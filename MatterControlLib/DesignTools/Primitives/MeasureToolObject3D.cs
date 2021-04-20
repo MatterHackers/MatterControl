@@ -33,9 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Markdig.Agg;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -55,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
-		private MarkdownWidget markdownWidget;
+		private GuiWidget numberWidget;
 
 		public MeasureToolObject3D()
 		{
@@ -189,7 +187,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				true);
 
 			// Restore DepthTest
-			world.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
+			world.Render3DLine(start,
+				end,
+				Color.Black.WithAlpha(Constants.LineAlpha),
+				true,
+				GuiWidget.DeviceScale,
+				true,
+				true);
 
 			var screenStart = world.GetScreenPosition(start);
 			var screenEnd = world.GetScreenPosition(end);
@@ -199,18 +203,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (PositionsHaveBeenSet)
 			{
 				CreateWidgetIfRequired(controlLayer);
-				markdownWidget.Markdown = Distance.ToString("0.##");
-				markdownWidget.Position = center;
+				numberWidget.Visible = true;
+				numberWidget.Text = Distance.ToString("0.##");
+				numberWidget.Position = center - new Vector2(numberWidget.LocalBounds.Width / 2, numberWidget.LocalBounds.Height / 2);
 			}
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
 		{
-			if (markdownWidget == null)
+			if (numberWidget == null)
 			{
 				var theme = ApplicationController.Instance.MenuTheme;
-				markdownWidget = new MarkdownWidget(theme, true)
+				numberWidget = new TextWidget(Distance.ToString("0.##"))
 				{
+					TextColor = theme.TextColor,
+					PointSize = 10,
+					Selectable = true,
+					AutoExpandBoundsToText = true,
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit,
 					Width = 200,
@@ -223,28 +232,28 @@ namespace MatterHackers.MatterControl.DesignTools
 					Padding = 5,
 				};
 
-				markdownWidget.Markdown = Distance.ToString("0.##");
-				markdownWidget.Width = 100 * GuiWidget.DeviceScale;
+				controlLayer.GuiSurface.AddChild(numberWidget);
 
-				controlLayer.GuiSurface.AddChild(markdownWidget);
+				controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
 
-				markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
-
-				void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+				void NumberWidget_MouseDown(object sender, MouseEventArgs e2)
 				{
 					controlLayer.Scene.SelectedItem = this;
 				}
 
-				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
+				numberWidget.MouseDown += NumberWidget_MouseDown;
 			}
 		}
 
-		private void MarkdownWidget_AfterDraw(object sender, DrawEventArgs e)
+		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
 		{
 			if (!this.Parent.Children.Where(c => c == this).Any())
 			{
-				markdownWidget.Close();
-				markdownWidget.AfterDraw -= MarkdownWidget_AfterDraw;
+				numberWidget.Close();
+				if (sender is GuiWidget guiWidget)
+				{
+					guiWidget.AfterDraw -= GuiSurface_AfterDraw;
+				}
 			}
 		}
 
@@ -257,6 +266,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					StartPosition = new Vector3(-10, 5, 3);
 					EndPosition = new Vector3(10, 5, 3);
 					Distance = 0;
+					if (numberWidget != null)
+					{
+						numberWidget.Visible = false;
+					}
 					PositionsHaveBeenSet = false;
 					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 				},
