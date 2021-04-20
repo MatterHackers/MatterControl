@@ -34,20 +34,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Markdig.Agg;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[MarkDownDescription("Drag the sphere to the locations you would like to position the description.")]
+	[MarkDownDescription("Drag the sphere to the location you would like to position the description.")]
 	[HideMeterialAndColor]
 	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
@@ -86,6 +87,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MarkdownString]
 		public string Description { get; set; } = "Type a description in the properties panel";
+
+		public enum Sides
+		{
+			Left,
+			Right
+		}
+
+		public enum Positions
+		{
+			Above,
+			Below
+		}
+
+		[EnumDisplayAttribute(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public Sides Side { get; set; }
+		
+		[EnumDisplayAttribute(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public Positions Position { get; set; }
 
 		public override bool Persistable => false;
 
@@ -168,37 +187,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (PositionHasBeenSet)
 			{
-				if (markdownWidget == null)
-				{
-					var theme = ApplicationController.Instance.MenuTheme;
-					markdownWidget = new MarkdownWidget(theme, true)
-					{
-						HAnchor = HAnchor.Absolute,
-						VAnchor = VAnchor.Fit,
-						Width = 200,
-						Height = 100,
-						BackgroundColor = theme.BackgroundColor,
-						BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
-						Margin = 0,
-						BorderColor = theme.PrimaryAccentColor,
-						BackgroundOutlineWidth = 1,
-						Padding = 5,
-					};
-
-					markdownWidget.Markdown = Description;
-					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
-
-					controlLayer.GuiSurface.AddChild(markdownWidget);
-
-					markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
-
-					void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
-					{
-						controlLayer.Scene.SelectedItem = this;
-					}
-
-					markdownWidget.MouseDown += MarkdownWidget_MouseDown;
-				}
+				CreateWidgetIfRequired(controlLayer);
+				markdownWidget.Visible = true;
 
 				var descrpition = Description.Replace("\\n", "\n");
 				if (markdownWidget.Markdown != descrpition)
@@ -207,16 +197,70 @@ namespace MatterHackers.MatterControl.DesignTools
 					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
 				}
 
-				markdownWidget.Position = screenStart;
+				var pos = screenStart;
+				if (Side == Sides.Right)
+				{
+					pos.X -= markdownWidget.Width;
+				}
+				if (Position == Positions.Below)
+				{
+					pos.Y -= markdownWidget.Height;
+				}
+				markdownWidget.Position = pos;
+
+				var graphics2DOpenGL = new Graphics2DOpenGL(GuiWidget.DeviceScale);
+				var distBetweenPixelsWorldSpace = controlLayer.World.GetWorldUnitsPerScreenPixelAtPosition(start);
+				var transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * world.RotationMatrix.Inverted * Matrix4X4.CreateTranslation(start);
+				var theme = ApplicationController.Instance.MenuTheme;
+				graphics2DOpenGL.RenderTransformedPath(transform, new Ellipse(0,0, 5, 5), theme.PrimaryAccentColor, false);
 			}
 		}
 
-		private void MarkdownWidget_AfterDraw(object sender, DrawEventArgs e)
+		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
+		{
+			if (markdownWidget == null)
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				var width = 200 * GuiWidget.DeviceScale;
+				markdownWidget = new MarkdownWidget(theme, true)
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit,
+					Width = width,
+					Height = 100,
+					BackgroundColor = theme.BackgroundColor,
+					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+					Margin = 0,
+					BorderColor = theme.PrimaryAccentColor,
+					BackgroundOutlineWidth = 1,
+					Padding = 5,
+				};
+
+				markdownWidget.Markdown = Description;
+				markdownWidget.Width = width;
+
+				controlLayer.GuiSurface.AddChild(markdownWidget);
+
+				controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
+
+				void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+				{
+					controlLayer.Scene.SelectedItem = this;
+				}
+
+				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
+			}
+		}
+
+		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
 		{
 			if (!this.Parent.Children.Where(c => c == this).Any())
 			{
 				markdownWidget.Close();
-				markdownWidget.AfterDraw -= MarkdownWidget_AfterDraw;
+				if (sender is GuiWidget guiWidget)
+				{
+					guiWidget.AfterDraw -= GuiSurface_AfterDraw;
+				}
 			}
 		}
 
@@ -228,6 +272,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					StartPosition = new Vector3(-10, 5, 3);
 					PositionHasBeenSet = false;
+					if (markdownWidget != null)
+					{
+						markdownWidget.Visible = false;
+					}
 					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 				},
 				HelpText = "Reset the position".Localize(),
