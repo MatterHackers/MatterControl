@@ -30,8 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
@@ -53,6 +55,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
+		private MarkdownWidget markdownWidget;
 
 		public MeasureToolObject3D()
 		{
@@ -85,8 +88,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[ReadOnly(true)]
 		public double Distance { get; set; } = 0;
-
-		public bool AlwaysVisible { get; set; } = false;
 
 		[HideFromEditor]
 		public bool PositionsHaveBeenSet { get; set; } = false;
@@ -174,12 +175,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			if (controlLayer.Scene.SelectedItem != this
-				&& !AlwaysVisible)
-			{
-				return;
-			}
-
 			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
 
@@ -203,23 +198,53 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (PositionsHaveBeenSet)
 			{
-				controlLayer.DrawBeforeGui((graphics) =>
+				CreateWidgetIfRequired(controlLayer);
+				markdownWidget.Markdown = Distance.ToString("0.##");
+				markdownWidget.Position = center;
+			}
+		}
+
+		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
+		{
+			if (markdownWidget == null)
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				markdownWidget = new MarkdownWidget(theme, true)
 				{
-					var number = new TypeFacePrinter(Distance.ToString("0.##"),
-						10,
-						center,
-						Justification.Center,
-						Baseline.BoundsCenter);
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit,
+					Width = 200,
+					Height = 100,
+					BackgroundColor = theme.BackgroundColor,
+					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+					Margin = 0,
+					BorderColor = theme.PrimaryAccentColor,
+					BackgroundOutlineWidth = 1,
+					Padding = 5,
+				};
 
-					var theme = ApplicationController.Instance.MenuTheme;
+				markdownWidget.Markdown = Distance.ToString("0.##");
+				markdownWidget.Width = 100 * GuiWidget.DeviceScale;
 
-					var bounds = number.LocalBounds;
-					bounds.Inflate(3 * GuiWidget.DeviceScale);
+				controlLayer.GuiSurface.AddChild(markdownWidget);
 
-					graphics.Render(new RoundedRectShape(bounds, 3 * GuiWidget.DeviceScale), theme.BackgroundColor);
+				markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
 
-					graphics.Render(number, theme.TextColor);
-				});
+				void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+				{
+					controlLayer.Scene.SelectedItem = this;
+				}
+
+				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
+			}
+		}
+
+		private void MarkdownWidget_AfterDraw(object sender, DrawEventArgs e)
+		{
+			if (!this.Parent.Children.Where(c => c == this).Any())
+			{
+				markdownWidget.Close();
+				markdownWidget.AfterDraw -= MarkdownWidget_AfterDraw;
 			}
 		}
 

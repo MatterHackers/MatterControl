@@ -168,37 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (PositionHasBeenSet)
 			{
-				if (markdownWidget == null)
-				{
-					var theme = ApplicationController.Instance.MenuTheme;
-					markdownWidget = new MarkdownWidget(theme, true)
-					{
-						HAnchor = HAnchor.Absolute,
-						VAnchor = VAnchor.Fit,
-						Width = 200,
-						Height = 100,
-						BackgroundColor = theme.BackgroundColor,
-						BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
-						Margin = 0,
-						BorderColor = theme.PrimaryAccentColor,
-						BackgroundOutlineWidth = 1,
-						Padding = 5,
-					};
-
-					markdownWidget.Markdown = Description;
-					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
-
-					controlLayer.GuiSurface.AddChild(markdownWidget);
-
-					markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
-
-					void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
-					{
-						controlLayer.Scene.SelectedItem = this;
-					}
-
-					markdownWidget.MouseDown += MarkdownWidget_MouseDown;
-				}
+				CreateWidgetIfRequired(controlLayer);
 
 				var descrpition = Description.Replace("\\n", "\n");
 				if (markdownWidget.Markdown != descrpition)
@@ -208,6 +178,41 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				markdownWidget.Position = screenStart;
+			}
+		}
+
+		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
+		{
+			if (markdownWidget == null)
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				markdownWidget = new MarkdownWidget(theme, true)
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit,
+					Width = 200,
+					Height = 100,
+					BackgroundColor = theme.BackgroundColor,
+					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+					Margin = 0,
+					BorderColor = theme.PrimaryAccentColor,
+					BackgroundOutlineWidth = 1,
+					Padding = 5,
+				};
+
+				markdownWidget.Markdown = Description;
+				markdownWidget.Width = 100 * GuiWidget.DeviceScale;
+
+				controlLayer.GuiSurface.AddChild(markdownWidget);
+
+				markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
+
+				void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+				{
+					controlLayer.Scene.SelectedItem = this;
+				}
+
+				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
 			}
 		}
 
