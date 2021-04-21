@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				var pos = screenStart;
-				if (Side == Sides.Right)
+				if (Side == Sides.Left)
 				{
 					pos.X -= markdownWidget.Width;
 				}
