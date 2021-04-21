@@ -214,23 +214,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (numberWidget == null)
 			{
 				var theme = ApplicationController.Instance.MenuTheme;
-				numberWidget = new TextWidget(Distance.ToString("0.##"))
+				numberWidget = new GuiWidget()
+				{
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
+					Padding = 5,
+					BackgroundColor = theme.BackgroundColor,
+					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+					BorderColor = theme.PrimaryAccentColor,
+					BackgroundOutlineWidth = 1,
+				};
+
+				numberWidget.AddChild(new TextWidget(Distance.ToString("0.##"))
 				{
 					TextColor = theme.TextColor,
 					PointSize = 10,
 					Selectable = true,
 					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Fit,
-					Width = 200,
-					Height = 100,
-					BackgroundColor = theme.BackgroundColor,
-					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
-					Margin = 0,
-					BorderColor = theme.PrimaryAccentColor,
-					BackgroundOutlineWidth = 1,
-					Padding = 5,
-				};
+				});
 
 				controlLayer.GuiSurface.AddChild(numberWidget);
 

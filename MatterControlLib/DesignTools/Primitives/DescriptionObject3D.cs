@@ -177,6 +177,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
+		private double width = 200 * GuiWidget.DeviceScale;
+
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			var start = PositionHasBeenSet ? StartPosition : StartPosition.Transform(Matrix);
@@ -194,7 +196,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (markdownWidget.Markdown != descrpition)
 				{
 					markdownWidget.Markdown = descrpition;
-					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
+					markdownWidget.Width = width * GuiWidget.DeviceScale;
 				}
 
 				var pos = screenStart;
@@ -221,7 +223,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (markdownWidget == null)
 			{
 				var theme = ApplicationController.Instance.MenuTheme;
-				var width = 200 * GuiWidget.DeviceScale;
 				markdownWidget = new MarkdownWidget(theme, true)
 				{
 					HAnchor = HAnchor.Absolute,
