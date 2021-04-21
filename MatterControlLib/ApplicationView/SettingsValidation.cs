@@ -173,6 +173,7 @@ namespace MatterHackers.MatterControl
 							});
 					}
 
+					// make sure the first layer height is not too big
 					if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
 						errors.Add(
@@ -188,6 +189,24 @@ namespace MatterHackers.MatterControl
 									settings.GetValue<double>(SettingsKey.nozzle_diameter)),
 							});
 					}
+					// make sure the first layer height is not too small
+					else if (settings.GetValue<double>(SettingsKey.first_layer_height) < settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2)
+					{
+						errors.Add(
+							new SettingsValidationError(SettingsKey.first_layer_height)
+							{
+								Error = "{0} should be greater than or equal to 1/2 the {1}.".Localize().FormatWith(
+									GetSettingsName(SettingsKey.first_layer_height),
+									GetSettingsName(SettingsKey.nozzle_diameter)),
+								ValueDetails = "{0} = {1}\n1/2 {2} = {3}".FormatWith(
+									GetSettingsName(SettingsKey.first_layer_height),
+									settings.GetValue<double>(SettingsKey.first_layer_height),
+									GetSettingsName(SettingsKey.nozzle_diameter),
+									settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2),
+								ErrorLevel = ValidationErrorLevel.Warning,
+							});
+					}
+
 				}
 
 				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
@@ -298,7 +317,7 @@ namespace MatterHackers.MatterControl
 						errors.Add(
 							new SettingsValidationError(SettingsKey.validation_threshold)
 							{
-								Error = "The Validation Threshold mush be greater than 0 and less than .5mm. It is currently {0}.".Localize().FormatWith(threshold),
+								Error = "The Validation Threshold mush be greater than 0 and less than .5mm.".Localize().FormatWith(threshold),
 								ValueDetails = "{0} = {1}".FormatWith(GetSettingsName(SettingsKey.validation_threshold), threshold),
 							});
 					}
@@ -372,11 +391,11 @@ namespace MatterHackers.MatterControl
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
+							ValueDetails = "{0} = {1}\n{2} * 4 = {3}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter),
-								settings.GetValue<double>(SettingsKey.nozzle_diameter))
+								settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 						});
 				}
 

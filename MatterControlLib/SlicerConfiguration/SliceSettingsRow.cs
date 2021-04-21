@@ -439,8 +439,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 					errorsPanel.AddChild(errorPanel);
 
+					var text = item.Error;
+					if (!string.IsNullOrEmpty(item.ValueDetails))
+					{
+						text += "\n\n" + item.ValueDetails;
+					}
+
 					errorsPanel.AddChild(
-						new WrappedTextWidget(item.Error, pointSize: theme.DefaultFontSize - 1, textColor: Color.Red)
+						new WrappedTextWidget(text, pointSize: theme.DefaultFontSize - 1, textColor: Color.Red)
 						{
 							Margin = new BorderDouble(bottom: 3)
 						});
