@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
-		private GuiWidget numberWidget;
+		private GuiWidget containerWidget;
+		private GuiWidget textWidget;
 
 		public MeasureToolObject3D()
 		{
@@ -203,36 +204,37 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (PositionsHaveBeenSet)
 			{
 				CreateWidgetIfRequired(controlLayer);
-				numberWidget.Visible = true;
-				numberWidget.Text = Distance.ToString("0.##");
-				numberWidget.Position = center - new Vector2(numberWidget.LocalBounds.Width / 2, numberWidget.LocalBounds.Height / 2);
+				textWidget.Text = Distance.ToString("0.##");
+				containerWidget.Position = center - new Vector2(containerWidget.LocalBounds.Width / 2, containerWidget.LocalBounds.Height / 2);
 			}
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
 		{
-			if (numberWidget == null)
+			if (containerWidget == null
+				|| containerWidget.Parents<SystemWindow>().Count() == 0)
 			{
 				var theme = ApplicationController.Instance.MenuTheme;
-				numberWidget = new TextWidget(Distance.ToString("0.##"))
+				containerWidget = new GuiWidget()
+				{
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
+					Padding = 5,
+					BackgroundColor = theme.BackgroundColor,
+					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+					BorderColor = theme.PrimaryAccentColor,
+					BackgroundOutlineWidth = 1,
+				};
+
+				containerWidget.AddChild(textWidget = new TextWidget(Distance.ToString("0.##"))
 				{
 					TextColor = theme.TextColor,
 					PointSize = 10,
 					Selectable = true,
 					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Fit,
-					Width = 200,
-					Height = 100,
-					BackgroundColor = theme.BackgroundColor,
-					BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
-					Margin = 0,
-					BorderColor = theme.PrimaryAccentColor,
-					BackgroundOutlineWidth = 1,
-					Padding = 5,
-				};
+				});
 
-				controlLayer.GuiSurface.AddChild(numberWidget);
+				controlLayer.GuiSurface.AddChild(containerWidget);
 
 				controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
 
@@ -241,7 +243,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					controlLayer.Scene.SelectedItem = this;
 				}
 
-				numberWidget.MouseDown += NumberWidget_MouseDown;
+				containerWidget.MouseDown += NumberWidget_MouseDown;
 			}
 		}
 
@@ -249,7 +251,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (!this.Parent.Children.Where(c => c == this).Any())
 			{
-				numberWidget.Close();
+				containerWidget.Close();
 				if (sender is GuiWidget guiWidget)
 				{
 					guiWidget.AfterDraw -= GuiSurface_AfterDraw;
@@ -266,9 +268,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					StartPosition = new Vector3(-10, 5, 3);
 					EndPosition = new Vector3(10, 5, 3);
 					Distance = 0;
-					if (numberWidget != null)
+					if (containerWidget != null)
 					{
-						numberWidget.Visible = false;
+						containerWidget.Visible = false;
 					}
 					PositionsHaveBeenSet = false;
 					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));

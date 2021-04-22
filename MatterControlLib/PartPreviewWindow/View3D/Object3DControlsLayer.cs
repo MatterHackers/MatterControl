@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseDown(mouseEvent);
 
-			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
+			var ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			if (this.Scene.SelectedItem != null
 				&& !SuppressObject3DControls
 				&& FindHitObject3DControl(ray, out mouseDownObject3DControl, out IntersectInfo info))

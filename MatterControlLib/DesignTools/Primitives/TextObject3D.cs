@@ -46,15 +46,13 @@ using Newtonsoft.Json.Converters;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	public class TextObject3D : Object3D, IStaticThumbnail, IObjectWithHeight
+	public class TextObject3D : Object3D, IObjectWithHeight
 	{
 		public TextObject3D()
 		{
 			Name = "Text".Localize();
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
-
-		public string ThumbnailName => "Text";
 
 		public static async Task<TextObject3D> Create()
 		{

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public GitHubLibraryItem(string name, string url)
 		{
-			this.Name = name;
+			this.FileName = name;
 			this.Url = url;
 		}
 
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public DateTime DateModified { get; } = DateTime.Now;
 
-		public string FileName => Name;
+		public string FileName { get; set; }
 
 		public long FileSize { get; private set; }
 
@@ -68,7 +68,18 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual bool LocalContentExists => File.Exists(CachePath);
 
-		public string Name { get; set; }
+		public string Name 
+		{
+			get
+			{
+				if (Path.GetExtension(FileName).ToLower() == ".mcx")
+				{
+					return Path.GetFileNameWithoutExtension(FileName);
+				}
+
+				return FileName;
+			}
+		}
 
 		public string Url { get; }
 
@@ -78,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string FileKey => Url.GetLongHashCode().ToString();
 
-		public string FileExtension => Path.GetExtension(Name).Substring(1);
+		public string FileExtension => Path.GetExtension(FileName).Substring(1);
 
 		public static string GetLibraryPath(string fileKey, string fileExtension)
 		{

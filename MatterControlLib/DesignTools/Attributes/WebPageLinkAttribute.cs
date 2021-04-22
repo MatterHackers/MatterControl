@@ -35,10 +35,13 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class WebPageLinkAttribute : Attribute
 	{
 		public string Url { get; private set; }
-		public string Name { get; private set; }
-		public WebPageLinkAttribute(string name, string url)
+		public string ButtonName { get; private set; }
+		public string RowName { get; private set; }
+
+		public WebPageLinkAttribute(string rowName, string buttonName, string url)
 		{
-			Name = name;
+			RowName = rowName;
+			ButtonName = buttonName;
 			Url = url;
 		}
 	}

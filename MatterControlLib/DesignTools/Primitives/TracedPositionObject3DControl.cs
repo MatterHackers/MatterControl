@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Mesh shape;
 		private bool mouseOver;
-		private PlaneShape hitPlane;
-		private bool downOnControl;
+		public PlaneShape HitPlane { get; private set; }
+		public bool DownOnControl { get; private set; }
 
 		public TracedPositionObject3DControl(IObject3DControlContext object3DControlContext,
 			IObject3D owner,
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			GLHelper.Render(shape, color.WithAlpha(e.Alpha0to255), ShapeMatrix(), RenderTypes.Shaded);
 
-			if (hitPlane != null)
+			if (HitPlane != null)
 			{
 				//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
 				//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
@@ -129,8 +129,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
-			hitPlane = new PlaneShape(new Plane(mouseEvent3D.MouseRay.directionNormal, mouseEvent3D.info.HitPosition), null);
-			downOnControl = true;
+			DownOnControl = true;
+			// Make sure we always get a new hit plane
+			ResetHitPlane();
+		}
+
+		public void ResetHitPlane()
+		{
+			HitPlane = null;
 		}
 
 		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
@@ -141,51 +147,68 @@ namespace MatterHackers.MatterControl.DesignTools
 				context.GuiSurface.Invalidate();
 			}
 
-			if (downOnControl)
+			if (DownOnControl)
 			{
-				var ray = context.World.GetRayForLocalBounds(mouseEvent3D.MouseEvent2D.Position);
-				var scene = context.Scene;
-				var intersectionInfo = scene.GetBVHData().GetClosestIntersection(ray);
+				UpdatePosition(mouseEvent3D.MouseEvent2D.Position);
+			}
+		}
 
-				var oldPosition = getPosition();
-				var newPosition = oldPosition;
-				if (intersectionInfo == null)
+		private void UpdatePosition(Vector2 screenPosition)
+		{
+			var ray = context.World.GetRayForLocalBounds(screenPosition);
+			var scene = context.Scene;
+			var intersectionInfo = scene.GetBVHData().GetClosestIntersection(ray);
+
+			var oldPosition = getPosition();
+			var newPosition = oldPosition;
+			var world = Object3DControlContext.World;
+			var rayNormal = (oldPosition - world.EyePosition).GetNormal();
+			if (intersectionInfo == null)
+			{
+				if (HitPlane == null)
 				{
-					intersectionInfo = hitPlane.GetClosestIntersection(ray);
-					if (intersectionInfo != null)
+					HitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
+				}
+
+				intersectionInfo = HitPlane.GetClosestIntersection(ray);
+				if (intersectionInfo != null)
+				{
+					newPosition = intersectionInfo.HitPosition;
+				}
+			}
+			else
+			{
+				HitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
+
+				foreach (var object3D in scene.Children)
+				{
+					if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
 					{
 						newPosition = intersectionInfo.HitPosition;
+						break;
 					}
 				}
-				else
-				{
-					hitPlane = new PlaneShape(new Plane(mouseEvent3D.MouseRay.directionNormal, intersectionInfo.HitPosition), null);
+			}
 
-					foreach (var object3D in scene.Children)
-					{
-						if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
-						{
-							newPosition = intersectionInfo.HitPosition;
-							break;
-						}
-					}
-				}
-
-				if (newPosition != oldPosition)
-				{
-					setPosition(newPosition);
-					context.GuiSurface.Invalidate();
-				}
+			if (newPosition != oldPosition)
+			{
+				setPosition(newPosition);
+				context.GuiSurface.Invalidate();
 			}
 		}
 
 		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			downOnControl = false;
+			DownOnControl = false;
 		}
 
 		public void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
+		}
+
+		public void MoveToScreenPosition(Vector2 screenPosition)
+		{
+			UpdatePosition(screenPosition);
 		}
 	}
 }
