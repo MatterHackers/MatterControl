@@ -49,7 +49,6 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	[MarkDownDescription("Drag the sphere to the location you would like to position the description.")]
 	[HideMeterialAndColor]
 	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
@@ -59,11 +58,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DescriptionObject3D()
 		{
 			Name = "Description".Localize();
-
-			using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
-			{
-				Children.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
-			}
 		}
 
 		public static async Task<DescriptionObject3D> Create()
@@ -79,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[HideFromEditor]
 		public bool PositionHasBeenSet { get; set; } = false;
 
-		[MarkdownString]
+		[MultiLineEdit]
 		public string Description { get; set; } = "Type a description in the properties panel";
 
 		public enum Placements
@@ -116,10 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				tracedPositionControl = new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
-					() =>
-					{
-						return PositionHasBeenSet ? Position : Position.Transform(Matrix);
-					},
+					() => Position,
 					(position) =>
 					{
 						if (!PositionHasBeenSet)
@@ -127,8 +118,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							PositionHasBeenSet = true;
 						}
 
-						Position = position;
-						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+						if (Position != position)
+						{
+							Position = position;
+							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+						}
 					});
 			}
 
@@ -196,9 +190,25 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			var start = PositionHasBeenSet ? Position : Position.Transform(Matrix);
+			if (this.VisibleMeshes().Count() == 0)
+			{
+				// add the amf content
+				using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
+				{
+					Children.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
+				}
+			}
 
 			var world = controlLayer.World;
+
+			if (!PositionHasBeenSet)
+			{
+				var aabb = this.GetAxisAlignedBoundingBox();
+				Position = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
+			}
+
+
+			var start = Position;
 
 			var screenStart = world.GetScreenPosition(start);
 
@@ -237,13 +247,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * world.RotationMatrix.Inverted * Matrix4X4.CreateTranslation(start);
 			var theme = ApplicationController.Instance.MenuTheme;
 			graphics2DOpenGL.RenderTransformedPath(transform, new Ellipse(0, 0, 5, 5), theme.PrimaryAccentColor, false);
-
-			var hitPlane = tracedPositionControl?.HitPlane;
-			if (hitPlane != null)
-			{
-				world.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
-				//world.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
-			}
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
@@ -309,7 +312,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (delta.LengthSquared > 0)
 				{
 					tracedPositionControl.MoveToScreenPosition(screenStart + delta);
-					// widgetDownPosition = ePosition;
 				}
 			}
 		}

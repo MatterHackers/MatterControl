@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string FileKey => Url.GetLongHashCode().ToString();
 
-		public string FileExtension => Path.GetExtension(Name).Substring(1);
+		public string FileExtension => Path.GetExtension(FileName).Substring(1);
 
 		public static string GetLibraryPath(string fileKey, string fileExtension)
 		{

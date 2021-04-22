@@ -178,18 +178,21 @@ namespace MatterHackers.MatterControl.Library
 						{
 							lock (locker)
 							{
-								FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
-
-								// read in data
-								foreach (FileInfo file in dirContents)
+								if (!string.IsNullOrEmpty(content) && !content.Contains("\"Not Found\""))
 								{
-									if (file.type == "file")
-									{
-										imageUrlCache.Add((file.name, file.download_url));
-									}
-								}
+									FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
 
-								imageUrlCaches[key] = imageUrlCache;
+									// read in data
+									foreach (FileInfo file in dirContents)
+									{
+										if (file.type == "file")
+										{
+											imageUrlCache.Add((file.name, file.download_url));
+										}
+									}
+
+									imageUrlCaches[key] = imageUrlCache;
+								}
 							}
 						},
 						false,

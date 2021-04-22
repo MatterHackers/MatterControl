@@ -749,28 +749,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
 
-			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			renameMenuItem.Click += (s, e) =>
+			if (printer != null)
 			{
-				if (workspace != null)
+				var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+				renameMenuItem.Click += (s, e) =>
 				{
-					workspace.LibraryView.ActiveContainer.Rename(workspace.LibraryView.ActiveContainer.Items.FirstOrDefault());
-				}
-				else if (printer != null)
-				{
-					DialogWindow.Show(
-						new InputBoxPage(
-							"Rename Item".Localize(),
-							"Name".Localize(),
-							printer.Settings.GetValue(SettingsKey.printer_name),
-							"Enter New Name Here".Localize(),
-							"Rename".Localize(),
-							(newName) =>
-							{
-								printer.Settings.SetValue(SettingsKey.printer_name, newName);
-							}));
-				}
-			};
+					if (workspace != null)
+					{
+						workspace.LibraryView.ActiveContainer.Rename(workspace.LibraryView.ActiveContainer.Items.FirstOrDefault());
+					}
+					else if (printer != null)
+					{
+						DialogWindow.Show(
+							new InputBoxPage(
+								"Rename Item".Localize(),
+								"Name".Localize(),
+								printer.Settings.GetValue(SettingsKey.printer_name),
+								"Enter New Name Here".Localize(),
+								"Rename".Localize(),
+								(newName) =>
+								{
+									printer.Settings.SetValue(SettingsKey.printer_name, newName);
+								}));
+					}
+				};
+			}
 
 
 			var moveButtons = new FlowLayoutWidget();
