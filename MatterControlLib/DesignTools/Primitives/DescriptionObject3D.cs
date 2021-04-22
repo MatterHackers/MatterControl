@@ -237,6 +237,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			var transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * world.RotationMatrix.Inverted * Matrix4X4.CreateTranslation(start);
 			var theme = ApplicationController.Instance.MenuTheme;
 			graphics2DOpenGL.RenderTransformedPath(transform, new Ellipse(0, 0, 5, 5), theme.PrimaryAccentColor, false);
+
+			var hitPlane = tracedPositionControl?.HitPlane;
+			if (hitPlane != null)
+			{
+				world.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
+				//world.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
+			}
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)
@@ -283,8 +290,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (tracedPositionControl != null && !tracedPositionControl.DownOnControl)
 			{
+				tracedPositionControl.ResetHitPlane();
 				mouseDownPosition = Position;
-				widgetDownPosition = e.Position;
+				var widget = (GuiWidget)sender;
+				widgetDownPosition = widget.TransformToScreenSpace(e.Position);
 				mouseDownOnWidget = true;
 			}
 		}
@@ -294,9 +303,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (mouseDownOnWidget)
 			{
 				var screenStart = controlLayer.World.GetScreenPosition(mouseDownPosition);
-				var delta = e.Position - widgetDownPosition;
-				tracedPositionControl.MoveToScreenPosition(screenStart + delta);
-				widgetDownPosition = e.Position;
+				var widget = (GuiWidget)sender;
+				var ePosition = widget.TransformToScreenSpace(e.Position);
+				var delta = ePosition - widgetDownPosition;
+				if (delta.LengthSquared > 0)
+				{
+					tracedPositionControl.MoveToScreenPosition(screenStart + delta);
+					// widgetDownPosition = ePosition;
+				}
 			}
 		}
 

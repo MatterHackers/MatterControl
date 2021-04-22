@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Mesh shape;
 		private bool mouseOver;
-		private PlaneShape hitPlane;
+		public PlaneShape HitPlane { get; private set; }
 		public bool DownOnControl { get; private set; }
 
 		public TracedPositionObject3DControl(IObject3DControlContext object3DControlContext,
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			GLHelper.Render(shape, color.WithAlpha(e.Alpha0to255), ShapeMatrix(), RenderTypes.Shaded);
 
-			if (hitPlane != null)
+			if (HitPlane != null)
 			{
 				//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
 				//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
@@ -130,6 +130,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			DownOnControl = true;
+			// Make sure we always get a new hit plane
+			ResetHitPlane();
+		}
+
+		public void ResetHitPlane()
+		{
+			HitPlane = null;
 		}
 
 		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
@@ -158,12 +165,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			var rayNormal = (oldPosition - world.EyePosition).GetNormal();
 			if (intersectionInfo == null)
 			{
-				if (hitPlane == null)
+				if (HitPlane == null)
 				{
-					hitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
+					HitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
 				}
 
-				intersectionInfo = hitPlane.GetClosestIntersection(ray);
+				intersectionInfo = HitPlane.GetClosestIntersection(ray);
 				if (intersectionInfo != null)
 				{
 					newPosition = intersectionInfo.HitPosition;
@@ -171,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				hitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
+				HitPlane = new PlaneShape(new Plane(rayNormal, oldPosition), null);
 
 				foreach (var object3D in scene.Children)
 				{
