@@ -105,10 +105,19 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (file.type == "dir")
 				{
-					childContainers.Add(new GitHubContainerLink(file.name,
-						Account,
-						Repository,
-						RepoDirectory + "/" + file.name));
+					if (file.name == ".images")
+					{
+						folderImageUrlCache = new List<(string name, string url)>();
+						// do the initial load
+						LoadFolderImageUrlCache().Wait();
+					}
+					else
+					{
+						childContainers.Add(new GitHubContainerLink(file.name,
+							Account,
+							Repository,
+							RepoDirectory + "/" + file.name));
+					}
 				}
 				else if (file.type == "file")
 				{
@@ -136,31 +145,90 @@ namespace MatterHackers.MatterControl.Library
 
 		private static Dictionary<string, List<(string name, string url)>> imageUrlCaches = new Dictionary<string, List<(string name, string url)>>();
 
+		private List<(string name, string url)> folderImageUrlCache = null;
+
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			var existingThumbnail = base.GetThumbnail(item, width, height);
 
 			if (existingThumbnail.Result == null)
 			{
-				var imageUrlCache = LoadImageUrlCache();
-
-				foreach (var imageUrl in imageUrlCache)
+				// if there is a local cache check it first
+				if (folderImageUrlCache != null)
 				{
-					if (imageUrl.name.Contains(item.ID))
+					// load again to make sure we block until the load is done
+					LoadFolderImageUrlCache().Wait();
+					var folderImage = CheckForImage(Path.GetFileNameWithoutExtension(item.Name), folderImageUrlCache);
+					if (folderImage != null)
 					{
-						// download the image and cache it
-						var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
-						image.SetRecieveBlender(new BlenderPreMultBGRA());
-						WebCache.RetrieveImageAsync(image, imageUrl.url, false);
-						return Task.FromResult<ImageBuffer>(image);
+						folderImage.SetRecieveBlender(new BlenderPreMultBGRA());
+						return Task.FromResult<ImageBuffer>(folderImage);
 					}
+				}
+
+				// check the global cache if any
+				var repositoryImage = CheckForImage(item.ID, LoadRepositoryImageUrlCache());
+				if (repositoryImage != null)
+				{
+					return Task.FromResult<ImageBuffer>(repositoryImage);
 				}
 			}
 
 			return existingThumbnail;
 		}
 
-		private List<(string name, string url)> LoadImageUrlCache()
+		private ImageBuffer CheckForImage(string id, List<(string name, string url)> cache)
+		{
+			foreach (var imageUrl in cache)
+			{
+				if (imageUrl.name.Contains(id))
+				{
+					// download the image and cache it
+					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
+					image.SetRecieveBlender(new BlenderPreMultBGRA());
+					WebCache.RetrieveImageAsync(image, imageUrl.url, false);
+					return image;
+				}
+			}
+
+			return null;
+		}
+
+		private async Task LoadFolderImageUrlCache()
+		{
+			if (folderImageUrlCache.Count == 0)
+			{
+				folderImageUrlCache.Add(("recursion block", "No Image Files"));
+
+				// Check if we can find the thumbnail in the GitHub .images directory
+				var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}/.images";
+				// get the directory contents
+				var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+				AddCromeHeaders(requestMessage);
+				using (var client = new HttpClient())
+				{
+					using (HttpResponseMessage response = await client.SendAsync(requestMessage))
+					{
+						var content = await response.Content.ReadAsStringAsync();
+						if (!string.IsNullOrEmpty(content) && !content.Contains("\"Not Found\""))
+						{
+							FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
+
+							// read in data
+							foreach (FileInfo file in dirContents)
+							{
+								if (file.type == "file")
+								{
+									folderImageUrlCache.Add((file.name, file.download_url));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private List<(string name, string url)> LoadRepositoryImageUrlCache()
 		{
 			lock (locker)
 			{
