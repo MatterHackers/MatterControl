@@ -54,6 +54,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
+	/// <summary>
+	/// This is used to ensure that special objects have a constant icon when rendered in the tree view.
+	/// Normally icons are found by looking at the mesh but for primitive objects like the cube we want to have the same icon
+	/// all the time. It should always have a 'cube' icon regardless of how it has been transformed.
+	/// </summary>
 	public interface IStaticThumbnail
 	{
 		string ThumbnailName { get; }
