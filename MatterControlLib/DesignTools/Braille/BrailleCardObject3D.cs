@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	[WebPageLink("About Braille", "https://en.wikipedia.org/wiki/Braille")]
+	[WebPageLink("Website", "About Braille", "https://en.wikipedia.org/wiki/Braille")]
 	public class BrailleCardObject3D : Object3D
 	{
 		public BrailleCardObject3D()

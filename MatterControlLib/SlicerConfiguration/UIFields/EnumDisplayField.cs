@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					radioButtonSize = new Vector2(radioButton.Width, radioButton.Height);
 
 					// set it if checked
-					if (enumItem.Value == this.InitialValue)
+					if (enumItem.Key == this.InitialValue)
 					{
 						radioButton.Checked = true;
 					}

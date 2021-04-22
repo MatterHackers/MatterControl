@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
+	[WebPageLink("Resources", "Markdown Help", "https://guides.github.com/features/mastering-markdown/")]
 	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
 		private MarkdownWidget markdownWidget;
@@ -73,8 +75,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[HideFromEditor]
 		public bool PositionHasBeenSet { get; set; } = false;
 
+		[DisplayName("Description - Markdown Text")]
 		[MultiLineEdit]
-		public string Description { get; set; } = "Type a description in the properties panel";
+		public string Description { get; set; } = "You can edit this description in the properties panel";
 
 		public enum Placements
 		{
@@ -85,7 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[EnumDisplay(IconPaths = new string[] { "left_top.png", "left_bottom.png", "right_top.png", "right_bottom.png", }, InvertIcons = true)]
-		public Placements Placement { get; set; }
+		public Placements Placement { get; set; } = Placements.Left_Top;
 
 		public enum Widths
 		{

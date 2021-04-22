@@ -142,8 +142,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				AddFunctionButtons(item, mainContainer, theme);
-
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
@@ -162,6 +160,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 					mainContainer.AddChild(updateButton);
 				}
+
+				// add any function buttons last
+				AddFunctionButtons(item, mainContainer, theme);
 
 				// Init with custom 'UpdateControls' hooks
 				(context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
@@ -1039,7 +1040,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var detailsLink = new TextIconButton(unlockLink.Name.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
+				var detailsLink = new TextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					ToolTipText = unlockLink.Url,
@@ -1050,7 +1051,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// website row
-				editControlsContainer.AddChild(new SettingsRow("Website".Localize(), null, detailsLink, theme));
+				editControlsContainer.AddChild(new SettingsRow(unlockLink.RowName, null, detailsLink, theme));
 			}
 		}
 	}
