@@ -1004,11 +1004,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					DrawObject(item, transparentMeshes, e);
 				}
+			}
 
-				if (item is IAlwaysEditorDraw editorDraw)
-				{
-					editorDrawItems.Add(item);
-				}
+			foreach (var item in scene.Descendants().Where(i => i is IAlwaysEditorDraw))
+			{
+				editorDrawItems.Add(item);
 			}
 
 			if (sceneContext.Printer?.Connection?.serialPort is PrinterEmulator.Emulator emulator)
