@@ -233,6 +233,8 @@ namespace MatterHackers.MatterControl
 						// Force editor rebuild
 						scene.SelectedItem = null;
 						scene.SelectedItem = componentObject;
+
+						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 					}
 				},
 				ShowInModifyMenu = (sceneContext) =>

@@ -690,6 +690,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
 						field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
 						field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+						field.Content.Margin = new BorderDouble(0, 0, 0, 5);
 						RegisterValueChanged(field, (valueString) => valueString);
 						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 					}

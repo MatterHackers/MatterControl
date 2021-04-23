@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Markdig.Agg;
@@ -91,16 +92,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		private Vector3 WorldPosition
+		private Vector3 worldPosition
 		{
 			get
 			{
-				return LocalPosition;
+				return LocalPosition.Transform(this.WorldMatrix());
 			}
 
 			set
 			{
-				LocalPosition = value;
+				LocalPosition = value.Transform(this.WorldMatrix().Inverted);
 			}
 		}
 		
@@ -148,7 +149,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				tracedPositionControl = new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
-					() => WorldPosition,
+					() => worldPosition,
 					(position) =>
 					{
 						if (!PositionHasBeenSet)
@@ -156,9 +157,9 @@ namespace MatterHackers.MatterControl.DesignTools
 							PositionHasBeenSet = true;
 						}
 
-						if (WorldPosition != position)
+						if (worldPosition != position)
 						{
-							WorldPosition = position;
+							worldPosition = position;
 							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 						}
 					});
@@ -232,12 +233,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (!PositionHasBeenSet)
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-				WorldPosition = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
+				var aabb = Children.FirstOrDefault().GetAxisAlignedBoundingBox();
+				LocalPosition = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
 			}
 
 
-			var start = WorldPosition;
+			var start = worldPosition;
 
 			var screenStart = world.GetScreenPosition(start);
 
@@ -323,7 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (tracedPositionControl != null && !tracedPositionControl.DownOnControl)
 			{
 				tracedPositionControl.ResetHitPlane();
-				mouseDownPosition = WorldPosition;
+				mouseDownPosition = worldPosition;
 				var widget = (GuiWidget)sender;
 				widgetDownPosition = widget.TransformToScreenSpace(e.Position);
 				mouseDownOnWidget = true;
@@ -355,7 +356,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
 		{
-			if (!this.Parent.Children.Where(c => c == this).Any())
+			if (!controlLayer.Scene.Contains(this))
 			{
 				markdownWidget.Close();
 				if (sender is GuiWidget guiWidget)

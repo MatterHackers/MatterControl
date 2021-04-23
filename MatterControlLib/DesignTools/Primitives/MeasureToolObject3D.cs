@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -55,6 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private List<IObject3DControl> editorControls = null;
 		private GuiWidget containerWidget;
 		private GuiWidget textWidget;
+		private Object3DControlsLayer controlLayer;
 
 		public MeasureToolObject3D()
 		{
@@ -80,10 +82,40 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[HideFromEditor]
-		public Vector3 StartPosition { get; set; } = new Vector3(-10, 5, 3);
+		private Vector3 worldStartPosition
+		{
+			get
+			{
+				return LocalStartPosition.Transform(this.WorldMatrix());
+			}
+
+			set
+			{
+				LocalStartPosition = value.Transform(this.WorldMatrix().Inverted);
+			}
+		}
 
 		[HideFromEditor]
-		public Vector3 EndPosition { get; set; } = new Vector3(10, 5, 3);
+		private Vector3 worldEndPosition
+		{
+			get
+			{
+				return LocalEndPosition.Transform(this.WorldMatrix());
+			}
+
+			set
+			{
+				LocalEndPosition = value.Transform(this.WorldMatrix().Inverted);
+			}
+		}
+
+
+		[HideFromEditor]
+		public Vector3 LocalStartPosition { get; set; } = new Vector3(-10, 5, 3);
+
+		[HideFromEditor]
+		public Vector3 LocalEndPosition { get; set; } = new Vector3(10, 5, 3);
+
 
 		[ReadOnly(true)]
 		public double Distance { get; set; } = 0;
@@ -103,36 +135,36 @@ namespace MatterHackers.MatterControl.DesignTools
 					this,
 					() =>
 					{
-						return PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
+						return PositionsHaveBeenSet ? worldStartPosition : worldStartPosition.Transform(Matrix);
 					},
 					(position) =>
 					{
 						if (!PositionsHaveBeenSet)
 						{
 							PositionsHaveBeenSet = true;
-							EndPosition = EndPosition.Transform(this.Matrix);
+							worldEndPosition = worldEndPosition.Transform(this.Matrix);
 						}
 
-						StartPosition = position;
-						Distance = (StartPosition - EndPosition).Length;
+						worldStartPosition = position;
+						Distance = (worldStartPosition - worldEndPosition).Length;
 						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 					}),
 					new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
 					() =>
 					{
-						return PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+						return PositionsHaveBeenSet ? worldEndPosition : worldEndPosition.Transform(Matrix);
 					},
 					(position) =>
 					{
 						if (!PositionsHaveBeenSet)
 						{
 							PositionsHaveBeenSet = true;
-							StartPosition = StartPosition.Transform(this.Matrix);
+							worldStartPosition = worldStartPosition.Transform(this.Matrix);
 						}
 
-						EndPosition = position;
-						Distance = (StartPosition - EndPosition).Length;
+						worldEndPosition = position;
+						Distance = (worldStartPosition - worldEndPosition).Length;
 						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 					}),
 				};
@@ -174,8 +206,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
-			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+			var start = PositionsHaveBeenSet ? worldStartPosition : worldStartPosition.Transform(Matrix);
+			var end = PositionsHaveBeenSet ? worldEndPosition : worldEndPosition.Transform(Matrix);
 
 			var world = controlLayer.World;
 			// draw on top of anything that is already drawn
@@ -214,6 +246,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (containerWidget == null
 				|| containerWidget.Parents<SystemWindow>().Count() == 0)
 			{
+				this.controlLayer = controlLayer;
 				var theme = ApplicationController.Instance.MenuTheme;
 				containerWidget = new GuiWidget()
 				{
@@ -249,7 +282,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
 		{
-			if (!this.Parent.Children.Where(c => c == this).Any())
+			if (!controlLayer.Scene.Contains(this))
 			{
 				containerWidget.Close();
 				if (sender is GuiWidget guiWidget)
@@ -265,8 +298,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Action = () =>
 				{
-					StartPosition = new Vector3(-10, 5, 3);
-					EndPosition = new Vector3(10, 5, 3);
+					LocalStartPosition = new Vector3(-10, 5, 3);
+					LocalEndPosition = new Vector3(10, 5, 3);
 					Distance = 0;
 					if (containerWidget != null)
 					{
