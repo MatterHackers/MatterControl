@@ -41,9 +41,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
@@ -62,6 +60,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Description".Localize();
 		}
 
+		public override Mesh Mesh
+		{
+			get
+			{
+				if (!this.Children.Where(i => i.VisibleMeshes().Count() > 0).Any())
+				{
+					// add the amf content
+					using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
+					{
+						Children.Modify((list) =>
+						{
+							list.Clear();
+							list.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
+						});
+					}
+				}
+
+				return base.Mesh;
+			}
+
+			set => base.Mesh = value;
+		}
+
+
 		public static async Task<DescriptionObject3D> Create()
 		{
 			var item = new DescriptionObject3D();
@@ -69,8 +91,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		private Vector3 WorldPosition
+		{
+			get
+			{
+				return LocalPosition;
+			}
+
+			set
+			{
+				LocalPosition = value;
+			}
+		}
+		
 		[HideFromEditor]
-		public Vector3 Position { get; set; } = new Vector3(-10, 5, 3);
+		public Vector3 LocalPosition { get; set; }
 
 		[HideFromEditor]
 		public bool PositionHasBeenSet { get; set; } = false;
@@ -113,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				tracedPositionControl = new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
-					() => Position,
+					() => WorldPosition,
 					(position) =>
 					{
 						if (!PositionHasBeenSet)
@@ -121,9 +156,9 @@ namespace MatterHackers.MatterControl.DesignTools
 							PositionHasBeenSet = true;
 						}
 
-						if (Position != position)
+						if (WorldPosition != position)
 						{
-							Position = position;
+							WorldPosition = position;
 							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 						}
 					});
@@ -193,25 +228,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			if (this.VisibleMeshes().Count() == 0)
-			{
-				// add the amf content
-				using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
-				{
-					Children.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
-				}
-			}
-
 			var world = controlLayer.World;
 
 			if (!PositionHasBeenSet)
 			{
 				var aabb = this.GetAxisAlignedBoundingBox();
-				Position = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
+				WorldPosition = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
 			}
 
 
-			var start = Position;
+			var start = WorldPosition;
 
 			var screenStart = world.GetScreenPosition(start);
 
@@ -297,7 +323,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (tracedPositionControl != null && !tracedPositionControl.DownOnControl)
 			{
 				tracedPositionControl.ResetHitPlane();
-				mouseDownPosition = Position;
+				mouseDownPosition = WorldPosition;
 				var widget = (GuiWidget)sender;
 				widgetDownPosition = widget.TransformToScreenSpace(e.Position);
 				mouseDownOnWidget = true;
@@ -348,7 +374,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Action = () =>
 				{
-					Position = new Vector3(-10, 5, 3);
 					PositionHasBeenSet = false;
 					if (markdownWidget != null)
 					{

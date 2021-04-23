@@ -687,7 +687,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.SetValue(stringValue, false);
 						field.ClearUndoHistory();
 						field.Content.HAnchor = HAnchor.Stretch;
-						// field.Content.MinimumSize = new Vector2(0, 200 * GuiWidget.DeviceScale);
+						field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+						field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+						field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
 						RegisterValueChanged(field, (valueString) => valueString);
 						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 					}
