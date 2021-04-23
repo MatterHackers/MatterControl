@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.Library
 				{
 					// load again to make sure we block until the load is done
 					LoadFolderImageUrlCache().Wait();
-					var folderImage = CheckForImage(Path.GetFileNameWithoutExtension(item.Name), folderImageUrlCache);
+					var folderImage = CheckForImage(item.Name, folderImageUrlCache);
 					if (folderImage != null)
 					{
 						folderImage.SetRecieveBlender(new BlenderPreMultBGRA());
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			foreach (var imageUrl in cache)
 			{
-				if (imageUrl.name.Contains(id))
+				if (Path.GetFileNameWithoutExtension(imageUrl.name) == id)
 				{
 					// download the image and cache it
 					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);

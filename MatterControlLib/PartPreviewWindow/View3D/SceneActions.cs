@@ -326,6 +326,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scene.UndoBuffer.AddAndDo(deleteOperation);
 
 				scene.ClearSelection();
+
+				scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 			}
 		}
 
