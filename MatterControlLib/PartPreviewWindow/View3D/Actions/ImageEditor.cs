@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	using System.Linq;
+	using System.Web;
 	using CustomWidgets;
 	using DataConverters3D;
 	using MatterHackers.Agg.Platform;
@@ -61,8 +62,29 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var activeImage = imageObject.Image;
 
-			var imageSection = new SearchableSectionWidget("Image".Localize(), new FlowLayoutWidget(FlowDirection.TopToBottom), theme, emptyText: "Search Google".Localize());
-			imageSection.SearchInvoked += (s, e) =>
+			var imageSection = new SectionWidget("Image".Localize(), new FlowLayoutWidget(FlowDirection.TopToBottom), theme);
+
+			var emptyText = "Search Google".Localize();
+
+			var searchRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(5, 0)
+			};
+
+			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			searchRow.AddChild(searchField);
+			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+			searchRow.AddChild(searchButton);
+
+			void DoSearch(object s, EventArgs e)
 			{
 				string imageType = " silhouette";
 
@@ -71,8 +93,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					imageType = "";
 				}
 
-				ApplicationController.LaunchBrowser($"http://www.google.com/search?q={e.Data}{imageType}&tbm=isch");
+				var search = HttpUtility.UrlEncode(searchField.Text);
+				if (!string.IsNullOrEmpty(search))
+				{
+					ApplicationController.LaunchBrowser($"http://www.google.com/search?q={search}{imageType}&tbm=isch");
+				}
 			};
+
+			searchField.ActualTextEditWidget.EditComplete += DoSearch;
+			searchButton.Click += DoSearch;
 
 			theme.ApplyBoxStyle(imageSection, margin: 0);
 
@@ -175,7 +204,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var invertCheckbox = new CheckBox(new CheckBoxViewText("Invert".Localize(), textColor: theme.TextColor))
 			{
 				Checked = imageObject.Invert,
-				Margin = new BorderDouble(0),
+				Margin = new BorderDouble(5, 0),
 				VAnchor = VAnchor.Center,
 			};
 			invertCheckbox.CheckedStateChanged += (s, e) =>
@@ -183,6 +212,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				imageObject.Invert = invertCheckbox.Checked;
 			};
 			row.AddChild(invertCheckbox);
+
+			imageSection.ContentPanel.AddChild(searchRow);
 
 			row.AddChild(new HorizontalSpacer());
 

@@ -145,6 +145,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
+			EnsureTracedPositionControl(object3DControlsLayer);
+
+			object3DControlsLayer.Object3DControls.Modify((list) =>
+			{
+				list.Add(tracedPositionControl);
+			});
+		}
+
+		private void EnsureTracedPositionControl(Object3DControlsLayer object3DControlsLayer)
+		{
 			if (tracedPositionControl == null)
 			{
 				tracedPositionControl = new TracedPositionObject3DControl(object3DControlsLayer,
@@ -164,11 +174,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					});
 			}
-
-			object3DControlsLayer.Object3DControls.Modify((list) =>
-			{
-				list.Add(tracedPositionControl);
-			});
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -229,6 +234,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
+			EnsureTracedPositionControl(controlLayer);
+
 			var world = controlLayer.World;
 
 			if (!PositionHasBeenSet)
@@ -236,7 +243,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				var aabb = Children.FirstOrDefault().GetAxisAlignedBoundingBox();
 				LocalPosition = new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z);
 			}
-
 
 			var start = worldPosition;
 

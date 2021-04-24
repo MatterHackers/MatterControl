@@ -452,9 +452,9 @@ namespace MatterHackers.MatterControl
 			{
 				gitHubPat = "";
 			}
-			var accessToken = new MHTextEditWidget(gitHubPat, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a GitHub Person Access Token".Localize())
+			var accessToken = new MHTextEditWidget(gitHubPat, theme, pixelWidth: 350, messageWhenEmptyAndNotSelected: "Enter Person Access Token".Localize())
 			{
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.Absolute,
 				Margin = new BorderDouble(5),
 				Name = "GitHubPat Edit Field"
 			};
@@ -462,11 +462,18 @@ namespace MatterHackers.MatterControl
 			{
 				UserSettings.Instance.set("GitHubPat", accessToken.ActualTextEditWidget.Text);
 			};
+			accessToken.Closed += (s, e) =>
+			{
+				UserSettings.Instance.set("GitHubPat", accessToken.ActualTextEditWidget.Text);
+			};
 			this.AddSettingsRow(
 				new SettingsItem(
 					"GitHub Personal Access Token".Localize(),
 					accessToken,
-					theme),
+					theme)
+				{
+					ToolTipText = "This is used to increase the number of downloads allowed when browsing GitHub repositories".Localize(),
+				},
 				advancedPanel);
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);

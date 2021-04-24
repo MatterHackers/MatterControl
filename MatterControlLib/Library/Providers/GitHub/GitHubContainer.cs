@@ -32,10 +32,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.VersionManagement;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
@@ -105,6 +107,8 @@ namespace MatterHackers.MatterControl.Library
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 
 			var childContainers = new List<ILibraryContainerLink>();
+
+			this.Items.Clear();
 
 			// read in data
 			foreach (FileInfo file in dirContents)
@@ -299,12 +303,20 @@ namespace MatterHackers.MatterControl.Library
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
 		{
+#if true
+			// request.Headers.Add("User-Agent", "MatterControl");
+			request.Headers.UserAgent.Add(new ProductInfoHeaderValue("MatterControl", LatestVersionRequest.VersionKey.CurrentBuildNumber));
+			var token = UserSettings.Instance.get("GitHubPat");
+			if (!string.IsNullOrEmpty(token))
+			{
+				request.Headers.Authorization = new AuthenticationHeaderValue("Token", token);
+			}
+#else
 			request.Headers.Add("Connection", "keep-alive");
 			request.Headers.Add("Upgrade-Insecure-Requests", "1");
 			request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36");
 			request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-			var token = UserSettings.Instance.get("GitHubPat");
-			if (string.IsNullOrEmpty(token))
+			if (!string.IsNullOrEmpty(token))
 			{
 				request.Headers.Add("Authorization", $"token {token}");
 			}
@@ -313,6 +325,7 @@ namespace MatterHackers.MatterControl.Library
 			request.Headers.Add("Sec-Fetch-User", "?1");
 			request.Headers.Add("Sec-Fetch-Dest", "document");
 			request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
+#endif
 		}
 
 		private class StaticDataItem : ILibraryAssetStream
