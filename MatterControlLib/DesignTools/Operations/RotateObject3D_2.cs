@@ -140,6 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override Task Rebuild()
 		{
+			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
 				// set the matrix for the inner object

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 				if (scene != null)
 				{
-					var topParent = wrapper.Ancestors().LastOrDefault(i => i.Parent != null);
+					var topParent = wrapper.Parents().LastOrDefault(i => i.Parent != null);
 					UiThread.RunOnIdle(() =>
 					{
 						scene.SelectedItem = topParent ?? wrapper;

@@ -447,6 +447,28 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 #endif
 
+			var gitHubPat = UserSettings.Instance.get("GitHubPat");
+			if (gitHubPat == null)
+			{
+				gitHubPat = "";
+			}
+			var accessToken = new MHTextEditWidget(gitHubPat, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a GitHub Person Access Token".Localize())
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(5),
+				Name = "GitHubPat Edit Field"
+			};
+			accessToken.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				UserSettings.Instance.set("GitHubPat", accessToken.ActualTextEditWidget.Text);
+			};
+			this.AddSettingsRow(
+				new SettingsItem(
+					"GitHub Personal Access Token".Localize(),
+					accessToken,
+					theme),
+				advancedPanel);
+
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 		}
 

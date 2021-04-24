@@ -1,5 +1,6 @@
 ﻿/*
 Copyright (c) 2019, John Lewin
+Copyright (c) 2021, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -86,6 +87,11 @@ namespace MatterHackers.MatterControl.Library
 				{
 					lock (locker)
 					{
+						if (content.Contains("rate limit exceeded"))
+						{
+							StatusMessage = content;
+							return;
+						}
 						ParseJson(content);
 					}
 				},
@@ -167,9 +173,10 @@ namespace MatterHackers.MatterControl.Library
 				}
 
 				// check the global cache if any
-				var repositoryImage = CheckForImage(item.ID, LoadRepositoryImageUrlCache());
+				var repositoryImage = CheckRepositoryForImage(item.ID, LoadRepositoryImageUrlCache());
 				if (repositoryImage != null)
 				{
+					repositoryImage.SetRecieveBlender(new BlenderPreMultBGRA());
 					return Task.FromResult<ImageBuffer>(repositoryImage);
 				}
 			}
@@ -182,6 +189,23 @@ namespace MatterHackers.MatterControl.Library
 			foreach (var imageUrl in cache)
 			{
 				if (Path.GetFileNameWithoutExtension(imageUrl.name) == id)
+				{
+					// download the image and cache it
+					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
+					image.SetRecieveBlender(new BlenderPreMultBGRA());
+					WebCache.RetrieveImageAsync(image, imageUrl.url, false);
+					return image;
+				}
+			}
+
+			return null;
+		}
+
+		private ImageBuffer CheckRepositoryForImage(string id, List<(string name, string url)> cache)
+		{
+			foreach (var imageUrl in cache)
+			{
+				if (imageUrl.name.Contains(Path.GetFileNameWithoutExtension(id)))
 				{
 					// download the image and cache it
 					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
@@ -279,6 +303,11 @@ namespace MatterHackers.MatterControl.Library
 			request.Headers.Add("Upgrade-Insecure-Requests", "1");
 			request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36");
 			request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+			var token = UserSettings.Instance.get("GitHubPat");
+			if (string.IsNullOrEmpty(token))
+			{
+				request.Headers.Add("Authorization", $"token {token}");
+			}
 			request.Headers.Add("Sec-Fetch-Site", "none");
 			request.Headers.Add("Sec-Fetch-Mode", "navigate");
 			request.Headers.Add("Sec-Fetch-User", "?1");

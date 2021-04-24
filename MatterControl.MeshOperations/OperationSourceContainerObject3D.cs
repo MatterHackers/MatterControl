@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			// and select this
-			var rootItem = this.Ancestors().Where(i => scene.Children.Contains(i)).FirstOrDefault();
+			var rootItem = this.Parents().Where(i => scene.Children.Contains(i)).FirstOrDefault();
 			if (rootItem != null)
 			{
 				scene.SelectedItem = rootItem;
