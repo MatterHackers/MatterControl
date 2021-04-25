@@ -343,7 +343,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
 					MaximumSize = new Vector2(double.MaxValue, 200 * GuiWidget.DeviceScale),
+					Padding = 5,
+					Margin = 5,
+					BackgroundRadius = 3 * GuiWidget.DeviceScale,
+					BackgroundOutlineWidth = 1 * GuiWidget.DeviceScale,
+					BorderColor = theme.PrimaryAccentColor
 				};
+				markdownWidget.ScrollArea.VAnchor = VAnchor.Fit | VAnchor.Center;
 				markdownWidget.Markdown = sourceContainer.HeaderMarkdown;
 				listView.AddHeaderItem(markdownWidget);
 			}
