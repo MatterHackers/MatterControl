@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void UpdateStatus(object sender, EventArgs e)
 		{
-			string message = this.libraryView.ActiveContainer?.ContainerHeaderMarkdown;
+			string message = this.libraryView.ActiveContainer?.HeaderMarkdown;
 			if (!string.IsNullOrEmpty(message))
 			{
 				providerMessageWidget.Text = message;

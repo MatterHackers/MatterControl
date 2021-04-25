@@ -53,8 +53,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private readonly FlowLayoutWidget buttonPanel;
 		private readonly ILibraryContext libraryContext;
 		private readonly LibraryListView libraryView;
-		private GuiWidget providerMessageContainer;
-		private TextWidget providerMessageWidget;
 
 		private readonly List<LibraryAction> menuActions = new List<LibraryAction>();
 
@@ -215,14 +213,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			horizontalSplitter.Panel2.AddChild(libraryView);
-
-			buttonPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = theme.ToolbarPadding,
-			};
-			AddLibraryButtonElements();
-			allControls.AddChild(buttonPanel);
 
 			allControls.AnchorAll();
 
@@ -577,12 +567,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void Library_ContainerChanged(object sender, ContainerChangedEventArgs e)
 		{
-			// Release
-			if (e.PreviousContainer != null)
-			{
-				e.PreviousContainer.ContentChanged -= UpdateStatus;
-			}
-
 			var activeContainer = this.libraryView.ActiveContainer;
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
@@ -596,50 +580,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
 
-			activeContainer.ContentChanged += UpdateStatus;
-
 			searchButton.Enabled = activeContainer.Parent != null;
-
-			UpdateStatus(null, null);
-		}
-
-		private void UpdateStatus(object sender, EventArgs e)
-		{
-			string message = this.libraryView.ActiveContainer?.ContainerHeaderMarkdown;
-			if (!string.IsNullOrEmpty(message))
-			{
-				providerMessageWidget.Text = message;
-				providerMessageContainer.Visible = true;
-			}
-			else
-			{
-				providerMessageContainer.Visible = false;
-			}
-		}
-
-		private void AddLibraryButtonElements()
-		{
-			buttonPanel.RemoveChildren();
-
-			// add in the message widget
-			providerMessageContainer = new GuiWidget()
-			{
-				VAnchor = VAnchor.Fit | VAnchor.Top,
-				HAnchor = HAnchor.Stretch,
-				Visible = false,
-			};
-			buttonPanel.AddChild(providerMessageContainer, -1);
-
-			providerMessageWidget = new TextWidget("")
-			{
-				PointSize = 8,
-				HAnchor = HAnchor.Right,
-				VAnchor = VAnchor.Bottom,
-				TextColor = theme.BorderColor,
-				Margin = new BorderDouble(6),
-				AutoExpandBoundsToText = true,
-			};
-			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
 		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, ILibraryContext libraryContext, MainViewWidget mainViewWidget, ThemeConfig theme, bool allowPrint)
@@ -1105,10 +1046,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Unregister listeners
 			libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
 			libraryContext.ContainerChanged -= Library_ContainerChanged;
-			if (libraryView.ActiveContainer != null)
-			{
-				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-			}
 
 			mainViewWidget = null;
 

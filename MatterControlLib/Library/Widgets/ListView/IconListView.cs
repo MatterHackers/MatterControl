@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -46,6 +47,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int reflownWidth = -1;
 
 		private List<IconViewItem> allIconViews = new List<IconViewItem>();
+
+		private List<GuiWidget> headerItems = new List<GuiWidget>();
 
 		public IconListView(ThemeConfig theme, int thumbnailSize = -1)
 			: base(theme, thumbnailSize)
@@ -97,7 +100,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						child.Click -= Row_Click;
 					}
 
+					foreach (var headerItem in headerItems)
+					{
+						headerItem.Parent?.RemoveChild(headerItem);
+					}
+
 					this.CloseChildren();
+
+					foreach (var headerItem in headerItems)
+					{
+						headerItem.ClearRemovedFlag();
+						this.AddChild(headerItem);
+					}
 
 					foreach (var iconView in allIconViews)
 					{
@@ -150,6 +164,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = new BorderDouble(leftRightMargin, 0);
 
 			return newColumnCount;
+		}
+
+		public void AddHeaderItem(GuiWidget widget)
+		{
+			headerItems.Add(widget);
+			this.AddChild(widget);
 		}
 
 		public override ListViewItemBase AddItem(ListViewItem item)

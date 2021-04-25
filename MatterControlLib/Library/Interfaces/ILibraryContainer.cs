@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Library
 
 		ILibraryContainer Parent { get; set; }
 
-		string ContainerHeaderMarkdown { get; }
+		string HeaderMarkdown { get; }
 
 		void Activate();
 

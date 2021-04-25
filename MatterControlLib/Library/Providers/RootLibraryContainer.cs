@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public List<ILibraryItem> Items { get; }
 
-		public string ContainerHeaderMarkdown { get; set; }
+		public string HeaderMarkdown { get; set; }
 
 		public ICustomSearch CustomSearch { get; } = null;
 

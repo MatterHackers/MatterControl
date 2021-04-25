@@ -97,11 +97,11 @@ namespace MatterHackers.MatterControl.Library
 					{
 						if (content.Contains("rate limit exceeded"))
 						{
-							ContainerHeaderMarkdown = content;
+							HeaderMarkdown = content;
 							OnContentChanged();
 							return;
 						}
-						ContainerHeaderMarkdown = "Some good markdown in the markdown header part";
+						HeaderMarkdown = "Some good markdown in the markdown header part";
 						ParseJson(content);
 					}
 				},
