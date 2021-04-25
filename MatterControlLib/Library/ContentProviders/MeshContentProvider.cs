@@ -145,6 +145,12 @@ namespace MatterHackers.MatterControl
 				ImageIO.SaveImageData(
 					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
 					thumbnail);
+
+#if DEBUG
+				ImageIO.SaveImageData(
+					ApplicationController.Instance.Thumbnails.CachePath(Path.GetFileNameWithoutExtension(object3D.Name), width, height),
+					thumbnail);
+#endif
 			}
 
 			return thumbnail ?? DefaultImage;

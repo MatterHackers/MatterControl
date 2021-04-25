@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer Parent { get; set; }
 
-		public string StatusMessage { get; set; } = "";
+		public string ContainerHeaderMarkdown { get; set; } = "";
 
 		public virtual ICustomSearch CustomSearch { get; } = null;
 

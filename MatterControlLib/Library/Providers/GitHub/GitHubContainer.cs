@@ -37,6 +37,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.VersionManagement;
 using Newtonsoft.Json;
 
@@ -73,11 +74,16 @@ namespace MatterHackers.MatterControl.Library
 		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
 			this.Name = containerName;
 			this.Account = account;
 			this.Repository = repositor;
 			this.RepoDirectory = repoDirectory;
+
+			// Initialize a default CollectionData with a "Loading..." entry
+			this.Items = new List<ILibraryItem>
+			{
+				new MessageItem("Loading".Localize() + "...")
+			};
 		}
 
 		public override void Load()
@@ -91,9 +97,11 @@ namespace MatterHackers.MatterControl.Library
 					{
 						if (content.Contains("rate limit exceeded"))
 						{
-							StatusMessage = content;
+							ContainerHeaderMarkdown = content;
+							OnContentChanged();
 							return;
 						}
+						ContainerHeaderMarkdown = "Some good markdown in the markdown header part";
 						ParseJson(content);
 					}
 				},
@@ -117,7 +125,7 @@ namespace MatterHackers.MatterControl.Library
 				{
 					if (file.name == ".images")
 					{
-						folderImageUrlCache = new List<(string name, string url)>();
+						ImageUrlCache = new List<(string name, string url)>();
 						// do the initial load
 						LoadFolderImageUrlCache().Wait();
 					}
@@ -153,9 +161,7 @@ namespace MatterHackers.MatterControl.Library
 			OnContentChanged();
 		}
 
-		private static Dictionary<string, List<(string name, string url)>> imageUrlCaches = new Dictionary<string, List<(string name, string url)>>();
-
-		private List<(string name, string url)> folderImageUrlCache = null;
+		private List<(string name, string url)> ImageUrlCache = null;
 
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
@@ -164,24 +170,16 @@ namespace MatterHackers.MatterControl.Library
 			if (existingThumbnail.Result == null)
 			{
 				// if there is a local cache check it first
-				if (folderImageUrlCache != null)
+				if (ImageUrlCache != null)
 				{
 					// load again to make sure we block until the load is done
 					LoadFolderImageUrlCache().Wait();
-					var folderImage = CheckForImage(item.Name, folderImageUrlCache);
-					if (folderImage != null)
+					var itemImage = CheckForImage(item.Name, ImageUrlCache);
+					if (itemImage != null)
 					{
-						folderImage.SetRecieveBlender(new BlenderPreMultBGRA());
-						return Task.FromResult<ImageBuffer>(folderImage);
+						itemImage.SetRecieveBlender(new BlenderPreMultBGRA());
+						return Task.FromResult<ImageBuffer>(itemImage);
 					}
-				}
-
-				// check the global cache if any
-				var repositoryImage = CheckRepositoryForImage(item.ID, LoadRepositoryImageUrlCache());
-				if (repositoryImage != null)
-				{
-					repositoryImage.SetRecieveBlender(new BlenderPreMultBGRA());
-					return Task.FromResult<ImageBuffer>(repositoryImage);
 				}
 			}
 
@@ -192,24 +190,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			foreach (var imageUrl in cache)
 			{
-				if (Path.GetFileNameWithoutExtension(imageUrl.name) == id)
-				{
-					// download the image and cache it
-					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
-					image.SetRecieveBlender(new BlenderPreMultBGRA());
-					WebCache.RetrieveImageAsync(image, imageUrl.url, false);
-					return image;
-				}
-			}
-
-			return null;
-		}
-
-		private ImageBuffer CheckRepositoryForImage(string id, List<(string name, string url)> cache)
-		{
-			foreach (var imageUrl in cache)
-			{
-				if (imageUrl.name.Contains(Path.GetFileNameWithoutExtension(id)))
+				if (Path.GetFileNameWithoutExtension(imageUrl.name) == Path.GetFileNameWithoutExtension(id))
 				{
 					// download the image and cache it
 					var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
@@ -224,9 +205,9 @@ namespace MatterHackers.MatterControl.Library
 
 		private async Task LoadFolderImageUrlCache()
 		{
-			if (folderImageUrlCache.Count == 0)
+			if (ImageUrlCache.Count == 0)
 			{
-				folderImageUrlCache.Add(("recursion block", "No Image Files"));
+				ImageUrlCache.Add(("recursion block", "No Image Files"));
 
 				// Check if we can find the thumbnail in the GitHub .images directory
 				var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}/.images";
@@ -247,57 +228,12 @@ namespace MatterHackers.MatterControl.Library
 							{
 								if (file.type == "file")
 								{
-									folderImageUrlCache.Add((file.name, file.download_url));
+									ImageUrlCache.Add((file.name, file.download_url));
 								}
 							}
 						}
 					}
 				}
-			}
-		}
-
-		private List<(string name, string url)> LoadRepositoryImageUrlCache()
-		{
-			lock (locker)
-			{
-				var key = $"{Account}:{Repository}";
-
-				if (!imageUrlCaches.ContainsKey(key))
-				{
-					var imageUrlCache = new List<(string name, string url)>();
-
-					// Check if we can find the thumbnail in the GitHub .images directory
-					var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/.images";
-					// get the directory contents
-					WebCache.RetrieveText(uri,
-						(content) =>
-						{
-							lock (locker)
-							{
-								if (!string.IsNullOrEmpty(content) && !content.Contains("\"Not Found\""))
-								{
-									FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
-
-									// read in data
-									foreach (FileInfo file in dirContents)
-									{
-										if (file.type == "file")
-										{
-											imageUrlCache.Add((file.name, file.download_url));
-										}
-									}
-
-									imageUrlCaches[key] = imageUrlCache;
-								}
-							}
-						},
-						false,
-						AddCromeHeaders);
-
-					imageUrlCaches[key] = imageUrlCache;
-				}
-
-				return imageUrlCaches[key];
 			}
 		}
 
