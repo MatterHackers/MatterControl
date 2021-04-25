@@ -156,6 +156,28 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
+			Task.Run(async () =>
+			{
+				foreach (var item in this.Items)
+				{
+					// check if we have any of the images cached
+					var thumbnail = await Task.Run(() => ApplicationController.Instance.Thumbnails.LoadCachedImage(item, 256, 256));
+
+					if (thumbnail != null
+						&& thumbnail.Width == 256)
+					{
+						// save so it is easy to create the upload data for GitHub folders
+						var filename = ApplicationController.CacheablePath(
+							Path.Combine("GitHubImages", this.Repository, this.RepoDirectory.Replace("/", "\\"), ".images"),
+							$"{Path.GetFileNameWithoutExtension(item.Name)}.png");
+						if (!File.Exists(filename))
+						{
+							ImageIO.SaveImageData(filename, thumbnail);
+						}
+					}
+				}
+			});
+
 			this.ChildContainers = childContainers;
 
 			OnContentChanged();
