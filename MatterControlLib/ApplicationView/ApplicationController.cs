@@ -830,6 +830,8 @@ namespace MatterHackers.MatterControl
 
 			this.Library.LibraryCollectionContainer = new LibraryCollectionContainer();
 
+			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
+
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),

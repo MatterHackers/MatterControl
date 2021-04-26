@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl.Library
 							OnContentChanged();
 							return;
 						}
-						HeaderMarkdown = "Some good markdown in the markdown header part";
 						ParseJson(content);
 					}
 				},
@@ -146,8 +145,17 @@ namespace MatterHackers.MatterControl.Library
 							Repository,
 							file.download_url));
 					}
-					else if (file.name.ToLower() == "index.md")
+					else if (file.name == "index.md")
 					{
+						var uri = $"https://raw.githubusercontent.com/{Account}/{Repository}/main/{RepoDirectory}/index.md";
+						WebCache.RetrieveText(uri,
+							(content) =>
+							{
+								HeaderMarkdown = content;
+								OnContentChanged();
+							},
+							true,
+							AddCromeHeaders);
 					}
 					else
 					{
