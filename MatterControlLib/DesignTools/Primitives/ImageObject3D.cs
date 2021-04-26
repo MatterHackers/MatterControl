@@ -147,7 +147,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				try
 				{
 					assetStream = streamTask.Result;
-					imageBuffer = ImageIO.LoadImage(assetStream);
+					if (assetStream != null)
+					{
+						imageBuffer = ImageIO.LoadImage(assetStream);
+					}
 				}
 				catch { }
 
