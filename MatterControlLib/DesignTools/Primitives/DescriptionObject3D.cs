@@ -325,15 +325,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		void MarkdownWidget_MouseDown(object sender, MouseEventArgs e)
 		{
-			controlLayer.Scene.SelectedItem = this;
-
-			if (tracedPositionControl != null && !tracedPositionControl.DownOnControl)
+			if (e.Button == MouseButtons.Left)
 			{
-				tracedPositionControl.ResetHitPlane();
-				mouseDownPosition = worldPosition;
-				var widget = (GuiWidget)sender;
-				widgetDownPosition = widget.TransformToScreenSpace(e.Position);
-				mouseDownOnWidget = true;
+				controlLayer.Scene.SelectedItem = this;
+
+				if (tracedPositionControl != null && !tracedPositionControl.DownOnControl)
+				{
+					tracedPositionControl.ResetHitPlane();
+					mouseDownPosition = worldPosition;
+					var widget = (GuiWidget)sender;
+					widgetDownPosition = widget.TransformToScreenSpace(e.Position);
+					mouseDownOnWidget = true;
+				}
 			}
 		}
 
