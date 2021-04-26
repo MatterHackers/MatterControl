@@ -33,6 +33,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -209,6 +210,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private string filterText;
 
 		private bool _ascending = true;
+		private ILibraryContainer sourceContainer;
 
 		public bool Ascending
 		{
@@ -240,6 +242,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <param name="sourceContainer">The container to load</param>
 		private Task DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
+			this.sourceContainer = sourceContainer;
 			if (this.ActiveContainer is ILibraryWritableContainer activeWritable)
 			{
 				activeWritable.ItemContentChanged -= WritableContainer_ItemContentChanged;
@@ -264,6 +267,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int height = itemsContentView.ThumbHeight;
 
 			itemsContentView.BeginReload();
+
+			if (contentView is IconListView listView)
+			{
+				AddHeaderMarkdown(listView);
+			}
 
 			using (contentView.LayoutLock())
 			{
@@ -325,6 +333,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return Task.CompletedTask;
 		}
 
+		private void AddHeaderMarkdown(IconListView listView)
+		{
+			if (sourceContainer != null
+				&& !string.IsNullOrEmpty(sourceContainer.HeaderMarkdown))
+			{
+				var markdownWidget = new MarkdownWidget(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					MaximumSize = new Vector2(double.MaxValue, 200 * GuiWidget.DeviceScale),
+					Padding = 5,
+					Margin = 5,
+					BackgroundRadius = 3 * GuiWidget.DeviceScale,
+					BackgroundOutlineWidth = 1 * GuiWidget.DeviceScale,
+					BorderColor = theme.PrimaryAccentColor
+				};
+				markdownWidget.ScrollArea.VAnchor = VAnchor.Fit | VAnchor.Center;
+				markdownWidget.Markdown = sourceContainer.HeaderMarkdown;
+				listView.AddHeaderItem(markdownWidget);
+			}
+		}
+
 		private IEnumerable<ILibraryItem> SortItems(IEnumerable<ILibraryItem> items)
 		{
 			switch (ActiveSort)
@@ -382,7 +412,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						contentView.HAnchor = HAnchor.Stretch;
 						contentView.VAnchor = VAnchor.Fit | VAnchor.Top;
 						contentView.Name = "Library ListContentView";
-						this.AddChild(this.contentView);
+						this.AddChild(contentView);
 
 						this.ScrollArea.AddChild(
 							loadingIndicator = new ImageSequenceWidget(ApplicationController.Instance.GetProcessingSequence(theme.PrimaryAccentColor))

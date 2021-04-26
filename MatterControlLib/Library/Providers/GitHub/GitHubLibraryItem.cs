@@ -96,13 +96,16 @@ namespace MatterHackers.MatterControl.Library
 			return Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, $"{fileKey}.{fileExtension}");
 		}
 
+		private bool IsOlderThan(string filename, int hours)
+		{
+			var timeHouresAgo = DateTime.Now.AddHours(-hours);
+			return File.GetCreationTime(filename) <= timeHouresAgo;
+		}
+
 		public async Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
-			if (!this.LocalContentExists)
-			{
-				// Acquire the content if missing
-				await DownloadDigitalItem(reportProgress, CachePath);
-			}
+			// Acquire the content if missing
+			await DownloadDigitalItem(reportProgress, CachePath);
 
 			if (File.Exists(CachePath))
 			{
@@ -121,7 +124,7 @@ namespace MatterHackers.MatterControl.Library
 		private async Task<string> DownloadDigitalItem(Action<double, string> reportProgress, string libraryFilePath)
 		{
 			// Check for library cache file and download if missing
-			if (!File.Exists(libraryFilePath))
+			if (!File.Exists(libraryFilePath) || IsOlderThan(libraryFilePath, 12))
 			{
 				// Get a temporary path to write to during download. If we complete without error, swap this file into the libraryFilePath path
 				string tempFilePath = ApplicationDataStorage.Instance.GetTempFileName(FileExtension);

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 		public string CollectionKeyName { get; set; }
 
-		public string StatusMessage => _libraryContainer.StatusMessage;
+		public string HeaderMarkdown => _libraryContainer.HeaderMarkdown;
 
 		public bool IsProtected => _libraryContainer.IsProtected;
 
