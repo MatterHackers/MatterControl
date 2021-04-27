@@ -440,6 +440,21 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
+				if (settings.GetValue<int>(SettingsKey.extruder_count) > 1
+					&& settings.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder) < 3)
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.wipe_tower_perimeters_per_extruder)
+						{
+							Error = "{0} should be greater than 2.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.wipe_tower_perimeters_per_extruder)),
+							ErrorLevel = ValidationErrorLevel.Warning,
+							ValueDetails = "{0} = {1}".FormatWith(
+								GetSettingsName(SettingsKey.wipe_tower_perimeters_per_extruder),
+								settings.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder)),
+						});
+				}
+
 				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
 					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 				{

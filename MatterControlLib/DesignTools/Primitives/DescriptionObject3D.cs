@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Markdig.Agg;
@@ -320,6 +319,17 @@ namespace MatterHackers.MatterControl.DesignTools
 				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
 				markdownWidget.MouseMove += MarkdownWidget_MouseMove;
 				markdownWidget.MouseUp += MarkdownWidget_MouseUp;
+				markdownWidget.KeyDown += MarkdownWidget_KeyDown; ;
+			}
+		}
+
+		private void MarkdownWidget_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (mouseDownOnWidget
+				&& e.KeyCode == Keys.Escape)
+			{
+				mouseDownOnWidget = false;
+				worldPosition = mouseDownPosition;
 			}
 		}
 

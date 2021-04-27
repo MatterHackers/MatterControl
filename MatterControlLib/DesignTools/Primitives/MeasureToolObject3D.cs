@@ -111,10 +111,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 
 		[HideFromEditor]
-		public Vector3 LocalStartPosition { get; set; } = new Vector3(-10, 5, 3);
+		public Vector3 LocalStartPosition { get; set; }
 
 		[HideFromEditor]
-		public Vector3 LocalEndPosition { get; set; } = new Vector3(10, 5, 3);
+		public Vector3 LocalEndPosition { get; set; }
 
 
 		[ReadOnly(true)]
@@ -133,16 +133,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
-					() =>
-					{
-						return PositionsHaveBeenSet ? worldStartPosition : worldStartPosition.Transform(Matrix);
-					},
+					() => worldStartPosition,
 					(position) =>
 					{
 						if (!PositionsHaveBeenSet)
 						{
 							PositionsHaveBeenSet = true;
-							worldEndPosition = worldEndPosition.Transform(this.Matrix);
 						}
 
 						worldStartPosition = position;
@@ -151,16 +147,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					}),
 					new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
-					() =>
-					{
-						return PositionsHaveBeenSet ? worldEndPosition : worldEndPosition.Transform(Matrix);
-					},
+					() => worldEndPosition,
 					(position) =>
 					{
 						if (!PositionsHaveBeenSet)
 						{
 							PositionsHaveBeenSet = true;
-							worldStartPosition = worldStartPosition.Transform(this.Matrix);
 						}
 
 						worldEndPosition = position;
@@ -206,8 +198,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			var start = PositionsHaveBeenSet ? worldStartPosition : worldStartPosition.Transform(Matrix);
-			var end = PositionsHaveBeenSet ? worldEndPosition : worldEndPosition.Transform(Matrix);
+			if (!PositionsHaveBeenSet)
+			{
+				var aabb = this.Mesh.GetAxisAlignedBoundingBox();
+				LocalStartPosition = aabb.Center + new Vector3(-10, 5, 3);
+				LocalEndPosition = aabb.Center + new Vector3(10, 5, 3);
+			}
+
+			var start = worldStartPosition;
+			var end = worldEndPosition;
 
 			var world = controlLayer.World;
 			// draw on top of anything that is already drawn
@@ -238,6 +237,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				CreateWidgetIfRequired(controlLayer);
 				textWidget.Text = Distance.ToString("0.##");
 				containerWidget.Position = center - new Vector2(containerWidget.LocalBounds.Width / 2, containerWidget.LocalBounds.Height / 2);
+				containerWidget.Visible = true;
 			}
 		}
 
@@ -298,8 +298,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Action = () =>
 				{
-					LocalStartPosition = new Vector3(-10, 5, 3);
-					LocalEndPosition = new Vector3(10, 5, 3);
 					Distance = 0;
 					if (containerWidget != null)
 					{
