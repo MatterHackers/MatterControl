@@ -135,10 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLock = RebuildLock();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Generating Text Meshes".Localize(),
-				null,
-				(reporter, cancellationToken) =>
+			return Task.Run(() =>
 				{
 					using (new CenterAndHeightMaintainer(this))
 					{

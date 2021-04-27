@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, ISelectedEditorDraw
 	{
 		private Vector3 boundsSize;
+		private InvalidateType additonalInvalidate;
 
 		public FitToBoundsObject3D_2()
 		{
@@ -177,6 +178,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
+			additonalInvalidate = invalidateType.InvalidateType;
+
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
@@ -199,6 +202,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			base.OnInvalidate(invalidateType);
+
+			additonalInvalidate = InvalidateType.None;
 		}
 
 		public override Task Rebuild()
@@ -214,7 +219,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix | additonalInvalidate));
 			return Task.CompletedTask;
 		}
 
