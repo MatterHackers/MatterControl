@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public PlaneShape HitPlane { get; private set; }
 		public bool DownOnControl { get; private set; }
 
+		private Vector3 mouseDownPosition;
+
 		public TracedPositionObject3DControl(IObject3DControlContext object3DControlContext,
 			IObject3D owner,
 			Func<Vector3> getPosition,
@@ -78,6 +80,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.shape = SphereObject3D.CreateSphere(1, 15, 10);
 			collisionVolume = shape.CreateBVHData();
 			this.owner = owner;
+
+			Keyboard.StateChanged += Keyboard_StateChanged;
+		}
+
+		private void Keyboard_StateChanged(object sender, EventArgs e)
+		{
+			if (DownOnControl
+				&& Keyboard.IsKeyDown(Keys.Escape))
+			{
+				DownOnControl = false;
+				setPosition(mouseDownPosition);
+				return;
+			}
 		}
 
 		public bool DrawOnTop => true;
@@ -92,6 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Dispose()
 		{
+			Keyboard.StateChanged -= Keyboard_StateChanged;
 		}
 
 		public void Draw(DrawGlContentEventArgs e)
@@ -130,6 +146,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			DownOnControl = true;
+			mouseDownPosition = getPosition();
 			// Make sure we always get a new hit plane
 			ResetHitPlane();
 		}
