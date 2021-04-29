@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 		public double PixelsPerMM => inchesPerMm * SheetDpi;
 
-		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 40, 10, 0);
+		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 25, 10, 5);
 
 		public BorderDouble PageMarginPixels => PageMarginMM * PixelsPerMM;
 
