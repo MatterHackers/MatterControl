@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -52,8 +53,8 @@ namespace MatterHackers.MatterControl.Library
 		public HistoryContainerBase(string fullPath)
 			: base(fullPath)
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.IsProtected = true;
 
 			DefaultSort = new LibrarySortBehavior()

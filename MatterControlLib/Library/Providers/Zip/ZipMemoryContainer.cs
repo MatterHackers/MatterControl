@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -86,13 +87,13 @@ namespace MatterHackers.MatterControl.Library
 
 			this.Name = System.IO.Path.GetFileNameWithoutExtension(this.Path);
 
-			this.ChildContainers = directories.Where(d => !string.IsNullOrEmpty(d)).Select(d =>
-				new LocalZipContainerLink(this.Path)
-				{
-					CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}{pathSeparator}{d}"
-				}).ToList<ILibraryContainerLink>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>(directories.Where(d => !string.IsNullOrEmpty(d)).Select(d =>
+			new LocalZipContainerLink(this.Path)
+			{
+				CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}{pathSeparator}{d}"
+			}));
 
-			this.Items = items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
+			this.Items = new SafeList<ILibraryItem>(items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)));
 		}
 	}
 }

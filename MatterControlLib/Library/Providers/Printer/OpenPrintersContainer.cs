@@ -40,8 +40,8 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public OpenPrintersContainer()
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Printers".Localize();
 		}
 

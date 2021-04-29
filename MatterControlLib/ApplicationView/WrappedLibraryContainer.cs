@@ -1,5 +1,6 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
+Copyright (c) 2021 Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.Library;
 
@@ -59,9 +61,9 @@ namespace MatterHackers.MatterControl
 
 		public Type DefaultView => _libraryContainer.DefaultView;
 
-		public List<ILibraryContainerLink> ChildContainers => this.ExtraContainers.Concat(_libraryContainer.ChildContainers).ToList();
+		public SafeList<ILibraryContainerLink> ChildContainers => new SafeList<ILibraryContainerLink>(this.ExtraContainers.Concat(_libraryContainer.ChildContainers));
 
-		public List<ILibraryItem> Items => _libraryContainer.Items;
+		public SafeList<ILibraryItem> Items => _libraryContainer.Items;
 
 		public ILibraryContainer Parent { get => _libraryContainer.Parent; set => _libraryContainer.Parent = value; }
 

@@ -51,8 +51,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public SDCardContainer(PrinterConfig printer)
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "SD Card".Localize();
 			this.printer = printer;
 			void CommunicationStateChanged(object s, EventArgs e)

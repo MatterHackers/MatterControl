@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public LibraryCollectionContainer()
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Library".Localize();
 
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.Library
 					null,
 					() => new DynamicContainer()
 					{
-						Items = new List<ILibraryItem>()
+						Items = new SafeList<ILibraryItem>()
 						{
 							new GeneratorItem(
 								() => "Calibration Tab".Localize(),

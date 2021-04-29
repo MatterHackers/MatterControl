@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -44,8 +45,8 @@ namespace MatterHackers.MatterControl.Library
 		public PrintQueueContainer()
 		{
 			this.IsProtected = false;
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Print Queue".Localize();
 		}
 
@@ -57,12 +58,11 @@ namespace MatterHackers.MatterControl.Library
 
 			var missingItems = queueItems.Except(existingItems).ToList();
 
-			this.Items = existingItems.Select(p => new FileSystemFileItem(p.FileLocation)
+			this.Items = new SafeList<ILibraryItem>(existingItems.Select(p => new FileSystemFileItem(p.FileLocation)
 			{
 				Name = p.Name
 			})
-			.Concat<ILibraryItem>(missingItems.Select(p => new MissingFileItem(p.Name)))
-			.ToList<ILibraryItem>();
+			.Concat<ILibraryItem>(missingItems.Select(p => new MissingFileItem(p.Name))));
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)

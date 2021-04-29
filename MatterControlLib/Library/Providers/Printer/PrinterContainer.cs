@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.Library
 		public PrinterContainer(PrinterConfig printer)
 		{
 			this.printer = printer;
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = printer.Settings.GetValue(SettingsKey.printer_name);
 		}
 
