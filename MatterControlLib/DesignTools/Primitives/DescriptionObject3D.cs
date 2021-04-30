@@ -158,7 +158,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				tracedPositionControl = new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
+					// get position function
 					() => worldPosition,
+					// set position function
 					(position) =>
 					{
 						if (!PositionHasBeenSet)
@@ -171,7 +173,10 @@ namespace MatterHackers.MatterControl.DesignTools
 							worldPosition = position;
 							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 						}
-					});
+					},
+					// edit complete function
+					(undoPosition) => SetUndoData(undoPosition)
+					);
 			}
 		}
 
@@ -370,7 +375,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (mouseDownOnWidget)
 			{
 				mouseDownOnWidget = false;
+
+				SetUndoData(mouseDownPosition);
 			}
+		}
+
+		private void SetUndoData(Vector3 undoPosition)
+		{
+			var doPosition = worldPosition;
+
+			controlLayer.Scene.UndoBuffer.Add(new UndoRedoActions(() =>
+			{
+				worldPosition = undoPosition;
+				this.Invalidate(InvalidateType.Matrix);
+			},
+			() =>
+			{
+				worldPosition = doPosition;
+				this.Invalidate(InvalidateType.Matrix);
+			}));
 		}
 
 		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)

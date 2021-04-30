@@ -59,8 +59,8 @@ namespace MatterHackers.MatterControl.Library
 
 			this.IsProtected = false;
 
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 
 			if (AggContext.OperatingSystem == OSType.Windows
 				&& Directory.Exists(fullPath))
@@ -218,13 +218,13 @@ namespace MatterHackers.MatterControl.Library
 				if (filter == "")
 				{
 					var directories = Directory.GetDirectories(FullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
-					this.ChildContainers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).ToList();
+					this.ChildContainers = new SafeList<ILibraryContainerLink>(directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))));
 					var libraryFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".library", StringComparison.OrdinalIgnoreCase) != -1);
 					this.ChildContainers.AddRange(libraryFiles.Select(f => LibraryJsonFile.ContainerFromLocalFile(f)));
 				}
 				else
 				{
-					this.ChildContainers = new List<ILibraryContainerLink>();
+					this.ChildContainers = new SafeList<ILibraryContainerLink>();
 				}
 
 				var matchedFiles = nonZipFiles.Where(filePath =>
@@ -235,17 +235,20 @@ namespace MatterHackers.MatterControl.Library
 						&& ApplicationController.Instance.Library.IsContentFileType(fileName);
 				});
 
-				this.ChildContainers.Sort((a, b) => a.Name.CompareTo(b.Name));
+				this.ChildContainers.Modify((list) =>
+				{
+					list.Sort((a, b) => a.Name.CompareTo(b.Name));
+				});
 
 				// Matched files projected onto FileSystemFileItem
-				this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
+				this.Items = new SafeList<ILibraryItem>(matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)));
 
 				this.isDirty = false;
 			}
 			catch (Exception ex)
 			{
-				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = new List<ILibraryItem>()
+				this.ChildContainers = new SafeList<ILibraryContainerLink>();
+				this.Items = new SafeList<ILibraryItem>()
 				{
 					new MessageItem("Error loading container - " + ex.Message)
 				};

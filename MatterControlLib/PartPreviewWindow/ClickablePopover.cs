@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -41,15 +42,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
+		public override void Initialize()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				this.Width += 1;
+				this.Width -= 1;
+			});
+			base.Initialize();
+		}
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			this.allowAutoClose = false;
 			base.OnMouseEnterBounds(mouseEvent);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+		}
+
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
-			this.Close();
+			if (!PopupWidget.DebugKeepOpen)
+			{
+				this.Close();
+			}
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 

@@ -90,19 +90,21 @@ namespace MatterHackers.MatterControl.Plugins
 			set { SheetSizeMM = value / inchesPerMm; }
 		}
 
-		public double PixelPerMM => inchesPerMm * SheetDpi;
+		public Vector2 SheetSizePixels => SheetSizeMM * PixelsPerMM;
 
-		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 5);
+		public double PixelsPerMM => inchesPerMm * SheetDpi;
 
-		public BorderDouble PageMarginPixels => PageMarginMM * PixelPerMM;
+		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 25, 10, 5);
+
+		public BorderDouble PageMarginPixels => PageMarginMM * PixelsPerMM;
 
 		public double PartMarginMM { get; } = 2;
 
-		public double PartMarginPixels =>  PartMarginMM * PixelPerMM;
+		public double PartMarginPixels =>  PartMarginMM * PixelsPerMM;
 
 		public double PartPaddingMM { get; } = 2;
 
-		public double PartPaddingPixels => PartPaddingMM * PixelPerMM;
+		public double PartPaddingPixels => PartPaddingMM * PixelsPerMM;
 
 		public int SheetDpi { get; set; }
 
@@ -154,24 +156,24 @@ namespace MatterHackers.MatterControl.Plugins
 
 							TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
 							double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
-							Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
+							Vector2 sizeOfRender = new Vector2(widthInMM * PixelsPerMM, heightMM * PixelsPerMM);
 
 							ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
-							typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
+							typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelsPerMM);
 
 							Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
 
 							RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
-							double strokeWidth = .5 * PixelPerMM;
+							double strokeWidth = .5 * PixelsPerMM;
 							rectBounds.Inflate(-strokeWidth / 2);
-							RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
+							RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelsPerMM);
 							partGraphics2D.Render(rect, Color.LightGray);
 							Stroke rectOutline = new Stroke(rect, strokeWidth);
 							partGraphics2D.Render(rectOutline, Color.DarkGray);
 
 							foreach (var meshGroup in loadedMeshGroups)
 							{
-								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, Color.Black);
+								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelsPerMM, Color.Black);
 							}
 							partGraphics2D.Render(typeFacePrinter, Color.Black);
 
@@ -231,7 +233,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 		private void CreateOnePage(int plateNumber, ref int nextPartToPrintIndex, PdfPage pdfPage)
 		{
-			ImageBuffer plateInventoryImage = new ImageBuffer((int)(300 * 8.5), 300 * 11);
+			ImageBuffer plateInventoryImage = new ImageBuffer((int)(SheetSizePixels.X), (int)(SheetSizePixels.Y));
 			Graphics2D plateGraphics = plateInventoryImage.NewGraphics2D();
 			double currentlyPrintingHeightPixels = PrintTopOfPage(plateInventoryImage, plateGraphics);
 
@@ -306,7 +308,7 @@ namespace MatterHackers.MatterControl.Plugins
 		{
 			plateGraphics.Clear(Color.White);
 
-			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
+			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginPixels.Top;
 
 			string logoPathAndFile = Path.Combine("Images", "PartSheetLogo.png");
 			if (StaticData.Instance.FileExists(logoPathAndFile))
@@ -320,7 +322,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 			double underlineHeightMM = 1;
 
-			var lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelPerMM);
+			var lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelsPerMM);
 			lineBounds.Offset(PageMarginPixels.Left, currentlyPrintingHeightPixels - lineBounds.Height);
 			plateGraphics.FillRectangle(lineBounds, Color.Black);
 

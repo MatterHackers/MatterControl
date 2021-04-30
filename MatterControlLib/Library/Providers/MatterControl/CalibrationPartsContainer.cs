@@ -1,5 +1,6 @@
 ﻿/*
 Copyright (c) 2019, John Lewin
+Copyright (c) 2021, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,15 +43,15 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public CalibrationPartsContainer()
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Calibration Parts".Localize();
 		}
 
 		public override void Load()
 		{
 			var oemParts = StaticData.Instance.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
-			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
+			Items = new SafeList<ILibraryItem>(oemParts.Select(s => new StaticDataItem(s)));
 
 			Items.Add(new GeneratorItem(
 				() => "Set Temperature".Localize(),

@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -131,34 +131,46 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				editorControls = new List<IObject3DControl>
 				{
+					// Start Position Object
 					new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
+					// get position function
 					() => worldStartPosition,
+					// set position function
 					(position) =>
-					{
-						if (!PositionsHaveBeenSet)
 						{
-							PositionsHaveBeenSet = true;
-						}
+							if (!PositionsHaveBeenSet)
+							{
+								PositionsHaveBeenSet = true;
+							}
 
 						worldStartPosition = position;
-						Distance = (worldStartPosition - worldEndPosition).Length;
-						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
-					}),
+							Distance = (worldStartPosition - worldEndPosition).Length;
+							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+						},
+					// edit complete function
+					(undoPosition) => SetUndoData(undoPosition, worldEndPosition)
+					),
+					// End Position Object
 					new TracedPositionObject3DControl(object3DControlsLayer,
 					this,
+					// get position function
 					() => worldEndPosition,
+					// set position function
 					(position) =>
-					{
-						if (!PositionsHaveBeenSet)
 						{
-							PositionsHaveBeenSet = true;
-						}
+							if (!PositionsHaveBeenSet)
+							{
+								PositionsHaveBeenSet = true;
+							}
 
 						worldEndPosition = position;
-						Distance = (worldStartPosition - worldEndPosition).Length;
-						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
-					}),
+							Distance = (worldStartPosition - worldEndPosition).Length;
+							UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+						},
+					// edit complete function
+					(undoPosition) => SetUndoData(worldStartPosition, undoPosition)
+					),
 				};
 			}
 
@@ -166,6 +178,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				list.AddRange(editorControls);
 			});
+		}
+
+		private void SetUndoData(Vector3 undoStartPosition, Vector3 undoEndPosition)
+		{
+			var doStartPosition = worldStartPosition;
+			var doEndPosition = worldEndPosition;
+
+			controlLayer.Scene.UndoBuffer.Add(new UndoRedoActions(() =>
+			{
+				worldStartPosition = undoStartPosition;
+				worldEndPosition = undoEndPosition;
+				this.Invalidate(InvalidateType.Matrix);
+			},
+			() =>
+			{
+				worldStartPosition = doStartPosition;
+				worldEndPosition = doEndPosition;
+				this.Invalidate(InvalidateType.Matrix);
+			}));
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

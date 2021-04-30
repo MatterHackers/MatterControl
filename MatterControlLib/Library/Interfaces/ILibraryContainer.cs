@@ -1,5 +1,6 @@
 ﻿/*
 Copyright (c) 2017, John Lewin
+Copyright (c) 2021, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +28,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using System;
 using System.Collections.Generic;
@@ -49,7 +51,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		event EventHandler ContentChanged;
 
-		List<ILibraryContainerLink> ChildContainers { get; }
+		SafeList<ILibraryContainerLink> ChildContainers { get; }
 
 		string CollectionKeyName { get; }
 
@@ -63,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 
 		bool IsProtected { get; }
 
-		List<ILibraryItem> Items { get; }
+		SafeList<ILibraryItem> Items { get; }
 
 		string Name { get; }
 

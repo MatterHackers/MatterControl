@@ -73,17 +73,15 @@ namespace MatterHackers.MatterControl.Library
 
 		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Name = containerName;
 			this.Account = account;
 			this.Repository = repositor;
 			this.RepoDirectory = repoDirectory;
 
 			// Initialize a default CollectionData with a "Loading..." entry
-			this.Items = new List<ILibraryItem>
-			{
-				new MessageItem("Loading".Localize() + "...")
-			};
+			this.Items = new SafeList<ILibraryItem>();
+			this.Items.Add(new MessageItem("Loading".Localize() + "..."));
 		}
 
 		public override void Load()
@@ -113,7 +111,7 @@ namespace MatterHackers.MatterControl.Library
 			// parse result
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 
-			var childContainers = new List<ILibraryContainerLink>();
+			var childContainers = new SafeList<ILibraryContainerLink>();
 
 			this.Items.Clear();
 

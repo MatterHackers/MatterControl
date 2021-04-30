@@ -266,7 +266,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 
 					// Close the popover as long as it doesn't contain the mouse
-					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
+					if (!popoverBubble.ContainsFirstUnderMouseRecursive()
+						&& !PopupWidget.DebugKeepOpen)
 					{
 						// Close any active popover bubble
 						popoverBubble?.Close();

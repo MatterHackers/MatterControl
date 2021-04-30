@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IObject3D owner;
 
 		private Action<Vector3> setPosition;
+		
+		private Action<Vector3> editComplete;
 
 		private Mesh shape;
 		private bool mouseOver;
@@ -68,7 +70,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public TracedPositionObject3DControl(IObject3DControlContext object3DControlContext,
 			IObject3D owner,
 			Func<Vector3> getPosition,
-			Action<Vector3> setPosition)
+			Action<Vector3> setPosition,
+			Action<Vector3> editComplete)
 		{
 			this.Object3DControlContext = object3DControlContext;
 
@@ -76,6 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.context = object3DControlContext;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
+			this.editComplete = editComplete;
 			this.shape = PlatonicSolids.CreateCube();
 			this.shape = SphereObject3D.CreateSphere(1, 15, 10);
 			collisionVolume = shape.CreateBVHData();
@@ -216,7 +220,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			DownOnControl = false;
+			if (DownOnControl)
+			{
+				DownOnControl = false;
+				editComplete(mouseDownPosition);
+			}
 		}
 
 		public void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

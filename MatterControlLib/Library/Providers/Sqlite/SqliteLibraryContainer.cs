@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -55,8 +56,8 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ID = "SqliteContainer" + collectionID;
 			this.IsProtected = false;
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
+			this.ChildContainers = new SafeList<ILibraryContainerLink>();
+			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Local Library".Localize();
 			this.CollectionID = collectionID;
 		}
@@ -149,11 +150,11 @@ namespace MatterHackers.MatterControl.Library
 				Name = c.Name
 			});
 
-			this.ChildContainers = childContainers.Concat(
-				zipFiles.Select(f => new LocalLibraryZipContainerLink(f.Id, f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
+			this.ChildContainers = new Agg.SafeList<ILibraryContainerLink>(childContainers.Concat(
+				zipFiles.Select(f => new LocalLibraryZipContainerLink(f.Id, f.FileLocation, f.Name))).OrderBy(d => d.Name));
 
 			// PrintItems projected onto FileSystemFileItem
-			this.Items = nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
+			this.Items = new Agg.SafeList<ILibraryItem>(nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
 			{
 				if (File.Exists(printItem.FileLocation))
 				{
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl.Library
 					return new MessageItem($"{printItem.Name} (Missing)");
 					// return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
 				}
-			}).ToList();
+			}));
 		}
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
