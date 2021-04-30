@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			// MeshViewer
-			TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer)
+			TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer, theme)
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};

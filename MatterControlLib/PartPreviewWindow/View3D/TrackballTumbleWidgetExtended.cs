@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
@@ -21,6 +22,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Object3DControlsLayer Object3DControlLayer;
 		public float ZoomDelta { get; set; } = 0.2f;
 		public TrackBallController TrackBallController { get; }
+
+		private ThemeConfig theme;
+
 		public TrackBallTransformType CurrentTrackingType { get; set; } = TrackBallTransformType.None;
 		public TrackBallTransformType TransformState { get; set; }
 
@@ -34,11 +38,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector3 rotateVec = Vector3.Zero;
 		private Vector3 rotateVecOriginal = Vector3.Zero;
 		private Vector2 mouseDownPosition = Vector2.Zero;
+		private Vector3 mouseDownWorldPosition;
 
-		public TrackballTumbleWidgetExtended(WorldView world, GuiWidget sourceWidget, Object3DControlsLayer Object3DControlLayer)
+		public TrackballTumbleWidgetExtended(WorldView world, GuiWidget sourceWidget, Object3DControlsLayer Object3DControlLayer, ThemeConfig theme)
 		{
 			AnchorAll();
 			TrackBallController = new TrackBallController(world);
+			this.theme = theme;
 			this.world = world;
 			this.sourceWidget = sourceWidget;
 			this.Object3DControlLayer = Object3DControlLayer;
@@ -98,9 +104,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void CalculateMouseDownPostionAndPlane(Vector2 position)
+		private void CalculateMouseDownPostionAndPlane(Vector2 mousePosition)
 		{
-			throw new NotImplementedException();
+			mouseDownPosition = mousePosition;
+			Ray rayToCenter = world.GetRayForLocalBounds(mousePosition);
+			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayToCenter);
+			mouseDownWorldPosition = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
+
+			if (mouseDownWorldPosition == Vector3.Zero)
+			{
+				mouseDownWorldPosition = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
+				if (mouseDownWorldPosition.Length > 1000)
+				{
+					mouseDownWorldPosition = Vector3.Zero;
+				}
+			}
+
+			if (mouseDownWorldPosition == Vector3.Zero)
+			{
+				mouseDownWorldPosition = lastRotationOrigin;
+			}
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -131,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					zoomDelta = +(1 * mouseDelta.Y / 100);
 				}
 
-				ZoomToScreenPosition(currentMousePosition, zoomDelta);
+				ZoomToScreenPosition(-mouseDownWorldPosition, zoomDelta);
 				lastScaleMousePosition = currentMousePosition;
 			}
 		}
@@ -180,7 +203,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (this.ContainsFirstUnderMouseRecursive())
 			{
-				ZoomToScreenPosition(GetMousePosition(mouseEvent), mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
+				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
+				IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(ray);
+				Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
+
+				// if no object is found under the mouse trace from center to xy plane
+				if (hitPos == Vector3.Zero)
+				{
+					Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
+					hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
+				}
+
+				ZoomToScreenPosition(hitPos, mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
 			}
 		}
 
@@ -207,28 +241,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			isRotating = true;
-			mouseDownPosition = mousePosition;
-			Ray rayToCenter = world.GetRayForLocalBounds(mousePosition);
-			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayToCenter);
-			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : -intersectionInfo.HitPosition;
 
-			if (hitPos == Vector3.Zero)
-			{
-				hitPos = -IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
-				if (hitPos.Length > 1000)
-				{
-					hitPos = Vector3.Zero;
-				}
-			}
-
-			if (hitPos == Vector3.Zero)
-			{
-				hitPos = lastRotationOrigin;
-			}
-
-			rotateVec = hitPos - DisplacementVec;
+			rotateVec = -mouseDownWorldPosition - DisplacementVec;
 			rotateVecOriginal = rotateVec;
-			lastRotationOrigin = hitPos;
+			lastRotationOrigin = -mouseDownWorldPosition;
 		}
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
@@ -282,15 +298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ZeroVelocity();
 			}
 
-			Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-			Vector3 hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal)).GetNormal();
-
-			if (hitPos == Vector3.Zero)
-			{
-				hitPos = lastTranslationOrigin;
-			}
-
-			double distanceToCenter = (hitPos - Vector3Ex.Transform(Vector3.Zero, world.InverseModelviewMatrix)).Length;
+			double distanceToCenter = (-mouseDownWorldPosition - Vector3Ex.Transform(Vector3.Zero, world.InverseModelviewMatrix)).Length;
 			Vector2 mouseDelta = position - mouseDownPosition;
 			var offset = new Vector3(mouseDelta.X, mouseDelta.Y, 0);
 			offset = Vector3Ex.TransformPosition(offset, Matrix4X4.Invert(world.RotationMatrix));
@@ -299,30 +307,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			world.Translate(offset);
 
 			mouseDownPosition = position;
-			lastTranslationOrigin = hitPos;
+			lastTranslationOrigin = -mouseDownWorldPosition;
 			Invalidate();
 		}
 
-		public void ZoomToScreenPosition(Vector2 screenPosition, double zoomDelta)
+		public void ZoomToScreenPosition(Vector3 worldPosition, double zoomDelta)
 		{
 			if (isRotating)
 			{
 				ZeroVelocity();
 			}
 
-			Ray ray = world.GetRayForLocalBounds(screenPosition);
-			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(ray);
-			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
-
-			// if no object is found under the mouse trace from center to xy plane
-			if (hitPos == Vector3.Zero)
-			{
-				Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-				hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
-			}
+			var unitsPerPixel = world.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
 
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
-			Vector3 zoomVec = (hitPos - world.EyePosition) * zoomDelta;
+			Vector3 zoomVec = (worldPosition - world.EyePosition) * zoomDelta * Math.Min(unitsPerPixel * 100, 1);
 
 			DisplacementVec += zoomVec;
 			world.Translate(zoomVec);
@@ -366,7 +365,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (TransformState)
 				{
 					case TrackBallTransformType.Rotation:
-						graphics2D.Circle(world.GetScreenPosition(rotateVec), 5, Color.Red);
+						var circle = new Ellipse(world.GetScreenPosition(mouseDownWorldPosition), 8 * DeviceScale);
+						graphics2D.Render(new Stroke(circle, 2 * DeviceScale), theme.PrimaryAccentColor);
+						graphics2D.Render(new Stroke(new Stroke(circle, 4 * DeviceScale), DeviceScale), theme.TextColor.WithAlpha(128));
 						break;
 				}
 			}
