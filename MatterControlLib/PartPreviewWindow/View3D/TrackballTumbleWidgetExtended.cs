@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 currentMousePosition = GetMousePosition(mouseEvent);
 				ZeroVelocity();
 
+				CalculateMouseDownPostionAndPlane(mouseEvent.Position);
+
 				if (mouseEvent.Button == MouseButtons.Left)
 				{
 					if (TrackBallController.CurrentTrackingType == TrackBallTransformType.None)
@@ -94,6 +96,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
+		}
+
+		private void CalculateMouseDownPostionAndPlane(Vector2 position)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -157,16 +164,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent);
 		}
 
-		private Vector3 IntersectPlane(Vector3 rayP, Vector3 rayD)
+		private Vector3 IntersectXYPlane(Vector3 rayOrigin, Vector3 rayDirection)
 		{
-			return IntersectPlane(Vector3.Zero, new Vector3(0, 0, 1), rayP, rayD);
+			return IntersectPlane(new Vector3(0, 0, 1), rayOrigin, rayDirection);
 		}
 
-		private Vector3 IntersectPlane(Vector3 planeP, Vector3 planeN, Vector3 rayP, Vector3 rayD)
+		private Vector3 IntersectPlane(Vector3 planeNormal, Vector3 rayOrigin, Vector3 rayDirection)
 		{
-			var d = Vector3Ex.Dot(planeN, rayD);
-			var t = -(Vector3Ex.Dot(rayP, planeN) + d) / d;
-			return rayP + t * rayD;
+			var d = Vector3Ex.Dot(planeNormal, rayDirection);
+			var t = -(Vector3Ex.Dot(rayOrigin, planeNormal) + d) / d;
+			return rayOrigin + t * rayDirection;
 		}
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
@@ -201,13 +208,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			isRotating = true;
 			mouseDownPosition = mousePosition;
-			Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
+			Ray rayToCenter = world.GetRayForLocalBounds(mousePosition);
 			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayToCenter);
 			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : -intersectionInfo.HitPosition;
 
 			if (hitPos == Vector3.Zero)
 			{
-				hitPos = -IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
+				hitPos = -IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
 				if (hitPos.Length > 1000)
 				{
 					hitPos = Vector3.Zero;
@@ -276,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-			Vector3 hitPos = IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal)).GetNormal();
+			Vector3 hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal)).GetNormal();
 
 			if (hitPos == Vector3.Zero)
 			{
@@ -311,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (hitPos == Vector3.Zero)
 			{
 				Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-				hitPos = IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
+				hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
 			}
 
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
@@ -353,6 +360,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			RecalculateProjection();
+
+			if (TrackBallController.CurrentTrackingType == TrackBallTransformType.None)
+			{
+				switch (TransformState)
+				{
+					case TrackBallTransformType.Rotation:
+						graphics2D.Circle(world.GetScreenPosition(rotateVec), 5, Color.Red);
+						break;
+				}
+			}
+
 
 			base.OnDraw(graphics2D);
 		}
