@@ -158,7 +158,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
-				&& Object3DControlContext.SelectedObject3DControl as ScaleMatrixEdgeControl == null)
+				&& Object3DControlContext.SelectedObject3DControl as ScaleWidthDepthEdgeControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
@@ -282,13 +282,20 @@ namespace MatterHackers.Plugins.EditorTools
 						if (edgeIndex % 2 == 1)
 						{
 							newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
-							scaleController.ScaleWidth(newSize.X);
 						}
 						else
 						{
 							newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
-							scaleController.ScaleDepth(newSize.Y);
 						}
+					}
+
+					if (edgeIndex % 2 == 1)
+					{
+						scaleController.ScaleWidth(newSize.X);
+					}
+					else
+					{
+						scaleController.ScaleDepth(newSize.Y);
 					}
 
 					selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
@@ -315,7 +322,7 @@ namespace MatterHackers.Plugins.EditorTools
 					&& (widthDepthItem.Width != scaleController.InitialState.Width
 						|| widthDepthItem.Depth != scaleController.InitialState.Depth))
 				{
-					scaleController.WidthDepthEditComplete();
+					scaleController.EditComplete();
 				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
@@ -388,7 +395,7 @@ namespace MatterHackers.Plugins.EditorTools
 				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
 				newSize.Y = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
 
-				scaleController.WidthDepthEditComplete();
+				scaleController.EditComplete();
 
 				// and keep the locked edge in place
 				Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);

@@ -159,7 +159,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
-				&& Object3DControlContext.SelectedObject3DControl as ScaleMatrixCornerControl == null)
+				&& Object3DControlContext.SelectedObject3DControl as ScaleWidthDepthCornerControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}

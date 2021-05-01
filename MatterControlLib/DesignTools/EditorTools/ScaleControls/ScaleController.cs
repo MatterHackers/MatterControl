@@ -79,16 +79,14 @@ namespace MatterHackers.Plugins.EditorTools
 			selectedItem.Matrix = InitialState.Matrix;
 		}
 
-		public void ScaleWidth(double newWidth)
+		public void EditComplete()
 		{
-			FinalState = InitialState;
-			FinalState.Width = newWidth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift)
-			{
-				ScaleProportional(newWidth / InitialState.Width);
-			}
+			var doState = FinalState;
+			doState.Matrix = selectedItem.Matrix;
 
-			SetItem(selectedItem, FinalState);
+			var undoState = InitialState;
+
+			EditComplete(undoState, doState);
 		}
 
 		public void ScaleDepth(double newDepth)
@@ -103,27 +101,28 @@ namespace MatterHackers.Plugins.EditorTools
 			SetItem(selectedItem, FinalState);
 		}
 
-		private void ScaleProportional(double scale)
+		public void ScaleHeight(double newHeight)
 		{
-			FinalState.Width = InitialState.Width * scale;
-			FinalState.Depth = InitialState.Depth * scale;
-			FinalState.Height = InitialState.Height * scale;
+			FinalState = InitialState;
+			FinalState.Height = newHeight;
+			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			{
+				ScaleProportional(newHeight / InitialState.Height);
+			}
+
+			SetItem(selectedItem, FinalState);
 		}
 
-		private void SetItem(IObject3D item, ScaleStates states)
+		public void ScaleWidth(double newWidth)
 		{
-			if (item is IObjectWithWidthAndDepth widthDepthItem)
+			FinalState = InitialState;
+			FinalState.Width = newWidth;
+			if (context.GuiSurface.ModifierKeys == Keys.Shift)
 			{
-				widthDepthItem.Width = states.Width;
-				widthDepthItem.Depth = states.Depth;
+				ScaleProportional(newWidth / InitialState.Width);
 			}
 
-			if (item is IObjectWithHeight heightItem)
-			{
-				heightItem.Height = states.Height;
-			}
-
-			item.Matrix = states.Matrix;
+			SetItem(selectedItem, FinalState);
 		}
 
 		public void SetInitialState(IObject3DControlContext context)
@@ -142,16 +141,6 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			InitialState.Matrix = selectedItem.Matrix;
-		}
-
-		public void WidthDepthEditComplete()
-		{
-			var doState = FinalState;
-			doState.Matrix = selectedItem.Matrix;
-
-			var undoState = InitialState;
-
-			EditComplete(undoState, doState);
 		}
 
 		private void EditComplete(ScaleStates undoState, ScaleStates doState)
@@ -175,6 +164,29 @@ namespace MatterHackers.Plugins.EditorTools
 				selectedItem.Matrix = doState.Matrix;
 				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 			}));
+		}
+
+		private void ScaleProportional(double scale)
+		{
+			FinalState.Width = InitialState.Width * scale;
+			FinalState.Depth = InitialState.Depth * scale;
+			FinalState.Height = InitialState.Height * scale;
+		}
+
+		private void SetItem(IObject3D item, ScaleStates states)
+		{
+			if (item is IObjectWithWidthAndDepth widthDepthItem)
+			{
+				widthDepthItem.Width = states.Width;
+				widthDepthItem.Depth = states.Depth;
+			}
+
+			if (item is IObjectWithHeight heightItem)
+			{
+				heightItem.Height = states.Height;
+			}
+
+			item.Matrix = states.Matrix;
 		}
 
 		public struct ScaleStates
