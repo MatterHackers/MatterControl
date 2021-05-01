@@ -29,11 +29,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallTransformType TransformState { get; set; }
 
 		// tracks the displacement of the camera to accurately rotate, translate and zoom
-		public Vector3 DisplacementVec = Vector3.Zero;
+		public Vector3 bedCenter = Vector3.Zero;
 
 		private bool isRotating = false;
 		private Vector3 lastRotationOrigin = Vector3.Zero;
-		private Vector3 lastTranslationOrigin = Vector3.Zero;
 		private Vector2 lastScaleMousePosition = Vector2.Zero;
 		private Vector3 rotateVec = Vector3.Zero;
 		private Vector3 rotateVecOriginal = Vector3.Zero;
@@ -147,14 +146,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				double zoomDelta = 1;
 				if (mouseDelta.Y < 0)
 				{
-					zoomDelta = -(-1 * mouseDelta.Y / 100);
+					zoomDelta = -1 * mouseDelta.Y / 100;
 				}
 				else if (mouseDelta.Y > 0)
 				{
-					zoomDelta = +(1 * mouseDelta.Y / 100);
+					zoomDelta = -1 * mouseDelta.Y / 100;
 				}
 
-				ZoomToScreenPosition(-mouseDownWorldPosition, zoomDelta);
+				ZoomToWorldPosition(mouseDownWorldPosition, zoomDelta);
 				lastScaleMousePosition = currentMousePosition;
 			}
 		}
@@ -214,7 +213,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					hitPos = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
 				}
 
-				ZoomToScreenPosition(hitPos, mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
+				ZoomToWorldPosition(hitPos, mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
 			}
 		}
 
@@ -242,7 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			isRotating = true;
 
-			rotateVec = -mouseDownWorldPosition - DisplacementVec;
+			rotateVec = -mouseDownWorldPosition - bedCenter;
 			rotateVecOriginal = rotateVec;
 			lastRotationOrigin = -mouseDownWorldPosition;
 		}
@@ -270,7 +269,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (isRotating)
 			{
 				isRotating = false;
-				DisplacementVec += rotateVecOriginal - rotateVec;
+				bedCenter += rotateVecOriginal - rotateVec;
 				Invalidate();
 			}
 		}
@@ -301,17 +300,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double distanceToCenter = (-mouseDownWorldPosition - Vector3Ex.Transform(Vector3.Zero, world.InverseModelviewMatrix)).Length;
 			Vector2 mouseDelta = position - mouseDownPosition;
 			var offset = new Vector3(mouseDelta.X, mouseDelta.Y, 0);
-			offset = Vector3Ex.TransformPosition(offset, Matrix4X4.Invert(world.RotationMatrix));
+			offset = offset.TransformPosition(Matrix4X4.Invert(world.RotationMatrix));
 			offset *= distanceToCenter / 1000;
-			DisplacementVec += offset;
+			bedCenter += offset;
 			world.Translate(offset);
 
 			mouseDownPosition = position;
-			lastTranslationOrigin = -mouseDownWorldPosition;
 			Invalidate();
 		}
 
-		public void ZoomToScreenPosition(Vector3 worldPosition, double zoomDelta)
+		public void ZoomToWorldPosition(Vector3 worldPosition, double zoomDelta)
 		{
 			if (isRotating)
 			{
@@ -323,22 +321,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
 			Vector3 zoomVec = (worldPosition - world.EyePosition) * zoomDelta * Math.Min(unitsPerPixel * 100, 1);
 
-			DisplacementVec += zoomVec;
+			bedCenter += zoomVec;
 			world.Translate(zoomVec);
 
 			Invalidate();
 		}
 
-		public void Reset(Vector3 BedCenter)
+		public void Reset(Vector3 bedCenter)
 		{
 			ZeroVelocity();
-			DisplacementVec = Vector3.Zero;
 			lastRotationOrigin = Vector3.Zero;
-			lastTranslationOrigin = Vector3.Zero;
 			rotateVec = Vector3.Zero;
 			rotateVecOriginal = Vector3.Zero;
 			mouseDownPosition = Vector2.Zero;
-			DisplacementVec = BedCenter;
+			this.bedCenter = Vector3.Zero;
+			this.bedCenter = bedCenter;
 		}
 
 		public delegate void NearFarAction(out double zNear, out double zFar);
