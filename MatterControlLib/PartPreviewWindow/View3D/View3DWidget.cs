@@ -1761,6 +1761,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GL.Enable(EnableCap.Lighting);
 			}
 
+			TrackballTumbleWidget.OnDraw3D();
+
 			// Render 3D GCode if applicable
 			if (sceneContext.LoadedGCode != null
 				&& sceneContext.GCodeRenderer != null
