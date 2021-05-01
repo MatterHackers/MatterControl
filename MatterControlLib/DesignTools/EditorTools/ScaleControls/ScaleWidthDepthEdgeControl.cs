@@ -66,8 +66,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private Vector2 sizeOnMouseDown;
-		private Matrix4X4 matrixOnMouseDown;
+		private ScaleController scaleController = new ScaleController();
 
 		public ScaleWidthDepthEdgeControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
@@ -136,13 +135,7 @@ namespace MatterHackers.Plugins.EditorTools
 			if (selectedItem != null
 				&& MouseDownOnControl)
 			{
-				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
-				{
-					widthDepthItem.Width = sizeOnMouseDown.X;
-					widthDepthItem.Depth = sizeOnMouseDown.Y;
-				}
-
-				selectedItem.Matrix = matrixOnMouseDown;
+				scaleController.Cancel();
 
 				MouseDownOnControl = false;
 				MouseIsOver = false;
@@ -228,12 +221,8 @@ namespace MatterHackers.Plugins.EditorTools
 				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
-				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
-				{
-					sizeOnMouseDown = new Vector2(widthDepthItem.Width, widthDepthItem.Depth);
-				}
 
-				matrixOnMouseDown = selectedItem.Matrix;
+				scaleController.SetInitialState(Object3DControlContext);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -251,9 +240,7 @@ namespace MatterHackers.Plugins.EditorTools
 				xValueDisplayInfo.Visible = true;
 				yValueDisplayInfo.Visible = true;
 			}
-			else if (!hadClickOnControl
-				|| (selectedItem is IObjectWithWidthAndDepth widthDepthItem
-					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y)))
+			else if (!hadClickOnControl || scaleController.HasChange)
 			{
 				xValueDisplayInfo.Visible = false;
 				yValueDisplayInfo.Visible = false;
@@ -274,40 +261,37 @@ namespace MatterHackers.Plugins.EditorTools
 					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
-					if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+					var newSize = new Vector2(scaleController.InitialState.Width, scaleController.InitialState.Depth);
+					if (edgeIndex % 2 == 1)
 					{
-						var newSize = new Vector3(widthDepthItem.Width, widthDepthItem.Depth, 0);
+						newSize.X += deltaAlongStretch;
+						newSize.X = Math.Max(Math.Max(newSize.X, .001), Object3DControlContext.SnapGridDistance);
+					}
+					else
+					{
+						newSize.Y += deltaAlongStretch;
+						newSize.Y = Math.Max(Math.Max(newSize.Y, .001), Object3DControlContext.SnapGridDistance);
+					}
+
+					if (Object3DControlContext.SnapGridDistance > 0)
+					{
+						// snap this position to the grid
+						double snapGridDistance = Object3DControlContext.SnapGridDistance;
+
+						// snap this position to the grid
 						if (edgeIndex % 2 == 1)
 						{
-							newSize.X = sizeOnMouseDown.X + deltaAlongStretch;
-							newSize.X = Math.Max(Math.Max(newSize.X, .001), Object3DControlContext.SnapGridDistance);
+							newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
+							scaleController.ScaleWidth(newSize.X);
 						}
 						else
 						{
-							newSize.Y = sizeOnMouseDown.Y + deltaAlongStretch;
-							newSize.Y = Math.Max(Math.Max(newSize.Y, .001), Object3DControlContext.SnapGridDistance);
+							newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
+							scaleController.ScaleDepth(newSize.Y);
 						}
-
-						if (Object3DControlContext.SnapGridDistance > 0)
-						{
-							// snap this position to the grid
-							double snapGridDistance = Object3DControlContext.SnapGridDistance;
-
-							// snap this position to the grid
-							if (edgeIndex % 2 == 1)
-							{
-								newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
-							}
-							else
-							{
-								newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
-							}
-						}
-
-						widthDepthItem.Width = newSize.X;
-						widthDepthItem.Depth = newSize.Y;
-						selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 					}
+
+					selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 
 					await selectedItem.Rebuild();
 
@@ -328,14 +312,10 @@ namespace MatterHackers.Plugins.EditorTools
 			if (hadClickOnControl)
 			{
 				if (RootSelection is IObjectWithWidthAndDepth widthDepthItem
-					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
+					&& (widthDepthItem.Width != scaleController.InitialState.Width
+						|| widthDepthItem.Depth != scaleController.InitialState.Depth))
 				{
-					ScaleWidthDepthCornerControl.SetWidthDepthUndo(RootSelection,
-						Object3DControlContext.Scene.UndoBuffer,
-						new Vector2(widthDepthItem.Width, widthDepthItem.Depth),
-						RootSelection.Matrix,
-						sizeOnMouseDown,
-						matrixOnMouseDown);
+					scaleController.WidthDepthEditComplete();
 				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
@@ -408,12 +388,7 @@ namespace MatterHackers.Plugins.EditorTools
 				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
 				newSize.Y = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
 
-				ScaleWidthDepthCornerControl.SetWidthDepthUndo(RootSelection,
-					Object3DControlContext.Scene.UndoBuffer, 
-					new Vector2(newSize),
-					ActiveSelectedItem.Matrix,
-					sizeOnMouseDown,
-					matrixOnMouseDown);
+				scaleController.WidthDepthEditComplete();
 
 				// and keep the locked edge in place
 				Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
