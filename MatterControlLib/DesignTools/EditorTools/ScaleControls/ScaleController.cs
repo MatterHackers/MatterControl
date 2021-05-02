@@ -143,6 +143,19 @@ namespace MatterHackers.Plugins.EditorTools
 			InitialState.Matrix = selectedItem.Matrix;
 		}
 
+		internal void ScaleWidthDepth(double newWidth, double newDepth)
+		{
+			FinalState = InitialState;
+			FinalState.Width = newWidth;
+			FinalState.Depth = newDepth;
+			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			{
+				ScaleProportional(newWidth / InitialState.Width);
+			}
+
+			SetItem(selectedItem, FinalState);
+		}
+
 		private void EditComplete(ScaleStates undoState, ScaleStates doState)
 		{
 			var undoBuffer = context.Scene.UndoBuffer;
@@ -187,6 +200,8 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			item.Matrix = states.Matrix;
+
+			selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 		}
 
 		public struct ScaleStates

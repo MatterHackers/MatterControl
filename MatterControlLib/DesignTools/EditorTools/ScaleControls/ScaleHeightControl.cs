@@ -40,6 +40,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
@@ -69,7 +70,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public ScaleHeightControl(IObject3DControlContext context)
 			: base(context)
 		{
-			theme = AppContext.Theme;
+			theme = MatterControl.AppContext.Theme;
 
 			heightValueDisplayInfo = new InlineEditControl()
 			{
@@ -116,6 +117,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					await selectedItem.Rebuild();
 
+					throw new NotImplementedException("Need to have the object set by the time we edit complete for undo to be right");
 					Invalidate();
 
 					scaleController.EditComplete();

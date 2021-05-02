@@ -298,8 +298,6 @@ namespace MatterHackers.Plugins.EditorTools
 						scaleController.ScaleDepth(newSize.Y);
 					}
 
-					selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
@@ -391,10 +389,10 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				Vector3 lockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
 
-				Vector3 newSize = Vector3.Zero;
-				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
-				newSize.Y = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
+				scaleController.FinalState.Width = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
+				scaleController.FinalState.Height = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
 
+				throw new NotImplementedException("Need to have the matrix set by the time we edit complete for undo to be right");
 				scaleController.EditComplete();
 
 				// and keep the locked edge in place
