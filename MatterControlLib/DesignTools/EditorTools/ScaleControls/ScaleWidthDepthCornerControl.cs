@@ -33,6 +33,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -386,25 +387,25 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 		}
 
-		private void EditComplete(object s, EventArgs e)
+		private async void EditComplete(object s, EventArgs e)
 		{
-			if (ActiveSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			var newWidth = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : scaleController.FinalState.Width;
+			var newDepth = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : scaleController.FinalState.Depth;
+
+			if (newWidth == scaleController.FinalState.Width
+				&& newDepth == scaleController.FinalState.Depth)
 			{
-				Vector3 lockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
-
-				scaleController.FinalState.Width = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
-				scaleController.FinalState.Height = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
-
-				throw new NotImplementedException("Need to have the matrix set by the time we edit complete for undo to be right");
-				scaleController.EditComplete();
-
-				// and keep the locked edge in place
-				Vector3 newLockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
-
-				ActiveSelectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+				return;
 			}
 
-			Invalidate();
+			var lockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
+			scaleController.ScaleWidthDepth(newWidth, newDepth);
+			await ActiveSelectedItem.Rebuild();
+			// and keep the locked edge in place
+			var newLockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
+			ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
+
+			scaleController.EditComplete();
 		}
 
 		private bool ForceHideScale()

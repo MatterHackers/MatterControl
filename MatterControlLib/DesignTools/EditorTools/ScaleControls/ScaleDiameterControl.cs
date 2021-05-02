@@ -33,6 +33,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -45,6 +46,13 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleDiameterControl : Object3DControl
 	{
+		public enum Placement
+		{
+			Bottom,
+			Center,
+			Top,
+		}
+
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw
 		/// </summary>
@@ -65,12 +73,14 @@ namespace MatterHackers.Plugins.EditorTools
 		private ScaleController scaleController;
 		private Func<double> getDiameter;
 		private Action<double> setDiameter;
+		private readonly Placement placement;
 
-		public ScaleDiameterControl(IObject3DControlContext context, Func<double> getDiameter, Action<double> setDiameter)
+		public ScaleDiameterControl(IObject3DControlContext context, Func<double> getDiameter, Action<double> setDiameter, Placement placement = Placement.Bottom)
 			: base(context)
 		{
 			this.getDiameter = getDiameter;
 			this.setDiameter = setDiameter;
+			this.placement = placement;
 			theme = MatterControl.AppContext.Theme;
 
 			scaleController = new ScaleController(getDiameter, setDiameter);
@@ -81,7 +91,24 @@ namespace MatterHackers.Plugins.EditorTools
 				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
 			};
 
-			diameterValueDisplayInfo.EditComplete += EditComplete;
+			diameterValueDisplayInfo.EditComplete += async (s, e) =>
+			{
+				var newDiameter = diameterValueDisplayInfo.Value != 0 ? diameterValueDisplayInfo.Value : getDiameter();
+
+				if (newDiameter == scaleController.FinalState.Diameter)
+				{
+					return;
+				}
+
+				Vector3 lockedEdge = ObjectSpace.GetBottomCenterPosition(ActiveSelectedItem);
+				scaleController.ScaleDiameter(newDiameter);
+				await ActiveSelectedItem.Rebuild();
+				// and keep the locked edge in place
+				Vector3 newLockedEdge = ObjectSpace.GetBottomCenterPosition(ActiveSelectedItem);
+				ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
+
+				scaleController.EditComplete();
+			};
 
 			diameterValueDisplayInfo.VisibleChanged += (s, e) =>
 			{
@@ -226,9 +253,10 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					var delta = info.HitPosition - initialHitPosition;
 
-					var lockedEdge = ObjectSpace.GetEdgePosition(selectedItem, 2);
+					var lockedBottomCenter = ObjectSpace.GetBottomCenterPosition(selectedItem);
 
-					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, 0) - lockedEdge).GetNormal();
+					var grabPositionEdge = ObjectSpace.GetEdgePosition(selectedItem, 2);
+					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, 0) - grabPositionEdge).GetNormal();
 					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
@@ -250,9 +278,9 @@ namespace MatterHackers.Plugins.EditorTools
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
-					Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(selectedItem, 2);
+					Vector3 newBottomCenter = ObjectSpace.GetBottomCenterPosition(selectedItem);
 
-					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottomCenter - newBottomCenter);
 
 					Invalidate();
 				}
@@ -310,16 +338,6 @@ namespace MatterHackers.Plugins.EditorTools
 			var start = (limitsLines.start0 + limitsLines.end0) / 2;
 			var end = (limitsLines.start1 + limitsLines.end1) / 2;
 			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
-		}
-
-		private void EditComplete(object s, EventArgs e)
-		{
-			scaleController.FinalState.Diameter = diameterValueDisplayInfo.Value != 0 ? diameterValueDisplayInfo.Value : getDiameter();
-
-			throw new NotImplementedException("Need to have the matrix set by the time we edit complete for undo to be right");
-			scaleController.EditComplete();
-
-			Invalidate();
 		}
 
 		private bool ForceHideScale()

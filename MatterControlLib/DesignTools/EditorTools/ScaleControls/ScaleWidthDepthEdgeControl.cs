@@ -33,6 +33,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -381,25 +382,34 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 		}
 
-		private void EditComplete(object s, EventArgs e)
+		private async void EditComplete(object s, EventArgs e)
 		{
-			if (ActiveSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			var newWidth = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : scaleController.FinalState.Width;
+			var newDepth = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : scaleController.FinalState.Depth;
+
+			Vector3 lockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+			if (edgeIndex % 2 == 1)
 			{
-				Vector3 lockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
-
-				scaleController.FinalState.Width = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
-				scaleController.FinalState.Height = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
-
-				throw new NotImplementedException("Need to have the matrix set by the time we edit complete for undo to be right");
-				scaleController.EditComplete();
-
-				// and keep the locked edge in place
-				Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
-
-				ActiveSelectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+				if (newWidth == scaleController.FinalState.Width)
+				{
+					return;
+				}
+				scaleController.ScaleWidth(newWidth);
 			}
+			else
+			{
+				if (newDepth == scaleController.FinalState.Depth)
+				{
+					return;
+				}
+				scaleController.ScaleDepth(newDepth);
+			}
+			await ActiveSelectedItem.Rebuild();
+			// and keep the locked edge in place
+			Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+			ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
 
-			Invalidate();
+			scaleController.EditComplete();
 		}
 
 		private bool ForceHideScale()
@@ -514,8 +524,16 @@ namespace MatterHackers.Plugins.EditorTools
 		public static Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
 		{
 			quadrantIndex %= 4;
-			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
+			var originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			var cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
+
+			return cornerPosition.Transform(item.Matrix);
+		}
+
+		public static Vector3 GetBottomCenterPosition(IObject3D item)
+		{
+			var originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			var cornerPosition = originalSelectedBounds.GetBottomCenter();
 
 			return cornerPosition.Transform(item.Matrix);
 		}
@@ -523,7 +541,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public static Vector3 GetEdgePosition(IObject3D item, int edegIndex)
 		{
 			edegIndex %= 4;
-			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			var edgePosition = default(Vector3);
 			switch (edegIndex)
 			{

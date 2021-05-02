@@ -103,6 +103,9 @@ namespace MatterHackers.Plugins.EditorTools
 			selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 		}
 
+		/// <summary>
+		/// Save undo & do data from the state information
+		/// </summary>
 		public void EditComplete()
 		{
 			var doState = FinalState;
@@ -202,7 +205,7 @@ namespace MatterHackers.Plugins.EditorTools
 			var undoBuffer = context.Scene.UndoBuffer;
 			var selectedItem = this.selectedItem;
 
-			undoBuffer.AddAndDo(new UndoRedoActions(async () =>
+			undoBuffer.Add(new UndoRedoActions(async () =>
 			{
 				SetItem(selectedItem, undoState);
 				await selectedItem.Rebuild();

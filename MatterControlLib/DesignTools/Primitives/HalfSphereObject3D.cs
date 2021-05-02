@@ -123,9 +123,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				() => Diameter,
 				(diameter) => Diameter = diameter));
-			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
-				() => Diameter,
-				(diameter) => Diameter = diameter));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}

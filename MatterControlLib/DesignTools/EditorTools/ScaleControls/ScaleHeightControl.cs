@@ -66,14 +66,10 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 originalPointToMove;
 
 		private ScaleController scaleController;
-		private Func<double> getDiameter;
-		private readonly Action<double> setDiameter;
 
 		public ScaleHeightControl(IObject3DControlContext context, Func<double> getDiameter = null, Action<double> setDiameter = null)
 			: base(context)
 		{
-			this.getDiameter = getDiameter;
-			this.setDiameter = setDiameter;
 			theme = MatterControl.AppContext.Theme;
 
 			scaleController = new ScaleController(getDiameter, setDiameter);
@@ -116,18 +112,20 @@ namespace MatterHackers.Plugins.EditorTools
 
 			heightValueDisplayInfo.EditComplete += async (s, e) =>
 			{
+				if (heightValueDisplayInfo.Value == scaleController.FinalState.Height)
+				{
+					return;
+				}
+
 				var selectedItem = activeSelectedItem;
 
-				if (selectedItem is IObjectWithHeight heightObject
-					&& heightValueDisplayInfo.Value != heightObject.Height)
-				{
-					await selectedItem.Rebuild();
+				var bottom = GetBottomPosition(selectedItem);
+				scaleController.ScaleHeight(heightValueDisplayInfo.Value);
+				await selectedItem.Rebuild();
+				var postScaleBottom = GetBottomPosition(selectedItem);
+				selectedItem.Translate(bottom - postScaleBottom);
 
-					throw new NotImplementedException("Need to have the object set by the time we edit complete for undo to be right");
-					Invalidate();
-
-					scaleController.EditComplete();
-				}
+				scaleController.EditComplete();
 			};
 
 			Object3DControlContext.GuiSurface.AddChild(heightValueDisplayInfo);
