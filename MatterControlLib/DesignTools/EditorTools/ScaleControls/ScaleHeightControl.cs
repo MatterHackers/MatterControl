@@ -65,13 +65,19 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 originalPointToMove;
 
-		private ScaleController scaleController = new ScaleController();
+		private ScaleController scaleController;
+		private Func<double> getDiameter;
+		private readonly Action<double> setDiameter;
 
-		public ScaleHeightControl(IObject3DControlContext context)
+		public ScaleHeightControl(IObject3DControlContext context, Func<double> getDiameter = null, Action<double> setDiameter = null)
 			: base(context)
 		{
+			this.getDiameter = getDiameter;
+			this.setDiameter = setDiameter;
 			theme = MatterControl.AppContext.Theme;
 
+			scaleController = new ScaleController(getDiameter, setDiameter);
+			
 			heightValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () =>
@@ -153,8 +159,6 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
-
-			base.CancelOperation();
 		}
 
 		public override void Dispose()

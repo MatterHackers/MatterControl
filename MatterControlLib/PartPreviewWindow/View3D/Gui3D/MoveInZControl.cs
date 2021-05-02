@@ -283,8 +283,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
-
-			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

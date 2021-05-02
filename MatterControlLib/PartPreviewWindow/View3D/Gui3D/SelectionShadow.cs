@@ -89,5 +89,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// no widgets allocated so nothing to close
 		}
+
+		public override void CancelOperation()
+		{
+		}
 	}
 }

@@ -52,14 +52,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	[Flags]
 	public enum ControlTypes
 	{
-		MoveInZ = 1,
-		RotateXYZ = 2,
-		RotateZ = 4,
-		ScaleWidthDepth = 8,
-		ScaleMatrixXY = 16,
-		Shadow = 32,
-		SnappingIndicators = 64,
-		ScaleHeight = 128,
+		MoveInZ = 1 << 0,
+		RotateXYZ = 1 << 1,
+		RotateZ = 1 << 2,
+		ScaleWidthDepth = 1 << 3,
+		ScaleMatrixXY = 1 << 4,
+		Shadow = 1 << 5,
+		SnappingIndicators = 1 << 6,
+		ScaleHeight = 1 << 7,
 
 		Standard2D = MoveInZ | Shadow | SnappingIndicators | RotateZ | ScaleMatrixXY
 	}

@@ -44,6 +44,16 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private IObject3DControlContext context;
 
+		private Func<double> getDiameter;
+
+		private Action<double> setDiameter;
+
+		public ScaleController(Func<double> getDiameter = null, Action<double> setDiameter = null)
+		{
+			this.getDiameter = getDiameter;
+			this.setDiameter = setDiameter;
+		}
+
 		public bool HasChange
 		{
 			get
@@ -76,7 +86,21 @@ namespace MatterHackers.Plugins.EditorTools
 				widthDepthItem.Depth = InitialState.Depth;
 			}
 
+			if (selectedItem is IObjectWithHeight heightItem)
+			{
+				heightItem.Height= InitialState.Height;
+			}
+
+			if (setDiameter != null)
+			{
+				setDiameter?.Invoke(InitialState.Diameter);
+			}
+
+			selectedItem.Rebuild();
+
 			selectedItem.Matrix = InitialState.Matrix;
+		
+			selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 		}
 
 		public void EditComplete()
@@ -96,6 +120,18 @@ namespace MatterHackers.Plugins.EditorTools
 			if (context.GuiSurface.ModifierKeys == Keys.Shift)
 			{
 				ScaleProportional(newDepth / InitialState.Depth);
+			}
+
+			SetItem(selectedItem, FinalState);
+		}
+
+		public void ScaleDiameter(double newSize)
+		{
+			FinalState = InitialState;
+			FinalState.Diameter = newSize;
+			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			{
+				ScaleProportional(newSize / InitialState.Diameter);
 			}
 
 			SetItem(selectedItem, FinalState);
@@ -138,6 +174,11 @@ namespace MatterHackers.Plugins.EditorTools
 			if (selectedItem is IObjectWithHeight heightItem)
 			{
 				InitialState.Height = heightItem.Height;
+			}
+
+			if (getDiameter != null)
+			{
+				InitialState.Diameter = getDiameter.Invoke();
 			}
 
 			InitialState.Matrix = selectedItem.Matrix;
@@ -184,6 +225,7 @@ namespace MatterHackers.Plugins.EditorTools
 			FinalState.Width = InitialState.Width * scale;
 			FinalState.Depth = InitialState.Depth * scale;
 			FinalState.Height = InitialState.Height * scale;
+			FinalState.Diameter = InitialState.Diameter * scale;
 		}
 
 		private void SetItem(IObject3D item, ScaleStates states)
@@ -199,9 +241,11 @@ namespace MatterHackers.Plugins.EditorTools
 				heightItem.Height = states.Height;
 			}
 
+			setDiameter?.Invoke(states.Diameter);
+
 			item.Matrix = states.Matrix;
 
-			selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+			item.Invalidate(new InvalidateArgs(item, InvalidateType.DisplayValues));
 		}
 
 		public struct ScaleStates
@@ -211,6 +255,8 @@ namespace MatterHackers.Plugins.EditorTools
 			public double Height;
 
 			public double Width;
+
+			public double Diameter { get; internal set; }
 
 			public Matrix4X4 Matrix { get; set; }
 		}

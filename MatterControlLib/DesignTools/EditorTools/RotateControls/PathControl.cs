@@ -117,6 +117,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void CancelOperation()
 		{
+			throw new NotImplementedException();
 		}
 
 		public void Draw(DrawGlContentEventArgs e)
