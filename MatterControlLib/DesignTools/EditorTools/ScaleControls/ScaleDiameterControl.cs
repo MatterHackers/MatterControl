@@ -46,19 +46,12 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleDiameterControl : Object3DControl
 	{
-		public enum Placement
-		{
-			Bottom,
-			Center,
-			Top,
-		}
-
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw
 		/// </summary>
-		private readonly Mesh minXminYMesh;
+		private readonly Mesh grabControlMesh;
 
-		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
+		private readonly double grabControlSize = 15 * GuiWidget.DeviceScale;
 
 		private readonly ThemeConfig theme;
 
@@ -73,9 +66,9 @@ namespace MatterHackers.Plugins.EditorTools
 		private ScaleController scaleController;
 		private Func<double> getDiameter;
 		private Action<double> setDiameter;
-		private readonly Placement placement;
+		private readonly ObjectSpace.Placement placement;
 
-		public ScaleDiameterControl(IObject3DControlContext context, Func<double> getDiameter, Action<double> setDiameter, Placement placement = Placement.Bottom)
+		public ScaleDiameterControl(IObject3DControlContext context, Func<double> getDiameter, Action<double> setDiameter, ObjectSpace.Placement placement = ObjectSpace.Placement.Bottom)
 			: base(context)
 		{
 			this.getDiameter = getDiameter;
@@ -100,11 +93,11 @@ namespace MatterHackers.Plugins.EditorTools
 					return;
 				}
 
-				Vector3 lockedEdge = ObjectSpace.GetBottomCenterPosition(ActiveSelectedItem);
+				Vector3 lockedEdge = ObjectSpace.GetCenterPosition(ActiveSelectedItem, placement);
 				scaleController.ScaleDiameter(newDiameter);
 				await ActiveSelectedItem.Rebuild();
 				// and keep the locked edge in place
-				Vector3 newLockedEdge = ObjectSpace.GetBottomCenterPosition(ActiveSelectedItem);
+				Vector3 newLockedEdge = ObjectSpace.GetCenterPosition(ActiveSelectedItem, placement);
 				ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
 
 				scaleController.EditComplete();
@@ -122,9 +115,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 			DrawOnTop = true;
 
-			minXminYMesh = PlatonicSolids.CreateCube(selectCubeSize, selectCubeSize, selectCubeSize);
+			grabControlMesh = SphereObject3D.CreateSphere(grabControlSize, 15, 10);
 
-			CollisionVolume = minXminYMesh.CreateBVHData();
+			CollisionVolume = grabControlMesh.CreateBVHData();
 
 			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
@@ -176,11 +169,11 @@ namespace MatterHackers.Plugins.EditorTools
 					// don't draw if any other control is dragging
 					if (MouseIsOver || MouseDownOnControl)
 					{
-						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(grabControlMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(grabControlMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
@@ -253,7 +246,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					var delta = info.HitPosition - initialHitPosition;
 
-					var lockedBottomCenter = ObjectSpace.GetBottomCenterPosition(selectedItem);
+					var lockedBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
 
 					var grabPositionEdge = ObjectSpace.GetEdgePosition(selectedItem, 2);
 					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, 0) - grabPositionEdge).GetNormal();
@@ -261,7 +254,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					// scale it
 					var newSize = scaleController.InitialState.Diameter;
-					newSize += deltaAlongStretch;
+					newSize += deltaAlongStretch * 2;
 					newSize = Math.Max(Math.Max(newSize, .001), Object3DControlContext.SnapGridDistance);
 
 					if (Object3DControlContext.SnapGridDistance > 0)
@@ -278,7 +271,7 @@ namespace MatterHackers.Plugins.EditorTools
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
-					Vector3 newBottomCenter = ObjectSpace.GetBottomCenterPosition(selectedItem);
+					Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottomCenter - newBottomCenter);
 
@@ -305,14 +298,14 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
-			// create the transform for the box
-			Vector3 edgePosition = ObjectSpace.GetEdgePosition(selectedItem, 0);
+			// create the transform for the grab control
+			Vector3 edgePosition = ObjectSpace.GetEdgePosition(selectedItem, 0, placement);
 
 			Vector3 boxCenter = edgePosition;
 
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(edgePosition);
-			boxCenter.Y += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
-			boxCenter.Z += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
+			boxCenter.Y += grabControlSize / 2 * distBetweenPixelsWorldSpace;
+			boxCenter.Z += grabControlSize / 2 * distBetweenPixelsWorldSpace;
 
 			var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
 

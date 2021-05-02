@@ -530,35 +530,68 @@ namespace MatterHackers.Plugins.EditorTools
 			return cornerPosition.Transform(item.Matrix);
 		}
 
-		public static Vector3 GetBottomCenterPosition(IObject3D item)
+		public static Vector3 GetCenterPosition(IObject3D item, Placement placement)
 		{
-			var originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-			var cornerPosition = originalSelectedBounds.GetBottomCenter();
+			var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			var cornerPosition = aabb.Center;
+			switch (placement)
+			{
+				case Placement.Bottom:
+					cornerPosition.Z = aabb.MinXYZ.Z;
+					break;
+				case Placement.Center:
+					cornerPosition.Z = aabb.Center.Z;
+					break;
+				case Placement.Top:
+					cornerPosition.Z = aabb.MaxXYZ.Z;
+					break;
+			}
 
 			return cornerPosition.Transform(item.Matrix);
 		}
 
-		public static Vector3 GetEdgePosition(IObject3D item, int edegIndex)
+		public enum Placement
+		{
+			Bottom,
+			Center,
+			Top,
+		}
+
+		public static Vector3 GetEdgePosition(IObject3D item, int edegIndex, Placement placement = Placement.Bottom)
 		{
 			edegIndex %= 4;
 			var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			var edgePosition = default(Vector3);
+			double z = 0;
+			switch (placement)
+			{
+				case Placement.Bottom:
+					z = aabb.MinXYZ.Z;
+					break;
+				case Placement.Center:
+					z = aabb.Center.Z;
+					break;
+				case Placement.Top:
+					z = aabb.MaxXYZ.Z;
+					break;
+			}
+
 			switch (edegIndex)
 			{
 				case 0:
-					edgePosition = new Vector3(aabb.Center.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
+					edgePosition = new Vector3(aabb.Center.X, aabb.MaxXYZ.Y, z);
 					break;
 
 				case 1:
-					edgePosition = new Vector3(aabb.MinXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
+					edgePosition = new Vector3(aabb.MinXYZ.X, aabb.Center.Y, z);
 					break;
 
 				case 2:
-					edgePosition = new Vector3(aabb.Center.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
+					edgePosition = new Vector3(aabb.Center.X, aabb.MinXYZ.Y, z);
 					break;
 
 				case 3:
-					edgePosition = new Vector3(aabb.MaxXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
+					edgePosition = new Vector3(aabb.MaxXYZ.X, aabb.Center.Y, z);
 					break;
 			}
 
