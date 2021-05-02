@@ -33,12 +33,14 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SphereObject3D : PrimitiveObject3D, IPropertyGridModifier
+	public class SphereObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public SphereObject3D()
 		{
@@ -156,6 +158,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 			change.SetRowVisible(nameof(LatitudeSides), () => Advanced);
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }
