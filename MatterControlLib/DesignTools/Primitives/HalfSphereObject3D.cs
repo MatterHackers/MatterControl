@@ -41,6 +41,10 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class HalfSphereObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
+		private int lastLongitudeSides;
+		private int lastLatitudeSides;
+		private double lastDiameter;
+
 		public HalfSphereObject3D()
 		{
 			Name = "Half Sphere".Localize();
@@ -93,19 +97,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var radius = Diameter / 2;
-					var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-					var angle = 0.0;
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-					for (int i = 0; i < LatitudeSides; i++)
+					if (LongitudeSides != lastLongitudeSides
+						|| LatitudeSides != lastLatitudeSides
+						|| Diameter != lastDiameter)
 					{
-						angle += angleDelta;
+						var radius = Diameter / 2;
+						var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+						var angle = 0.0;
+						var path = new VertexStorage();
+						path.MoveTo(0, 0);
 						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+						for (int i = 0; i < LatitudeSides; i++)
+						{
+							angle += angleDelta;
+							path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+						}
+
+						Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 					}
 
-					Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
+					lastDiameter = Diameter;
+					lastLongitudeSides = LongitudeSides;
+					lastLatitudeSides = LatitudeSides;
 				}
 			}
 

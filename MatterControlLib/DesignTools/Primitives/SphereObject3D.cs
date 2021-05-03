@@ -114,17 +114,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					if (Sides == lastSides
-						&& LatitudeSides == lastLatitudeSides
-						&& StartingAngle == lastStartingAngle
-						&& EndingAngle == lastEndingAngle)
-					{
-						if (lastDiameter != Diameter)
-						{
-							Mesh.Transform(Matrix4X4.CreateScale(1 / lastDiameter) * Matrix4X4.CreateScale(Diameter));
-						}
-					}
-					else
+					if (Sides != lastSides
+						|| LatitudeSides != lastLatitudeSides
+						|| StartingAngle != lastStartingAngle
+						|| EndingAngle != lastEndingAngle
+						|| Diameter != lastDiameter)
 					{
 						var startingAngle = StartingAngle;
 						var endingAngle = EndingAngle;
@@ -141,6 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					lastDiameter = Diameter;
 					lastEndingAngle = EndingAngle;
+					lastStartingAngle = StartingAngle;
 					lastSides = Sides;
 					lastLatitudeSides = LatitudeSides;
 				}
