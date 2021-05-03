@@ -67,12 +67,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private ScaleController scaleController;
 
-		public ScaleHeightControl(IObject3DControlContext context, Func<double> getDiameter = null, Action<double> setDiameter = null)
+		public ScaleHeightControl(IObject3DControlContext context, List<Func<double>> getDiameters = null, List<Action<double>> setDiameters = null)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getDiameter, setDiameter);
+			scaleController = new ScaleController(getDiameters, setDiameters);
 			
 			heightValueDisplayInfo = new InlineEditControl()
 			{
