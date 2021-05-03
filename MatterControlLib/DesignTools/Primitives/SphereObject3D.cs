@@ -42,6 +42,12 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class SphereObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
+		private int lastSides;
+		private int lastLatitudeSides;
+		private double lastStartingAngle;
+		private double lastEndingAngle;
+		private double lastDiameter;
+
 		public SphereObject3D()
 		{
 			Name = "Sphere".Localize();
@@ -108,17 +114,35 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var startingAngle = StartingAngle;
-					var endingAngle = EndingAngle;
-					var latitudeSides = LatitudeSides;
-					if (!Advanced)
+					if (Sides == lastSides
+						&& LatitudeSides == lastLatitudeSides
+						&& StartingAngle == lastStartingAngle
+						&& EndingAngle == lastEndingAngle)
 					{
-						startingAngle = 0;
-						endingAngle = 360;
-						latitudeSides = Sides;
+						if (lastDiameter != Diameter)
+						{
+							Mesh.Transform(Matrix4X4.CreateScale(1 / lastDiameter) * Matrix4X4.CreateScale(Diameter));
+						}
+					}
+					else
+					{
+						var startingAngle = StartingAngle;
+						var endingAngle = EndingAngle;
+						var latitudeSides = LatitudeSides;
+						if (!Advanced)
+						{
+							startingAngle = 0;
+							endingAngle = 360;
+							latitudeSides = Sides;
+						}
+
+						Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
 					}
 
-					Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
+					lastDiameter = Diameter;
+					lastEndingAngle = EndingAngle;
+					lastSides = Sides;
+					lastLatitudeSides = LatitudeSides;
 				}
 			}
 

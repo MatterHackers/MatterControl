@@ -167,14 +167,21 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
+					var color = theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255);
 					if (MouseIsOver || MouseDownOnControl)
 					{
-						GLHelper.Render(grabControlMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(grabControlMesh, color, TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(grabControlMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
+						color = theme.TextColor;
+						GLHelper.Render(grabControlMesh, color.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
+
+					Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
+					var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
+					var translation = Matrix4X4.CreateTranslation(newBottomCenter);
+					Object3DControlContext.World.RenderRing(rotation * translation, Vector3.Zero, getDiameter(), 60, color.WithAlpha(e.Alpha0to255), 2, 0, e.ZBuffered);
 				}
 
 				if (hitPlane != null)
@@ -205,8 +212,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				diameterValueDisplayInfo.Visible = true;
 
-				var edge = ObjectSpace.GetEdgePosition(selectedItem, 0);
-				var otherSide = ObjectSpace.GetEdgePosition(selectedItem, 2);
+				var (edge, otherSide) = GetHitPosition(selectedItem);
 
 				var upNormal = (edge - otherSide).GetNormal();
 				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
@@ -248,8 +254,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 					var lockedBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
 
-					var grabPositionEdge = ObjectSpace.GetEdgePosition(selectedItem, 2);
-					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, 0) - grabPositionEdge).GetNormal();
+					var (hit, otherSide) = GetHitIndices(selectedItem);
+					var grabPositionEdge = ObjectSpace.GetEdgePosition(selectedItem, otherSide);
+					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, hit) - grabPositionEdge).GetNormal();
 					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
@@ -298,20 +305,56 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
-			// create the transform for the grab control
-			Vector3 edgePosition = ObjectSpace.GetEdgePosition(selectedItem, 0, placement);
+			var (hitPos, etherSide) = GetHitPosition(selectedItem);
 
-			Vector3 boxCenter = edgePosition;
-
-			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(edgePosition);
-			boxCenter.Y += grabControlSize / 2 * distBetweenPixelsWorldSpace;
-			boxCenter.Z += grabControlSize / 2 * distBetweenPixelsWorldSpace;
-
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(hitPos);
 			var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
 
-			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
+			var centerMatrix = Matrix4X4.CreateTranslation(hitPos);
 			centerMatrix = rotation * Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
+		}
+
+		private (Vector3 edge, Vector3 otherSide) GetHitPosition(IObject3D selectedItem)
+		{
+			var bestZEdgePosition = Vector3.Zero;
+			var otherSide = Vector3.Zero;
+			var bestCornerZ = double.PositiveInfinity;
+			// get the closest z on the bottom in view space
+			for (int i = 0; i < 4; i++)
+			{
+				Vector3 cornerPosition = ObjectSpace.GetEdgePosition(selectedItem, i, placement);
+				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
+				if (cornerScreenSpace.Z < bestCornerZ)
+				{
+					bestCornerZ = cornerScreenSpace.Z;
+					bestZEdgePosition = cornerPosition;
+					otherSide = ObjectSpace.GetEdgePosition(selectedItem, (i + 2) % 4, placement);
+				}
+			}
+
+			return (bestZEdgePosition, otherSide);
+		}
+
+		private (int edge, int otherSide) GetHitIndices(IObject3D selectedItem)
+		{
+			var bestZEdgePosition = -1;
+			var otherSide = -1;
+			var bestCornerZ = double.PositiveInfinity;
+			// get the closest z on the bottom in view space
+			for (int i = 0; i < 4; i++)
+			{
+				Vector3 cornerPosition = ObjectSpace.GetEdgePosition(selectedItem, i, placement);
+				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
+				if (cornerScreenSpace.Z < bestCornerZ)
+				{
+					bestCornerZ = cornerScreenSpace.Z;
+					bestZEdgePosition = i;
+					otherSide = (i + 2) % 4;
+				}
+			}
+
+			return (bestZEdgePosition, otherSide);
 		}
 
 		private void DrawMeasureLines(DrawGlContentEventArgs e)

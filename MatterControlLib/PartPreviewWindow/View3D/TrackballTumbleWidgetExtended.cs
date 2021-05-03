@@ -116,8 +116,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (hitPlane != null)
 			{
-				world.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
-				world.RenderPlane(mouseDownWorldPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+				//world.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
+				//world.RenderPlane(mouseDownWorldPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
 			}
 		}
 
