@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -218,12 +219,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
+			var getDiameters = new List<Func<double>>() { () => Diameter, () => DiameterTop };
+			var setDiameters = new List<Action<double>>() { (diameter) => Diameter = diameter, (diameter) => DiameterTop = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
-				() => Diameter,
-				(diameter) => Diameter = diameter));
+				getDiameters,
+				setDiameters,
+				0,
+				controlVisible: () => true));
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getDiameters,
+				setDiameters,
+				1,
+				ObjectSpace.Placement.Top,
+				controlVisible: () => Advanced));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
-				() => Diameter,
-				(diameter) => Diameter = diameter));
+				getDiameters,
+				setDiameters));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}

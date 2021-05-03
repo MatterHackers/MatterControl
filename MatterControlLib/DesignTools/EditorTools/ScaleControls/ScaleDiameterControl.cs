@@ -41,6 +41,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
 {
@@ -64,19 +65,29 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 initialHitPosition;
 
 		private ScaleController scaleController;
-		private Func<double> getDiameter;
-		private Action<double> setDiameter;
+		private List<Func<double>> getDiameters;
+		private readonly Func<bool> controlVisible;
 		private readonly ObjectSpace.Placement placement;
+		private readonly int diameterIndex;
+		private readonly double angleOffset;
 
-		public ScaleDiameterControl(IObject3DControlContext context, Func<double> getDiameter, Action<double> setDiameter, ObjectSpace.Placement placement = ObjectSpace.Placement.Bottom)
+		public ScaleDiameterControl(IObject3DControlContext context,
+			List<Func<double>> getDiameters,
+			List<Action<double>> setDiameters,
+			int diameterIndex,
+			ObjectSpace.Placement placement = ObjectSpace.Placement.Bottom,
+			Func<bool> controlVisible = null,
+			double angleOffset = 0)
 			: base(context)
 		{
-			this.getDiameter = getDiameter;
-			this.setDiameter = setDiameter;
+			this.getDiameters = getDiameters;
+			this.controlVisible = controlVisible;
 			this.placement = placement;
+			this.diameterIndex = diameterIndex;
+			this.angleOffset = angleOffset;
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getDiameter, setDiameter);
+			scaleController = new ScaleController(getDiameters, setDiameters);
 
 			diameterValueDisplayInfo = new InlineEditControl()
 			{
@@ -86,15 +97,15 @@ namespace MatterHackers.Plugins.EditorTools
 
 			diameterValueDisplayInfo.EditComplete += async (s, e) =>
 			{
-				var newDiameter = diameterValueDisplayInfo.Value != 0 ? diameterValueDisplayInfo.Value : getDiameter();
+				var newDiameter = diameterValueDisplayInfo.Value != 0 ? diameterValueDisplayInfo.Value : getDiameters[diameterIndex]();
 
-				if (newDiameter == scaleController.FinalState.Diameter)
+				if (newDiameter == scaleController.FinalState.Diameters[diameterIndex])
 				{
 					return;
 				}
 
 				Vector3 lockedEdge = ObjectSpace.GetCenterPosition(ActiveSelectedItem, placement);
-				scaleController.ScaleDiameter(newDiameter);
+				scaleController.ScaleDiameter(newDiameter, diameterIndex);
 				await ActiveSelectedItem.Rebuild();
 				// and keep the locked edge in place
 				Vector3 newLockedEdge = ObjectSpace.GetCenterPosition(ActiveSelectedItem, placement);
@@ -150,7 +161,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void Draw(DrawGlContentEventArgs e)
 		{
-			bool shouldDrawScaleControls = true;
+			bool shouldDrawScaleControls = controlVisible == null ? true : controlVisible();
 			if (Object3DControlContext.SelectedObject3DControl != null
 				&& Object3DControlContext.SelectedObject3DControl as ScaleDiameterControl == null)
 			{
@@ -181,7 +192,7 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
 					var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
 					var translation = Matrix4X4.CreateTranslation(newBottomCenter);
-					Object3DControlContext.World.RenderRing(rotation * translation, Vector3.Zero, getDiameter(), 60, color.WithAlpha(e.Alpha0to255), 2, 0, e.ZBuffered);
+					Object3DControlContext.World.RenderRing(rotation * translation, Vector3.Zero, getDiameters[diameterIndex](), 60, color.WithAlpha(e.Alpha0to255), 2, 0, e.ZBuffered);
 				}
 
 				if (hitPlane != null)
@@ -191,7 +202,8 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			if (MouseIsOver || MouseDownOnControl)
+			if (shouldDrawScaleControls
+				&& (MouseIsOver || MouseDownOnControl))
 			{
 				DrawMeasureLines(e);
 			}
@@ -260,7 +272,7 @@ namespace MatterHackers.Plugins.EditorTools
 					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
-					var newSize = scaleController.InitialState.Diameter;
+					var newSize = scaleController.InitialState.Diameters[diameterIndex];
 					newSize += deltaAlongStretch * 2;
 					newSize = Math.Max(Math.Max(newSize, .001), Object3DControlContext.SnapGridDistance);
 
@@ -273,7 +285,7 @@ namespace MatterHackers.Plugins.EditorTools
 						newSize = ((int)((newSize / snapGridDistance) + .5)) * snapGridDistance;
 					}
 
-					scaleController.ScaleDiameter(newSize);
+					scaleController.ScaleDiameter(newSize, diameterIndex);
 
 					await selectedItem.Rebuild();
 
@@ -293,7 +305,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
-				if (getDiameter() != scaleController.InitialState.Diameter)
+				if (getDiameters[diameterIndex]() != scaleController.InitialState.Diameters[diameterIndex])
 				{
 					scaleController.EditComplete();
 				}
@@ -305,31 +317,54 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
-			var (hitPos, etherSide) = GetHitPosition(selectedItem);
+			var (hitPos, _) = GetHitPosition(selectedItem);
 
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(hitPos);
-			var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
 
 			var centerMatrix = Matrix4X4.CreateTranslation(hitPos);
-			centerMatrix = rotation * Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
+			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 		}
 
 		private (Vector3 edge, Vector3 otherSide) GetHitPosition(IObject3D selectedItem)
 		{
+			Vector3 GetEdgePosition(IObject3D item, double angle, ObjectSpace.Placement placement)
+			{
+				var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+				var centerPosition = aabb.Center;
+				switch (placement)
+				{
+					case ObjectSpace.Placement.Bottom:
+						centerPosition.Z = aabb.MinXYZ.Z;
+						break;
+					case ObjectSpace.Placement.Center:
+						centerPosition.Z = aabb.Center.Z;
+						break;
+					case ObjectSpace.Placement.Top:
+						centerPosition.Z = aabb.MaxXYZ.Z;
+						break;
+				}
+
+				var offset = new Vector3(getDiameters[diameterIndex]() / 2, 0, 0).Transform(Matrix4X4.CreateRotationZ(angle + angleOffset));
+				centerPosition += offset;
+
+				return centerPosition.Transform(item.Matrix);
+			}
+
 			var bestZEdgePosition = Vector3.Zero;
 			var otherSide = Vector3.Zero;
 			var bestCornerZ = double.PositiveInfinity;
 			// get the closest z on the bottom in view space
-			for (int i = 0; i < 4; i++)
+			var rotations = 16;
+			for (int i = 0; i < rotations; i++)
 			{
-				Vector3 cornerPosition = ObjectSpace.GetEdgePosition(selectedItem, i, placement);
+				Vector3 cornerPosition = GetEdgePosition(selectedItem, MathHelper.Tau * i / rotations, placement);
 				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
 				if (cornerScreenSpace.Z < bestCornerZ)
 				{
 					bestCornerZ = cornerScreenSpace.Z;
 					bestZEdgePosition = cornerPosition;
-					otherSide = ObjectSpace.GetEdgePosition(selectedItem, (i + 2) % 4, placement);
+					otherSide = GetEdgePosition(selectedItem, MathHelper.Tau * i / rotations + MathHelper.Tau / 2, placement);
 				}
 			}
 

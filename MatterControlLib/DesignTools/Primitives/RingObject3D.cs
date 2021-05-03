@@ -28,16 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight
+	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObject3DControlsProvider
 	{
 		public RingObject3D()
 		{
@@ -147,6 +150,26 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var getDiameters = new List<Func<double>>() { () => OuterDiameter, () => InnerDiameter };
+			var setDiameters = new List<Action<double>>() { (diameter) => OuterDiameter = diameter, (diameter) => InnerDiameter = diameter };
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getDiameters,
+				setDiameters,
+				0));
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getDiameters,
+				setDiameters,
+				1,
+				angleOffset: -MathHelper.Tau / 32));
+			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				getDiameters,
+				setDiameters));
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

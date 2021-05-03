@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
@@ -114,17 +115,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					if (Sides == lastSides
-						&& LatitudeSides == lastLatitudeSides
-						&& StartingAngle == lastStartingAngle
-						&& EndingAngle == lastEndingAngle)
-					{
-						if (lastDiameter != Diameter)
-						{
-							Mesh.Transform(Matrix4X4.CreateScale(1 / lastDiameter) * Matrix4X4.CreateScale(Diameter));
-						}
-					}
-					else
+					if (Sides != lastSides
+						|| LatitudeSides != lastLatitudeSides
+						|| StartingAngle != lastStartingAngle
+						|| EndingAngle != lastEndingAngle
+						|| Diameter != lastDiameter)
 					{
 						var startingAngle = StartingAngle;
 						var endingAngle = EndingAngle;
@@ -141,6 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					lastDiameter = Diameter;
 					lastEndingAngle = EndingAngle;
+					lastStartingAngle = StartingAngle;
 					lastSides = Sides;
 					lastLatitudeSides = LatitudeSides;
 				}
@@ -187,8 +183,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
-				() => Diameter,
-				(diameter) => Diameter = diameter,
+				new List<Func<double>>() { () => Diameter },
+				new List<Action<double>>() { (diameter) => Diameter = diameter },
+				0,
 				ObjectSpace.Placement.Center));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
@@ -41,6 +42,10 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class HalfSphereObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
+		private int lastLongitudeSides;
+		private int lastLatitudeSides;
+		private double lastDiameter;
+
 		public HalfSphereObject3D()
 		{
 			Name = "Half Sphere".Localize();
@@ -93,19 +98,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var radius = Diameter / 2;
-					var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-					var angle = 0.0;
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-					for (int i = 0; i < LatitudeSides; i++)
+					if (LongitudeSides != lastLongitudeSides
+						|| LatitudeSides != lastLatitudeSides
+						|| Diameter != lastDiameter)
 					{
-						angle += angleDelta;
+						var radius = Diameter / 2;
+						var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+						var angle = 0.0;
+						var path = new VertexStorage();
+						path.MoveTo(0, 0);
 						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+						for (int i = 0; i < LatitudeSides; i++)
+						{
+							angle += angleDelta;
+							path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+						}
+
+						Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 					}
 
-					Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
+					lastDiameter = Diameter;
+					lastLongitudeSides = LongitudeSides;
+					lastLatitudeSides = LatitudeSides;
 				}
 			}
 
@@ -121,8 +135,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
-				() => Diameter,
-				(diameter) => Diameter = diameter));
+				new List<Func<double>>() { () => Diameter },
+				new List<Action<double>>() { (diameter) => Diameter = diameter },
+				0));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
