@@ -40,6 +40,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
@@ -58,19 +59,21 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private bool hadClickOnControl;
 
-		private double heightOnMouseDown = 0;
-
 		private PlaneShape hitPlane;
 
 		private Vector3 initialHitPosition;
 
 		private Vector3 originalPointToMove;
 
-		public ScaleHeightControl(IObject3DControlContext context)
+		private ScaleController scaleController;
+
+		public ScaleHeightControl(IObject3DControlContext context, Func<double> getDiameter = null, Action<double> setDiameter = null)
 			: base(context)
 		{
-			theme = AppContext.Theme;
+			theme = MatterControl.AppContext.Theme;
 
+			scaleController = new ScaleController(getDiameter, setDiameter);
+			
 			heightValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () =>
@@ -109,17 +112,20 @@ namespace MatterHackers.Plugins.EditorTools
 
 			heightValueDisplayInfo.EditComplete += async (s, e) =>
 			{
+				if (heightValueDisplayInfo.Value == scaleController.FinalState.Height)
+				{
+					return;
+				}
+
 				var selectedItem = activeSelectedItem;
 
-				if (selectedItem is IObjectWithHeight heightObject
-					&& heightValueDisplayInfo.Value != heightObject.Height)
-				{
-					await selectedItem.Rebuild();
+				var bottom = GetBottomPosition(selectedItem);
+				scaleController.ScaleHeight(heightValueDisplayInfo.Value);
+				await selectedItem.Rebuild();
+				var postScaleBottom = GetBottomPosition(selectedItem);
+				selectedItem.Translate(bottom - postScaleBottom);
 
-					Invalidate();
-
-					SetHeightUndo(heightValueDisplayInfo.Value, heightObject.Height);
-				}
+				scaleController.EditComplete();
 			};
 
 			Object3DControlContext.GuiSurface.AddChild(heightValueDisplayInfo);
@@ -143,10 +149,7 @@ namespace MatterHackers.Plugins.EditorTools
 			if (selectedItem != null
 				&& MouseDownOnControl)
 			{
-				if (activeSelectedItem is IObjectWithHeight heightObject)
-				{
-					heightObject.Height = heightOnMouseDown;
-				}
+				scaleController.Cancel();
 
 				MouseDownOnControl = false;
 				MouseIsOver = false;
@@ -154,8 +157,6 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
-
-			base.CancelOperation();
 		}
 
 		public override void Dispose()
@@ -262,10 +263,7 @@ namespace MatterHackers.Plugins.EditorTools
 				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
-				if (selectedItem is IObjectWithHeight heightObject)
-				{
-					heightOnMouseDown = heightObject.Height;
-				}
+				scaleController.SetInitialState(Object3DControlContext);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -318,12 +316,7 @@ namespace MatterHackers.Plugins.EditorTools
 						newSize = ((int)((newSize / snapGridDistance) + .5)) * snapGridDistance;
 					}
 
-					if (selectedItem is IObjectWithHeight heightObject)
-					{
-						heightObject.Height = newSize;
-						selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-					}
-
+					scaleController.ScaleHeight(newSize);
 
 					await selectedItem.Rebuild();
 
@@ -343,9 +336,9 @@ namespace MatterHackers.Plugins.EditorTools
 			if (MouseDownOnControl)
 			{
 				if (activeSelectedItem is IObjectWithHeight heightObject
-					&& heightObject.Height != heightOnMouseDown)
+					&& heightObject.Height != scaleController.InitialState.Height)
 				{
-					SetHeightUndo(heightObject.Height, heightOnMouseDown);
+					scaleController.EditComplete();
 				}
 
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
@@ -419,24 +412,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 					heightValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -heightValueDisplayInfo.LocalBounds.Center.Y);
 				}
-			}
-		}
-
-		private void SetHeightUndo(double doHeight, double undoHeight)
-		{
-			if (activeSelectedItem is IObjectWithHeight heightObject)
-			{
-				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
-				undoBuffer.AddAndDo(new UndoRedoActions(() =>
-				{
-					heightObject.Height = undoHeight;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				},
-				() =>
-				{
-					heightObject.Height = doHeight;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				}));
 			}
 		}
 	}

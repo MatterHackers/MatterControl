@@ -45,13 +45,17 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class LinearExtrudeObject3D : Object3D, IPropertyGridModifier
+	public class LinearExtrudeObject3D : Object3D
+#if DEBUG
+, IPropertyGridModifier
+#endif
 	{
 		public double Height { get; set; } = 5;
 
+#if DEBUG
 		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
-		
+
 		[Description("The amount to inset the bevel")]
 		public double BevelInset { get; set; } = 2;
 
@@ -61,6 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double BevelStart { get; set; } = 4;
 
 		public int BevelSteps { get; set; } = 1;
+#endif
 
 		public override bool CanFlatten => true;
 
@@ -136,6 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			bool valuesChanged = false;
 
+#if DEBUG
 			if (BevelTop)
 			{
 				BevelSteps = agg_basics.Clamp(BevelSteps, 1, 32, ref valuesChanged);
@@ -143,6 +149,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var aabb = this.GetAxisAlignedBoundingBox();
 				BevelInset = agg_basics.Clamp(BevelInset, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
 			}
+#endif
 
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
@@ -153,6 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var vertexSource = this.VertexSource;
 					List<(double height, double inset)> bevel = null;
+#if DEBUG
 					if (BevelTop)
 					{
 						bevel = new List<(double height, double inset)>();
@@ -165,6 +173,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							bevel.Add((height, inset));
 						}
 					}
+#endif
 
 					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height, bevel);
 					if (Mesh.Vertices.Count == 0)
@@ -184,11 +193,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 		}
 
+#if DEBUG
 		public void UpdateControls(PublicPropertyChange change)
 		{
 			change.SetRowVisible(nameof(BevelStart), () => BevelTop);
 			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
 			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
 		}
+#endif
 	}
 }

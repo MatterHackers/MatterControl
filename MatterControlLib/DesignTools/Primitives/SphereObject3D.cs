@@ -33,13 +33,21 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SphereObject3D : PrimitiveObject3D, IPropertyGridModifier
+	public class SphereObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
+		private int lastSides;
+		private int lastLatitudeSides;
+		private double lastStartingAngle;
+		private double lastEndingAngle;
+		private double lastDiameter;
+
 		public SphereObject3D()
 		{
 			Name = "Sphere".Localize();
@@ -106,17 +114,35 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var startingAngle = StartingAngle;
-					var endingAngle = EndingAngle;
-					var latitudeSides = LatitudeSides;
-					if (!Advanced)
+					if (Sides == lastSides
+						&& LatitudeSides == lastLatitudeSides
+						&& StartingAngle == lastStartingAngle
+						&& EndingAngle == lastEndingAngle)
 					{
-						startingAngle = 0;
-						endingAngle = 360;
-						latitudeSides = Sides;
+						if (lastDiameter != Diameter)
+						{
+							Mesh.Transform(Matrix4X4.CreateScale(1 / lastDiameter) * Matrix4X4.CreateScale(Diameter));
+						}
+					}
+					else
+					{
+						var startingAngle = StartingAngle;
+						var endingAngle = EndingAngle;
+						var latitudeSides = LatitudeSides;
+						if (!Advanced)
+						{
+							startingAngle = 0;
+							endingAngle = 360;
+							latitudeSides = Sides;
+						}
+
+						Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
 					}
 
-					Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
+					lastDiameter = Diameter;
+					lastEndingAngle = EndingAngle;
+					lastSides = Sides;
+					lastLatitudeSides = LatitudeSides;
 				}
 			}
 
@@ -156,6 +182,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 			change.SetRowVisible(nameof(LatitudeSides), () => Advanced);
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter,
+				ObjectSpace.Placement.Center));
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

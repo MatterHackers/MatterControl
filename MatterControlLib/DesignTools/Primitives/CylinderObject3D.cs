@@ -36,11 +36,13 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight
+	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObject3DControlsProvider
 	{
 		public CylinderObject3D()
 		{
@@ -212,6 +214,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				endingAngleWidget.Visible = Advanced;
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

@@ -110,9 +110,7 @@ namespace MatterHackers.MeshVisualizer
 			Object3DControlContext.GuiSurface.Invalidate();
 		}
 
-		public virtual void CancelOperation()
-		{
-		}
+		public abstract void CancelOperation();
 
 		public virtual void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{

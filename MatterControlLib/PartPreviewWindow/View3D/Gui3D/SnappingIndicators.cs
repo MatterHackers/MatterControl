@@ -138,5 +138,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
+		public override void CancelOperation()
+		{
+		}
 	}
 }

@@ -32,10 +32,12 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ConeObject3D : PrimitiveObject3D, IObjectWithHeight
+	public class ConeObject3D : PrimitiveObject3D, IObjectWithHeight, IObject3DControlsProvider
 	{
 		public ConeObject3D()
 		{
@@ -97,6 +99,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 			return Task.CompletedTask;
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Diameter,
+				(diameter) => Diameter = diameter));
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

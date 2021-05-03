@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			// MeshViewer
-			TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer)
+			TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer, theme)
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};
@@ -1760,6 +1760,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				GL.Enable(EnableCap.Lighting);
 			}
+
+			TrackballTumbleWidget.OnDraw3D();
 
 			// Render 3D GCode if applicable
 			if (sceneContext.LoadedGCode != null
