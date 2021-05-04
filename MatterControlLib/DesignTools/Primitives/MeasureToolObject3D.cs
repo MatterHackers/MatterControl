@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -266,6 +265,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (PositionsHaveBeenSet)
 			{
 				CreateWidgetIfRequired(controlLayer);
+				// always keep the displayed distance the actual world distance
+				var worldStartPosition = LocalStartPosition.Transform(this.WorldMatrix());
+				var worldEndPosition = LocalEndPosition.Transform(this.WorldMatrix());
+				Distance = (worldStartPosition - worldEndPosition).Length;
 				textWidget.Text = Distance.ToString("0.##");
 				containerWidget.Position = center - new Vector2(containerWidget.LocalBounds.Width / 2, containerWidget.LocalBounds.Height / 2);
 				containerWidget.Visible = true;

@@ -127,7 +127,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (MouseCaptured)
 			{
-				Vector2 currentMousePosition = GetMousePosition(mouseEvent);
 				ZeroVelocity();
 
 				CalculateMouseDownPostionAndPlane(mouseEvent.Position);
@@ -140,18 +139,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							case TrackBallTransformType.Rotation:
 								CurrentTrackingType = TrackBallTransformType.Rotation;
-								StartRotateAroundOrigin(currentMousePosition);
+								StartRotateAroundOrigin(mouseEvent.Position);
 								break;
 
 							case TrackBallTransformType.Translation:
 								CurrentTrackingType = TrackBallTransformType.Translation;
-								mouseDownPosition = currentMousePosition;
+								mouseDownPosition = mouseEvent.Position;
 								break;
 
 							case TrackBallTransformType.Scale:
 								CurrentTrackingType = TrackBallTransformType.Scale;
-								mouseDownPosition = currentMousePosition;
-								lastScaleMousePosition = currentMousePosition;
+								mouseDownPosition = mouseEvent.Position;
+								lastScaleMousePosition = mouseEvent.Position;
 								break;
 						}
 					}
@@ -161,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						CurrentTrackingType = TrackBallTransformType.Translation;
-						mouseDownPosition = currentMousePosition;
+						mouseDownPosition = mouseEvent.Position;
 					}
 				}
 				else if (mouseEvent.Button == MouseButtons.Right)
@@ -169,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						CurrentTrackingType = TrackBallTransformType.Rotation;
-						StartRotateAroundOrigin(currentMousePosition);
+						StartRotateAroundOrigin(mouseEvent.Position);
 					}
 				}
 			}
@@ -179,20 +178,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseMove(mouseEvent);
 
-			Vector2 currentMousePosition = GetMousePosition(mouseEvent);
-
 			if (CurrentTrackingType == TrackBallTransformType.Rotation)
 			{
-				motionQueue.AddMoveToMotionQueue(currentMousePosition, UiThread.CurrentTimerMs);
-				DoRotateAroundOrigin(currentMousePosition);
+				motionQueue.AddMoveToMotionQueue(mouseEvent.Position, UiThread.CurrentTimerMs);
+				DoRotateAroundOrigin(mouseEvent.Position);
 			}
 			else if (CurrentTrackingType == TrackBallTransformType.Translation)
 			{
-				Translate(currentMousePosition);
+				Translate(mouseEvent.Position);
 			}
 			else if (CurrentTrackingType == TrackBallTransformType.Scale)
 			{
-				Vector2 mouseDelta = currentMousePosition - lastScaleMousePosition;
+				Vector2 mouseDelta = mouseEvent.Position - lastScaleMousePosition;
 				double zoomDelta = 1;
 				if (mouseDelta.Y < 0)
 				{
@@ -204,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				ZoomToWorldPosition(mouseDownWorldPosition, zoomDelta);
-				lastScaleMousePosition = currentMousePosition;
+				lastScaleMousePosition = mouseEvent.Position;
 			}
 		}
 
@@ -310,6 +307,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ZeroVelocity();
 			}
+
+			mouseDownPosition = mousePosition;
 
 			isRotating = true;
 
@@ -418,21 +417,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				mouseDownWorldPosition = lastRotationOrigin;
 			}
-		}
-
-		private Vector2 GetMousePosition(MouseEventArgs mouseEvent)
-		{
-			Vector2 currentMousePosition;
-			if (mouseEvent.NumPositions == 1)
-			{
-				currentMousePosition.X = mouseEvent.X;
-				currentMousePosition.Y = mouseEvent.Y;
-			}
-			else
-			{
-				currentMousePosition = (mouseEvent.GetPosition(1) + mouseEvent.GetPosition(0)) / 2;
-			}
-			return currentMousePosition;
 		}
 
 		private Vector3 IntersectPlane(Vector3 planeNormal, Vector3 rayOrigin, Vector3 rayDirection)
