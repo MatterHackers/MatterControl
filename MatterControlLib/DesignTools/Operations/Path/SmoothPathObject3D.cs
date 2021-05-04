@@ -97,8 +97,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// set the mesh to show the path
 					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					UiThread.RunOnIdle(() =>
+					{
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					});
 					return Task.CompletedTask;
 				});
 		}

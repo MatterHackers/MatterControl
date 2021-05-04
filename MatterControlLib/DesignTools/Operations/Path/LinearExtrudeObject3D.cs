@@ -181,14 +181,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						Mesh = null;
 					}
 
-					rebuildLock.Dispose();
-
-					if (valuesChanged)
+					UiThread.RunOnIdle(() =>
 					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+						rebuildLock.Dispose();
+						if (valuesChanged)
+						{
+							Invalidate(InvalidateType.DisplayValues);
+						}
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+					});
 					return Task.CompletedTask;
 				});
 		}

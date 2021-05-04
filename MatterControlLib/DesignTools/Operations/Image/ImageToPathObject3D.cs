@@ -345,8 +345,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						this.Invalidate(InvalidateType.Properties);
 					}
 
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					UiThread.RunOnIdle(() =>
+					{
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					});
+
 					return Task.CompletedTask;
 				});
 		}

@@ -108,6 +108,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				return Task.CompletedTask;
 			}
 
+			var rebuildLocks = this.RebuilLockAll();
+
 			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var generatedMesh = Lithophane.Generate(
@@ -130,7 +132,11 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				// Apply offset
 				this.Matrix *= Matrix4X4.CreateTranslation(-this.ImageOffset);
 
-				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+				UiThread.RunOnIdle(() =>
+				{
+					rebuildLocks.Dispose();
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+				});
 
 				return Task.CompletedTask;
 			});

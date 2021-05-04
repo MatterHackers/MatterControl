@@ -196,8 +196,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					Mesh = mesh;
 
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+					UiThread.RunOnIdle(() =>
+					{
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 					return Task.CompletedTask;
 				});
 		}

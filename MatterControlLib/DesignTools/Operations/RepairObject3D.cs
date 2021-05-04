@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using g3;
 using gs;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -100,14 +101,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					this.FinalVertices = finalVertices;
 
 					SourceContainer.Visible = false;
-					rebuildLocks.Dispose();
 
-					if (valuesChanged)
+					UiThread.RunOnIdle(() =>
 					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						rebuildLocks.Dispose();
+						if (valuesChanged)
+						{
+							Invalidate(InvalidateType.DisplayValues);
+						}
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 
 					return Task.CompletedTask;
 				});

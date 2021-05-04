@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -157,14 +158,15 @@ namespace MatterHackers.MatterControl.DesignTools
 						this.Children.Add(child);
 					}
 
-					rebuildLocks.Dispose();
-
-					if (valuesChanged)
+					UiThread.RunOnIdle(() =>
 					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						rebuildLocks.Dispose();
+						if (valuesChanged)
+						{
+							Invalidate(InvalidateType.DisplayValues);
+						}
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 
 					return Task.CompletedTask;
 				});

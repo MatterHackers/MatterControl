@@ -136,48 +136,50 @@ namespace MatterHackers.MatterControl.DesignTools
 			var rebuildLock = RebuildLock();
 
 			return Task.Run(() =>
+			{
+				using (new CenterAndHeightMaintainer(this))
 				{
-					using (new CenterAndHeightMaintainer(this))
+					if (string.IsNullOrWhiteSpace(NameToWrite))
 					{
-						if (string.IsNullOrWhiteSpace(NameToWrite))
-						{
-							Mesh = PlatonicSolids.CreateCube(20, 10, Height);
-						}
-						else
-						{
-							Mesh = null;
-							this.Children.Modify(list =>
-							{
-								list.Clear();
-
-								var offest = 0.0;
-								double pointsToMm = 0.352778;
-
-								foreach (var letter in this.NameToWrite.ToCharArray())
-								{
-									var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
-									{
-										ResolutionScale = 10
-									};
-									var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-
-									list.Add(new Object3D()
-									{
-										Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
-										Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
-										Name = letter.ToString()
-									});
-
-									offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
-								}
-							});
-						}
+						Mesh = PlatonicSolids.CreateCube(20, 10, Height);
 					}
+					else
+					{
+						Mesh = null;
+						this.Children.Modify(list =>
+						{
+							list.Clear();
 
+							var offest = 0.0;
+							double pointsToMm = 0.352778;
+
+							foreach (var letter in this.NameToWrite.ToCharArray())
+							{
+								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
+								{
+									ResolutionScale = 10
+								};
+								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+
+								list.Add(new Object3D()
+								{
+									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
+									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
+									Name = letter.ToString()
+								});
+
+								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+							}
+						});
+					}
+				}
+
+				UiThread.RunOnIdle(() =>
+				{
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					return Task.CompletedTask;
 				});
+			});
 		}
 	}
 }

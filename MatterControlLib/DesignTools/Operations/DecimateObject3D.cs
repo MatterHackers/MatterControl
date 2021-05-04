@@ -163,14 +163,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					SourceContainer.Visible = false;
-					rebuildLocks.Dispose();
 
-					if (valuesChanged)
+					UiThread.RunOnIdle(() =>
 					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						rebuildLocks.Dispose();
+						if (valuesChanged)
+						{
+							Invalidate(InvalidateType.DisplayValues);
+						}
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 
 					return Task.CompletedTask;
 				});

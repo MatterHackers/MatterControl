@@ -341,14 +341,16 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.AddRange(twistedChildren);
 					});
 
-					rebuildLocks.Dispose();
-
 					if (valuesChanged)
 					{
 						Invalidate(InvalidateType.DisplayValues);
 					}
 
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					UiThread.RunOnIdle(() =>
+					{
+						rebuildLocks.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 
 					return Task.CompletedTask;
 				});

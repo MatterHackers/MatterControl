@@ -223,14 +223,15 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.AddRange(curvedChildren);
 					});
 
-					rebuildLocks.Dispose();
-
-					if (valuesChanged)
+					UiThread.RunOnIdle(() =>
 					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						rebuildLocks.Dispose();
+						if (valuesChanged)
+						{
+							Invalidate(InvalidateType.DisplayValues);
+						}
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
 
 					return Task.CompletedTask;
 				});
