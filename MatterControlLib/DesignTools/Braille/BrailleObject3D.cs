@@ -104,9 +104,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				using (new CenterAndHeightMaintainer(this))
 				{
 					this.Children.Modify(list =>
-				{
-					list.Clear();
-				});
+					{
+						list.Clear();
+					});
 
 					var brailleText = TextToEncode;
 					if (UseGrade2)

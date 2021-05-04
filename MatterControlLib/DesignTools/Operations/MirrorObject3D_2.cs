@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -109,8 +110,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						this.Matrix = oldMatrix;
 						SourceContainer.Visible = false;
-						rebuildLock.Dispose();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						UiThread.RunOnIdle(() =>
+						{
+							rebuildLock.Dispose();
+							Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						});
+
 						return Task.CompletedTask;
 					});
 			}

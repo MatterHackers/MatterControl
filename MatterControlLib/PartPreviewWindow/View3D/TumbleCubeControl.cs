@@ -226,8 +226,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseDown(mouseEvent);
 
+			// store the mouse down so we can check of up if we should move to the clicked spot or we have rotated the cube
 			mouseDownPosition = mouseEvent.Position;
-			trackballTumbleWidgetExtended.StartRotateAroundOrigin(mouseDownPosition);
+			trackballTumbleWidgetExtended.StartRotateAroundOrigin(mouseEvent.Position);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)

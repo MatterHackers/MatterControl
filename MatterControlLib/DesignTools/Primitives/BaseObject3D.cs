@@ -246,8 +246,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 					}
 
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					UiThread.RunOnIdle(() =>
+					{
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+					});
+
 					return Task.CompletedTask;
 				});
 		}
