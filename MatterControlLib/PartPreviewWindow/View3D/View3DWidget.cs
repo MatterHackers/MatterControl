@@ -1391,7 +1391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ResetView()
 		{
-			TrackballTumbleWidget.Reset(-new Vector3(sceneContext.BedCenter));
+			TrackballTumbleWidget.Reset(new Vector3(sceneContext.BedCenter));
 
 			var world = sceneContext.World;
 
