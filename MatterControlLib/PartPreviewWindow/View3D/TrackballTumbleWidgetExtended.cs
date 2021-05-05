@@ -306,8 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lastRotationOrigin = Vector3.Zero;
 			rotateVec = Vector3.Zero;
 			rotateVecOriginal = Vector3.Zero;
-			this.bedCenter = Vector3.Zero;
-			this.bedCenter = bedCenter;
+			this.bedCenter = -bedCenter;
 			mouseDownWorldPosition = bedCenter;
 		}
 
