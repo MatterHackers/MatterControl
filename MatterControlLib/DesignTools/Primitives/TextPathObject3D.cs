@@ -141,6 +141,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+				vertexSource = (VertexStorage)vertexSource.Union(vertexSource);
+
 				this.VertexSource = vertexSource;
 				base.Mesh = null;
 			}

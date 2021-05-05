@@ -78,7 +78,7 @@ public static class VertexSourceExtensions
 		clipper.AddPaths(bPolys, PolyType.ptClip, true);
 
 		var outputPolys = new List<List<IntPoint>>();
-		clipper.Execute(clipType, outputPolys);
+		clipper.Execute(clipType, outputPolys, PolyFillType.pftNonZero);
 
 		Clipper.CleanPolygons(outputPolys);
 
