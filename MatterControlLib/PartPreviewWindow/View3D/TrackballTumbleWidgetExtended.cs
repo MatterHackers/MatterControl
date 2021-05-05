@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool isRotating = false;
 		private Vector3 lastRotationOrigin = Vector3.Zero;
 		private Vector2 lastScaleMousePosition = Vector2.Zero;
-		private Vector2 mouseDownPosition = Vector2.Zero;
+		private Vector2 rotationStartPosition = Vector2.Zero;
 		private Vector3 mouseDownWorldPosition;
 		private Object3DControlsLayer Object3DControlLayer;
 		private Vector3 rotateVec = Vector3.Zero;
@@ -33,6 +33,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RunningInterval runningInterval;
 		private ThemeConfig theme;
 		private WorldView world;
+		private Vector2 mouseDown;
 
 		public TrackballTumbleWidgetExtended(WorldView world, GuiWidget sourceWidget, Object3DControlsLayer Object3DControlLayer, ThemeConfig theme)
 		{
@@ -62,14 +63,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallTransformType CurrentTrackingType { get; set; } = TrackBallTransformType.None;
 		public TrackBallController TrackBallController { get; }
 		public TrackBallTransformType TransformState { get; set; }
-		public float ZoomDelta { get; set; } = 0.2f;
+		public double ZoomDelta { get; set; } = 0.2f;
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
 			if (isRotating)
 			{
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, mouseDownPosition, mousePosition, false);
-				mouseDownPosition = mousePosition;
+				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, rotationStartPosition, mousePosition, false);
+				rotationStartPosition = mousePosition;
 				world.Translate(rotateVec);
 				rotateVec = Vector3Ex.TransformVector(rotateVec, world.RotationMatrix);
 
@@ -118,6 +119,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				//world.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
 				//world.RenderPlane(mouseDownWorldPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+
+				//world.RenderAxis(mouseDownWorldPosition, Matrix4X4.Identity, 100, 1);
 			}
 		}
 
@@ -125,6 +128,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseDown(mouseEvent);
 
+			mouseDown = mouseEvent.Position;
+			
 			if (MouseCaptured)
 			{
 				ZeroVelocity();
@@ -144,12 +149,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							case TrackBallTransformType.Translation:
 								CurrentTrackingType = TrackBallTransformType.Translation;
-								mouseDownPosition = mouseEvent.Position;
 								break;
 
 							case TrackBallTransformType.Scale:
 								CurrentTrackingType = TrackBallTransformType.Scale;
-								mouseDownPosition = mouseEvent.Position;
 								lastScaleMousePosition = mouseEvent.Position;
 								break;
 						}
@@ -160,7 +163,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						CurrentTrackingType = TrackBallTransformType.Translation;
-						mouseDownPosition = mouseEvent.Position;
 					}
 				}
 				else if (mouseEvent.Button == MouseButtons.Right)
@@ -190,17 +192,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (CurrentTrackingType == TrackBallTransformType.Scale)
 			{
 				Vector2 mouseDelta = mouseEvent.Position - lastScaleMousePosition;
-				double zoomDelta = 1;
+				double zoomDelta = 0;
 				if (mouseDelta.Y < 0)
 				{
 					zoomDelta = -1 * mouseDelta.Y / 100;
 				}
 				else if (mouseDelta.Y > 0)
 				{
-					zoomDelta = -1 * mouseDelta.Y / 100;
+					zoomDelta = -mouseDelta.Y / 100.0;
 				}
 
-				ZoomToWorldPosition(mouseDownWorldPosition, zoomDelta);
+				if (zoomDelta != 0)
+				{
+					ZoomToMousePosition(mouseDown, zoomDelta);
+				}
 				lastScaleMousePosition = mouseEvent.Position;
 			}
 		}
@@ -237,18 +242,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (this.ContainsFirstUnderMouseRecursive())
 			{
-				var ray = world.GetRayForLocalBounds(mouseEvent.Position);
-				IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(ray);
-				Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
+				var mousePosition = mouseEvent.Position;
+				var zoomDelta = mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta;
+				ZoomToMousePosition(mousePosition, zoomDelta);
+			}
+		}
 
-				// if no object is found under the mouse trace from center to xy plane
-				if (hitPos == Vector3.Zero)
+		private void ZoomToMousePosition(Vector2 mousePosition, double zoomDelta)
+		{
+			var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
+			var rayAtMousePosition = world.GetRayForLocalBounds(mousePosition);
+			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayAtMousePosition);
+			if (intersectionInfo != null)
+			{
+				// we hit an object in the scene set the position to that
+				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
+				ZoomToWorldPosition(intersectionInfo.HitPosition, zoomDelta);
+				mouseDownWorldPosition = intersectionInfo.HitPosition;
+			}
+			else
+			{
+				// we did not hit anything
+				// find a new 3d mouse position by hitting the screen plane at the distance of the last 3d mouse down position
+				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
+				intersectionInfo = hitPlane.GetClosestIntersection(rayAtMousePosition);
+				if (intersectionInfo != null)
 				{
-					var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-					hitPos = IntersectXYPlane(rayAtScreenCenter.origin, new Vector3(rayAtScreenCenter.directionNormal).GetNormal());
+					ZoomToWorldPosition(intersectionInfo.HitPosition, zoomDelta);
+					mouseDownWorldPosition = intersectionInfo.HitPosition;
 				}
-
-				ZoomToWorldPosition(hitPos, mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
+				else
+				{
+					int a = 0;
+				}
 			}
 		}
 
@@ -280,9 +306,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lastRotationOrigin = Vector3.Zero;
 			rotateVec = Vector3.Zero;
 			rotateVecOriginal = Vector3.Zero;
-			mouseDownPosition = Vector2.Zero;
 			this.bedCenter = Vector3.Zero;
 			this.bedCenter = bedCenter;
+			mouseDownWorldPosition = bedCenter;
 		}
 
 		public void SetRotationWithDisplacement(Quaternion rotationQ)
@@ -308,7 +334,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ZeroVelocity();
 			}
 
-			mouseDownPosition = mousePosition;
+			rotationStartPosition = mousePosition;
 
 			isRotating = true;
 
@@ -324,15 +350,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ZeroVelocity();
 			}
 
-			double distanceToCenter = (-mouseDownWorldPosition - Vector3Ex.Transform(Vector3.Zero, world.InverseModelviewMatrix)).Length;
-			Vector2 mouseDelta = position - mouseDownPosition;
-			var offset = new Vector3(mouseDelta.X, mouseDelta.Y, 0);
-			offset = offset.TransformPosition(Matrix4X4.Invert(world.RotationMatrix));
-			offset *= distanceToCenter / 1000;
+			var rayAtPosition = world.GetRayForLocalBounds(position);
+			var hitAtPosition = hitPlane.GetClosestIntersection(rayAtPosition);
+
+			var offset = hitAtPosition.HitPosition - mouseDownWorldPosition;
 			bedCenter += offset;
 			world.Translate(offset);
 
-			mouseDownPosition = position;
 			Invalidate();
 		}
 
@@ -380,7 +404,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						Vector2 center = LocalBounds.Center;
-						mouseDownPosition = center;
+						rotationStartPosition = center;
 						DoRotateAroundOrigin(center + currentVelocityPerMs * msPerUpdate);
 						Invalidate();
 
@@ -396,26 +420,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CalculateMouseDownPostionAndPlane(Vector2 mousePosition)
 		{
-			mouseDownPosition = mousePosition;
-			var rayToCenter = world.GetRayForLocalBounds(mousePosition);
-			var intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayToCenter);
-			mouseDownWorldPosition = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
-
+			var rayAtMousePosition = world.GetRayForLocalBounds(mousePosition);
+			var intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayAtMousePosition);
 			var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
-			hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
-
-			if (mouseDownWorldPosition == Vector3.Zero)
+			if (intersectionInfo != null)
 			{
-				mouseDownWorldPosition = IntersectXYPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
-				if (mouseDownWorldPosition.Length > 1000)
-				{
-					mouseDownWorldPosition = Vector3.Zero;
-				}
+				// we hit an object in the scene set the position to that
+				mouseDownWorldPosition = intersectionInfo.HitPosition;
+				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
 			}
-
-			if (mouseDownWorldPosition == Vector3.Zero)
+			else
 			{
-				mouseDownWorldPosition = lastRotationOrigin;
+				// we did not hit anything
+				// find a new 3d mouse position by hitting the screen plane at the distance of the last 3d mouse down position
+				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
+				intersectionInfo = hitPlane.GetClosestIntersection(rayAtMousePosition);
+				if (intersectionInfo != null)
+				{
+					mouseDownWorldPosition = intersectionInfo.HitPosition;
+				}
+				else
+				{
+					int a = 0;
+				}
 			}
 		}
 
