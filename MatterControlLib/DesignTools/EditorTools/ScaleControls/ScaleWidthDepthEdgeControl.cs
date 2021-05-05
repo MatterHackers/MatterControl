@@ -187,11 +187,11 @@ namespace MatterHackers.Plugins.EditorTools
 					//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
 					//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
 				}
-			}
 
-			if (MouseIsOver || MouseDownOnControl)
-			{
-				DrawMeasureLines(e);
+				if (MouseIsOver || MouseDownOnControl)
+				{
+					DrawMeasureLines(e);
+				}
 			}
 
 			base.Draw(e);
