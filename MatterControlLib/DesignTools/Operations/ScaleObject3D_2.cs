@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,29 +42,29 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Use ScaleObject3D_2 instead", false)]
-	public class ScaleObject3D : TransformWrapperObject3D, ISelectedEditorDraw, IPropertyGridModifier
+	public class ScaleObject3D_2 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		public enum ScaleType
 		{
-			Specify,
+			Custom,
 			Inches_to_mm,
 			mm_to_Inches,
 			mm_to_cm,
-			cm_to_mm
+			cm_to_mm,
+			UF_316L,
 		}
 
-		public ScaleObject3D()
+		public ScaleObject3D_2()
 		{
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D(IObject3D item, double x = 1, double y = 1, double z = 1)
+		public ScaleObject3D_2(IObject3D item, double x = 1, double y = 1, double z = 1)
 			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
+		public ScaleObject3D_2(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
 			WrapItems(new IObject3D[] { itemToScale });
@@ -103,12 +98,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
 
-		public ScaleType Operation { get; set; } = ScaleType.Specify;
+		public ScaleType Operation { get; set; } = ScaleType.Custom;
 
-		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Width")]
-		public double SizeX
+		public double Width
 		{
 			get
 			{
@@ -133,10 +126,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Depth")]
-		public double SizeY
+		public double Depth
 		{
 			get
 			{
@@ -161,10 +152,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Height")]
-		public double SizeZ
+		public double Height
 		{
 			get
 			{
@@ -252,12 +241,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(SizeX), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(SizeY), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(SizeZ), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(MaitainProportions), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(Width), () => Operation == ScaleType.Custom);
+			change.SetRowVisible(nameof(Depth), () => Operation == ScaleType.Custom);
+			change.SetRowVisible(nameof(Height), () => Operation == ScaleType.Custom);
+			change.SetRowVisible(nameof(MaitainProportions), () => Operation == ScaleType.Custom);
+			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Custom);
+			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Custom);
 
 			if (change.Changed == nameof(Operation))
 			{
@@ -298,7 +287,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeX))
+			else if (change.Changed == nameof(Width))
 			{
 				if (MaitainProportions)
 				{
@@ -312,7 +301,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeY))
+			else if (change.Changed == nameof(Depth))
 			{
 				if (MaitainProportions)
 				{
@@ -326,7 +315,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeZ))
+			else if (change.Changed == nameof(Height))
 			{
 				if (MaitainProportions)
 				{
