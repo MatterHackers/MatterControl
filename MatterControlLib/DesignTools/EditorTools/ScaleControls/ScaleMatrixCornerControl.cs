@@ -202,9 +202,8 @@ namespace MatterHackers.Plugins.EditorTools
 			base.Draw(e);
 		}
 
-		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine(int quadrant)
+		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine(IObject3D selectedItem, int quadrant)
 		{
-			var selectedItem = RootSelection;
 			var corner = new Vector3[4];
 			var screen = new Vector3[4];
 			for (int i = 0; i < 4; i++)
@@ -236,21 +235,25 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void DrawMeasureLines(DrawGlContentEventArgs e, int quadrant)
 		{
-			var (start0, end0, start1, end1) = GetMeasureLine(quadrant);
-
-			var color = theme.TextColor.WithAlpha(e.Alpha0to255);
-			if (!e.ZBuffered)
+			var selectedItem = RootSelection;
+			if (selectedItem != null)
 			{
-				theme.TextColor.WithAlpha(Constants.LineAlpha);
+				var (start0, end0, start1, end1) = GetMeasureLine(selectedItem, quadrant);
+
+				var color = theme.TextColor.WithAlpha(e.Alpha0to255);
+				if (!e.ZBuffered)
+				{
+					theme.TextColor.WithAlpha(Constants.LineAlpha);
+				}
+
+				Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
+
+				Object3DControlContext.World.Render3DLine(clippingFrustum, start0, end0, color, e.ZBuffered, GuiWidget.DeviceScale);
+				Object3DControlContext.World.Render3DLine(clippingFrustum, start1, end1, color, e.ZBuffered, GuiWidget.DeviceScale);
+				var start = (start0 + end0) / 2;
+				var end = (start1 + end1) / 2;
+				Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 			}
-
-			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
-
-			Object3DControlContext.World.Render3DLine(clippingFrustum, start0, end0, color, e.ZBuffered, GuiWidget.DeviceScale);
-			Object3DControlContext.World.Render3DLine(clippingFrustum, start1, end1, color, e.ZBuffered, GuiWidget.DeviceScale);
-			var start = (start0 + end0) / 2;
-			var end = (start1 + end1) / 2;
-			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 		}
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
@@ -524,15 +527,15 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					UpdateNumberControl(quadrantIndex);
-					UpdateNumberControl(quadrantIndex + 1);
+					UpdateNumberControl(selectedItem, quadrantIndex);
+					UpdateNumberControl(selectedItem, quadrantIndex + 1);
 				}
 			}
 		}
 
-		private void UpdateNumberControl(int quadrant)
+		private void UpdateNumberControl(IObject3D selectedItem, int quadrant)
 		{
-			var (start0, end0, start1, end1) = GetMeasureLine(quadrant);
+			var (start0, end0, start1, end1) = GetMeasureLine(selectedItem, quadrant);
 			var start = (start0 + end0) / 2;
 			var end = (start1 + end1) / 2;
 			var screenStart = Object3DControlContext.World.GetScreenPosition(start);
