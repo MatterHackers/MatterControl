@@ -191,12 +191,12 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector3 endPosition = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
 					Object3DControlContext.World.Render3DLine(startPosition, endPosition, theme.TextColor.WithAlpha(e.Alpha0to255), e.ZBuffered, GuiWidget.DeviceScale);
 				}
-			}
 
-			if (MouseIsOver || MouseDownOnControl)
-			{
-				DrawMeasureLines(e, quadrantIndex);
-				DrawMeasureLines(e, quadrantIndex + 1);
+				if (MouseIsOver || MouseDownOnControl)
+				{
+					DrawMeasureLines(e, quadrantIndex);
+					DrawMeasureLines(e, quadrantIndex + 1);
+				}
 			}
 
 			base.Draw(e);

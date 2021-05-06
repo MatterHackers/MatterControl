@@ -181,19 +181,19 @@ namespace MatterHackers.Plugins.EditorTools
 					//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
 					//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
 				}
-			}
 
-			if (e != null && selectedItem != null)
-			{
-				Vector3 startPosition = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex);
-				Vector3 endPosition = ObjectSpace.GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
-				Object3DControlContext.World.Render3DLine(startPosition, endPosition, theme.TextColor.WithAlpha(e.Alpha0to255), e.ZBuffered, GuiWidget.DeviceScale);
-			}
+				if (e != null)
+				{
+					Vector3 startPosition = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex);
+					Vector3 endPosition = ObjectSpace.GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
+					Object3DControlContext.World.Render3DLine(startPosition, endPosition, theme.TextColor.WithAlpha(e.Alpha0to255), e.ZBuffered, GuiWidget.DeviceScale);
+				}
 
-			if (MouseIsOver || MouseDownOnControl)
-			{
-				DrawMeasureLines(e, quadrantIndex);
-				DrawMeasureLines(e, quadrantIndex + 1);
+				if (MouseIsOver || MouseDownOnControl)
+				{
+					DrawMeasureLines(e, quadrantIndex);
+					DrawMeasureLines(e, quadrantIndex + 1);
+				}
 			}
 
 			base.Draw(e);
