@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public ScaleType Operation { get; set; } = ScaleType.Specify;
 
+		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
 		[DisplayName("Width")]
 		public double SizeX
@@ -126,6 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
 		[DisplayName("Depth")]
 		public double SizeY
@@ -153,6 +155,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
 		[DisplayName("Height")]
 		public double SizeZ
