@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				IObject3D extrusionObject = imageObject;
 
 				var loadingScale = 32 / extrusionObject.XSize();
-				extrusionObject = new ScaleObject3D(extrusionObject, loadingScale, loadingScale, 1 / extrusionObject.ZSize());
+				extrusionObject = new ScaleObject3D_2(extrusionObject, loadingScale, loadingScale, 1 / extrusionObject.ZSize());
 				extrusionObject = PlaceOnBase(logoBase, extrusionObject);
 
 				this.Children.Add(coinBlank);

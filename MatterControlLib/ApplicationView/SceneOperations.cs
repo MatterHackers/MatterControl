@@ -591,11 +591,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Scale")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(ScaleObject3D),
+				ResultType = typeof(ScaleObject3D_2),
 				TitleResolver = () => "Scale".Localize(),
 				Action = (sceneContext) =>
 				{
-					new ScaleObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
+					new ScaleObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
