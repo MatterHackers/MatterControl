@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,29 +42,34 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Use ScaleObject3D_2 instead", false)]
-	public class ScaleObject3D : TransformWrapperObject3D, ISelectedEditorDraw, IPropertyGridModifier
+	public interface IScaleLocker
 	{
-		public enum ScaleType
+		bool ScaleLocked { get; }
+	}
+
+	public class ScaleObject3D_2 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
+	{
+		public enum ScaleTypes
 		{
-			Specify,
+			Custom,
 			Inches_to_mm,
 			mm_to_Inches,
 			mm_to_cm,
-			cm_to_mm
+			cm_to_mm,
+			Ultrafuse_316L,
 		}
 
-		public ScaleObject3D()
+		public ScaleObject3D_2()
 		{
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D(IObject3D item, double x = 1, double y = 1, double z = 1)
+		public ScaleObject3D_2(IObject3D item, double x = 1, double y = 1, double z = 1)
 			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
+		public ScaleObject3D_2(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
 			WrapItems(new IObject3D[] { itemToScale });
@@ -103,108 +103,127 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
 
-		public ScaleType Operation { get; set; } = ScaleType.Specify;
+		public ScaleTypes ScaleType { get; set; } = ScaleTypes.Custom;
+
+		public enum ScaleMethods
+		{
+			Direct,
+			Percentage,
+		}
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
+		public ScaleMethods ScaleMethod { get; set; } = ScaleMethods.Direct;
+
+		[Description("Ensure that the part maintains its proportions.")]
+		public bool LockProportions { get; set; } = true;
+
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Width")]
-		public double SizeX
+		public double Width
 		{
 			get
 			{
-				if (UsePercentage)
-				{
-					return ScaleRatio.X * 100;
-				}
-
 				return ScaleRatio.X * UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
 			}
 
 			set
 			{
-				if (UsePercentage)
-				{
-					ScaleRatio.X = value / 100;
-				}
-				else
-				{
-					ScaleRatio.X = value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
-				}
+				ScaleRatio.X = value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
+				FixIfLockedProportions(0);
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Depth")]
-		public double SizeY
+		public double Depth
 		{
 			get
 			{
-				if (UsePercentage)
-				{
-					return ScaleRatio.Y * 100;
-				}
-
 				return ScaleRatio.Y * UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
 			}
 
 			set
 			{
-				if (UsePercentage)
-				{
-					ScaleRatio.Y = value / 100;
-				}
-				else
-				{
-					ScaleRatio.Y = value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
-				}
+				ScaleRatio.Y = value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
+				FixIfLockedProportions(1);
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		[DisplayName("Height")]
-		public double SizeZ
+		public double Height
 		{
 			get
 			{
-				if (UsePercentage)
-				{
-					return ScaleRatio.Z * 100;
-				}
-
 				return ScaleRatio.Z * UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
 			}
 
 			set
 			{
-				if (UsePercentage)
-				{
-					ScaleRatio.Z = value / 100;
-				}
-				else
-				{
-					ScaleRatio.Z = value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
-				}
+				ScaleRatio.Z = value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
+				FixIfLockedProportions(2);
 			}
 		}
 
-		[Description("Ensure that the part maintains its proportions.")]
-		[DisplayName("Maintain Proportions")]
-		public bool MaitainProportions { get; set; } = true;
-
-		[Description("Toggle between specifying the size or the percentage to scale.")]
-		public bool UsePercentage { get; set; }
-
-		[Description("This is the position to perform the scale about.")]
-		public Vector3 ScaleAbout { get; set; }
-
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double WidthPercent
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			get
 			{
-				layer.World.RenderAxis(ScaleAbout, this.WorldMatrix(), 30, 1);
+				return ScaleRatio.X * 100;
+			}
+
+			set
+			{
+				ScaleRatio.X = value / 100;
+				FixIfLockedProportions(0);
+			}
+		}
+
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double DepthPercent
+		{
+			get
+			{
+				return ScaleRatio.Y * 100;
+			}
+
+			set
+			{
+				ScaleRatio.Y = value / 100;
+				FixIfLockedProportions(1);
+			}
+		}
+
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double HeightPercent
+		{
+			get
+			{
+				return ScaleRatio.Z * 100;
+			}
+
+			set
+			{
+				ScaleRatio.Z = value / 100;
+				FixIfLockedProportions(2);
+			}
+		}
+
+		public bool ScaleLocked => LockProportions && ScaleType == ScaleTypes.Custom;
+
+		private void FixIfLockedProportions(int index)
+		{
+			if (LockProportions 
+				&& ScaleType == ScaleTypes.Custom)
+			{
+				ScaleRatio[(index + 1) % 3] = ScaleRatio[index];
+				ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
+				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
 		}
 
@@ -239,9 +258,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					// set the matrix for the transform object
 					ItemWithTransform.Matrix = Matrix4X4.Identity;
-					ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(-ScaleAbout);
 					ItemWithTransform.Matrix *= Matrix4X4.CreateScale(ScaleRatio);
-					ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 				}
 			}
 
@@ -252,91 +269,50 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(SizeX), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(SizeY), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(SizeZ), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(MaitainProportions), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Specify);
-			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(Width), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
+			change.SetRowVisible(nameof(Depth), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
+			change.SetRowVisible(nameof(Height), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
+			change.SetRowVisible(nameof(WidthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
+			change.SetRowVisible(nameof(DepthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
+			change.SetRowVisible(nameof(HeightPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
+			change.SetRowVisible(nameof(LockProportions), () => ScaleType == ScaleTypes.Custom);
+			change.SetRowVisible(nameof(ScaleMethod), () => ScaleType == ScaleTypes.Custom);
 
-			if (change.Changed == nameof(Operation))
+			if (change.Changed == nameof(ScaleType))
 			{
 				// recalculate the scaling
 				double scale = 1;
-				switch (Operation)
+				switch (ScaleType)
 				{
-					case ScaleType.Inches_to_mm:
+					case ScaleTypes.Inches_to_mm:
 						scale = 25.4;
 						break;
-					case ScaleType.mm_to_Inches:
+					case ScaleTypes.mm_to_Inches:
 						scale = .0393;
 						break;
-					case ScaleType.mm_to_cm:
+					case ScaleTypes.mm_to_cm:
 						scale = .1;
 						break;
-					case ScaleType.cm_to_mm:
+					case ScaleTypes.cm_to_mm:
 						scale = 10;
 						break;
+					case ScaleTypes.Ultrafuse_316L:
+						ScaleRatio = new Vector3(1.1982, 1.1982, 1.261);
+						Rebuild();
+						return;
 				}
 
 				ScaleRatio = new Vector3(scale, scale, scale);
 				Rebuild();
 			}
-			else if (change.Changed == nameof(UsePercentage))
+			else if (change.Changed == nameof(LockProportions))
 			{
-				// make sure we update the controls on screen to reflect the different data type
-				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
-			}
-			else if (change.Changed == nameof(MaitainProportions))
-			{
-				if (MaitainProportions)
+				if (LockProportions)
 				{
 					var maxScale = Math.Max(ScaleRatio.X, Math.Max(ScaleRatio.Y, ScaleRatio.Z));
 					ScaleRatio = new Vector3(maxScale, maxScale, maxScale);
 					Rebuild();
 					// make sure we update the controls on screen to reflect the different data type
-					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
-				}
-			}
-			else if (change.Changed == nameof(SizeX))
-			{
-				if (MaitainProportions)
-				{
-					// scale y and z to match
-					ScaleRatio[1] = ScaleRatio[0];
-					ScaleRatio[2] = ScaleRatio[0];
-					Rebuild();
-					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
-					// then update the display values
-					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
-				}
-			}
-			else if (change.Changed == nameof(SizeY))
-			{
-				if (MaitainProportions)
-				{
-					// scale y and z to match
-					ScaleRatio[0] = ScaleRatio[1];
-					ScaleRatio[2] = ScaleRatio[1];
-					Rebuild();
-					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
-					// then update the display values
-					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
-				}
-			}
-			else if (change.Changed == nameof(SizeZ))
-			{
-				if (MaitainProportions)
-				{
-					// scale y and z to match
-					ScaleRatio[0] = ScaleRatio[2];
-					ScaleRatio[1] = ScaleRatio[2];
-					Rebuild();
-					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
-					// then update the display values
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}

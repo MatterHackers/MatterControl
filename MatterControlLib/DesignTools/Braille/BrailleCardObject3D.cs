@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var scaleRatio = Math.Max(letterObject.XSize() / 17, letterObject.ZSize() / 17);
 					if (scaleRatio > 1)
 					{
-						letterObject = new ScaleObject3D(letterObject, 1.0 / scaleRatio, 1, 1.0 / scaleRatio);
+						letterObject = new ScaleObject3D_2(letterObject, 1.0 / scaleRatio, 1, 1.0 / scaleRatio);
 					}
 					letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 					letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);

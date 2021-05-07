@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
@@ -132,7 +133,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Depth = newDepth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			if (context.GuiSurface.ModifierKeys == Keys.Shift
+				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
 			{
 				ScaleProportional(newDepth / InitialState.Depth);
 			}
@@ -156,7 +158,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Height = newHeight;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			if (context.GuiSurface.ModifierKeys == Keys.Shift
+				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
 			{
 				ScaleProportional(newHeight / InitialState.Height);
 			}
@@ -168,7 +171,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			if (context.GuiSurface.ModifierKeys == Keys.Shift
+				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
 			{
 				ScaleProportional(newWidth / InitialState.Width);
 			}
@@ -207,7 +211,8 @@ namespace MatterHackers.Plugins.EditorTools
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
 			FinalState.Depth = newDepth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift)
+			if (context.GuiSurface.ModifierKeys == Keys.Shift
+				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
 			{
 				ScaleProportional(newWidth / InitialState.Width);
 			}

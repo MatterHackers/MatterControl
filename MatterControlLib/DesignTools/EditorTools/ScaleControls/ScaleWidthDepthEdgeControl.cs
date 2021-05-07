@@ -365,21 +365,25 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void DrawMeasureLines(DrawGlContentEventArgs e)
 		{
-			var limitsLines = GetMeasureLine();
-
-			var color = theme.TextColor.WithAlpha(e.Alpha0to255);
-			if (!e.ZBuffered)
+			var selectedItem = RootSelection;
+			if (selectedItem != null)
 			{
-				theme.TextColor.WithAlpha(Constants.LineAlpha);
+				var limitsLines = GetMeasureLine(selectedItem);
+
+				var color = theme.TextColor.WithAlpha(e.Alpha0to255);
+				if (!e.ZBuffered)
+				{
+					theme.TextColor.WithAlpha(Constants.LineAlpha);
+				}
+
+				Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
+
+				Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start0, limitsLines.end0, color, e.ZBuffered, GuiWidget.DeviceScale);
+				Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start1, limitsLines.end1, color, e.ZBuffered, GuiWidget.DeviceScale);
+				var start = (limitsLines.start0 + limitsLines.end0) / 2;
+				var end = (limitsLines.start1 + limitsLines.end1) / 2;
+				Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 			}
-
-			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
-
-			Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start0, limitsLines.end0, color, e.ZBuffered, GuiWidget.DeviceScale);
-			Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start1, limitsLines.end1, color, e.ZBuffered, GuiWidget.DeviceScale);
-			var start = (limitsLines.start0 + limitsLines.end0) / 2;
-			var end = (limitsLines.start1 + limitsLines.end1) / 2;
-			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 		}
 
 		private async void EditComplete(object s, EventArgs e)
@@ -437,30 +441,8 @@ namespace MatterHackers.Plugins.EditorTools
 			return false;
 		}
 
-		private Vector3 GetDeltaToOtherSideXy(IObject3D selectedItem, int quadrantIndex)
+		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine(IObject3D selectedItem)
 		{
-			Vector3 cornerPosition = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex);
-			Vector3 cornerPositionCcw = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 1);
-			Vector3 cornerPositionCw = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 3);
-
-			double xDirection = cornerPositionCcw.X - cornerPosition.X;
-			if (xDirection == 0)
-			{
-				xDirection = cornerPositionCw.X - cornerPosition.X;
-			}
-
-			double yDirection = cornerPositionCcw.Y - cornerPosition.Y;
-			if (yDirection == 0)
-			{
-				yDirection = cornerPositionCw.Y - cornerPosition.Y;
-			}
-
-			return new Vector3(xDirection, yDirection, cornerPosition.Z);
-		}
-
-		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine()
-		{
-			var selectedItem = RootSelection;
 			var corner = new Vector3[4];
 			var screen = new Vector3[4];
 			for (int i = 0; i < 4; i++)
@@ -498,7 +480,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					var limitsLines = GetMeasureLine();
+					var limitsLines = GetMeasureLine(selectedItem);
 					var start = (limitsLines.start0 + limitsLines.end0) / 2;
 					var end = (limitsLines.start1 + limitsLines.end1) / 2;
 					var screenStart = Object3DControlContext.World.GetScreenPosition(start);

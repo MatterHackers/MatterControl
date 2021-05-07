@@ -417,11 +417,10 @@ namespace MatterControl.Tests.MatterControl
 				var undoBuffer = new UndoBuffer();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D();
+				var scaleObject = new ScaleObject3D_2();
 				scaleObject.WrapItems(new IObject3D[] { cube }, undoBuffer);
 
 				// ensure that the object did not move
-				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
 				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
@@ -441,10 +440,9 @@ namespace MatterControl.Tests.MatterControl
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D(cube);
+				var scaleObject = new ScaleObject3D_2(cube);
 
 				// ensure that the object did not move
-				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
 				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
@@ -467,10 +465,9 @@ namespace MatterControl.Tests.MatterControl
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D(cube);
+				var scaleObject = new ScaleObject3D_2(cube);
 
 				// ensure that the object did not move
-				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
 				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
