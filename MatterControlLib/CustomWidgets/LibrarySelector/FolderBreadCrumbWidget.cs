@@ -59,12 +59,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.CloseChildren();
 
-			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "upfolder_20.png"), 20, 20, theme.InvertIcons), theme)
+			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,
 				Name = "Library Up Button",
-				ToolTipText = "Up one folder".Localize(),
+				ToolTipText = "Click to go back".Localize(),
 				Margin = theme.ButtonSpacing,
 				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight)
 			};

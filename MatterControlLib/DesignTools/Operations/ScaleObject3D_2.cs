@@ -30,13 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -129,8 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.X = value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
-				FixIfLockedProportions(0);
+				FixIfLockedProportions(0, value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
 			}
 		}
 
@@ -145,8 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.Y = value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
-				FixIfLockedProportions(1);
+				FixIfLockedProportions(1, value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize);
 			}
 		}
 
@@ -161,8 +156,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.Z = value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
-				FixIfLockedProportions(2);
+				FixIfLockedProportions(2, value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize);
 			}
 		}
 
@@ -177,8 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.X = value / 100;
-				FixIfLockedProportions(0);
+				FixIfLockedProportions(0, value / 100);
 			}
 		}
 
@@ -193,8 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.Y = value / 100;
-				FixIfLockedProportions(1);
+				FixIfLockedProportions(1, value / 100);
 			}
 		}
 
@@ -209,21 +201,34 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			set
 			{
-				ScaleRatio.Z = value / 100;
-				FixIfLockedProportions(2);
+				FixIfLockedProportions(2, value / 100);
 			}
 		}
 
-		public bool ScaleLocked => LockProportions && ScaleType == ScaleTypes.Custom;
+		public bool ScaleLocked => LockProportions;
 
-		private void FixIfLockedProportions(int index)
+		private void FixIfLockedProportions(int index, double newScale)
 		{
-			if (LockProportions 
-				&& ScaleType == ScaleTypes.Custom)
+			if (Math.Abs(newScale - ScaleRatio[index]) > .001)
 			{
-				ScaleRatio[(index + 1) % 3] = ScaleRatio[index];
-				ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
-				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+				ScaleRatio[index] = newScale;
+				if (ScaleType != ScaleTypes.Custom)
+				{
+					// WIP: switch back to custom scaling (as we are no longer on a fixed scaling)
+					// needs to:
+					//   - create an undo point for the switch
+					//   - update the properties control to show the right drop down
+					//   - show all the settings
+				}
+
+				if (LockProportions)
+				{
+					ScaleRatio[(index + 1) % 3] = ScaleRatio[index];
+					ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+				}
+
+				Rebuild();
 			}
 		}
 
@@ -299,11 +304,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					case ScaleTypes.Ultrafuse_316L:
 						ScaleRatio = new Vector3(1.1982, 1.1982, 1.261);
 						Rebuild();
+						Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 						return;
 				}
 
 				ScaleRatio = new Vector3(scale, scale, scale);
 				Rebuild();
+				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
 			else if (change.Changed == nameof(LockProportions))
 			{

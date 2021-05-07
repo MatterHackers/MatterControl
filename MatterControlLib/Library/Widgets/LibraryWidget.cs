@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class LibraryWidget : GuiWidget
 	{
-		private readonly FlowLayoutWidget buttonPanel;
 		private readonly ILibraryContext libraryContext;
 		private readonly LibraryListView libraryView;
 
