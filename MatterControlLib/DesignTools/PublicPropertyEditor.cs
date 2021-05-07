@@ -776,6 +776,18 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				};
 
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues)
+						&& field.Content is MHDropDownList list
+						&& list.SelectedValue != property.Value.ToString())
+					{
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+
 				if (addToSettingsRow)
 				{
 					rowContainer = CreateSettingsRow(property, field, theme);

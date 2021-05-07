@@ -659,9 +659,14 @@ namespace MatterHackers.MatterControl
 		{
 			var center = view3D.TrackballTumbleWidget.LocalBounds.Center;
 
-			view3D.TrackballTumbleWidget.TrackBallController.OnMouseDown(center, Matrix4X4.Identity, operation);
-			view3D.TrackballTumbleWidget.TrackBallController.OnMouseMove(center + offset);
-			view3D.TrackballTumbleWidget.TrackBallController.OnMouseUp();
+			var oldState = view3D.TrackballTumbleWidget.TransformState;
+			view3D.TrackballTumbleWidget.TransformState = operation;
+			var mouseEvent = new MouseEventArgs(MouseButtons.Left, 1, center.X, center.Y, 0);
+			view3D.TrackballTumbleWidget.OnMouseDown(mouseEvent);
+			mouseEvent = new MouseEventArgs(mouseEvent, center.X + offset.X, center.Y + offset.Y);
+			view3D.TrackballTumbleWidget.OnMouseMove(mouseEvent);
+			view3D.TrackballTumbleWidget.OnMouseUp(mouseEvent);
+			view3D.TrackballTumbleWidget.TransformState = oldState;
 			view3D.TrackballTumbleWidget.Invalidate();
 		}
 
