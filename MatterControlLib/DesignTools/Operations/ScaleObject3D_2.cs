@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			mm_to_Inches,
 			mm_to_cm,
 			cm_to_mm,
-			UF_316L,
+			Ultrafuse_316L,
 		}
 
 		public ScaleObject3D_2()
@@ -214,11 +214,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public bool ScaleLocked => LockProportions;
+		public bool ScaleLocked => LockProportions && ScaleType == ScaleTypes.Custom;
 
 		private void FixIfLockedProportions(int index)
 		{
-			if (LockProportions)
+			if (LockProportions 
+				&& ScaleType == ScaleTypes.Custom)
 			{
 				ScaleRatio[(index + 1) % 3] = ScaleRatio[index];
 				ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
@@ -275,6 +276,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(DepthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(HeightPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(LockProportions), () => ScaleType == ScaleTypes.Custom);
+			change.SetRowVisible(nameof(ScaleMethod), () => ScaleType == ScaleTypes.Custom);
 
 			if (change.Changed == nameof(ScaleType))
 			{
@@ -294,6 +296,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					case ScaleTypes.cm_to_mm:
 						scale = 10;
 						break;
+					case ScaleTypes.Ultrafuse_316L:
+						ScaleRatio = new Vector3(1.1982, 1.1982, 1.261);
+						Rebuild();
+						return;
 				}
 
 				ScaleRatio = new Vector3(scale, scale, scale);
