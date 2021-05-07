@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public bool Advanced { get; set; } = false;
 
 		[ReadOnly(true)]
+		[DisplayName("")] // clear the display name so this text will be the full width of the editor
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more twist options.";
 
 		[Description("Allows for the repositioning of the rotation origin")]

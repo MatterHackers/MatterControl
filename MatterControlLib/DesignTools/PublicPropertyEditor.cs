@@ -670,12 +670,57 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					rowContainer = new WrappedTextWidget(stringValue,
-						textColor: theme.TextColor,
-						pointSize: 10)
+					WrappedTextWidget wrappedTextWidget = null;
+					if (!string.IsNullOrEmpty(property.DisplayName))
 					{
-						Margin = 5
-					};
+						rowContainer = new GuiWidget()
+						{
+							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Fit,
+							Margin = 9
+						};
+
+						var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
+							textColor: theme.TextColor,
+							pointSize: 10)
+						{
+							VAnchor = VAnchor.Center,
+						});
+
+						var wrapContainer = new GuiWidget()
+						{
+							Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 9, 9, 9),
+							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Fit
+						};
+						wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+						{
+							HAnchor = HAnchor.Stretch
+						};
+						wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
+						wrapContainer.AddChild(wrappedTextWidget);
+						rowContainer.AddChild(wrapContainer);
+					}
+					else
+					{
+						rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
+												textColor: theme.TextColor,
+												pointSize: 10)
+						{
+							Margin = 9
+						};
+					}
+
+					void RefreshField(object s, InvalidateArgs e)
+					{
+						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+						{
+							wrappedTextWidget.Text = property.Value.ToString();
+						}
+					}
+
+					object3D.Invalidated += RefreshField;
+					wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -775,18 +820,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
-
-				void RefreshField(object s, InvalidateArgs e)
-				{
-					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues)
-						&& field.Content is MHDropDownList list
-						&& list.SelectedValue != property.Value.ToString())
-					{
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}
-				}
-
-				object3D.Invalidated += RefreshField;
 
 				if (addToSettingsRow)
 				{

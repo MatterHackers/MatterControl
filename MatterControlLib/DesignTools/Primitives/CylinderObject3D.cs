@@ -130,6 +130,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Advanced { get; set; } = false;
 
+		[ReadOnly(true)]
+		[DisplayName("")] // clear the display name so this text will be the full width of the editor
+		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more cylinder options.";
+
 		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
 
@@ -215,6 +219,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				endingAngleWidget.Visible = Advanced;
 			}
+
+			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)

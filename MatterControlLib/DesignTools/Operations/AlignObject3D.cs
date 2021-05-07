@@ -175,6 +175,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool Advanced { get; set; } = false;
 
+		[ReadOnly(true)]
+		[DisplayName("")] // clear the display name so this text will be the full width of the editor
+		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more align options.";
+
 		[SectionStart("X Axis"), DisplayName("Align")]
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XAlign { get; set; } = Align.None;
@@ -401,6 +405,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(YOffset), () => Advanced);
 			change.SetRowVisible(nameof(ZAlignTo), () => Advanced);
 			change.SetRowVisible(nameof(ZOffset), () => Advanced);
+			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);
 		}
 
 		private static bool IsSet(FaceAlign variableToCheck, FaceAlign faceToCheckFor, FaceAlign faceToAssertNot)

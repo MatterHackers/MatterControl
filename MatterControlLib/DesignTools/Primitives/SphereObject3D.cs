@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
@@ -80,6 +81,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
+
+		[ReadOnly(true)]
+		[DisplayName("")] // clear the display name so this text will be the full width of the editor
+		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more sphere options.";
 
 		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
@@ -178,6 +183,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 			change.SetRowVisible(nameof(LatitudeSides), () => Advanced);
+			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)

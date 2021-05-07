@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public bool ScaleLocked => LockProportions && ScaleType == ScaleTypes.Custom;
+		public bool ScaleLocked => LockProportions;
 
 		private void FixIfLockedProportions(int index, double newScale)
 		{
@@ -214,8 +214,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				ScaleRatio[index] = newScale;
 				if (ScaleType != ScaleTypes.Custom)
 				{
-					ScaleType = ScaleTypes.Custom;
-					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+					// WIP: switch back to custom scaling (as we are no longer on a fixed scaling)
+					// needs to:
+					//   - create an undo point for the switch
+					//   - update the properties control to show the right drop down
+					//   - show all the settings
 				}
 
 				if (LockProportions)
@@ -224,6 +227,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
+
+				Rebuild();
 			}
 		}
 
@@ -299,11 +304,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					case ScaleTypes.Ultrafuse_316L:
 						ScaleRatio = new Vector3(1.1982, 1.1982, 1.261);
 						Rebuild();
+						Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 						return;
 				}
 
 				ScaleRatio = new Vector3(scale, scale, scale);
 				Rebuild();
+				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
 			else if (change.Changed == nameof(LockProportions))
 			{
