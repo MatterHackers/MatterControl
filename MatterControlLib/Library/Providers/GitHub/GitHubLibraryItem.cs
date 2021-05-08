@@ -158,16 +158,17 @@ namespace MatterHackers.MatterControl.Library
 			try
 			{
 				// get the file contents;
-				var downLoadUrl = new HttpRequestMessage(HttpMethod.Get, Url);
-				GitHubContainer.AddCromeHeaders(downLoadUrl);
+				var requestMessage = new HttpRequestMessage(HttpMethod.Get, Url);
+				GitHubContainer.AddCromeHeaders(requestMessage);
 
 				using (var client = new HttpClient())
 				{
-					using (HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl))
+					using (HttpResponseMessage response = await client.SendAsync(requestMessage))
 					{
-						using (var readData = await contentResponse.Content.ReadAsStreamAsync())
+						using (var readData = await response.Content.ReadAsStreamAsync())
 						{
-							await readData.CopyToAsync(fileStream);
+							var totalBytes = response.Content.Headers.ContentLength;
+							await HttpProgress.ProcessContentStream(totalBytes, readData, fileStream, reportProgress);
 						}
 					}
 				}

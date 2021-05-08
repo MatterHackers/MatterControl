@@ -91,8 +91,9 @@ namespace MatterHackers.MatterControl.Library
 
 				this.Children.Add(placeholderItem);
 
+				var itemsToLoad = items.Where(item => item.IsContentFileType()).ToList();
 				// Filter to content file types only
-				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
+				foreach (var item in itemsToLoad)
 				{
 					// Acquire
 					var progressControl = new DragDropLoadProgress(view3DWidget, null, ApplicationController.Instance.Theme);
