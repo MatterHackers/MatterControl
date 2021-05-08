@@ -26,8 +26,10 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
@@ -40,14 +42,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject, ThemeConfig theme)
 		{
+			this.theme = theme;
 			this.TrackingObject = trackingObject;
 			this.view3DWidget = view3DWidget;
 			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
-			progressBar = new ProgressBar(80 * GuiWidget.DeviceScale, 15 * GuiWidget.DeviceScale)
+			var height = 12;
+			progressBar = new ProgressBar(80 * GuiWidget.DeviceScale, height * GuiWidget.DeviceScale)
 			{
 				FillColor = theme.PrimaryAccentColor,
+				BackgroundColor = theme.BackgroundColor,
+				BackgroundRadius = height / 2 * GuiWidget.DeviceScale,
+				BackgroundOutlineWidth = 1 * GuiWidget.DeviceScale,
+				BorderColor = theme.TextColor,
 			};
 		}
+
+		private ThemeConfig theme;
 
 		public IObject3D TrackingObject { get; set; }
 
@@ -63,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox bounds = TrackingObject.GetAxisAlignedBoundingBox(offset);
 
 				Vector3 renderPosition = bounds.GetBottomCorner(2);
-				Vector2 cornerScreenSpace = view3DWidget.Object3DControlLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 0);
+				Vector2 cornerScreenSpace = view3DWidget.Object3DControlLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 10) * GuiWidget.DeviceScale;
 
 				e.Graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.Graphics2D.GetTransform();
@@ -74,7 +84,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (!string.IsNullOrEmpty(this.State))
 				{
-					e.Graphics2D.DrawString(this.State, 0, -20, 11);
+					var stringPrinter = new TypeFacePrinter(this.State, 9, new Vector2(0, -20));
+					var textBounds = stringPrinter.LocalBounds;
+					textBounds.Inflate(textBounds.Height / 4);
+					e.Graphics2D.Render(new RoundedRect(textBounds, textBounds.Height / 4), theme.BackgroundColor);
+					stringPrinter.Render(e.Graphics2D, theme.TextColor);
 				}
 
 				e.Graphics2D.PopTransform();
