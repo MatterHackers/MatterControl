@@ -47,7 +47,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[MarkDownDescription("Drag the spheres to the locations you would like to measure the distance between.")]
+	[MarkDownDescription("Drag the spheres to the locations you would like to measure the distance between. The object on the bed will not print.")]
 	[HideMeterialAndColor]
 	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{

@@ -121,12 +121,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
+				var children = UntransformedChildren;
+				if (children == null)
+				{
+					return 0;
+				}
 				return ScaleRatio.X * UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
 			}
 
 			set
 			{
-				FixIfLockedProportions(0, value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
+				var children = UntransformedChildren;
+				if (children != null)
+				{
+					FixIfLockedProportions(0, value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
+				}
 			}
 		}
 
@@ -136,12 +145,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				return ScaleRatio.Y * UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
+				var children = UntransformedChildren;
+				if (children == null)
+				{
+					return 0;
+				}
+				return ScaleRatio.Y * children.GetAxisAlignedBoundingBox().YSize;
 			}
 
 			set
 			{
-				FixIfLockedProportions(1, value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize);
+				var children = UntransformedChildren;
+				if (children != null)
+				{
+					FixIfLockedProportions(1, value / children.GetAxisAlignedBoundingBox().YSize);
+				}
 			}
 		}
 
@@ -151,12 +169,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				return ScaleRatio.Z * UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
+				var children = UntransformedChildren;
+				if (children == null)
+				{
+					return 0;
+				}
+				return ScaleRatio.Z * children.GetAxisAlignedBoundingBox().ZSize;
 			}
 
 			set
 			{
-				FixIfLockedProportions(2, value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize);
+				var children = UntransformedChildren;
+				if (children != null)
+				{
+					FixIfLockedProportions(2, value / children.GetAxisAlignedBoundingBox().ZSize);
+				}
 			}
 		}
 

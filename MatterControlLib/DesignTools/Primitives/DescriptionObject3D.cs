@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
 	[WebPageLink("Resources", "Markdown Help", "https://guides.github.com/features/mastering-markdown/")]
+	[MarkDownDescription("Used to add description within then scene. The object on the bed will not print.")]
 	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
 		private MarkdownWidget markdownWidget;
