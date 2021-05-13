@@ -165,6 +165,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.print_center,
 			SettingsKey.print_leveling_probe_start,
 			SettingsKey.print_leveling_required_to_print,
+			SettingsKey.print_leveling_insets,
 			SettingsKey.print_leveling_solution,
 			SettingsKey.print_time_estimate_multiplier,
 			SettingsKey.printer_name,

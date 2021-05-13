@@ -182,6 +182,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_leveling_probe_start = nameof(print_leveling_probe_start);
 		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
 		public const string print_leveling_solution = nameof(print_leveling_solution);
+		public const string print_leveling_insets = nameof(print_leveling_insets);
 		public const string print_time_estimate_multiplier = nameof(print_time_estimate_multiplier);
 		public const string printer_name = nameof(printer_name);
 		public const string probe_has_been_calibrated = nameof(probe_has_been_calibrated);

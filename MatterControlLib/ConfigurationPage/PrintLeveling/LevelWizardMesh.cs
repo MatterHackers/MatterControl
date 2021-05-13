@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -53,7 +54,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
 
-			aabb.Expand(aabb.XSize * -.1, aabb.YSize * -.1, 0);
+			var insets = printer.Settings.GetValue<Vector4>(SettingsKey.print_leveling_insets);
+			aabb.MinXYZ.X += aabb.XSize * insets[0] / 100.0;
+			aabb.MinXYZ.Y += aabb.YSize * insets[1] / 100.0;
+			aabb.MaxXYZ.X -= aabb.XSize * insets[2] / 100.0;
+			aabb.MaxXYZ.Y -= aabb.YSize * insets[3] / 100.0;
 
 			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
