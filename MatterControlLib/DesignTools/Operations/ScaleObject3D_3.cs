@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,8 +39,22 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Use ScaleObject3D_3 instead", false)]
-	public class ScaleObject3D_2 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
+	public enum LockProportions
+	{
+		[Description("Scale Freely")]
+		None,
+		[Description("Lock the Width & Depth together")]
+		X_Y,
+		[Description("Lock the Width, Depth & Height together")]
+		X_Y_Z
+	}
+
+	public interface IScaleLocker
+	{
+		LockProportions LockProportion { get; }
+	}
+
+	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
 	{
 		public enum ScaleTypes
 		{
@@ -57,17 +66,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Ultrafuse_316L,
 		}
 
-		public ScaleObject3D_2()
+		public ScaleObject3D_3()
 		{
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D_2(IObject3D item, double x = 1, double y = 1, double z = 1)
+		public ScaleObject3D_3(IObject3D item, double x = 1, double y = 1, double z = 1)
 			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public ScaleObject3D_2(IObject3D itemToScale, Vector3 scale)
+		public ScaleObject3D_3(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
 			WrapItems(new IObject3D[] { itemToScale });
@@ -112,8 +121,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public ScaleMethods ScaleMethod { get; set; } = ScaleMethods.Direct;
 
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		[Description("Ensure that the part maintains its proportions.")]
-		public bool LockProportions { get; set; } = true;
+		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
 
 
 		[MaxDecimalPlaces(3)]
@@ -233,8 +244,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public LockProportions LockProportion => LockProportions ? Operations.LockProportions.X_Y_Z: Operations.LockProportions.None;
-
 		private void FixIfLockedProportions(int index, double newScale)
 		{
 			if (Math.Abs(newScale - ScaleRatio[index]) > .001)
@@ -249,11 +258,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					//   - show all the settings
 				}
 
-				if (LockProportions)
+				if (LockProportion == LockProportions.X_Y_Z)
 				{
 					ScaleRatio[(index + 1) % 3] = ScaleRatio[index];
 					ScaleRatio[(index + 2) % 3] = ScaleRatio[index];
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+				}
+				else if (LockProportion == LockProportions.X_Y)
+				{
+					if (index == 0)
+					{
+						ScaleRatio[1] = ScaleRatio[index];
+						Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+					}
+					else if(index == 1)
+					{
+						ScaleRatio[0] = ScaleRatio[index];
+						Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+					}
 				}
 
 				Rebuild();
@@ -340,12 +362,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				Rebuild();
 				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
-			else if (change.Changed == nameof(LockProportions))
+			else if (change.Changed == nameof(LockProportion))
 			{
-				if (LockProportions)
+				if (LockProportion == LockProportions.X_Y_Z)
 				{
 					var maxScale = Math.Max(ScaleRatio.X, Math.Max(ScaleRatio.Y, ScaleRatio.Z));
 					ScaleRatio = new Vector3(maxScale, maxScale, maxScale);
+					Rebuild();
+					// make sure we update the controls on screen to reflect the different data type
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
+				}
+				else if (LockProportion == LockProportions.X_Y)
+				{
+					var maxScale = Math.Max(ScaleRatio.X, ScaleRatio.Y);
+					ScaleRatio = new Vector3(maxScale, maxScale, ScaleRatio.Z);
 					Rebuild();
 					// make sure we update the controls on screen to reflect the different data type
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));

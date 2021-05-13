@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		X_Y_Z
 	}
 
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_2", true)]
+	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_3", true)]
 	public class FitToBoundsObject3D : Object3D, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]

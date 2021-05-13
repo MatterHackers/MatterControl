@@ -591,11 +591,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Scale")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(ScaleObject3D_2),
+				ResultType = typeof(ScaleObject3D_3),
 				TitleResolver = () => "Scale".Localize(),
 				Action = (sceneContext) =>
 				{
-					new ScaleObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+					new ScaleObject3D_3().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
@@ -1014,7 +1014,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Fit to Bounds")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(FitToBoundsObject3D_2),
+				ResultType = typeof(FitToBoundsObject3D_3),
 				TitleResolver = () => "Fit to Bounds".Localize(),
 				Action = async (sceneContext) =>
 				{
@@ -1022,7 +1022,7 @@ namespace MatterHackers.MatterControl
 					var selectedItem = scene.SelectedItem;
 					using (new SelectionMaintainer(scene))
 					{
-						var fit = await FitToBoundsObject3D_2.Create(selectedItem.Clone());
+						var fit = await FitToBoundsObject3D_3.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
 
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
