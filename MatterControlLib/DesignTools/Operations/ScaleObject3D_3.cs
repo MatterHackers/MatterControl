@@ -244,6 +244,54 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double WidthPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.X * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(0, value / 100);
+			}
+		}
+
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double DepthPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.Y * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(1, value / 100);
+			}
+		}
+
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		public double HeightPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.Z * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(2, value / 100);
+			}
+		}
+
 		private void FixIfLockedProportions(int index, double newScale)
 		{
 			if (Math.Abs(newScale - ScaleRatio[index]) > .001)
@@ -330,8 +378,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(WidthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(DepthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(HeightPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
-			change.SetRowVisible(nameof(LockProportions), () => ScaleType == ScaleTypes.Custom);
+			change.SetRowVisible(nameof(LockProportion), () => ScaleType == ScaleTypes.Custom);
 			change.SetRowVisible(nameof(ScaleMethod), () => ScaleType == ScaleTypes.Custom);
+
+			change.SetRowVisible(nameof(WidthPercentDisplay), () => ScaleType != ScaleTypes.Custom);
+			change.SetRowVisible(nameof(DepthPercentDisplay), () => ScaleType != ScaleTypes.Custom);
+			change.SetRowVisible(nameof(HeightPercentDisplay), () => ScaleType != ScaleTypes.Custom);
 
 			if (change.Changed == nameof(ScaleType))
 			{
