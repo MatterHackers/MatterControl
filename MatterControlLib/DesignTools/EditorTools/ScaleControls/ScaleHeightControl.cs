@@ -86,7 +86,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					// if another control gets a hover
 					if (Object3DControlContext.HoveredObject3DControl != this
-					&& Object3DControlContext.HoveredObject3DControl != null)
+						&& Object3DControlContext.HoveredObject3DControl != null)
 					{
 						return true;
 					}

@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -48,21 +43,23 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_3", true)]
-	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, ISelectedEditorDraw
+	public class FitToBoundsObject3D_3 : TransformWrapperObject3D, ISelectedEditorDraw, IObjectWithWidthAndDepth, IObjectWithHeight
 	{
 		private Vector3 boundsSize;
 		private InvalidateType additonalInvalidate;
 
-		public FitToBoundsObject3D_2()
+		public FitToBoundsObject3D_3()
 		{
 			Name = "Fit to Bounds".Localize();
 		}
 
 		private IObject3D FitBounds => Children.Last();
 
-		[DisplayName("Width")]
-		public double SizeX
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		[Description("Ensure that the part maintains its proportions.")]
+		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
+
+		public double Width
 		{
 			get => boundsSize.X;
 			set
@@ -75,8 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[DisplayName("Depth")]
-		public double SizeY
+		public double Depth
 		{
 			get => boundsSize.Y;
 			set
@@ -89,8 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[DisplayName("Height")]
-		public double SizeZ
+		public double Height
 		{
 			get => boundsSize.Z;
 			set
@@ -103,9 +98,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[Description("Set the rules for how to maintain the part while scaling.")]
-		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
-
 		[Description("Allows you turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
 
@@ -115,9 +107,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Allows you turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
-		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
+		public static async Task<FitToBoundsObject3D_3> Create(IObject3D itemToFit)
 		{
-			var fitToBounds = new FitToBoundsObject3D_2();
+			var fitToBounds = new FitToBoundsObject3D_3();
 			using (fitToBounds.RebuildLock())
 			{
 				var startingAabb = itemToFit.GetAxisAlignedBoundingBox();
@@ -156,8 +148,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var center = aabb.Center;
 			var worldMatrix = this.WorldMatrix();
 
-			var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-			var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+			var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
+			var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
 			var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
 			layer.World.RenderAabb(bounds, worldMatrix, Color.Red, 1, 1);
 		}
@@ -236,29 +228,29 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var scale = Vector3.One;
 				if (StretchX)
 				{
-					scale.X = SizeX / aabb.XSize;
+					scale.X = Width / aabb.XSize;
 				}
 				if (StretchY)
 				{
-					scale.Y = SizeY / aabb.YSize;
+					scale.Y = Depth / aabb.YSize;
 				}
 				if (StretchZ)
 				{
-					scale.Z = SizeZ / aabb.ZSize;
+					scale.Z = Height / aabb.ZSize;
 				}
 
-				switch (MaintainRatio)
+				switch (LockProportion)
 				{
-					case MaintainRatio.None:
+					case LockProportions.None:
 						break;
 
-					case MaintainRatio.X_Y:
+					case LockProportions.X_Y:
 						var minXy = Math.Min(scale.X, scale.Y);
 						scale.X = minXy;
 						scale.Y = minXy;
 						break;
 
-					case MaintainRatio.X_Y_Z:
+					case LockProportions.X_Y_Z:
 						var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
 						scale.X = minXyz;
 						scale.Y = minXyz;

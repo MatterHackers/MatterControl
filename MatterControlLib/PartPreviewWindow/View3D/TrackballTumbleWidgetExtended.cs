@@ -349,14 +349,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ZeroVelocity();
 			}
 
-			var rayAtPosition = world.GetRayForLocalBounds(position);
-			var hitAtPosition = hitPlane.GetClosestIntersection(rayAtPosition);
+			if (hitPlane != null)
+			{
+				var rayAtPosition = world.GetRayForLocalBounds(position);
+				var hitAtPosition = hitPlane.GetClosestIntersection(rayAtPosition);
 
-			var offset = hitAtPosition.HitPosition - mouseDownWorldPosition;
-			bedCenter += offset;
-			world.Translate(offset);
+				if (hitAtPosition != null)
+				{
+					var offset = hitAtPosition.HitPosition - mouseDownWorldPosition;
+					bedCenter += offset;
+					world.Translate(offset);
 
-			Invalidate();
+					Invalidate();
+				}
+			}
 		}
 
 		public void ZeroVelocity()

@@ -47,7 +47,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Use ScaleObject3D_2 instead", false)]
+	[Obsolete("Use ScaleObject3D_3 instead", false)]
 	public class ScaleObject3D : TransformWrapperObject3D, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		public enum ScaleType

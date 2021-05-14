@@ -325,11 +325,11 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(cube);
 				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 				root.Children.Remove(cube);
-				var fit = await FitToBoundsObject3D_2.Create(cube);
+				var fit = await FitToBoundsObject3D_3.Create(cube);
 
-				fit.SizeX = 50;
-				fit.SizeY = 20;
-				fit.SizeZ = 20;
+				fit.Width = 50;
+				fit.Depth = 20;
+				fit.Height = 20;
 				root.Children.Add(fit);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), .001));
@@ -339,11 +339,11 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = await CubeObject3D.Create(20, 20, 20);
-				var fit = await FitToBoundsObject3D_2.Create(cube);
+				var fit = await FitToBoundsObject3D_3.Create(cube);
 
-				fit.SizeX = 50;
-				fit.SizeY = 20;
-				fit.SizeZ = 20;
+				fit.Width = 50;
+				fit.Depth = 20;
+				fit.Height = 20;
 
 				var pinch = new PinchObject3D_3();
 				pinch.Children.Add(fit);
@@ -384,11 +384,11 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = await CubeObject3D.Create(20, 20, 20);
-				var fit = await FitToBoundsObject3D_2.Create(cube);
+				var fit = await FitToBoundsObject3D_3.Create(cube);
 
-				fit.SizeX = 50;
-				fit.SizeY = 20;
-				fit.SizeZ = 20;
+				fit.Width = 50;
+				fit.Depth = 20;
+				fit.Height = 20;
 
 				var translate = new TranslateObject3D(fit, 11, 0, 0);
 
@@ -417,7 +417,7 @@ namespace MatterControl.Tests.MatterControl
 				var undoBuffer = new UndoBuffer();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D_2();
+				var scaleObject = new ScaleObject3D_3();
 				scaleObject.WrapItems(new IObject3D[] { cube }, undoBuffer);
 
 				// ensure that the object did not move
@@ -440,7 +440,7 @@ namespace MatterControl.Tests.MatterControl
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D_2(cube);
+				var scaleObject = new ScaleObject3D_3(cube);
 
 				// ensure that the object did not move
 				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
@@ -465,7 +465,7 @@ namespace MatterControl.Tests.MatterControl
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
-				var scaleObject = new ScaleObject3D_2(cube);
+				var scaleObject = new ScaleObject3D_3(cube);
 
 				// ensure that the object did not move
 				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
@@ -525,11 +525,11 @@ namespace MatterControl.Tests.MatterControl
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
-			var fit = await FitToBoundsObject3D_2.Create(cube);
+			var fit = await FitToBoundsObject3D_3.Create(cube);
 
-			fit.SizeX = 10;
-			fit.SizeY = 10;
-			fit.SizeZ = 6;
+			fit.Width = 10;
+			fit.Depth = 10;
+			fit.Height = 6;
 
 			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
 
@@ -635,11 +635,11 @@ namespace MatterControl.Tests.MatterControl
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
-			var fit = await FitToBoundsObject3D_2.Create(cube);
+			var fit = await FitToBoundsObject3D_3.Create(cube);
 
-			fit.SizeX = 50;
-			fit.SizeY = 20;
-			fit.SizeZ = 20;
+			fit.Width = 50;
+			fit.Depth = 20;
+			fit.Height = 20;
 
 			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), 1.0));
 

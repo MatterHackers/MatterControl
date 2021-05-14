@@ -292,6 +292,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					("Leveling", new[]
 					{
 						SettingsKey.print_leveling_solution,
+						SettingsKey.print_leveling_insets,
 						SettingsKey.leveling_sample_points,
 						SettingsKey.print_leveling_required_to_print,
 					}),

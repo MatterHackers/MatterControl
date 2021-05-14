@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var textArea = new Vector2(25, 6);
 
 			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
-			nameMesh = new ScaleObject3D_2(nameMesh, scale, scale, 2 / textBounds.ZSize);
+			nameMesh = new ScaleObject3D_3(nameMesh, scale, scale, 2 / textBounds.ZSize);
 			nameMesh = new AlignObject3D(nameMesh, FaceAlign.Bottom | FaceAlign.Front, cancerRibbonStl, FaceAlign.Top | FaceAlign.Front, 0, 0, -1);
 			nameMesh = new SetCenterObject3D(nameMesh, cancerRibbonStl.GetCenter(), true, false, false);
 

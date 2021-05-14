@@ -133,8 +133,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Depth = newDepth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift
-				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
+			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
 				ScaleProportional(newDepth / InitialState.Depth);
 			}
@@ -158,8 +157,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Height = newHeight;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift
-				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
+			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
 				ScaleProportional(newHeight / InitialState.Height);
 			}
@@ -171,8 +169,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift
-				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
+			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
 				ScaleProportional(newWidth / InitialState.Width);
 			}
@@ -211,8 +208,7 @@ namespace MatterHackers.Plugins.EditorTools
 			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
 			FinalState.Depth = newDepth;
-			if (context.GuiSurface.ModifierKeys == Keys.Shift
-				|| (selectedItem is IScaleLocker scaleLocker && scaleLocker.ScaleLocked))
+			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
 				ScaleProportional(newWidth / InitialState.Width);
 			}
@@ -245,12 +241,38 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void ScaleProportional(double scale)
 		{
-			FinalState.Width = InitialState.Width * scale;
-			FinalState.Depth = InitialState.Depth * scale;
-			FinalState.Height = InitialState.Height * scale;
-			for (int i = 0; i < FinalState.Diameters.Count; i++)
+			if (selectedItem is IScaleLocker scaleLocker)
 			{
-				FinalState.Diameters[i] = InitialState.Diameters[i] * scale;
+				switch (scaleLocker.LockProportion)
+				{
+					case LockProportions.None:
+						break;
+
+					case LockProportions.X_Y:
+						if (FinalState.Width != InitialState.Width
+							|| FinalState.Depth != InitialState.Depth)
+						{
+							FinalState.Width = InitialState.Width * scale;
+							FinalState.Depth = InitialState.Depth * scale;
+						}
+						break;
+
+					case LockProportions.X_Y_Z:
+						FinalState.Width = InitialState.Width * scale;
+						FinalState.Depth = InitialState.Depth * scale;
+						FinalState.Height = InitialState.Height * scale;
+						break;
+				}
+			}
+			else
+			{
+				FinalState.Width = InitialState.Width * scale;
+				FinalState.Depth = InitialState.Depth * scale;
+				FinalState.Height = InitialState.Height * scale;
+				for (int i = 0; i < FinalState.Diameters.Count; i++)
+				{
+					FinalState.Diameters[i] = InitialState.Diameters[i] * scale;
+				}
 			}
 		}
 

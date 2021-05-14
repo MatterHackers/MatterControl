@@ -1076,6 +1076,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.print_leveling_insets,
+					PresentationName = "Leveling Insets".Localize(),
+					HelpText = "The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this".Localize(),
+					DataEditType = DataEditTypes.BOUNDS,
+					Units = "%".Localize(),
+					ShowAsOverride = true,
+					ShowIfSet = "!has_hardware_leveling",
+					RebuildGCodeOnChange = false,
+					DefaultValue = "10,10,10,10"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.leveling_sample_points,
 					PresentationName = "Sample Points".Localize(),
 					HelpText = "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.".Localize(),

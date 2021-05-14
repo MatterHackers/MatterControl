@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case EnumDisplayAttribute.PresentationMode.Buttons:
-					AddButtons(enumItems);
+					AddButtons(enumItems, enumDescriptions);
 					break;
 
 				default:
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = menuRow;
 		}
 
-		private void AddButtons(IEnumerable<(string Key, string Value)> enumItems)
+		private void AddButtons(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
 		{
 			var menuRow = new FlowLayoutWidget();
 
@@ -177,6 +177,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SelectedBackgroundColor = theme.PrimaryAccentColor,
 					UnselectedBackgroundColor = theme.MinimalShade,
 					BackgroundColor = theme.MinimalShade,
+					ToolTipText = descriptions[index]
 				};
 
 				radioButton.CheckedStateChanged += (s, e) =>
