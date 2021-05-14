@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -176,6 +177,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			favoritesBar.ScrollArea.VAnchor = VAnchor.Fit;
 
+			favoritesBar.VerticalScrollBar.Show = ScrollBar.ShowState.Never;
+
 			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
 
@@ -185,7 +188,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
 				Margin = new BorderDouble(bottom: 3, top: 3),
 				Height = theme.ButtonHeight - 6 * GuiWidget.DeviceScale,
-				Width = theme.ButtonHeight - 6 * GuiWidget.DeviceScale
+				Width = theme.ButtonHeight - 6 * GuiWidget.DeviceScale,
+				ToolTipText = expanded ? "Reduced Width".Localize() : "Expand Width".Localize(),
 			};
 
 			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(async () =>
@@ -201,6 +205,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				favoritesBar.ListContentView.BoundsChanged += UpdateWidth;
 				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
 				expandBarButton.Invalidate();
+				expandBarButton.ToolTipText = expanded ? "Reduced Width".Localize() : "Expand Width".Localize();
 
 				await favoritesBar.Reload();
 				UpdateWidth(favoritesBar.ListContentView, null);
