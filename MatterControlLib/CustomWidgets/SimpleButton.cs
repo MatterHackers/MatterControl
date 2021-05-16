@@ -573,6 +573,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public void SetIcon(ImageBuffer imageBuffer)
+		{
+			ImageWidget.Image = imageBuffer;
+		}
+
 		public ImageWidget ImageWidget { get; }
 
 		public override string Text { get => textWidget.Text; set => textWidget.Text = value; }

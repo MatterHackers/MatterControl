@@ -310,19 +310,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			controlLayer.AddChild(tumbleCubeControl);
 
-			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset)
+			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
 			{
-				widget.BackgroundRadius = new RadiusCorners(widget.Width / 2);
+				widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
 				widget.BackgroundOutlineWidth = 1;
 				widget.VAnchor = VAnchor.Top;
 				widget.HAnchor = HAnchor.Right;
+				if (center)
+				{
+					offset.X -= (widget.Width / 2) / scale;
+				}
+				
 				widget.Margin = new BorderDouble(0, 0, offset.X, offset.Y);
 				return controlLayer.AddChild(widget);
 			}
 
 			Vector2 RotatedMargin(GuiWidget widget, double angle)
 			{
-				var radius = 120;
+				var radius = 70 * scale;
 				var widgetCenter = new Vector2(widget.Width / 2, widget.Height / 2);
 				// divide by scale to convert from pixels to margin units
 				return (cubeCenterFromRightTop - widgetCenter - new Vector2(0, radius).GetRotated(angle)) / scale;
@@ -344,7 +349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Rotate (Alt + Left Mouse)".Localize(),
+				ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
@@ -354,7 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Move (Shift + Left Mouse)".Localize(),
+				ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
@@ -364,7 +369,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize(),
+				ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(scaleButton, RotatedMargin(scaleButton, - MathHelper.Tau * .15));
@@ -381,13 +386,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				void renderRoundedGroup(double spanRatio, double startRatio)
 				{
 					var angle = MathHelper.Tau * spanRatio;
-					var width = 20 * scale;
+					var width = 17 * scale;
 					var start = MathHelper.Tau * startRatio - angle / 2;
 					var end = MathHelper.Tau * startRatio + angle / 2;
-					var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 10 * scale + width / 2, start, end);
-					var background = new Stroke(arc, width * scale);
+					var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
+					var background = new Stroke(arc, width * 2);
 					background.LineCap = LineCap.Round;
-					e.Graphics2D.Render(new Stroke(background, scale), Color.Black);
+					e.Graphics2D.Render(background, theme.TextColor.WithAlpha(20));
+					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(200));
 				}
 
 				renderRoundedGroup(.31, .25);
@@ -406,31 +412,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var turnTableButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var turnTableButton = new IconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Turn Table".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, - MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var othrographicButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var projectionButton = new IconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
 			{
-				ToolTipText = "Orthographic".Localize(),
+				ToolTipText = "Perspective Projection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			AddRoundButton(othrographicButton, RotatedMargin(othrographicButton, -MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
+			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
+			var startHeight = 180;
+			var ySpacing = 40;
 			// put in the bed and build volume buttons
-			AddBedAndBuildVolumeButtons(controlLayer, sceneContext, printer, theme);
+			AddBedAndBuildVolumeButtons(controlLayer, sceneContext, printer, theme, cubeCenterFromRightTop.X, startHeight, scale);
 
-			// put in the list buttons
+			// put in the view list buttons
 			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
 				ToolTipText = "Model View Style".Localize(),
@@ -441,15 +449,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
-
-			AddRoundButton(modelViewStyleButton, new Vector2(80, 230));
+			var marginCenter = cubeCenterFromRightTop.X / scale;
+			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
 
 			if (printer?.ViewState != null)
 			{
 				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
 			}
 
-			// now add the grid snap button
+			// Add the grid snap button
 			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
 			{
 				ToolTipText = "Snap Grid".Localize(),
@@ -460,8 +468,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
-
-			AddRoundButton(gridSnapButton, new Vector2(80, 260));
+			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
 
 #if DEBUG
 			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
@@ -476,18 +483,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				}
 			};
-			AddRoundButton(renderOptionsButton, new Vector2(80, 290));
+			AddRoundButton(renderOptionsButton, new Vector2(marginCenter, startHeight + 3 * ySpacing), true);
 #endif
 		}
 
-		internal void AddBedAndBuildVolumeButtons(GuiWidget parent, ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
+		internal void AddBedAndBuildVolumeButtons(GuiWidget parent,
+			ISceneContext sceneContext,
+			PrinterConfig printer,
+			ThemeConfig theme,
+			double center,
+			double height,
+			double scale)
 		{
 			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
 				Checked = sceneContext.RendererOptions.RenderBed,
-				Margin = new BorderDouble(0, 0, 70, 200),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
 				ToggleButton = true,
@@ -495,6 +507,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = theme.ButtonHeight,
 				SiblingRadioButtonList = new List<GuiWidget>()
 			};
+			bedButton.Margin = new BorderDouble(0, 0, (center + 18 * scale - bedButton.Width / 2) / scale, height);
 			bedButton.CheckedStateChanged += (s, e) =>
 			{
 				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
@@ -508,7 +521,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
-				Margin = new BorderDouble(0, 0, 90, 200),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
 				ToggleButton = true,
@@ -517,6 +529,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = theme.ButtonHeight,
 				SiblingRadioButtonList = new List<GuiWidget>()
 			};
+			printAreaButton.Margin = new BorderDouble(0, 0, (center - 18 * scale - printAreaButton.Width / 2) / scale, height);
+
 			printAreaButton.CheckedStateChanged += (s, e) =>
 			{
 				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
