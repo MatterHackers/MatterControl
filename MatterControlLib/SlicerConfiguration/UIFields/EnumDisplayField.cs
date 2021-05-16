@@ -92,11 +92,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			switch (enumDisplayAttibute.Mode)
 			{
 				case EnumDisplayAttribute.PresentationMode.IconRow:
-					AddIconRow(enumItems);
+					AddIconRow(enumItems, enumDescriptions);
 					break;
 
 				case EnumDisplayAttribute.PresentationMode.Tabs:
-					AddTabs(enumItems);
+					AddTabs(enumItems, enumDescriptions);
 					break;
 
 				case EnumDisplayAttribute.PresentationMode.Buttons:
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems)
+		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
 		{
 			var menuRow = new FlowLayoutWidget()
 			{
@@ -120,7 +120,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var localIndex = index;
 
-				var radioButton = new RadioTextButton(enumItem.Value, theme);
+				var radioButton = new RadioTextButton(enumItem.Value, theme)
+				{
+					ToolTipText = descriptions[index]
+				};
+
 				menuRow.AfterDraw += (s, e) =>
 				{
 					e.Graphics2D.Rectangle(menuRow.LocalBounds.Left, 0, menuRow.LocalBounds.Right, 2, theme.PrimaryAccentColor);
@@ -209,7 +213,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = menuRow;
 		}
 
-		private void AddIconRow(IEnumerable<(string Key, string Value)> enumItems)
+		private void AddIconRow(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
 		{
 			var iconsRow = new FlowLayoutWidget();
 
@@ -236,7 +240,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					var radioButton = new RadioIconButton(iconImage, theme)
 					{
-						ToolTipText = enumItem.Key
+						ToolTipText = descriptions[index] == null ? enumItem.Key : descriptions[index],
 					};
 
 					radioButtonSize = new Vector2(radioButton.Width, radioButton.Height);

@@ -208,60 +208,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton.Enabled = undoBuffer.UndoCount > 0;
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
 
-			var buttonGroupA = new ObservableCollection<GuiWidget>();
-
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-				rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
-				{
-					SiblingRadioButtonList = buttonGroupA,
-					ToolTipText = "Rotate (Alt + Left Mouse)".Localize(),
-					Margin = theme.ButtonSpacing
-				};
-				rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
-				buttonGroupA.Add(rotateButton);
-				AddChild(rotateButton);
-
-				iconPath = Path.Combine("ViewTransformControls", "translate.png");
-				translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
-				{
-					SiblingRadioButtonList = buttonGroupA,
-					ToolTipText = "Move (Shift + Left Mouse)".Localize(),
-					Margin = theme.ButtonSpacing
-				};
-				translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
-				buttonGroupA.Add(translateButton);
-				AddChild(translateButton);
-
-				iconPath = Path.Combine("ViewTransformControls", "scale.png");
-				scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
-				{
-					SiblingRadioButtonList = buttonGroupA,
-					ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize(),
-					Margin = theme.ButtonSpacing
-				};
-				scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
-				buttonGroupA.Add(scaleButton);
-				AddChild(scaleButton);
-
-				rotateButton.Checked = true;
-
-				// Add vertical separator
-				this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
-
-				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-				partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
-				{
-					SiblingRadioButtonList = buttonGroupA,
-					ToolTipText = "Select Part".Localize(),
-					Margin = theme.ButtonSpacing
-				};
-				partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
-				buttonGroupA.Add(partSelectButton);
-				AddChild(partSelectButton);
-			}
-
 			operationButtons = new Dictionary<GuiWidget, SceneOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar

@@ -352,5 +352,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 		}
+
+		public void ScaledProportionally()
+		{
+		}
 	}
 }

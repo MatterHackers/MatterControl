@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Ensure that the part maintains its proportions.")]
 		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
 
+		[MaxDecimalPlaces(3)]
 		public double Width
 		{
 			get => boundsSize.X;
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[MaxDecimalPlaces(3)]
 		public double Depth
 		{
 			get => boundsSize.Y;
@@ -85,6 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[MaxDecimalPlaces(3)]
 		public double Height
 		{
 			get => boundsSize.Z;
