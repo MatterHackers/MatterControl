@@ -444,6 +444,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
+				Checked = true,
 			};
 			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) =>
 			{
