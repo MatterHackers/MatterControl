@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewStyleButton : DropButton
 	{
-		private IconButton iconButton;
+		private TextIconButton iconButton;
 		private ISceneContext sceneContext;
 
 		private Dictionary<RenderTypes, ImageBuffer> viewIcons;
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				[RenderTypes.Overhang] = StaticData.Instance.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
 			};
 
-			this.AddChild(iconButton = new IconButton(viewIcons[sceneContext.ViewState.RenderType], theme)
+			this.AddChild(iconButton = new TextIconButton("View".Localize(), viewIcons[sceneContext.ViewState.RenderType], theme)
 			{
 				Selectable = false
 			});
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
-				"Outlines".Localize(),
+				"Outlines (default)".Localize(),
 				viewIcons[RenderTypes.Outlines],
 				() => sceneContext.ViewState.RenderType == RenderTypes.Outlines,
 				(isChecked) =>

@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
 							}
 						}
-						else if (JsonPath.JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
+						else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
 						{
 							var context = new PPEContext();
 

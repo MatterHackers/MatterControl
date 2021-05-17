@@ -241,7 +241,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void ScaleProportional(double scale)
 		{
-			if (selectedItem is IScaleLocker scaleLocker)
+			if (context.GuiSurface.ModifierKeys != Keys.Shift
+				&& selectedItem is IScaleLocker scaleLocker)
 			{
 				switch (scaleLocker.LockProportion)
 				{
@@ -263,6 +264,8 @@ namespace MatterHackers.Plugins.EditorTools
 						FinalState.Height = InitialState.Height * scale;
 						break;
 				}
+
+				scaleLocker.ScaledProportionally();
 			}
 			else
 			{

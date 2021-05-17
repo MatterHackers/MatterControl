@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public interface IScaleLocker
 	{
 		LockProportions LockProportion { get; }
+
+		void ScaledProportionally();
 	}
 
 	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
@@ -244,6 +246,57 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		[DisplayName("Width Percent")]
+		public double WidthPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.X * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(0, value / 100);
+			}
+		}
+
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		[DisplayName("Depth Percent")]
+		public double DepthPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.Y * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(1, value / 100);
+			}
+		}
+
+		[ReadOnly(true)]
+		[MaxDecimalPlaces(2)]
+		[JsonIgnore]
+		[DisplayName("Height Percent")]
+		public double HeightPercentDisplay
+		{
+			get
+			{
+				return ScaleRatio.Z * 100;
+			}
+
+			set
+			{
+				FixIfLockedProportions(2, value / 100);
+			}
+		}
+
 		private void FixIfLockedProportions(int index, double newScale)
 		{
 			if (Math.Abs(newScale - ScaleRatio[index]) > .001)
@@ -322,16 +375,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Task.CompletedTask;
 		}
 
+		PublicPropertyChange change;
+
 		public void UpdateControls(PublicPropertyChange change)
 		{
+			this.change = change;
 			change.SetRowVisible(nameof(Width), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
 			change.SetRowVisible(nameof(Depth), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
 			change.SetRowVisible(nameof(Height), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
 			change.SetRowVisible(nameof(WidthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(DepthPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
 			change.SetRowVisible(nameof(HeightPercent), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Percentage);
-			change.SetRowVisible(nameof(LockProportions), () => ScaleType == ScaleTypes.Custom);
+			change.SetRowVisible(nameof(LockProportion), () => ScaleType == ScaleTypes.Custom);
 			change.SetRowVisible(nameof(ScaleMethod), () => ScaleType == ScaleTypes.Custom);
+
+			change.SetRowVisible(nameof(WidthPercentDisplay), () => ScaleType != ScaleTypes.Custom);
+			change.SetRowVisible(nameof(DepthPercentDisplay), () => ScaleType != ScaleTypes.Custom);
+			change.SetRowVisible(nameof(HeightPercentDisplay), () => ScaleType != ScaleTypes.Custom);
 
 			if (change.Changed == nameof(ScaleType))
 			{
@@ -380,6 +440,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// make sure we update the controls on screen to reflect the different data type
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
+			}
+		}
+
+		public void ScaledProportionally()
+		{
+			// this does not work yet
+			// it needs to have an undo for the change to custom
+			// it needs to not cause extra undos to exist
+			return;
+
+			if (ScaleType != ScaleTypes.Custom)
+			{
+				ScaleType = ScaleTypes.Custom;
+				this.UpdateControls(new PublicPropertyChange(change.Context, "Rebuild_On_Scale"));
 			}
 		}
 	}

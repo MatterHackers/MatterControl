@@ -346,12 +346,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private bool CanSelectObject()
+		{
+			var view3D = this.Parents<View3DWidget>().First();
+			if (view3D != null)
+			{
+				return view3D.TrackballTumbleWidget.TransformState == VectorMath.TrackBall.TrackBallTransformType.None;
+			}
+
+			return true;
+		}
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
 
 			var ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			if (this.Scene.SelectedItem != null
+				&& CanSelectObject()
 				&& !SuppressObject3DControls
 				&& FindHitObject3DControl(ray, out mouseDownObject3DControl, out IntersectInfo info))
 			{
@@ -369,7 +381,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseMove(mouseEvent);
 
 			if (SuppressObject3DControls
-				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
+				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y)
+				|| !CanSelectObject())
 			{
 				return;
 			}
@@ -407,32 +420,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Invalidate();
 
-			if (SuppressObject3DControls)
+			if (!SuppressObject3DControls
+				&& CanSelectObject())
 			{
-				return;
-			}
+				Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
+				bool anyObject3DControlVolumeHit = FindHitObject3DControl(ray, out IObject3DControl object3DControl, out IntersectInfo info);
+				var mouseEvent3D = new Mouse3DEventArgs(mouseEvent, ray, info);
 
-			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
-			bool anyObject3DControlVolumeHit = FindHitObject3DControl(ray, out IObject3DControl object3DControl, out IntersectInfo info);
-			var mouseEvent3D = new Mouse3DEventArgs(mouseEvent, ray, info);
-
-			if (MouseDownOnObject3DControlVolume && mouseDownObject3DControl != null)
-			{
-				mouseDownObject3DControl.OnMouseUp(mouseEvent3D);
-				SelectedObject3DControl = null;
-
-				mouseDownObject3DControl = null;
-			}
-			else
-			{
-				mouseDownObject3DControl = null;
-
-				if (anyObject3DControlVolumeHit)
+				if (MouseDownOnObject3DControlVolume && mouseDownObject3DControl != null)
 				{
-					object3DControl.OnMouseUp(mouseEvent3D);
-				}
+					mouseDownObject3DControl.OnMouseUp(mouseEvent3D);
+					SelectedObject3DControl = null;
 
-				SelectedObject3DControl = null;
+					mouseDownObject3DControl = null;
+				}
+				else
+				{
+					mouseDownObject3DControl = null;
+
+					if (anyObject3DControlVolumeHit)
+					{
+						object3DControl.OnMouseUp(mouseEvent3D);
+					}
+
+					SelectedObject3DControl = null;
+				}
 			}
 
 			base.OnMouseUp(mouseEvent);

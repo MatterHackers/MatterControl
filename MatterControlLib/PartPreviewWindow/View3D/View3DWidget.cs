@@ -28,7 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -38,6 +41,7 @@ using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -63,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private readonly TreeView treeView;
 
-		private readonly ViewStyleButton modelViewStyleButton;
+		private ViewStyleButton modelViewStyleButton;
 
 		private readonly PrinterConfig printer;
 
@@ -86,6 +90,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterConfig Printer { get; private set; }
 
 		private readonly PrinterTabPage printerTabPage;
+		private RadioIconButton translateButton;
+		private RadioIconButton rotateButton;
+		private RadioIconButton scaleButton;
+		private RadioIconButton partSelectButton;
 
 		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
@@ -262,90 +270,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			var tumbleCubeControl = new TumbleCubeControl(this.Object3DControlLayer, theme, TrackballTumbleWidget)
-			{
-				Margin = new BorderDouble(0, 0, 10, 35),
-				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Right,
-				Name = "Tumble Cube Control"
-			};
-
-			this.Object3DControlLayer.AddChild(tumbleCubeControl);
-
-			var viewOptionsBar = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Right | HAnchor.Fit,
-				VAnchor = VAnchor.Top | VAnchor.Fit,
-				// Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
-				BackgroundColor = theme.MinimalShade,
-				Name = "View Options Bar"
-			};
-			this.Object3DControlLayer.AddChild(viewOptionsBar);
-
-			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
-			{
-				VAnchor = VAnchor.Absolute,
-				ToolTipText = "Reset View".Localize(),
-				Margin = theme.ButtonSpacing
-			};
-			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
-			viewOptionsBar.AddChild(homeButton);
-
-#if DEBUG
-			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
-			{
-				ToolTipText = "Model View Style".Localize(),
-				PopupMate = new MatePoint()
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
-				},
-				AnchorMate = new MatePoint()
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
-				}
-			};
-			viewOptionsBar.AddChild(renderOptionsButton);
-#endif
-
-			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
-			{
-				ToolTipText = "Model View Style".Localize(),
-				PopupMate = new MatePoint()
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
-				}
-			};
-			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
-			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
-
-			viewOptionsBar.AddChild(modelViewStyleButton);
-
-			if (printer?.ViewState != null)
-			{
-				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
-			}
-
-			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
-
-			// now add the grid snap button
-			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
-			{
-				ToolTipText = "Snap Grid".Localize(),
-				PopupMate = new MatePoint()
-				{
-					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
-				}
-			};
-			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
-			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
-
-			viewOptionsBar.AddChild(gridSnapButton);
+			CreateTumbleCubeAndControls(theme);
 
 			this.Object3DControlLayer.AfterDraw += AfterDraw3DContent;
 
 			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			UpdateControlButtons(viewControls3D.ActiveButton);
 
 			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
@@ -364,6 +296,321 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext.Scene.SelectedItem = currentItem;
 				});
 			}
+		}
+
+		private void CreateTumbleCubeAndControls(ThemeConfig theme)
+		{
+			var controlLayer = this.Object3DControlLayer;
+			var scale = GuiWidget.DeviceScale;
+			var tumbleCubeControl = new TumbleCubeControl(controlLayer, theme, TrackballTumbleWidget)
+			{
+				Margin = new BorderDouble(0, 0, 40, 45),
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Right,
+				Name = "Tumble Cube Control"
+			};
+
+			var cubeCenterFromRightTop = new Vector2(tumbleCubeControl.Margin.Right * scale + tumbleCubeControl.Width / 2,
+				tumbleCubeControl.Margin.Top * scale + tumbleCubeControl.Height / 2);
+
+			controlLayer.AddChild(tumbleCubeControl);
+
+			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
+			{
+				widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
+				widget.BackgroundOutlineWidth = 1;
+				widget.VAnchor = VAnchor.Top;
+				widget.HAnchor = HAnchor.Right;
+				if (center)
+				{
+					offset.X -= (widget.Width / 2) / scale;
+				}
+				
+				widget.Margin = new BorderDouble(0, 0, offset.X, offset.Y);
+				return controlLayer.AddChild(widget);
+			}
+
+			Vector2 RotatedMargin(GuiWidget widget, double angle)
+			{
+				var radius = 70 * scale;
+				var widgetCenter = new Vector2(widget.Width / 2, widget.Height / 2);
+				// divide by scale to convert from pixels to margin units
+				return (cubeCenterFromRightTop - widgetCenter - new Vector2(0, radius).GetRotated(angle)) / scale;
+			}
+
+			// add the view controls
+			var buttonGroupA = new ObservableCollection<GuiWidget>();
+			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16, theme.InvertIcons), theme)
+			{
+				SiblingRadioButtonList = buttonGroupA,
+				ToolTipText = "Select Parts".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			
+			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
+			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			buttonGroupA.Add(partSelectButton);
+
+			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
+			{
+				SiblingRadioButtonList = buttonGroupA,
+				// ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
+				ToolTipText = "Rotate View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
+			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+			buttonGroupA.Add(rotateButton);
+
+			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
+			{
+				SiblingRadioButtonList = buttonGroupA,
+				// ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
+				ToolTipText = "Move View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
+			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+			buttonGroupA.Add(translateButton);
+
+			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
+			{
+				SiblingRadioButtonList = buttonGroupA,
+				// ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
+				ToolTipText = "Zoom View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			AddRoundButton(scaleButton, RotatedMargin(scaleButton, - MathHelper.Tau * .15));
+			scaleButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+			buttonGroupA.Add(scaleButton);
+
+			// add the background render for the view controls
+			controlLayer.BeforeDraw += (s, e) =>
+			{
+				var tumbleCubeRadius = tumbleCubeControl.Width / 2;
+				var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
+					controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
+
+				void renderRoundedGroup(double spanRatio, double startRatio)
+				{
+					var angle = MathHelper.Tau * spanRatio;
+					var width = 17 * scale;
+					var start = MathHelper.Tau * startRatio - angle / 2;
+					var end = MathHelper.Tau * startRatio + angle / 2;
+					var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
+					var background = new Stroke(arc, width * 2);
+					background.LineCap = LineCap.Round;
+					e.Graphics2D.Render(background, theme.TextColor.WithAlpha(20));
+					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
+				}
+
+				renderRoundedGroup(.3, .25);
+				renderRoundedGroup(.1, .5 + .1);
+				renderRoundedGroup(.1, 1 - .1);
+
+				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
+			};
+
+			// add the home button
+			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Reset View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
+
+			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Zoom to Selection".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
+
+			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Turntable Mode".Localize(),
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+			};
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, - MathHelper.Tau * .4)).Click += (s, e) =>
+			{
+				// toggle the turn table mode
+			};
+
+			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Perspective Mode".Localize(),
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+				Checked = true,
+			};
+			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) =>
+			{
+				// toggle projection mode
+			};
+
+			var startHeight = 180;
+			var ySpacing = 40;
+
+			// put in the bed and build volume buttons
+			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = "Show Print Bed".Localize(),
+				Checked = sceneContext.RendererOptions.RenderBed,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+			};
+			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
+			};
+
+			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
+
+			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
+				Checked = sceneContext.RendererOptions.RenderBuildVolume,
+				ToggleButton = true,
+				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+			};
+			AddRoundButton(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
+
+			printAreaButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+			};
+
+			this.BindBedOptions(controlLayer, bedButton, printAreaButton, sceneContext.RendererOptions);
+
+			if (printer != null)
+			{
+				// Disable print area button in GCode2D view
+				void ViewModeChanged(object s, ViewModeChangedEventArgs e)
+				{
+					// Button is conditionally created based on BuildHeight, only set enabled if created
+					printAreaButton.Enabled = BuildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
+				}
+
+				printer.ViewState.ViewModeChanged += ViewModeChanged;
+
+				controlLayer.Closed += (s, e) =>
+				{
+					printer.ViewState.ViewModeChanged -= ViewModeChanged;
+				};
+			}
+
+			// put in the view list buttons
+			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
+			{
+				ToolTipText = "Model View Style".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				}
+			};
+			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+			var marginCenter = cubeCenterFromRightTop.X / scale;
+			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
+
+			if (printer?.ViewState != null)
+			{
+				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+			}
+
+			// Add the grid snap button
+			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
+			{
+				ToolTipText = "Snap Grid".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
+				}
+			};
+			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
+			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
+
+#if DEBUG
+			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
+			{
+				ToolTipText = "Debug Render Options".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				AnchorMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+				}
+			};
+			AddRoundButton(renderOptionsButton, new Vector2(marginCenter, startHeight + 3 * ySpacing), true);
+#endif
+		}
+
+		public void UpdateControlButtons(ViewControls3DButtons activeTransformState)
+		{
+			switch (activeTransformState)
+			{
+				case ViewControls3DButtons.Rotate:
+					if (rotateButton != null)
+					{
+						rotateButton.Checked = true;
+					}
+					break;
+
+				case ViewControls3DButtons.Translate:
+					if (translateButton != null)
+					{
+						translateButton.Checked = true;
+					}
+					break;
+
+				case ViewControls3DButtons.Scale:
+					if (scaleButton != null)
+					{
+						scaleButton.Checked = true;
+					}
+					break;
+
+				case ViewControls3DButtons.PartSelect:
+					if (partSelectButton != null)
+					{
+						partSelectButton.Checked = true;
+					}
+					break;
+			}
+		}
+
+		public void BindBedOptions(GuiWidget container, ICheckbox bedButton, ICheckbox printAreaButton, View3DConfig renderOptions)
+		{
+			void SyncProperties(object s, PropertyChangedEventArgs e)
+			{
+				switch (e.PropertyName)
+				{
+					case nameof(renderOptions.RenderBed):
+						bedButton.Checked = renderOptions.RenderBed;
+						break;
+
+					case nameof(renderOptions.RenderBuildVolume) when printAreaButton != null:
+						printAreaButton.Checked = renderOptions.RenderBuildVolume;
+						break;
+				}
+			}
+
+			renderOptions.PropertyChanged += SyncProperties;
+
+			container.Closed += (s, e) =>
+			{
+				renderOptions.PropertyChanged -= SyncProperties;
+			};
 		}
 
 		private void GetNearFar(out double zNear, out double zFar)
@@ -1067,15 +1314,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						this.Object3DControlLayer.SuppressObject3DControls = true;
 
-						var info = new IntersectInfo();
-
-						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, out info);
+						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, out IntersectInfo info);
 						if (hitObject == null)
 						{
 							if (selectedItem != null)
 							{
 								Scene.ClearSelection();
-								selectedItem = null;
 							}
 
 							// start a selection rect

@@ -831,6 +831,26 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.Content.HAnchor = HAnchor.Stretch;
 					rowContainer = field.Content;
 				}
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						var newValue = property.Value.ToString();
+						if (field.Content is MHDropDownList dropDown)
+						{
+							if (field.Value != newValue)
+							{
+								field.SetValue(newValue, false);
+								dropDown.SelectedValue = newValue;
+							}
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
 			}
 			else if (propertyValue is IObject3D item
 				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
