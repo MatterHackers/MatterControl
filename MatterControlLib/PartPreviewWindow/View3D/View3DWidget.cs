@@ -90,6 +90,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterConfig Printer { get; private set; }
 
 		private readonly PrinterTabPage printerTabPage;
+		private RadioIconButton translateButton;
+		private RadioIconButton rotateButton;
+		private RadioIconButton scaleButton;
+		private RadioIconButton partSelectButton;
 
 		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
@@ -273,6 +277,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			UpdateControlButtons(viewControls3D.ActiveButton);
 
 			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
@@ -335,10 +340,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add the view controls
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
-			var partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16, theme.InvertIcons), theme)
+			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Select Part".Localize(),
+				ToolTipText = "Select Parts".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			
@@ -346,30 +351,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 
-			var rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
+			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
+				// ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
+				ToolTipText = "Rotate View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
 
-			var translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
+			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
+				// ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
+				ToolTipText = "Move View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
-			var scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
+			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
+				// ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
+				ToolTipText = "Zoom View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(scaleButton, RotatedMargin(scaleButton, - MathHelper.Tau * .15));
@@ -393,13 +401,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var background = new Stroke(arc, width * 2);
 					background.LineCap = LineCap.Round;
 					e.Graphics2D.Render(background, theme.TextColor.WithAlpha(20));
-					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(200));
+					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
 				}
 
-				renderRoundedGroup(.31, .25);
-
-				renderRoundedGroup(.11, .5 + .1);
-				renderRoundedGroup(.11, 1 - .1);
+				renderRoundedGroup(.3, .25);
+				renderRoundedGroup(.1, .5 + .1);
+				renderRoundedGroup(.1, 1 - .1);
 
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
 			};
@@ -419,24 +426,84 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var turnTableButton = new IconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
+			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
 			{
-				ToolTipText = "Turn Table".Localize(),
-				Margin = theme.ButtonSpacing
+				ToolTipText = "Turntable Mode".Localize(),
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, - MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, - MathHelper.Tau * .4)).Click += (s, e) =>
+			{
+				// toggle the turn table mode
+			};
 
-			var projectionButton = new IconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
+			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
 			{
-				ToolTipText = "Perspective Projection".Localize(),
-				Margin = theme.ButtonSpacing
+				ToolTipText = "Perspective Mode".Localize(),
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
-			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
+			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) =>
+			{
+				// toggle projection mode
+			};
 
 			var startHeight = 180;
 			var ySpacing = 40;
+
 			// put in the bed and build volume buttons
-			AddBedAndBuildVolumeButtons(controlLayer, sceneContext, printer, theme, cubeCenterFromRightTop.X, startHeight, scale);
+			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = "Show Print Bed".Localize(),
+				Checked = sceneContext.RendererOptions.RenderBed,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+			};
+			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
+			};
+
+			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
+
+			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
+				Checked = sceneContext.RendererOptions.RenderBuildVolume,
+				ToggleButton = true,
+				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+			};
+			AddRoundButton(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
+
+			printAreaButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+			};
+
+			this.BindBedOptions(controlLayer, bedButton, printAreaButton, sceneContext.RendererOptions);
+
+			if (printer != null)
+			{
+				// Disable print area button in GCode2D view
+				void ViewModeChanged(object s, ViewModeChangedEventArgs e)
+				{
+					// Button is conditionally created based on BuildHeight, only set enabled if created
+					printAreaButton.Enabled = BuildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
+				}
+
+				printer.ViewState.ViewModeChanged += ViewModeChanged;
+
+				controlLayer.Closed += (s, e) =>
+				{
+					printer.ViewState.ViewModeChanged -= ViewModeChanged;
+				};
+			}
 
 			// put in the view list buttons
 			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
@@ -487,73 +554,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #endif
 		}
 
-		internal void AddBedAndBuildVolumeButtons(GuiWidget parent,
-			ISceneContext sceneContext,
-			PrinterConfig printer,
-			ThemeConfig theme,
-			double center,
-			double height,
-			double scale)
+		public void UpdateControlButtons(ViewControls3DButtons activeTransformState)
 		{
-			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			switch (activeTransformState)
 			{
-				Name = "Bed Button",
-				ToolTipText = "Show Print Bed".Localize(),
-				Checked = sceneContext.RendererOptions.RenderBed,
-				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Right,
-				ToggleButton = true,
-				Height = theme.ButtonHeight,
-				Width = theme.ButtonHeight,
-				SiblingRadioButtonList = new List<GuiWidget>()
-			};
-			bedButton.Margin = new BorderDouble(0, 0, (center + 18 * scale - bedButton.Width / 2) / scale, height);
-			bedButton.CheckedStateChanged += (s, e) =>
-			{
-				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
-			};
-			parent.AddChild(bedButton);
+				case ViewControls3DButtons.Rotate:
+					if (rotateButton != null)
+					{
+						rotateButton.Checked = true;
+					}
+					break;
 
-			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
+				case ViewControls3DButtons.Translate:
+					if (translateButton != null)
+					{
+						translateButton.Checked = true;
+					}
+					break;
 
-			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
-			{
-				Name = "Bed Button",
-				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
-				Checked = sceneContext.RendererOptions.RenderBuildVolume,
-				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Right,
-				ToggleButton = true,
-				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
-				Height = theme.ButtonHeight,
-				Width = theme.ButtonHeight,
-				SiblingRadioButtonList = new List<GuiWidget>()
-			};
-			printAreaButton.Margin = new BorderDouble(0, 0, (center - 18 * scale - printAreaButton.Width / 2) / scale, height);
+				case ViewControls3DButtons.Scale:
+					if (scaleButton != null)
+					{
+						scaleButton.Checked = true;
+					}
+					break;
 
-			printAreaButton.CheckedStateChanged += (s, e) =>
-			{
-				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
-			};
-			parent.AddChild(printAreaButton);
-
-			this.BindBedOptions(parent, bedButton, printAreaButton, sceneContext.RendererOptions);
-
-			if (printer != null)
-			{
-				// Disable print area button in GCode2D view
-				void ViewModeChanged(object s, ViewModeChangedEventArgs e)
-				{
-					// Button is conditionally created based on BuildHeight, only set enabled if created
-					printAreaButton.Enabled = BuildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
-				}
-
-				printer.ViewState.ViewModeChanged += ViewModeChanged;
-
-				parent.Closed += (s, e) =>
-				{
-					printer.ViewState.ViewModeChanged -= ViewModeChanged;
-				};
+				case ViewControls3DButtons.PartSelect:
+					if (partSelectButton != null)
+					{
+						partSelectButton.Checked = true;
+					}
+					break;
 			}
 		}
 

@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -146,10 +147,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					bounds.Bottom + expand,
 					bounds.Right - expand,
 					bounds.Top - expand);
-				rect.radius(BackgroundRadius.SW * GuiWidget.DeviceScale,
-					BackgroundRadius.SE * GuiWidget.DeviceScale,
-					BackgroundRadius.NE * GuiWidget.DeviceScale,
-					BackgroundRadius.NW * GuiWidget.DeviceScale);
+				rect.radius(BackgroundRadius.SW,
+					BackgroundRadius.SE,
+					BackgroundRadius.NE,
+					BackgroundRadius.NW);
 
 				var rectOutline = new Stroke(rect, stroke);
 
@@ -352,7 +353,27 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, theme.PrimaryAccentColor);
+				if (BackgroundRadius.SW + BackgroundRadius.NW == Width)
+				{
+					void Render(double startRatio)
+					{
+						var stroke = 4 * GuiWidget.DeviceScale;
+						var angle = MathHelper.Tau / 4;
+						var start = MathHelper.Tau * startRatio - angle / 2;
+						var end = MathHelper.Tau * startRatio + angle / 2;
+						var arc = new Arc(Width / 2, Height / 2, Width / 2 - stroke / 2, Height / 2 - stroke / 2, start, end);
+						var background = new Stroke(arc, stroke);
+						graphics2D.Render(background, theme.PrimaryAccentColor.WithAlpha(100));
+					}
+
+					Render(1.0 / 3.0 + .75);
+					Render(2.0 / 3.0 + .75);
+					Render(1.0 + .75);
+				}
+				else
+				{
+					graphics2D.Rectangle(0, 0, LocalBounds.Right, 2 * DeviceScale, theme.PrimaryAccentColor);
+				}
 			}
 
 			base.OnDraw(graphics2D);

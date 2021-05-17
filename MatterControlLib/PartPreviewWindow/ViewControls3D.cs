@@ -81,11 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
-		private readonly RadioIconButton translateButton;
-		private readonly RadioIconButton rotateButton;
-		private readonly RadioIconButton scaleButton;
-		private readonly RadioIconButton partSelectButton;
-
 		private View3DWidget view3DWidget;
 		private readonly ISceneContext sceneContext;
 		private readonly PartWorkspace workspace;
@@ -371,41 +366,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				this.activeTransformState = value;
-				switch (this.activeTransformState)
-				{
-					case ViewControls3DButtons.Rotate:
-						if (rotateButton != null)
-						{
-							rotateButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.Translate:
-						if (translateButton != null)
-						{
-							translateButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.Scale:
-						if (scaleButton != null)
-						{
-							scaleButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.PartSelect:
-						if (partSelectButton != null)
-						{
-							partSelectButton.Checked = true;
-						}
-
-						break;
-				}
-
+				view3DWidget?.UpdateControlButtons(activeTransformState);
 				TransformStateChanged?.Invoke(this, new TransformStateChangedEventArgs()
 				{
 					TransformMode = activeTransformState

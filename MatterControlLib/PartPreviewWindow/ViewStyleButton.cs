@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
-				"Outlines".Localize(),
+				"Outlines (default)".Localize(),
 				viewIcons[RenderTypes.Outlines],
 				() => sceneContext.ViewState.RenderType == RenderTypes.Outlines,
 				(isChecked) =>
