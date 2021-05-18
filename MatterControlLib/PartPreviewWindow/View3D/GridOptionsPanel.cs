@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.object3DControlLayer = object3DControlLayer;
 			this.PopupContent = () => ShowGridOptions(theme);
 
-			this.AddChild(new IconButton(StaticData.Instance.LoadIcon("1694146.png", 16, 16, theme.InvertIcons), theme)
+			this.AddChild(new TextIconButton("Snap", StaticData.Instance.LoadIcon("snap_grid.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Selectable = false
 			});
@@ -85,12 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
-			}
-
-			// Override menu left padding to improve radio circle -> icon spacing
-			foreach (var menuItem in popupMenu.Children)
-			{
-				//menuItem.Padding = menuItem.Padding.Clone(left: 25);
 			}
 
 			return popupMenu;

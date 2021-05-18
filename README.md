@@ -1,7 +1,7 @@
 MatterControl
 =============
 
-|        | Master |
+|        | main |
 | ------ | ------ |
 | Linux | [![Travis CI-Master](https://travis-ci.org/MatterHackers/MatterControl.svg?branch=master)](https://travis-ci.org/MatterHackers/MatterControl) |
 | Windows | [![AppVeyor-Master](https://ci.appveyor.com/api/projects/status/c85oe36mdgp446uw?svg=true)](https://ci.appveyor.com/project/larsbrubaker/mattercontrol) |
@@ -53,12 +53,12 @@ MatterControl is written in C#. It uses the [agg-sharp](https://github.com/Matte
 
 5. Optionally switch to a target branch
 
-        git checkout master
+        git checkout main
         git submodule update --init --recursive
 
     As a single command line statement:
 
-        targetBranch=master && git checkout $targetBranch && git submodule update --init --recursive
+        targetBranch=main && git checkout $targetBranch && git submodule update --init --recursive
 
 6. Build MatterControl
 

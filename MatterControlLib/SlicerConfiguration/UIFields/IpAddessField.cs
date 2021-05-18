@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printer.Settings.SetValue(SettingsKey.selector_ip_address, defaultOption.Text);
 			};
-			UiThread.RunOnIdle(RebuildMenuItems);
 
 			// Prevent droplist interaction when connected
 			void CommunicationStateChanged(object s, EventArgs e)
@@ -74,6 +73,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			widget.AddChild(refreshButton);
 
 			this.Content = widget;
+		
+			UiThread.RunOnIdle(RebuildMenuItems);
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)

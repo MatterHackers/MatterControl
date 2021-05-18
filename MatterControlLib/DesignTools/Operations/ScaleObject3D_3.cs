@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public interface IScaleLocker
 	{
 		LockProportions LockProportion { get; }
+
+		void ScaledProportionally();
 	}
 
 	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
@@ -247,6 +249,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[ReadOnly(true)]
 		[MaxDecimalPlaces(2)]
 		[JsonIgnore]
+		[DisplayName("Width Percent")]
 		public double WidthPercentDisplay
 		{
 			get
@@ -263,6 +266,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[ReadOnly(true)]
 		[MaxDecimalPlaces(2)]
 		[JsonIgnore]
+		[DisplayName("Depth Percent")]
 		public double DepthPercentDisplay
 		{
 			get
@@ -279,6 +283,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[ReadOnly(true)]
 		[MaxDecimalPlaces(2)]
 		[JsonIgnore]
+		[DisplayName("Height Percent")]
 		public double HeightPercentDisplay
 		{
 			get
@@ -370,8 +375,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Task.CompletedTask;
 		}
 
+		PublicPropertyChange change;
+
 		public void UpdateControls(PublicPropertyChange change)
 		{
+			this.change = change;
 			change.SetRowVisible(nameof(Width), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
 			change.SetRowVisible(nameof(Depth), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
 			change.SetRowVisible(nameof(Height), () => ScaleType == ScaleTypes.Custom && ScaleMethod == ScaleMethods.Direct);
@@ -432,6 +440,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// make sure we update the controls on screen to reflect the different data type
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
+			}
+		}
+
+		public void ScaledProportionally()
+		{
+			// this does not work yet
+			// it needs to have an undo for the change to custom
+			// it needs to not cause extra undos to exist
+			return;
+
+			if (ScaleType != ScaleTypes.Custom)
+			{
+				ScaleType = ScaleTypes.Custom;
+				this.UpdateControls(new PublicPropertyChange(change.Context, "Rebuild_On_Scale"));
 			}
 		}
 	}

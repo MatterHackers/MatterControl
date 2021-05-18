@@ -638,6 +638,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var rect = LocalBounds;
 			var centerY = rect.YCenter;
 
+			if (this.Parent == null)
+			{
+				return;
+			}
+
 			var siblings = this.Parent.Children.OfType<ChromeTab>().ToList();
 
 			int position = siblings.IndexOf(this);
