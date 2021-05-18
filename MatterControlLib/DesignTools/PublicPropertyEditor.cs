@@ -848,8 +848,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				object3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				if (object3D != null)
+				{
+					object3D.Invalidated += RefreshField;
+					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				}
 
 			}
 			else if (propertyValue is IObject3D item
