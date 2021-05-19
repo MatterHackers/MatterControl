@@ -324,6 +324,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.validate_layer_height,
 						SettingsKey.emulate_endstops,
 						SettingsKey.send_with_checksum,
+						SettingsKey.additional_printing_errors,
 						SettingsKey.reset_long_extrusion,
 						SettingsKey.output_only_first_layer,
 						SettingsKey.g0,

@@ -206,6 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.validate_leveling,
 			SettingsKey.validation_threshold,
 			SettingsKey.write_regex,
+			SettingsKey.additional_printing_errors,
 			SettingsKey.xy_offsets_have_been_calibrated,
 			SettingsKey.z_homes_to_max,
 			SettingsKey.z_offset,

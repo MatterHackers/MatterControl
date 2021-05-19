@@ -305,8 +305,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			readLineStartCallBacks.Register("Done saving file", PrintingCanContinue);
 
 			readLineStartCallBacks.Register("B:", ReadTemperatures); // smoothie
-			readLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
-			readLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
 
 			readLineStartCallBacks.Register("SD printing byte", ReadSdProgress); // repetier
 
@@ -317,37 +315,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			readLineStartCallBacks.Register("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			readLineStartCallBacks.Register("RS:", PrinterRequestsResend);
-			readLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
-
-			readLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
 
 			// smoothie failures
-			readLineContainsCallBacks.Register("T:inf", PrinterReportsError);
-			readLineContainsCallBacks.Register("B:inf", PrinterReportsError);
-			readLineContainsCallBacks.Register("ZProbe not triggered", PrinterReportsError);
 			readLineStartCallBacks.Register("ERROR: Homing cycle failed", PrinterReportsError);
 
 			// marlin failures
-			readLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
-			readLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
-			readLineContainsCallBacks.Register("M999", PrinterReportsError);
-			readLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
-			readLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
-			readLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
-			readLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
-			readLineContainsCallBacks.Register("Error:Probing Failed", PrinterReportsError);
-			readLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
 			readLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
 			readLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
 
 			// repetier failures
-			readLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
 			readLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
 			readLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
 
 			// s3g failures
-			readLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
-
 			writeLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
@@ -431,6 +411,46 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			E = 8,
 			XYZ = X | Y | Z,
 			C = 16, // used by e3d quad extruder
+		}
+
+		private void RegisterReadlineContainsCallbacks()
+		{
+			readLineContainsCallBacks.Clear();
+
+			readLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
+			readLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
+			readLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
+			readLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
+			// smoothie failures
+			readLineContainsCallBacks.Register("T:inf", PrinterReportsError);
+			readLineContainsCallBacks.Register("B:inf", PrinterReportsError);
+			readLineContainsCallBacks.Register("ZProbe not triggered", PrinterReportsError);
+			// marlin failures
+			readLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
+			readLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
+			readLineContainsCallBacks.Register("M999", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
+			readLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
+			readLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Probing Failed", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
+			// repetier failures
+			readLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
+			// s3g failures
+			readLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
+
+			if (CommunicationState == CommunicationStates.PreparingToPrint)
+			{
+				foreach (var error in Printer.Settings.GetValue(SettingsKey.additional_printing_errors).Split(','))
+				{
+					var trimmedLine = error.Trim();
+					if (!string.IsNullOrEmpty(trimmedLine))
+					{
+						readLineContainsCallBacks.Register(trimmedLine, PrinterReportsError);
+					}
+				}
+			}
 		}
 
 		public double ActualBedTemperature
@@ -1477,6 +1497,18 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			ConnectionFailed?.Invoke(this, eventArgs);
 
 			CommunicationState = CommunicationStates.Disconnected;
+
+			if (serialPort != null)
+			{
+				serialPort.Close();
+				serialPort.Dispose();
+			}
+
+			serialPort = null;
+
+			// make sure we clear out the stream processors
+			CreateStreamProcessors();
+
 		}
 
 		private void OnIdle()
@@ -2359,6 +2391,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		private void CreateStreamProcessors(Stream gcodeStream = null)
 		{
+			// reset the error detection before each print
+			RegisterReadlineContainsCallbacks();
+
 			// reset our assumptions about the flow sensor
 			FilamentPositionSensorDetected = false;
 

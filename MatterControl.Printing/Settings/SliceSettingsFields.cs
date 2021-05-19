@@ -1980,6 +1980,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.additional_printing_errors,
+					PresentationName = "Additional Printing Errors".Localize(),
+					HelpText = "In addition to the normal firmware errors, these comma separated strings will cause MatterControl to stop and show an error message.".Localize(),
+					DataEditType = DataEditTypes.WIDE_STRING,
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					Units = "",
+					ShowAsOverride = true,
+					ShowIfSet = null,
+					DefaultValue = ""
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.read_regex,
 					PresentationName = "Read Filter".Localize(),
 					HelpText = "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.".Localize(),

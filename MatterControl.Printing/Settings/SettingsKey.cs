@@ -297,6 +297,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string wipe_tower_perimeters_per_extruder = nameof(wipe_tower_perimeters_per_extruder);
 		public const string wipe_tower_size = nameof(wipe_tower_size);
 		public const string write_regex = nameof(write_regex);
+		public const string additional_printing_errors = nameof(additional_printing_errors);
 		public const string xy_offsets_have_been_calibrated = nameof(xy_offsets_have_been_calibrated);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 		public const string z_offset = nameof(z_offset);
