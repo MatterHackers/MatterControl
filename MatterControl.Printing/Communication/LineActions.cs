@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.SerialPortCommunication
 {
@@ -37,35 +38,32 @@ namespace MatterHackers.SerialPortCommunication
 	/// </summary>
 	public abstract class LineActions
 	{
-		public Dictionary<string, Action<string>> registeredActions = new Dictionary<string, Action<string>>();
+		public Dictionary<string, List<Action<string>>> registeredActions = new Dictionary<string, List<Action<string>>>();
 
 		public void Register(string key, Action<string> value)
 		{
 			if (registeredActions.ContainsKey(key))
 			{
-				registeredActions[key] += value;
+				registeredActions[key].Add(value);
 			}
 			else
 			{
-				registeredActions.Add(key, value);
+				registeredActions.Add(key, new List<Action<string>>() { value });
 			}
+		}
+
+		public void Clear()
+		{
+			registeredActions.Clear();
 		}
 
 		public void Unregister(string key, Action<string> value)
 		{
 			if (registeredActions.ContainsKey(key))
 			{
-				if (registeredActions[key] == null)
+				if (registeredActions[key].Contains(value))
 				{
-					throw new Exception();
-				}
-
-				registeredActions[key] -= value;
-
-				// TODO: this doesn't look like it can ever be hit. Who would have assigned null to key?
-				if (registeredActions[key] == null)
-				{
-					registeredActions.Remove(key);
+					registeredActions[key].Remove(value);
 				}
 			}
 			else
@@ -81,12 +79,14 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public override void ProcessLine(string line)
 		{
-			foreach (var pair in this.registeredActions)
+			foreach (var kvp in this.registeredActions)
 			{
-				if (line.StartsWith(pair.Key))
+				if (line.StartsWith(kvp.Key))
 				{
-					// Invoke action of lines starting with the given key
-					pair.Value.Invoke(line);
+					foreach (var value in kvp.Value)
+					{
+						value(line);
+					}
 				}
 			}
 		}
@@ -96,12 +96,14 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public override void ProcessLine(string line)
 		{
-			foreach (var pair in this.registeredActions)
+			foreach (var kvp in this.registeredActions)
 			{
-				if (line.Contains(pair.Key))
+				if (line.Contains(kvp.Key))
 				{
-					// Invoke action of lines containing the given key
-					pair.Value.Invoke(line);
+					foreach (var value in kvp.Value)
+					{
+						value(line);
+					}
 				}
 			}
 		}

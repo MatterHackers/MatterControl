@@ -441,7 +441,7 @@ namespace MatterHackers.Plugins.EditorTools
 			for (int i = 0; i < 4; i++)
 			{
 				corner[i] = ObjectSpace.GetCornerPosition(selectedItem, quadrant + i);
-				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
+				screen[i] = Object3DControlContext.World.WorldToScreenSpace(corner[i]);
 			}
 
 			var start = corner[0];

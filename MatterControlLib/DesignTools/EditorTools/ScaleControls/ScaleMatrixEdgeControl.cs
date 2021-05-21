@@ -401,8 +401,8 @@ namespace MatterHackers.Plugins.EditorTools
 			lines.Clear();
 			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, edgeIndex);
 			var cornerPosition = GetCornerPosition(selectedItem, edgeIndex);
-			var screen1 = Object3DControlContext.World.GetScreenSpace(cornerPosition);
-			var screen2 = Object3DControlContext.World.GetScreenSpace(GetCornerPosition(selectedItem, (edgeIndex + 1) % 4));
+			var screen1 = Object3DControlContext.World.WorldToScreenSpace(cornerPosition);
+			var screen2 = Object3DControlContext.World.WorldToScreenSpace(GetCornerPosition(selectedItem, (edgeIndex + 1) % 4));
 
 			if (screen1.Z < screen2.Z)
 			{
