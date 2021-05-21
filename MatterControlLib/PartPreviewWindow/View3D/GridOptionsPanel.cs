@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -45,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.object3DControlLayer = object3DControlLayer;
 			this.PopupContent = () => ShowGridOptions(theme);
 
-			this.AddChild(new TextIconButton("Snap", StaticData.Instance.LoadIcon("snap_grid.png", 16, 16, theme.InvertIcons), theme)
+			this.AddChild(new TextIconButton("Snap", StaticData.Instance.LoadIcon("snap_grid.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Selectable = false
 			});

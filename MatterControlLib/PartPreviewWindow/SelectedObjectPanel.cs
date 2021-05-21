@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(primaryActionsPanel);
 
 			// put in a make permanent button
-			var icon = StaticData.Instance.LoadIcon("apply.png", 16, 16, theme.InvertIcons).SetPreMultiply();
+			var icon = StaticData.Instance.LoadIcon("apply.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply();
 			flattenButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
@@ -112,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(flattenButton);
 
 			// put in a remove button
-			removeButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16, theme.InvertIcons), theme)
+			removeButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Cancel".Localize(),
@@ -210,7 +211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var primaryAction in primaryActions)
 				{
 					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
-					var button = new IconButton(primaryAction.Icon(theme.InvertIcons), theme)
+					var button = new IconButton(primaryAction.Icon(theme), theme)
 					{
 						// Name = namedAction.Title + " Button",
 						ToolTipText = primaryAction.Title,

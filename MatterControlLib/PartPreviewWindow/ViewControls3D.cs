@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						groupButton = theme.CreateSplitButton(
 							new SplitButtonParams()
 							{
-								Icon = defaultOperation.Icon(theme.InvertIcons),
+								Icon = defaultOperation.Icon(theme),
 								ButtonAction = (menuButton) =>
 								{
 									defaultOperation.Action.Invoke(sceneContext);
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									foreach (var operation in operationGroup.Operations)
 									{
-										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme));
 
 										operationMenu.Enabled = operation.IsEnabled(sceneContext);
 										operationMenu.ToolTipText = operation.Title;
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 											{
 												// Update button
 												var iconButton = groupButton.Children.OfType<IconButton>().First();
-												iconButton.SetIcon(operation.Icon(theme.InvertIcons));
+												iconButton.SetIcon(operation.Icon(theme));
 												iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
 												UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (namedAction.Icon != null)
 				{
-					button = new IconButton(namedAction.Icon(theme.InvertIcons), theme)
+					button = new IconButton(namedAction.Icon(theme), theme)
 					{
 						Name = namedAction.Title + " Button",
 						ToolTipText = namedAction.Title,

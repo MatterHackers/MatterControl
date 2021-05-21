@@ -43,6 +43,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
@@ -340,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add the view controls
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
-			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16, theme.InvertIcons), theme)
+			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Select Parts".Localize(),
@@ -351,7 +352,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 
-			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
+			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
@@ -362,7 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
 
-			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
+			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
@@ -373,7 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
-			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
+			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
@@ -412,21 +413,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// add the home button
-			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16, theme.InvertIcons), theme)
+			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
+			void SetZoomEnabled(object s, EventArgs e)
+			{
+				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null;
+			}
 
-			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
+			this.Scene.SelectionChanged += SetZoomEnabled;
+			this.Closed += (s, e) => this.Scene.SelectionChanged -= SetZoomEnabled;
+
+			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) =>
+			{
+				var selectedItem = this.Scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					var aabb = selectedItem.GetAxisAlignedBoundingBox();
+					var center = aabb.Center;
+					// pan to the center
+					// zoom to fill the view
+					viewControls3D.NotifyResetView();
+				}
+			};
+
+			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Turntable Mode".Localize(),
 				Margin = theme.ButtonSpacing,
@@ -438,7 +458,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// toggle the turn table mode
 			};
 
-			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
+			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Perspective Mode".Localize(),
 				Margin = theme.ButtonSpacing,

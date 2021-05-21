@@ -50,6 +50,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
@@ -573,7 +574,8 @@ namespace MatterHackers.MatterControl
 			var sceneContext = view3DWidget.sceneContext;
 			var printer = sceneContext.Printer;
 
-			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
+			var theme = Instance.MenuTheme;
+			bool invertIcons = theme.InvertIcons;
 
 			// Build workspace actions, each having a unique ID
 			var actions = new[]
@@ -621,7 +623,7 @@ namespace MatterHackers.MatterControl
 				new NamedAction()
 				{
 					ID = "Delete",
-					Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).SetPreMultiply(),
+					Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 					Title = "Remove".Localize(),
 					Action = sceneContext.Scene.DeleteSelection,
 					IsEnabled = () => sceneContext.Scene.SelectedItem != null
@@ -630,7 +632,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, invertIcons),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -690,7 +692,7 @@ namespace MatterHackers.MatterControl
 						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 					},
 					IsEnabled = () => sceneContext.EditableScene,
-					Icon = StaticData.Instance.LoadIcon("arrange_all.png", 16, 16, invertIcons),
+					Icon = StaticData.Instance.LoadIcon("arrange_all.png", 16, 16).SetToColor(theme.TextColor),
 				},
 				new NamedAction()
 				{

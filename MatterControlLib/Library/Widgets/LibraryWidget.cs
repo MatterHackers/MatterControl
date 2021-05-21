@@ -38,6 +38,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -646,7 +647,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Enter Share Code".Localize() + "...",
-				Icon = StaticData.Instance.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("enter-code.png", 16, 16).SetToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					UiThread.RunOnIdle(() =>
