@@ -359,7 +359,7 @@ namespace MatterHackers.Plugins.EditorTools
 			for (int i = 0; i < rotations; i++)
 			{
 				Vector3 cornerPosition = GetEdgePosition(selectedItem, MathHelper.Tau * i / rotations, placement);
-				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
+				Vector3 cornerScreenSpace = Object3DControlContext.World.WorldToScreenSpace(cornerPosition);
 				if (cornerScreenSpace.Z < bestCornerZ)
 				{
 					bestCornerZ = cornerScreenSpace.Z;
@@ -380,7 +380,7 @@ namespace MatterHackers.Plugins.EditorTools
 			for (int i = 0; i < 4; i++)
 			{
 				Vector3 cornerPosition = ObjectSpace.GetEdgePosition(selectedItem, i, placement);
-				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
+				Vector3 cornerScreenSpace = Object3DControlContext.World.WorldToScreenSpace(cornerPosition);
 				if (cornerScreenSpace.Z < bestCornerZ)
 				{
 					bestCornerZ = cornerScreenSpace.Z;
@@ -465,7 +465,7 @@ namespace MatterHackers.Plugins.EditorTools
 			for (int i = 0; i < 4; i++)
 			{
 				corner[i] = ObjectSpace.GetCornerPosition(selectedItem, i);
-				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
+				screen[i] = Object3DControlContext.World.WorldToScreenSpace(corner[i]);
 			}
 
 			var start = corner[0];

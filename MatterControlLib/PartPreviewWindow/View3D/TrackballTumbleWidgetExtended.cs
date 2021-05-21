@@ -12,9 +12,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class TrackballTumbleWidgetExtended : GuiWidget
 	{
-		// tracks the displacement of the camera to accurately rotate, translate and zoom
-		public Vector3 bedCenter = Vector3.Zero;
-
 		public NearFarAction GetNearFar;
 		private readonly MotionQueue motionQueue = new MotionQueue();
 		private readonly GuiWidget sourceWidget;
@@ -23,16 +20,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector2 currentVelocityPerMs = new Vector2();
 		private PlaneShape hitPlane;
 		private bool isRotating = false;
-		private Vector3 lastRotationOrigin = Vector3.Zero;
 		private Vector2 lastScaleMousePosition = Vector2.Zero;
 		private Vector2 rotationStartPosition = Vector2.Zero;
 		private Vector3 mouseDownWorldPosition;
-		private Object3DControlsLayer Object3DControlLayer;
-		private Vector3 rotateVec = Vector3.Zero;
-		private Vector3 rotateVecOriginal = Vector3.Zero;
+		private readonly Object3DControlsLayer Object3DControlLayer;
 		private RunningInterval runningInterval;
-		private ThemeConfig theme;
-		private WorldView world;
+		private readonly ThemeConfig theme;
+		private readonly WorldView world;
 		private Vector2 mouseDown;
 
 		public TrackballTumbleWidgetExtended(WorldView world, GuiWidget sourceWidget, Object3DControlsLayer Object3DControlLayer, ThemeConfig theme)
@@ -71,13 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, rotationStartPosition, mousePosition, false);
 				rotationStartPosition = mousePosition;
-				world.Translate(rotateVec);
-				rotateVec = Vector3Ex.TransformVector(rotateVec, world.RotationMatrix);
 
-				world.Rotate(activeRotationQuaternion);
-
-				rotateVec = Vector3Ex.TransformVector(rotateVec, Matrix4X4.Invert(world.RotationMatrix));
-				world.Translate(-rotateVec);
+				world.RotateAroundPosition(mouseDownWorldPosition, activeRotationQuaternion);
 
 				Invalidate();
 			}
@@ -88,7 +77,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (isRotating)
 			{
 				isRotating = false;
-				bedCenter += rotateVecOriginal - rotateVec;
 				Invalidate();
 			}
 		}
@@ -303,27 +291,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Reset(Vector3 bedCenter)
 		{
 			ZeroVelocity();
-			lastRotationOrigin = Vector3.Zero;
-			rotateVec = Vector3.Zero;
-			rotateVecOriginal = Vector3.Zero;
-			this.bedCenter = -bedCenter;
 			mouseDownWorldPosition = bedCenter;
 		}
 
 		public void SetRotationWithDisplacement(Quaternion rotationQ)
 		{
-			StartRotateAroundOrigin(Vector2.Zero);
+			if (isRotating)
+			{
+				ZeroVelocity();
+			}
 
-			var rotationM = Matrix4X4.CreateRotation(rotationQ);
-			world.Translate(rotateVec);
-			rotateVec = Vector3Ex.TransformVector(rotateVec, world.RotationMatrix);
-
-			world.RotationMatrix = rotationM;
-
-			rotateVec = Vector3Ex.TransformVector(rotateVec, Matrix4X4.Invert(world.RotationMatrix));
-			world.Translate(-rotateVec);
-
-			EndRotateAroundOrigin();
+			world.SetRotationHoldPosition(mouseDownWorldPosition, rotationQ);
 		}
 
 		public void StartRotateAroundOrigin(Vector2 mousePosition)
@@ -336,10 +314,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotationStartPosition = mousePosition;
 
 			isRotating = true;
-
-			rotateVec = -mouseDownWorldPosition - bedCenter;
-			rotateVecOriginal = rotateVec;
-			lastRotationOrigin = -mouseDownWorldPosition;
 		}
 
 		public void Translate(Vector2 position)
@@ -357,7 +331,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (hitAtPosition != null)
 				{
 					var offset = hitAtPosition.HitPosition - mouseDownWorldPosition;
-					bedCenter += offset;
 					world.Translate(offset);
 
 					Invalidate();
@@ -386,9 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var unitsPerPixel = world.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
 
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
-			Vector3 zoomVec = (worldPosition - world.EyePosition) * zoomDelta * Math.Min(unitsPerPixel * 100, 1);
-
-			bedCenter += zoomVec;
+			var zoomVec = (worldPosition - world.EyePosition) * zoomDelta * Math.Min(unitsPerPixel * 100, 1);
 			world.Translate(zoomVec);
 
 			Invalidate();
@@ -449,18 +420,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					int a = 0;
 				}
 			}
-		}
-
-		private Vector3 IntersectPlane(Vector3 planeNormal, Vector3 rayOrigin, Vector3 rayDirection)
-		{
-			var d = Vector3Ex.Dot(planeNormal, rayDirection);
-			var t = -(Vector3Ex.Dot(rayOrigin, planeNormal) + d) / d;
-			return rayOrigin + t * rayDirection;
-		}
-
-		private Vector3 IntersectXYPlane(Vector3 rayOrigin, Vector3 rayDirection)
-		{
-			return IntersectPlane(new Vector3(0, 0, 1), rayOrigin, rayDirection);
 		}
 
 		internal class MotionQueue

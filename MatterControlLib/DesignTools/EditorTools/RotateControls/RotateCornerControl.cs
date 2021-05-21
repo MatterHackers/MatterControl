@@ -209,19 +209,19 @@ namespace MatterHackers.Plugins.EditorTools
 			cornerIndexOut = 0;
 			AxisAlignedBoundingBox currentSelectedBounds = objectBeingRotated.GetAxisAlignedBoundingBox();
 
-			Vector3 bestZCornerPosition = Vector3.Zero;
+			var bestZCornerPosition = Vector3.Zero;
 			int xCornerIndex = 0;
-			Vector3 bestXCornerPosition = Vector3.Zero;
+			var bestXCornerPosition = Vector3.Zero;
 			int yCornerIndex = 1;
-			Vector3 bestYCornerPosition = Vector3.Zero;
+			var bestYCornerPosition = Vector3.Zero;
 			int zCornerIndex = 2;
 
 			double bestCornerZ = double.PositiveInfinity;
 			// get the closest z on the bottom in view space
 			for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++)
 			{
-				Vector3 cornerPosition = currentSelectedBounds.GetBottomCorner(cornerIndex);
-				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
+				var cornerPosition = currentSelectedBounds.GetBottomCorner(cornerIndex);
+				var cornerScreenSpace = Object3DControlContext.World.WorldToScreenSpace(cornerPosition);
 				if (cornerScreenSpace.Z < bestCornerZ)
 				{
 					zCornerIndex = cornerIndex;
@@ -230,7 +230,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					bestZCornerPosition = SetBottomControlHeight(currentSelectedBounds, bestZCornerPosition);
 
-					Vector3 testCornerPosition = currentSelectedBounds.GetBottomCorner((cornerIndex + 1) % 4);
+					var testCornerPosition = currentSelectedBounds.GetBottomCorner((cornerIndex + 1) % 4);
 					if (testCornerPosition.Y == cornerPosition.Y)
 					{
 						xCornerIndex = (cornerIndex + 1) % 4;
@@ -283,7 +283,7 @@ namespace MatterHackers.Plugins.EditorTools
 				AxisAlignedBoundingBox currentSelectedBounds = selectedObject.GetAxisAlignedBoundingBox();
 
 				var selectedObjectRotationCenter = currentSelectedBounds.Center;
-				Vector3 cornerForAxis = GetCornerPosition(selectedObject);
+				var cornerForAxis = GetCornerPosition(selectedObject);
 				// move the rotation center to the correct side of the bounding box
 				selectedObjectRotationCenter[RotationAxis] = cornerForAxis[RotationAxis];
 
@@ -323,7 +323,7 @@ namespace MatterHackers.Plugins.EditorTools
 					controlCenter = mouseDownInfo.ControlCenter;
 				}
 
-				var hitPlane = new PlaneShape(RotationPlanNormal, Vector3Ex.Dot(RotationPlanNormal, controlCenter), null);
+				var hitPlane = new PlaneShape(RotationPlanNormal, RotationPlanNormal.Dot(controlCenter), null);
 				IntersectInfo hitOnRotationPlane = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 				if (hitOnRotationPlane != null)
 				{
@@ -334,7 +334,7 @@ namespace MatterHackers.Plugins.EditorTools
 						selectedObjectRotationCenter = mouseDownInfo.SelectedObjectRotationCenter;
 					}
 
-					Vector3 cornerForAxis = GetCornerPosition(selectedItem);
+					var cornerForAxis = GetCornerPosition(selectedItem);
 					// move the rotation center to the correct side of the bounding box
 					selectedObjectRotationCenter[RotationAxis] = cornerForAxis[RotationAxis];
 
@@ -455,7 +455,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
-			Vector3 boxCenter = GetControlCenter(selectedItem);
+			var boxCenter = GetControlCenter(selectedItem);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
 
 			GetCornerPosition(selectedItem, out int cornerIndexOut);
@@ -583,8 +583,8 @@ namespace MatterHackers.Plugins.EditorTools
 					if (mouseMoveInfo != null && MouseDownOnControl)
 					{
 						var unitPosition = new Vector3(Math.Cos(mouseMoveInfo.AngleOfHit), Math.Sin(mouseMoveInfo.AngleOfHit), 0);
-						Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
-						var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
+						var startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
+						var center = Vector3.Zero.Transform(rotationCenterTransform);
 						if ((mouseMoveInfo.HitPosition - center).Length > rotationTransformScale * innerRadius)
 						{
 							Object3DControlContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, theme.PrimaryAccentColor, drawEventArgs.ZBuffered);
@@ -634,8 +634,8 @@ namespace MatterHackers.Plugins.EditorTools
 				double startAngle = i * snappingRadians;
 
 				var unitPosition = new Vector3(Math.Cos(startAngle), Math.Sin(startAngle), 0);
-				Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
-				Vector3 endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
+				var startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
+				var endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
 
 				Object3DControlContext.World.Render3DLine(startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
 			}
@@ -657,10 +657,10 @@ namespace MatterHackers.Plugins.EditorTools
 		/// <returns>The center of the control in item space.</returns>
 		private Vector3 GetControlCenter(IObject3D selectedItem)
 		{
-			Vector3 boxCenter = GetCornerPosition(selectedItem);
+			var boxCenter = GetCornerPosition(selectedItem);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
 			// figure out which way the corner is relative to the bounds
-			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem);
+			var otherSideDelta = GetDeltaToOtherSideXy(selectedItem);
 
 			double xSign = otherSideDelta.X > 0 ? 1 : -1;
 			double ySign = otherSideDelta.Y > 0 ? 1 : -1;
@@ -678,9 +678,9 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			Vector3 cornerPosition = GetCornerPosition(selectedItem, out int cornerIndex);
-			Vector3 cornerPositionCcw = currentSelectedBounds.GetBottomCorner((cornerIndex + 1) % 4);
-			Vector3 cornerPositionCw = currentSelectedBounds.GetBottomCorner((cornerIndex + 3) % 4);
+			var cornerPosition = GetCornerPosition(selectedItem, out int cornerIndex);
+			var cornerPositionCcw = currentSelectedBounds.GetBottomCorner((cornerIndex + 1) % 4);
+			var cornerPositionCw = currentSelectedBounds.GetBottomCorner((cornerIndex + 3) % 4);
 
 			double xDirection = cornerPositionCcw.X - cornerPosition.X;
 			if (xDirection == 0)
@@ -700,7 +700,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 GetRotationCenter(IObject3D selectedItem, AxisAlignedBoundingBox currentSelectedBounds)
 		{
 			var rotationCenter = currentSelectedBounds.Center;
-			Vector3 cornerForAxis = GetCornerPosition(selectedItem);
+			var cornerForAxis = GetCornerPosition(selectedItem);
 			// move the rotation center to the plane of the control
 			rotationCenter[RotationAxis] = cornerForAxis[RotationAxis];
 
@@ -718,8 +718,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			Vector3 controlCenter = GetControlCenter(selectedItem);
-			Vector3 rotationCenter = GetRotationCenter(selectedItem, currentSelectedBounds);
+			var controlCenter = GetControlCenter(selectedItem);
+			var rotationCenter = GetRotationCenter(selectedItem, currentSelectedBounds);
 			if (mouseDownInfo != null)
 			{
 				rotationCenter = mouseDownInfo.SelectedObjectRotationCenter;
@@ -734,7 +734,7 @@ namespace MatterHackers.Plugins.EditorTools
 			rotationTransformScale = distBetweenPixelsWorldSpace;
 			rotationCenterTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * Matrix4X4.CreateTranslation(rotationCenter);
 
-			var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
+			var center = Vector3.Zero.Transform(rotationCenterTransform);
 
 			switch (RotationAxis)
 			{
@@ -746,7 +746,7 @@ namespace MatterHackers.Plugins.EditorTools
 							* Matrix4X4.CreateRotation(new Vector3(-MathHelper.Tau / 4, 0, 0))
 							* rotationCenterTransform;
 
-						var center2 = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
+						var center2 = Vector3.Zero.Transform(rotationCenterTransform);
 						rotationCenterTransform *= Matrix4X4.CreateTranslation(center - center2);
 					}
 
@@ -760,7 +760,7 @@ namespace MatterHackers.Plugins.EditorTools
 							* Matrix4X4.CreateRotation(new Vector3(0, MathHelper.Tau / 4, 0))
 							* rotationCenterTransform;
 
-						var center2 = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
+						var center2 = Vector3.Zero.Transform(rotationCenterTransform);
 						rotationCenterTransform *= Matrix4X4.CreateTranslation(center - center2);
 					}
 
@@ -799,7 +799,7 @@ namespace MatterHackers.Plugins.EditorTools
 							double outerRadius = innerRadius + RingWidth;
 							double snappingMarkRadius = outerRadius + 20 * GuiWidget.DeviceScale;
 
-							var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
+							var center = Vector3.Zero.Transform(rotationCenterTransform);
 							if (Math.Abs((mouseMoveInfo.HitPosition - center).Length - rotationTransformScale * snappingMarkRadius) < 20 * rotationTransformScale)
 							{
 								return i;
@@ -821,7 +821,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 				var unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
-				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100 * GuiWidget.DeviceScale), rotationCenterTransform);
+				var anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100 * GuiWidget.DeviceScale), rotationCenterTransform);
 
 				Vector2 angleDisplayPosition = Object3DControlContext.World.GetScreenPosition(anglePosition);
 
