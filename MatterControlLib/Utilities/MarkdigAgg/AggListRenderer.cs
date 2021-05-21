@@ -6,6 +6,7 @@ using Markdig.Syntax;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers.Agg
@@ -39,7 +40,7 @@ namespace Markdig.Renderers.Agg
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			base.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("bullet.png", 16, 16, theme.InvertIcons))
+			base.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("bullet.png", 16, 16).SetToColor(theme.TextColor))
 			{
 				Margin = new BorderDouble(top: 1, left: 10),
 				VAnchor = VAnchor.Top,

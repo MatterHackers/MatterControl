@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -95,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.Content.AddChild(inlineEdit);
 			}
 
-			var addItem = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
+			var addItem = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Right | HAnchor.Absolute,
 				Width = theme.ButtonHeight,

@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -286,7 +287,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(left: 10)
 			};
 
-			keyboardImage = new IconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons), theme)
+			keyboardImage = new IconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),

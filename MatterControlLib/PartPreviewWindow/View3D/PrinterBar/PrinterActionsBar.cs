@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var resetConnectionButton = new TextIconButton(
 						"Reset".Localize(),
-						StaticData.Instance.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
+						StaticData.Instance.LoadIcon("e_stop.png", 14, 14).SetToColor(theme.TextColor),
 						theme)
 					{
 						ToolTipText = "Reboots the firmware on the controller".Localize(),
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16).SetToColor(theme.TextColor),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click,
 					IsEnabled = () => printer.Connection.IsConnected
@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					ApplicationController.Instance.ExportAsMatterControlConfig(printer);
 				}),
-				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
 			});
 			menuActions.Add(new ActionSeparator());
 			menuActions.Add(new NamedAction()
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 					});
 				}),
-				Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
+				Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16).SetToColor(theme.TextColor)
 			});
 			menuActions.Add(new ActionSeparator());
 			menuActions.Add(new NamedAction()
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					DialogWindow.Show(new UpdateSettingsPage(printer));
 				},
-				Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
+				Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16).SetToColor(theme.TextColor)
 			});
 			menuActions.Add(new NamedAction()
 			{

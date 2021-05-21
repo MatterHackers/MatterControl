@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -77,11 +78,6 @@ namespace MatterHackers.MatterControl
 		private double MicroButtonWidth => 30 * GuiWidget.DeviceScale;
 
 		private readonly int defaultScrollBarWidth = 120;
-
-		/// <summary>
-		/// Gets a value indicating whether icons should be inverted due to black source images on a dark theme
-		/// </summary>
-		public bool InvertIcons => this?.IsDarkTheme ?? false;
 
 		public void MakeRoundedButton(GuiWidget button, Color? boarderColor = null)
 		{
@@ -255,12 +251,7 @@ namespace MatterHackers.MatterControl
 
 		internal void EnsureDefaults()
 		{
-			// if (this.BedColor == Color.Transparent)
-			// {
-			// 	this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
-			// }
-
-			// EnsureDefaults is called after deserialization and at a point when state should be fully loaded. Invoking RebuildTheme here ensures icons are inverted correctly
+			// EnsureDefaults is called after deserialization and at a point when state should be fully loaded. Invoking RebuildTheme here ensures icons shaded correctly
 			this.RebuildTheme();
 		}
 
@@ -291,7 +282,7 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget CreateSearchButton()
 		{
-			return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
+			return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(TextColor), this)
 			{
 				ToolTipText = "Search".Localize(),
 			};
@@ -317,7 +308,7 @@ namespace MatterHackers.MatterControl
 			restoreNormal = ColorCircle(size, (AggContext.OperatingSystem == OSType.Android) ? new Color(200, 0, 0) : Color.Transparent);
 			restoreHover = ColorCircle(size, new Color("#DB4437"));
 
-			this.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
+			this.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).SetToColor(TextColor);
 
 			ScrollBar.DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
 		}

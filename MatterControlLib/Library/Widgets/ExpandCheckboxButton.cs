@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -54,8 +55,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ExpandCheckboxButton(string text, ThemeConfig theme, int pointSize = 11, bool expandable = true)
 		{
-			arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons);
-			arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12, theme.InvertIcons);
+			arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor);
+			arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12).SetToColor(theme.TextColor);
 
 			imageButton = new IconButton(arrowRight, theme)
 			{

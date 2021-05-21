@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using CustomWidgets;
 	using DataConverters3D;
 	using MatterHackers.Agg.Platform;
+	using MatterHackers.ImageProcessing;
 	using MatterHackers.MatterControl.DataStorage;
 
 	public class ImageEditor : IObject3DEditor
@@ -78,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				VAnchor = VAnchor.Center
 			};
 			searchRow.AddChild(searchField);
-			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons), theme)
+			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Search".Localize(),
 			};

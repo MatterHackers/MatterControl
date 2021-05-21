@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -225,7 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (string.IsNullOrEmpty(buttonText))
 			{
-				return new IconButton(StaticData.Instance.LoadIcon(iconFilename, 12, 12, theme.InvertIcons), theme)
+				return new IconButton(StaticData.Instance.LoadIcon(iconFilename, 12, 12).SetToColor(theme.TextColor), theme)
 				{
 					Margin = theme.ButtonSpacing,
 					Enabled = clickAction != null,
@@ -237,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var oldSize = theme.DefaultFontSize;
 				theme.DefaultFontSize = 8;
-				var pauseButton = new TextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12, theme.InvertIcons), theme)
+				var pauseButton = new TextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12).SetToColor(theme.TextColor), theme)
 				{
 					Margin = new BorderDouble(marginX, 0),
 					Padding = new BorderDouble(7, 3),

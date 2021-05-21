@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.VectorMath;
@@ -229,9 +230,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (enumDisplayAttibute.IconWidth > 0)
 					{
 						// If the attribute allows invert, use the theme.InvertIcons state
-						bool invertIcons = enumDisplayAttibute.InvertIcons ? theme.InvertIcons : false;
-
-						iconImage = StaticData.Instance.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight, invertIcons);
+						iconImage = StaticData.Instance.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight).SetToColor(theme.TextColor);
 					}
 					else
 					{

@@ -34,6 +34,7 @@ using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -221,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								this.CloseMenu();
 							};
 						},
-						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
 						ButtonEnabled = exportPlugin.Enabled,
 						ButtonName = "Export GCode Button",
 						ButtonAction = (widget) =>

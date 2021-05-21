@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -56,7 +57,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Bed Temperature".Localize();
 
-			this.ImageWidget.Image = StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons);
+			this.ImageWidget.Image = StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor);
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 

@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			titleAndTreeView.AddChild(treeView);
 
 			workspaceName.ActionArea.AddChild(
-				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons), theme)
+				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor), theme)
 				{
 					Enabled = false
 				},
@@ -475,7 +475,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var ySpacing = 40;
 
 			// put in the bed and build volume buttons
-			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
 
-			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
+			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",

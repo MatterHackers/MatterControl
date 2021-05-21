@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "Preset Pulldown Container"
 			};
 
-			editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Edit Selected Setting".Localize(),
 				Enabled = dropDownList.SelectedIndex != -1,

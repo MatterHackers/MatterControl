@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.RenderOpenGl;
@@ -56,12 +57,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewIcons = new Dictionary<RenderTypes, ImageBuffer>()
 			{
-				[RenderTypes.Shaded] = StaticData.Instance.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Outlines] = StaticData.Instance.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Polygons] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.NonManifold] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Materials] = StaticData.Instance.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Overhang] = StaticData.Instance.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Shaded] = StaticData.Instance.LoadIcon("view_shaded.png", 16, 16),
+				[RenderTypes.Outlines] = StaticData.Instance.LoadIcon("view_outlines.png", 16, 16),
+				[RenderTypes.Polygons] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16),
+				[RenderTypes.NonManifold] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16),
+				[RenderTypes.Materials] = StaticData.Instance.LoadIcon("view_materials.png", 16, 16),
+				[RenderTypes.Overhang] = StaticData.Instance.LoadIcon("view_overhang.png", 16, 16),
 			};
 
 			this.AddChild(iconButton = new TextIconButton("View".Localize(), viewIcons[sceneContext.ViewState.RenderType], theme)

@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -106,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (ShowPortWizardButton)
 			{
-				var configureIcon = new IconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons), theme)
+				var configureIcon = new IconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,

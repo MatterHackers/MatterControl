@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -41,7 +42,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public InlineListItemEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
 			: base(title, theme, automationName, boldFont)
 		{
-			var removeButton = new IconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
+			var removeButton = new IconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Delete".Localize(),
 				Visible = true,

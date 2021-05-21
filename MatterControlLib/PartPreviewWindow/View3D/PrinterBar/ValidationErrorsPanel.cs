@@ -32,6 +32,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -46,8 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Fit | VAnchor;
 			this.BackgroundColor = theme.ResolveColor(theme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30));
 
-			var errorImage = StaticData.Instance.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
-			var warningImage = StaticData.Instance.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
+			var errorImage = StaticData.Instance.LoadIcon("SettingsGroupError_16x.png", 16, 16).SetToColor(theme.TextColor);
+			var warningImage = StaticData.Instance.LoadIcon("SettingsGroupWarning_16x.png", 16, 16).SetToColor(theme.TextColor);
 			var infoImage = StaticData.Instance.LoadIcon("StatusInfoTip_16x.png", 16, 16);
 
 			foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))

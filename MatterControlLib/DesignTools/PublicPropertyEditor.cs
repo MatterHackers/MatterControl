@@ -39,6 +39,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
@@ -1093,7 +1094,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget GetUnlockRow(ThemeConfig theme, string url)
 		{
-			var detailsLink = new TextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
+			var detailsLink = new TextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Margin = 5,
 				ToolTipText = "Visit MatterHackers.com to Purchase".Localize()
@@ -1111,7 +1112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var detailsLink = new TextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
+				var detailsLink = new TextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					ToolTipText = unlockLink.Url,

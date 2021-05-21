@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.CloseChildren();
 
-			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20, theme.InvertIcons), theme)
+			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20).SetToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,

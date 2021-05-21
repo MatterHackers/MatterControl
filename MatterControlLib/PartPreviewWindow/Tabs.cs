@@ -35,6 +35,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
@@ -267,7 +268,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 
-			var plusTabButton = new NewTabButton(StaticData.Instance.LoadIcon("fa-plus_12.png", 12, 12, theme.InvertIcons), theme)
+			var plusTabButton = new NewTabButton(StaticData.Instance.LoadIcon("fa-plus_12.png", 12, 12).SetToColor(theme.TextColor), theme)
 			{
 				Height = 20 * GuiWidget.DeviceScale,
 			};

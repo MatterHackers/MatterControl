@@ -311,7 +311,6 @@ namespace MatterHackers.MatterControl
 			var theme = ApplicationController.Instance.Theme;
 			SingleWindowProvider.SetWindowTheme(theme.TextColor,
 				theme.DefaultFontSize - 1,
-				theme.InvertIcons,
 				() => theme.CreateSmallResetButton(),
 				theme.ToolbarPadding,
 				theme.TabBarBackground,

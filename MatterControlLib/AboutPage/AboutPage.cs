@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -120,7 +121,7 @@ namespace MatterHackers.MatterControl
 
 			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(StaticData.Instance.ReadAllText(Path.Combine("License", "license.json")));
 
-			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons);
+			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).SetToColor(theme.TextColor);
 
 			SectionWidget section = null;
 

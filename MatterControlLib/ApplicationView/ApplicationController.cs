@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(MenuTheme.TextColor),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -575,7 +575,6 @@ namespace MatterHackers.MatterControl
 			var printer = sceneContext.Printer;
 
 			var theme = Instance.MenuTheme;
-			bool invertIcons = theme.InvertIcons;
 
 			// Build workspace actions, each having a unique ID
 			var actions = new[]
@@ -1278,7 +1277,6 @@ namespace MatterHackers.MatterControl
 				var theme = ApplicationController.Instance.Theme;
 				SingleWindowProvider.SetWindowTheme(theme.TextColor,
 					theme.DefaultFontSize - 1,
-					theme.InvertIcons,
 					() => theme.CreateSmallResetButton(),
 					theme.ToolbarPadding,
 					theme.TabBarBackground,
@@ -2330,7 +2328,7 @@ namespace MatterHackers.MatterControl
 					VAnchor = VAnchor.Stretch
 				};
 
-				var icon = StaticData.Instance.LoadIcon("help_page.png", 16, 16, theme.InvertIcons);
+				var icon = StaticData.Instance.LoadIcon("help_page.png", 16, 16).SetToColor(theme.TextColor);
 
 				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, icon)
 				{

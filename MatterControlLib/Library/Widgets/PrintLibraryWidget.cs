@@ -35,6 +35,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
 
-			var toolbar = new OverflowBar(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
+			var toolbar = new OverflowBar(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

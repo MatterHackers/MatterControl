@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 			};
 
-			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor);
 
 			var generalSection = new SectionWidget("General".Localize(), generalPanel, theme, expandingContent: false)
 			{
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					configureNotificationsButton,
-					StaticData.Instance.LoadIcon("notify-24x24.png", 16, 16, theme.InvertIcons)),
+					StaticData.Instance.LoadIcon("notify-24x24.png", 16, 16).SetToColor(theme.TextColor)),
 				generalPanel);
 
 			// LanguageControl
@@ -391,7 +392,7 @@ namespace MatterHackers.MatterControl
 				true,
 				false);
 
-			var openCacheButton = new IconButton(StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons), theme)
+			var openCacheButton = new IconButton(StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Open Folder".Localize(),
 			};
@@ -407,7 +408,7 @@ namespace MatterHackers.MatterControl
 					theme),
 				advancedPanel);
 
-			var clearCacheButton = new HoverIconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
+			var clearCacheButton = new HoverIconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Clear Cache".Localize(),
 			};
@@ -424,7 +425,7 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 #if DEBUG
-			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor);
 
 			var configurePluginsButton = new IconButton(configureIcon, theme)
 			{
@@ -598,7 +599,7 @@ namespace MatterHackers.MatterControl
 				Margin = 0
 			};
 
-			themeSection.SetNonExpandableIcon(StaticData.Instance.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
+			themeSection.SetNonExpandableIcon(StaticData.Instance.LoadIcon("theme.png", 16, 16));
 
 			return themeSection;
 		}
