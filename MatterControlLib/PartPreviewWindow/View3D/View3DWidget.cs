@@ -68,8 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private readonly TreeView treeView;
 
-		private ViewStyleButton modelViewStyleButton;
-
 		private readonly PrinterConfig printer;
 
 		private readonly ThemeConfig theme;
@@ -316,6 +314,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			controlLayer.AddChild(tumbleCubeControl);
 
+			var hudBackground = controlLayer.AddChild(new GuiWidget()
+			{
+				VAnchor = VAnchor.Stretch, 
+				HAnchor = HAnchor.Stretch,
+				Selectable = false,
+				DoubleBuffer = true,
+			});
+
 			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
 			{
 				widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
@@ -386,9 +392,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupA.Add(scaleButton);
 
 			var bottomButtonOffset = 0;
+			var hudBackgroundColor = theme.BedBackgroundColor.WithAlpha(120);
+			var hudStrokeColor = theme.TextColor.WithAlpha(120);
 
 			// add the background render for the view controls
-			controlLayer.BeforeDraw += (s, e) =>
+			// controlLayer.BeforeDraw += (s, e) => // enable to debug any rendering errors that might be due to double buffered hudBackground
+			hudBackground.BeforeDraw += (s, e) =>
 			{
 				var tumbleCubeRadius = tumbleCubeControl.Width / 2;
 				var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
@@ -398,8 +407,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var background = new Stroke(vertexSource, width * 2);
 					background.LineCap = LineCap.Round;
-					e.Graphics2D.Render(background, theme.BedBackgroundColor.WithAlpha(120));
-					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
+					e.Graphics2D.Render(background, hudBackgroundColor);
+					e.Graphics2D.Render(new Stroke(background, scale), hudStrokeColor);
 				}
 
 				void renderRoundedGroup(double spanRatio, double startRatio)
@@ -433,7 +442,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				tumbleCubeCenter.X += bottomButtonOffset;
 
-				renderRoundedLine(20, 100);
+				renderRoundedLine(18, 101);
 				
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
 			};
@@ -511,22 +520,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
 			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
-			bedButton.CheckedStateChanged += (s, e) =>
-			{
-				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
-			};
-
-			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
-
 			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
 				ToggleButton = true,
-				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D && bedButton.Checked,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
+
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
+				printAreaButton.Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D && bedButton.Checked;
+			};
+
+			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
+
 			AddRoundButton(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
 
 			printAreaButton.CheckedStateChanged += (s, e) =>
@@ -553,8 +564,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
+			// declare the grid snap button
+			GridOptionsPanel gridSnapButton = null;
+
 			// put in the view list buttons
-			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
+			var modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
 				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
@@ -566,14 +580,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
 			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
+			modelViewStyleButton.BackgroundColor = hudBackgroundColor;
+			modelViewStyleButton.BorderColor = hudStrokeColor;
+
+			void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
+			{
+				modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
+				gridSnapButton.Visible = modelViewStyleButton.Visible;
+			}
 
 			if (printer?.ViewState != null)
 			{
-				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+				printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 			}
 
+			this.Closed += (s, e) =>
+			{
+				if (printer?.ViewState != null)
+				{
+					printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
+				}
+			};
+
 			// Add the grid snap button
-			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
+			gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
 			{
 				ToolTipText = "Snap Grid".Localize(),
 				PopupMate = new MatePoint()
@@ -584,6 +614,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
+			gridSnapButton.BackgroundColor = hudBackgroundColor;
+			gridSnapButton.BorderColor = hudStrokeColor;
 
 #if DEBUG
 			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
@@ -754,11 +786,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeView.TopLeftOffset = beforeReubildScrollPosition;
 
 			Invalidate();
-		}
-
-		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
-		{
-			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
@@ -974,11 +1001,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
-
-			if (printer?.ViewState != null)
-			{
-				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
-			}
 
 			if (this.Object3DControlLayer != null)
 			{
