@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static void FlashBackground(this GuiWidget widget, Color hightlightColor)
 		{
-			double displayTime = 2;
+			double displayTime = 1.5;
 			double pulseTime = .5;
 			double totalSeconds = 0;
 			Color backgroundColor = widget.BackgroundColor;

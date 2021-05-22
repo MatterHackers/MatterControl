@@ -570,7 +570,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// put in the view list buttons
 			var modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
-				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
@@ -605,7 +604,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add the grid snap button
 			gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
 			{
-				ToolTipText = "Snap Grid".Localize(),
 				PopupMate = new MatePoint()
 				{
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
@@ -1704,7 +1702,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ResetView()
 		{
-			TrackballTumbleWidget.Reset(new Vector3(sceneContext.BedCenter));
+			TrackballTumbleWidget.SetRotationCenter(new Vector3(sceneContext.BedCenter));
 
 			var world = sceneContext.World;
 

@@ -387,30 +387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var look = Matrix4X4.LookAt(Vector3.Zero, normalAndUp.normal, normalAndUp.up);
 
-					var start = new Quaternion(object3DControlLayer.World.RotationMatrix);
-					var end = new Quaternion(look);
-
-					Task.Run(() =>
-					{
-						// TODO: stop any spinning happening in the view
-						double duration = .25;
-						var timer = Stopwatch.StartNew();
-						var time = timer.Elapsed.TotalSeconds;
-
-						while (time < duration)
-						{
-							var current = Quaternion.Slerp(start, end, time / duration);
-							UiThread.RunOnIdle(() =>
-							{
-								trackballTumbleWidgetExtended.SetRotationWithDisplacement(current);
-							});
-							time = timer.Elapsed.TotalSeconds;
-							Thread.Sleep(10);
-						}
-
-						trackballTumbleWidgetExtended.SetRotationWithDisplacement(end);
-						Invalidate();
-					});
+					trackballTumbleWidgetExtended.AnimateTo(look);
 				}
 			}
 
