@@ -385,12 +385,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scaleButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
 			buttonGroupA.Add(scaleButton);
 
+			var bottomButtonOffset = 0;
+
 			// add the background render for the view controls
 			controlLayer.BeforeDraw += (s, e) =>
 			{
 				var tumbleCubeRadius = tumbleCubeControl.Width / 2;
 				var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
 					controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
+
+				void renderPath(IVertexSource vertexSource, double width)
+				{
+					var background = new Stroke(vertexSource, width * 2);
+					background.LineCap = LineCap.Round;
+					e.Graphics2D.Render(background, theme.BedBackgroundColor.WithAlpha(120));
+					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
+				}
 
 				void renderRoundedGroup(double spanRatio, double startRatio)
 				{
@@ -399,16 +409,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var start = MathHelper.Tau * startRatio - angle / 2;
 					var end = MathHelper.Tau * startRatio + angle / 2;
 					var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
-					var background = new Stroke(arc, width * 2);
-					background.LineCap = LineCap.Round;
-					e.Graphics2D.Render(background, theme.TextColor.WithAlpha(20));
-					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
+
+					renderPath(arc, width);
 				}
 
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
 				renderRoundedGroup(.1, 1 - .1);
 
+				void renderRoundedLine(double lineWidth, double heightBelowCenter)
+				{
+					lineWidth *= scale;
+					var width = 17 * scale;
+					var height = tumbleCubeCenter.Y - heightBelowCenter * scale;
+					var start = tumbleCubeCenter.X - lineWidth;
+					var end = tumbleCubeCenter.X + lineWidth;
+					var line = new VertexStorage();
+					line.MoveTo(start, height);
+					line.LineTo(end, height);
+
+					renderPath(line, width);
+				}
+
+				tumbleCubeCenter.X += bottomButtonOffset;
+
+				renderRoundedLine(20, 100);
+				
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
 			};
 
@@ -473,6 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var startHeight = 180;
 			var ySpacing = 40;
+			cubeCenterFromRightTop.X -= bottomButtonOffset;
 
 			// put in the bed and build volume buttons
 			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)

@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.AltPopupBounds = default(RectangleDouble);
+
+			this.HoverColor = theme.SlightShade;
 		}
 
 		public Func<GuiWidget> PopupContent { get; set; }
@@ -67,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BackgroundColor
 		{
-			get => MenuVisible ? theme.SlightShade : base.BackgroundColor;
+			get => MenuVisible ? HoverColor : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 
