@@ -440,10 +440,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				while (time < duration)
 				{
 					var current = Quaternion.Slerp(rotationStart, rotationEnd, time / duration);
-					UiThread.RunOnIdle(() =>
-					{
-						this.SetRotationWithDisplacement(current);
-					});
+					this.SetRotationWithDisplacement(current);
+					Invalidate();
 					time = timer.Elapsed.TotalSeconds;
 					Thread.Sleep(10);
 				}
@@ -452,6 +450,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 			});
 		}
+
+		public void AnimateTranslation(Vector3 start, Vector3 end)
+		{
+			var delta = end - start;
+			Task.Run(() =>
+			{
+				// TODO: stop any spinning happening in the view
+				double duration = .25;
+				var timer = Stopwatch.StartNew();
+				var lastAppliedTime = 0.0;
+				var time = timer.Elapsed.TotalSeconds;
+
+				var ratio = 0.0;
+				while (time < duration)
+				{
+					ratio = (time - lastAppliedTime) / duration;
+					lastAppliedTime = time;
+					world.Translate(delta * ratio);
+					Invalidate();
+					time = timer.Elapsed.TotalSeconds;
+					Thread.Sleep(10);
+				}
+
+				ratio = (time - lastAppliedTime) / duration;
+				if (ratio > 0)
+				{
+					world.Translate(delta * ratio);
+				}
+
+				Invalidate();
+			});
+		}
+
 
 		internal class MotionQueue
 		{

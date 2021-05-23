@@ -184,10 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewModes.Add(PartViewMode.Layers3D, layers3DButton);
 
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				this.AddChild(layers3DButton);
-			}
+			this.AddChild(layers3DButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
 			layers2DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)

@@ -71,20 +71,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				switch (e.TransformMode)
 				{
-					case ViewControls3DButtons.Translate:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
-						}
-
-						break;
-
 					case ViewControls3DButtons.Scale:
 						if (gcode2DWidget != null)
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
 						}
+						break;
 
+					default:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
+						}
 						break;
 				}
 			};

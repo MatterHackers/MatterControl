@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -319,7 +320,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch, 
 				HAnchor = HAnchor.Stretch,
 				Selectable = false,
-				DoubleBuffer = true,
 			});
 
 			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
@@ -462,7 +462,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			void SetZoomEnabled(object s, EventArgs e)
 			{
-				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null;
+				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null
+					&& (printer == null || printer.ViewState.ViewMode == PartViewMode.Model);
 			}
 
 			this.Scene.SelectionChanged += SetZoomEnabled;
@@ -476,8 +477,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var aabb = selectedItem.GetAxisAlignedBoundingBox();
 					var center = aabb.Center;
 					// pan to the center
+					var world = sceneContext.World;
+					var screenCenter = new Vector2(world.Width / 2, world.Height / 2);
+					var centerRay = world.GetRayForLocalBounds(screenCenter);
+					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * 80);
 					// zoom to fill the view
-					viewControls3D.NotifyResetView();
+					// viewControls3D.NotifyResetView();
 				}
 			};
 
