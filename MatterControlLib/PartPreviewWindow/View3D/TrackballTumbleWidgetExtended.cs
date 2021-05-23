@@ -429,57 +429,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var rotationStart = new Quaternion(world.RotationMatrix);
 			var rotationEnd = new Quaternion(newRotation);
-
-			Task.Run(() =>
+			ZeroVelocity();
+			var updates = 10;
+			Animation.Run(this, .25, updates, (update) =>
 			{
-				// TODO: stop any spinning happening in the view
-				double duration = .25;
-				var timer = Stopwatch.StartNew();
-				var time = timer.Elapsed.TotalSeconds;
-
-				while (time < duration)
-				{
-					var current = Quaternion.Slerp(rotationStart, rotationEnd, time / duration);
-					this.SetRotationWithDisplacement(current);
-					Invalidate();
-					time = timer.Elapsed.TotalSeconds;
-					Thread.Sleep(10);
-				}
-
-				this.world.RotationMatrix = newRotation;
-				Invalidate();
+				var current = Quaternion.Slerp(rotationStart, rotationEnd, update / (double)updates);
+				this.SetRotationWithDisplacement(current);
 			});
 		}
 
 		public void AnimateTranslation(Vector3 start, Vector3 end)
 		{
 			var delta = end - start;
-			Task.Run(() =>
+
+			ZeroVelocity();
+			Animation.Run(this, .25, 10, (update) =>
 			{
-				// TODO: stop any spinning happening in the view
-				double duration = .25;
-				var timer = Stopwatch.StartNew();
-				var lastAppliedTime = 0.0;
-				var time = timer.Elapsed.TotalSeconds;
-
-				var ratio = 0.0;
-				while (time < duration)
-				{
-					ratio = (time - lastAppliedTime) / duration;
-					lastAppliedTime = time;
-					world.Translate(delta * ratio);
-					Invalidate();
-					time = timer.Elapsed.TotalSeconds;
-					Thread.Sleep(10);
-				}
-
-				ratio = (time - lastAppliedTime) / duration;
-				if (ratio > 0)
-				{
-					world.Translate(delta * ratio);
-				}
-
-				Invalidate();
+				world.Translate(delta * .1);
 			});
 		}
 
