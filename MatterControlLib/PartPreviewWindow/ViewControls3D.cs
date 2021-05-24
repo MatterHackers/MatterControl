@@ -37,6 +37,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
@@ -134,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			bedMenuButton = new PopupMenuButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			bedMenuButton = new PopupMenuButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Options Menu",
 				ToolTipText = "Bed",
@@ -154,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			undoButton = new IconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			undoButton = new IconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo".Localize(),
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			redoButton = new IconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			redoButton = new IconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
@@ -235,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						groupButton = theme.CreateSplitButton(
 							new SplitButtonParams()
 							{
-								Icon = defaultOperation.Icon(theme.InvertIcons),
+								Icon = defaultOperation.Icon(theme),
 								ButtonAction = (menuButton) =>
 								{
 									defaultOperation.Action.Invoke(sceneContext);
@@ -246,7 +247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									foreach (var operation in operationGroup.Operations)
 									{
-										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme));
 
 										operationMenu.Enabled = operation.IsEnabled(sceneContext);
 										operationMenu.ToolTipText = operation.Title;
@@ -263,7 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 											{
 												// Update button
 												var iconButton = groupButton.Children.OfType<IconButton>().First();
-												iconButton.SetIcon(operation.Icon(theme.InvertIcons));
+												iconButton.SetIcon(operation.Icon(theme));
 												iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
 												UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
@@ -302,7 +303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (namedAction.Icon != null)
 				{
-					button = new IconButton(namedAction.Icon(theme.InvertIcons), theme)
+					button = new IconButton(namedAction.Icon(theme), theme)
 					{
 						Name = namedAction.Title + " Button",
 						ToolTipText = namedAction.Title,
@@ -471,7 +472,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Export",
 						Title = "Export".Localize(),
-						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
+						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(menuTheme.TextColor),
 						Action = () =>
 						{
 							ApplicationController.Instance.ExportLibraryItems(
@@ -512,7 +513,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private IconButton CreateOpenButton(ThemeConfig theme)
 		{
-			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
+			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Open File".Localize(),
@@ -581,7 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var buttonView = new TextIconButton(
 				"",
-				StaticData.Instance.LoadIcon("cube_add.png", 16, 16, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("cube_add.png", 16, 16).SetToColor(theme.TextColor),
 				theme);
 
 			// Remove right Padding for drop style
@@ -699,7 +700,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
 			}
 
-			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("support.png", 16, 16, theme.InvertIcons), theme)
+			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
@@ -722,7 +723,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return theme.CreateSplitButton(new SplitButtonParams()
 			{
 				ButtonName = "Save",
-				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16).SetToColor(theme.TextColor),
 				ButtonAction = (menuButton) =>
 				{
 					ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async (progress, cancellationToken) =>
@@ -767,7 +768,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 								}));
 					});
-					var export = popupMenu.CreateMenuItem("Export".Localize(), StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons));
+					var export = popupMenu.CreateMenuItem("Export".Localize(), StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor));
 					export.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(

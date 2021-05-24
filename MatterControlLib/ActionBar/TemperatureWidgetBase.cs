@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -65,7 +66,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.MakeScrollable = false;
 			this.AlignToRightEdge = true;
 
-			ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png", 14, 14, theme.InvertIcons))
+			ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png", 14, 14).SetToColor(theme.TextColor))
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 5)

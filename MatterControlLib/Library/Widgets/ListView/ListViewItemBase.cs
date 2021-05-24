@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbWidth = width;
 			this.thumbHeight = height;
 
-			overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons);
+			overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
 		}
 
 		public bool HasMenu { get; set; } = false;

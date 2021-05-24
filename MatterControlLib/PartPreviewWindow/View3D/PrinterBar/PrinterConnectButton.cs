@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			connectButton = new TextIconButton(
 				"Connect".Localize(),
-				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)
 			{
 				Name = "Connect to printer button",
@@ -76,7 +77,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// add the cancel stop button
 			cancelConnectButton = new TextIconButton(
 				"Cancel".Localize(),
-				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)
 			{
 				ToolTipText = "Stop trying to connect to the printer.".Localize(),
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			disconnectButton = new TextIconButton(
 				"Disconnect".Localize(),
-				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)
 			{
 				Name = "Disconnect from printer button",

@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Extensibility;
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
 					HelpTextResolver = () => "*An image must be selected*".Localize(),
 					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
-					Icon = (invertIcon) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16, invertIcon)
+					Icon = (theme) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16).SetToColor(theme.TextColor)
 				},
 				"Image");
 		}

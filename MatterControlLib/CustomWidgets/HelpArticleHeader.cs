@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.VAnchor = VAnchor.Stretch;
 			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
 
-			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = editToolTipText ?? "Edit".Localize(),
 				Name = helpArticle.Name + " Edit"

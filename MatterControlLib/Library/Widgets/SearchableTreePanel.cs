@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.theme = theme;
 			this.TreeLoaded = false;
 
-			var searchIcon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
+			var searchIcon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor).AjustAlpha(0.3);
 
 			searchBox = new TextEditWithInlineCancel(theme)
 			{

@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.Padding = new BorderDouble(3, 0);
 
-			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14, theme.InvertIcons))
+			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14).SetToColor(theme.TextColor))
 			{
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Left

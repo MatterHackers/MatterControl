@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 
 		public OperationIconButton(SceneOperation sceneOperation, ISceneContext sceneContext, ThemeConfig theme)
-			: base(sceneOperation.Icon(theme.InvertIcons), theme)
+			: base(sceneOperation.Icon(theme), theme)
 		{
 			this.sceneOperation = sceneOperation;
 			this.sceneContext = sceneContext;

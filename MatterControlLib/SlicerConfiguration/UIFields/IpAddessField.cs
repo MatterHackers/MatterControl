@@ -11,6 +11,7 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Zeroconf;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Agg.Platform;
+using MatterHackers.ImageProcessing;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var widget = new FlowLayoutWidget();
 			widget.AddChild(dropdownList);
-			refreshButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14, theme.InvertIcons), theme)
+			refreshButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				Margin = new BorderDouble(left: 5)
 			};

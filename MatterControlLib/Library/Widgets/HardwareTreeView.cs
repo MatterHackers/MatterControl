@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Text = "Printers".Localize(),
 				HAnchor = HAnchor.Stretch,
 				AlwaysExpandable = true,
-				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
+				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16).SetToColor(theme.TextColor)
 			};
 			printersNode.TreeView = this;
 
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			mainRow.AddChild(new HorizontalSpacer());
 
 			// add in the create printer button
-			var createPrinter = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
+			var createPrinter = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Create Printer",
 				VAnchor = VAnchor.Center,
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			mainRow.AddChild(createPrinter);
 
 			// add in the import printer button
-			var importPrinter = new IconButton(StaticData.Instance.LoadIcon("md-import_18.png", 18, 18, theme.InvertIcons), theme)
+			var importPrinter = new IconButton(StaticData.Instance.LoadIcon("md-import_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,
@@ -115,7 +116,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Text = "Materials".Localize(),
 				AlwaysExpandable = true,
-				Image = StaticData.Instance.LoadIcon("filament.png", 16, 16, theme.InvertIcons)
+				Image = StaticData.Instance.LoadIcon("filament.png", 16, 16).SetToColor(theme.TextColor)
 			};
 			materialsNode.TreeView = this;
 

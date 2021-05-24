@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -90,8 +91,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return Task.FromResult(
 				StaticData.Instance.LoadIcon(
-					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"),
-					ApplicationController.Instance.Theme.InvertIcons));
+					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png")).SetToColor(ApplicationController.Instance.Theme.TextColor));
 		}
 
 		public override void Load()

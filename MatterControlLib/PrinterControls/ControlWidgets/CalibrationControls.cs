@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					null,
 					theme));
 
-				var runWizardButton = new IconButton(StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons), theme)
+				var runWizardButton = new IconButton(StaticData.Instance.LoadIcon("compass.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,

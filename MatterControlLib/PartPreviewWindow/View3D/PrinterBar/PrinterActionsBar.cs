@@ -34,6 +34,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var resetConnectionButton = new TextIconButton(
 						"Reset".Localize(),
-						StaticData.Instance.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
+						StaticData.Instance.LoadIcon("e_stop.png", 14, 14).SetToColor(theme.TextColor),
 						theme)
 					{
 						ToolTipText = "Reboots the firmware on the controller".Localize(),
@@ -153,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			var iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			modelViewButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewModes.Add(PartViewMode.Model, modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			layers3DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -183,13 +184,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewModes.Add(PartViewMode.Layers3D, layers3DButton);
 
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				this.AddChild(layers3DButton);
-			}
+			this.AddChild(layers3DButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			layers2DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
@@ -313,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16).SetToColor(theme.TextColor),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click,
 					IsEnabled = () => printer.Connection.IsConnected
@@ -368,7 +366,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					ApplicationController.Instance.ExportAsMatterControlConfig(printer);
 				}),
-				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
 			});
 			menuActions.Add(new ActionSeparator());
 			menuActions.Add(new NamedAction()
@@ -381,7 +379,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 					});
 				}),
-				Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
+				Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16).SetToColor(theme.TextColor)
 			});
 			menuActions.Add(new ActionSeparator());
 			menuActions.Add(new NamedAction()
@@ -391,7 +389,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					DialogWindow.Show(new UpdateSettingsPage(printer));
 				},
-				Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
+				Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16).SetToColor(theme.TextColor)
 			});
 			menuActions.Add(new NamedAction()
 			{

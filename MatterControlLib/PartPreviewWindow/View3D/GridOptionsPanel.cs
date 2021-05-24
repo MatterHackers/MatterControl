@@ -26,10 +26,12 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -38,6 +40,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class GridOptionsPanel : DropButton
 	{
 		Object3DControlsLayer object3DControlLayer;
+		private GuiWidget textButton;
+		private PopupMenu popupMenu;
 
 		public GridOptionsPanel(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
 			: base(theme)
@@ -45,17 +49,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.object3DControlLayer = object3DControlLayer;
 			this.PopupContent = () => ShowGridOptions(theme);
 
-			this.AddChild(new TextIconButton("Snap", StaticData.Instance.LoadIcon("snap_grid.png", 16, 16, theme.InvertIcons), theme)
+			var gridDistance = object3DControlLayer.SnapGridDistance;
+
+			textButton = this.AddChild(new TextButton(gridDistance.ToString(), theme)
 			{
-				Selectable = false
+				Selectable = false,
+				HAnchor = HAnchor.Center
 			});
-			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
+			this.Width = this.Height;
+
+			UserSettings.Instance.SettingChanged += UserSettings_SettingChanged;
+		
+			SetToolTip();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listener
+			UserSettings.Instance.SettingChanged -= UserSettings_SettingChanged;
+
+			base.OnClosed(e);
+		}
+
+		private void UserSettings_SettingChanged(object sender, StringEventArgs e)
+		{
+			if (e.Data == UserSettingsKey.SnapGridDistance)
+			{
+				SetToolTip();
+			}
+		}
+
+		private void SetToolTip()
+		{
+			var distance = object3DControlLayer.SnapGridDistance;
+			if (distance == 0)
+			{
+				textButton.Text = "-";
+				ToolTipText = "Snapping Turned Off".Localize();
+			}
+			else
+			{
+				textButton.Text = distance.ToString().TrimStart('0');
+				ToolTipText = "Snap Grid".Localize() + " = " + textButton.Text;
+			}
+
+			popupMenu?.Close();
+			popupMenu = null;
 		}
 
 		private GuiWidget ShowGridOptions(ThemeConfig theme)
 		{
-			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+			popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 			var siblingList = new List<GuiWidget>();
 

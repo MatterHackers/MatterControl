@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.ColorPicker;
@@ -208,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				picker.SetColorWithoutChangeEvent(Color.White);
 			};
 
-			var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16, theme.InvertIcons), theme)
+			var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Margin = 0,
 				HAnchor = HAnchor.Fit | HAnchor.Left,

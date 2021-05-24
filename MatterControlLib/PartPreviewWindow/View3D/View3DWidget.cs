@@ -39,10 +39,12 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
@@ -66,8 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
 
 		private readonly TreeView treeView;
-
-		private ViewStyleButton modelViewStyleButton;
 
 		private readonly PrinterConfig printer;
 
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			titleAndTreeView.AddChild(treeView);
 
 			workspaceName.ActionArea.AddChild(
-				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons), theme)
+				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor), theme)
 				{
 					Enabled = false
 				},
@@ -315,6 +315,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			controlLayer.AddChild(tumbleCubeControl);
 
+			var hudBackground = controlLayer.AddChild(new GuiWidget()
+			{
+				VAnchor = VAnchor.Stretch, 
+				HAnchor = HAnchor.Stretch,
+				Selectable = false,
+			});
+
 			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
 			{
 				widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
@@ -340,7 +347,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add the view controls
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
-			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16, theme.InvertIcons), theme)
+			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Select Parts".Localize(),
@@ -351,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 
-			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons), theme)
+			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
@@ -362,7 +369,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
 
-			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons), theme)
+			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
@@ -373,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
-			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16, theme.InvertIcons), theme)
+			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				// ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
@@ -384,12 +391,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scaleButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
 			buttonGroupA.Add(scaleButton);
 
+			var bottomButtonOffset = 0;
+			var hudBackgroundColor = theme.BedBackgroundColor.WithAlpha(120);
+			var hudStrokeColor = theme.TextColor.WithAlpha(120);
+
 			// add the background render for the view controls
-			controlLayer.BeforeDraw += (s, e) =>
+			// controlLayer.BeforeDraw += (s, e) => // enable to debug any rendering errors that might be due to double buffered hudBackground
+			hudBackground.BeforeDraw += (s, e) =>
 			{
 				var tumbleCubeRadius = tumbleCubeControl.Width / 2;
 				var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
 					controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
+
+				void renderPath(IVertexSource vertexSource, double width)
+				{
+					var background = new Stroke(vertexSource, width * 2);
+					background.LineCap = LineCap.Round;
+					e.Graphics2D.Render(background, hudBackgroundColor);
+					e.Graphics2D.Render(new Stroke(background, scale), hudStrokeColor);
+				}
 
 				void renderRoundedGroup(double spanRatio, double startRatio)
 				{
@@ -398,35 +418,141 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var start = MathHelper.Tau * startRatio - angle / 2;
 					var end = MathHelper.Tau * startRatio + angle / 2;
 					var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
-					var background = new Stroke(arc, width * 2);
-					background.LineCap = LineCap.Round;
-					e.Graphics2D.Render(background, theme.TextColor.WithAlpha(20));
-					e.Graphics2D.Render(new Stroke(background, scale), theme.TextColor.WithAlpha(120));
+
+					renderPath(arc, width);
 				}
 
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
 				renderRoundedGroup(.1, 1 - .1);
 
+				void renderRoundedLine(double lineWidth, double heightBelowCenter)
+				{
+					lineWidth *= scale;
+					var width = 17 * scale;
+					var height = tumbleCubeCenter.Y - heightBelowCenter * scale;
+					var start = tumbleCubeCenter.X - lineWidth;
+					var end = tumbleCubeCenter.X + lineWidth;
+					var line = new VertexStorage();
+					line.MoveTo(start, height);
+					line.LineTo(end, height);
+
+					renderPath(line, width);
+				}
+
+				tumbleCubeCenter.X += bottomButtonOffset;
+
+				renderRoundedLine(18, 101);
+				
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
 			};
 
 			// add the home button
-			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16, theme.InvertIcons), theme)
+			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => viewControls3D.NotifyResetView();
+			void SetZoomEnabled(object s, EventArgs e)
+			{
+				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null
+					&& (printer == null || printer.ViewState.ViewMode == PartViewMode.Model);
+			}
 
-			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16, theme.InvertIcons), theme)
+			this.Scene.SelectionChanged += SetZoomEnabled;
+			this.Closed += (s, e) => this.Scene.SelectionChanged -= SetZoomEnabled;
+
+			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) =>
+			{
+				bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
+				{
+					if (partScreenBounds.Bottom < goalBounds.Bottom
+						|| partScreenBounds.Top > goalBounds.Top
+						|| partScreenBounds.Left < goalBounds.Left
+						|| partScreenBounds.Right > goalBounds.Right)
+					{
+						return true;
+					}
+
+					return false;
+				}
+
+				var selectedItem = this.Scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					var aabb = selectedItem.GetAxisAlignedBoundingBox();
+					var center = aabb.Center;
+					// pan to the center
+					var world = sceneContext.World;
+					var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
+					var centerRay = world.GetRayForLocalBounds(screenCenter);
+
+					bool done = false;
+					double scaleFraction = .1;
+					// make the target size a portion of the total size
+					var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
+					goalBounds.Inflate(-world.Width * .1);
+
+					int rescaleAttempts = 0;
+					var testWorld = new WorldView(world.Width, world.Height);
+					testWorld.RotationMatrix = world.RotationMatrix;
+					var distance = 80.0;
+					void AjustDistance()
+					{
+						testWorld.TranslationMatrix = world.TranslationMatrix;
+						var delta = centerRay.origin + centerRay.directionNormal * distance - center;
+						testWorld.Translate(delta);
+					}
+
+					while (!done && rescaleAttempts++ < 500)
+					{
+
+						var partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+						{
+							distance *= 1 + scaleFraction;
+							AjustDistance();
+							partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+							// If it crossed over the goal reduct the amount we are adjusting by.
+							if (NeedsToBeSmaller(partScreenBounds, goalBounds))
+							{
+								scaleFraction /= 2;
+							}
+						}
+						else
+						{
+							testWorld.Scale *= 1 - scaleFraction;
+							AjustDistance();
+							partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+							// If it crossed over the goal reduct the amount we are adjusting by.
+							if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+							{
+								scaleFraction /= 2;
+								if (scaleFraction < .001)
+								{
+									done = true;
+								}
+							}
+						}
+					}
+
+					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * 80);
+					// zoom to fill the view
+					// viewControls3D.NotifyResetView();
+				}
+			};
+
+			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Turntable Mode".Localize(),
 				Margin = theme.ButtonSpacing,
@@ -438,7 +564,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// toggle the turn table mode
 			};
 
-			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16, theme.InvertIcons), theme)
+			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Perspective Mode".Localize(),
 				Margin = theme.ButtonSpacing,
@@ -453,9 +579,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var startHeight = 180;
 			var ySpacing = 40;
+			cubeCenterFromRightTop.X -= bottomButtonOffset;
 
 			// put in the bed and build volume buttons
-			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -464,22 +591,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
 			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
-			bedButton.CheckedStateChanged += (s, e) =>
-			{
-				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
-			};
-
-			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
-
-			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
+			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
 				ToggleButton = true,
-				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D && bedButton.Checked,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
+
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
+				printAreaButton.Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D && bedButton.Checked;
+			};
+
+			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
+
 			AddRoundButton(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
 
 			printAreaButton.CheckedStateChanged += (s, e) =>
@@ -506,10 +635,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
+			// declare the grid snap button
+			GridOptionsPanel gridSnapButton = null;
+
 			// put in the view list buttons
-			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
+			var modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
-				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
@@ -519,16 +650,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
 			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
+			modelViewStyleButton.BackgroundColor = hudBackgroundColor;
+			modelViewStyleButton.BorderColor = hudStrokeColor;
+
+			void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
+			{
+				modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
+				gridSnapButton.Visible = modelViewStyleButton.Visible;
+			}
 
 			if (printer?.ViewState != null)
 			{
-				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+				printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 			}
 
-			// Add the grid snap button
-			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
+			this.Closed += (s, e) =>
 			{
-				ToolTipText = "Snap Grid".Localize(),
+				if (printer?.ViewState != null)
+				{
+					printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
+				}
+			};
+
+			// Add the grid snap button
+			gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
+			{
 				PopupMate = new MatePoint()
 				{
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
@@ -537,6 +683,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
+			gridSnapButton.BackgroundColor = hudBackgroundColor;
+			gridSnapButton.BorderColor = hudStrokeColor;
 
 #if DEBUG
 			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
@@ -707,11 +855,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeView.TopLeftOffset = beforeReubildScrollPosition;
 
 			Invalidate();
-		}
-
-		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
-		{
-			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
@@ -927,11 +1070,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
-
-			if (printer?.ViewState != null)
-			{
-				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
-			}
 
 			if (this.Object3DControlLayer != null)
 			{
@@ -1633,19 +1771,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return offset;
 		}
 
+		Vector3 homeEyePosition = default(Vector3);
+		Matrix4X4 homeRotation = default(Matrix4X4);
 		public void ResetView()
 		{
-			TrackballTumbleWidget.Reset(new Vector3(sceneContext.BedCenter));
-
 			var world = sceneContext.World;
+			TrackballTumbleWidget.SetRotationCenter(new Vector3(sceneContext.BedCenter));
 
-			world.Reset();
-			world.Scale = .03;
-			world.Translate(-new Vector3(sceneContext.BedCenter));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
+			void ResetHome()
+			{
+				world.Reset();
+				world.Scale = .03;
+				world.Translate(-new Vector3(sceneContext.BedCenter));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
 
-			Invalidate();
+				homeEyePosition = world.EyePosition;
+				homeRotation = world.RotationMatrix;
+				Invalidate();
+			}
+
+			void Rotate()
+			{
+				TrackballTumbleWidget.AnimateRotation(homeRotation);//, ResetHome);
+
+			}
+
+			void Translate()
+			{
+				TrackballTumbleWidget.AnimateTranslation(world.EyePosition, homeEyePosition);
+
+			}
+
+			if (homeEyePosition.Z != 0)
+			{
+				// pan to the center
+				//var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
+				//var centerRay = world.GetRayForLocalBounds(screenCenter);
+				//TrackballTumbleWidget.AnimateTranslation(new Vector3(sceneContext.BedCenter, 0), centerRay.origin + centerRay.directionNormal * 80);
+				ResetHome();
+			}
+			else
+			{
+				ResetHome();
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)

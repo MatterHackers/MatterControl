@@ -36,6 +36,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary;
 
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			private static ImageBuffer CreateOverflowIcon(ThemeConfig theme)
 			{
-				return StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons);
+				return StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
 			}
 		}
 	}

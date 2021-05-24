@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl
 				Text = "Printers".Localize(),
 				HAnchor = HAnchor.Stretch,
 				AlwaysExpandable = true,
-				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
+				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16).SetToColor(theme.TextColor)
 			};
 			rootPrintersNode.TreeView = treeView;
 			treeView.AddChild(rootPrintersNode);

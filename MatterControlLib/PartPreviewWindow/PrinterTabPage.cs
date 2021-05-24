@@ -32,6 +32,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -70,20 +71,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				switch (e.TransformMode)
 				{
-					case ViewControls3DButtons.Translate:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
-						}
-
-						break;
-
 					case ViewControls3DButtons.Scale:
 						if (gcode2DWidget != null)
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
 						}
+						break;
 
+					default:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
+						}
 						break;
 				}
 			};
@@ -688,7 +687,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the move up button
 			var babyStepAmount = .02;
-			var upButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Up Arrow.png", 32, 32, theme.InvertIcons), theme)
+			var upButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Up Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -727,7 +726,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// add in the move down button
-			var downButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Down Arrow.png", 32, 32, theme.InvertIcons), theme)
+			var downButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Down Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -895,7 +894,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			timeContainer.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("fa-clock_24.png", 24, 24, theme.InvertIcons))
+			timeContainer.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("fa-clock_24.png", 24, 24).SetToColor(theme.TextColor))
 			{
 				VAnchor = VAnchor.Center
 			});

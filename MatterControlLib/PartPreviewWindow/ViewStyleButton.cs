@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.RenderOpenGl;
@@ -41,10 +42,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewStyleButton : DropButton
 	{
-		private TextIconButton iconButton;
+		private IconButton iconButton;
 		private ISceneContext sceneContext;
 
-		private Dictionary<RenderTypes, ImageBuffer> viewIcons;
+		private Dictionary<RenderTypes, (ImageBuffer image, string toolTip)> viewData;
+		private PopupMenu popupMenu;
 
 		public ViewStyleButton(ISceneContext sceneContext, ThemeConfig theme)
 			: base(theme)
@@ -54,20 +56,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
-			viewIcons = new Dictionary<RenderTypes, ImageBuffer>()
+			viewData = new Dictionary<RenderTypes, (ImageBuffer image, string toolTip)>
 			{
-				[RenderTypes.Shaded] = StaticData.Instance.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Outlines] = StaticData.Instance.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Polygons] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.NonManifold] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Materials] = StaticData.Instance.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Overhang] = StaticData.Instance.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Shaded] = (StaticData.Instance.LoadIcon("view_shaded.png", 16, 16), "View Mode = Shaded".Localize()),
+				[RenderTypes.Outlines] = (StaticData.Instance.LoadIcon("view_outlines.png", 16, 16), "View Mode = Outlines".Localize()),
+				[RenderTypes.Polygons] = (StaticData.Instance.LoadIcon("view_polygons.png", 16, 16), "View Mode = Polygons".Localize()),
+				[RenderTypes.NonManifold] = (StaticData.Instance.LoadIcon("view_polygons.png", 16, 16), "View Mode = Non-Manifold".Localize()),
+				[RenderTypes.Materials] = (StaticData.Instance.LoadIcon("view_materials.png", 16, 16), "View Mode = Materials".Localize()),
+				[RenderTypes.Overhang] = (StaticData.Instance.LoadIcon("view_overhang.png", 16, 16), "View Mode = Overhangs".Localize()),
 			};
 
-			this.AddChild(iconButton = new TextIconButton("View".Localize(), viewIcons[sceneContext.ViewState.RenderType], theme)
+			var renderType = sceneContext.ViewState.RenderType;
+			this.AddChild(iconButton = new IconButton(viewData[renderType].image, theme)
 			{
 				Selectable = false
 			});
+			
+			ToolTipText = viewData[renderType].toolTip;
 
 			UserSettings.Instance.SettingChanged += UserSettings_SettingChanged;
 		}
@@ -84,23 +89,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e.Data == UserSettingsKey.defaultRenderSetting)
 			{
-				iconButton.SetIcon(viewIcons[sceneContext.ViewState.RenderType]);
+				var renderType = sceneContext.ViewState.RenderType;
+				iconButton.SetIcon(viewData[renderType].image);
 				if (!this.MenuVisible)
 				{
-					iconButton.FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.TextColor, 6).ToColor());
+					this.FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.TextColor, 6).ToColor());
 				}
+				ToolTipText = viewData[renderType].toolTip;
+
+				popupMenu?.Close();
+				popupMenu = null;
 			}
 		}
 
 		private GuiWidget ShowViewOptions()
 		{
-			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+			popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 			var siblingList = new List<GuiWidget>();
 
 			popupMenu.CreateBoolMenuItem(
 				"Shaded".Localize(),
-				viewIcons[RenderTypes.Shaded],
+				viewData[RenderTypes.Shaded].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.Shaded,
 				(isChecked) =>
 				{
@@ -111,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Outlines (default)".Localize(),
-				viewIcons[RenderTypes.Outlines],
+				viewData[RenderTypes.Outlines].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.Outlines,
 				(isChecked) =>
 				{
@@ -123,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if DEBUG
 			popupMenu.CreateBoolMenuItem(
 				"Non-Manifold".Localize(),
-				viewIcons[RenderTypes.Polygons],
+				viewData[RenderTypes.Polygons].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.NonManifold,
 				(isChecked) =>
 				{
@@ -135,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Polygons".Localize(),
-				viewIcons[RenderTypes.Polygons],
+				viewData[RenderTypes.Polygons].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.Polygons,
 				(isChecked) =>
 				{
@@ -146,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Materials".Localize(),
-				viewIcons[RenderTypes.Materials],
+				viewData[RenderTypes.Materials].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.Materials,
 				(isChecked) =>
 				{
@@ -157,7 +167,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Overhang".Localize(),
-				viewIcons[RenderTypes.Overhang],
+				viewData[RenderTypes.Overhang].image,
 				() => sceneContext.ViewState.RenderType == RenderTypes.Overhang,
 				(isChecked) =>
 				{

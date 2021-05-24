@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14, theme.InvertIcons), theme)
+			checkUpdateButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Check for Update".Localize(),
 				BackgroundColor = theme.MinimalShade,

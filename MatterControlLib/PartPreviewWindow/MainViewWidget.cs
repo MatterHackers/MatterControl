@@ -39,6 +39,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -625,7 +626,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			themePanel.AddChild(
-				new ImageWidget(StaticData.Instance.LoadIcon("theme.png", 16, 16, theme.InvertIcons), false)
+				new ImageWidget(StaticData.Instance.LoadIcon("theme.png", 16, 16), false)
 				{
 					HAnchor = HAnchor.Center | HAnchor.Absolute,
 					VAnchor = VAnchor.Center | VAnchor.Absolute,
@@ -785,7 +786,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(textWidget);
 			var buttonSize = 24 * DeviceScale;
-			var moveLeftButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons).MirrorX(), theme)
+			var moveLeftButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor).MirrorX(), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
@@ -801,7 +802,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(moveLeftButton);
 
-			var moveRightButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons), theme)
+			var moveRightButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
@@ -855,7 +856,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl,
 				new PartTabPage(workspace, theme, ""),
 				theme,
-				StaticData.Instance.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
+				StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 			};

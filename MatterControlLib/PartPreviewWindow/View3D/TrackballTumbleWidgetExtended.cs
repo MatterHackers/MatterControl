@@ -7,6 +7,9 @@ using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -288,10 +291,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void Reset(Vector3 bedCenter)
+		public void SetRotationCenter(Vector3 worldPosition)
 		{
 			ZeroVelocity();
-			mouseDownWorldPosition = bedCenter;
+			mouseDownWorldPosition = worldPosition;
 		}
 
 		public void SetRotationWithDisplacement(Quaternion rotationQ)
@@ -420,6 +423,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					int a = 0;
 				}
 			}
+		}
+
+		public void AnimateRotation(Matrix4X4 newRotation, Action after = null)
+		{
+			var rotationStart = new Quaternion(world.RotationMatrix);
+			var rotationEnd = new Quaternion(newRotation);
+			ZeroVelocity();
+			var updates = 10;
+			Animation.Run(this, .25, updates, (update) =>
+			{
+				var current = Quaternion.Slerp(rotationStart, rotationEnd, update / (double)updates);
+				this.SetRotationWithDisplacement(current);
+			}, after);
+		}
+
+		public void AnimateTranslation(Vector3 worldStart, Vector3 worldEnd, Action after = null)
+		{
+			var delta = worldEnd - worldStart;
+
+			ZeroVelocity();
+			Animation.Run(this, .25, 10, (update) =>
+			{
+				world.Translate(delta * .1);
+			}, after);
 		}
 
 		internal class MotionQueue

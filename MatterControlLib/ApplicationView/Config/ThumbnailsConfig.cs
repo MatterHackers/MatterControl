@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
@@ -61,7 +62,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public ImageBuffer DefaultThumbnail() => StaticData.Instance.LoadIcon("cube.png", 16, 16, Theme.InvertIcons);
+		public ImageBuffer DefaultThumbnail() => StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(Theme.TextColor);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{

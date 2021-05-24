@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl
 				{
 					theme = AppContext.Theme;
 
-					defaultIcon = StaticData.Instance.LoadIcon("mesh.png", theme.InvertIcons); //.AnyAlphaToColor(theme.PrimaryAccentColor);
+					defaultIcon = StaticData.Instance.LoadIcon("mesh.png").SetToColor(theme.TextColor); //.AnyAlphaToColor(theme.PrimaryAccentColor);
 				}
 
 				return defaultIcon;

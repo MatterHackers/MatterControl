@@ -45,24 +45,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCode2DWidget : GuiWidget
 	{
-		public enum ETransformState { Move, Scale };
+		private static Color gridColor = new Color(190, 190, 190, 255);
 
-		public ETransformState TransformState { get; set; }
+		private ImageBuffer bedImage;
 
-		private Vector2 lastMousePosition = new Vector2(0, 0);
-		private Vector2 mouseDownPosition = new Vector2(0, 0);
-
-		private double layerScale { get; set; } = 1;
-		private Vector2 gridSizeMm;
 		private Vector2 gridCenterMm;
 
-		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
-		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
+		private Vector2 gridSizeMm;
+
+		private Vector2 lastMousePosition = new Vector2(0, 0);
+
+		private Vector2 mouseDownPosition = new Vector2(0, 0);
+
 		private View3DConfig options;
+
+		private double pinchStartScale = 1;
+
 		private PrinterConfig printer;
 
-		private static Color gridColor = new Color(190, 190, 190, 255);
-		private ImageBuffer bedImage;
+		private double startDistanceBetweenPoints = 1;
+
+		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
 		public GCode2DWidget(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -98,43 +101,81 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		private void Printer_SettingChanged(object sender, StringEventArgs stringEvent)
-		{
-			if (stringEvent != null)
-			{
-				if (stringEvent.Data == SettingsKey.bed_size
-					|| stringEvent.Data == SettingsKey.print_center
-					|| stringEvent.Data == SettingsKey.bed_shape)
-				{
-					this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-					this.gridCenterMm = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+		public enum ETransformState { Move, Scale };
 
-					bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+		public override RectangleDouble LocalBounds
+		{
+			get
+			{
+				return base.LocalBounds;
+			}
+
+			set
+			{
+				double oldWidth = Width;
+				double oldHeight = Height;
+				base.LocalBounds = value;
+				if (oldWidth > 0)
+				{
+					layerScale = layerScale * (Width / oldWidth);
+				}
+				else if (printer.Bed.GCodeRenderer != null)
+				{
+					CenterPartInView();
 				}
 			}
 		}
+
+		public ETransformState TransformState { get; set; }
+
+		private double layerScale { get; set; } = 1;
+
+		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
 
 		private Affine scalingTransform => Affine.NewScaling(layerScale, layerScale);
 
 		private Affine totalTransform => Affine.NewTranslation(unscaledRenderOffset) * scalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
-		private void LoadedGCodeChanged(object sender, EventArgs e)
+		public void CenterPartInView()
 		{
-			if (loadedGCode == null)
+			if (loadedGCode != null)
 			{
-				// TODO: Display an overlay for invalid GCode
+				RectangleDouble partBounds = loadedGCode.GetBounds();
+				Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
+
+				unscaledRenderOffset = -weightedCenter;
+				layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
+
+				Invalidate();
 			}
-			else
-			{
-				CenterPartInView();
-			}
+		}
+
+		public void DrawBedImage(Graphics2D graphics2D, Affine transform)
+		{
+			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
+
+			Vector2 imageStart = Vector2.Zero + gridOffset;
+			transform.transform(ref imageStart);
+			Vector2 imageEnd = gridSizeMm + gridOffset;
+			transform.transform(ref imageEnd);
+			graphics2D.Render(bedImage, imageStart, imageEnd.X - imageStart.X, imageEnd.Y - imageStart.Y);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+			printer.Bed.LoadedGCodeChanged -= LoadedGCodeChanged;
+			printer.Bed.GCodeRenderer?.Dispose();
+
+			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (loadedGCode != null)
 			{
-				if(layerScale == 0)
+				if (layerScale == 0)
 				{
 					CenterPartInView();
 				}
@@ -172,19 +213,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public void DrawBedImage(Graphics2D graphics2D, Affine transform)
-		{
-			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
-
-			Vector2 imageStart = Vector2.Zero + gridOffset;
-			transform.transform(ref imageStart);
-			Vector2 imageEnd = gridSizeMm + gridOffset;
-			transform.transform(ref imageEnd);
-			graphics2D.Render(bedImage, imageStart, imageEnd.X - imageStart.X, imageEnd.Y - imageStart.Y);
-		}
-
-		double startDistanceBetweenPoints = 1;
-		double pinchStartScale = 1;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
@@ -211,39 +239,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void Zoom(double scaleAmount)
-		{
-			ScalePartAndFixPosition(new MouseEventArgs(MouseButtons.None,0, Width/2, Height/2, 0), layerScale * scaleAmount);
-			Invalidate();
-		}
-
-		public override void OnMouseWheel(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseWheel(mouseEvent);
-			if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
-			{
-				const double deltaFor1Click = 120;
-				double scaleAmount = (mouseEvent.WheelDelta / deltaFor1Click) * .1;
-
-				ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
-
-				Invalidate();
-			}
-		}
-
-		void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
-		{
-			Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			totalTransform.inverse_transform(ref mousePreScale);
-
-			layerScale = scaleAmount;
-
-			Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			totalTransform.inverse_transform(ref mousePostScale);
-
-			unscaledRenderOffset += (mousePostScale - mousePreScale);
-		}
-
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseMove(mouseEvent);
@@ -262,12 +257,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 mouseDelta = mousePos - lastMousePosition;
 				switch (TransformState)
 				{
-					case ETransformState.Move:
-						scalingTransform.inverse_transform(ref mouseDelta);
-
-						unscaledRenderOffset += mouseDelta;
-						break;
-
 					case ETransformState.Scale:
 						double zoomDelta = 1;
 						if (mouseDelta.Y < 0)
@@ -290,8 +279,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						unscaledRenderOffset += (mousePostScale - mousePreScale);
 						break;
 
-					default:
-						throw new NotImplementedException();
+					case ETransformState.Move:
+					default: // also treat everything else like a move
+						scalingTransform.inverse_transform(ref mouseDelta);
+
+						unscaledRenderOffset += mouseDelta;
+						break;
 				}
 
 				Invalidate();
@@ -310,50 +303,65 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
+		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
-			// Unregister listeners
-			printer.Settings.SettingChanged -= Printer_SettingChanged;
-			printer.Bed.LoadedGCodeChanged -= LoadedGCodeChanged;
-			printer.Bed.GCodeRenderer?.Dispose();
-
-			base.OnClosed(e);
-		}
-
-		public override RectangleDouble LocalBounds
-		{
-			get
+			base.OnMouseWheel(mouseEvent);
+			if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
 			{
-				return base.LocalBounds;
-			}
-			set
-			{
-				double oldWidth = Width;
-				double oldHeight = Height;
-				base.LocalBounds = value;
-				if (oldWidth > 0)
-				{
-					layerScale = layerScale * (Width / oldWidth);
-				}
-				else if (printer.Bed.GCodeRenderer != null)
-				{
-					CenterPartInView();
-				}
-			}
-		}
+				const double deltaFor1Click = 120;
+				double scaleAmount = (mouseEvent.WheelDelta / deltaFor1Click) * .1;
 
-		public void CenterPartInView()
-		{
-			if (loadedGCode != null)
-			{
-				RectangleDouble partBounds = loadedGCode.GetBounds();
-				Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
-
-				unscaledRenderOffset = -weightedCenter;
-				layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
+				ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
 
 				Invalidate();
 			}
+		}
+
+		public void Zoom(double scaleAmount)
+		{
+			ScalePartAndFixPosition(new MouseEventArgs(MouseButtons.None, 0, Width / 2, Height / 2, 0), layerScale * scaleAmount);
+			Invalidate();
+		}
+
+		private void LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			if (loadedGCode == null)
+			{
+				// TODO: Display an overlay for invalid GCode
+			}
+			else
+			{
+				CenterPartInView();
+			}
+		}
+
+		private void Printer_SettingChanged(object sender, StringEventArgs stringEvent)
+		{
+			if (stringEvent != null)
+			{
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.bed_shape)
+				{
+					this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+					this.gridCenterMm = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+
+					bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+				}
+			}
+		}
+
+		private void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
+		{
+			Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+			totalTransform.inverse_transform(ref mousePreScale);
+
+			layerScale = scaleAmount;
+
+			Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+			totalTransform.inverse_transform(ref mousePostScale);
+
+			unscaledRenderOffset += (mousePostScale - mousePreScale);
 		}
 	}
 }

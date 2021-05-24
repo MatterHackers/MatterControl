@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -167,7 +168,7 @@ namespace MatterHackers.MatterControl
 									MinimumSize = new Vector2(125, 0)
 								});
 
-							var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+							var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
 							{
 								Name = "Edit Leveling Data Button",
 								ToolTipText = "Edit Leveling Data".Localize(),

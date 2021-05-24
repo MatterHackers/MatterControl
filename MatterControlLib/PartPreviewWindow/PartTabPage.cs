@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -179,8 +180,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			favoritesBar.VerticalScrollBar.Show = ScrollBar.ShowState.Never;
 
-			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
-			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
+			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16).SetToColor(theme.TextColor);
+			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16).SetToColor(theme.TextColor);
 
 			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
 			{

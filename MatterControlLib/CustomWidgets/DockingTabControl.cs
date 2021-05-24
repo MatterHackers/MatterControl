@@ -36,6 +36,8 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
@@ -163,11 +165,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget CreatePinButton()
 		{
-			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
+			string imageFile = this.ControlIsPinned ? "Pushpin.png" : "PushpinUnpin.png";
 
-			var pinTabButton = new IconButton(StaticData.Instance.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
+			var pinTabButton = new IconButton(StaticData.Instance.LoadIcon(imageFile, 16, 16).SetToColor(theme.TextColor), theme)
 			{
-				Name = "Pin Settings Button"
+				Name = "Pin Settings Button",
+				ToolTipText = this.ControlIsPinned ? "Unpin".Localize() : "Pin".Localize()
 			};
 			pinTabButton.Click += (s, e) =>
 			{

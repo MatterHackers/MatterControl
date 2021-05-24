@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			keyValues.Add(item.Source, node);
 
 			// Check for operation resulting in the given type
-			var image = SceneOperations.GetIcon(item.Source.GetType(), theme.InvertIcons);
+			var image = SceneOperations.GetIcon(item.Source.GetType(), theme);
 
 			if (image != null)
 			{

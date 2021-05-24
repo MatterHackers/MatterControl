@@ -32,6 +32,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Must come before pathButton.Click definition
 			RadioButton copyAndCalibrateOption = null;
 
-			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
+			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Margin = new BorderDouble(left: 8),

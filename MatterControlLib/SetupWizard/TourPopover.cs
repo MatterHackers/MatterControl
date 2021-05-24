@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -262,7 +263,7 @@ namespace MatterHackers.MatterControl.Tour
 			public ArrowButton(string text, ArrowDirection arrowDirection, ThemeConfig theme, double pointSize = -1)
 				: base(text, theme, pointSize)
 			{
-				var rightArrow = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 10, 10, theme.InvertIcons);
+				var rightArrow = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 10, 10).SetToColor(theme.TextColor);
 
 				if (arrowDirection == ArrowDirection.Right)
 				{

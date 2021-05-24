@@ -34,6 +34,7 @@ using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -114,9 +115,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			var size = (int)(buttonFontSize * GuiWidget.DeviceScale);
 
-			var star = StaticData.Instance.LoadIcon("star.png", size, size, theme.InvertIcons);
-			var openStar = StaticData.Instance.LoadIcon("open_star.png", size, size, theme.InvertIcons);
-			var failure = StaticData.Instance.LoadIcon("failure.png", size, size, theme.InvertIcons);
+			var star = StaticData.Instance.LoadIcon("star.png", size, size).SetToColor(theme.TextColor);
+			var openStar = StaticData.Instance.LoadIcon("open_star.png", size, size).SetToColor(theme.TextColor);
+			var failure = StaticData.Instance.LoadIcon("failure.png", size, size).SetToColor(theme.TextColor);
 
 			content.AddChild(new GuiWidget(size, 1));
 
