@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ThemeSet
 	{
-		public static int LatestSchemeVersion { get; } = 20190413;
+		public static int LatestSchemeVersion { get; } = 20210524;
 
 		/// <summary>
 		/// The identifier to use for this combination of accent colors, theme and menu theme
