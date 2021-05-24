@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var look = Matrix4X4.LookAt(Vector3.Zero, normalAndUp.normal, normalAndUp.up);
 
-					trackballTumbleWidgetExtended.AnimateTo(look);
+					trackballTumbleWidgetExtended.AnimateRotation(look);
 				}
 			}
 

@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void AnimateTo(Matrix4X4 newRotation)
+		public void AnimateRotation(Matrix4X4 newRotation, Action after = null)
 		{
 			var rotationStart = new Quaternion(world.RotationMatrix);
 			var rotationEnd = new Quaternion(newRotation);
@@ -435,20 +435,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var current = Quaternion.Slerp(rotationStart, rotationEnd, update / (double)updates);
 				this.SetRotationWithDisplacement(current);
-			});
+			}, after);
 		}
 
-		public void AnimateTranslation(Vector3 start, Vector3 end)
+		public void AnimateTranslation(Vector3 worldStart, Vector3 worldEnd, Action after = null)
 		{
-			var delta = end - start;
+			var delta = worldEnd - worldStart;
 
 			ZeroVelocity();
 			Animation.Run(this, .25, 10, (update) =>
 			{
 				world.Translate(delta * .1);
-			});
+			}, after);
 		}
-
 
 		internal class MotionQueue
 		{

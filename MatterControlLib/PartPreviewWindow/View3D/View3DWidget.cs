@@ -471,6 +471,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) =>
 			{
+				bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
+				{
+					if (partScreenBounds.Bottom < goalBounds.Bottom
+						|| partScreenBounds.Top > goalBounds.Top
+						|| partScreenBounds.Left < goalBounds.Left
+						|| partScreenBounds.Right > goalBounds.Right)
+					{
+						return true;
+					}
+
+					return false;
+				}
+
 				var selectedItem = this.Scene.SelectedItem;
 				if (selectedItem != null)
 				{
@@ -478,8 +491,61 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var center = aabb.Center;
 					// pan to the center
 					var world = sceneContext.World;
-					var screenCenter = new Vector2(world.Width / 2, world.Height / 2);
+					var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
 					var centerRay = world.GetRayForLocalBounds(screenCenter);
+
+					bool done = false;
+					double scaleFraction = .1;
+					// make the target size a portion of the total size
+					var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
+					goalBounds.Inflate(-world.Width * .1);
+
+					int rescaleAttempts = 0;
+					var testWorld = new WorldView(world.Width, world.Height);
+					testWorld.RotationMatrix = world.RotationMatrix;
+					var distance = 80.0;
+					void AjustDistance()
+					{
+						testWorld.TranslationMatrix = world.TranslationMatrix;
+						var delta = centerRay.origin + centerRay.directionNormal * distance - center;
+						testWorld.Translate(delta);
+					}
+
+					while (!done && rescaleAttempts++ < 500)
+					{
+
+						var partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+						{
+							distance *= 1 + scaleFraction;
+							AjustDistance();
+							partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+							// If it crossed over the goal reduct the amount we are adjusting by.
+							if (NeedsToBeSmaller(partScreenBounds, goalBounds))
+							{
+								scaleFraction /= 2;
+							}
+						}
+						else
+						{
+							testWorld.Scale *= 1 - scaleFraction;
+							AjustDistance();
+							partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+							// If it crossed over the goal reduct the amount we are adjusting by.
+							if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+							{
+								scaleFraction /= 2;
+								if (scaleFraction < .001)
+								{
+									done = true;
+								}
+							}
+						}
+					}
+
 					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * 80);
 					// zoom to fill the view
 					// viewControls3D.NotifyResetView();
@@ -1705,19 +1771,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return offset;
 		}
 
+		Vector3 homeEyePosition = default(Vector3);
+		Matrix4X4 homeRotation = default(Matrix4X4);
 		public void ResetView()
 		{
+			var world = sceneContext.World;
 			TrackballTumbleWidget.SetRotationCenter(new Vector3(sceneContext.BedCenter));
 
-			var world = sceneContext.World;
+			void ResetHome()
+			{
+				world.Reset();
+				world.Scale = .03;
+				world.Translate(-new Vector3(sceneContext.BedCenter));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
 
-			world.Reset();
-			world.Scale = .03;
-			world.Translate(-new Vector3(sceneContext.BedCenter));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
+				homeEyePosition = world.EyePosition;
+				homeRotation = world.RotationMatrix;
+				Invalidate();
+			}
 
-			Invalidate();
+			void Rotate()
+			{
+				TrackballTumbleWidget.AnimateRotation(homeRotation);//, ResetHome);
+
+			}
+
+			void Translate()
+			{
+				TrackballTumbleWidget.AnimateTranslation(world.EyePosition, homeEyePosition);
+
+			}
+
+			if (homeEyePosition.Z != 0)
+			{
+				// pan to the center
+				//var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
+				//var centerRay = world.GetRayForLocalBounds(screenCenter);
+				//TrackballTumbleWidget.AnimateTranslation(new Vector3(sceneContext.BedCenter, 0), centerRay.origin + centerRay.directionNormal * 80);
+				ResetHome();
+			}
+			else
+			{
+				ResetHome();
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
