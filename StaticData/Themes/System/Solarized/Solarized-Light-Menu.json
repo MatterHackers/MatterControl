@@ -74,7 +74,7 @@
   },
   "DisabledColor": "#DDDDDD",
   "SplashAccentColor": "#00000000",
-  "BedBackgroundColor": "#00000000",
+  "BedBackgroundColor": "#ECECEC",
   "PrimaryAccentColor": "#B58900",
   "SectionBackgroundColor": "#e6e6e6"
 }
