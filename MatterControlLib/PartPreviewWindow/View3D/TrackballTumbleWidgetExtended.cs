@@ -71,6 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (TurntableEnabled)
 				{
 					var delta = mousePosition - rotationStartPosition;
+					// scale it to device units
+					delta *= 300 / this.Width;
 					var zRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitZ.Transform(world.RotationMatrix), delta.X * MathHelper.Tau / 360.0);
 					var screenXRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitX, -delta.Y * MathHelper.Tau / 360.0);
 					activeRotationQuaternion = new Quaternion(zRotation * screenXRotation);
