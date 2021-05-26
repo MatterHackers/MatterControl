@@ -494,8 +494,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
 					var centerRay = world.GetRayForLocalBounds(screenCenter);
 
-					bool done = false;
-					double scaleFraction = .1;
 					// make the target size a portion of the total size
 					var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
 					goalBounds.Inflate(-world.Width * .1);
@@ -504,6 +502,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var testWorld = new WorldView(world.Width, world.Height);
 					testWorld.RotationMatrix = world.RotationMatrix;
 					var distance = 80.0;
+
 					void AjustDistance()
 					{
 						testWorld.TranslationMatrix = world.TranslationMatrix;
@@ -511,42 +510,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						testWorld.Translate(delta);
 					}
 
-					while (!done && rescaleAttempts++ < 500)
+					AjustDistance();
+
+					while (rescaleAttempts++ < 500)
 					{
 
 						var partScreenBounds = testWorld.GetScreenBounds(aabb);
 
-						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
 						{
-							distance *= 1 + scaleFraction;
-							AjustDistance();
-							partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-							// If it crossed over the goal reduct the amount we are adjusting by.
-							if (NeedsToBeSmaller(partScreenBounds, goalBounds))
-							{
-								scaleFraction /= 2;
-							}
-						}
-						else
-						{
-							testWorld.Scale *= 1 - scaleFraction;
+							distance++;
 							AjustDistance();
 							partScreenBounds = testWorld.GetScreenBounds(aabb);
 
 							// If it crossed over the goal reduct the amount we are adjusting by.
 							if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
 							{
-								scaleFraction /= 2;
-								if (scaleFraction < .001)
-								{
-									done = true;
-								}
+								break;
+							}
+						}
+						else
+						{
+							distance--;
+							AjustDistance();
+							partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+							// If it crossed over the goal reduct the amount we are adjusting by.
+							if (NeedsToBeSmaller(partScreenBounds, goalBounds))
+							{
+								break;
 							}
 						}
 					}
 
-					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * 80);
+					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * distance);
 					// zoom to fill the view
 					// viewControls3D.NotifyResetView();
 				}
