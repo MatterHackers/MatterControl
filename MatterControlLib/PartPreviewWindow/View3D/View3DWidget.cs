@@ -471,16 +471,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => ZoomToSelection();
 
+			var turntableEnabled = UserSettings.Instance.get(UserSettingsKey.TurntableMode) != "False";
+			TrackballTumbleWidget.TurntableEnabled = turntableEnabled;
+
 			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Turntable Mode".Localize(),
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
+				Checked = turntableEnabled,
 			};
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, - MathHelper.Tau * .4)).Click += (s, e) =>
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4));
+			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
-				// toggle the turn table mode
+				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
+				TrackballTumbleWidget.TurntableEnabled = turnTableButton.Checked;
+				if (turnTableButton.Checked)
+				{
+					// Make sure the view has up going the right direction
+					// WIP, this should fix the current rotation rather than reset the view
+					viewControls3D.NotifyResetView();
+				}
 			};
 
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)

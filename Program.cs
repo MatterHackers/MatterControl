@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,6 @@ using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
-using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -44,17 +42,15 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using MatterHackers.VectorMath;
 using Microsoft.Extensions.Configuration;
 using Mindscape.Raygun4Net;
-using Photon.Parts;
 using SQLiteWin32;
 
 namespace MatterHackers.MatterControl
 {
 	public class Program
 	{
-		[FlagsAttribute]
+		[Flags]
 		public enum EXECUTION_STATE : uint
 		{
 			ES_AWAYMODE_REQUIRED = 0x00000040,
@@ -236,9 +232,9 @@ namespace MatterHackers.MatterControl
 
 			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
 			Application.EnableF5Collect = config.GetValue<bool>("MatterControl:Application:EnableF5Collect");
-			Application.EnableNetworkTraffic = config.GetValue<bool>("MatterControl:Application:EnableNetworkTraffic", true);
-			Application.MiniTouchScreen.Make = config.GetValue<string>("MatterControl:MiniTouchScreen:Make", "");
-			Application.MiniTouchScreen.Model = config.GetValue<string>("MatterControl:MiniTouchScreen:Model", "");
+			Application.EnableNetworkTraffic = config.GetValue("MatterControl:Application:EnableNetworkTraffic", true);
+			Application.MiniTouchScreen.Make = config.GetValue("MatterControl:MiniTouchScreen:Make", "");
+			Application.MiniTouchScreen.Model = config.GetValue("MatterControl:MiniTouchScreen:Model", "");
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));

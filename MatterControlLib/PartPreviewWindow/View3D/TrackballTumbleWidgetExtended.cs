@@ -61,12 +61,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallController TrackBallController { get; }
 		public TrackBallTransformType TransformState { get; set; }
 		public double ZoomDelta { get; set; } = 0.2f;
+		public bool TurntableEnabled { get; set; }
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
 			if (isRotating)
 			{
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, rotationStartPosition, mousePosition, false);
+				Quaternion activeRotationQuaternion;
+				if (TurntableEnabled)
+				{
+					var delta = mousePosition - rotationStartPosition;
+					var zRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitZ.Transform(world.RotationMatrix), delta.X * MathHelper.Tau / 360.0);
+					var screenXRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitX, -delta.Y * MathHelper.Tau / 360.0);
+					activeRotationQuaternion = new Quaternion(zRotation * screenXRotation);
+				}
+				else
+				{
+					activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter,
+						TrackBallController.TrackBallRadius,
+						rotationStartPosition,
+						mousePosition,
+						false);
+				}
+
 				rotationStartPosition = mousePosition;
 
 				world.RotateAroundPosition(mouseDownWorldPosition, activeRotationQuaternion);
