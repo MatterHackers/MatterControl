@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallController TrackBallController { get; }
 		public TrackBallTransformType TransformState { get; set; }
 		public double ZoomDelta { get; set; } = 0.2f;
+		public bool TurntableEnabled { get; set; }
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
