@@ -588,6 +588,12 @@ namespace MatterHackers.MatterControl
 							keyEvent.Handled = true;
 							break;
 
+						case 'z':
+						case 'Z':
+							view3D.ZoomToSelection();
+							keyEvent.Handled = true;
+							break;
+
 						case ' ':
 							view3D.Scene.ClearSelection();
 							keyEvent.Handled = true;

@@ -469,88 +469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Scene.SelectionChanged += SetZoomEnabled;
 			this.Closed += (s, e) => this.Scene.SelectionChanged -= SetZoomEnabled;
 
-			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) =>
-			{
-				bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
-				{
-					if (partScreenBounds.Bottom < goalBounds.Bottom
-						|| partScreenBounds.Top > goalBounds.Top
-						|| partScreenBounds.Left < goalBounds.Left
-						|| partScreenBounds.Right > goalBounds.Right)
-					{
-						return true;
-					}
-
-					return false;
-				}
-
-				var selectedItem = this.Scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					var aabb = selectedItem.GetAxisAlignedBoundingBox();
-					var center = aabb.Center;
-					// pan to the center
-					var world = sceneContext.World;
-					var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
-					var centerRay = world.GetRayForLocalBounds(screenCenter);
-
-					bool done = false;
-					double scaleFraction = .1;
-					// make the target size a portion of the total size
-					var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
-					goalBounds.Inflate(-world.Width * .1);
-
-					int rescaleAttempts = 0;
-					var testWorld = new WorldView(world.Width, world.Height);
-					testWorld.RotationMatrix = world.RotationMatrix;
-					var distance = 80.0;
-					void AjustDistance()
-					{
-						testWorld.TranslationMatrix = world.TranslationMatrix;
-						var delta = centerRay.origin + centerRay.directionNormal * distance - center;
-						testWorld.Translate(delta);
-					}
-
-					while (!done && rescaleAttempts++ < 500)
-					{
-
-						var partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
-						{
-							distance *= 1 + scaleFraction;
-							AjustDistance();
-							partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-							// If it crossed over the goal reduct the amount we are adjusting by.
-							if (NeedsToBeSmaller(partScreenBounds, goalBounds))
-							{
-								scaleFraction /= 2;
-							}
-						}
-						else
-						{
-							testWorld.Scale *= 1 - scaleFraction;
-							AjustDistance();
-							partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-							// If it crossed over the goal reduct the amount we are adjusting by.
-							if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
-							{
-								scaleFraction /= 2;
-								if (scaleFraction < .001)
-								{
-									done = true;
-								}
-							}
-						}
-					}
-
-					TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * 80);
-					// zoom to fill the view
-					// viewControls3D.NotifyResetView();
-				}
-			};
+			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => ZoomToSelection();
 
 			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
@@ -701,6 +620,86 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddRoundButton(renderOptionsButton, new Vector2(marginCenter, startHeight + 3 * ySpacing), true);
 #endif
+		}
+
+		public void ZoomToSelection()
+		{
+			bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
+			{
+				if (partScreenBounds.Bottom < goalBounds.Bottom
+					|| partScreenBounds.Top > goalBounds.Top
+					|| partScreenBounds.Left < goalBounds.Left
+					|| partScreenBounds.Right > goalBounds.Right)
+				{
+					return true;
+				}
+
+				return false;
+			}
+
+			var selectedItem = this.Scene.SelectedItem;
+			if (selectedItem != null)
+			{
+				var aabb = selectedItem.GetAxisAlignedBoundingBox();
+				var center = aabb.Center;
+				// pan to the center
+				var world = sceneContext.World;
+				var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
+				var centerRay = world.GetRayForLocalBounds(screenCenter);
+
+				// make the target size a portion of the total size
+				var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
+				goalBounds.Inflate(-world.Width * .1);
+
+				int rescaleAttempts = 0;
+				var testWorld = new WorldView(world.Width, world.Height);
+				testWorld.RotationMatrix = world.RotationMatrix;
+				var distance = 80.0;
+
+				void AjustDistance()
+				{
+					testWorld.TranslationMatrix = world.TranslationMatrix;
+					var delta = centerRay.origin + centerRay.directionNormal * distance - center;
+					testWorld.Translate(delta);
+				}
+
+				AjustDistance();
+
+				while (rescaleAttempts++ < 500)
+				{
+
+					var partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+					if (NeedsToBeSmaller(partScreenBounds, goalBounds))
+					{
+						distance++;
+						AjustDistance();
+						partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+						// If it crossed over the goal reduct the amount we are adjusting by.
+						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
+						{
+							break;
+						}
+					}
+					else
+					{
+						distance--;
+						AjustDistance();
+						partScreenBounds = testWorld.GetScreenBounds(aabb);
+
+						// If it crossed over the goal reduct the amount we are adjusting by.
+						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
+						{
+							break;
+						}
+					}
+				}
+
+				TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * distance);
+				// zoom to fill the view
+				// viewControls3D.NotifyResetView();
+			}
 		}
 
 		public void UpdateControlButtons(ViewControls3DButtons activeTransformState)

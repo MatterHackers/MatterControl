@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center
 			});
 			this.VAnchor = VAnchor.Fit;
+			// make sure the button is square
 			this.Width = this.Height;
 
 			UserSettings.Instance.SettingChanged += UserSettings_SettingChanged;
@@ -100,7 +101,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget ShowGridOptions(ThemeConfig theme)
 		{
-			popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+			popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme)
+			{
+				HAnchor = HAnchor.Absolute,
+				Width = 80
+			};
 
 			var siblingList = new List<GuiWidget>();
 

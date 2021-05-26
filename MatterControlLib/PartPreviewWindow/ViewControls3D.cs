@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			undoButton = new IconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16).SetToColor(theme.TextColor), theme)
+			undoButton = new IconButton(StaticData.Instance.LoadIcon("undo.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo".Localize(),
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			redoButton = new IconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16).SetToColor(theme.TextColor), theme)
+			redoButton = new IconButton(StaticData.Instance.LoadIcon("redo.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UpdateToolbarButtons(null, null);
 		}
 
-		internal void NotifyResetView()
+		public void NotifyResetView()
 		{
 			this.ResetView.Invoke(this, null);
 		}
