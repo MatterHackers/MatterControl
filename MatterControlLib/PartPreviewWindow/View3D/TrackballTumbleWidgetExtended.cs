@@ -67,7 +67,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (isRotating)
 			{
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, rotationStartPosition, mousePosition, false);
+				Quaternion activeRotationQuaternion;
+				if (TurntableEnabled)
+				{
+					var delta = mousePosition - rotationStartPosition;
+					var zRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitZ.Transform(world.RotationMatrix), delta.X * MathHelper.Tau / 360.0);
+					var screenXRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitX, -delta.Y * MathHelper.Tau / 360.0);
+					activeRotationQuaternion = new Quaternion(zRotation * screenXRotation);
+				}
+				else
+				{
+					activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter,
+						TrackBallController.TrackBallRadius,
+						rotationStartPosition,
+						mousePosition,
+						false);
+				}
+
 				rotationStartPosition = mousePosition;
 
 				world.RotateAroundPosition(mouseDownWorldPosition, activeRotationQuaternion);

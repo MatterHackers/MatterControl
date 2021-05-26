@@ -486,6 +486,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
+				TrackballTumbleWidget.TurntableEnabled = turnTableButton.Checked;
+				if (turnTableButton.Checked)
+				{
+					// Make sure the view has up going the right direction
+					// WIP, this should fix the current rotation rather than reset the view
+					viewControls3D.NotifyResetView();
+				}
 			};
 
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
