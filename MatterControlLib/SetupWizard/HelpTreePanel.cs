@@ -160,6 +160,7 @@ namespace MatterHackers.MatterControl
 				("shift + ← → ↑ ↓","Pan".Localize()),
 				//("f","Zoom to fit".Localize()),
 				("w","Zoom to window".Localize()),
+				("z","Zoom to selection".Localize()),
 				("ctrl + s","Save".Localize()),
 				("ctrl + z","Undo".Localize()),
 				("ctrl + y","Redo".Localize()),

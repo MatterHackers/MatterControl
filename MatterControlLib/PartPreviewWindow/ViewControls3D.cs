@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UpdateToolbarButtons(null, null);
 		}
 
-		internal void NotifyResetView()
+		public void NotifyResetView()
 		{
 			this.ResetView.Invoke(this, null);
 		}
