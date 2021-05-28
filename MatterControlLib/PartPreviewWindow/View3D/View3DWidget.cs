@@ -495,18 +495,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
+			var orthographicEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
+			TrackballTumbleWidget.PerspectiveMode = orthographicEnabled;
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Perspective Mode".Localize(),
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = true,
+				Checked = turntableEnabled,
 			};
-			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) =>
+			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
+			projectionButton.CheckedStateChanged += (s, e) =>
 			{
-				// toggle projection mode
+				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
+				TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
+				if (true)
+				{
+					// Make sure the view has up going the right direction
+					// WIP, this should fix the current rotation rather than reset the view
+					viewControls3D.NotifyResetView();
+				}
 			};
+
 
 			var startHeight = 180;
 			var ySpacing = 40;

@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl
 		public const string NotificationEmailAddress = nameof(NotificationEmailAddress);
 		public const string NotificationPhoneNumber = nameof(NotificationPhoneNumber);
 		public const string OpenScadPath = nameof(OpenScadPath);
+		public const string PerspectiveMode = nameof(PerspectiveMode);
 		public const string SupportGenerationType = nameof(SupportGenerationType);
 		public const string SupportMaxOverHangAngle = nameof(SupportMaxOverHangAngle);
 		public const string SupportPillarSize = nameof(SupportPillarSize);
