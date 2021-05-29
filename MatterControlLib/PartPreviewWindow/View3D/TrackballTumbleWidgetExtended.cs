@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallTransformType TransformState { get; set; }
 		public double ZoomDelta { get; set; } = 0.2f;
 		public bool TurntableEnabled { get; set; }
-		public bool PerspectiveMode { get; set; }
+		public bool PerspectiveMode { get; set; } = true;
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			TrackBallController.TrackBallRadius = trackingRadius;
 
-			var zNear = .1;
+			var zNear = .01;
 			var zFar = 100.0;
 
 			GetNearFar?.Invoke(out zNear, out zFar);
@@ -295,7 +295,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (!PerspectiveMode)
 				{
-					this.world.CalculateOrthogrphicMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
+					this.world.CalculatePerspectiveMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar, 2);
+					//this.world.CalculateOrthogrphicMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
 				}
 			}
 			else

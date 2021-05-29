@@ -495,8 +495,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var orthographicEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
-			TrackballTumbleWidget.PerspectiveMode = orthographicEnabled;
+			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
+			TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Perspective Mode".Localize(),
@@ -514,8 +514,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// Make sure the view has up going the right direction
 					// WIP, this should fix the current rotation rather than reset the view
-					viewControls3D.NotifyResetView();
+					ResetView();
 				}
+				Invalidate();
 			};
 
 
