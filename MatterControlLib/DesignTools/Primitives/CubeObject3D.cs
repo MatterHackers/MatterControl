@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
@@ -39,50 +37,6 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(DoubleExpresion))]
-	public class DoubleExpresion
-	{
-		public string Expresion { get; set; }
-
-		public double Value(IObject3D owner)
-		{
-			if (double.TryParse(Expresion, out double result))
-			{
-				return result;
-			}
-
-			return SheetObject3D.FindTableAndValue<double>(owner, Expresion);
-		}
-
-		public DoubleExpresion(double value)
-		{
-			Expresion = value.ToString();
-		}
-
-		public DoubleExpresion(string value)
-		{
-			Expresion = value;
-		}
-
-		public static implicit operator DoubleExpresion(double value)
-		{
-			return new DoubleExpresion(value);
-		}
-
-		public static implicit operator DoubleExpresion(string value)
-		{
-			return new DoubleExpresion(value);
-		}
-	}
-
-	public class SheetObject3D : Object3D
-	{
-		public static T FindTableAndValue<T>(IObject3D owner, string expresion)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
 	public class CubeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public CubeObject3D()

@@ -689,6 +689,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
 				spacer.HAnchor = HAnchor.Absolute;
 				spacer.Width = Math.Max(0, 100 - label.Width);
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						DoubleExpresion newValue = (DoubleExpresion)property.Value;
+						if (newValue.Expresion != field.Value)
+						{
+							var format = "0." + new string('#', 5);
+							if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+							{
+								format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+							}
+
+							field.TextValue = newValue.Value(object3D).ToString(format);
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is string stringValue)
 			{

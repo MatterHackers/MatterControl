@@ -41,6 +41,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
+		public string TextValue
+		{
+			get { return textEditWidget.Text; }
+			set
+			{
+				if (textEditWidget.Text != value)
+				{
+					textEditWidget.Text = value;
+				}
+			}
+		}
+
 		public override void Initialize(int tabIndex)
 		{
 			textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
