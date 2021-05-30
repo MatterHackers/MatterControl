@@ -67,12 +67,17 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private ScaleController scaleController = new ScaleController();
+		private ScaleController scaleController;
 
-		public ScaleWidthDepthEdgeControl(IObject3DControlContext context, int edgeIndex)
+		public ScaleWidthDepthEdgeControl(IObject3DControlContext context,
+			Func<double> getHeight,
+			Action<double> setHeight,
+			int edgeIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
+
+			scaleController = new ScaleController(getHeight, setHeight);
 
 			xValueDisplayInfo = new InlineEditControl()
 			{

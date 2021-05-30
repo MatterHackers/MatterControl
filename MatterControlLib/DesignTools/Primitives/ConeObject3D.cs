@@ -39,7 +39,7 @@ using MatterHackers.Plugins.EditorTools;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ConeObject3D : PrimitiveObject3D, IObjectWithHeight, IObject3DControlsProvider
+	public class ConeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public ConeObject3D()
 		{
@@ -105,13 +105,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
+			double getHeight() => Height;
+			void setHeight(double height) => Height = height;
 			var getDiameters = new List<Func<double>>() { () => Diameter };
 			var setDiameters = new List<Action<double>>() { (diameter) => Diameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				0));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

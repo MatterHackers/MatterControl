@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfWedgeObject3D : PrimitiveObject3D, IObjectWithHeight, IObjectWithWidthAndDepth
+	public class HalfWedgeObject3D : PrimitiveObject3D, IObjectWithWidthAndDepth
 	{
 		public HalfWedgeObject3D()
 		{

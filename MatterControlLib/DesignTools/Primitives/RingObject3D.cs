@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObject3DControlsProvider
+	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public RingObject3D()
 		{
@@ -160,18 +160,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
+			double getHeight() => Height;
+			void setHeight(double height) => Height = height;
 			var getDiameters = new List<Func<double>>() { () => OuterDiameter, () => InnerDiameter };
 			var setDiameters = new List<Action<double>>() { (diameter) => OuterDiameter = diameter, (diameter) => InnerDiameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				0));
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				1,
 				angleOffset: -MathHelper.Tau / 32));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

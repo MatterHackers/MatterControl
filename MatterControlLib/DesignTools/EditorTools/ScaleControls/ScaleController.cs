@@ -49,11 +49,19 @@ namespace MatterHackers.Plugins.EditorTools
 		private List<Func<double>> getDiameters;
 
 		private List<Action<double>> setDiameters;
+		private Func<double> getHeight;
+		private Action<double> setHeight;
 
-		public ScaleController(List<Func<double>> getDiameters = null, List<Action<double>> setDiameters = null)
+		public ScaleController(Func<double> getHeight,
+			Action<double> setHeight,
+			List<Func<double>> getDiameters = null,
+			List<Action<double>> setDiameters = null)
 		{
 			this.getDiameters = getDiameters;
 			this.setDiameters = setDiameters;
+
+			this.getHeight = getHeight;
+			this.setHeight = setHeight;
 
 			if (getDiameters != null)
 			{
@@ -96,10 +104,7 @@ namespace MatterHackers.Plugins.EditorTools
 				widthDepthItem.Depth = InitialState.Depth;
 			}
 
-			if (selectedItem is IObjectWithHeight heightItem)
-			{
-				heightItem.Height= InitialState.Height;
-			}
+			setHeight?.Invoke(InitialState.Height);
 
 			if (setDiameters != null)
 			{
@@ -187,9 +192,9 @@ namespace MatterHackers.Plugins.EditorTools
 				InitialState.Depth = widthDepthItem.Depth;
 			}
 
-			if (selectedItem is IObjectWithHeight heightItem)
+			if (getHeight != null)
 			{
-				InitialState.Height = heightItem.Height;
+				InitialState.Height = getHeight();
 			}
 
 			if (getDiameters != null)
@@ -287,10 +292,7 @@ namespace MatterHackers.Plugins.EditorTools
 				widthDepthItem.Depth = states.Depth;
 			}
 
-			if (item is IObjectWithHeight heightItem)
-			{
-				heightItem.Height = states.Height;
-			}
+			setHeight?.Invoke(states.Height);
 
 			if (setDiameters != null)
 			{

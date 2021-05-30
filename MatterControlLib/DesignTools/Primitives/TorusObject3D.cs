@@ -170,11 +170,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			var getDiameters = new List<Func<double>>() { () => OuterDiameter, () => InnerDiameter };
 			var setDiameters = new List<Action<double>>() { (diameter) => OuterDiameter = diameter, (diameter) => InnerDiameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				null,
+				null,
 				getDiameters,
 				setDiameters,
 				0,
 				ObjectSpace.Placement.Center));
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				null,
+				null,
 				getDiameters,
 				setDiameters,
 				1,

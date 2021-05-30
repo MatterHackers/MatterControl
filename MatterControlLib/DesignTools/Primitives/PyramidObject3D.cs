@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PyramidObject3D : PrimitiveObject3D, IObjectWithHeight, IObjectWithWidthAndDepth
+	public class PyramidObject3D : PrimitiveObject3D, IObjectWithWidthAndDepth
 	{
 		public PyramidObject3D()
 		{

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		void ScaledProportionally();
 	}
 
-	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
+	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
 	{
 		public enum ScaleTypes
 		{

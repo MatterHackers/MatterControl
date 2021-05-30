@@ -72,6 +72,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly double angleOffset;
 
 		public ScaleDiameterControl(IObject3DControlContext context,
+			Func<double> getHeight,
+			Action<double> setHeight,
 			List<Func<double>> getDiameters,
 			List<Action<double>> setDiameters,
 			int diameterIndex,
@@ -87,7 +89,7 @@ namespace MatterHackers.Plugins.EditorTools
 			this.angleOffset = angleOffset;
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getDiameters, setDiameters);
+			scaleController = new ScaleController(getHeight, setHeight, getDiameters, setDiameters);
 
 			diameterValueDisplayInfo = new InlineEditControl()
 			{

@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObject3DControlsProvider
+	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public CylinderObject3D()
 		{
@@ -225,20 +225,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
+			double getHeight() => Height;
+			void setHeight(double height) => Height = height;
 			var getDiameters = new List<Func<double>>() { () => Diameter, () => DiameterTop };
 			var setDiameters = new List<Action<double>>() { (diameter) => Diameter = diameter, (diameter) => DiameterTop = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				0,
 				controlVisible: () => true));
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				1,
 				ObjectSpace.Placement.Top,
 				controlVisible: () => Advanced));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

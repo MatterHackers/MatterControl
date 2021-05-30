@@ -27,14 +27,63 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D, IObjectWithHeight, IObjectWithWidthAndDepth
+	[TypeConverter(typeof(DoubleExpresion))]
+	public class DoubleExpresion
+	{
+		public string Expresion { get; set; }
+
+		public double Value(IObject3D owner)
+		{
+			if (double.TryParse(Expresion, out double result))
+			{
+				return result;
+			}
+
+			return SheetObject3D.FindTableAndValue<double>(owner, Expresion);
+		}
+
+		public DoubleExpresion(double value)
+		{
+			Expresion = value.ToString();
+		}
+
+		public DoubleExpresion(string value)
+		{
+			Expresion = value;
+		}
+
+		public static implicit operator DoubleExpresion(double value)
+		{
+			return new DoubleExpresion(value);
+		}
+
+		public static implicit operator DoubleExpresion(string value)
+		{
+			return new DoubleExpresion(value);
+		}
+	}
+
+	public class SheetObject3D : Object3D
+	{
+		public static T FindTableAndValue<T>(IObject3D owner, string expresion)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class CubeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public CubeObject3D()
 		{
@@ -44,14 +93,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override string ThumbnailName => "Cube";
 
+		/// <summary>
+		/// This is the actual serialized with that can use expressions
+		/// </summary>
 		[MaxDecimalPlaces(2)]
-		public double Width { get; set; } = 20;
+		public DoubleExpresion Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Depth { get; set; } = 20;
+		public DoubleExpresion Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleExpresion Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()
 		{
@@ -71,6 +123,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			await item.Rebuild();
 			return item;
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			double getHeight() => Height.Value(this);
+			void setHeight(double height) => Height = height;
+
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer, getHeight, setHeight));
+			object3DControlsLayer.AddWidthDepthControls(getHeight, setHeight);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -94,18 +157,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+					Mesh = PlatonicSolids.CreateCube(Width.Value(this), Depth.Value(this), Height.Value(this));
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
-	}
-
-	public interface IObjectWithHeight
-	{
-		double Height { get; set; }
 	}
 
 	public interface IObjectWithWidthAndDepth

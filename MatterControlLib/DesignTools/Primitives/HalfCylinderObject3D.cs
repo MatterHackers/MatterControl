@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			object3DControlsLayer.AddControls(ControlTypes.ScaleWidthDepth);
+			object3DControlsLayer.AddWidthDepthControls(null, null);
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}

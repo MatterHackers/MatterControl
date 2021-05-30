@@ -66,14 +66,20 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 originalPointToMove;
 
 		private ScaleController scaleController;
+		private readonly Func<double> getHeight;
 
-		public ScaleHeightControl(IObject3DControlContext context, List<Func<double>> getDiameters = null, List<Action<double>> setDiameters = null)
+		public ScaleHeightControl(IObject3DControlContext context,
+			Func<double> getHeight,
+			Action<double> setHeight,
+			List<Func<double>> getDiameters = null,
+			List<Action<double>> setDiameters = null)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getDiameters, setDiameters);
-			
+			scaleController = new ScaleController(getHeight, setHeight, getDiameters, setDiameters);
+			this.getHeight = getHeight;
+
 			heightValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () =>
@@ -335,11 +341,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (MouseDownOnControl)
 			{
-				if (activeSelectedItem is IObjectWithHeight heightObject
-					&& heightObject.Height != scaleController.InitialState.Height)
-				{
-					scaleController.EditComplete();
-				}
+				scaleController.EditComplete();
 
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
@@ -405,10 +407,7 @@ namespace MatterHackers.Plugins.EditorTools
 					int j = 0;
 
 					Vector2 heightDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
-					if (activeSelectedItem is IObjectWithHeight heightObject)
-					{
-						heightValueDisplayInfo.Value = heightObject.Height;
-					}
+					heightValueDisplayInfo.Value = getHeight();
 
 					heightValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -heightValueDisplayInfo.LocalBounds.Center.Y);
 				}

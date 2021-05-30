@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
+			typeof(DoubleExpresion),
 			typeof(Color),
 			typeof(Vector2), typeof(Vector3), typeof(Vector4),
 			typeof(DirectionVector), typeof(DirectionAxis),
@@ -666,6 +667,28 @@ namespace MatterHackers.MatterControl.DesignTools
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field, theme);
+			}
+			else if (propertyValue is DoubleExpresion doubleExpresion)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(doubleExpresion.Expresion, false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(field,
+					(valueString) => new DoubleExpresion(valueString),
+					(value) =>
+					{
+						return ((DoubleExpresion)value).Expresion;
+					});
+				rowContainer = CreateSettingsRow(property, field, theme);
+
+				var label = rowContainer.Children.First();
+
+				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+				spacer.HAnchor = HAnchor.Absolute;
+				spacer.Width = Math.Max(0, 100 - label.Width);
 			}
 			else if (propertyValue is string stringValue)
 			{
