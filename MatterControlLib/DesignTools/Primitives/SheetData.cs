@@ -27,44 +27,92 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
-using MatterHackers.DataConverters3D;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(DoubleExpresion))]
-	public class DoubleExpresion
+	public class SheetData
 	{
-		public string Expresion { get; set; }
-
-		public double Value(IObject3D owner)
+		public SheetData()
 		{
-			if (double.TryParse(Expresion, out double result))
+		}
+
+		public SheetData(int width, int height)
+		{
+			this.Rows = new List<RowData>(height);
+			for (int i = 0; i < height; i++)
 			{
-				return result;
+				Rows.Add(new RowData(width));
+			}
+		}
+
+		public string this[int x, int y]
+		{
+			get
+			{
+				return Rows[y].RowItems[x].Data;
 			}
 
-			return SheetObject3D.FindTableAndValue<double>(owner, Expresion);
+			set
+			{
+				Rows[y].RowItems[x].Data = value;
+			}
 		}
 
-		public DoubleExpresion(double value)
+		[JsonIgnore]
+		public int Width => Rows.Count;
+
+		[JsonIgnore]
+		public int Height => Rows[0].RowItems.Count;
+
+		public class CellFormat
 		{
-			Expresion = value.ToString();
+			public enum DataTypes
+			{
+				String,
+				Number,
+				Curency,
+				DateTime,
+			}
+
+			public int DecimalPlaces = 10;
+			public DataTypes DataType;
+			public Agg.Font.Justification Justification;
+			public bool Bold;
 		}
 
-		public DoubleExpresion(string value)
+		public class TableCell
 		{
-			Expresion = value;
+			/// <summary>
+			/// The user override name for this cell
+			/// </summary>
+			public string Name;
+
+			public string Data = "";
+
+			public CellFormat Format;
 		}
 
-		public static implicit operator DoubleExpresion(double value)
+		public class RowData
 		{
-			return new DoubleExpresion(value);
+			public List<TableCell> RowItems = new List<TableCell>();
+
+			public RowData()
+			{
+			}
+
+			public RowData(int numItems)
+			{
+				RowItems = new List<TableCell>(numItems);
+				for (int i = 0; i < numItems; i++)
+				{
+					RowItems.Add(new TableCell());
+				}
+			}
 		}
 
-		public static implicit operator DoubleExpresion(string value)
-		{
-			return new DoubleExpresion(value);
-		}
+		public List<RowData> Rows = new List<RowData>();
 	}
 }

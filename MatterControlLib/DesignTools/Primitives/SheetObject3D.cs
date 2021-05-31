@@ -36,70 +36,14 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SheetData
+	[HideChildrenFromTreeView]
+	[HideMeterialAndColor]
+	public class SheetObject3D : Object3D
 	{
-		public SheetData(int width, int height)
-		{
-			this.Table = new List<List<RowData>>(height);
-			for (int i = 0; i < height; i++)
-			{
-				Table.Add(new List<RowData>(width));
-				for (int j = 0; j < width; j++)
-				{
-					Table[i].Add(new RowData());
-				}
-			}
-		}
-
-		[JsonIgnore]
-		public int Width => Table.Count;
-
-		[JsonIgnore]
-		public int Height => Table[0].Count;
-
-		public class CellFormat
-		{
-			public enum DataTypes
-			{
-				String,
-				Number,
-				Curency,
-				DateTime,
-			}
-
-			public int DecimalPlaces = 10;
-			public DataTypes DataType;
-			public Agg.Font.Justification Justification;
-			public bool Bold;
-		}
-
-		public class CellData
-		{
-			/// <summary>
-			/// The user override name for this cell
-			/// </summary>
-			public string Name;
-
-			public string Data;
-
-			public CellFormat Format;
-		}
-
-		public class RowData
-		{
-			public List<CellData> RowItems;
-		}
-
-		public List<List<RowData>> Table;
-	}
-
-	public class VariableSheetObject3D : Object3D
-	{
-		public SheetData SheetData { get; set; } = new SheetData(5, 5);
+		public SheetData SheetData { get; set; }
 
 		public override Mesh Mesh
 		{
@@ -124,19 +68,77 @@ namespace MatterHackers.MatterControl.DesignTools
 			set => base.Mesh = value;
 		}
 
-		public static async Task<VariableSheetObject3D> Create()
+		public static async Task<SheetObject3D> Create()
 		{
-			var item = new VariableSheetObject3D();
+			var item = new SheetObject3D();
+			item.SheetData = new SheetData(5, 5);
 			await item.Rebuild();
 			return item;
 		}
 
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated) && invalidateType.Source == this)
+			{
+				using (RebuildLock())
+				{
+					// send a message to all our siblings and their children
+					SendInvalidateToAll();
+				}
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		private void SendInvalidateToAll()
+		{
+			foreach (var sibling in this.Parent.Children)
+			{
+				SendInvalidateRecursive(sibling);
+			}
+		}
+
+		private void SendInvalidateRecursive(IObject3D item)
+		{
+			// process depth first
+			foreach(var child in item.Children)
+			{
+				SendInvalidateRecursive(child);
+			}
+
+			// and send the invalidate
+			item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+		}
+
 		public static T FindTableAndValue<T>(IObject3D owner, string expresion)
 		{
-			if (typeof(T) == typeof(double))
+			// look through all the parents
+			foreach(var parent in owner.Parents())
 			{
-				// this way we can use the common pattern without error
-				return (T)(object)5.5;
+				// then each child of any give parent
+				foreach (var sibling in parent.Children)
+				{
+					// if it is a sheet
+					if(sibling != owner
+						&& sibling is SheetObject3D sheet
+						&& expresion.Length == 2)
+					{
+						// try to manage the cell into the correct data type
+						if (typeof(T) == typeof(double))
+						{
+							var x = expresion.Substring(0, 1).ToUpper()[0] - 'A';
+							var y = expresion.Substring(1, 1)[0] - '1';
+							if (double.TryParse(sheet.SheetData[x, y], out double doubleValue))
+							{
+								return (T)(object)doubleValue;
+							}
+							// else return an error
+							return (T)(object)5.5;
+						}
+					}
+				}
 			}
 
 			throw new NotImplementedException();

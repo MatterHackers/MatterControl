@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Variable Sheet".Localize(),
-					async () => await VariableSheetObject3D.Create())
+					async () => await SheetObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 			};
 
