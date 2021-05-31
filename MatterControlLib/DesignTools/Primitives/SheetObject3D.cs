@@ -35,13 +35,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
-	public class SheetObject3D : Object3D, IEditorButtonProvider
+	public class SheetObject3D : Object3D, IObject3DControlsProvider
 	{
 		public SheetData SheetData { get; set; }
 
@@ -144,13 +145,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<EditorButtonData> GetEditorButtonsData()
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			// do not add any controls
-			if (false)
-			{
-				yield return new EditorButtonData();
-			}
 		}
 	}
 }
