@@ -39,13 +39,15 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	[Obsolete("Use ScaleObject3D_3 instead", false)]
-	public class ScaleObject3D_2 : TransformWrapperObject3D, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
+	public class ScaleObject3D_2 : TransformWrapperObject3D, IObject3DControlsProvider, IPropertyGridModifier, IScaleLocker
 	{
 		public enum ScaleTypes
 		{
@@ -355,6 +357,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void ScaledProportionally()
 		{
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width,
+				(width) => Width = width,
+				() => Depth,
+				(depth) => Depth = depth,
+				() => Height,
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width,
+				(width) => Width = width,
+				() => Depth,
+				(depth) => Depth = depth,
+				() => Height,
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

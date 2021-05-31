@@ -207,12 +207,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public void AddWidthDepthControls(Func<double> getHeight, Action<double> setHeight)
+		public void AddWidthDepthControls(Func<double> getWidth,
+			Action<double> setWidth,
+			Func<double> getDepth,
+			Action<double> setDepth,
+			Func<double> getHeight,
+			Action<double> setHeight)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				Object3DControls.Add(new ScaleWidthDepthCornerControl(this, getHeight, setHeight, i));
-				Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getHeight, setHeight, i));
+				Object3DControls.Add(new ScaleWidthDepthCornerControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+				Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
 			}
 		}
 

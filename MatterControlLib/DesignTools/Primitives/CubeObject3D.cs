@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -81,13 +80,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			double getHeight() => Height.Value(this);
-			void setHeight(double height) => Height = height;
-
 			var controls = object3DControlsLayer.Object3DControls;
 
-			controls.Add(new ScaleHeightControl(object3DControlsLayer, getHeight, setHeight));
-			object3DControlsLayer.AddWidthDepthControls(getHeight, setHeight);
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth, 
+				() => Height.Value(this),
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -118,11 +128,5 @@ namespace MatterHackers.MatterControl.DesignTools
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
-	}
-
-	public interface IObjectWithWidthAndDepth
-	{
-		double Width { get; set; }
-		double Depth { get; set; }
 	}
 }

@@ -178,6 +178,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				1,
 				angleOffset: -MathHelper.Tau / 32));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				null,
+				null,
+				null,
+				null,
 				getHeight,
 				setHeight,
 				getDiameters,

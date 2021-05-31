@@ -116,6 +116,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				setDiameters,
 				0));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				null,
+				null,
+				null,
+				null,
 				getHeight,
 				setHeight,
 				getDiameters,

@@ -49,19 +49,33 @@ namespace MatterHackers.Plugins.EditorTools
 		private List<Func<double>> getDiameters;
 
 		private List<Action<double>> setDiameters;
+		private Func<double> getWidth;
+		private Action<double> setWidth;
+		private Func<double> getDepth;
+		private Action<double> setDepth;
 		private Func<double> getHeight;
 		private Action<double> setHeight;
 
-		public ScaleController(Func<double> getHeight,
+		public ScaleController(Func<double> getWidth,
+			Action<double> setWidth,
+			Func<double> getDepth,
+			Action<double> setDepth,
+			Func<double> getHeight,
 			Action<double> setHeight,
 			List<Func<double>> getDiameters = null,
 			List<Action<double>> setDiameters = null)
 		{
-			this.getDiameters = getDiameters;
-			this.setDiameters = setDiameters;
+			this.getWidth = getWidth;
+			this.setWidth = setWidth;
+
+			this.getDepth = getDepth;
+			this.setDepth = setDepth;
 
 			this.getHeight = getHeight;
 			this.setHeight = setHeight;
+
+			this.getDiameters = getDiameters;
+			this.setDiameters = setDiameters;
 
 			if (getDiameters != null)
 			{
@@ -76,8 +90,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			get
 			{
-				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem
-				   && (widthDepthItem.Width != InitialState.Width || widthDepthItem.Depth != InitialState.Depth))
+				if (getWidth != null
+				   && (getWidth() != InitialState.Width || getDepth() != InitialState.Depth))
 				{
 					return true;
 				}
@@ -98,11 +112,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void Cancel()
 		{
-			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
-			{
-				widthDepthItem.Width = InitialState.Width;
-				widthDepthItem.Depth = InitialState.Depth;
-			}
+			setWidth?.Invoke(InitialState.Width);
+			setDepth?.Invoke(InitialState.Depth);
 
 			setHeight?.Invoke(InitialState.Height);
 
@@ -186,10 +197,10 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			this.context = context;
 
-			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			if (getWidth != null)
 			{
-				InitialState.Width = widthDepthItem.Width;
-				InitialState.Depth = widthDepthItem.Depth;
+				InitialState.Width = getWidth();
+				InitialState.Depth = getDepth();
 			}
 
 			if (getHeight != null)
@@ -286,11 +297,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void SetItem(IObject3D item, ScaleStates states)
 		{
-			if (item is IObjectWithWidthAndDepth widthDepthItem)
-			{
-				widthDepthItem.Width = states.Width;
-				widthDepthItem.Depth = states.Depth;
-			}
+			setWidth?.Invoke(states.Width);
+			setDepth?.Invoke(states.Depth);
 
 			setHeight?.Invoke(states.Height);
 

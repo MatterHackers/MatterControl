@@ -89,7 +89,7 @@ namespace MatterHackers.Plugins.EditorTools
 			this.angleOffset = angleOffset;
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getHeight, setHeight, getDiameters, setDiameters);
+			scaleController = new ScaleController(null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
 
 			diameterValueDisplayInfo = new InlineEditControl()
 			{

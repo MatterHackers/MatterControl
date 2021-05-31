@@ -32,11 +32,13 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PyramidObject3D : PrimitiveObject3D, IObjectWithWidthAndDepth
+	public class PyramidObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public PyramidObject3D()
 		{
@@ -55,13 +57,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double Width { get; set; } = 20;
+		public DoubleConstantOrReference Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Depth { get; set; } = 20;
+		public DoubleConstantOrReference Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleConstantOrReference Height { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -86,16 +88,38 @@ namespace MatterHackers.MatterControl.DesignTools
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
 					path.LineTo(Math.Sqrt(2) * 100, 0);
-					path.LineTo(0, Height * 100);
+					path.LineTo(0, Height.Value(this) * 100);
 
 					var mesh = VertexSourceToMesh.Revolve(path, 4);
-					mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2 / 100.0, Depth / 2 / 100.0, 1 / 100.0));
+					mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width.Value(this) / 2 / 100.0, Depth.Value(this) / 2 / 100.0, 1 / 100.0));
 					Mesh = mesh;
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }
