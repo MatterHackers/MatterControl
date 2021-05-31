@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
-	public class SheetObject3D : Object3D
+	public class SheetObject3D : Object3D, IEditorButtonProvider
 	{
 		public SheetData SheetData { get; set; }
 
@@ -112,25 +112,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
 		}
 
-		public static T FindTableAndValue<T>(IObject3D owner, string expresion)
+		public static T FindTableAndValue<T>(IObject3D owner, string cellId)
 		{
 			// look through all the parents
-			foreach(var parent in owner.Parents())
+			foreach (var parent in owner.Parents())
 			{
 				// then each child of any give parent
 				foreach (var sibling in parent.Children)
 				{
+					var expression = "";
 					// if it is a sheet
-					if(sibling != owner
-						&& sibling is SheetObject3D sheet
-						&& expresion.Length == 2)
+					if (sibling != owner
+						&& sibling is SheetObject3D sheet)
 					{
 						// try to manage the cell into the correct data type
+						expression = sheet.SheetData[cellId]?.Expression;
+
 						if (typeof(T) == typeof(double))
 						{
-							var x = expresion.Substring(0, 1).ToUpper()[0] - 'A';
-							var y = expresion.Substring(1, 1)[0] - '1';
-							if (double.TryParse(sheet.SheetData[x, y], out double doubleValue))
+							if (double.TryParse(expression, out double doubleValue))
 							{
 								return (T)(object)doubleValue;
 							}
@@ -142,6 +142,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			throw new NotImplementedException();
+		}
+
+		public IEnumerable<EditorButtonData> GetEditorButtonsData()
+		{
+			// do not add any controls
+			if (false)
+			{
+				yield return new EditorButtonData();
+			}
 		}
 	}
 }

@@ -48,16 +48,69 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public string this[int x, int y]
+		public TableCell this[int x, int y]
 		{
 			get
 			{
-				return Rows[y].RowItems[x].Data;
+				var cellId = $"{(char)('A' + x)}{y + 1}";
+				return this[cellId];
 			}
 
 			set
 			{
-				Rows[y].RowItems[x].Data = value;
+				var cellId = $"{(char)('A' + x)}{y + 1}";
+				this[cellId] = value;
+			}
+		}
+
+		public TableCell this[string cellId]
+		{
+			get
+			{
+				if (cellId.Length == 2)
+				{
+					var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
+					var y = cellId.Substring(1, 1)[0] - '1';
+					return Rows[y].Cells[x];
+				}
+				else
+				{
+					foreach (var row in Rows)
+					{
+						foreach(var cell in row.Cells)
+						{
+							if (cell.Name == cellId)
+							{
+								return cell;
+							}
+						}
+					}
+				}
+
+				return null;
+			}
+
+			set
+			{
+				if (cellId.Length == 2)
+				{
+					var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
+					var y = cellId.Substring(1, 1)[0] - '1';
+					Rows[y].Cells[x] = value;
+				}
+				else
+				{
+					foreach (var row in Rows)
+					{
+						for (int i = 0; i < row.Cells.Count; i++)
+						{
+							if (row.Cells[i].Name == cellId)
+							{
+								row.Cells[i] = value;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -65,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int Width => Rows.Count;
 
 		[JsonIgnore]
-		public int Height => Rows[0].RowItems.Count;
+		public int Height => Rows[0].Cells.Count;
 
 		public class CellFormat
 		{
@@ -86,18 +139,29 @@ namespace MatterHackers.MatterControl.DesignTools
 		public class TableCell
 		{
 			/// <summary>
-			/// The user override name for this cell
+			/// The user override id for this cell
 			/// </summary>
 			public string Name;
 
-			public string Data = "";
+			/// <summary>
+			/// The actual content typed into the cell
+			/// </summary>
+			public string Expression = "";
 
+			/// <summary>
+			/// The results of parsing the Expression
+			/// </summary>
+			public string Value => Expression;
+
+			/// <summary>
+			/// How to format this data in the display
+			/// </summary>
 			public CellFormat Format;
 		}
 
 		public class RowData
 		{
-			public List<TableCell> RowItems = new List<TableCell>();
+			public List<TableCell> Cells = new List<TableCell>();
 
 			public RowData()
 			{
@@ -105,10 +169,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			public RowData(int numItems)
 			{
-				RowItems = new List<TableCell>(numItems);
+				Cells = new List<TableCell>(numItems);
 				for (int i = 0; i < numItems; i++)
 				{
-					RowItems.Add(new TableCell());
+					Cells.Add(new TableCell());
 				}
 			}
 		}

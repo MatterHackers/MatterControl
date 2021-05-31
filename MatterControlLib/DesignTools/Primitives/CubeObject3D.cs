@@ -51,13 +51,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// This is the actual serialized with that can use expressions
 		/// </summary>
 		[MaxDecimalPlaces(2)]
-		public DoubleExpresion Width { get; set; } = 20;
+		public DoubleConstantOrReference Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleExpresion Depth { get; set; } = 20;
+		public DoubleConstantOrReference Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleExpresion Height { get; set; } = 20;
+		public DoubleConstantOrReference Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()
 		{

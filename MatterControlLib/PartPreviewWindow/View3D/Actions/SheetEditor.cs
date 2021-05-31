@@ -37,9 +37,155 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SheetEditor : IObject3DEditor, IObject3DControlsProvider
+	public class SheetEditor : IObject3DEditor
 	{
-		private SheetObject3D sheetObject;
+		public class SheetEditorWidget : FlowLayoutWidget
+		{
+			private SheetObject3D sheetObject;
+			private SheetData sheetData;
+			Point2D selectedCell = new Point2D(-1, -1);
+			Dictionary<(int, int), GuiWidget> CellWidgetsByLocation = new Dictionary<(int, int), GuiWidget>();
+			private ThemeConfig theme;
+			private MHTextEditWidget editSelectedName;
+			private MHTextEditWidget editSelectedExpression;
+
+			public SheetEditorWidget(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
+				: base(FlowDirection.TopToBottom)
+			{
+				this.theme = theme;
+				HAnchor = HAnchor.MaxFitOrStretch;
+
+				sheetObject = item as SheetObject3D;
+				sheetData = sheetObject.SheetData;
+				var countWidth = 10 * GuiWidget.DeviceScale;
+				var cellWidth = 50 * GuiWidget.DeviceScale;
+
+				// put in the edit row
+				var editSelectionGroup = this.AddChild(new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+				});
+
+				editSelectedName = new MHTextEditWidget("", theme, cellWidth, messageWhenEmptyAndNotSelected: "Name".Localize())
+				{
+					HAnchor = HAnchor.Absolute,
+					SelectAllOnFocus = true,
+				};
+				editSelectedName.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete;
+				editSelectionGroup.AddChild(editSelectedName);
+				editSelectedExpression = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
+				{
+					HAnchor = HAnchor.Stretch,
+					SelectAllOnFocus = true,
+				};
+				editSelectionGroup.AddChild(editSelectedExpression);
+				editSelectedExpression.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete1;
+
+				// put in the header row
+				var topRow = this.AddChild(new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+				});
+
+
+				topRow.AddChild(new GuiWidget(cellWidth, 1));
+				for (int x = 0; x < sheetData.Width; x++)
+				{
+					topRow.AddChild(new TextWidget(((char)('A' + x)).ToString())
+					{
+						HAnchor = HAnchor.Absolute,
+						Width = cellWidth,
+						TextColor = theme.TextColor
+					});
+				}
+
+				for (int y = 0; y < sheetData.Height; y++)
+				{
+					var row = new FlowLayoutWidget()
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+					};
+					this.AddChild(row);
+
+					// add row count
+					row.AddChild(new TextWidget((y + 1).ToString())
+					{
+						TextColor = theme.TextColor,
+					});
+
+					for (int x = 0; x < sheetData.Width; x++)
+					{
+						var capturedX = x;
+						var capturedY = y;
+
+						var edit = new MHTextEditWidget(sheetData[x, y].Expression, theme, cellWidth)
+						{
+							SelectAllOnFocus = true,
+						};
+
+						CellWidgetsByLocation.Add((capturedX, capturedY), edit);
+
+						edit.MouseDown += (s, e) => SelectCell(capturedX, capturedY);
+
+						row.AddChild(edit);
+						edit.ActualTextEditWidget.EditComplete += (s, e) =>
+						{
+							editSelectedExpression.Text = edit.Text;
+							sheetData[capturedX, capturedY].Expression = edit.Text;
+							Recalculate();
+						};
+					}
+				}
+			}
+
+			private void ActualTextEditWidget_EditComplete1(object sender, EventArgs e)
+			{
+				if (selectedCell.x == -1)
+				{
+					return;
+				}
+
+				sheetData[selectedCell.x, selectedCell.y].Expression = editSelectedExpression.Text;
+				CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].Text = editSelectedExpression.Text;
+			}
+
+			private void ActualTextEditWidget_EditComplete(object sender, EventArgs e)
+			{
+				if (selectedCell.x == -1)
+				{
+					return;
+				}
+
+				sheetData[selectedCell.x, selectedCell.y].Name = editSelectedName.Text;
+			}
+			private void SelectCell(int x, int y)
+			{
+				if (selectedCell.x != -1)
+				{
+					CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].BorderColor = Color.Transparent;
+				}
+				selectedCell.x = x;
+				selectedCell.y = y;
+				CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].BorderColor = theme.PrimaryAccentColor;
+				editSelectedExpression.Text = sheetData[x, y].Expression;
+				if (string.IsNullOrEmpty(sheetData[x, y].Name))
+				{
+					editSelectedName.Text = $"{(char)('A' + x)}{y + 1}";
+				}
+				else
+				{
+					editSelectedName.Text = sheetData[x, y].Name;
+				}
+			}
+
+			private void Recalculate()
+			{
+				sheetObject.Invalidate(InvalidateType.SheetUpdated);
+			}
+		}
 
 		string IObject3DEditor.Name => "Sheet Editor";
 
@@ -47,94 +193,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.MaxFitOrStretch
-			};
-
-			sheetObject = item as SheetObject3D;
-			var sheetData = sheetObject.SheetData;
-			var countWidth = 10 * GuiWidget.DeviceScale;
-			var cellWidth = 50 * GuiWidget.DeviceScale;
-
-			// put in the edit row
-			var editRow = topToBottom.AddChild(new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			});
-			var editNameField = editRow.AddChild(new MHTextEditWidget("", theme)
-			{
-				HAnchor = HAnchor.Absolute,
-				Width = cellWidth,
-			});
-			var editSelectionField = editRow.AddChild(new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
-			{
-				HAnchor = HAnchor.Stretch,
-			});
-
-			// put in the header row
-			var topRow = topToBottom.AddChild(new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			});
-
-			
-			topRow.AddChild(new GuiWidget(cellWidth, 1));
-			for (int x = 0; x < sheetData.Width; x++)
-			{
-				topRow.AddChild(new TextWidget(((char)('A' + x)).ToString())
-				{
-					HAnchor = HAnchor.Absolute,
-					Width = cellWidth,
-					TextColor = theme.TextColor
-				});
-			}
-			
-			for (int y=0; y<sheetData.Height; y++)
-			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-				};
-				topToBottom.AddChild(row);
-
-				// add row count
-				row.AddChild(new TextWidget((y + 1).ToString())
-				{
-					TextColor = theme.TextColor,
-				});
-
-				for (int x=0; x<sheetData.Width; x++)
-				{
-					var edit = new MHTextEditWidget(sheetData[x, y], theme, cellWidth)
-					{
-						SelectAllOnFocus = true,
-					};
-
-					row.AddChild(edit);
-					var capturedX = x;
-					var capturedY = y;
-					edit.ActualTextEditWidget.EditComplete += (s, e) =>
-					{
-						sheetData[capturedX, capturedY] = edit.ActualTextEditWidget.Text;
-						Recalculate();
-					};
-				}
-			}
-
-			return topToBottom;
-		}
-
-		private void Recalculate()
-		{
-			sheetObject.Invalidate(InvalidateType.SheetUpdated);
-		}
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
+			return new SheetEditorWidget(item, undoBuffer, theme);
 		}
 	}
 }
