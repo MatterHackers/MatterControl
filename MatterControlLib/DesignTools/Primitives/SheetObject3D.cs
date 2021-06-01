@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -71,13 +70,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static async Task<SheetObject3D> Create()
 		{
-			var item = new SheetObject3D();
-			item.SheetData = new SheetData(5, 5);
+			var item = new SheetObject3D
+			{
+				SheetData = new SheetData(5, 5)
+			};
 			await item.Rebuild();
 			return item;
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated) && invalidateType.Source == this)
 			{
@@ -113,7 +114,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
 		}
 
-		public static T FindTableAndValue<T>(IObject3D owner, string cellId)
+		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
 		{
 			// look through all the parents
 			foreach (var parent in owner.Parents())
@@ -121,17 +122,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				// then each child of any give parent
 				foreach (var sibling in parent.Children)
 				{
-					var expression = "";
 					// if it is a sheet
 					if (sibling != owner
 						&& sibling is SheetObject3D sheet)
 					{
 						// try to manage the cell into the correct data type
-						expression = sheet.SheetData[cellId]?.Expression;
+						string value = sheet.SheetData.EvaluateExpression(inputExpression);
 
 						if (typeof(T) == typeof(double))
 						{
-							if (double.TryParse(expression, out double doubleValue))
+							if (double.TryParse(value, out double doubleValue))
 							{
 								return (T)(object)doubleValue;
 							}

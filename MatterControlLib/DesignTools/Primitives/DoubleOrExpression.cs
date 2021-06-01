@@ -32,39 +32,39 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(DoubleConstantOrReference))]
-	public class DoubleConstantOrReference
+	[TypeConverter(typeof(DoubleOrExpression))]
+	public class DoubleOrExpression
 	{
-		public string CellId { get; set; }
+		public string Expression { get; set; }
 
 		public double Value(IObject3D owner)
 		{
-			if (double.TryParse(CellId, out double result))
+			if (double.TryParse(Expression, out double result))
 			{
 				return result;
 			}
 
-			return SheetObject3D.FindTableAndValue<double>(owner, CellId);
+			return SheetObject3D.EvaluateExpression<double>(owner, Expression);
 		}
 
-		public DoubleConstantOrReference(double value)
+		public DoubleOrExpression(double value)
 		{
-			CellId = value.ToString();
+			Expression = value.ToString();
 		}
 
-		public DoubleConstantOrReference(string value)
+		public DoubleOrExpression(string expression)
 		{
-			CellId = value;
+			Expression = expression;
 		}
 
-		public static implicit operator DoubleConstantOrReference(double value)
+		public static implicit operator DoubleOrExpression(double value)
 		{
-			return new DoubleConstantOrReference(value);
+			return new DoubleOrExpression(value);
 		}
 
-		public static implicit operator DoubleConstantOrReference(string value)
+		public static implicit operator DoubleOrExpression(string expression)
 		{
-			return new DoubleConstantOrReference(value);
+			return new DoubleOrExpression(expression);
 		}
 	}
 }

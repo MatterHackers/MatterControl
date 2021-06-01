@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
-			typeof(DoubleConstantOrReference),
+			typeof(DoubleOrExpression),
 			typeof(Color),
 			typeof(Vector2), typeof(Vector3), typeof(Vector4),
 			typeof(DirectionVector), typeof(DirectionAxis),
@@ -668,19 +668,19 @@ namespace MatterHackers.MatterControl.DesignTools
 					(value) => { return ((bool)value) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field, theme);
 			}
-			else if (propertyValue is DoubleConstantOrReference doubleExpresion)
+			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
 				// create a string editor
 				var field = new TextField(theme);
 				field.Initialize(0);
-				field.SetValue(doubleExpresion.CellId, false);
+				field.SetValue(doubleExpresion.Expression, false);
 				field.ClearUndoHistory();
 				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field,
-					(valueString) => new DoubleConstantOrReference(valueString),
+					(valueString) => new DoubleOrExpression(valueString),
 					(value) =>
 					{
-						return ((DoubleConstantOrReference)value).CellId;
+						return ((DoubleOrExpression)value).Expression;
 					});
 				rowContainer = CreateSettingsRow(property, field, theme);
 
@@ -694,8 +694,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						DoubleConstantOrReference newValue = (DoubleConstantOrReference)property.Value;
-						if (newValue.CellId != field.Value)
+						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
+						if (newValue.Expression != field.Value)
 						{
 							var format = "0." + new string('#', 5);
 							if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)

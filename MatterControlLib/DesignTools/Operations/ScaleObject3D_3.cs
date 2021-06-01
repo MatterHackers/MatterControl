@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleConstantOrReference Width
+		public DoubleOrExpression Width
 		{
 			get
 			{
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleConstantOrReference Depth
+		public DoubleOrExpression Depth
 		{
 			get
 			{
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleConstantOrReference Height
+		public DoubleOrExpression Height
 		{
 			get
 			{

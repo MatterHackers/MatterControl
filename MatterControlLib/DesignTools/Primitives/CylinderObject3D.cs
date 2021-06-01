@@ -120,10 +120,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MaxDecimalPlaces(2)]
 		[Description("The width from one side to the opposite side.")]
-		public DoubleConstantOrReference Diameter { get; set; } = 20;
+		public DoubleOrExpression Diameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference Height { get; set; } = 20;
+		public DoubleOrExpression Height { get; set; } = 20;
 
 		[Description("The number of segments around the perimeter.")]
 		public int Sides { get; set; } = 40;
@@ -135,13 +135,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more cylinder options.";
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference EndingAngle { get; set; } = 360;
+		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference DiameterTop { get; set; } = 20;
+		public DoubleOrExpression DiameterTop { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

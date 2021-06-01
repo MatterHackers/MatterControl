@@ -56,13 +56,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference Width { get; set; } = 20;
+		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference Depth { get; set; } = 20;
+		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public DoubleConstantOrReference Height { get; set; } = 10;
+		public DoubleOrExpression Height { get; set; } = 10;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

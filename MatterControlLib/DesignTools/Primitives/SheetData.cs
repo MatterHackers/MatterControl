@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Linq;
+using org.mariuszgromada.math.mxparser;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -48,18 +48,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public string EvaluateExpression(string expression)
+		{
+			if (!tabelCalculated)
+			{
+				Recalculate();
+			}
+
+			var evaluator = new Expression(expression);
+			AddConstants(evaluator);
+			var value = evaluator.calculate();
+
+			return value.ToString();
+		}
+
+		public string CellId(int x, int y)
+		{
+			return $"{(char)('A' + x)}{y + 1}";
+		}
+
 		public TableCell this[int x, int y]
 		{
 			get
 			{
-				var cellId = $"{(char)('A' + x)}{y + 1}";
-				return this[cellId];
+				return this[CellId(x, y)];
 			}
 
 			set
 			{
-				var cellId = $"{(char)('A' + x)}{y + 1}";
-				this[cellId] = value;
+				this[CellId(x, y)] = value;
 			}
 		}
 
@@ -149,11 +166,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			public string Expression = "";
 
 			/// <summary>
-			/// The results of parsing the Expression
-			/// </summary>
-			public string Value => Expression;
-
-			/// <summary>
 			/// How to format this data in the display
 			/// </summary>
 			public CellFormat Format;
@@ -178,5 +190,39 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public List<RowData> Rows = new List<RowData>();
+
+		Dictionary<string, double> constants = new Dictionary<string, double>();
+		private bool tabelCalculated;
+
+		public void Recalculate()
+		{
+			constants.Clear();
+			// WIP: sort the cell by reference (needs to be DAG)
+			for (int y = 0; y < Rows.Count; y++)
+			{
+				for (int x = 0; x < Rows[y].Cells.Count; x++)
+				{
+					var cell = this[x, y];
+					var evaluator = new Expression(cell.Expression);
+					AddConstants(evaluator);
+					var value = evaluator.calculate();
+					constants.Add(CellId(x, y), value);
+					if (!string.IsNullOrEmpty(cell.Name))
+					{
+						constants.Add(cell.Name, value);
+					}
+				}
+			}
+
+			tabelCalculated = true;
+		}
+
+		private void AddConstants(Expression evaluator)
+		{
+			foreach(var kvp in constants)
+			{
+				evaluator.defineConstant(kvp.Key, kvp.Value);
+			}
+		}
 	}
 }

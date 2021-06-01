@@ -95,8 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					topRow.AddChild(new TextWidget(((char)('A' + x)).ToString())
 					{
-						HAnchor = HAnchor.Absolute,
-						Width = cellWidth,
+						HAnchor = HAnchor.Stretch,
 						TextColor = theme.TextColor
 					});
 				}
@@ -121,8 +120,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						var capturedX = x;
 						var capturedY = y;
 
-						var edit = new MHTextEditWidget(sheetData[x, y].Expression, theme, cellWidth)
+						var edit = new MHTextEditWidget(sheetData[x, y].Expression, theme)
 						{
+							HAnchor = HAnchor.Stretch,
 							SelectAllOnFocus = true,
 						};
 
@@ -183,6 +183,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			private void Recalculate()
 			{
+				sheetData.Recalculate();
 				sheetObject.Invalidate(InvalidateType.SheetUpdated);
 			}
 		}
