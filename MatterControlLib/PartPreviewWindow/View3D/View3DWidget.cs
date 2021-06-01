@@ -424,7 +424,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
-				renderRoundedGroup(.1, 1 - .1);
+				
+				// renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
+				renderRoundedGroup(.001, 1 - .151); // when we only have turntable
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -495,30 +497,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
-			TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
-			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
+			if (false)
 			{
-				ToolTipText = "Perspective Mode".Localize(),
-				Margin = theme.ButtonSpacing,
-				ToggleButton = true,
-				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = turntableEnabled,
-			};
-			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
-			projectionButton.CheckedStateChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
-				TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
-				if (true)
+				var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
+				TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
+				var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
+					ToolTipText = "Perspective Mode".Localize(),
+					Margin = theme.ButtonSpacing,
+					ToggleButton = true,
+					SiblingRadioButtonList = new List<GuiWidget>(),
+					Checked = turntableEnabled,
+				};
+				AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
+				projectionButton.CheckedStateChanged += (s, e) =>
+				{
+					UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
+					TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
+					if (true)
+					{
 					// Make sure the view has up going the right direction
 					// WIP, this should fix the current rotation rather than reset the view
 					ResetView();
-				}
-				Invalidate();
-			};
-
+					}
+					Invalidate();
+				};
+			}
 
 			var startHeight = 180;
 			var ySpacing = 40;

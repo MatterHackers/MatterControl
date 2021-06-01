@@ -224,9 +224,19 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					expression = expression.Substring(1);
 				}
+				if (expression.StartsWith("."))
+				{
+					expression = "0" + expression;
+				}
 				var evaluator = new Expression(expression);
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
+				if (double.IsNaN(value)
+					|| double.IsInfinity(value))
+				{
+					value = 0;
+				}
+
 				constants.Add(CellId(xyc.x, xyc.y), value);
 				if (!string.IsNullOrEmpty(xyc.cell.Name))
 				{
