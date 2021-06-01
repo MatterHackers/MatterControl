@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using org.mariuszgromada.math.mxparser;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -169,6 +170,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			/// How to format this data in the display
 			/// </summary>
 			public CellFormat Format;
+
+			public override string ToString()
+			{
+				return Expression;
+			}
 		}
 
 		public class RowData
@@ -194,23 +200,37 @@ namespace MatterHackers.MatterControl.DesignTools
 		Dictionary<string, double> constants = new Dictionary<string, double>();
 		private bool tabelCalculated;
 
-		public void Recalculate()
+		private IEnumerable<(int x, int y, TableCell cell)> EnumerateCells()
 		{
-			constants.Clear();
-			// WIP: sort the cell by reference (needs to be DAG)
 			for (int y = 0; y < Rows.Count; y++)
 			{
 				for (int x = 0; x < Rows[y].Cells.Count; x++)
 				{
-					var cell = this[x, y];
-					var evaluator = new Expression(cell.Expression);
-					AddConstants(evaluator);
-					var value = evaluator.calculate();
-					constants.Add(CellId(x, y), value);
-					if (!string.IsNullOrEmpty(cell.Name))
-					{
-						constants.Add(cell.Name, value);
-					}
+					yield return (x, y, this[x, y]);
+				}
+			}
+		}
+
+		public void Recalculate()
+		{
+			constants.Clear();
+
+			// WIP: sort the cell by reference (needs to be DAG)
+			var list = EnumerateCells().OrderByDescending(i => i.cell.Expression).ToList();
+			foreach (var xyc in list)
+			{
+				var expression = xyc.cell.Expression;
+				if (expression.StartsWith("="))
+				{
+					expression = expression.Substring(1);
+				}
+				var evaluator = new Expression(expression);
+				AddConstants(evaluator);
+				var value = evaluator.calculate();
+				constants.Add(CellId(xyc.x, xyc.y), value);
+				if (!string.IsNullOrEmpty(xyc.cell.Name))
+				{
+					constants.Add(xyc.cell.Name, value);
 				}
 			}
 
