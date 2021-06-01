@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderRoundedGroup(.1, .5 + .1);
 				
 				// renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
-				renderRoundedGroup(.001, 1 - .151); // when we only have turntable
+				renderRoundedGroup(.001, 1 - .127); // when we only have turntable
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -484,7 +484,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
 			};
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4));
+			// AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .375));
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
