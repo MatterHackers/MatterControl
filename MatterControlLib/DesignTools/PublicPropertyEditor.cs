@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
+			typeof(DoubleOrExpression),
 			typeof(Color),
 			typeof(Vector2), typeof(Vector3), typeof(Vector4),
 			typeof(DirectionVector), typeof(DirectionAxis),
@@ -666,6 +667,49 @@ namespace MatterHackers.MatterControl.DesignTools
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field, theme);
+			}
+			else if (propertyValue is DoubleOrExpression doubleExpresion)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(doubleExpresion.Expression, false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(field,
+					(valueString) => new DoubleOrExpression(valueString),
+					(value) =>
+					{
+						return ((DoubleOrExpression)value).Expression;
+					});
+				rowContainer = CreateSettingsRow(property, field, theme);
+
+				var label = rowContainer.Children.First();
+
+				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+				spacer.HAnchor = HAnchor.Absolute;
+				spacer.Width = Math.Max(0, 100 - label.Width);
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
+						if (newValue.Expression != field.Value)
+						{
+							var format = "0." + new string('#', 5);
+							if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+							{
+								format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+							}
+
+							field.TextValue = newValue.Value(object3D).ToString(format);
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is string stringValue)
 			{

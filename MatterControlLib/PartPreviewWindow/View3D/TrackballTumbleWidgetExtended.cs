@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallTransformType TransformState { get; set; }
 		public double ZoomDelta { get; set; } = 0.2f;
 		public bool TurntableEnabled { get; set; }
+		public bool PerspectiveMode { get; set; } = true;
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
@@ -72,9 +73,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var delta = mousePosition - rotationStartPosition;
 					// scale it to device units
-					delta *= 300 / this.Width;
-					var zRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitZ.Transform(world.RotationMatrix), delta.X * MathHelper.Tau / 360.0);
-					var screenXRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitX, -delta.Y * MathHelper.Tau / 360.0);
+					delta /= TrackBallController.TrackBallRadius / 2;
+					var zRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitZ.Transform(world.RotationMatrix), delta.X);
+					var screenXRotation = Matrix4X4.CreateFromAxisAngle(Vector3.UnitX, -delta.Y);
 					activeRotationQuaternion = new Quaternion(zRotation * screenXRotation);
 				}
 				else
@@ -201,20 +202,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else if (CurrentTrackingType == TrackBallTransformType.Scale)
 			{
-				Vector2 mouseDelta = mouseEvent.Position - lastScaleMousePosition;
-				double zoomDelta = 0;
-				if (mouseDelta.Y < 0)
-				{
-					zoomDelta = -1 * mouseDelta.Y / 100;
-				}
-				else if (mouseDelta.Y > 0)
-				{
-					zoomDelta = -mouseDelta.Y / 100.0;
-				}
+				Vector2 mouseDelta = (mouseEvent.Position - lastScaleMousePosition) / GuiWidget.DeviceScale;
+				double zoomDelta = mouseDelta.Y < 0 ? .01 : -.01;
 
-				if (zoomDelta != 0)
+				for(int i=0; i<Math.Abs(mouseDelta.Y); i++)
 				{
-					ZoomToMousePosition(mouseDown, zoomDelta);
+					ZoomToWorldPosition(mouseDownWorldPosition, zoomDelta);
 				}
 				lastScaleMousePosition = mouseEvent.Position;
 			}
@@ -281,10 +274,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ZoomToWorldPosition(intersectionInfo.HitPosition, zoomDelta);
 					mouseDownWorldPosition = intersectionInfo.HitPosition;
 				}
-				else
-				{
-					int a = 0;
-				}
 			}
 		}
 
@@ -295,18 +284,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			TrackBallController.TrackBallRadius = trackingRadius;
 
-			var zNear = .1;
+			var zNear = .01;
 			var zFar = 100.0;
 
 			GetNearFar?.Invoke(out zNear, out zFar);
 
 			if (CenterOffsetX != 0)
 			{
-				this.world.CalculateProjectionMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
+				this.world.CalculatePerspectiveMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
+
+				if (!PerspectiveMode)
+				{
+					this.world.CalculatePerspectiveMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar, 2);
+					//this.world.CalculateOrthogrphicMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
+				}
 			}
 			else
 			{
-				this.world.CalculateProjectionMatrix(sourceWidget.Width, sourceWidget.Height, zNear, zFar);
+				this.world.CalculatePerspectiveMatrix(sourceWidget.Width, sourceWidget.Height, zNear, zFar);
 			}
 		}
 
@@ -378,10 +373,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ZeroVelocity();
 			}
 
-			var unitsPerPixel = world.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
-
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
-			var zoomVec = (worldPosition - world.EyePosition) * zoomDelta * Math.Min(unitsPerPixel * 100, 1);
+			var delta = worldPosition - world.EyePosition;
+			var deltaLength = delta.Length;
+			var minDist = 3;
+			var maxDist = 2000;
+			if ((deltaLength < minDist && zoomDelta < 0)
+				|| (deltaLength > maxDist && zoomDelta > 0))
+			{
+				return;
+			}
+			var zoomVec = delta * zoomDelta;
 			world.Translate(zoomVec);
 
 			Invalidate();

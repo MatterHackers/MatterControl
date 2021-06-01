@@ -135,6 +135,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				null,
+				null,
 				new List<Func<double>>() { () => Diameter },
 				new List<Action<double>>() { (diameter) => Diameter = diameter },
 				0));

@@ -42,12 +42,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ProgressBar progressBar;
 		private TextWidget textWidget;
-		private ThemeConfig theme;
 
 		public RunningTaskStatusPanel(string title, RunningTaskDetails taskDetails, ThemeConfig theme)
 		{
 			this.taskDetails = taskDetails;
-			this.theme = theme;
 			this.Padding = new BorderDouble(3, 0);
 
 			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14).SetToColor(theme.TextColor))

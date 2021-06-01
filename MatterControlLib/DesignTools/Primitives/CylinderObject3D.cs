@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObject3DControlsProvider
+	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public CylinderObject3D()
 		{
@@ -120,10 +120,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MaxDecimalPlaces(2)]
 		[Description("The width from one side to the opposite side.")]
-		public double Diameter { get; set; } = 20;
+		public DoubleOrExpression Diameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleOrExpression Height { get; set; } = 20;
 
 		[Description("The number of segments around the perimeter.")]
 		public int Sides { get; set; } = 40;
@@ -135,18 +135,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more cylinder options.";
 
 		[MaxDecimalPlaces(2)]
-		public double StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double EndingAngle { get; set; } = 360;
+		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		[MaxDecimalPlaces(2)]
-		public double DiameterTop { get; set; } = 20;
+		public DoubleOrExpression DiameterTop { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}
@@ -161,11 +161,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
+			var height = Height.Value(this);
+			var diameter = Diameter.Value(this);
+			var diameterTop = DiameterTop.Value(this);
 			Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-			Height = agg_basics.Clamp(Height, .01, 1000000, ref valuesChanged);
-			Diameter = agg_basics.Clamp(Diameter, .01, 1000000, ref valuesChanged);
-			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+			height = agg_basics.Clamp(height, .01, 1000000, ref valuesChanged);
+			diameter = agg_basics.Clamp(diameter, .01, 1000000, ref valuesChanged);
+			var startingAngle = agg_basics.Clamp(StartingAngle.Value(this), 0, 360 - .01, ref valuesChanged);
+			var endingAngle = agg_basics.Clamp(EndingAngle.Value(this), StartingAngle.Value(this) + .01, 360, ref valuesChanged);
 
 			if (valuesChanged)
 			{
@@ -179,22 +182,22 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (!Advanced)
 					{
 						var path = new VertexStorage();
-						path.MoveTo(0, -Height / 2);
-						path.LineTo(Diameter / 2, -Height / 2);
-						path.LineTo(Diameter / 2, Height / 2);
-						path.LineTo(0, Height / 2);
+						path.MoveTo(0, -height / 2);
+						path.LineTo(diameter / 2, -height / 2);
+						path.LineTo(diameter / 2, height / 2);
+						path.LineTo(0, height / 2);
 
 						Mesh = VertexSourceToMesh.Revolve(path, Sides);
 					}
 					else
 					{
 						var path = new VertexStorage();
-						path.MoveTo(0, -Height / 2);
-						path.LineTo(Diameter / 2, -Height / 2);
-						path.LineTo(DiameterTop / 2, Height / 2);
-						path.LineTo(0, Height / 2);
+						path.MoveTo(0, -height / 2);
+						path.LineTo(diameter / 2, -height / 2);
+						path.LineTo(diameterTop / 2, height / 2);
+						path.LineTo(0, height / 2);
 
-						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
+						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(startingAngle), MathHelper.DegreesToRadians(endingAngle));
 					}
 				}
 			}
@@ -225,20 +228,32 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			var getDiameters = new List<Func<double>>() { () => Diameter, () => DiameterTop };
+			double getHeight() => Height.Value(this);
+			void setHeight(double height) => Height = height;
+			var getDiameters = new List<Func<double>>() { () => Diameter.Value(this), () => DiameterTop.Value(this) };
 			var setDiameters = new List<Action<double>>() { (diameter) => Diameter = diameter, (diameter) => DiameterTop = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				0,
 				controlVisible: () => true));
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters,
 				1,
 				ObjectSpace.Placement.Top,
 				controlVisible: () => Advanced));
 			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				null,
+				null,
+				null,
+				null,
+				getHeight,
+				setHeight,
 				getDiameters,
 				setDiameters));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

@@ -34,6 +34,8 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -56,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		void ScaledProportionally();
 	}
 
-	public class ScaleObject3D_3 : TransformWrapperObject3D, IObjectWithHeight, IObjectWithWidthAndDepth, IPropertyGridModifier, IScaleLocker
+	public class ScaleObject3D_3 : TransformWrapperObject3D, IObject3DControlsProvider, IPropertyGridModifier, IScaleLocker
 	{
 		public enum ScaleTypes
 		{
@@ -131,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public double Width
+		public DoubleOrExpression Width
 		{
 			get
 			{
@@ -148,14 +150,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(0, value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
+					FixIfLockedProportions(0, value.Value(this) / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
 				}
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public double Depth
+		public DoubleOrExpression Depth
 		{
 			get
 			{
@@ -172,14 +174,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(1, value / children.GetAxisAlignedBoundingBox().YSize);
+					FixIfLockedProportions(1, value.Value(this) / children.GetAxisAlignedBoundingBox().YSize);
 				}
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public double Height
+		public DoubleOrExpression Height
 		{
 			get
 			{
@@ -196,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(2, value / children.GetAxisAlignedBoundingBox().ZSize);
+					FixIfLockedProportions(2, value.Value(this) / children.GetAxisAlignedBoundingBox().ZSize);
 				}
 			}
 		}
@@ -455,6 +457,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				ScaleType = ScaleTypes.Custom;
 				this.UpdateControls(new PublicPropertyChange(change.Context, "Rebuild_On_Scale"));
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

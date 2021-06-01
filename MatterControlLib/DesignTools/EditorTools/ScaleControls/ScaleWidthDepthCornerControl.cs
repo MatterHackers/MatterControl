@@ -56,6 +56,10 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
 
 		private readonly ThemeConfig theme;
+		private readonly Func<double> getWidth;
+		private readonly Action<double> setWidth;
+		private readonly Func<double> getDepth;
+		private readonly Action<double> setDepth;
 
 		private readonly InlineEditControl xValueDisplayInfo;
 
@@ -67,12 +71,24 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private ScaleController scaleController = new ScaleController();
+		private ScaleController scaleController;
 
-		public ScaleWidthDepthCornerControl(IObject3DControlContext object3DControlContext, int quadrant)
+		public ScaleWidthDepthCornerControl(IObject3DControlContext object3DControlContext,
+			Func<double> getWidth,
+			Action<double> setWidth,
+			Func<double> getDepth,
+			Action<double> setDepth,
+			Func<double> getHeight,
+			Action<double> setHeight,
+			int quadrant)
 			: base(object3DControlContext)
 		{
 			theme = MatterControl.AppContext.Theme;
+			this.getWidth = getWidth;
+			this.setWidth = setWidth;
+			this.getDepth = getDepth;
+			this.setDepth = setDepth;
+			scaleController = new ScaleController(getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 			xValueDisplayInfo = new InlineEditControl()
 			{
@@ -316,9 +332,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
-				if (RootSelection is IObjectWithWidthAndDepth widthDepthItem
-					&& (widthDepthItem.Width != scaleController.InitialState.Width
-					|| widthDepthItem.Depth != scaleController.InitialState.Depth))
+				if (getWidth() != scaleController.InitialState.Width
+					|| getDepth() != scaleController.InitialState.Depth)
 				{
 					scaleController.EditComplete();
 				}
@@ -499,27 +514,24 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		public static void SetWidthDepthUndo(IObject3D selectedItem, UndoBuffer undoBuffer, Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
+		public void SetWidthDepthUndo(IObject3D selectedItem, UndoBuffer undoBuffer, Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
 		{
-			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			undoBuffer.AddAndDo(new UndoRedoActions(async () =>
 			{
-				undoBuffer.AddAndDo(new UndoRedoActions(async () =>
-				{
-					widthDepthItem.Width = undoWidthDepth.X;
-					widthDepthItem.Depth = undoWidthDepth.Y;
-					await selectedItem.Rebuild();
-					selectedItem.Matrix = undoMatrix;
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-				},
-				async () =>
-				{
-					widthDepthItem.Width = doWidthDepth.X;
-					widthDepthItem.Depth = doWidthDepth.Y;
-					await selectedItem.Rebuild();
-					selectedItem.Matrix = doMatrix;
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-				}));
-			}
+				setWidth(undoWidthDepth.X);
+				setDepth(undoWidthDepth.Y);
+				await selectedItem.Rebuild();
+				selectedItem.Matrix = undoMatrix;
+				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+			},
+			async () =>
+			{
+				setWidth(doWidthDepth.X);
+				setDepth(doWidthDepth.Y);
+				await selectedItem.Rebuild();
+				selectedItem.Matrix = doMatrix;
+				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+			}));
 		}
 	}
 }

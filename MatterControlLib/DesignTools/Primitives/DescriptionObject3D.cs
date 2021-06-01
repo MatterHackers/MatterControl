@@ -84,7 +84,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			set => base.Mesh = value;
 		}
 
-
 		public static async Task<DescriptionObject3D> Create()
 		{
 			var item = new DescriptionObject3D();

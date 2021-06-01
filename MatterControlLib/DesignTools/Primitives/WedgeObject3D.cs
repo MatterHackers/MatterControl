@@ -34,11 +34,13 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight, IObjectWithWidthAndDepth
+	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public WedgeObject3D()
 		{
@@ -57,13 +59,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double Width { get; set; } = 20;
+		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Depth { get; set; } = 20;
+		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleOrExpression Height { get; set; } = 20;
 
 		public bool Round { get; set; } = false;
 
@@ -100,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
-					path.LineTo(Width, 0);
+					path.LineTo(Width.Value(this), 0);
 
 					if (Round)
 					{
@@ -109,13 +111,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							var angle = range / (RoundSegments - 1) * i;
 							var rad = MathHelper.DegreesToRadians(angle);
-							path.LineTo(Width - Math.Sin(rad) * Width, Height - Math.Cos(rad) * Height);
+							path.LineTo(Width.Value(this) - Math.Sin(rad) * Width.Value(this), Height.Value(this) - Math.Cos(rad) * Height.Value(this));
 						}
 					}
 
-					path.LineTo(0, Height);
+					path.LineTo(0, Height.Value(this));
 
-					Mesh = VertexSourceToMesh.Extrude(path, Depth);
+					Mesh = VertexSourceToMesh.Extrude(path, Depth.Value(this));
 					Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 				}
 			}
@@ -131,6 +133,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				segmentsWidget.Visible = Round;
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

@@ -29,9 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -104,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme)
 			{
 				HAnchor = HAnchor.Absolute,
-				Width = 80
+				Width = 80 * GuiWidget.DeviceScale
 			};
 
 			var siblingList = new List<GuiWidget>();

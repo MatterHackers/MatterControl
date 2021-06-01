@@ -946,6 +946,7 @@ namespace MatterHackers.MatterControl
 
 			this.Extensions = new ExtensionsConfig(this.Library);
 			this.Extensions.Register(new ImageEditor());
+			this.Extensions.Register(new SheetEditor());
 			this.Extensions.Register(new PublicPropertyEditor());
 
 			HelpArticle helpArticle = null;

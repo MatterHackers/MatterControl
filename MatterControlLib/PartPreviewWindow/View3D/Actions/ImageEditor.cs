@@ -38,7 +38,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	using System.Linq;
 	using System.Web;
 	using CustomWidgets;
 	using DataConverters3D;

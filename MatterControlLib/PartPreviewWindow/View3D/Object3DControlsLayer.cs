@@ -55,11 +55,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		MoveInZ = 1 << 0,
 		RotateXYZ = 1 << 1,
 		RotateZ = 1 << 2,
-		ScaleWidthDepth = 1 << 3,
-		ScaleMatrixXY = 1 << 4,
-		Shadow = 1 << 5,
-		SnappingIndicators = 1 << 6,
-		ScaleHeight = 1 << 7,
+		ScaleMatrixXY = 1 << 3,
+		Shadow = 1 << 4,
+		SnappingIndicators = 1 << 5,
 
 		Standard2D = MoveInZ | Shadow | SnappingIndicators | RotateZ | ScaleMatrixXY
 	}
@@ -178,24 +176,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					// add default controls
-					if (selectedItem is IObjectWithHeight heightObject)
-					{
-						// When this is ready make the debug behavior the only behavior
-						Object3DControls.Add(new ScaleHeightControl(this));
-					}
-					else
-					{
-						Object3DControls.Add(new ScaleMatrixTopControl(this));
-					}
+					Object3DControls.Add(new ScaleMatrixTopControl(this));
 
-					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
-					{
-						AddControls(ControlTypes.ScaleWidthDepth);
-					}
-					else
-					{
-						AddControls(ControlTypes.ScaleMatrixXY);
-					}
+					AddControls(ControlTypes.ScaleMatrixXY);
 
 					AddControls(ControlTypes.RotateXYZ
 						| ControlTypes.MoveInZ
@@ -224,6 +207,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
+		public void AddWidthDepthControls(Func<double> getWidth,
+			Action<double> setWidth,
+			Func<double> getDepth,
+			Action<double> setDepth,
+			Func<double> getHeight,
+			Action<double> setHeight)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				Object3DControls.Add(new ScaleWidthDepthCornerControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+				Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+			}
+		}
+
 		public void AddControls(ControlTypes controls)
 		{
 			if (controls.HasFlag(ControlTypes.RotateXYZ))
@@ -244,26 +241,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Object3DControls.Add(new MoveInZControl(this));
 			}
 
-			if (controls.HasFlag(ControlTypes.ScaleHeight))
-			{
-				Object3DControls.Add(new ScaleHeightControl(this));
-			}
-
 			if (controls.HasFlag(ControlTypes.ScaleMatrixXY))
 			{
 				for (int i = 0; i < 4; i++)
 				{
 					Object3DControls.Add(new ScaleMatrixCornerControl(this, i));
 					Object3DControls.Add(new ScaleMatrixEdgeControl(this, i));
-				}
-			}
-
-			if (controls.HasFlag(ControlTypes.ScaleWidthDepth))
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Object3DControls.Add(new ScaleWidthDepthCornerControl(this, i));
-					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, i));
 				}
 			}
 

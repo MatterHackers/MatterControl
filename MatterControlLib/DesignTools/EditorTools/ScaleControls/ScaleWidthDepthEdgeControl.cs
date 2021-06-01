@@ -56,7 +56,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
 
 		private readonly ThemeConfig theme;
-
+		private readonly Func<double> getWidth;
+		private readonly Func<double> getDepth;
 		private readonly InlineEditControl xValueDisplayInfo;
 
 		private readonly InlineEditControl yValueDisplayInfo;
@@ -67,12 +68,23 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private ScaleController scaleController = new ScaleController();
+		private ScaleController scaleController;
 
-		public ScaleWidthDepthEdgeControl(IObject3DControlContext context, int edgeIndex)
+		public ScaleWidthDepthEdgeControl(IObject3DControlContext context,
+			Func<double> getWidth,
+			Action<double> setWidth,
+			Func<double> getDepth,
+			Action<double> setDepth,
+			Func<double> getHeight,
+			Action<double> setHeight,
+			int edgeIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
+
+			this.getWidth = getWidth;
+			this.getDepth = getDepth;
+			scaleController = new ScaleController(getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 			xValueDisplayInfo = new InlineEditControl()
 			{
@@ -315,9 +327,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
-				if (RootSelection is IObjectWithWidthAndDepth widthDepthItem
-					&& (widthDepthItem.Width != scaleController.InitialState.Width
-						|| widthDepthItem.Depth != scaleController.InitialState.Depth))
+				if (getWidth() != scaleController.InitialState.Width
+					|| getDepth() != scaleController.InitialState.Depth)
 				{
 					scaleController.EditComplete();
 				}

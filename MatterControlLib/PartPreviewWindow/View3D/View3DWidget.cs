@@ -424,7 +424,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
-				renderRoundedGroup(.1, 1 - .1);
+				
+				// renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
+				renderRoundedGroup(.001, 1 - .127); // when we only have turntable
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -482,7 +484,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
 			};
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4));
+			// AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .375));
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
@@ -495,18 +498,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
+			if (false)
 			{
-				ToolTipText = "Perspective Mode".Localize(),
-				Margin = theme.ButtonSpacing,
-				ToggleButton = true,
-				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = true,
-			};
-			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3)).Click += (s, e) =>
-			{
-				// toggle projection mode
-			};
+				var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
+				TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
+				var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
+				{
+					ToolTipText = "Perspective Mode".Localize(),
+					Margin = theme.ButtonSpacing,
+					ToggleButton = true,
+					SiblingRadioButtonList = new List<GuiWidget>(),
+					Checked = turntableEnabled,
+				};
+				AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
+				projectionButton.CheckedStateChanged += (s, e) =>
+				{
+					UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
+					TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
+					if (true)
+					{
+					// Make sure the view has up going the right direction
+					// WIP, this should fix the current rotation rather than reset the view
+					ResetView();
+					}
+					Invalidate();
+				};
+			}
 
 			var startHeight = 180;
 			var ySpacing = 40;

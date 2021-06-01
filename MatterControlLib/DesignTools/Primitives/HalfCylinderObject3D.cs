@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfCylinderObject3D : PrimitiveObject3D, IObject3DControlsProvider, IObjectWithWidthAndDepth
+	public class HalfCylinderObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public HalfCylinderObject3D()
 		{
@@ -57,10 +57,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double Width { get; set; } = 20;
+		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Depth { get; set; } = 20;
+		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
 		public int Sides { get; set; } = 20;
@@ -89,15 +89,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				using (new CenterAndHeightMaintainer(this))
 				{
 					var path = new VertexStorage();
-					path.MoveTo(Width / 2, 0);
+					path.MoveTo(Width.Value(this) / 2, 0);
 
 					for (int i = 1; i < Sides; i++)
 					{
 						var angle = MathHelper.Tau * i / 2 / (Sides - 1);
-						path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
+						path.LineTo(Math.Cos(angle) * Width.Value(this) / 2, Math.Sin(angle) * Width.Value(this) / 2);
 					}
 
-					var mesh = VertexSourceToMesh.Extrude(path, Depth);
+					var mesh = VertexSourceToMesh.Extrude(path, Depth.Value(this));
 					mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 					Mesh = mesh;
 				}
@@ -114,7 +114,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			object3DControlsLayer.AddControls(ControlTypes.ScaleWidthDepth);
+			var controls = object3DControlsLayer.Object3DControls;
+
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				null,
+				null);
+
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}

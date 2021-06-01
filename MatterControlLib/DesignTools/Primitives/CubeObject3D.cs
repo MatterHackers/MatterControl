@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D, IObjectWithHeight, IObjectWithWidthAndDepth
+	public class CubeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public CubeObject3D()
 		{
@@ -44,14 +46,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override string ThumbnailName => "Cube";
 
+		/// <summary>
+		/// This is the actual serialized with that can use expressions
+		/// </summary>
 		[MaxDecimalPlaces(2)]
-		public double Width { get; set; } = 20;
+		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Depth { get; set; } = 20;
+		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleOrExpression Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()
 		{
@@ -73,10 +78,32 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			var controls = object3DControlsLayer.Object3DControls;
+
+			controls.Add(new ScaleHeightControl(object3DControlsLayer,
+				() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth, 
+				() => Height.Value(this),
+				(height) => Height = height));
+			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
+				(width) => Width = width,
+				() => Depth.Value(this),
+				(depth) => Depth = depth,
+				() => Height.Value(this),
+				(height) => Height = height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
+		}
+
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}
@@ -94,23 +121,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+					Mesh = PlatonicSolids.CreateCube(Width.Value(this), Depth.Value(this), Height.Value(this));
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
-	}
-
-	public interface IObjectWithHeight
-	{
-		double Height { get; set; }
-	}
-
-	public interface IObjectWithWidthAndDepth
-	{
-		double Width { get; set; }
-		double Depth { get; set; }
 	}
 }
