@@ -424,9 +424,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
-				
+
+				// render the perspective and turntable group background				
 				// renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
-				renderRoundedGroup(.001, 1 - .127); // when we only have turntable
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -480,12 +480,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ToolTipText = "Turntable Mode".Localize(),
 				Margin = theme.ButtonSpacing,
+				Padding = 2,
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
+				BorderColor = hudStrokeColor,
 			};
+
 			// AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .375));
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .30));
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());

@@ -213,8 +213,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Action<double> setWidth = (newWidth) => width.Expression = newWidth.ToString();
 			Func<double> getDepth = () => depth.Value(item);
 			Action<double> setDepth = (newDepth) => depth.Expression = newDepth.ToString();
-			Func<double> getHeight = () => height.Value(item);
-			Action<double> setHeight = (newHeight) => height.Expression = newHeight.ToString();
+			Func<double> getHeight = null;
+			Action<double> setHeight = null;
+			if (height != null)
+			{
+				getHeight = () => height.Value(item);
+				setHeight = (newHeight) => height.Expression = newHeight.ToString();
+			}
 
 			if (width != null 
 				&& !width.IsEquation

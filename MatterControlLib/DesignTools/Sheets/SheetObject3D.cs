@@ -84,6 +84,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (RebuildLock())
 				{
+					// update the table info
+					SheetData.Recalculate();
 					// send a message to all our siblings and their children
 					SendInvalidateToAll();
 				}
@@ -142,6 +144,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						return (T)(object)0;
 					}
 				}
+			}
+			
+			if (inputExpression.Length > 0 && inputExpression[0] == '=')
+			{
+				inputExpression = inputExpression.Substring(1);
 			}
 
 			// look through all the parents

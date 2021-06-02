@@ -147,7 +147,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void ScaleDepth(double newDepth)
 		{
-			FinalState = new ScaleStates(InitialState);
 			FinalState.Depth = newDepth;
 			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
@@ -159,7 +158,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void ScaleDiameter(double newSize, int index)
 		{
-			FinalState = new ScaleStates(InitialState);
 			FinalState.Diameters[index] = newSize;
 			if (context.GuiSurface.ModifierKeys == Keys.Shift)
 			{
@@ -171,7 +169,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void ScaleHeight(double newHeight)
 		{
-			FinalState = new ScaleStates(InitialState);
 			FinalState.Height = newHeight;
 			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
@@ -183,7 +180,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void ScaleWidth(double newWidth)
 		{
-			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
 			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
 			{
@@ -221,11 +217,12 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			InitialState.Matrix = selectedItem.Matrix;
+
+			FinalState = new ScaleStates(InitialState);
 		}
 
 		internal void ScaleWidthDepth(double newWidth, double newDepth)
 		{
-			FinalState = new ScaleStates(InitialState);
 			FinalState.Width = newWidth;
 			FinalState.Depth = newDepth;
 			if (context.GuiSurface.ModifierKeys == Keys.Shift || selectedItem is IScaleLocker)
