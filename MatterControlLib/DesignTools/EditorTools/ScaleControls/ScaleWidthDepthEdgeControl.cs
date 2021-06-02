@@ -327,8 +327,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
-				if (getWidth() != scaleController.InitialState.Width
-					|| getDepth() != scaleController.InitialState.Depth)
+				if ((getWidth != null && getWidth() != scaleController.InitialState.Width)
+					|| (getDepth != null && getDepth() != scaleController.InitialState.Depth))
 				{
 					scaleController.EditComplete();
 				}

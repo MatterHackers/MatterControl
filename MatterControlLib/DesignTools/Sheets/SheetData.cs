@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class SheetData
 	{
+		private object locker = new object();
 		public SheetData()
 		{
 		}
@@ -51,33 +52,49 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public string EvaluateExpression(string expression)
 		{
-			if (!tabelCalculated)
+			lock (locker)
 			{
-				Recalculate();
+				if (!tabelCalculated)
+				{
+					Recalculate();
+				}
+
+				if(expression.StartsWith("="))
+				{
+					expression = expression.Substring(1);
+				}
+				var evaluator = new Expression(expression);
+				AddConstants(evaluator);
+				var value = evaluator.calculate();
+
+				return value.ToString();
 			}
-
-			var evaluator = new Expression(expression);
-			AddConstants(evaluator);
-			var value = evaluator.calculate();
-
-			return value.ToString();
 		}
 
 		public string CellId(int x, int y)
 		{
-			return $"{(char)('A' + x)}{y + 1}";
+			lock (locker)
+			{
+				return $"{(char)('A' + x)}{y + 1}";
+			}
 		}
 
 		public TableCell this[int x, int y]
 		{
 			get
 			{
-				return this[CellId(x, y)];
+				lock (locker)
+				{
+					return this[CellId(x, y)];
+				}
 			}
 
 			set
 			{
-				this[CellId(x, y)] = value;
+				lock (locker)
+				{
+					this[CellId(x, y)] = value;
+				}
 			}
 		}
 
@@ -85,46 +102,52 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				if (cellId.Length == 2)
+				lock (locker)
 				{
-					var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
-					var y = cellId.Substring(1, 1)[0] - '1';
-					return Rows[y].Cells[x];
-				}
-				else
-				{
-					foreach (var row in Rows)
+					if (cellId.Length == 2)
 					{
-						foreach(var cell in row.Cells)
+						var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
+						var y = cellId.Substring(1, 1)[0] - '1';
+						return Rows[y].Cells[x];
+					}
+					else
+					{
+						foreach (var row in Rows)
 						{
-							if (cell.Name == cellId)
+							foreach (var cell in row.Cells)
 							{
-								return cell;
+								if (cell.Name == cellId)
+								{
+									return cell;
+								}
 							}
 						}
 					}
-				}
 
-				return null;
+					return null;
+				}
 			}
 
 			set
 			{
-				if (cellId.Length == 2)
+				lock (locker)
 				{
-					var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
-					var y = cellId.Substring(1, 1)[0] - '1';
-					Rows[y].Cells[x] = value;
-				}
-				else
-				{
-					foreach (var row in Rows)
+					if (cellId.Length == 2)
 					{
-						for (int i = 0; i < row.Cells.Count; i++)
+						var x = cellId.Substring(0, 1).ToUpper()[0] - 'A';
+						var y = cellId.Substring(1, 1)[0] - '1';
+						Rows[y].Cells[x] = value;
+					}
+					else
+					{
+						foreach (var row in Rows)
 						{
-							if (row.Cells[i].Name == cellId)
+							for (int i = 0; i < row.Cells.Count; i++)
 							{
-								row.Cells[i] = value;
+								if (row.Cells[i].Name == cellId)
+								{
+									row.Cells[i] = value;
+								}
 							}
 						}
 					}
@@ -202,56 +225,65 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private IEnumerable<(int x, int y, TableCell cell)> EnumerateCells()
 		{
-			for (int y = 0; y < Rows.Count; y++)
+			lock (locker)
 			{
-				for (int x = 0; x < Rows[y].Cells.Count; x++)
+				for (int y = 0; y < Rows.Count; y++)
 				{
-					yield return (x, y, this[x, y]);
+					for (int x = 0; x < Rows[y].Cells.Count; x++)
+					{
+						yield return (x, y, this[x, y]);
+					}
 				}
 			}
 		}
 
 		public void Recalculate()
 		{
-			constants.Clear();
-
-			// WIP: sort the cell by reference (needs to be DAG)
-			var list = EnumerateCells().OrderByDescending(i => i.cell.Expression).ToList();
-			foreach (var xyc in list)
+			lock (locker)
 			{
-				var expression = xyc.cell.Expression;
-				if (expression.StartsWith("="))
+				constants.Clear();
+
+				// WIP: sort the cell by reference (needs to be DAG)
+				var list = EnumerateCells().OrderByDescending(i => i.cell.Expression).ToList();
+				foreach (var xyc in list)
 				{
-					expression = expression.Substring(1);
-				}
-				if (expression.StartsWith("."))
-				{
-					expression = "0" + expression;
-				}
-				var evaluator = new Expression(expression);
-				AddConstants(evaluator);
-				var value = evaluator.calculate();
-				if (double.IsNaN(value)
-					|| double.IsInfinity(value))
-				{
-					value = 0;
+					var expression = xyc.cell.Expression;
+					if (expression.StartsWith("="))
+					{
+						expression = expression.Substring(1);
+					}
+					if (expression.StartsWith("."))
+					{
+						expression = "0" + expression;
+					}
+					var evaluator = new Expression(expression);
+					AddConstants(evaluator);
+					var value = evaluator.calculate();
+					if (double.IsNaN(value)
+						|| double.IsInfinity(value))
+					{
+						value = 0;
+					}
+
+					constants.Add(CellId(xyc.x, xyc.y), value);
+					if (!string.IsNullOrEmpty(xyc.cell.Name))
+					{
+						constants.Add(xyc.cell.Name, value);
+					}
 				}
 
-				constants.Add(CellId(xyc.x, xyc.y), value);
-				if (!string.IsNullOrEmpty(xyc.cell.Name))
-				{
-					constants.Add(xyc.cell.Name, value);
-				}
+				tabelCalculated = true;
 			}
-
-			tabelCalculated = true;
 		}
 
 		private void AddConstants(Expression evaluator)
 		{
-			foreach(var kvp in constants)
+			lock (locker)
 			{
-				evaluator.defineConstant(kvp.Key, kvp.Value);
+				foreach (var kvp in constants)
+				{
+					evaluator.defineConstant(kvp.Key, kvp.Value);
+				}
 			}
 		}
 	}

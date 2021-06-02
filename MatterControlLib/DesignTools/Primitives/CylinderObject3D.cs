@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression Height { get; set; } = 20;
 
 		[Description("The number of segments around the perimeter.")]
-		public int Sides { get; set; } = 40;
+		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
@@ -161,14 +161,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			var height = Height.Value(this);
-			var diameter = Diameter.Value(this);
-			var diameterTop = DiameterTop.Value(this);
-			Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-			height = agg_basics.Clamp(height, .01, 1000000, ref valuesChanged);
-			diameter = agg_basics.Clamp(diameter, .01, 1000000, ref valuesChanged);
-			var startingAngle = agg_basics.Clamp(StartingAngle.Value(this), 0, 360 - .01, ref valuesChanged);
-			var endingAngle = agg_basics.Clamp(EndingAngle.Value(this), StartingAngle.Value(this) + .01, 360, ref valuesChanged);
+			double height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
+			var diameter = Diameter.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
+			var diameterTop = DiameterTop.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
+			var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+			var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+			var endingAngle = EndingAngle.ClampIfNotCalculated(this, StartingAngle.Value(this) + .01, 360, ref valuesChanged);
 
 			if (valuesChanged)
 			{
@@ -187,7 +185,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						path.LineTo(diameter / 2, height / 2);
 						path.LineTo(0, height / 2);
 
-						Mesh = VertexSourceToMesh.Revolve(path, Sides);
+						Mesh = VertexSourceToMesh.Revolve(path, sides);
 					}
 					else
 					{
@@ -197,7 +195,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						path.LineTo(diameterTop / 2, height / 2);
 						path.LineTo(0, height / 2);
 
-						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(startingAngle), MathHelper.DegreesToRadians(endingAngle));
+						Mesh = VertexSourceToMesh.Revolve(path, sides, MathHelper.DegreesToRadians(startingAngle), MathHelper.DegreesToRadians(endingAngle));
 					}
 				}
 			}

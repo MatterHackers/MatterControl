@@ -470,12 +470,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				(depth) => Depth = depth,
 				() => Height.Value(this),
 				(height) => Height = height));
-			object3DControlsLayer.AddWidthDepthControls(() => Width.Value(this),
-				(width) => Width = width,
-				() => Depth.Value(this),
-				(depth) => Depth = depth,
-				() => Height.Value(this),
-				(height) => Height = height);
+			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, Height);
 
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);

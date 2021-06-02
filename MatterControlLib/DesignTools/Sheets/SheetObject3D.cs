@@ -116,6 +116,34 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
 		{
+			// check if the expression is not an equation (does not start with "=")
+			if (inputExpression.Length > 0 && inputExpression[0] != '=')
+			{
+				// not an equation so try to parse it directly
+				if (double.TryParse(inputExpression, out var result))
+				{
+					if (typeof(T) == typeof(double))
+					{
+						return (T)(object)result;
+					}
+					if (typeof(T) == typeof(int))
+					{
+						return (T)(object)(int)Math.Round(result);
+					}
+				}
+				else
+				{
+					if (typeof(T) == typeof(double))
+					{
+						return (T)(object)0.0;
+					}
+					if (typeof(T) == typeof(int))
+					{
+						return (T)(object)0;
+					}
+				}
+			}
+
 			// look through all the parents
 			foreach (var parent in owner.Parents())
 			{

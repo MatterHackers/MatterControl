@@ -90,8 +90,8 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			get
 			{
-				if (getWidth != null
-				   && (getWidth() != InitialState.Width || getDepth() != InitialState.Depth))
+				if ((getWidth != null && getWidth() != InitialState.Width)
+				   || (getDepth != null && getDepth() != InitialState.Depth))
 				{
 					return true;
 				}
@@ -200,7 +200,11 @@ namespace MatterHackers.Plugins.EditorTools
 			if (getWidth != null)
 			{
 				InitialState.Width = getWidth();
-				InitialState.Depth = getDepth();
+			}
+
+			if (getDepth != null)
+			{
+				InitialState.Depth = getDepth.Invoke();
 			}
 
 			if (getHeight != null)
