@@ -131,18 +131,32 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						if (typeof(T) == typeof(double))
 						{
-							if (double.TryParse(value, out double doubleValue))
+							if (double.TryParse(value, out double doubleValue)
+								&& !double.IsNaN(doubleValue)
+								&& !double.IsInfinity(doubleValue))
 							{
 								return (T)(object)doubleValue;
 							}
 							// else return an error
-							return (T)(object)5.5;
+							return (T)(object).1;
+						}
+
+						if (typeof(T) == typeof(int))
+						{
+							if (double.TryParse(value, out double doubleValue)
+								&& !double.IsNaN(doubleValue)
+								&& !double.IsInfinity(doubleValue))
+							{
+								return (T)(object)(int)Math.Round(doubleValue);
+							}
+							// else return an error
+							return (T)(object)1;
 						}
 					}
 				}
 			}
 
-			throw new NotImplementedException();
+			return (T)(object)default(T);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
