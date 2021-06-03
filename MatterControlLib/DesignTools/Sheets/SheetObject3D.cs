@@ -84,6 +84,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (RebuildLock())
 				{
+					// update the table info
+					SheetData.Recalculate();
 					// send a message to all our siblings and their children
 					SendInvalidateToAll();
 				}
@@ -116,6 +118,39 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
 		{
+			// check if the expression is not an equation (does not start with "=")
+			if (inputExpression.Length > 0 && inputExpression[0] != '=')
+			{
+				// not an equation so try to parse it directly
+				if (double.TryParse(inputExpression, out var result))
+				{
+					if (typeof(T) == typeof(double))
+					{
+						return (T)(object)result;
+					}
+					if (typeof(T) == typeof(int))
+					{
+						return (T)(object)(int)Math.Round(result);
+					}
+				}
+				else
+				{
+					if (typeof(T) == typeof(double))
+					{
+						return (T)(object)0.0;
+					}
+					if (typeof(T) == typeof(int))
+					{
+						return (T)(object)0;
+					}
+				}
+			}
+			
+			if (inputExpression.Length > 0 && inputExpression[0] == '=')
+			{
+				inputExpression = inputExpression.Substring(1);
+			}
+
 			// look through all the parents
 			foreach (var parent in owner.Parents())
 			{
@@ -131,18 +166,32 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						if (typeof(T) == typeof(double))
 						{
-							if (double.TryParse(value, out double doubleValue))
+							if (double.TryParse(value, out double doubleValue)
+								&& !double.IsNaN(doubleValue)
+								&& !double.IsInfinity(doubleValue))
 							{
 								return (T)(object)doubleValue;
 							}
 							// else return an error
-							return (T)(object)5.5;
+							return (T)(object).1;
+						}
+
+						if (typeof(T) == typeof(int))
+						{
+							if (double.TryParse(value, out double doubleValue)
+								&& !double.IsNaN(doubleValue)
+								&& !double.IsInfinity(doubleValue))
+							{
+								return (T)(object)(int)Math.Round(doubleValue);
+							}
+							// else return an error
+							return (T)(object)1;
 						}
 					}
 				}
 			}
 
-			throw new NotImplementedException();
+			return (T)(object)default(T);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)

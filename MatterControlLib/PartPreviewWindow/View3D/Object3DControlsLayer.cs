@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.Plugins.EditorTools;
@@ -207,17 +208,65 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public void AddWidthDepthControls(Func<double> getWidth,
-			Action<double> setWidth,
-			Func<double> getDepth,
-			Action<double> setDepth,
-			Func<double> getHeight,
-			Action<double> setHeight)
+		public void AddHeightControl(IObject3D item, DoubleOrExpression width, DoubleOrExpression depth, DoubleOrExpression height)
 		{
-			for (int i = 0; i < 4; i++)
+			Func<double> getWidth = () => width.Value(item);
+			Action<double> setWidth = (newWidth) => width.Expression = newWidth.ToString();
+			Func<double> getDepth = () => depth.Value(item);
+			Action<double> setDepth = (newDepth) => depth.Expression = newDepth.ToString();
+			Func<double> getHeight = null;
+			Action<double> setHeight = null;
+			if (height != null)
 			{
-				Object3DControls.Add(new ScaleWidthDepthCornerControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
-				Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+				getHeight = () => height.Value(item);
+				setHeight = (newHeight) => height.Expression = newHeight.ToString();
+			}
+
+			Object3DControls.Add(new ScaleHeightControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight));
+		}
+
+		public void AddWidthDepthControls(IObject3D item, DoubleOrExpression width, DoubleOrExpression depth, DoubleOrExpression height)
+		{
+			Func<double> getWidth = () => width.Value(item);
+			Action<double> setWidth = (newWidth) => width.Expression = newWidth.ToString();
+			Func<double> getDepth = () => depth.Value(item);
+			Action<double> setDepth = (newDepth) => depth.Expression = newDepth.ToString();
+			Func<double> getHeight = null;
+			Action<double> setHeight = null;
+			if (height != null)
+			{
+				getHeight = () => height.Value(item);
+				setHeight = (newHeight) => height.Expression = newHeight.ToString();
+			}
+
+			if (width != null 
+				&& !width.IsEquation
+				&& depth != null
+				&& !depth.IsEquation)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Object3DControls.Add(new ScaleWidthDepthCornerControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, i));
+				}
+			}
+			else
+			{
+				// if the width is set and a constant
+				if (width != null && !width.IsEquation)
+				{
+					// add width side controls
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, null, null, getHeight, setHeight, 1));
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, getWidth, setWidth, null, null, getHeight, setHeight, 3));
+				}
+
+				// if the depth is set and a constant
+				if (depth != null && !depth.IsEquation)
+				{
+					// add depth side controls
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, null, null, getDepth, setDepth, getHeight, setHeight, 0));
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, null, null, getDepth, setDepth, getHeight, setHeight, 2));
+				}
 			}
 		}
 

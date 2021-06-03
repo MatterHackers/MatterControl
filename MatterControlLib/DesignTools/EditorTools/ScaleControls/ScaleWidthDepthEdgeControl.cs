@@ -57,7 +57,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private readonly ThemeConfig theme;
 		private readonly Func<double> getWidth;
+		private readonly Action<double> setWidth;
 		private readonly Func<double> getDepth;
+		private readonly Action<double> setDepth;
+		private readonly Func<double> getHeight;
+		private readonly Action<double> setHeight;
 		private readonly InlineEditControl xValueDisplayInfo;
 
 		private readonly InlineEditControl yValueDisplayInfo;
@@ -83,8 +87,12 @@ namespace MatterHackers.Plugins.EditorTools
 			theme = MatterControl.AppContext.Theme;
 
 			this.getWidth = getWidth;
+			this.setWidth = setWidth;
 			this.getDepth = getDepth;
-			scaleController = new ScaleController(getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
+			this.setDepth = setDepth;
+			this.getHeight = getHeight;
+			this.setHeight = setHeight;
+			scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 			xValueDisplayInfo = new InlineEditControl()
 			{
@@ -233,7 +241,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 
-				scaleController.SetInitialState(Object3DControlContext);
+				scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -327,10 +335,12 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
-				if (getWidth() != scaleController.InitialState.Width
-					|| getDepth() != scaleController.InitialState.Depth)
+				if ((getWidth != null && getWidth() != scaleController.InitialState.Width)
+					|| (getDepth != null && getDepth() != scaleController.InitialState.Depth))
 				{
 					scaleController.EditComplete();
+					// make a new controller so we will have new undo data
+					scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
@@ -425,6 +435,8 @@ namespace MatterHackers.Plugins.EditorTools
 			ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
 
 			scaleController.EditComplete();
+			// make a new controller so we will have new undo data
+			scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 		}
 
 		private bool ForceHideScale()

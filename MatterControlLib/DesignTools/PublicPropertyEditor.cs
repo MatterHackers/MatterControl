@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(DoubleOrExpression),
+			typeof(IntOrExpression),
 			typeof(Color),
 			typeof(Vector2), typeof(Vector3), typeof(Vector4),
 			typeof(DirectionVector), typeof(DirectionAxis),
@@ -704,6 +705,43 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 
 							field.TextValue = newValue.Value(object3D).ToString(format);
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+			}
+			else if (propertyValue is IntOrExpression intExpresion)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(intExpresion.Expression, false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(field,
+					(valueString) => new IntOrExpression(valueString),
+					(value) =>
+					{
+						return ((IntOrExpression)value).Expression;
+					});
+				rowContainer = CreateSettingsRow(property, field, theme);
+
+				var label = rowContainer.Children.First();
+
+				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+				spacer.HAnchor = HAnchor.Absolute;
+				spacer.Width = Math.Max(0, 100 - label.Width);
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						IntOrExpression newValue = (IntOrExpression)property.Value;
+						if (newValue.Expression != field.Value)
+						{
+							field.TextValue = newValue.Value(object3D).ToString();
 						}
 					}
 				}

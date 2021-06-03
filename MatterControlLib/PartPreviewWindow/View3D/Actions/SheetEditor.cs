@@ -183,7 +183,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			private void Recalculate()
 			{
-				sheetData.Recalculate();
 				sheetObject.Invalidate(InvalidateType.SheetUpdated);
 			}
 		}

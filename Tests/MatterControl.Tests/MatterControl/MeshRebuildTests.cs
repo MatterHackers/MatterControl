@@ -28,9 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 #define DEBUG_INTO_TGAS
 
-using System;
 using System.Linq;
-using MatterHackers.Agg;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -44,8 +43,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 	[TestFixture, Category("Agg.PolygonMesh.Rebuild")]
 	public class MeshRebuildTests
 	{
-		[Test]
-		public void PinchChangesMesh()
+		public void SetupEvnironment()
 		{
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -55,13 +53,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			MatterControl.AppContext.Platform.InitPluginFinder();
 			MatterControl.AppContext.Platform.ProcessCommandline();
-			RunTest();
 		}
 
-		private async void RunTest()
+		[Test]
+		public async Task PinchChangesMesh()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			SetupEvnironment();
 
 			var root = new Object3D();
 
@@ -71,6 +68,53 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			await pinch1.Rebuild();
 			root.Children.Add(pinch1);
 			Assert.AreEqual(3, root.Descendants().Count());
+		}
+	}
+
+	[TestFixture, Category("Agg.Scene.Rebuild")]
+	public class SceenSheetTests
+	{
+		public void SetupEvnironment()
+		{
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			MatterControl.AppContext.Platform.InitPluginFinder();
+			MatterControl.AppContext.Platform.ProcessCommandline();
+		}
+
+		[Test]
+		public async Task TestSheetFunctions()
+		{
+			SetupEvnironment();
+			var root = new Object3D();
+
+			// Create the scene (a cube and a sheet)
+			var cube1 = new CubeObject3D();
+			root.Children.Add(cube1);
+			var sheet = await SheetObject3D.Create();
+			root.Children.Add(sheet);
+			// set the sheet A1 to 33
+			sheet.SheetData[0, 0].Expression = "=33";
+			// rebuild cube without a reference to sheet
+			cube1.Invalidate(InvalidateType.Properties);
+			Assert.AreEqual(20, cube1.Width.Value(cube1), "cube1 should be the default 20mm");
+			// set the cube width to the sheet value, but with a bad description (needs an equals to work)
+			cube1.Width = "A1";
+			cube1.Invalidate(InvalidateType.Properties);
+			Assert.AreEqual(0, cube1.Width.Value(cube1), "Should be 0 as the reference is bad");
+			// now fix the reference
+			cube1.Width = "=A1";
+			cube1.Invalidate(InvalidateType.Properties);
+			Assert.AreEqual(33, cube1.Width.Value(cube1), "Should now be the value ad A1");
+			// Change the sheet value
+			sheet.SheetData[0, 0].Expression = "=43";
+			// and rebuild the references
+			sheet.Invalidate(InvalidateType.SheetUpdated);
+			Assert.AreEqual(43, cube1.Width.Value(cube1));
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private int partCount = 0;
 		private ThemeConfig theme;
 		private Toolbar statusBar;
-		private FlowLayoutWidget tasksContainer;
+		private GuiWidget tasksContainer;
 		private GuiWidget stretchStatusPanel;
 		private LinkLabel updateAvailableButton;
 
@@ -386,14 +386,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			statusBar.ActionArea.VAnchor = VAnchor.Stretch;
 
-			tasksContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			tasksContainer = statusBar.AddChild(new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Stretch,
 				BackgroundColor = theme.MinimalShade,
 				Name = "runningTasksPanel"
-			};
-			statusBar.AddChild(tasksContainer);
+			});
+
+			tasksContainer.AddChild(new TextWidget("This is a status message")
+			{
+				TextColor = theme.TextColor
+			});
 
 			stretchStatusPanel = new GuiWidget()
 			{

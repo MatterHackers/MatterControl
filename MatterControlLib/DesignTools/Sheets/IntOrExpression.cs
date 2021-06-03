@@ -28,43 +28,75 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.ComponentModel;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(DoubleOrExpression))]
-	public class DoubleOrExpression
+	[TypeConverter(typeof(IntOrExpression))]
+	public class IntOrExpression
 	{
 		public string Expression { get; set; }
 
-		public double Value(IObject3D owner)
-		{
-			if (double.TryParse(Expression, out double result))
-			{
-				return result;
-			}
+		/// <summary>
+		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
+		/// </summary>
+		public bool IsEquation { get => Expression.Length > 0 && Expression[0] == '='; }
 
-			return SheetObject3D.EvaluateExpression<double>(owner, Expression);
+		public int Value(IObject3D owner)
+		{
+			return SheetObject3D.EvaluateExpression<int>(owner, Expression);
 		}
 
-		public DoubleOrExpression(double value)
+		public IntOrExpression(int value)
 		{
 			Expression = value.ToString();
 		}
 
-		public DoubleOrExpression(string expression)
+		public IntOrExpression(double value)
+		{
+			Expression = ((int)value).ToString();
+		}
+
+		public IntOrExpression(string expression)
 		{
 			Expression = expression;
 		}
 
-		public static implicit operator DoubleOrExpression(double value)
+		public static implicit operator IntOrExpression(int value)
 		{
-			return new DoubleOrExpression(value);
+			return new IntOrExpression(value);
 		}
 
-		public static implicit operator DoubleOrExpression(string expression)
+		public static implicit operator IntOrExpression(double value)
 		{
-			return new DoubleOrExpression(expression);
+			return new IntOrExpression(value);
+		}
+
+		public static implicit operator IntOrExpression(string expression)
+		{
+			return new IntOrExpression(expression);
+		}
+
+		/// <summary>
+		/// Evaluate the expression clap the result and return the clamped value.
+		/// If the expression as not an equation, modify it to be the clamped value.
+		/// </summary>
+		/// <param name="item">The Object to find the table relative to</param>
+		/// <param name="min">The min value to clamp to</param>
+		/// <param name="max">The max value to clamp to</param>
+		/// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
+		/// <returns></returns>
+		public int ClampIfNotCalculated(IObject3D item, int min, int max, ref bool valuesChanged)
+		{
+			var value = agg_basics.Clamp(this.Value(item), min, max, ref valuesChanged);
+			if (!this.IsEquation)
+			{
+				// clamp the actual expression as it is not an equation
+				Expression = value.ToString();
+			}
+
+			return value;
 		}
 	}
 }
