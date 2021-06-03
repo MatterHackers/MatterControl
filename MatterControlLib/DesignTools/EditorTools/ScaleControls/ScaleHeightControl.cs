@@ -52,7 +52,10 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly InlineEditControl heightValueDisplayInfo;
 
 		private readonly ThemeConfig theme;
-
+		private readonly Func<double> getWidth;
+		private readonly Action<double> setWidth;
+		private readonly Func<double> getDepth;
+		private readonly Action<double> setDepth;
 		private readonly Mesh topScaleMesh;
 
 		private IObject3D activeSelectedItem;
@@ -67,6 +70,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private ScaleController scaleController;
 		private readonly Func<double> getHeight;
+		private readonly Action<double> setHeight;
+		private readonly List<Func<double>> getDiameters;
+		private readonly List<Action<double>> setDiameters;
 
 		public ScaleHeightControl(IObject3DControlContext context,
 			Func<double> getWidth,
@@ -81,8 +87,16 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, getDiameters, setDiameters);
+			this.getWidth = getWidth;
+			this.setWidth = setWidth;
+			this.getDepth = getDepth;
+			this.setDepth = setDepth;
 			this.getHeight = getHeight;
+			this.setHeight = setHeight;
+			this.getDiameters = getDiameters;
+			this.setDiameters = setDiameters;
+
+			scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, getDiameters, setDiameters);
 
 			heightValueDisplayInfo = new InlineEditControl()
 			{
@@ -136,6 +150,7 @@ namespace MatterHackers.Plugins.EditorTools
 				selectedItem.Translate(bottom - postScaleBottom);
 
 				scaleController.EditComplete();
+				scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, getDiameters, setDiameters);
 			};
 
 			Object3DControlContext.GuiSurface.AddChild(heightValueDisplayInfo);
@@ -273,7 +288,7 @@ namespace MatterHackers.Plugins.EditorTools
 				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
-				scaleController.SetInitialState(Object3DControlContext);
+				scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, getDiameters, setDiameters);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -346,6 +361,7 @@ namespace MatterHackers.Plugins.EditorTools
 			if (MouseDownOnControl)
 			{
 				scaleController.EditComplete();
+				scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight, getDiameters, setDiameters);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}

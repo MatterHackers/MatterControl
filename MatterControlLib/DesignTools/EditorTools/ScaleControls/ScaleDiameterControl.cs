@@ -65,7 +65,10 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 initialHitPosition;
 
 		private ScaleController scaleController;
+		private Func<double> getHeight;
+		private Action<double> setHeight;
 		private List<Func<double>> getDiameters;
+		private readonly List<Action<double>> setDiameters;
 		private readonly Func<bool> controlVisible;
 		private readonly ObjectSpace.Placement placement;
 		private readonly int diameterIndex;
@@ -82,14 +85,17 @@ namespace MatterHackers.Plugins.EditorTools
 			double angleOffset = 0)
 			: base(context)
 		{
+			this.getHeight = getHeight;
+			this.setHeight = setHeight;
 			this.getDiameters = getDiameters;
+			this.setDiameters = setDiameters;
 			this.controlVisible = controlVisible;
 			this.placement = placement;
 			this.diameterIndex = diameterIndex;
 			this.angleOffset = angleOffset;
 			theme = MatterControl.AppContext.Theme;
 
-			scaleController = new ScaleController(null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
+			scaleController = new ScaleController(Object3DControlContext, null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
 
 			diameterValueDisplayInfo = new InlineEditControl()
 			{
@@ -114,6 +120,7 @@ namespace MatterHackers.Plugins.EditorTools
 				ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
 
 				scaleController.EditComplete();
+				scaleController = new ScaleController(Object3DControlContext, null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
 			};
 
 			diameterValueDisplayInfo.VisibleChanged += (s, e) =>
@@ -235,7 +242,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 
-				scaleController.SetInitialState(Object3DControlContext);
+				scaleController = new ScaleController(Object3DControlContext, null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -310,6 +317,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (getDiameters[diameterIndex]() != scaleController.InitialState.Diameters[diameterIndex])
 				{
 					scaleController.EditComplete();
+					scaleController = new ScaleController(Object3DControlContext, null, null, null, null, getHeight, setHeight, getDiameters, setDiameters);
 				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}

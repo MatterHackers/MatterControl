@@ -56,7 +56,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private Func<double> getHeight;
 		private Action<double> setHeight;
 
-		public ScaleController(Func<double> getWidth,
+		public ScaleController(IObject3DControlContext context,
+			Func<double> getWidth,
 			Action<double> setWidth,
 			Func<double> getDepth,
 			Action<double> setDepth,
@@ -65,6 +66,8 @@ namespace MatterHackers.Plugins.EditorTools
 			List<Func<double>> getDiameters = null,
 			List<Action<double>> setDiameters = null)
 		{
+			this.context = context;
+
 			this.getWidth = getWidth;
 			this.setWidth = setWidth;
 
@@ -84,6 +87,8 @@ namespace MatterHackers.Plugins.EditorTools
 					InitialState.Diameters.Add(0);
 				}
 			}
+
+			SetInitialState(context);
 		}
 
 		public bool HasChange
@@ -137,12 +142,7 @@ namespace MatterHackers.Plugins.EditorTools
 		/// </summary>
 		public void EditComplete()
 		{
-			var doState = FinalState;
-			doState.Matrix = selectedItem.Matrix;
-
-			var undoState = InitialState;
-
-			EditComplete(undoState, doState);
+			EditComplete(InitialState, FinalState);
 		}
 
 		public void ScaleDepth(double newDepth)
@@ -189,10 +189,8 @@ namespace MatterHackers.Plugins.EditorTools
 			SetItem(selectedItem, FinalState);
 		}
 
-		public void SetInitialState(IObject3DControlContext context)
+		private void SetInitialState(IObject3DControlContext context)
 		{
-			this.context = context;
-
 			if (getWidth != null)
 			{
 				InitialState.Width = getWidth();
@@ -235,8 +233,14 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void EditComplete(ScaleStates undoState, ScaleStates doState)
 		{
-			var undoBuffer = context.Scene.UndoBuffer;
 			var selectedItem = this.selectedItem;
+
+			// make copies of the scale states as they will be save into the undo redo stack
+			doState = new ScaleStates(doState);
+			doState.Matrix = selectedItem.Matrix;
+			undoState = new ScaleStates(undoState);
+
+			var undoBuffer = context.Scene.UndoBuffer;
 
 			undoBuffer.Add(new UndoRedoActions(async () =>
 			{

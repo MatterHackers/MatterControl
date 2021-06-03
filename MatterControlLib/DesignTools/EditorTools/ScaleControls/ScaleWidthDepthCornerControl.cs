@@ -60,7 +60,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly Action<double> setWidth;
 		private readonly Func<double> getDepth;
 		private readonly Action<double> setDepth;
-
+		private readonly Func<double> getHeight;
+		private readonly Action<double> setHeight;
 		private readonly InlineEditControl xValueDisplayInfo;
 
 		private readonly InlineEditControl yValueDisplayInfo;
@@ -88,7 +89,9 @@ namespace MatterHackers.Plugins.EditorTools
 			this.setWidth = setWidth;
 			this.getDepth = getDepth;
 			this.setDepth = setDepth;
-			scaleController = new ScaleController(getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
+			this.getHeight = getHeight;
+			this.setHeight = setHeight;
+			scaleController = new ScaleController(object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 			xValueDisplayInfo = new InlineEditControl()
 			{
@@ -239,7 +242,7 @@ namespace MatterHackers.Plugins.EditorTools
 				hitPlane = new PlaneShape(new Plane(planeNormal, edge0), null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
-				scaleController.SetInitialState(Object3DControlContext);
+				scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -336,6 +339,8 @@ namespace MatterHackers.Plugins.EditorTools
 					|| getDepth() != scaleController.InitialState.Depth)
 				{
 					scaleController.EditComplete();
+					// make a new controller so we will have new undo data
+					scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
@@ -421,6 +426,8 @@ namespace MatterHackers.Plugins.EditorTools
 			ActiveSelectedItem.Translate(lockedEdge - newLockedEdge);
 
 			scaleController.EditComplete();
+			// make a new controller so we will have new undo data
+			scaleController = new ScaleController(Object3DControlContext, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight);
 		}
 
 		private bool ForceHideScale()

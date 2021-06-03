@@ -361,15 +361,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			var controls = object3DControlsLayer.Object3DControls;
-
-			controls.Add(new ScaleHeightControl(object3DControlsLayer,
-				() => Width,
-				(width) => Width = width,
-				() => Depth,
-				(depth) => Depth = depth,
-				() => Height,
-				(height) => Height = height));
+			object3DControlsLayer.AddHeightControl(this, Width, Depth, Height);
 			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, Height);
 
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

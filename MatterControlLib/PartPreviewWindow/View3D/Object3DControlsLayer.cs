@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.Plugins.EditorTools;
@@ -205,6 +206,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			drawBeforeCallbacks.Clear();
 
 			base.OnDraw(graphics2D);
+		}
+
+		public void AddHeightControl(IObject3D item, DoubleOrExpression width, DoubleOrExpression depth, DoubleOrExpression height)
+		{
+			Func<double> getWidth = () => width.Value(item);
+			Action<double> setWidth = (newWidth) => width.Expression = newWidth.ToString();
+			Func<double> getDepth = () => depth.Value(item);
+			Action<double> setDepth = (newDepth) => depth.Expression = newDepth.ToString();
+			Func<double> getHeight = null;
+			Action<double> setHeight = null;
+			if (height != null)
+			{
+				getHeight = () => height.Value(item);
+				setHeight = (newHeight) => height.Expression = newHeight.ToString();
+			}
+
+			Object3DControls.Add(new ScaleHeightControl(this, getWidth, setWidth, getDepth, setDepth, getHeight, setHeight));
 		}
 
 		public void AddWidthDepthControls(IObject3D item, DoubleOrExpression width, DoubleOrExpression depth, DoubleOrExpression height)
