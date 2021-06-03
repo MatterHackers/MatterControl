@@ -145,6 +145,30 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+				// clean up stretch text widget to have same width
+				var allStretch = new List<GuiWidget>();
+				var maxNameWidth = 0.0;
+				foreach (var sr in mainContainer.Descendants<SettingsRow>())
+				{
+					foreach (var tw in sr.Descendants<TextWidget>())
+					{
+						if (tw.Width > maxNameWidth)
+						{
+							maxNameWidth = tw.Width;
+						}
+					}
+				}
+				maxNameWidth += 20 * GuiWidget.DeviceScale;
+
+				foreach (var row in mainContainer.Descendants<SettingsRow>())
+				{
+					foreach (var spacer in row.Children<HorizontalSpacer>())
+					{
+						var textWidth = row.Children<TextWidget>().First().Width;
+						spacer.Width = maxNameWidth - textWidth;
+					}
+				}
+
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
