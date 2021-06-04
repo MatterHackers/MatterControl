@@ -696,11 +696,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
 				// create a string editor
-				var field = new TextField(theme);
+				var field = new ExpressionField(theme);
 				field.Initialize(0);
 				field.SetValue(doubleExpresion.Expression, false);
 				field.ClearUndoHistory();
-				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field,
 					(valueString) => new DoubleOrExpression(valueString),
 					(value) =>
@@ -708,12 +707,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						return ((DoubleOrExpression)value).Expression;
 					});
 				rowContainer = CreateSettingsRow(property, field, theme);
-
-				var label = rowContainer.Children.First();
-
-				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-				spacer.HAnchor = HAnchor.Absolute;
-				spacer.Width = Math.Max(0, 100 - label.Width);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -739,11 +732,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is IntOrExpression intExpresion)
 			{
 				// create a string editor
-				var field = new TextField(theme);
+				var field = new ExpressionField(theme);
 				field.Initialize(0);
 				field.SetValue(intExpresion.Expression, false);
 				field.ClearUndoHistory();
-				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field,
 					(valueString) => new IntOrExpression(valueString),
 					(value) =>
@@ -751,12 +743,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						return ((IntOrExpression)value).Expression;
 					});
 				rowContainer = CreateSettingsRow(property, field, theme);
-
-				var label = rowContainer.Children.First();
-
-				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-				spacer.HAnchor = HAnchor.Absolute;
-				spacer.Width = Math.Max(0, 100 - label.Width);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
