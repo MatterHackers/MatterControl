@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -57,7 +58,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add an editor field for the SupportGenerator.SupportType
 			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
 
+			var rows = new List<SettingsRow>();
+
 			var editor = PublicPropertyEditor.CreatePropertyEditor(
+				rows,
 				new EditableProperty(propertyInfo, supportGenerator),
 				null,
 				new PPEContext(),

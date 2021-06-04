@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
@@ -106,14 +107,32 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					});
 				}
 
-				var textLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.TextColor);
+				textLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.TextColor);
 				this.AddChild(textLabel);
 				textLabel.Selectable = false;
 
-				this.AddChild(new HorizontalSpacer());
+				this.spacer = this.AddChild(new HorizontalSpacer());
 			}
 
 			this.PerformLayout();
+		}
+
+		public SettingsRow SetTextRightMargin(List<SettingsRow> rows, double spacing)
+		{
+			var maxTextWidth = 0.0;
+			foreach (var row in rows)
+			{
+				maxTextWidth = Math.Max(maxTextWidth, row.textLabel.Width);
+			}
+
+			spacer.HAnchor = HAnchor.Absolute;
+			var newWidth = spacing + maxTextWidth;
+			foreach (var row in rows)
+			{
+				row.spacer.Width = Math.Max(0,  newWidth - row.textLabel.Width);
+			}
+
+			return this;
 		}
 
 		public bool FullRowSelect
@@ -203,6 +222,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private static int popupCount;
 		private bool popupScheduled = false;
+		private GuiWidget spacer;
+		private GuiWidget textLabel;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
