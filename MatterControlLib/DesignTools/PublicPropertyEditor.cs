@@ -145,6 +145,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+#if false
 				// clean up stretch text widget to have same width
 				var allStretch = new List<GuiWidget>();
 				var maxNameWidth = 0.0;
@@ -152,10 +153,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					foreach (var tw in sr.Descendants<TextWidget>())
 					{
-						if (tw.Width > maxNameWidth)
+						tw.Children.Modify(list =>
 						{
-							maxNameWidth = tw.Width;
-						}
+							if (list.Count > 2 
+								&& list[2].HAnchor == HAnchor.Stretch
+								&& tw.Width > maxNameWidth)
+							{
+								maxNameWidth = tw.Width;
+							}
+						});
 					}
 				}
 				maxNameWidth += 20 * GuiWidget.DeviceScale;
@@ -168,6 +174,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						spacer.Width = maxNameWidth - textWidth;
 					}
 				}
+#endif
 
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
@@ -707,6 +714,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						return ((DoubleOrExpression)value).Expression;
 					});
 				rowContainer = CreateSettingsRow(property, field, theme);
+				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+				spacer.HAnchor = HAnchor.Absolute;
+				var label = rowContainer.Children<TextWidget>().First();
+				spacer.Width = Math.Max(0, 100 * GuiWidget.DeviceScale - label.Width);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -743,6 +754,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						return ((IntOrExpression)value).Expression;
 					});
 				rowContainer = CreateSettingsRow(property, field, theme);
+				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+				spacer.HAnchor = HAnchor.Absolute;
+				var label = rowContainer.Children<TextWidget>().First();
+				spacer.Width = Math.Max(0, 100 * GuiWidget.DeviceScale - label.Width);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -843,11 +858,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						RegisterValueChanged(field, (valueString) => valueString);
 						rowContainer = CreateSettingsRow(property, field, theme);
 
-						var label = rowContainer.Children.First();
+						var label = rowContainer.Children<TextWidget>().First();
 
 						var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
 						spacer.HAnchor = HAnchor.Absolute;
-						spacer.Width = Math.Max(0, 100 - label.Width);
+						spacer.Width = Math.Max(0, 100 * GuiWidget.DeviceScale - label.Width);
 					}
 				}
 			}

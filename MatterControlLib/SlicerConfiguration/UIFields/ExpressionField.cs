@@ -55,12 +55,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
+			var aligner = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
+			aligner.AddChild(textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,
 				Name = this.Name,
-			};
+			});
 			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
 				if (this.Value != textEditWidget.Text)
@@ -73,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			textEditWidget.ActualTextEditWidget.TextChanged += ActualTextEditWidget_TextChanged;
 
-			this.Content = textEditWidget;
+			this.Content = aligner;
 		}
 
 		private void ActualTextEditWidget_TextChanged(object sender, System.EventArgs e)
@@ -84,7 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				textEditWidget.HAnchor = HAnchor.Fit;
+				textEditWidget.HAnchor = HAnchor.Fit | HAnchor.Right;
 			}
 		}
 
