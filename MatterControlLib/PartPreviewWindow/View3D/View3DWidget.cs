@@ -594,11 +594,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				PopupMate = new MatePoint()
 				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
 			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
-			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
 			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
 			modelViewStyleButton.BackgroundColor = hudBackgroundColor;
