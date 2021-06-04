@@ -32,10 +32,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -45,29 +48,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public SheetData SheetData { get; set; }
 
-		public override Mesh Mesh
-		{
-			get
-			{
-				if (!this.Children.Where(i => i.VisibleMeshes().Count() > 0).Any())
-				{
-					// add the amf content
-					using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
-					{
-						Children.Modify((list) =>
-						{
-							list.Clear();
-							list.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
-						});
-					}
-				}
-
-				return base.Mesh;
-			}
-
-			set => base.Mesh = value;
-		}
-
 		public static async Task<SheetObject3D> Create()
 		{
 			var item = new SheetObject3D
@@ -76,6 +56,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 			await item.Rebuild();
 			return item;
+		}
+
+		public SheetObject3D()
+		{
+			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet.stl")))
+			{
+				var mesh = StlProcessing.Load(stlStream, CancellationToken.None);
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				mesh.Transform(Matrix4X4.CreateScale(20 / aabb.XSize));
+				Mesh = mesh;
+			}
+
+			Color = new Color("#117c43");
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
