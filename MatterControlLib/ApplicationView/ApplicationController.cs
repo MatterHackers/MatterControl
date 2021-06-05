@@ -1355,6 +1355,23 @@ namespace MatterHackers.MatterControl
 
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
+		private string _uiHint = "";
+		/// <summary>
+		/// Set or get the current ui hint for the thing the mouse is over
+		/// </summary>
+		public string UiHint
+		{
+			get => _uiHint;
+			
+			set
+			{
+				_uiHint = value;
+				UiHintChanged?.Invoke(this, null);
+			}
+		}
+
+		public event EventHandler UiHintChanged;
+
 		public string ShortProductName
 		{
 			get

@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
+	[WebPageLink("Documentation", "Open", "https://matterhackers.com/support/mattercontrol-variable-support")]
+	[MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
 	public class SheetObject3D : Object3D, IObject3DControlsProvider
 	{
 		public SheetData SheetData { get; set; }
@@ -60,15 +62,29 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public SheetObject3D()
 		{
-			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet.stl")))
+			Mesh border;
+			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
 			{
-				var mesh = StlProcessing.Load(stlStream, CancellationToken.None);
-				var aabb = mesh.GetAxisAlignedBoundingBox();
-				mesh.Transform(Matrix4X4.CreateScale(20 / aabb.XSize));
-				Mesh = mesh;
+				border = StlProcessing.Load(stlStream, CancellationToken.None);
 			}
+			this.Children.Add(new Object3D()
+			{
+				Mesh = border,
+				Color = new Color("#9D9D9D")
+			});
+			Mesh boxes;
+			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
+			{
+				boxes = StlProcessing.Load(stlStream, CancellationToken.None);
+			}
+			this.Children.Add(new Object3D()
+			{
+				Mesh = boxes,
+				Color = new Color("#117c43")
+			});
 
-			Color = new Color("#117c43");
+			var aabb = border.GetAxisAlignedBoundingBox();
+			this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
