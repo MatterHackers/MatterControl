@@ -1015,7 +1015,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var progressBackgroundColor = new Color(theme.AccentMimimalOverlay, 35);
 
-			int displayedTaskCount = 0;
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 			{
@@ -1037,13 +1036,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				tasksContainer.AddChild(runningTaskPanel);
-				displayedTaskCount++;
 			}
 
-			if (displayedTaskCount == 0)
+			if (!string.IsNullOrEmpty(ApplicationController.Instance.UiHint))
 			{
 				statusMessage.Text = ApplicationController.Instance.UiHint;
 				statusMessage.Visible = true;
+				var parent = statusMessage.Parent;
+				if (parent.Children.IndexOf(statusMessage) != parent.Children.Count - 1)
+				{
+					parent.RemoveChild(statusMessage);
+					statusMessage.ClearRemovedFlag();
+					parent.AddChild(statusMessage);
+				}
 			}
 			else
 			{

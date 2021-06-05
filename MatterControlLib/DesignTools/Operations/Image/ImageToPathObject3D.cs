@@ -153,10 +153,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				var graphics2D = _histogramDisplayCache.NewGraphics2D();
 				graphics2D.Clear(Color.Transparent);
 				_histogramDisplayCache.CopyFrom(_histogramRawCache);
-				graphics2D.FillRectangle(0, 0, RangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.Red, 100));
-				graphics2D.FillRectangle(RangeEnd * _histogramDisplayCache.Width, 0, 255, _histogramDisplayCache.Height, new Color(Color.Red, 100));
-				graphics2D.Line(RangeStart * _histogramDisplayCache.Width, 0, RangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
-				graphics2D.Line(RangeEnd * _histogramDisplayCache.Width, 0, RangeEnd * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
+				var rangeStart = RangeStart.Value(this);
+				var rangeEnd = RangeEnd.Value(this);
+				graphics2D.FillRectangle(0, 0, rangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.Red, 100));
+				graphics2D.FillRectangle(rangeEnd * _histogramDisplayCache.Width, 0, 255, _histogramDisplayCache.Height, new Color(Color.Red, 100));
+				graphics2D.Line(rangeStart * _histogramDisplayCache.Width, 0, rangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
+				graphics2D.Line(rangeEnd * _histogramDisplayCache.Width, 0, rangeEnd * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
 			}
 		}
 
@@ -164,10 +166,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
 		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		public double RangeStart { get; set; } = .1;
+		public DoubleOrExpression RangeStart { get; set; } = .1;
 
 		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		public double RangeEnd { get; set; } = 1;
+		public DoubleOrExpression RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -178,19 +180,19 @@ namespace MatterHackers.MatterControl.DesignTools
 				switch (FeatureDetector)
 				{
 					case ThresholdFunctions.Silhouette:
-						return new SilhouetteThresholdFunction(RangeStart, RangeEnd);
+						return new SilhouetteThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
 
 					case ThresholdFunctions.Intensity:
-						return new MapOnMaxIntensity(RangeStart, RangeEnd);
+						return new MapOnMaxIntensity(RangeStart.Value(this), RangeEnd.Value(this));
 
 					case ThresholdFunctions.Alpha:
-						return new AlphaThresholdFunction(RangeStart, RangeEnd);
+						return new AlphaThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
 
 					case ThresholdFunctions.Hue:
-						return new HueThresholdFunction(RangeStart, RangeEnd);
+						return new HueThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
 				}
 
-				return new MapOnMaxIntensity(RangeStart, RangeEnd);
+				return new MapOnMaxIntensity(RangeStart.Value(this), RangeEnd.Value(this));
 			}
 		}
 
@@ -294,26 +296,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			bool propertyUpdated = false;
 			var minSeparation = .01;
-			if (RangeStart < 0
-				|| RangeStart > 1
-				|| RangeEnd < 0
-				|| RangeEnd > 1
-				|| RangeStart > RangeEnd - minSeparation)
+			var rangeStart = RangeStart.Value(this);
+			var rangeEnd = RangeEnd.Value(this);
+			if (rangeStart < 0
+				|| rangeStart > 1
+				|| rangeEnd < 0
+				|| rangeEnd > 1
+				|| rangeStart > rangeEnd - minSeparation)
 			{
-				RangeStart = Math.Max(0, Math.Min(1 - minSeparation, RangeStart));
-				RangeEnd = Math.Max(0, Math.Min(1, RangeEnd));
-				if (RangeStart > RangeEnd - minSeparation)
+				rangeStart = Math.Max(0, Math.Min(1 - minSeparation, rangeStart));
+				rangeEnd = Math.Max(0, Math.Min(1, rangeEnd));
+				if (rangeStart > rangeEnd - minSeparation)
 				{
 					// values are overlapped or too close together
-					if (RangeEnd < 1 - minSeparation)
+					if (rangeEnd < 1 - minSeparation)
 					{
 						// move the end up whenever possible
-						RangeEnd = RangeStart + minSeparation;
+						rangeEnd = rangeStart + minSeparation;
 					}
 					else
 					{
 						// move the end to the end and the start up
-						RangeEnd = 1;
+						rangeEnd = 1;
 						RangeStart = 1 - minSeparation;
 					}
 				}

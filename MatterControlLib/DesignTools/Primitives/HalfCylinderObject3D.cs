@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public int Sides { get; set; } = 20;
+		public IntOrExpression Sides { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -85,15 +85,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 180, ref valuesChanged);
+				var sides = Sides.ClampIfNotCalculated(this, 3, 180, ref valuesChanged);
 				using (new CenterAndHeightMaintainer(this))
 				{
 					var path = new VertexStorage();
 					path.MoveTo(Width.Value(this) / 2, 0);
 
-					for (int i = 1; i < Sides; i++)
+					for (int i = 1; i < sides; i++)
 					{
-						var angle = MathHelper.Tau * i / 2 / (Sides - 1);
+						var angle = MathHelper.Tau * i / 2 / (sides - 1);
 						path.LineTo(Math.Cos(angle) * Width.Value(this) / 2, Math.Sin(angle) * Width.Value(this) / 2);
 					}
 

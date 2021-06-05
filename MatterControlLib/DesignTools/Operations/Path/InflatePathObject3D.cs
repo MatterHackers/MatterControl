@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("The amount to expand the path lines.")]
-		public double Inflate { get; set; }
+		public DoubleOrExpression Inflate { get; set; }
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				return;
 			}
 
-			VertexSource = path.VertexSource.Offset(Inflate, GetJoinType(Style));
+			VertexSource = path.VertexSource.Offset(Inflate.Value(this), GetJoinType(Style));
 		}
 
 		internal static JoinType GetJoinType(ExpandStyles style)

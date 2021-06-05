@@ -53,9 +53,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("The with of the outline.")]
-		public double OutlineWidth { get; set; } = 3;
+		public DoubleOrExpression OutlineWidth { get; set; } = 3;
 
-		public double Ratio { get; set; } = .5;
+		public DoubleOrExpression Ratio { get; set; } = .5;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles InnerStyle { get; set; } = ExpandStyles.Sharp;
@@ -94,9 +94,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			if (OutlineWidth < .01 || OutlineWidth > 1000)
+			var outlineWidth = OutlineWidth.Value(this);
+			if (outlineWidth < .01 || outlineWidth > 1000)
 			{
-				OutlineWidth = Math.Min(1000, Math.Max(.01, OutlineWidth));
+				OutlineWidth = Math.Min(1000, Math.Max(.01, outlineWidth));
 				valuesChanged = true;
 			}
 
@@ -130,14 +131,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			var offseter = new ClipperOffset();
 
+			var outlineWidth = OutlineWidth.Value(this);
+			var ratio = Ratio.Value(this);
+
 			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(OuterStyle), EndType.etClosedPolygon);
 			var outerLoops = new List<List<IntPoint>>();
-			offseter.Execute(ref outerLoops, OutlineWidth * Ratio * 1000);
+			offseter.Execute(ref outerLoops, outlineWidth * ratio * 1000);
 			Clipper.CleanPolygons(outerLoops);
 
 			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(InnerStyle), EndType.etClosedPolygon);
 			var innerLoops = new List<List<IntPoint>>();
-			offseter.Execute(ref innerLoops, -OutlineWidth * (1 - Ratio) * 1000);
+			offseter.Execute(ref innerLoops, -outlineWidth * (1 - ratio) * 1000);
 			Clipper.CleanPolygons(innerLoops);
 
 			var allLoops = outerLoops;

@@ -94,6 +94,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				GuiWidget scope = mainContainer;
 
+				rows.Clear();
+
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
@@ -204,11 +206,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static SettingsRow CreateSettingsRow(List<SettingsRow> rows, double textRightMargin, EditableProperty property, UIField field, ThemeConfig theme)
+		private static SettingsRow CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme, List<SettingsRow> rows = null)
 		{
 			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, field.Content, theme);
-			rows.Add(row);
-			row.SetTextRightMargin(rows, textRightMargin);
+			if (rows != null)
+			{
+				rows.Add(row);
+				row.SetTextRightMargin(rows);
+			}
 			return row;
 		}
 
@@ -288,8 +293,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
 			GuiWidget rowContainer = null;
-
-			var textRightMargin = 10 * GuiWidget.DeviceScale;
 
 			// Get reflected property value once, then test for each case below
 			var propertyValue = property.Value;
@@ -388,7 +391,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
 
-					rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 			}
 			else if (propertyValue is Color color)
@@ -402,7 +405,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is Vector2 vector2)
 			{
@@ -476,7 +479,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
@@ -558,7 +561,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							return childrenSelector;
 						});
 
-					rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 				else // show the subtract editor for boolean subtract and subtract and replace
 				{
@@ -660,7 +663,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					object3D.Invalidated += RefreshField;
 					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-					rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 			}
 			else if (propertyValue is bool boolValue)
@@ -673,7 +676,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				RegisterValueChanged(field,
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
@@ -688,7 +691,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						return ((DoubleOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -724,11 +727,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						return ((IntOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
-				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-				spacer.HAnchor = HAnchor.Absolute;
-				var label = rowContainer.Children<TextWidget>().First();
-				spacer.Width = Math.Max(0, 100 * GuiWidget.DeviceScale - label.Width);
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -827,13 +826,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.ClearUndoHistory();
 						field.Content.HAnchor = HAnchor.Stretch;
 						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
-
-						var label = rowContainer.Children<TextWidget>().First();
-
-						var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-						spacer.HAnchor = HAnchor.Absolute;
-						spacer.Width = Math.Max(0, 100 * GuiWidget.DeviceScale - label.Width);
+						rowContainer = CreateSettingsRow(property, field, theme, rows);
 					}
 				}
 			}
@@ -851,7 +844,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (property.PropertyType.IsEnum)
 			{
@@ -902,7 +895,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (addToSettingsRow)
 				{
-					rowContainer = CreateSettingsRow(rows, textRightMargin, property, field, theme);
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 				else
 				{

@@ -71,15 +71,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double OuterDiameter { get; set; } = 20;
+		public DoubleOrExpression OuterDiameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double InnerDiameter { get; set; } = 15;
+		public DoubleOrExpression InnerDiameter { get; set; } = 15;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 5;
+		public DoubleOrExpression Height { get; set; } = 5;
 
-		public int Sides { get; set; } = 40;
+		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
@@ -88,10 +88,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more ring options.";
 
 		[MaxDecimalPlaces(2)]
-		public double StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double EndingAngle { get; set; } = 360;
+		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -112,33 +112,33 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+				var outerDiameter = OuterDiameter.Value(this);
+				var innerDiameter = InnerDiameter.ClampIfNotCalculated(this, 0, outerDiameter - .1, ref valuesChanged);
+				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
+				var height = Height.Value(this);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var startingAngle = StartingAngle;
-					var endingAngle = EndingAngle;
 					if (!Advanced)
 					{
 						startingAngle = 0;
 						endingAngle = 360;
 					}
 
-					var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+					innerDiameter = Math.Min(outerDiameter - .1, innerDiameter);
 
 					var path = new VertexStorage();
-					path.MoveTo(OuterDiameter / 2, -Height / 2);
-					path.LineTo(OuterDiameter / 2, Height / 2);
-					path.LineTo(innerDiameter / 2, Height / 2);
-					path.LineTo(innerDiameter / 2, -Height / 2);
-					path.LineTo(OuterDiameter / 2, -Height / 2);
+					path.MoveTo(outerDiameter / 2, -height / 2);
+					path.LineTo(outerDiameter / 2, height / 2);
+					path.LineTo(innerDiameter / 2, height / 2);
+					path.LineTo(innerDiameter / 2, -height / 2);
+					path.LineTo(outerDiameter / 2, -height / 2);
 
 					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-					Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
+					Mesh = VertexSourceToMesh.Revolve(path, sides, startAngle, endAngle);
 				}
 			}
 
@@ -160,9 +160,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			double getHeight() => Height;
+			double getHeight() => Height.Value(this);
 			void setHeight(double height) => Height = height;
-			var getDiameters = new List<Func<double>>() { () => OuterDiameter, () => InnerDiameter };
+			var getDiameters = new List<Func<double>>() { () => OuterDiameter.Value(this), () => InnerDiameter.Value(this) };
 			var setDiameters = new List<Action<double>>() { (diameter) => OuterDiameter = diameter, (diameter) => InnerDiameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				getHeight,

@@ -59,12 +59,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double OuterDiameter { get; set; } = 20;
+		public DoubleOrExpression OuterDiameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double InnerDiameter { get; set; } = 10;
+		public DoubleOrExpression InnerDiameter { get; set; } = 10;
 
-		public int Sides { get; set; } = 40;
+		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
@@ -73,15 +73,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more torus options.";
 
 		[MaxDecimalPlaces(2)]
-		public double StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double EndingAngle { get; set; } = 360;
+		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
-		public int RingSides { get; set; } = 15;
+		public IntOrExpression RingSides { get; set; } = 15;
 
 		[MaxDecimalPlaces(2)]
-		public double RingPhaseAngle { get; set; } = 0;
+		public DoubleOrExpression RingPhaseAngle { get; set; } = 0;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -102,30 +102,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				RingSides = agg_basics.Clamp(RingSides, 3, 360, ref valuesChanged);
+				var outerDiameter = OuterDiameter.Value(this);
+				var innerDiameter = InnerDiameter.ClampIfNotCalculated(this, 0, outerDiameter - .1, ref valuesChanged);
+				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var ringSides = RingSides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
 
-				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+				var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
 
-				var ringSides = RingSides;
-				var startingAngle = StartingAngle;
-				var endingAngle = EndingAngle;
-				var ringPhaseAngle = RingPhaseAngle;
+				var ringPhaseAngle = RingPhaseAngle.Value(this);
 				if (!Advanced)
 				{
-					ringSides = Math.Max(3, (int)(Sides / 2));
+					ringSides = Math.Max(3, (int)(sides / 2));
 					startingAngle = 0;
 					endingAngle = 360;
 					ringPhaseAngle = 0;
 				}
 
-				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+				innerDiameter = Math.Min(outerDiameter - .1, innerDiameter);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var poleRadius = (OuterDiameter / 2 - innerDiameter / 2) / 2;
+					var poleRadius = (outerDiameter / 2 - innerDiameter / 2) / 2;
 					var toroidRadius = innerDiameter / 2 + poleRadius;
 					var path = new VertexStorage();
 					var angleDelta = MathHelper.Tau / ringSides;
@@ -143,7 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-					Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
+					Mesh = VertexSourceToMesh.Revolve(path, sides, startAngle, endAngle);
 				}
 			}
 
@@ -167,7 +165,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			var getDiameters = new List<Func<double>>() { () => OuterDiameter, () => InnerDiameter };
+			var getDiameters = new List<Func<double>>() { () => OuterDiameter.Value(this), () => InnerDiameter.Value(this) };
 			var setDiameters = new List<Action<double>>() { (diameter) => OuterDiameter = diameter, (diameter) => InnerDiameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				null,

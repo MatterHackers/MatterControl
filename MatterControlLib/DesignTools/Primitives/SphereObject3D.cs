@@ -76,9 +76,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
-		public double Diameter { get; set; } = 20;
+		public DoubleOrExpression Diameter { get; set; } = 20;
 
-		public int Sides { get; set; } = 40;
+		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
@@ -87,12 +87,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more sphere options.";
 
 		[MaxDecimalPlaces(2)]
-		public double StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double EndingAngle { get; set; } = 360;
+		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
-		public int LatitudeSides { get; set; } = 30;
+		public IntOrExpression LatitudeSides { get; set; } = 30;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -113,37 +113,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 360, ref valuesChanged);
-				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var latitudeSides = LatitudeSides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
+				var diameter = Diameter.Value(this);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					if (Sides != lastSides
-						|| LatitudeSides != lastLatitudeSides
-						|| StartingAngle != lastStartingAngle
-						|| EndingAngle != lastEndingAngle
-						|| Diameter != lastDiameter)
+					if (sides != lastSides
+						|| latitudeSides != lastLatitudeSides
+						|| startingAngle != lastStartingAngle
+						|| endingAngle != lastEndingAngle
+						|| diameter != lastDiameter)
 					{
-						var startingAngle = StartingAngle;
-						var endingAngle = EndingAngle;
-						var latitudeSides = LatitudeSides;
 						if (!Advanced)
 						{
 							startingAngle = 0;
 							endingAngle = 360;
-							latitudeSides = Sides;
+							latitudeSides = sides;
 						}
 
-						Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
+						Mesh = CreateSphere(diameter, sides, latitudeSides, startingAngle, endingAngle);
 					}
 
-					lastDiameter = Diameter;
-					lastEndingAngle = EndingAngle;
-					lastStartingAngle = StartingAngle;
-					lastSides = Sides;
-					lastLatitudeSides = LatitudeSides;
+					lastDiameter = diameter;
+					lastEndingAngle = endingAngle;
+					lastStartingAngle = startingAngle;
+					lastSides = sides;
+					lastLatitudeSides = latitudeSides;
 				}
 			}
 
@@ -191,7 +189,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				null,
 				null,
-				new List<Func<double>>() { () => Diameter },
+				new List<Func<double>>() { () => Diameter.Value(this) },
 				new List<Action<double>>() { (diameter) => Diameter = diameter },
 				0,
 				ObjectSpace.Placement.Center));

@@ -117,18 +117,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.PerformLayout();
 		}
 
-		public SettingsRow SetTextRightMargin(List<SettingsRow> rows, double spacing)
+		public SettingsRow SetTextRightMargin(List<SettingsRow> rows)
 		{
+			var spacing = 11 * GuiWidget.DeviceScale;
 			var maxTextWidth = 0.0;
 			foreach (var row in rows)
 			{
 				maxTextWidth = Math.Max(maxTextWidth, row.textLabel.Width);
 			}
 
-			spacer.HAnchor = HAnchor.Absolute;
 			var newWidth = spacing + maxTextWidth;
 			foreach (var row in rows)
 			{
+				row.spacer.HAnchor = HAnchor.Absolute;
 				row.spacer.Width = Math.Max(0,  newWidth - row.textLabel.Width);
 			}
 

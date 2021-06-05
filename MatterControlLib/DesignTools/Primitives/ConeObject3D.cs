@@ -57,14 +57,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public double Diameter { get; set; } = 20;
-		//[DisplayName("Top")]
-		//public double TopDiameter { get; set; } = 0;
+		public DoubleOrExpression Diameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 20;
+		public DoubleOrExpression Height { get; set; } = 20;
 
-		public int Sides { get; set; } = 40;
+		public IntOrExpression Sides { get; set; } = 40;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -86,16 +84,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref changed);
 				using (new CenterAndHeightMaintainer(this))
 				{
 
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
-					path.LineTo(Diameter / 2, 0);
-					path.LineTo(0, Height);
+					path.LineTo(Diameter.Value(this) / 2, 0);
+					path.LineTo(0, Height.Value(this));
 
-					Mesh = VertexSourceToMesh.Revolve(path, Sides);
+					Mesh = VertexSourceToMesh.Revolve(path, sides);
 				}
 			}
 
@@ -105,9 +103,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			double getHeight() => Height;
+			double getHeight() => Height.Value(this);
 			void setHeight(double height) => Height = height;
-			var getDiameters = new List<Func<double>>() { () => Diameter };
+			var getDiameters = new List<Func<double>>() { () => Diameter.Value(this) };
 			var setDiameters = new List<Action<double>>() { (diameter) => Diameter = diameter };
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				getHeight,

@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public double Diameter { get; set; } = 20;
-		public int LongitudeSides { get; set; } = 40;
-		public int LatitudeSides { get; set; } = 10;
+		public DoubleOrExpression Diameter { get; set; } = 20;
+		public IntOrExpression LongitudeSides { get; set; } = 40;
+		public IntOrExpression LatitudeSides { get; set; } = 10;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -93,33 +93,34 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref valuesChanged);
-				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref valuesChanged);
+				var latitudeSides = LatitudeSides.ClampIfNotCalculated(this, 3, 180, ref valuesChanged);
+				var longitudeSides = LongitudeSides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var diameter = Diameter.Value(this);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
-					if (LongitudeSides != lastLongitudeSides
-						|| LatitudeSides != lastLatitudeSides
-						|| Diameter != lastDiameter)
+					if (longitudeSides != lastLongitudeSides
+						|| latitudeSides != lastLatitudeSides
+						|| diameter != lastDiameter)
 					{
-						var radius = Diameter / 2;
-						var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+						var radius = diameter / 2;
+						var angleDelta = MathHelper.Tau / 4 / latitudeSides;
 						var angle = 0.0;
 						var path = new VertexStorage();
 						path.MoveTo(0, 0);
 						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-						for (int i = 0; i < LatitudeSides; i++)
+						for (int i = 0; i < latitudeSides; i++)
 						{
 							angle += angleDelta;
 							path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 						}
 
-						Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
+						Mesh = VertexSourceToMesh.Revolve(path, longitudeSides);
 					}
 
-					lastDiameter = Diameter;
-					lastLongitudeSides = LongitudeSides;
-					lastLatitudeSides = LatitudeSides;
+					lastDiameter = diameter;
+					lastLongitudeSides = longitudeSides;
+					lastLatitudeSides = latitudeSides;
 				}
 			}
 
@@ -137,7 +138,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.Object3DControls.Add(new ScaleDiameterControl(object3DControlsLayer,
 				null,
 				null,
-				new List<Func<double>>() { () => Diameter },
+				new List<Func<double>>() { () => Diameter.Value(this) },
 				new List<Action<double>>() { (diameter) => Diameter = diameter },
 				0));
 			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);

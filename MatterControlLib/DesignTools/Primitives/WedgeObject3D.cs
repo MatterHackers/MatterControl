@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Round { get; set; } = false;
 
-		public int RoundSegments { get; set; } = 15;
+		public IntOrExpression RoundSegments { get; set; } = 15;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			RoundSegments = agg_basics.Clamp(RoundSegments, 3, 360 / 4 - 2, ref valuesChanged);
+			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 3, 360 / 4 - 2, ref valuesChanged);
 
 			if (valuesChanged)
 			{
@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (Round)
 					{
 						var range = 360 / 4.0;
-						for (int i = 1; i < RoundSegments - 1; i++)
+						for (int i = 1; i < roundSegments - 1; i++)
 						{
-							var angle = range / (RoundSegments - 1) * i;
+							var angle = range / (roundSegments - 1) * i;
 							var rad = MathHelper.DegreesToRadians(angle);
 							path.LineTo(Width.Value(this) - Math.Sin(rad) * Width.Value(this), Height.Value(this) - Math.Cos(rad) * Height.Value(this));
 						}
