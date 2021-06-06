@@ -74,6 +74,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private ScaleController scaleController;
 
+		public override string UiHint => ScallingHint;
+	
 		public ScaleWidthDepthEdgeControl(IObject3DControlContext context,
 			Func<double> getWidth,
 			Action<double> setWidth,
@@ -164,6 +166,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void Dispose()

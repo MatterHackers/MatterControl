@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
+			typeof(StringOrExpression),
 			typeof(DoubleOrExpression),
 			typeof(IntOrExpression),
 			typeof(Color),
@@ -829,6 +830,22 @@ namespace MatterHackers.MatterControl.DesignTools
 						rowContainer = CreateSettingsRow(property, field, theme, rows);
 					}
 				}
+			}
+			else if (propertyValue is StringOrExpression stringOrExpression)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(stringOrExpression.Expression, false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(field,
+					(valueString) => new StringOrExpression(valueString),
+					(value) =>
+					{
+						return ((StringOrExpression)value).Expression;
+					});
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 			}
 			else if (propertyValue is char charValue)
 			{

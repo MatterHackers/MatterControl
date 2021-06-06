@@ -130,6 +130,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			// check if the expression is not an equation (does not start with "=")
 			if (inputExpression.Length > 0 && inputExpression[0] != '=')
 			{
+				if (typeof(T) == typeof(string))
+				{
+					return (T)(object)inputExpression;
+				}
+
 				// not an equation so try to parse it directly
 				if (double.TryParse(inputExpression, out var result))
 				{
@@ -170,8 +175,22 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (sibling != owner
 						&& sibling is SheetObject3D sheet)
 					{
+
 						// try to manage the cell into the correct data type
 						string value = sheet.SheetData.EvaluateExpression(inputExpression);
+
+						if (typeof(T) == typeof(string))
+						{
+							// if parsing the equation resulted in NaN as the output
+							if (value == "NaN")
+							{
+								// return the actual expression
+								return (T)(object)inputExpression;
+							}
+
+							// get the value of the cell
+							return (T)(object)value;
+						}
 
 						if (typeof(T) == typeof(double))
 						{

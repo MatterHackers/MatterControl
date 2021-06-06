@@ -80,15 +80,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 
 		[Description("The height the base will be derived from (starting at the bottom).")]
-		public double CalculationHeight { get; set; } = .1;
+		public DoubleOrExpression CalculationHeight { get; set; } = .1;
 
 		[DisplayName("Expand")]
-		public double BaseSize { get; set; } = 3;
+		public DoubleOrExpression BaseSize { get; set; } = 3;
 
-		public double InfillAmount { get; set; } = 3;
+		public DoubleOrExpression InfillAmount { get; set; } = 3;
 
 		[DisplayName("Height")]
-		public double ExtrusionHeight { get; set; } = 5;
+		public DoubleOrExpression ExtrusionHeight { get; set; } = 5;
 
 		[ReadOnly(true)]
 		public string NoBaseMessage { get; set; } = "No base is added under your part. Switch to a different base option to create a base.";
@@ -159,12 +159,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (OutlineIsFromMesh)
 				{
-					if (meshVertexCache.vertexSource == null || meshVertexCache.height != CalculationHeight)
+					var calculationHeight = CalculationHeight.Value(this);
+					if (meshVertexCache.vertexSource == null || meshVertexCache.height != calculationHeight)
 					{
 						var aabb = this.GetAxisAlignedBoundingBox();
-						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + CalculationHeight));
+						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + calculationHeight));
 						meshVertexCache.vertexSource = GetSlicePaths(this, cutPlane);
-						meshVertexCache.height = CalculationHeight;
+						meshVertexCache.height = calculationHeight;
 					}
 
 					return meshVertexCache.vertexSource;
@@ -396,15 +397,18 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Polygons basePolygons;
 
+					var infillAmount = InfillAmount.Value(this);
+					var baseSize = BaseSize.Value(this);
+					var extrusionHeight = ExtrusionHeight.Value(this);
 					if (BaseType == BaseTypes.Outline
-						&& InfillAmount > 0)
+						&& infillAmount > 0)
 					{
-						basePolygons = polysToOffset.Offset((BaseSize + InfillAmount) * scalingForClipper);
-						basePolygons = basePolygons.Offset(-InfillAmount * scalingForClipper);
+						basePolygons = polysToOffset.Offset((baseSize + infillAmount) * scalingForClipper);
+						basePolygons = basePolygons.Offset(-infillAmount * scalingForClipper);
 					}
 					else
 					{
-						basePolygons = polysToOffset.Offset(BaseSize * scalingForClipper);
+						basePolygons = polysToOffset.Offset(baseSize * scalingForClipper);
 					}
 
 					basePolygons = ClipperLib.Clipper.CleanPolygons(basePolygons, 10);
@@ -412,8 +416,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
 
-					var mesh = VertexSourceToMesh.Extrude(vectorShape, zHeightTop: ExtrusionHeight);
-					mesh.Translate(new Vector3(0, 0, -ExtrusionHeight + bottomWithoutBase));
+					var mesh = VertexSourceToMesh.Extrude(vectorShape, zHeightTop: extrusionHeight);
+					mesh.Translate(new Vector3(0, 0, -extrusionHeight + bottomWithoutBase));
 
 					var baseObject = new Object3D()
 					{
@@ -467,7 +471,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var aabb = this.GetAxisAlignedBoundingBox(this.WorldMatrix());
 				// ExtrusionHeight
-				layer.World.RenderPathOutline(this.WorldMatrix() * Matrix4X4.CreateTranslation(0, 0, CalculationHeight - aabb.MinXYZ.Z + ExtrusionHeight), VertexSource, Agg.Color.Red, 5);
+				layer.World.RenderPathOutline(this.WorldMatrix() * Matrix4X4.CreateTranslation(0, 0, CalculationHeight.Value(this) - aabb.MinXYZ.Z + ExtrusionHeight.Value(this)), VertexSource, Agg.Color.Red, 5);
 
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);

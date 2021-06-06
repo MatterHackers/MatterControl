@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -62,6 +63,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hadClickOnControl;
 		private readonly ThemeConfig theme;
 
+		public override string UiHint => "Type 'Esc' to cancel".Localize();
+	
 		public MoveInZControl(IObject3DControlContext context)
 			: base(context)
 		{
@@ -283,6 +286,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

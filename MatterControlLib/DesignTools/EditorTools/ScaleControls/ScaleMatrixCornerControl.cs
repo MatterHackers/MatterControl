@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -56,8 +55,6 @@ namespace MatterHackers.Plugins.EditorTools
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
 
-		private double DistToStart => 10 * GuiWidget.DeviceScale;
-
 		private double LineLength => 35 * GuiWidget.DeviceScale;
 
 		private Vector3 originalPointToMove;
@@ -67,6 +64,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly InlineEditControl xValueDisplayInfo;
 		private readonly InlineEditControl yValueDisplayInfo;
 		private bool hadClickOnControl;
+
+		public override string UiHint => ScallingHint;
 
 		public ScaleMatrixCornerControl(IObject3DControlContext context, int cornerIndex)
 			: base(context)
@@ -396,6 +395,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

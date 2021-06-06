@@ -41,6 +41,8 @@ namespace MatterHackers.MeshVisualizer
 	{
 		string Name { get; }
 
+		string UiHint { get; }
+
 		void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo);
 
 		/// <summary>
