@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}
@@ -85,13 +85,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref changed);
+				var diameter = Diameter.ClampIfNotCalculated(this, .01, 1000000, ref changed);
+				var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref changed);
 				using (new CenterAndHeightMaintainer(this))
 				{
 
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
-					path.LineTo(Diameter.Value(this) / 2, 0);
-					path.LineTo(0, Height.Value(this));
+					path.LineTo(diameter / 2, 0);
+					path.LineTo(0, height);
 
 					Mesh = VertexSourceToMesh.Revolve(path, sides);
 				}
