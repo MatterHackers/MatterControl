@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// add an item to the bed
 				fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Cube");
-				testRunner.AddItemToBedplate()
+				testRunner.AddItemToBed()
 					.ClickByName("PrintPopupMenu")
 					.ClickByName("Export GCode Button")
 					.Type(fullPathToGcodeFile)
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Directory.CreateDirectory(gcodeOutputPath);
 				testRunner.EnsureWelcomePageClosed()
 					.ClickByName("Create New")
-					.AddItemToBedplate()					
+					.AddItemToBed()					
 					.ClickByName("Bed Options Menu")
 					.ClickByName("Export Menu Item")
 					.WaitForName("Export Item Window");

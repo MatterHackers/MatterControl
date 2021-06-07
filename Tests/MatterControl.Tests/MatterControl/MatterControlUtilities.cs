@@ -225,9 +225,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 			}
 
-			testRunner.DragDropByName("Object3DControlLayer", "Object3DControlLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right)
-				.Delay(1)
-				.ClickByName(partNameToSelect);
+			testRunner.ClickByName(partNameToSelect);
 		}
 
 		public static AutomationRunner WaitForFirstDraw(this AutomationRunner testRunner)
@@ -617,6 +615,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					break;
 
 				case "Calibration Parts Row Item Collection":
+				case "Primitives Row Item Collection":
 				case "Cloud Library Row Item Collection":
 				case "Print Queue Row Item Collection":
 				case "Local Library Row Item Collection":
@@ -722,7 +721,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.WaitForWidgetDisappear("Automation Dialog TextEdit", 5);
 		}
 
-		public static AutomationRunner AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
+		public static AutomationRunner AddItemToBed(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
 			if (!testRunner.NameExists(partName, 1) && !string.IsNullOrEmpty(containerName))
 			{
@@ -1316,7 +1315,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Layers3D Button");
 
 			// TODO: Remove workaround needed to force GCode options to appear {{
-			testRunner.AddItemToBedplate()
+			testRunner.AddItemToBed()
 				.ClickByName("Generate Gcode Button");
 			// TODO: Remove workaround needed to force GCode options to appear }}
 		}

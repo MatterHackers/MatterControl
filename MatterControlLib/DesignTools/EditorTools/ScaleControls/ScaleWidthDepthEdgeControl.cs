@@ -88,6 +88,22 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			theme = MatterControl.AppContext.Theme;
 
+			switch (edgeIndex)
+			{
+				case 0:
+					Name = "ScaleDepthBack";
+					break;
+				case 1:
+					Name = "ScaleWidthLeft";
+					break;
+				case 2:
+					Name = "ScaleDepthFront";
+					break;
+				case 3:
+					Name = "ScaleWidthRight";
+					break;
+			}
+
 			this.getWidth = getWidth;
 			this.setWidth = setWidth;
 			this.getDepth = getDepth;
@@ -100,6 +116,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				ForceHide = ForceHideScale,
 				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
+				Name = "XValueDisplay",
 			};
 
 			xValueDisplayInfo.EditComplete += EditComplete;
@@ -115,7 +132,8 @@ namespace MatterHackers.Plugins.EditorTools
 			yValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
-				GetDisplayString = (value) => "{0:0.0}".FormatWith(value)
+				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
+				Name = "YValueDisplay",
 			};
 
 			yValueDisplayInfo.EditComplete += EditComplete;

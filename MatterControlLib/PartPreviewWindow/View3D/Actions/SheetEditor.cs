@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					HAnchor = HAnchor.Absolute,
 					SelectAllOnFocus = true,
 				};
-				editSelectedName.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete;
+				editSelectedName.ActualTextEditWidget.EditComplete += SelectedName_EditComplete;
 				editSelectionGroup.AddChild(editSelectedName);
 				editSelectedExpression = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
 				{
@@ -152,14 +152,32 @@ namespace MatterHackers.MatterControl.DesignTools
 				CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].Text = editSelectedExpression.Text;
 			}
 
-			private void ActualTextEditWidget_EditComplete(object sender, EventArgs e)
+			private void SelectedName_EditComplete(object sender, EventArgs e)
 			{
 				if (selectedCell.x == -1)
 				{
 					return;
 				}
 
-				sheetData[selectedCell.x, selectedCell.y].Name = editSelectedName.Text;
+				var existingNames = new HashSet<string>();
+				for (int y = 0; y < sheetData.Height; y++)
+				{
+					for (int x = 0; x < sheetData.Width; x++)
+					{
+						if (x != selectedCell.x || y != selectedCell.y)
+						{
+							var currentName = sheetData[x, y].Name;
+							if (!string.IsNullOrEmpty(currentName))
+							{
+								existingNames.Add(currentName);
+							}
+						}
+					}
+				}
+
+				var name = agg_basics.GetNonCollidingName(editSelectedName.Text, existingNames);
+				editSelectedName.Text = name;
+				sheetData[selectedCell.x, selectedCell.y].Name = name;
 			}
 			private void SelectCell(int x, int y)
 			{

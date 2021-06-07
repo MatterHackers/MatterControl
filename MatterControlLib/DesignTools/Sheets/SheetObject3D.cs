@@ -28,17 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
+using org.mariuszgromada.math.mxparser;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -87,6 +89,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
 		}
 
+		public override bool Persistable => false;
+
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated) && invalidateType.Source == this)
@@ -107,22 +111,49 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void SendInvalidateToAll()
 		{
+			var updatedItems = new HashSet<IObject3D>();
+			updatedItems.Add(this);
 			foreach (var sibling in this.Parent.Children)
 			{
-				SendInvalidateRecursive(sibling);
+				SendInvalidateRecursive(sibling, updatedItems);
 			}
 		}
 
-		private void SendInvalidateRecursive(IObject3D item)
+		private void SendInvalidateRecursive(IObject3D item, HashSet<IObject3D> updatedItems)
 		{
+			if (updatedItems.Contains(item))
+			{
+				return;
+			}
+
 			// process depth first
 			foreach(var child in item.Children)
 			{
-				SendInvalidateRecursive(child);
+				SendInvalidateRecursive(child, updatedItems);
 			}
 
 			// and send the invalidate
-			item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+			RunningInterval runningInterval = null;
+			void RebuildWhenUnlocked()
+			{
+				if (!item.RebuildLocked)
+				{
+					updatedItems.Add(item);
+					UiThread.ClearInterval(runningInterval);
+					item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+				}
+			}
+
+			if (!item.RebuildLocked)
+			{
+				updatedItems.Add(item);
+				item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+			}
+			else
+			{
+				// we need to get back to the user requested change when not locked
+				runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .2);
+			}
 		}
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
@@ -175,50 +206,57 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (sibling != owner
 						&& sibling is SheetObject3D sheet)
 					{
-
 						// try to manage the cell into the correct data type
 						string value = sheet.SheetData.EvaluateExpression(inputExpression);
-
-						if (typeof(T) == typeof(string))
-						{
-							// if parsing the equation resulted in NaN as the output
-							if (value == "NaN")
-							{
-								// return the actual expression
-								return (T)(object)inputExpression;
-							}
-
-							// get the value of the cell
-							return (T)(object)value;
-						}
-
-						if (typeof(T) == typeof(double))
-						{
-							if (double.TryParse(value, out double doubleValue)
-								&& !double.IsNaN(doubleValue)
-								&& !double.IsInfinity(doubleValue))
-							{
-								return (T)(object)doubleValue;
-							}
-							// else return an error
-							return (T)(object).1;
-						}
-
-						if (typeof(T) == typeof(int))
-						{
-							if (double.TryParse(value, out double doubleValue)
-								&& !double.IsNaN(doubleValue)
-								&& !double.IsInfinity(doubleValue))
-							{
-								return (T)(object)(int)Math.Round(doubleValue);
-							}
-							// else return an error
-							return (T)(object)1;
-						}
+						return CastResult<T>(value, inputExpression);
 					}
 				}
 			}
 
+			// could not find a sheet, try to evaluate the expression directly
+			var evaluator = new Expression(inputExpression);
+			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
+		}
+
+		public static T CastResult<T>(string value, string inputExpression)
+		{
+			if (typeof(T) == typeof(string))
+			{
+				// if parsing the equation resulted in NaN as the output
+				if (value == "NaN")
+				{
+					// return the actual expression
+					return (T)(object)inputExpression;
+				}
+
+				// get the value of the cell
+				return (T)(object)value;
+			}
+
+			if (typeof(T) == typeof(double))
+			{
+				if (double.TryParse(value, out double doubleValue)
+					&& !double.IsNaN(doubleValue)
+					&& !double.IsInfinity(doubleValue))
+				{
+					return (T)(object)doubleValue;
+				}
+				// else return an error
+				return (T)(object).1;
+			}
+
+			if (typeof(T) == typeof(int))
+			{
+				if (double.TryParse(value, out double doubleValue)
+					&& !double.IsNaN(doubleValue)
+					&& !double.IsInfinity(doubleValue))
+				{
+					return (T)(object)(int)Math.Round(doubleValue);
+				}
+				// else return an error
+				return (T)(object)1;
+			}
+		
 			return (T)(object)default(T);
 		}
 

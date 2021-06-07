@@ -682,7 +682,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
 				// create a string editor
-				var field = new ExpressionField(theme);
+				var field = new ExpressionField(theme)
+				{
+					Name = property.DisplayName + " Field"
+				};
 				field.Initialize(0);
 				field.SetValue(doubleExpresion.Expression, false);
 				field.ClearUndoHistory();
