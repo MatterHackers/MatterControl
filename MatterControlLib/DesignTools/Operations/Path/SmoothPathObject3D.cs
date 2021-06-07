@@ -52,9 +52,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Smooth Path".Localize();
 		}
 
-		public double SmoothDistance { get; set; } = .3;
+		public DoubleOrExpression SmoothDistance { get; set; } = .3;
 
-		public int Iterations { get; set; } = 3;
+		public IntOrExpression Iterations { get; set; } = 3;
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				null,
 				(reporter, cancellationToken) =>
 				{
-					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
+					DoSmoothing((long)(SmoothDistance.Value(this) * 1000), Iterations.Value(this));
 
 					// set the mesh to show the path
 					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);

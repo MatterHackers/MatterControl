@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						printer.Settings.GetValue(SettingsKey.end_gcode),
 						"Failure persisting GCode/MultilineTextField value");
 
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 
 					// Shorten the delay so the test runs in a reasonable time
 					printer.Connection.TimeToHoldTemperature = 5;
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.OpenPrintPopupMenu()
 						.ClickByName("SetupPrinter")
 						.Complete9StepLeveling()
-						.AddItemToBedplate();
+						.AddItemToBed();
 
 					var printer = testRunner.FirstPrinter();
 
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					// print a part
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 
 					testRunner.StartPrint(testRunner.FirstPrinter(), pauseAtLayers: "2;6");
 
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = testRunner.FirstPrinter();
 
 					// print a part
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 					testRunner.StartPrint(printer, pauseAtLayers: "2");
 					ProfileManager.DebugPrinterDelete = true;
 
@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
-					testRunner.AddItemToBedplate()
+					testRunner.AddItemToBed()
 						.StartPrint(printer, pauseAtLayers: "2;4;6")
 						.ClickResumeButton(printer, true, 1) // Resume
 						.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
@@ -405,8 +405,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					};
 
 					// print a part
-					testRunner.AddItemToBedplate()
-						.AddItemToBedplate(partName: "Row Item Set Temperature")
+					testRunner.AddItemToBed()
+						.AddItemToBed(partName: "Row Item Set Temperature")
 						.DragDropByName("MoveInZControl", "MoveInZControl", offsetDrag: new Point2D(0, 0), offsetDrop: new Point2D(0, 10))
 						.ClickByName("Temperature Edit")
 						.Type("222.2")
@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
-					testRunner.AddItemToBedplate()
+					testRunner.AddItemToBed()
 						.ClickByName("ItemMaterialButton")
 						.ClickByName("Material 2 Button")
 						.StartPrint(printer, pauseAtLayers: "2;3;4;5");
@@ -504,7 +504,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 
 					testRunner.SwitchToControlsTab();
 
@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 
 					testRunner.SwitchToControlsTab();
 
@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
-					testRunner.AddItemToBedplate();
+					testRunner.AddItemToBed();
 
 					var printer = testRunner.FirstPrinter();
 

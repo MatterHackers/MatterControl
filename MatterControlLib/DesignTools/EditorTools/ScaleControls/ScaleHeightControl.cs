@@ -74,6 +74,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly List<Func<double>> getDiameters;
 		private readonly List<Action<double>> setDiameters;
 
+		public override string UiHint => ScallingHint;
+	
 		public ScaleHeightControl(IObject3DControlContext context,
 			Func<double> getWidth,
 			Action<double> setWidth,
@@ -182,6 +184,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void Dispose()

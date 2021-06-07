@@ -214,7 +214,10 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			InitialState.Matrix = selectedItem.Matrix;
+			if (selectedItem != null)
+			{
+				InitialState.Matrix = selectedItem.Matrix;
+			}
 
 			FinalState = new ScaleStates(InitialState);
 		}

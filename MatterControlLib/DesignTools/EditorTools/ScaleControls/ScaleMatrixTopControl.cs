@@ -64,6 +64,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly InlineEditControl zValueDisplayInfo;
 		private bool hadClickOnControl;
 
+		public override string UiHint => ScallingHint;
+	
 		public ScaleMatrixTopControl(IObject3DControlContext context)
 			: base(context)
 		{
@@ -313,6 +315,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

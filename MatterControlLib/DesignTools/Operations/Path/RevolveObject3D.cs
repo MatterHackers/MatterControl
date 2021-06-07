@@ -49,15 +49,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class RevolveObject3D : Object3D, ISelectedEditorDraw
 	{
 		[MaxDecimalPlaces(2)]
-		public double AxisPosition { get; set; } = 0;
+		public DoubleOrExpression AxisPosition { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double StartingAngle { get; set; } = 0;
+		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		public double EndingAngle { get; set; } = 45;
+		public DoubleOrExpression EndingAngle { get; set; } = 45;
 
-		public int Sides { get; set; } = 30;
+		public IntOrExpression Sides { get; set; } = 30;
 
 		public override bool CanFlatten => true;
 
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var aabb = this.GetAxisAlignedBoundingBox();
 				var vertexSource = this.VertexSource.Transform(Matrix);
 				var bounds = vertexSource.GetBounds();
-				var lineX = bounds.Left + AxisPosition;
+				var lineX = bounds.Left + AxisPosition.Value(this);
 
 				var start = new Vector3(lineX, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
 				var end = new Vector3(lineX, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
@@ -151,16 +151,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+			var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+			var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
+			var sides = Sides.Value(this);
+			var axisPosition = AxisPosition.Value(this);
 
-			if (StartingAngle > 0 || EndingAngle < 360)
+			if (startingAngle > 0 || endingAngle < 360)
 			{
-				Sides = agg_basics.Clamp(Sides, 1, 360, ref valuesChanged);
+				Sides = agg_basics.Clamp(sides, 1, 360, ref valuesChanged);
 			}
 			else
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
+				Sides = agg_basics.Clamp(sides, 3, 360, ref valuesChanged);
 			}
 
 			if (valuesChanged)
@@ -177,15 +179,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var vertexSource = this.VertexSource.Transform(Matrix);
 					var pathBounds = vertexSource.GetBounds();
-					vertexSource = vertexSource.Translate(-pathBounds.Left - AxisPosition, 0);
+					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
 					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
-						Sides,
-						MathHelper.DegreesToRadians(360 - EndingAngle),
-						MathHelper.DegreesToRadians(360 - StartingAngle),
+						sides,
+						MathHelper.DegreesToRadians(360 - endingAngle),
+						MathHelper.DegreesToRadians(360 - startingAngle),
 						false);
 
 					// take the axis offset out
-					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + AxisPosition, 0, 0));
+					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + axisPosition, 0, 0));
 					// move back to object space
 					mesh.Transform(this.Matrix.Inverted);
 

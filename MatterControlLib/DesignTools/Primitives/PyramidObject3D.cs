@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}

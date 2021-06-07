@@ -50,21 +50,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 , IPropertyGridModifier
 #endif
 	{
-		public double Height { get; set; } = 5;
+		public DoubleOrExpression Height { get; set; } = 5;
 
 #if DEBUG
 		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
 
 		[Description("The amount to inset the bevel")]
-		public double BevelInset { get; set; } = 2;
+		public DoubleOrExpression BevelInset { get; set; } = 2;
 
 		/// <summary>
 		[Description("The height the bevel will start")]
 		/// </summary>
-		public double BevelStart { get; set; } = 4;
+		public DoubleOrExpression BevelStart { get; set; } = 4;
 
-		public int BevelSteps { get; set; } = 1;
+		public IntOrExpression BevelSteps { get; set; } = 1;
 #endif
 
 		public override bool CanFlatten => true;
@@ -141,14 +141,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			bool valuesChanged = false;
 
+			var height = Height.Value(this);
 #if DEBUG
-			if (BevelTop)
-			{
-				BevelSteps = agg_basics.Clamp(BevelSteps, 1, 32, ref valuesChanged);
-				BevelStart = agg_basics.Clamp(BevelStart, 0, Height, ref valuesChanged);
-				var aabb = this.GetAxisAlignedBoundingBox();
-				BevelInset = agg_basics.Clamp(BevelInset, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
-			}
+			var bevelSteps = BevelSteps.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
+			var bevelStart = BevelStart.ClampIfNotCalculated(this, 0, height, ref valuesChanged);
+			var aabb = this.GetAxisAlignedBoundingBox();
+			var bevelInset = BevelInset.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
 #endif
 
 			var rebuildLock = RebuildLock();
@@ -164,18 +162,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					if (BevelTop)
 					{
 						bevel = new List<(double height, double inset)>();
-						for (int i = 0; i < BevelSteps; i++)
+						for (int i = 0; i < bevelSteps; i++)
 						{
-							var heightRatio = i / (double)BevelSteps;
-							var height = heightRatio * (Height - BevelStart) + BevelStart;
-							var insetRatio = (i + 1) / (double)BevelSteps;
-							var inset = Easing.Sinusoidal.In(insetRatio) * -BevelInset;
+							var heightRatio = i / (double)bevelSteps;
+							height = heightRatio * (height - bevelStart) + bevelStart;
+							var insetRatio = (i + 1) / (double)bevelSteps;
+							var inset = Easing.Sinusoidal.In(insetRatio) * -bevelInset;
 							bevel.Add((height, inset));
 						}
 					}
 #endif
 
-					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height, bevel);
+					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, height, bevel);
 					if (Mesh.Vertices.Count == 0)
 					{
 						Mesh = null;

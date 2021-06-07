@@ -115,9 +115,10 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public bool DrawOnTop => false;
 
+		public string UiHint => "";
+
 		public void CancelOperation()
 		{
-			throw new NotImplementedException();
 		}
 
 		public void Draw(DrawGlContentEventArgs e)

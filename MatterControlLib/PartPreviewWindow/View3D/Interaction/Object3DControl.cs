@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
@@ -38,6 +40,8 @@ namespace MatterHackers.MeshVisualizer
 {
 	public abstract class Object3DControl : IObject3DControl
 	{
+		public static string ScallingHint => "Hold 'Shift' to scale proportionally, Type 'Esc' to cancel".Localize();
+
 		private bool _mouseIsOver = false;
 
 		public Matrix4X4 TotalTransform { get; set; } = Matrix4X4.Identity;
@@ -52,6 +56,8 @@ namespace MatterHackers.MeshVisualizer
 		public bool DrawOnTop { get; protected set; }
 
 		public virtual bool Visible { get; set; }
+
+		public virtual string UiHint { get; }
 
 		protected bool MouseDownOnControl { get; set; }
 
@@ -110,7 +116,13 @@ namespace MatterHackers.MeshVisualizer
 			Object3DControlContext.GuiSurface.Invalidate();
 		}
 
-		public abstract void CancelOperation();
+		public virtual void CancelOperation()
+		{
+			if (!string.IsNullOrEmpty(UiHint))
+			{
+				ApplicationController.Instance.UiHint = "";
+			}
+		}
 
 		public virtual void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
@@ -118,6 +130,10 @@ namespace MatterHackers.MeshVisualizer
 			{
 				MouseDownOnControl = true;
 				this.Object3DControlContext.GuiSurface.Invalidate();
+				if (!string.IsNullOrEmpty(UiHint))
+				{
+					ApplicationController.Instance.UiHint = UiHint;
+				}
 			}
 		}
 
@@ -129,6 +145,11 @@ namespace MatterHackers.MeshVisualizer
 		public virtual void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			MouseDownOnControl = false;
+
+			if (!string.IsNullOrEmpty(UiHint))
+			{
+				ApplicationController.Instance.UiHint = "";
+			}
 		}
 
 		public virtual void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

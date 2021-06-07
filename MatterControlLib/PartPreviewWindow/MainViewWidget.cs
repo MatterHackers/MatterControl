@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private Toolbar statusBar;
 		private GuiWidget tasksContainer;
+		private GuiWidget statusMessage;
 		private GuiWidget stretchStatusPanel;
 		private LinkLabel updateAvailableButton;
 
@@ -76,6 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddStandardUi(theme);
 			ApplicationController.Instance.WorkspacesChanged += Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
+			ApplicationController.Instance.UiHintChanged += Tasks_TasksChanged;
 			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
 			// Register listeners
@@ -394,9 +396,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "runningTasksPanel"
 			});
 
-			tasksContainer.AddChild(new TextWidget("This is a status message")
+			statusMessage = tasksContainer.AddChild(new TextWidget("")
 			{
-				TextColor = theme.TextColor
+				Margin = new BorderDouble(5, 0, 0, 0),
+				TextColor = theme.TextColor,
+				VAnchor = VAnchor.Center,
+				PointSize = theme.FontSize9,
+				Visible = false,
+				AutoExpandBoundsToText = true,
 			});
 
 			stretchStatusPanel = new GuiWidget()
@@ -958,6 +965,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
 			ApplicationController.Instance.WorkspacesChanged -= Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
+			ApplicationController.Instance.UiHintChanged -= Tasks_TasksChanged;
 			ApplicationController.Instance.ShellFileOpened -= Instance_OpenNewFile;
 			if (tabControl != null)
 			{
@@ -1028,6 +1036,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				tasksContainer.AddChild(runningTaskPanel);
+			}
+
+			if (!string.IsNullOrEmpty(ApplicationController.Instance.UiHint))
+			{
+				statusMessage.Text = ApplicationController.Instance.UiHint;
+				statusMessage.Visible = true;
+				var parent = statusMessage.Parent;
+				if (parent.Children.IndexOf(statusMessage) != parent.Children.Count - 1)
+				{
+					parent.RemoveChild(statusMessage);
+					statusMessage.ClearRemovedFlag();
+					parent.AddChild(statusMessage);
+				}
+			}
+			else
+			{
+				statusMessage.Visible = false;
 			}
 
 			tasksContainer.Invalidate();

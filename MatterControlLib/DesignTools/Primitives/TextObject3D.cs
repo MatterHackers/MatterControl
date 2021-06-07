@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,12 +65,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[DisplayName("Text")]
-		public string NameToWrite { get; set; } = "Text";
+		public StringOrExpression NameToWrite { get; set; } = "Text";
 
-		public double PointSize { get; set; } = 24;
+		public DoubleOrExpression PointSize { get; set; } = 24;
 
 		[MaxDecimalPlaces(2)]
-		public double Height { get; set; } = 5;
+		public DoubleOrExpression Height { get; set; } = 5;
 
 		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -83,10 +84,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			var newContainer = new GroupObject3D();
 			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
 			int index = 0;
+			var nameToWrite = NameToWrite.Value(this);
 			foreach (var child in this.Children)
 			{
 				var clone = child.Clone();
-				var newName = index < NameToWrite.Length ? NameToWrite[index++].ToString() : "Letter".Localize();
+				var newName = index < nameToWrite.Length ? nameToWrite[index++].ToString() : "Letter".Localize();
 				clone.Name = MapIfSymbol(newName);
 				newContainer.Children.Add(clone);
 			}
@@ -139,9 +141,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					if (string.IsNullOrWhiteSpace(NameToWrite))
+					bool valuesChanged = false;
+					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
+					var nameToWrite = NameToWrite.Value(this);
+					if (string.IsNullOrWhiteSpace(nameToWrite))
 					{
-						Mesh = PlatonicSolids.CreateCube(20, 10, Height);
+						Mesh = PlatonicSolids.CreateCube(20, 10, height);
 					}
 					else
 					{
@@ -153,9 +158,10 @@ namespace MatterHackers.MatterControl.DesignTools
 							var offest = 0.0;
 							double pointsToMm = 0.352778;
 
-							foreach (var letter in this.NameToWrite.ToCharArray())
+							foreach (var letter in nameToWrite.ToCharArray())
 							{
-								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
+								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), PointSize.Value(this));
+								var letterPrinter = new TypeFacePrinter(letter.ToString(), style)
 								{
 									ResolutionScale = 10
 								};
@@ -163,7 +169,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 								list.Add(new Object3D()
 								{
-									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
+									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
 									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
 									Name = letter.ToString()
 								});

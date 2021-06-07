@@ -67,6 +67,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private double rotationTransformScale = 1;
 		private Vector3 selectCubeSize = new Vector3(30, 30, .1) * GuiWidget.DeviceScale;
 
+		public override string UiHint => "Hold 'Shift' to lock to 45°, Type 'Esc' to cancel";
+
 		public RotateCornerControl(IObject3DControlContext context, int axisIndex)
 			: base(context)
 		{
@@ -451,6 +453,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForFirstDraw()
 					.AddAndSelectPrinter()
 					.AddTestAssetsToLibrary(new[] { "Rook.amf" })
-					.AddItemToBedplate("", "Row Item Rook")
+					.AddItemToBed("", "Row Item Rook")
 					.SwitchToSliceSettings()
 					.SelectSliceSettingsField(SettingsKey.create_raft)
 					.WaitForReloadAll(() => testRunner.StartSlicing())
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						farthestE = Math.Max(farthestE, printer.Connection.CurrentExtruderDestination);
 					};
 
-					testRunner.AddItemToBedplate()
+					testRunner.AddItemToBed()
 						.StartPrint(printer)
 						.WaitFor(() => printer.Connection.Printing, 60) // wait for the print to start
 						.WaitFor(() => !printer.Connection.Printing, 60); // wait for the print to finish
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					var printer = testRunner.FirstPrinter();
 
-					testRunner.AddItemToBedplate()
+					testRunner.AddItemToBed()
 						.StartPrint(printer, pauseAtLayers: "4;2;a;not;6")
 						.WaitForLayerAndResume(printer, 2)
 						.WaitForLayerAndResume(printer, 4)
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
 
-					testRunner.AddItemToBedplate()
+					testRunner.AddItemToBed()
 						.StartPrint(printer, pauseAtLayers: "2")
 						// Wait for the Ok button
 						.WaitForName("Yes Button", 30);

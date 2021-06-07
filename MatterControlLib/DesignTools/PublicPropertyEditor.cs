@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
+			typeof(StringOrExpression),
 			typeof(DoubleOrExpression),
 			typeof(IntOrExpression),
 			typeof(Color),
@@ -69,8 +70,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(ImageBuffer),
 			typeof(List<string>)
 		};
-
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+		private List<SettingsRow> rows = new List<SettingsRow>();
 
 		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
@@ -92,6 +94,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				AddMarkDownDescription(context.item, mainContainer, theme);
 
 				GuiWidget scope = mainContainer;
+
+				rows.Clear();
 
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
@@ -138,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						scope = mainContainer;
 					}
 
-					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
+					var editor = CreatePropertyEditor(rows, property, undoBuffer, context, theme);
 					if (editor != null)
 					{
 						scope.AddChild(editor);
@@ -203,9 +207,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static GuiWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme)
+		private static SettingsRow CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme, List<SettingsRow> rows = null)
 		{
-			return new SettingsRow(property.DisplayName.Localize(), property.Description, field.Content, theme);
+			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, field.Content, theme);
+			if (rows != null)
+			{
+				rows.Add(row);
+				row.SetTextRightMargin(rows);
+			}
+			return row;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field, bool fullWidth = false)
@@ -278,7 +288,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		public static GuiWidget CreatePropertyEditor(EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
+		public static GuiWidget CreatePropertyEditor(List<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
 			var object3D = property.Item;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
@@ -672,24 +682,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
 				// create a string editor
-				var field = new TextField(theme);
+				var field = new ExpressionField(theme)
+				{
+					Name = property.DisplayName + " Field"
+				};
 				field.Initialize(0);
 				field.SetValue(doubleExpresion.Expression, false);
 				field.ClearUndoHistory();
-				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field,
 					(valueString) => new DoubleOrExpression(valueString),
 					(value) =>
 					{
 						return ((DoubleOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field, theme);
-
-				var label = rowContainer.Children.First();
-
-				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-				spacer.HAnchor = HAnchor.Absolute;
-				spacer.Width = Math.Max(0, 100 - label.Width);
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -715,24 +721,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is IntOrExpression intExpresion)
 			{
 				// create a string editor
-				var field = new TextField(theme);
+				var field = new ExpressionField(theme);
 				field.Initialize(0);
 				field.SetValue(intExpresion.Expression, false);
 				field.ClearUndoHistory();
-				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field,
 					(valueString) => new IntOrExpression(valueString),
 					(value) =>
 					{
 						return ((IntOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field, theme);
-
-				var label = rowContainer.Children.First();
-
-				var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-				spacer.HAnchor = HAnchor.Absolute;
-				spacer.Width = Math.Max(0, 100 - label.Width);
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -831,15 +830,25 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.ClearUndoHistory();
 						field.Content.HAnchor = HAnchor.Stretch;
 						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsRow(property, field, theme);
-
-						var label = rowContainer.Children.First();
-
-						var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-						spacer.HAnchor = HAnchor.Absolute;
-						spacer.Width = Math.Max(0, 100 - label.Width);
+						rowContainer = CreateSettingsRow(property, field, theme, rows);
 					}
 				}
+			}
+			else if (propertyValue is StringOrExpression stringOrExpression)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(stringOrExpression.Expression, false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(field,
+					(valueString) => new StringOrExpression(valueString),
+					(value) =>
+					{
+						return ((StringOrExpression)value).Expression;
+					});
+				rowContainer = CreateSettingsRow(property, field, theme, rows);
 			}
 			else if (propertyValue is char charValue)
 			{

@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly PrinterTabPage printerTabPage;
 		private RadioIconButton translateButton;
 		private RadioIconButton rotateButton;
-		private RadioIconButton scaleButton;
+		private RadioIconButton zoomButton;
 		private RadioIconButton partSelectButton;
 
 		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
@@ -361,10 +361,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				// ToolTipText = "Rotate\n- Right Mouse Button\n- Ctrl + Left Mouse Button".Localize(),
 				ToolTipText = "Rotate View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
+			rotateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Rotate: Right Mouse Button | Ctrl + Left Mouse Button".Localize();
+			rotateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
@@ -372,24 +373,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				// ToolTipText = "Move\n- Middle Mouse Button\n- Ctrl + Shift + Left Mouse Button".Localize(),
 				ToolTipText = "Move View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
+			translateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button".Localize();
+			translateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
-			scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
+			zoomButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
-				// ToolTipText = "Zoom\n- Mouse Wheel\n- Ctrl + Alt + Left Mouse Button".Localize(),
 				ToolTipText = "Zoom View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			AddRoundButton(scaleButton, RotatedMargin(scaleButton, - MathHelper.Tau * .15));
-			scaleButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
-			buttonGroupA.Add(scaleButton);
+			zoomButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button".Localize();
+			zoomButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			AddRoundButton(zoomButton, RotatedMargin(zoomButton, - MathHelper.Tau * .15));
+			zoomButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+			buttonGroupA.Add(zoomButton);
 
 			var bottomButtonOffset = 0;
 			var hudBackgroundColor = theme.BedBackgroundColor.WithAlpha(120);
@@ -594,11 +597,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				PopupMate = new MatePoint()
 				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
 			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
-			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
 			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
 			modelViewStyleButton.BackgroundColor = hudBackgroundColor;
@@ -753,9 +756,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 
 				case ViewControls3DButtons.Scale:
-					if (scaleButton != null)
+					if (zoomButton != null)
 					{
-						scaleButton.Checked = true;
+						zoomButton.Checked = true;
 					}
 					break;
 

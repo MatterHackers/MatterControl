@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
+				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
 			{
 				await Rebuild();
 			}

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -53,8 +54,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IObject3DControlContext context;
 
 		private Func<Vector3> getPosition;
-
-		private IObject3D owner;
 
 		private Action<Vector3> setPosition;
 		
@@ -83,20 +82,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.shape = PlatonicSolids.CreateCube();
 			this.shape = SphereObject3D.CreateSphere(1, 15, 10);
 			collisionVolume = shape.CreateBVHData();
-			this.owner = owner;
-
-			Keyboard.StateChanged += Keyboard_StateChanged;
-		}
-
-		private void Keyboard_StateChanged(object sender, EventArgs e)
-		{
-			if (DownOnControl
-				&& Keyboard.IsKeyDown(Keys.Escape))
-			{
-				DownOnControl = false;
-				setPosition(mouseDownPosition);
-				return;
-			}
 		}
 
 		public bool DrawOnTop => true;
@@ -105,13 +90,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Visible { get; set; }
 
+		public string UiHint => "Type 'Esc' to cancel".Localize();
+
 		public void CancelOperation()
 		{
-		}
-
-		public void Dispose()
-		{
-			Keyboard.StateChanged -= Keyboard_StateChanged;
+			if (DownOnControl)
+			{
+				ApplicationController.Instance.UiHint = "";
+				DownOnControl = false;
+				setPosition(mouseDownPosition);
+				ApplicationController.Instance.UiHint = "";
+			}
 		}
 
 		public void Draw(DrawGlContentEventArgs e)
@@ -150,6 +139,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			DownOnControl = true;
+			ApplicationController.Instance.UiHint = UiHint;
 			mouseDownPosition = getPosition();
 			// Make sure we always get a new hit plane
 			ResetHitPlane();
@@ -224,6 +214,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				DownOnControl = false;
 				editComplete(mouseDownPosition);
+				ApplicationController.Instance.UiHint = "";
 			}
 		}
 
@@ -234,6 +225,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void MoveToScreenPosition(Vector2 screenPosition)
 		{
 			UpdatePosition(screenPosition);
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }

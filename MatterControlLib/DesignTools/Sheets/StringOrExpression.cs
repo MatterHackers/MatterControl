@@ -27,15 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.ComponentModel;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(DoubleOrExpression))]
-	public class DoubleOrExpression
+	[TypeConverter(typeof(StringOrExpression))]
+	public class StringOrExpression
 	{
 		/// <summary>
 		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
@@ -46,50 +44,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override string ToString() => Expression;
 
-		public double Value(IObject3D owner)
+		public string Value(IObject3D owner)
 		{
-			return SheetObject3D.EvaluateExpression<double>(owner, Expression);
+			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
 		}
 
-		public DoubleOrExpression(double value)
-		{
-			Expression = value.ToString();
-		}
-
-		public DoubleOrExpression(string expression)
+		public StringOrExpression(string expression)
 		{
 			Expression = expression;
 		}
 
-		public static implicit operator DoubleOrExpression(double value)
+		public static implicit operator StringOrExpression(string expression)
 		{
-			return new DoubleOrExpression(value);
-		}
-
-		public static implicit operator DoubleOrExpression(string expression)
-		{
-			return new DoubleOrExpression(expression);
-		}
-
-		/// <summary>
-		/// Evaluate the expression clap the result and return the clamped value.
-		/// If the expression as not an equation, modify it to be the clamped value.
-		/// </summary>
-		/// <param name="item">The Object to find the table relative to</param>
-		/// <param name="min">The min value to clamp to</param>
-		/// <param name="max">The max value to clamp to</param>
-		/// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
-		/// <returns></returns>
-		public double ClampIfNotCalculated(IObject3D item, double min, double max, ref bool valuesChanged)
-		{
-			var value = agg_basics.Clamp(this.Value(item), min, max, ref valuesChanged);
-			if (!this.IsEquation)
-			{
-				// clamp the actual expression as it is not an equation
-				Expression = value.ToString();
-			}
-
-			return value;
+			return new StringOrExpression(expression);
 		}
 	}
 }

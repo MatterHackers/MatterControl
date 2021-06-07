@@ -74,6 +74,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private ScaleController scaleController;
 
+		public override string UiHint => ScallingHint;
+	
 		public ScaleWidthDepthEdgeControl(IObject3DControlContext context,
 			Func<double> getWidth,
 			Action<double> setWidth,
@@ -85,6 +87,22 @@ namespace MatterHackers.Plugins.EditorTools
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
+
+			switch (edgeIndex)
+			{
+				case 0:
+					Name = "ScaleDepthBack";
+					break;
+				case 1:
+					Name = "ScaleWidthLeft";
+					break;
+				case 2:
+					Name = "ScaleDepthFront";
+					break;
+				case 3:
+					Name = "ScaleWidthRight";
+					break;
+			}
 
 			this.getWidth = getWidth;
 			this.setWidth = setWidth;
@@ -98,6 +116,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				ForceHide = ForceHideScale,
 				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
+				Name = "XValueDisplay",
 			};
 
 			xValueDisplayInfo.EditComplete += EditComplete;
@@ -113,7 +132,8 @@ namespace MatterHackers.Plugins.EditorTools
 			yValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
-				GetDisplayString = (value) => "{0:0.0}".FormatWith(value)
+				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
+				Name = "YValueDisplay",
 			};
 
 			yValueDisplayInfo.EditComplete += EditComplete;
@@ -164,6 +184,8 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.Scene.DrawSelection = true;
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
+
+			base.CancelOperation();
 		}
 
 		public override void Dispose()

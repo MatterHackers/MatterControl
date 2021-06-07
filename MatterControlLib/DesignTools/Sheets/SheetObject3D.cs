@@ -28,45 +28,29 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
+using org.mariuszgromada.math.mxparser;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
+	[WebPageLink("Documentation", "Open", "https://matterhackers.com/support/mattercontrol-variable-support")]
+	[MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
 	public class SheetObject3D : Object3D, IObject3DControlsProvider
 	{
 		public SheetData SheetData { get; set; }
-
-		public override Mesh Mesh
-		{
-			get
-			{
-				if (!this.Children.Where(i => i.VisibleMeshes().Count() > 0).Any())
-				{
-					// add the amf content
-					using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "description_tool.amf")))
-					{
-						Children.Modify((list) =>
-						{
-							list.Clear();
-							list.Add(AmfDocument.Load(measureAmfStream, CancellationToken.None));
-						});
-					}
-				}
-
-				return base.Mesh;
-			}
-
-			set => base.Mesh = value;
-		}
 
 		public static async Task<SheetObject3D> Create()
 		{
@@ -77,6 +61,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			await item.Rebuild();
 			return item;
 		}
+
+		public SheetObject3D()
+		{
+			Mesh border;
+			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+			{
+				border = StlProcessing.Load(stlStream, CancellationToken.None);
+			}
+			this.Children.Add(new Object3D()
+			{
+				Mesh = border,
+				Color = new Color("#9D9D9D")
+			});
+			Mesh boxes;
+			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
+			{
+				boxes = StlProcessing.Load(stlStream, CancellationToken.None);
+			}
+			this.Children.Add(new Object3D()
+			{
+				Mesh = boxes,
+				Color = new Color("#117c43")
+			});
+
+			var aabb = border.GetAxisAlignedBoundingBox();
+			this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
+		}
+
+		public override bool Persistable => false;
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -98,22 +111,49 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void SendInvalidateToAll()
 		{
+			var updatedItems = new HashSet<IObject3D>();
+			updatedItems.Add(this);
 			foreach (var sibling in this.Parent.Children)
 			{
-				SendInvalidateRecursive(sibling);
+				SendInvalidateRecursive(sibling, updatedItems);
 			}
 		}
 
-		private void SendInvalidateRecursive(IObject3D item)
+		private void SendInvalidateRecursive(IObject3D item, HashSet<IObject3D> updatedItems)
 		{
+			if (updatedItems.Contains(item))
+			{
+				return;
+			}
+
 			// process depth first
 			foreach(var child in item.Children)
 			{
-				SendInvalidateRecursive(child);
+				SendInvalidateRecursive(child, updatedItems);
 			}
 
 			// and send the invalidate
-			item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+			RunningInterval runningInterval = null;
+			void RebuildWhenUnlocked()
+			{
+				if (!item.RebuildLocked)
+				{
+					updatedItems.Add(item);
+					UiThread.ClearInterval(runningInterval);
+					item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+				}
+			}
+
+			if (!item.RebuildLocked)
+			{
+				updatedItems.Add(item);
+				item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+			}
+			else
+			{
+				// we need to get back to the user requested change when not locked
+				runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .2);
+			}
 		}
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
@@ -121,6 +161,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			// check if the expression is not an equation (does not start with "=")
 			if (inputExpression.Length > 0 && inputExpression[0] != '=')
 			{
+				if (typeof(T) == typeof(string))
+				{
+					return (T)(object)inputExpression;
+				}
+
 				// not an equation so try to parse it directly
 				if (double.TryParse(inputExpression, out var result))
 				{
@@ -163,34 +208,55 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						// try to manage the cell into the correct data type
 						string value = sheet.SheetData.EvaluateExpression(inputExpression);
-
-						if (typeof(T) == typeof(double))
-						{
-							if (double.TryParse(value, out double doubleValue)
-								&& !double.IsNaN(doubleValue)
-								&& !double.IsInfinity(doubleValue))
-							{
-								return (T)(object)doubleValue;
-							}
-							// else return an error
-							return (T)(object).1;
-						}
-
-						if (typeof(T) == typeof(int))
-						{
-							if (double.TryParse(value, out double doubleValue)
-								&& !double.IsNaN(doubleValue)
-								&& !double.IsInfinity(doubleValue))
-							{
-								return (T)(object)(int)Math.Round(doubleValue);
-							}
-							// else return an error
-							return (T)(object)1;
-						}
+						return CastResult<T>(value, inputExpression);
 					}
 				}
 			}
 
+			// could not find a sheet, try to evaluate the expression directly
+			var evaluator = new Expression(inputExpression);
+			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
+		}
+
+		public static T CastResult<T>(string value, string inputExpression)
+		{
+			if (typeof(T) == typeof(string))
+			{
+				// if parsing the equation resulted in NaN as the output
+				if (value == "NaN")
+				{
+					// return the actual expression
+					return (T)(object)inputExpression;
+				}
+
+				// get the value of the cell
+				return (T)(object)value;
+			}
+
+			if (typeof(T) == typeof(double))
+			{
+				if (double.TryParse(value, out double doubleValue)
+					&& !double.IsNaN(doubleValue)
+					&& !double.IsInfinity(doubleValue))
+				{
+					return (T)(object)doubleValue;
+				}
+				// else return an error
+				return (T)(object).1;
+			}
+
+			if (typeof(T) == typeof(int))
+			{
+				if (double.TryParse(value, out double doubleValue)
+					&& !double.IsNaN(doubleValue)
+					&& !double.IsInfinity(doubleValue))
+				{
+					return (T)(object)(int)Math.Round(doubleValue);
+				}
+				// else return an error
+				return (T)(object)1;
+			}
+		
 			return (T)(object)default(T);
 		}
 

@@ -299,6 +299,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SettingsRow("Material".Localize(), null, materialField.Content, theme));
 			}
 
+			var rows = new List<SettingsRow>();
+
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
@@ -338,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
 
-							var editor = PublicPropertyEditor.CreatePropertyEditor(editableProperty, undoBuffer, context, theme);
+							var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
 							if (editor != null)
 							{
 								editorPanel.AddChild(editor);
