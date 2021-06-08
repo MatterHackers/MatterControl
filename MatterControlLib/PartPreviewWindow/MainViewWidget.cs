@@ -398,7 +398,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			statusMessage = tasksContainer.AddChild(new TextWidget("")
 			{
-				Margin = new BorderDouble(5, 0, 0, 0),
+				Margin = new BorderDouble(5, 0, 0, 3),
 				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Center,
 				PointSize = theme.FontSize9,
