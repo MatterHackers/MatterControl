@@ -62,31 +62,45 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		public override Mesh Mesh
+		{ 
+			get
+			{
+				if(Children.Count == 0)
+				{
+					Mesh border;
+					using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+					{
+						border = StlProcessing.Load(stlStream, CancellationToken.None);
+					}
+					this.Children.Add(new Object3D()
+					{
+						Mesh = border,
+						Color = new Color("#9D9D9D")
+					});
+					Mesh boxes;
+					using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
+					{
+						boxes = StlProcessing.Load(stlStream, CancellationToken.None);
+					}
+					this.Children.Add(new Object3D()
+					{
+						Mesh = boxes,
+						Color = new Color("#117c43")
+					});
+
+					var aabb = border.GetAxisAlignedBoundingBox();
+					this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
+				}
+
+				return null;
+			}
+
+			set => base.Mesh = value; 
+		}
+
 		public SheetObject3D()
 		{
-			Mesh border;
-			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
-			{
-				border = StlProcessing.Load(stlStream, CancellationToken.None);
-			}
-			this.Children.Add(new Object3D()
-			{
-				Mesh = border,
-				Color = new Color("#9D9D9D")
-			});
-			Mesh boxes;
-			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
-			{
-				boxes = StlProcessing.Load(stlStream, CancellationToken.None);
-			}
-			this.Children.Add(new Object3D()
-			{
-				Mesh = boxes,
-				Color = new Color("#117c43")
-			});
-
-			var aabb = border.GetAxisAlignedBoundingBox();
-			this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
 		}
 
 		public override bool Persistable => false;
