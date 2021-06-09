@@ -109,51 +109,81 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		internal class UpdateItem
+		{
+			internal int depth;
+			internal IObject3D item;
+			internal DataConverters3D.RebuildLock rubuildLock;
+		}
 		private void SendInvalidateToAll()
 		{
-			var updatedItems = new HashSet<IObject3D>();
-			updatedItems.Add(this);
+			var updateItems = new List<UpdateItem>();
 			foreach (var sibling in this.Parent.Children)
 			{
-				SendInvalidateRecursive(sibling, updatedItems);
-			}
-		}
-
-		private void SendInvalidateRecursive(IObject3D item, HashSet<IObject3D> updatedItems)
-		{
-			if (updatedItems.Contains(item))
-			{
-				return;
+				if (sibling != this)
+				{
+					AddItemsToList(sibling, updateItems, 0);
+				}
 			}
 
-			// process depth first
-			foreach(var child in item.Children)
+			// sort them
+			updateItems.Sort((a, b) => a.depth.CompareTo(b.depth));
+			// lock everything
+			foreach (var depthItem in updateItems)
 			{
-				SendInvalidateRecursive(child, updatedItems);
+				depthItem.rubuildLock = depthItem.item.RebuildLock();
 			}
 
 			// and send the invalidate
 			RunningInterval runningInterval = null;
 			void RebuildWhenUnlocked()
 			{
-				if (!item.RebuildLocked)
+				// get the last item from the list
+				var index = updateItems.Count - 1;
+				var updateItem = updateItems[index];
+				// if it is locked from above
+				if (updateItem.rubuildLock != null)
 				{
-					updatedItems.Add(item);
+					// release the lock and rebuild
+					updateItem.rubuildLock.Dispose();
+					updateItem.rubuildLock = null;
+					// and ask it to update
+					updateItem.item.Invalidate(new InvalidateArgs(updateItem.item, InvalidateType.SheetUpdated));
+				}
+				else if (updateItem.item.RebuildLocked)
+				{
+					// wait for the current rebuild to end
+					return;
+				}
+				else
+				{
+					// remove it from the list
+					updateItems.RemoveAt(index);
+				}
+
+				if (updateItems.Count == 0)
+				{
 					UiThread.ClearInterval(runningInterval);
-					item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
 				}
 			}
 
-			if (!item.RebuildLocked)
+			// rebuild depth first
+			runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .01);
+		}
+
+		private void AddItemsToList(IObject3D inItem, List<UpdateItem> updatedItems, int inDepth)
+		{
+			// process depth first
+			foreach(var child in inItem.Children)
 			{
-				updatedItems.Add(item);
-				item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+				AddItemsToList(child, updatedItems, inDepth + 1);
 			}
-			else
+
+			updatedItems.Add(new UpdateItem()
 			{
-				// we need to get back to the user requested change when not locked
-				runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .2);
-			}
+				depth = inDepth,
+				item = inItem
+			});
 		}
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
