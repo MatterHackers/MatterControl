@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -62,31 +63,49 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		public override Mesh Mesh
+		{
+			get
+			{
+				if (this.Children.Where(i => i.Mesh == null).Any())
+				{
+					this.Children.Modify((list) =>
+					{
+						list.Clear();
+						Mesh border;
+						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+						{
+							border = StlProcessing.Load(stlStream, CancellationToken.None);
+						}
+						list.Add(new Object3D()
+						{
+							Mesh = border,
+							Color = new Color("#9D9D9D")
+						});
+						Mesh boxes;
+						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
+						{
+							boxes = StlProcessing.Load(stlStream, CancellationToken.None);
+						}
+						list.Add(new Object3D()
+						{
+							Mesh = boxes,
+							Color = new Color("#117c43")
+						});
+
+						var aabb = border.GetAxisAlignedBoundingBox();
+						this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
+					});
+				}
+
+				return null;
+			}
+
+			set => base.Mesh = value; 
+		}
+
 		public SheetObject3D()
 		{
-			Mesh border;
-			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
-			{
-				border = StlProcessing.Load(stlStream, CancellationToken.None);
-			}
-			this.Children.Add(new Object3D()
-			{
-				Mesh = border,
-				Color = new Color("#9D9D9D")
-			});
-			Mesh boxes;
-			using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
-			{
-				boxes = StlProcessing.Load(stlStream, CancellationToken.None);
-			}
-			this.Children.Add(new Object3D()
-			{
-				Mesh = boxes,
-				Color = new Color("#117c43")
-			});
-
-			var aabb = border.GetAxisAlignedBoundingBox();
-			this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
 		}
 
 		public override bool Persistable => false;
@@ -109,51 +128,94 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		internal class UpdateItem
+		{
+			internal int depth;
+			internal IObject3D item;
+			internal RebuildLock rebuildLock;
+		}
 		private void SendInvalidateToAll()
 		{
-			var updatedItems = new HashSet<IObject3D>();
-			updatedItems.Add(this);
+			var updateItems = new List<UpdateItem>();
 			foreach (var sibling in this.Parent.Children)
 			{
-				SendInvalidateRecursive(sibling, updatedItems);
-			}
-		}
-
-		private void SendInvalidateRecursive(IObject3D item, HashSet<IObject3D> updatedItems)
-		{
-			if (updatedItems.Contains(item))
-			{
-				return;
+				if (sibling != this)
+				{
+					AddItemsToList(sibling, updateItems, 0);
+				}
 			}
 
-			// process depth first
-			foreach(var child in item.Children)
+			// sort them
+			updateItems.Sort((a, b) => a.depth.CompareTo(b.depth));
+			// lock everything
+			foreach (var depthItem in updateItems)
 			{
-				SendInvalidateRecursive(child, updatedItems);
+				depthItem.rebuildLock = depthItem.item.RebuildLock();
 			}
 
 			// and send the invalidate
 			RunningInterval runningInterval = null;
 			void RebuildWhenUnlocked()
 			{
-				if (!item.RebuildLocked)
+				// get the last item from the list
+				var index = updateItems.Count - 1;
+				var updateItem = updateItems[index];
+				// if it is locked from above
+				if (updateItem.rebuildLock != null)
 				{
-					updatedItems.Add(item);
+					// release the lock and rebuild
+					// and ask it to update
+					var depthToBuild = updateItem.depth;
+					for (int i = 0; i < updateItems.Count; i++)
+					{
+						if (updateItems[i].depth == updateItem.depth)
+						{
+							updateItems[i].rebuildLock.Dispose();
+							updateItems[i].rebuildLock = null;
+							updateItems[i].item.Invalidate(new InvalidateArgs(updateItems[i].item, InvalidateType.SheetUpdated));
+						}
+					}
+				}
+				else if (updateItems.Where(i => i.depth == updateItem.depth && i.item.RebuildLocked).Any())
+				{
+					// wait for the current rebuild to end
+					return;
+				}
+				else
+				{
+					// remove all items at this level
+					for (int i = updateItems.Count - 1; i >= 0; i--)
+					{
+						if (updateItems[i].depth == updateItem.depth)
+						{
+							updateItems.RemoveAt(i);
+						}
+					}
+				}
+
+				if (updateItems.Count == 0)
+				{
 					UiThread.ClearInterval(runningInterval);
-					item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
 				}
 			}
 
-			if (!item.RebuildLocked)
+			// rebuild depth first
+			runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .01);
+		}
+
+		private void AddItemsToList(IObject3D inItem, List<UpdateItem> updatedItems, int inDepth)
+		{
+			// process depth first
+			foreach(var child in inItem.Children)
 			{
-				updatedItems.Add(item);
-				item.Invalidate(new InvalidateArgs(item, InvalidateType.SheetUpdated));
+				AddItemsToList(child, updatedItems, inDepth + 1);
 			}
-			else
+
+			updatedItems.Add(new UpdateItem()
 			{
-				// we need to get back to the user requested change when not locked
-				runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .2);
-			}
+				depth = inDepth,
+				item = inItem
+			});
 		}
 
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
