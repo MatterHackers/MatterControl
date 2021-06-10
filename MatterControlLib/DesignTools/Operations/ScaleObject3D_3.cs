@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleOrExpression Width
+		public double Width
 		{
 			get
 			{
@@ -150,14 +150,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(0, value.Value(this) / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
+					FixIfLockedProportions(0, value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize);
 				}
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleOrExpression Depth
+		public double Depth
 		{
 			get
 			{
@@ -174,14 +174,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(1, value.Value(this) / children.GetAxisAlignedBoundingBox().YSize);
+					FixIfLockedProportions(1, value / children.GetAxisAlignedBoundingBox().YSize);
 				}
 			}
 		}
 
 		[MaxDecimalPlaces(3)]
 		[JsonIgnore]
-		public DoubleOrExpression Height
+		public double Height
 		{
 			get
 			{
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var children = UntransformedChildren;
 				if (children != null)
 				{
-					FixIfLockedProportions(2, value.Value(this) / children.GetAxisAlignedBoundingBox().ZSize);
+					FixIfLockedProportions(2, value / children.GetAxisAlignedBoundingBox().ZSize);
 				}
 			}
 		}

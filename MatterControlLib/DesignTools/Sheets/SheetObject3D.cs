@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -63,34 +64,38 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override Mesh Mesh
-		{ 
+		{
 			get
 			{
-				if(Children.Count == 0)
+				if (this.Children.Where(i => i.Mesh == null).Any())
 				{
-					Mesh border;
-					using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+					this.Children.Modify((list) =>
 					{
-						border = StlProcessing.Load(stlStream, CancellationToken.None);
-					}
-					this.Children.Add(new Object3D()
-					{
-						Mesh = border,
-						Color = new Color("#9D9D9D")
-					});
-					Mesh boxes;
-					using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
-					{
-						boxes = StlProcessing.Load(stlStream, CancellationToken.None);
-					}
-					this.Children.Add(new Object3D()
-					{
-						Mesh = boxes,
-						Color = new Color("#117c43")
-					});
+						list.Clear();
+						Mesh border;
+						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+						{
+							border = StlProcessing.Load(stlStream, CancellationToken.None);
+						}
+						list.Add(new Object3D()
+						{
+							Mesh = border,
+							Color = new Color("#9D9D9D")
+						});
+						Mesh boxes;
+						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
+						{
+							boxes = StlProcessing.Load(stlStream, CancellationToken.None);
+						}
+						list.Add(new Object3D()
+						{
+							Mesh = boxes,
+							Color = new Color("#117c43")
+						});
 
-					var aabb = border.GetAxisAlignedBoundingBox();
-					this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
+						var aabb = border.GetAxisAlignedBoundingBox();
+						this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
+					});
 				}
 
 				return null;
@@ -127,7 +132,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			internal int depth;
 			internal IObject3D item;
-			internal DataConverters3D.RebuildLock rubuildLock;
+			internal RebuildLock rebuildLock;
 		}
 		private void SendInvalidateToAll()
 		{
@@ -145,7 +150,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// lock everything
 			foreach (var depthItem in updateItems)
 			{
-				depthItem.rubuildLock = depthItem.item.RebuildLock();
+				depthItem.rebuildLock = depthItem.item.RebuildLock();
 			}
 
 			// and send the invalidate
@@ -156,23 +161,36 @@ namespace MatterHackers.MatterControl.DesignTools
 				var index = updateItems.Count - 1;
 				var updateItem = updateItems[index];
 				// if it is locked from above
-				if (updateItem.rubuildLock != null)
+				if (updateItem.rebuildLock != null)
 				{
 					// release the lock and rebuild
-					updateItem.rubuildLock.Dispose();
-					updateItem.rubuildLock = null;
 					// and ask it to update
-					updateItem.item.Invalidate(new InvalidateArgs(updateItem.item, InvalidateType.SheetUpdated));
+					var depthToBuild = updateItem.depth;
+					for (int i = 0; i < updateItems.Count; i++)
+					{
+						if (updateItems[i].depth == updateItem.depth)
+						{
+							updateItems[i].rebuildLock.Dispose();
+							updateItems[i].rebuildLock = null;
+							updateItems[i].item.Invalidate(new InvalidateArgs(updateItems[i].item, InvalidateType.SheetUpdated));
+						}
+					}
 				}
-				else if (updateItem.item.RebuildLocked)
+				else if (updateItems.Where(i => i.depth == updateItem.depth && i.item.RebuildLocked).Any())
 				{
 					// wait for the current rebuild to end
 					return;
 				}
 				else
 				{
-					// remove it from the list
-					updateItems.RemoveAt(index);
+					// remove all items at this level
+					for (int i = updateItems.Count - 1; i >= 0; i--)
+					{
+						if (updateItems[i].depth == updateItem.depth)
+						{
+							updateItems.RemoveAt(i);
+						}
+					}
 				}
 
 				if (updateItems.Count == 0)
