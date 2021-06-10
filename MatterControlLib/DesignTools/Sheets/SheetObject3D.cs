@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				if (this.Children.Where(i => i.Mesh == null).Any())
+				if (this.Children.Count == 0 
+					|| this.Children.Where(i => i.Mesh == null).Any())
 				{
 					this.Children.Modify((list) =>
 					{
@@ -143,6 +144,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					AddItemsToList(sibling, updateItems, 0);
 				}
+			}
+			if (updateItems.Count == 0)
+			{
+				return;
 			}
 
 			// sort them
@@ -276,7 +281,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// could not find a sheet, try to evaluate the expression directly
-			var evaluator = new Expression(inputExpression);
+			var evaluator = new Expression(inputExpression.ToLower());
 			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
 		}
 

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					expression = expression.Substring(1);
 				}
-				var evaluator = new Expression(expression);
+				var evaluator = new Expression(expression.ToLower());
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
 
@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						expression = "0" + expression;
 					}
-					var evaluator = new Expression(expression);
+					var evaluator = new Expression(expression.ToLower());
 					AddConstants(evaluator);
 					var value = evaluator.calculate();
 					if (double.IsNaN(value)
@@ -265,10 +265,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						value = 0;
 					}
 
-					constants.Add(CellId(xyc.x, xyc.y), value);
-					if (!string.IsNullOrEmpty(xyc.cell.Name))
+					constants.Add(CellId(xyc.x, xyc.y).ToLower(), value);
+					if (!string.IsNullOrEmpty(xyc.cell.Name?.ToLower()))
 					{
-						constants.Add(xyc.cell.Name, value);
+						constants.Add(xyc.cell.Name.ToLower(), value);
 					}
 				}
 
