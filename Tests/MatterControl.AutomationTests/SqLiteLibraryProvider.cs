@@ -13,9 +13,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
-
-				testRunner.AddItemToBed();
+				testRunner.OpenEmptyPartTab()
+					.AddItemToBed();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.Object3DControlLayer.Scene;
@@ -23,17 +22,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => scene.SelectedItem != null);
 				Assert.IsNotNull(scene.SelectedItem, "Expect part selection after Add to Bed action");
 
-				testRunner.ClickByName("Duplicate Button");
-
-				// wait for the copy to finish
-				testRunner.Delay(.1);
-				testRunner.ClickByName("Remove Button");
-
-				testRunner.SaveBedplateToFolder("0Test Part", "Local Library Row Item Collection");
-
-				// Click Home -> Local Library
-				testRunner.NavigateToLibraryHome();
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
+				testRunner.ClickByName("Duplicate Button")
+					// wait for the copy to finish
+					.Delay(.1)
+					.ClickByName("Remove Button")
+					.SaveBedplateToFolder("0Test Part", "Local Library Row Item Collection")
+					// Click Home -> Local Library
+					.NavigateToLibraryHome()
+					.NavigateToFolder("Local Library Row Item Collection");
 
 				// ensure that it is now in the library folder (that the folder updated)
 				Assert.IsTrue(testRunner.WaitForName("Row Item 0Test Part"), "The part we added should be in the library");

@@ -26,11 +26,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(1, scene.Children.Count, "Should have 1 part before copy");
 
 				// Select scene object
-				testRunner.Select3DPart("Calibration - Box.stl");
-
-				// Click Copy button and count Scene.Children
-				testRunner.ClickByName("Duplicate Button");
-				testRunner.WaitFor(() => scene.Children.Count == 2);
+				testRunner.Select3DPart("Calibration - Box.stl")
+					// Click Copy button and count Scene.Children
+					.ClickByName("Duplicate Button")
+					.WaitFor(() => scene.Children.Count == 2);
 				Assert.AreEqual(2, scene.Children.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count Scene.Children
@@ -63,8 +62,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int i = 2; i <= 6; i++)
 				{
-					testRunner.ClickByName("Duplicate Button");
-					testRunner.WaitFor(() => scene.Children.Count == i);
+					testRunner.ClickByName("Duplicate Button")
+						.WaitFor(() => scene.Children.Count == i);
 					Assert.AreEqual(i, scene.Children.Count, $"Should have {i} parts after copy");
 				}
 
@@ -72,17 +71,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(6, scene.Children.Count, "Scene should have 6 parts after copy loop");
 
 				// Duplicate button moved to new container - move focus back to View3DWidget so CTRL-A below is seen by expected control
-				testRunner.Select3DPart("Calibration - Box.stl");
-
-				// select all
-				testRunner.Type("^a");
-
-				testRunner.ClickByName("Group Button");
-				testRunner.WaitFor(() => scene.Children.Count == 1);
+				testRunner.Select3DPart("Calibration - Box.stl")
+					// select all
+					.Type("^a")
+					.ClickByName("Group Button")
+					.WaitFor(() => scene.Children.Count == 1);
 				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 parts after group");
 
-				testRunner.ClickByName("Ungroup Button");
-				testRunner.WaitFor(() => scene.Children.Count == 6);
+				testRunner.ClickByName("Ungroup Button")
+					.WaitFor(() => scene.Children.Count == 6);
 				Assert.AreEqual(6, scene.Children.Count, $"Should have 6 parts after ungroup");
 
 				return Task.CompletedTask;
@@ -108,8 +105,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add 5 items
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName("Duplicate Button");
-					testRunner.Delay(.5);
+					testRunner.ClickByName("Duplicate Button")
+						.Delay(.5);
 				}
 
 				Assert.AreEqual(6, scene.Children.Count, "There should be 6 parts on the bed after the copy loop");
@@ -139,17 +136,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int i = 0; i <= 2; i++)
 				{
-					testRunner.ClickByName("Duplicate Button");
-					testRunner.Delay(.5);
+					testRunner.ClickByName("Duplicate Button")
+						.Delay(.5);
 				}
 
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection");
-
-				// Click Home -> Local Library
-				testRunner.NavigateToLibraryHome();
-				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection")
+					// Click Home -> Local Library
+					.NavigateToLibraryHome()
+					.NavigateToFolder("Print Queue Row Item Collection");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA", 5), "The part we added should be in the library");
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");

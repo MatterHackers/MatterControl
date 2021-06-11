@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 ;
 
-		public static void ExpandEditTool(this AutomationRunner testRunner, string expandCheckboxButtonName)
+		public static AutomationRunner ExpandEditTool(this AutomationRunner testRunner, string expandCheckboxButtonName)
 		{
 			var mirrorPanel = testRunner.GetWidgetByName(expandCheckboxButtonName, out _);
 			var checkBox = mirrorPanel.Children<ExpandCheckboxButton>().FirstOrDefault();
@@ -216,16 +216,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName(expandCheckboxButtonName);
 			}
+
+			return testRunner;
 		}
 
-		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
+		public static AutomationRunner Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
 			if (testRunner.NameExists("3D View Edit", .2))
 			{
 				testRunner.ClickByName("3D View Edit");
 			}
 
-			testRunner.ClickByName(partNameToSelect);
+			return testRunner.ClickByName(partNameToSelect);
 		}
 
 		public static AutomationRunner WaitForFirstDraw(this AutomationRunner testRunner)
@@ -236,7 +238,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
-		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
+		public static AutomationRunner OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
@@ -249,6 +251,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
+
+			return testRunner;
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
@@ -565,17 +569,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
 		}
 
-		public static void OpenUserPopupMenu(this AutomationRunner testRunner)
+		public static AutomationRunner OpenUserPopupMenu(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("User Options Menu");
+			return testRunner.ClickByName("User Options Menu");
 		}
 
 		public static AutomationRunner ClickButton(this AutomationRunner testRunner, string buttonName, string buttonText, double maxWait = 5)
 		{
 			testRunner.WaitForName(buttonName, maxWait, predicate: (w) => w.Children.FirstOrDefault().Text == buttonText);
-			testRunner.ClickByName(buttonName);
-
-			return testRunner;
+			return testRunner.ClickByName(buttonName);
 		}
 
 		public static AutomationRunner ClickResumeButton(this AutomationRunner testRunner,
@@ -662,9 +664,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.ClickByName("Already Loaded Button");
 		}
 
-		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
+		public static AutomationRunner NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
-			testRunner.EnsureContentMenuOpen()
+			return testRunner.EnsureContentMenuOpen()
 				.ClickByName("Bread Crumb Button Home")
 				.Delay(.5);
 		}
@@ -753,9 +755,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
-		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
+		public static AutomationRunner SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
 		{
-			testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(8, 0))
+			return testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(8, 0))
 				.ClickByName("Save As Menu Item")
 				.Delay(1)
 				.Type(newFileName)

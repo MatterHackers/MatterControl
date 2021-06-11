@@ -304,6 +304,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var newValue = field.Value;
 					var oldValue = property.Value.ToString();
+					if (newValue == oldValue)
+					{
+						return;
+					}
 					if (valueToString != null)
 					{
 						oldValue = valueToString(property.Value);
