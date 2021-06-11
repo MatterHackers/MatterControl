@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.filament_density,
 			SettingsKey.filament_has_been_loaded,
 			SettingsKey.filament_runout_sensor,
+			SettingsKey.enable_firmware_sounds,
 			SettingsKey.firmware_type,
 			SettingsKey.first_layer_bed_temperature,
 			SettingsKey.g0,

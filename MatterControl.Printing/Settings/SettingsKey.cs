@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_diameter = nameof(filament_diameter);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
 		public const string filament_runout_sensor = nameof(filament_runout_sensor);
+		public const string enable_firmware_sounds = nameof(enable_firmware_sounds);
 		public const string fill_angle = nameof(fill_angle);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_pattern = nameof(fill_pattern);

@@ -331,6 +331,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.progress_reporting,
 						SettingsKey.include_firmware_updater,
 						SettingsKey.backup_firmware_before_update,
+						SettingsKey.enable_firmware_sounds,
 					}),
 					("Diagnostics", new[]
 					{
