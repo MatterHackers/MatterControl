@@ -35,7 +35,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -372,6 +371,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
+
+			Invalidate(InvalidateType.DisplayValues);
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 
 			return Task.CompletedTask;
