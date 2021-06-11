@@ -28,15 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class RemoveNOPsStream : GCodeStreamProxy
 	{
+		private bool filterM300;
+
 		public override string DebugInfo => "";
 
 		public RemoveNOPsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			filterM300 = !printer.Settings.GetValue<bool>(SettingsKey.enable_firmware_sounds);
 		}
 
 		public override string ReadLine()
@@ -53,8 +58,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return baseLine;
 			}
 
-			// if the line contains no actual movement information, don't' send it
 			var trimmedLine = baseLine.Trim();
+
+			// check if the send is a sound and if needed filter it
+			if (filterM300
+				&& trimmedLine.StartsWith("M300"))
+			{
+				return "";
+			}
+
+			// if the line contains no actual movement information, don't' send it
 			if (trimmedLine == "G1"
 				|| trimmedLine == "G0")
 			{

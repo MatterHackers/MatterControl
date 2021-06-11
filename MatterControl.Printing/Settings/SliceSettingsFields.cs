@@ -1122,6 +1122,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.enable_firmware_sounds,
+					PresentationName = "Enable Firmware Sounds".Localize(),
+					HelpText = "Allow M300 commands (play sound) to be sent to the firmware. Disable to turn off sounds.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "1",
+					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.runout_sensor_check_distance,
 					PresentationName = "Runout Check Distance".Localize(),
 					HelpText = "The distance that the filament has to extrude before we check the measured distance.".Localize(),
