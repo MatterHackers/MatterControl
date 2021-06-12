@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 		public int DefaultFontSize { get; set; } = 11;
 
-		public int DefaultContainerPadding { get; } = 10;
+		public int DefaultContainerPadding { get; } = 5;
 
 		public int H1PointSize { get; } = 11;
 
