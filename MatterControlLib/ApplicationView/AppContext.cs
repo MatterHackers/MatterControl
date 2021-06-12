@@ -124,8 +124,6 @@ namespace MatterHackers.MatterControl
 				themeset = themeProvider.GetTheme("Modern-Dark");
 			}
 
-			ScrollBar.DefaultThumbView.ThumbColor = new Color(themeset.Theme.TextColor, 30);
-
 			ToolTipManager.CreateToolTip = MatterControlToolTipWidget;
 		}
 
