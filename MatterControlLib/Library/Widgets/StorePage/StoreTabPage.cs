@@ -57,10 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			if (OemSettings.Instance.ShowShopButton)
 			{
 				topToBottom.AddChild(new ExplorePanel(theme, "banners?sk=ii2gffs6e89c2cdd9er21v"));
-			}
-
-			if (OemSettings.Instance.ShowShopButton)
-			{
 				// actual feed
 				topToBottom.AddChild(new ExplorePanel(theme, "explore?sk=2lhddgi3q67xoqa53pchpeddl6w1uf"));
 			}
