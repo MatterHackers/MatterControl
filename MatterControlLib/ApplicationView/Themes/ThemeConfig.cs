@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 		public int DefaultFontSize { get; set; } = 11;
 
-		public int DefaultContainerPadding { get; } = 10;
+		public int DefaultContainerPadding { get; } = 5;
 
 		public int H1PointSize { get; } = 11;
 
@@ -310,7 +310,9 @@ namespace MatterHackers.MatterControl
 
 			this.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).SetToColor(TextColor);
 
-			ScrollBar.DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
+			ScrollBar.DefaultBackgroundColor = this.TextColor.WithAlpha(30);
+			ScrollBar.DefaultThumbColor = this.TextColor.WithAlpha(130);
+			ScrollBar.DefaultThumbHoverColor = this.PrimaryAccentColor.WithAlpha(130);
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)

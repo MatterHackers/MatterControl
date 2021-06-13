@@ -193,7 +193,10 @@ namespace MatterHackers.MatterControl
 							// save the as png
 							lock (locker)
 							{
-								ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
+								if (!File.Exists(pngFileName))
+								{
+									ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
+								}
 							}
 						}
 						else // save original stream as gif

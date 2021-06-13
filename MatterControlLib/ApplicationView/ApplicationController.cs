@@ -971,11 +971,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			ScrollBar.DefaultMargin = new BorderDouble(right: 1);
-			ScrollBar.ScrollBarWidth = 8 * GuiWidget.DeviceScale;
-			ScrollBar.GrowThumbBy = 2;
+			ScrollBar.ScrollBarWidth = 11 * GuiWidget.DeviceScale;
+			ScrollBar.GrowThumbBy = 3 * GuiWidget.DeviceScale;
 
 			// Initialize statics
-			ScrollBar.DefaultThumbBackground.DefaultBackgroundColor = Color.Transparent;
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
