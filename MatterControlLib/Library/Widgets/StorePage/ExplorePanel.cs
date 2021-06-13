@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		string relativeUrl;
 		private ThemeConfig theme;
-		FlowLeftRightWithWrapping currentContentContainer;
 		private object locker = new object();
 
 		public ExplorePanel(ThemeConfig theme, string relativeUrl)
@@ -84,16 +83,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 						if (explorerFeed != null)
 						{
+							var container = new List<GuiWidget>();
+
+							// Add controls for content
+							GuiWidget currentContentContainer = null;
+							foreach (var content in explorerFeed.Content)
+							{
+								AddContentItem(container, ref currentContentContainer, theme, content);
+							}
+
+							this.CloseChildren();
+							foreach (var widget in container)
+							{
+								this.AddChild(widget);
+							}
 							UiThread.RunOnIdle(() =>
 							{
-								this.CloseChildren();
-
-									// Add controls for content
-								foreach (var content in explorerFeed.Content)
-								{
-									AddContentItem(content);
-								}
-
 								// Force layout to change to get it working
 								this.Margin = new BorderDouble(20);
 								this.Margin = oldMargin;
@@ -105,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		}
 
 
-		private void AddContentItem(FeedSectionData content)
+		private static void AddContentItem(List<GuiWidget> container, ref GuiWidget currentContentContainer, ThemeConfig theme, FeedSectionData content)
 		{
 			switch (content.content_type)
 			{
@@ -147,14 +152,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							};
 						}
 
-						this.AddChild(imageWidget);
+						container.Add(imageWidget);
 					}
 					break;
 
 				case "banner_rotate":
 					// TODO: make this make a carousel rather than add the first item and rotate between all the items
 					var rand = new Random();
-					AddContentItem(content.banner_list[rand.Next(content.banner_list.Count)]);
+					AddContentItem(container, ref currentContentContainer, theme, content.banner_list[rand.Next(content.banner_list.Count)]);
 					break;
 
 				case "banner_image":
@@ -189,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							}
 
 							imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
-							this.AddChild(imageWidget);
+							container.Add(imageWidget);
 						}
 					}
 					break;
@@ -199,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					if(currentContentContainer == null)
 					{
 						currentContentContainer = new FlowLeftRightWithWrapping();
-						this.AddChild(currentContentContainer);
+						container.Add(currentContentContainer);
 					}
 					currentContentContainer.AddChild(new ExploreSection(content, theme));
 					break;
