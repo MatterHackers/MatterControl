@@ -45,15 +45,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public override int Count { get; set; } = 3;
+		public override IntOrExpression Count { get; set; } = 3;
 
 		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
 
-		public double Rotate { get; set; } = -15;
+		public DoubleOrExpression Rotate { get; set; } = -15;
 
 		public bool RotatePart { get; set; } = true;
 
-		public double Scale { get; set; } = .9;
+		public DoubleOrExpression Scale { get; set; } = .9;
 
 		public bool ScaleOffset { get; set; } = true;
 
@@ -76,12 +76,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						var lastChild = sourceContainer.Children.First();
 						list.Add(lastChild.Clone());
 						var offset = Offset;
-						for (int i = 1; i < Count; i++)
+						var count = Count.Value(this);
+						var rotate = Rotate.Value(this);
+						var scale = Scale.Value(this);
+						for (int i = 1; i < count; i++)
 						{
-							var rotateRadians = MathHelper.DegreesToRadians(Rotate);
+							var rotateRadians = MathHelper.DegreesToRadians(rotate);
 							if (ScaleOffset)
 							{
-								offset *= Scale;
+								offset *= scale;
 							}
 
 							var next = lastChild.Clone();
@@ -93,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 								next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
 							}
 
-							next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
+							next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(scale));
 							list.Add(next);
 							lastChild = next;
 						}

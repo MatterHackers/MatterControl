@@ -54,13 +54,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public override int Count { get; set; } = 3;
+		public override IntOrExpression Count { get; set; } = 3;
 
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;
 
 		// make this public when within angle works
-		private double Angle { get; set; } = 360;
+		private DoubleOrExpression Angle { get; set; } = 360;
 
 		// make this public when it works
 		[DisplayName("Keep Within Angle")]
@@ -109,12 +109,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						var sourceItem = sourceContainer.Children.First();
 
 						var offset = Vector3.Zero;
-						for (int i = 0; i < Math.Max(Count, 1); i++)
+						var count = Count.Value(this);
+						var angle = Angle.Value(this);
+						for (int i = 0; i < Math.Max(count, 1); i++)
 						{
 							var next = sourceItem.Clone();
 
 							var normal = Axis.Normal.GetNormal();
-							var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
+							var angleRadians = MathHelper.DegreesToRadians(angle) / count * i;
 							next.Rotate(Axis.Origin, normal, angleRadians);
 
 							if (!RotatePart)

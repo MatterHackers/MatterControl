@@ -38,9 +38,10 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class ZipMemoryItem : FileSystemItem, ILibraryAssetStream
 	{
-		public ZipMemoryItem(string filePath, string relativePath, long fileSize)
+		public ZipMemoryItem(ZipMemoryContainer containingZip, string filePath, string relativePath, long fileSize)
 			: base(filePath)
 		{
+			this.ContainingZip = containingZip;
 			this.RelativePath = relativePath;
 			this.Name = System.IO.Path.GetFileName(relativePath);
 			this.FileSize = fileSize;
@@ -59,6 +60,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public override string ID => agg_basics.GetLongHashCode($"{this.Path}/{this.RelativePath}").ToString();
 
+		public ZipMemoryContainer ContainingZip { get; }
 		public string RelativePath { get; set; }
 
 		public async Task<StreamAndLength> GetStream(Action<double, string> reportProgress)

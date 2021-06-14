@@ -50,9 +50,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Automation runner must do as much as program.cs to spin up platform
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			MatterControl.AppContext.Platform.InitPluginFinder();
-			MatterControl.AppContext.Platform.ProcessCommandline();
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
 		}
 
 		[Test]
@@ -81,9 +81,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Automation runner must do as much as program.cs to spin up platform
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			MatterControl.AppContext.Platform.InitPluginFinder();
-			MatterControl.AppContext.Platform.ProcessCommandline();
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
 		}
 
 		[Test]

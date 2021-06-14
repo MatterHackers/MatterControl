@@ -40,6 +40,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public abstract class ArrayObject3D : OperationSourceContainerObject3D
 	{
-		public abstract int Count { get; set; }
+		public abstract IntOrExpression Count { get; set; }
 	}
 }

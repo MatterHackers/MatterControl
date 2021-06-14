@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.Library
 				CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}{pathSeparator}{d}"
 			}));
 
-			this.Items = new SafeList<ILibraryItem>(items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)));
+			this.Items = new SafeList<ILibraryItem>(items.Select(kvp => new ZipMemoryItem(this, this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)));
 		}
 	}
 }
