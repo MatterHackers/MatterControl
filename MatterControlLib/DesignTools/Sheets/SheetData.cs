@@ -31,12 +31,16 @@ using System.Collections.Generic;
 using org.mariuszgromada.math.mxparser;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class SheetData
 	{
 		private object locker = new object();
+
+		public event EventHandler Recalculated;
+
 		public SheetData()
 		{
 		}
@@ -274,6 +278,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				tabelCalculated = true;
 			}
+
+			Recalculated?.Invoke(this, null);
 		}
 
 		private void AddConstants(Expression evaluator)

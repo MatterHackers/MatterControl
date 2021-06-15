@@ -438,6 +438,8 @@ namespace MatterControl.Tests.MatterControl
 						.ClickByName("Paste Menu Item");
 					Assert.AreEqual(pastText, textWidget.Text, "Pasted everything");
 
+					// make sure we lose selection if we click off the menu
+
 					// cut works
 					testRunner.RightClickByName(GetSliceSettingsField(setting))
 						.ClickByName("Select All Menu Item")

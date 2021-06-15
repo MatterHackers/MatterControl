@@ -49,52 +49,57 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public override int Count { get; set; } = 3;
+		public override IntOrExpression Count { get; set; } = 3;
 
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 
-		public double Distance { get; set; } = 30;
+		public DoubleOrExpression Distance { get; set; } = 30;
 
 		public override async Task Rebuild()
 		{
 			var rebuildLock = this.RebuildLock();
 			SourceContainer.Visible = true;
 
-			await ApplicationController.Instance.Tasks.Execute(
-				"Linear Array".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					this.DebugDepth("Rebuild");
+			using (new CenterAndHeightMaintainer(this, CenterAndHeightMaintainer.MaintainFlags.Height))
+			{
+				await ApplicationController.Instance.Tasks.Execute(
+					"Linear Array".Localize(),
+					null,
+					(reporter, cancellationToken) =>
+					{
+						this.DebugDepth("Rebuild");
 
-					var newChildren = new List<IObject3D>();
+						var newChildren = new List<IObject3D>();
 
-					newChildren.Add(SourceContainer);
+						newChildren.Add(SourceContainer);
 
-					var arrayItem = SourceContainer.Children.First();
+						var arrayItem = SourceContainer.Children.First();
 
+						var distance = Distance.Value(this);
+						var count = Count.Value(this);
 					// add in all the array items
-					for (int i = 0; i < Math.Max(Count, 1); i++)
-					{
-						var next = arrayItem.Clone();
-						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-						newChildren.Add(next);
-					}
+					for (int i = 0; i < Math.Max(count, 1); i++)
+						{
+							var next = arrayItem.Clone();
+							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * distance * i);
+							newChildren.Add(next);
+						}
 
-					Children.Modify(list =>
-					{
-						list.Clear();
-						list.AddRange(newChildren);
-					});
+						Children.Modify(list =>
+						{
+							list.Clear();
+							list.AddRange(newChildren);
+						});
 
-					SourceContainer.Visible = false;
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLock.Dispose();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						SourceContainer.Visible = false;
+						UiThread.RunOnIdle(() =>
+						{
+							rebuildLock.Dispose();
+							Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						});
+						return Task.CompletedTask;
 					});
-					return Task.CompletedTask;
-				});
+			}
 		}
 	}
 }

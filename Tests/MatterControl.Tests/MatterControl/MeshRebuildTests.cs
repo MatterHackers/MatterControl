@@ -50,9 +50,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Automation runner must do as much as program.cs to spin up platform
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			MatterControl.AppContext.Platform.InitPluginFinder();
-			MatterControl.AppContext.Platform.ProcessCommandline();
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
 		}
 
 		[Test]
@@ -81,9 +81,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Automation runner must do as much as program.cs to spin up platform
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			MatterControl.AppContext.Platform.InitPluginFinder();
-			MatterControl.AppContext.Platform.ProcessCommandline();
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
 		}
 
 		[Test]
@@ -112,6 +112,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(33, cube1.Width.Value(cube1), "Should now be the value ad A1");
 			// Change the sheet value
 			sheet.SheetData[0, 0].Expression = "=43";
+			sheet.SheetData.Recalculate();
 			// and rebuild the references
 			sheet.Invalidate(InvalidateType.SheetUpdated);
 			Assert.AreEqual(43, cube1.Width.Value(cube1));

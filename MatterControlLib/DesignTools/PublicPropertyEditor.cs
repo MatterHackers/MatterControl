@@ -599,7 +599,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					Margin = new BorderDouble(0, 3)
 				});
 			}
-#if !__ANDROID__
 			else if (propertyValue is List<string> stringList)
 			{
 				var field = new SurfacedEditorsField(theme, property.Item);
@@ -614,7 +613,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer.Descendants<HorizontalSpacer>().FirstOrDefault()?.Close();
 			}
-#endif
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{

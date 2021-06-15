@@ -1,11 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 
@@ -14,6 +16,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrimitiveAndSheetsTests
 	{
+		[Test]
+		public void SheetEditorLayoutAndNavigation()
+		{
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var systemWindow = new SystemWindow(800, 600)
+			{
+				Name = "Main Window",
+			};
+
+			Application.AddTextWidgetRightClickMenu();
+
+			AutomationRunner.TimeToMoveMouse = .1;
+
+			var sheetData = new SheetData(5, 5);
+			var undoBuffer = new UndoBuffer();
+			var theme = ApplicationController.Instance.Theme;
+			var sheetEditor = new SheetEditorWidget(sheetData, undoBuffer, theme);
+
+			systemWindow.AddChild(sheetEditor);
+
+			AutomationRunner.ShowWindowAndExecuteTests(systemWindow, testRunner =>
+			{
+				testRunner.Delay(100);
+
+				return Task.CompletedTask;
+			},
+			2000);
+		}
+
 		[Test]
 		public async Task DimensionsWorkWhenNoSheet()
 		{

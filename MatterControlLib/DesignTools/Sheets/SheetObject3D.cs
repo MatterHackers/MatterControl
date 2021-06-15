@@ -51,7 +51,25 @@ namespace MatterHackers.MatterControl.DesignTools
 	[MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
 	public class SheetObject3D : Object3D, IObject3DControlsProvider
 	{
-		public SheetData SheetData { get; set; }
+		private SheetData _sheetData;
+		public SheetData SheetData
+		{
+			get => _sheetData;
+
+			set
+			{
+				if (_sheetData != value)
+				{
+					if (_sheetData != null)
+					{
+						_sheetData.Recalculated -= SendInvalidateToAll;
+					}
+
+					_sheetData = value;
+					_sheetData.Recalculated += SendInvalidateToAll;
+				}
+			}
+		}
 
 		public static async Task<SheetObject3D> Create()
 		{
@@ -111,31 +129,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool Persistable => false;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated) && invalidateType.Source == this)
-			{
-				using (RebuildLock())
-				{
-					// update the table info
-					SheetData.Recalculate();
-					// send a message to all our siblings and their children
-					SendInvalidateToAll();
-				}
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
 		internal class UpdateItem
 		{
 			internal int depth;
 			internal IObject3D item;
 			internal RebuildLock rebuildLock;
 		}
-		private void SendInvalidateToAll()
+		private void SendInvalidateToAll(object s, EventArgs e)
 		{
 			var updateItems = new List<UpdateItem>();
 			foreach (var sibling in this.Parent.Children)
