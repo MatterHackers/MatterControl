@@ -112,6 +112,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(33, cube1.Width.Value(cube1), "Should now be the value ad A1");
 			// Change the sheet value
 			sheet.SheetData[0, 0].Expression = "=43";
+			sheet.SheetData.Recalculate();
 			// and rebuild the references
 			sheet.Invalidate(InvalidateType.SheetUpdated);
 			Assert.AreEqual(43, cube1.Width.Value(cube1));

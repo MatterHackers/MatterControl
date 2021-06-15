@@ -312,10 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Selector example:            '$.Children<CylinderObject3D>'
 					var match = pathResolver.Select(componentObject, selector).ToList();
 
-					//// TODO: Create editor row for each property
-					//// - Use the type of the property to find a matching editor (ideally all datatype -> editor functionality would resolve consistently)
 					//// - Add editor row for each
-
 					foreach (var instance in match)
 					{
 						if (instance is IObject3D object3D)
