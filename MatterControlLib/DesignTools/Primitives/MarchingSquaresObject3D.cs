@@ -28,19 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading.Tasks;
+using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D, IObject3DControlsProvider
+	public class MarchingSquaresObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
-		public CubeObject3D()
+		public MarchingSquaresObject3D()
 		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
+			Name = "MarchingSquares".Localize();
+			Color = Agg.Color.Cyan;
 		}
 
 		public override string ThumbnailName => "Cube";
@@ -57,22 +57,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
-		public static async Task<CubeObject3D> Create()
+		public static async Task<MarchingSquaresObject3D> Create()
 		{
-			var item = new CubeObject3D();
-			await item.Rebuild();
-			return item;
-		}
-
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
-		{
-			var item = new CubeObject3D()
-			{
-				Width = x,
-				Depth = y,
-				Height = z,
-			};
-
+			var item = new MarchingSquaresObject3D();
 			await item.Rebuild();
 			return item;
 		}
@@ -107,7 +94,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					Mesh = PlatonicSolids.CreateCube(Width.Value(this), Depth.Value(this), Height.Value(this));
+					var c = new MarchingCubes();
+					c.Generate();
+					MeshNormals.QuickCompute(c.Mesh); // generate normals
+					Mesh = c.Mesh.ToMesh();
 				}
 			}
 
