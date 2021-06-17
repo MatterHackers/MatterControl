@@ -121,9 +121,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						// remove the paint from the original
 						var subtract = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							paint.obj3D.Mesh, paint.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+							paint.obj3D.Mesh, paint.matrix, CsgModes.Subtract, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 						var intersect = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							paint.obj3D.Mesh, paint.matrix, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+							paint.obj3D.Mesh, paint.matrix, CsgModes.Intersect, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 						var inverseKeep = keep.matrix.Inverted;
 						subtract.Transform(inverseKeep);

@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
 							first.Mesh, first.WorldMatrix(),
-							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+							CsgModes.Intersect, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 						var inverse = first.WorldMatrix();
 						inverse.Invert();

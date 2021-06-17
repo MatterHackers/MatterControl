@@ -103,48 +103,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
-			var first = participants.First();
-			var resultsMesh = first.Mesh;
-			var firstWorldMatrix = first.WorldMatrix(SourceContainer);
-
-			var totalOperations = participants.Count() - 1;
-			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
-
-			var progressStatus = new ProgressStatus();
-			foreach (var item in participants)
-			{
-				if (item != first)
-				{
-					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
-					resultsMesh = BooleanProcessing.Do(item.Mesh,
-						itemWorldMatrix,
-						// other mesh
-						resultsMesh,
-						firstWorldMatrix,
-						// operation
-						0,
-						// reporting
-						reporter,
-						amountPerOperation,
-						percentCompleted,
-						progressStatus,
-						cancellationToken);
-
-					// after the first union we are working with the transformed mesh and don't need the first transform
-					firstWorldMatrix = Matrix4X4.Identity;
-
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
-					reporter?.Report(progressStatus);
-				}
-			}
+			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
+			var resultsMesh = BooleanProcessing.DoArray(items,
+				CsgModes.Union,
+				reporter,
+				cancellationToken);
 
 			var resultsItem = new Object3D()
 			{
 				Mesh = resultsMesh
 			};
-			resultsItem.CopyProperties(first, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+			resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
 			this.Children.Add(resultsItem);
 			SourceContainer.Visible = false;
 		}

@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							paint.Mesh,
 							paint.WorldMatrix(SourceContainer),
 							// operation type
-							2,
+							CsgModes.Intersect,
 							// reporting data
 							reporter,
 							amountPerOperation,
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							paint.Mesh,
 							paint.WorldMatrix(SourceContainer),
 							// operation type
-							1,
+							CsgModes.Subtract,
 							// reporting data
 							reporter,
 							amountPerOperation,

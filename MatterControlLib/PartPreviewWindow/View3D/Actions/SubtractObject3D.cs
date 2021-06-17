@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
 						var result = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							remove.obj3D.Mesh, remove.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+							remove.obj3D.Mesh, remove.matrix, CsgModes.Subtract, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 						var inverse = keep.matrix.Inverted;
 						result.Transform(inverse);
 

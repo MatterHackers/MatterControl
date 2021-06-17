@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
 					resultsMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
 						resultsMesh, firstWorldMatrix,
-						2,
+						CsgModes.Intersect,
 						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 					// after the first union we are working with the transformed mesh and don't need the first transform
 					firstWorldMatrix = Matrix4X4.Identity;

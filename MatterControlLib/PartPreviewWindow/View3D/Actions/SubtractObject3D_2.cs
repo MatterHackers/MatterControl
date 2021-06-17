@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							remove.Mesh,
 							remove.WorldMatrix(SourceContainer),
 							// operation type
-							1,
+							CsgModes.Subtract,
 							// reporting
 							reporter,
 							amountPerOperation,

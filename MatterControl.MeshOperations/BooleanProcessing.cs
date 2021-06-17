@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MatterHackers.Agg;
@@ -37,6 +38,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	public enum CsgModes
+	{
+		Union,
+		Subtract,
+		Intersect
+	}
+
 	public static class BooleanProcessing
 	{
 		private const string BooleanAssembly = "609_Boolean_bin.dll";
@@ -50,13 +58,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DoBooleanOperation(double[] va, int vaCount, int[] fa, int faCount, double[] vb, int vbCount, int[] fb, int fbCount, int operation, out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
 
+		public static Mesh DoArray(System.Collections.Generic.IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
+			CsgModes operation,
+			IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken)
+		{
+			var progressStatus = new ProgressStatus();
+			var totalOperations = items.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			var first = items.First();
+			var resultsMesh = first.mesh;
+			var firstWorldMatrix = first.matrix;
+
+			foreach (var item in items)
+			{
+				if (item != first)
+				{
+					var itemWorldMatrix = item.matrix;
+					resultsMesh = BooleanProcessing.Do(item.mesh,
+						itemWorldMatrix,
+						// other mesh
+						resultsMesh,
+						firstWorldMatrix,
+						// operation
+						operation,
+						// reporting
+						reporter,
+						amountPerOperation,
+						percentCompleted,
+						progressStatus,
+						cancellationToken);
+
+					// after the first union we are working with the transformed mesh and don't need the first transform
+					firstWorldMatrix = Matrix4X4.Identity;
+
+					percentCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = percentCompleted;
+					reporter?.Report(progressStatus);
+				}
+			}
+
+			return resultsMesh;
+		}
+
 		public static Mesh Do(Mesh inMeshA,
 			Matrix4X4 matrixA,
 			// mesh B
 			Mesh inMeshB,
 			Matrix4X4 matrixB,
 			// operation
-			int operation,
+			CsgModes operation,
 			// reporting
 			IProgress<ProgressStatus> reporter,
 			double amountPerOperation,
@@ -91,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						fb,
 						fb.Length,
 						// operation
-						operation,
+						(int)operation,
 						// results
 						out pVc,
 						out int vcCount,
@@ -143,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			switch (operation)
 			{
-				case 0:
+				case CsgModes.Union:
 					return PolygonMesh.Csg.CsgOperations.Union(meshA,
 						meshB,
 						(status, progress0To1) =>
@@ -157,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						},
 						cancellationToken);
 
-				case 1:
+				case CsgModes.Subtract:
 					return PolygonMesh.Csg.CsgOperations.Subtract(meshA,
 						meshB,
 						(status, progress0To1) =>
@@ -171,7 +224,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						},
 						cancellationToken);
 
-				case 2:
+				case CsgModes.Intersect:
 					return PolygonMesh.Csg.CsgOperations.Intersect(meshA,
 						meshB,
 						(status, progress0To1) =>
