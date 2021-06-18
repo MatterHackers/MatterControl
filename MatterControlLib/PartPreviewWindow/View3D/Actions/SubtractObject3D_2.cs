@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
@@ -51,6 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Subtract";
 		}
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
 
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
@@ -209,7 +213,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							remove.Mesh,
 							remove.WorldMatrix(SourceContainer),
 							// operation type
-							CsgModes.Subtract,
+							BooleanProcessing.CsgModes.Subtract,
+							Processing,
 							// reporting
 							reporter,
 							amountPerOperation,

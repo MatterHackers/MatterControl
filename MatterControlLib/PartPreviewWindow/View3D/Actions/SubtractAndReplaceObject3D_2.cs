@@ -53,6 +53,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract and Replace";
 		}
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
+
 		[HideFromEditor]
 		public SelectedChildren ComputedChildren { get; set; } = new SelectedChildren();
 
@@ -267,7 +270,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							paint.Mesh,
 							paint.WorldMatrix(SourceContainer),
 							// operation type
-							CsgModes.Intersect,
+							BooleanProcessing.CsgModes.Intersect,
+							Processing,
 							// reporting data
 							reporter,
 							amountPerOperation,
@@ -281,7 +285,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							paint.Mesh,
 							paint.WorldMatrix(SourceContainer),
 							// operation type
-							CsgModes.Subtract,
+							BooleanProcessing.CsgModes.Subtract,
+							Processing,
 							// reporting data
 							reporter,
 							amountPerOperation,

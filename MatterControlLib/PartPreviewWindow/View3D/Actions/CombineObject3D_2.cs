@@ -35,7 +35,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -45,6 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Combine";
 		}
+
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
 
 		public override Task Rebuild()
 		{
@@ -104,7 +110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 			var resultsMesh = BooleanProcessing.DoArray(items,
-				CsgModes.Union,
+				BooleanProcessing.CsgModes.Union,
+				Processing,
 				reporter,
 				cancellationToken);
 
