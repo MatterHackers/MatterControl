@@ -32,7 +32,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using g3;
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -117,6 +119,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			ProgressStatus progressStatus,
 			CancellationToken cancellationToken)
 		{
+			// process using marching cubes
+			{
+				var meshA2 = inMeshA.Copy(CancellationToken.None);
+				meshA2.Transform(matrixA);
+
+				var meshB2 = inMeshB.Copy(CancellationToken.None);
+				meshB2.Transform(matrixB);
+
+				// Convert to DMesh3
+				var meshA3 = meshA2.ToDMesh3();
+				var meshB3 = meshB2.ToDMesh3();
+
+				var xxx = new MeshBoolean();
+				xxx.Target = meshA3;
+				xxx.Tool = meshB3;
+
+				return xxx.Result.ToMesh();
+			}
+
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
 			if (externalAssemblyExists
 				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
