@@ -131,7 +131,7 @@ namespace MatterHackers.PolygonMesh
 						break;
 				}
 				var marchingCells = resolution;
-				var implicitCells = resolution;
+				var implicitCells = resolution * 4;
 
 				var implicitMeshs = new List<BoundedImplicitFunction3d>();
 				foreach (var item in items)
@@ -384,12 +384,33 @@ namespace MatterHackers.PolygonMesh
 			return null;
 		}
 
+		class MWNImplicit : BoundedImplicitFunction3d
+		{
+			public DMeshAABBTree3 MeshAABBTree3;
+			public AxisAlignedBox3d Bounds() { return MeshAABBTree3.Bounds; }
+			public double Value(ref Vector3d pt)
+			{
+				return -(MeshAABBTree3.FastWindingNumber(pt) - 0.5);
+			}
+		}
+
 		public static BoundedImplicitFunction3d GetImplicitFromMesh(Mesh mesh, Matrix4X4 matrix, int numCells)
 		{
 			var meshCopy = mesh.Copy(CancellationToken.None);
 			meshCopy.Transform(matrix);
 
 			var meshA3 = meshCopy.ToDMesh3();
+
+			// Interesting experiment, this produces an extreamely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
+#if false
+			DMeshAABBTree3 meshAABBTree3 = new DMeshAABBTree3(meshA3, true);
+			meshAABBTree3.FastWindingNumber(Vector3d.Zero);   // build approximation
+			return new MWNImplicit()
+			{
+				MeshAABBTree3 = meshAABBTree3
+			};
+#endif
+
 			double meshCellsize = meshA3.CachedBounds.MaxDim / numCells;
 			var signedDistance = new MeshSignedDistanceGrid(meshA3, meshCellsize);
 			signedDistance.Compute();
