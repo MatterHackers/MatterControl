@@ -27,41 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(StringOrExpression))]
-	public class StringOrExpression : IDirectOrExpression
+	public interface IDirectOrExpression
 	{
-		/// <summary>
-		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
-		/// </summary>
-		public bool IsEquation { get => Expression.Length > 0 && Expression[0] == '='; }
+		string Expression { get; set; }
 
-		public string Expression { get; set; }
-
-		public override string ToString() => Expression;
-
-		public string Value(IObject3D owner)
-		{
-			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
-		}
-
-		public string ValueString(IObject3D owner)
-		{
-			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
-		}
-
-		public StringOrExpression(string expression)
-		{
-			Expression = expression;
-		}
-
-		public static implicit operator StringOrExpression(string expression)
-		{
-			return new StringOrExpression(expression);
-		}
+		string ValueString(IObject3D owner);
 	}
 }

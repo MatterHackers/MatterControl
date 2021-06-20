@@ -34,8 +34,9 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+
 	[TypeConverter(typeof(DoubleOrExpression))]
-	public class DoubleOrExpression
+	public class DoubleOrExpression : IDirectOrExpression
 	{
 		/// <summary>
 		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
@@ -49,6 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Value(IObject3D owner)
 		{
 			return SheetObject3D.EvaluateExpression<double>(owner, Expression);
+		}
+
+		public string ValueString(IObject3D owner)
+		{
+			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
 		}
 
 		public DoubleOrExpression(double value)
@@ -90,6 +96,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			return value;
+		}
+
+		public double DefaultAndClampIfNotCalculated(IObject3D item,
+			double min,
+			double max,
+			string keyName,
+			double defaultValue,
+			ref bool changed)
+		{
+			var currentValue = this.Value(item);
+			if (!this.IsEquation)
+			{
+				double databaseValue = UserSettings.Instance.Fields.GetDouble(keyName, defaultValue);
+
+				if (currentValue == 0)
+				{
+					currentValue = databaseValue;
+					changed = true;
+				}
+
+				currentValue = agg_basics.Clamp(currentValue, min, max, ref changed);
+
+				if (currentValue != databaseValue)
+				{
+					UserSettings.Instance.Fields.SetDouble(keyName, currentValue);
+				}
+			}
+
+			return currentValue;
 		}
 	}
 }

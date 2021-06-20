@@ -308,39 +308,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
 				foreach (var selector in componentObject.SurfacedEditors)
 				{
-					// Get the named property via reflection
-					// Selector example:            '$.Children<CylinderObject3D>'
-					var match = pathResolver.Select(componentObject, selector).ToList();
-
-					//// - Add editor row for each
-					foreach (var instance in match)
+					// if it is a reference to a sheet cell
+					if (selector.StartsWith("!"))
 					{
-						if (instance is IObject3D object3D)
+						var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
+						if (firtSheet != null)
 						{
-							if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+							var cellId = selector.Substring(1);
+							var cell = firtSheet.SheetData[cellId];
+							if (cell != null)
 							{
-								ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
+								// add an editor for the cell
+								var field = new DoubleField(theme);
+								field.Initialize(0);
+								double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId), out double value);
+								field.DoubleValue = value;
+								field.ClearUndoHistory();
+
+								field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = 3;
+								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, cell.Name, field.Content, theme);
+
+								editorPanel.AddChild(row);
 							}
 						}
-						else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
+					}
+					else // parse it as a path to an object
+					{
+						// Get the named property via reflection
+						// Selector example:            '$.Children<CylinderObject3D>'
+						var match = pathResolver.Select(componentObject, selector).ToList();
+
+						//// - Add editor row for each
+						foreach (var instance in match)
 						{
-							var context = new PPEContext();
-
-							if (reflectionTarget.Source is IObject3D editedChild)
+							if (instance is IObject3D object3D)
 							{
-								context.item = editedChild;
+								if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+								{
+									ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
+								}
 							}
-							else
+							else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
 							{
-								context.item = item;
-							}
+								var context = new PPEContext();
 
-							var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
+								if (reflectionTarget.Source is IObject3D editedChild)
+								{
+									context.item = editedChild;
+								}
+								else
+								{
+									context.item = item;
+								}
 
-							var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
-							if (editor != null)
-							{
-								editorPanel.AddChild(editor);
+								var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
+
+								var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
+								if (editor != null)
+								{
+									editorPanel.AddChild(editor);
+								}
 							}
 						}
 					}

@@ -34,7 +34,7 @@ using MatterHackers.DataConverters3D;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[TypeConverter(typeof(IntOrExpression))]
-	public class IntOrExpression
+	public class IntOrExpression : IDirectOrExpression
 	{
 		public string Expression { get; set; }
 
@@ -46,6 +46,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int Value(IObject3D owner)
 		{
 			return SheetObject3D.EvaluateExpression<int>(owner, Expression);
+		}
+
+		public string ValueString(IObject3D owner)
+		{
+			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
 		}
 
 		public IntOrExpression(int value)
