@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							updateItems[i].rebuildLock.Dispose();
 							updateItems[i].rebuildLock = null;
-							updateItems[i].item.Invalidate(new InvalidateArgs(updateItems[i].item, InvalidateType.SheetUpdated));
+							updateItems[i].item.Invalidate(new InvalidateArgs(this, InvalidateType.SheetUpdated));
 						}
 					}
 				}
