@@ -326,7 +326,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								field.ClearUndoHistory();
 
 								field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = 3;
-								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, cell.Name, field.Content, theme);
+								field.ValueChanged += (s, e) =>
+								{
+									cell.Expression = field.Value;
+									firtSheet.SheetData.Recalculate();
+								};
+
+								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);
 
 								editorPanel.AddChild(row);
 							}

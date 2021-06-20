@@ -320,17 +320,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Check if the sheet is the first sheet parent of this item (if not it will not change it's data).
 				if (Find(itemToCheck) == sheet)
 				{
-					// Find all the OrReference properties on this item and check if any start with an '='.
-					foreach (var property in PublicPropertyEditor.GetEditablePropreties(itemToCheck))
+					foreach (var item in itemToCheck.DescendantsAndSelf())
 					{
-						var propertyValue = property.Value;
-
-						if (propertyValue is IDirectOrExpression directOrExpression)
+						// Find all the OrReference properties on this item and check if any start with an '='.
+						foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
 						{
-							if (directOrExpression.Expression.StartsWith("="))
+							var propertyValue = property.Value;
+
+							if (propertyValue is IDirectOrExpression directOrExpression)
 							{
-								// WIP: check if the value has actually changed, this will update every object on any cell change
-								return true;
+								if (directOrExpression.Expression.StartsWith("="))
+								{
+									// WIP: check if the value has actually changed, this will update every object on any cell change
+									return true;
+								}
 							}
 						}
 					}
