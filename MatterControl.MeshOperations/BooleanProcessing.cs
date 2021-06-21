@@ -82,37 +82,40 @@ namespace MatterHackers.PolygonMesh
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
-				var first = items.First();
-				var resultsMesh = first.mesh;
-				var firstWorldMatrix = first.matrix;
+				var first = true;
+				var resultsMesh = items.First().mesh;
+				var firstWorldMatrix = items.First().matrix;
 
 				foreach (var item in items)
 				{
-					if (item != first)
+					if (first)
 					{
-						var itemWorldMatrix = item.matrix;
-						resultsMesh = Do(item.mesh,
-							itemWorldMatrix,
-							// other mesh
-							resultsMesh,
-							firstWorldMatrix,
-							// operation
-							operation,
-							processingMode,
-							// reporting
-							reporter,
-							amountPerOperation,
-							percentCompleted,
-							progressStatus,
-							cancellationToken);
-
-						// after the first union we are working with the transformed mesh and don't need the first transform
-						firstWorldMatrix = Matrix4X4.Identity;
-
-						percentCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = percentCompleted;
-						reporter?.Report(progressStatus);
+						first = false;
+						continue;
 					}
+
+					var itemWorldMatrix = item.matrix;
+					resultsMesh = Do(item.mesh,
+						itemWorldMatrix,
+						// other mesh
+						resultsMesh,
+						firstWorldMatrix,
+						// operation
+						operation,
+						processingMode,
+						// reporting
+						reporter,
+						amountPerOperation,
+						percentCompleted,
+						progressStatus,
+						cancellationToken);
+
+					// after the first union we are working with the transformed mesh and don't need the first transform
+					firstWorldMatrix = Matrix4X4.Identity;
+
+					percentCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = percentCompleted;
+					reporter?.Report(progressStatus);
 				}
 
 				return resultsMesh;
