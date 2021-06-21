@@ -74,16 +74,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		public IntOrExpression LongitudeSides { get; set; } = 40;
 		public IntOrExpression LatitudeSides { get; set; } = 10;
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

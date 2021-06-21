@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
@@ -51,6 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Subtract";
 		}
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
 
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
@@ -95,24 +99,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 
@@ -209,7 +216,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							remove.Mesh,
 							remove.WorldMatrix(SourceContainer),
 							// operation type
-							1,
+							BooleanProcessing.CsgModes.Subtract,
+							Processing,
 							// reporting
 							reporter,
 							amountPerOperation,

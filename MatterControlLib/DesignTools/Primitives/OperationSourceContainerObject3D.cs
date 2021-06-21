@@ -177,29 +177,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Invalidate(InvalidateType.Children);
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			// TODO: color and output type could have special consideration that would not require a rebuild
 			// They could just propagate the color and output type to the correctly child and everything would be good
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Color)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.OutputType))
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Color)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.OutputType))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

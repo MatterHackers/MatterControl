@@ -61,24 +61,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

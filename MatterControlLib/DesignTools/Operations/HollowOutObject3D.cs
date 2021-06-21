@@ -27,14 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using g3;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 
@@ -50,6 +48,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
 		public double Distance { get; set; } = 2;
+
+		public int NumCells { get; set; } = 64;
 
 		private static DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
 		{
@@ -71,14 +71,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return c.Mesh;
 		}
 
-		public static Mesh HollowOut(Mesh inMesh, double distance)
+		public static Mesh HollowOut(Mesh inMesh, double distance, int numCells)
 		{
 			// Convert to DMesh3
 			var mesh = inMesh.ToDMesh3();
 
 			// Create instance of BoundedImplicitFunction3d interface
-			int numcells = 64;
-			double meshCellsize = mesh.CachedBounds.MaxDim / numcells;
+			double meshCellsize = mesh.CachedBounds.MaxDim / numCells;
 
 			var levelSet = new MeshSignedDistanceGrid(mesh, meshCellsize)
 			{
@@ -96,11 +95,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					A = implicitMesh,
 					Offset = -distance
 				},
-				128);
+				numCells);
 
 			// make sure it is a reasonable number of polygons
-			var reducer = new Reducer(insetMesh);
-			reducer.ReduceToTriangleCount(Math.Max(inMesh.Faces.Count / 2, insetMesh.TriangleCount / 10));
+			// var reducer = new Reducer(insetMesh);
+			// reducer.ReduceToTriangleCount(Math.Max(inMesh.Faces.Count / 2, insetMesh.TriangleCount / 10));
 
 			// Convert to PolygonMesh and reverse faces
 			var interior = insetMesh.ToMesh();
@@ -132,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var newMesh = new Object3D()
 						{
-							Mesh = HollowOut(sourceItem.Mesh, this.Distance)
+							Mesh = HollowOut(sourceItem.Mesh, this.Distance, this.NumCells)
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);

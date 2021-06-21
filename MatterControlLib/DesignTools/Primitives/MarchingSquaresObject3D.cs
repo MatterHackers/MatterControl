@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,37 +27,27 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
+using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
+	public class MarchingSquaresObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
-		public WedgeObject3D()
+		public MarchingSquaresObject3D()
 		{
-			Name = "Wedge".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Wedge"];
+			Name = "MarchingSquares".Localize();
+			Color = Agg.Color.Cyan;
 		}
 
-		public override string ThumbnailName => "Wedge";
-	
-		public static async Task<WedgeObject3D> Create()
-		{
-			var item = new WedgeObject3D();
+		public override string ThumbnailName => "Cube";
 
-			await item.Rebuild();
-			return item;
-		}
-
+		/// <summary>
+		/// This is the actual serialized with that can use expressions
+		/// </summary>
 		[MaxDecimalPlaces(2)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
@@ -67,9 +57,21 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
-		public bool Round { get; set; } = false;
+		public static async Task<MarchingSquaresObject3D> Create()
+		{
+			var item = new MarchingSquaresObject3D();
+			await item.Rebuild();
+			return item;
+		}
 
-		public IntOrExpression RoundSegments { get; set; } = 15;
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddHeightControl(this, Width, Depth, Height);
+			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, Height);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
+		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -90,61 +92,20 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool valuesChanged = false;
-
-			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 3, 360 / 4 - 2, ref valuesChanged);
-
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
 
 			using (RebuildLock())
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(Width.Value(this), 0);
-
-					if (Round)
-					{
-						var range = 360 / 4.0;
-						for (int i = 1; i < roundSegments - 1; i++)
-						{
-							var angle = range / (roundSegments - 1) * i;
-							var rad = MathHelper.DegreesToRadians(angle);
-							path.LineTo(Width.Value(this) - Math.Sin(rad) * Width.Value(this), Height.Value(this) - Math.Cos(rad) * Height.Value(this));
-						}
-					}
-
-					path.LineTo(0, Height.Value(this));
-
-					Mesh = VertexSourceToMesh.Extrude(path, Depth.Value(this));
-					Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+					var c = new MarchingCubes();
+					c.Generate();
+					MeshNormals.QuickCompute(c.Mesh); // generate normals
+					Mesh = c.Mesh.ToMesh();
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-
 			return Task.CompletedTask;
-		}
-
-		public void UpdateControls(PublicPropertyChange change)
-		{
-			if (change.Context.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
-			{
-				segmentsWidget.Visible = Round;
-			}
-		}
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddHeightControl(this, Width, Depth, Height);
-			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, Height);
-
-			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
-			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 	}
 }

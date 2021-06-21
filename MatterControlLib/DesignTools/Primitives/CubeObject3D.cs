@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -87,16 +86,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

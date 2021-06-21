@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							foreach (var cell in row.Cells)
 							{
-								if (cell.Name == cellId)
+								if (cellId.Equals(cell.Name, StringComparison.OrdinalIgnoreCase))
 								{
 									return cell;
 								}
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							for (int i = 0; i < row.Cells.Count; i++)
 							{
-								if (row.Cells[i].Name == cellId)
+								if (cellId.Equals(row.Cells[i].Name, StringComparison.OrdinalIgnoreCase))
 								{
 									row.Cells[i] = value;
 								}
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					constants.Add(CellId(xyc.x, xyc.y).ToLower(), value);
-					if (!string.IsNullOrEmpty(xyc.cell.Name?.ToLower()))
+					if (!string.IsNullOrEmpty(xyc.cell.Name))
 					{
 						constants.Add(xyc.cell.Name.ToLower(), value);
 					}

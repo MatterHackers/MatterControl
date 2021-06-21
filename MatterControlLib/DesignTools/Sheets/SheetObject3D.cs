@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							updateItems[i].rebuildLock.Dispose();
 							updateItems[i].rebuildLock = null;
-							updateItems[i].item.Invalidate(new InvalidateArgs(updateItems[i].item, InvalidateType.SheetUpdated));
+							updateItems[i].item.Invalidate(new InvalidateArgs(this, InvalidateType.SheetUpdated));
 						}
 					}
 				}
@@ -264,25 +264,83 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// look through all the parents
-			foreach (var parent in owner.Parents())
+			var sheet = Find(owner);
+			if (sheet != null)
 			{
-				// then each child of any give parent
-				foreach (var sibling in parent.Children)
-				{
-					// if it is a sheet
-					if (sibling != owner
-						&& sibling is SheetObject3D sheet)
-					{
-						// try to manage the cell into the correct data type
-						string value = sheet.SheetData.EvaluateExpression(inputExpression);
-						return CastResult<T>(value, inputExpression);
-					}
-				}
+				// try to manage the cell into the correct data type
+				string value = sheet.SheetData.EvaluateExpression(inputExpression);
+				return CastResult<T>(value, inputExpression);
 			}
 
 			// could not find a sheet, try to evaluate the expression directly
 			var evaluator = new Expression(inputExpression.ToLower());
 			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
+		}
+
+		/// <summary>
+		/// Find the sheet that the given item will reference
+		/// </summary>
+		/// <param name="item">The item to start the search from</param>
+		/// <returns></returns>
+		public static SheetObject3D Find(IObject3D item)
+		{
+			// look through all the parents
+			foreach (var parent in item.Parents())
+			{
+				// then each child of any give parent
+				foreach (var sibling in parent.Children)
+				{
+					// if it is a sheet
+					if (sibling != item
+						&& sibling is SheetObject3D sheet)
+					{
+						return sheet;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Check if there are any references from the item to the sheet.
+		/// </summary>
+		/// <param name="itemToCheck">The item to validate editable properties on</param>
+		/// <param name="sheetToCheck">The sheet to check if this object references</param>
+		/// <returns></returns>
+		public static bool NeedsRebuild(IObject3D itemToCheck, InvalidateArgs invalidateArgs)
+		{
+			if (!invalidateArgs.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			{
+				return false;
+			}
+
+			if (invalidateArgs.Source is SheetObject3D sheet)
+			{
+				// Check if the sheet is the first sheet parent of this item (if not it will not change it's data).
+				if (Find(itemToCheck) == sheet)
+				{
+					foreach (var item in itemToCheck.DescendantsAndSelf())
+					{
+						// Find all the OrReference properties on this item and check if any start with an '='.
+						foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
+						{
+							var propertyValue = property.Value;
+
+							if (propertyValue is IDirectOrExpression directOrExpression)
+							{
+								if (directOrExpression.Expression.StartsWith("="))
+								{
+									// WIP: check if the value has actually changed, this will update every object on any cell change
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public static T CastResult<T>(string value, string inputExpression)

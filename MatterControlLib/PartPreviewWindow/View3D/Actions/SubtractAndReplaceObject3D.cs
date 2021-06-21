@@ -120,10 +120,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						transformedKeep.Transform(keep.matrix);
 
 						// remove the paint from the original
-						var subtract = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							paint.obj3D.Mesh, paint.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-						var intersect = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							paint.obj3D.Mesh, paint.matrix, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						var subtract = BooleanProcessing.Do(keep.obj3D.Mesh,
+							keep.matrix,
+							paint.obj3D.Mesh,
+							paint.matrix,
+							BooleanProcessing.CsgModes.Subtract,
+							BooleanProcessing.ProcessingModes.Exact,
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
+						
+						var intersect = BooleanProcessing.Do(keep.obj3D.Mesh,
+							keep.matrix,
+							paint.obj3D.Mesh,
+							paint.matrix,
+							BooleanProcessing.CsgModes.Intersect,
+							BooleanProcessing.ProcessingModes.Exact,
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
 
 						var inverseKeep = keep.matrix.Inverted;
 						subtract.Transform(inverseKeep);
@@ -139,8 +158,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						}
 						else // union into the current paint
 						{
-							paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
-								intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+							paintMesh = BooleanProcessing.Do(paintMesh,
+								Matrix4X4.Identity,
+								intersect,
+								Matrix4X4.Identity,
+								BooleanProcessing.CsgModes.Subtract,
+								BooleanProcessing.ProcessingModes.Exact,
+								reporter,
+								amountPerOperation,
+								percentCompleted,
+								progressStatus,
+								cancellationToken);
 						}
 
 						if (cancellationToken.IsCancellationRequested)

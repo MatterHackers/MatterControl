@@ -267,22 +267,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Image)
-				&& invalidateType.Source != this
+			if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Image)
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
 			{
-				UpdateHistogramDisplay();
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			{
 				await Rebuild();
 			}
 
-			base.OnInvalidate(invalidateType);
+			base.OnInvalidate(invalidateArgs);
 		}
 
 		private Color GetRGBA(byte[] buffer, int offset)
@@ -294,6 +296,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
+			UpdateHistogramDisplay();
 			bool propertyUpdated = false;
 			var minSeparation = .01;
 			var rangeStart = RangeStart.Value(this);

@@ -92,24 +92,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				Rebuild();
 			}
-			else if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateType.Source == this)
-				 || invalidateType.InvalidateType.HasFlag(InvalidateType.SheetUpdated))
+			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

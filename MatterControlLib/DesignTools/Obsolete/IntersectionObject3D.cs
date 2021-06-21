@@ -40,6 +40,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -117,9 +118,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					if (remove != first)
 					{
-						var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
-							first.Mesh, first.WorldMatrix(),
-							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						var result = BooleanProcessing.Do(remove.Mesh,
+							remove.WorldMatrix(),
+							first.Mesh,
+							first.WorldMatrix(),
+							BooleanProcessing.CsgModes.Intersect,
+							BooleanProcessing.ProcessingModes.Exact,
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
 
 						var inverse = first.WorldMatrix();
 						inverse.Invert();
