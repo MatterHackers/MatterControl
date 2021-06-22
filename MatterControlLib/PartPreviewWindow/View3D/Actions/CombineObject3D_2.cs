@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,6 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.IplicitSurfaceMesh MeshAnalysis { get; set; }
 
 		public override Task Rebuild()
 		{
@@ -111,6 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				BooleanProcessing.CsgModes.Union,
+				MeshAnalysis == BooleanProcessing.IplicitSurfaceMesh.Exact,
 				Processing,
 				reporter,
 				cancellationToken);
