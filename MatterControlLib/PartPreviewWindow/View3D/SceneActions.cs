@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 
 							// build the ungroup list
-							List<IObject3D> addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
+							var addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
 							{
 								Mesh = mesh,
 							}));
@@ -370,10 +370,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
+				var maxArea = 0.0;
 				// find the lowest point on the model
-				for (int testIndex = 0; testIndex < meshToCheck.Vertices.Count; testIndex++)
+				for (int testFace = 0; testFace < meshToCheck.Faces.Count; testFace++)
 				{
-					var vertex = meshToCheck.Vertices[testIndex];
+					var face = meshToCheck.Faces[testFace];
+					var vertex = meshToCheck.Vertices[face.v0];
 					var vertexPosition = vertex.Transform(itemToCheck.WorldMatrix());
 					if (firstVertex)
 					{
@@ -385,10 +387,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else if (vertexPosition.Z < lowestPosition.Z)
 					{
-						meshWithLowest = meshToCheck;
-						lowestPosition = vertexPosition;
-						sourceVertexPosition = vertex;
-						itemToLayFlat = itemToCheck;
+						if (Math.Abs(vertexPosition.Z - lowestPosition.Z) < .001)
+						{
+							// check if this face has a bigger area than the other face that is also this low
+							var faceArea = face.GetArea(meshToCheck);
+							if (faceArea > maxArea)
+							{
+								maxArea = faceArea;
+								meshWithLowest = meshToCheck;
+								lowestPosition = vertexPosition;
+								sourceVertexPosition = vertex;
+								itemToLayFlat = itemToCheck;
+							}
+						}
+						else
+						{
+							// reset the max area
+							maxArea = face.GetArea(meshToCheck);
+							meshWithLowest = meshToCheck;
+							lowestPosition = vertexPosition;
+							sourceVertexPosition = vertex;
+							itemToLayFlat = itemToCheck;
+						}
 					}
 				}
 			}
@@ -470,8 +490,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var planeNormal = xPositive.Cross(yPositive).GetNormal();
 
 				// this code takes the minimum rotation required and looks much better.
-				Quaternion rotation = new Quaternion(planeNormal, new Vector3Float(0, 0, -1));
-				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
+				var rotation = new Quaternion(planeNormal, new Vector3Float(0, 0, -1));
+				var partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it
 				objectToLayFlat.Matrix = objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
