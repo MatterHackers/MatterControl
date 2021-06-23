@@ -52,6 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.IplicitSurfaceMesh MeshAnalysis { get; set; }
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -111,6 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				BooleanProcessing.CsgModes.Intersect,
+				MeshAnalysis == BooleanProcessing.IplicitSurfaceMesh.Exact,
 				Processing,
 				reporter,
 				cancellationToken);

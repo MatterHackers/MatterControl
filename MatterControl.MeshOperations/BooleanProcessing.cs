@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -49,6 +50,14 @@ namespace MatterHackers.PolygonMesh
 			Subtract,
 			Intersect
 		}
+
+		public enum IplicitSurfaceMesh
+		{
+			[Description("Faster but less accurate")]
+			Grid,
+			[Description("Slower but more accurate")]
+			Exact
+		};
 
 		public enum ProcessingModes
 		{
@@ -71,6 +80,7 @@ namespace MatterHackers.PolygonMesh
 
 		public static Mesh DoArray(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
 			CsgModes operation,
+			bool exactSurface,
 			ProcessingModes processingMode,
 			IProgress<ProgressStatus> reporter,
 			CancellationToken cancellationToken)
@@ -134,7 +144,7 @@ namespace MatterHackers.PolygonMesh
 						break;
 				}
 				var marchingCells = resolution;
-				var implicitCells = resolution * 4;
+				var implicitCells = exactSurface ? 0 : resolution * 4;
 
 				var implicitMeshs = new List<BoundedImplicitFunction3d>();
 				foreach (var item in items)
@@ -404,20 +414,23 @@ namespace MatterHackers.PolygonMesh
 
 			var meshA3 = meshCopy.ToDMesh3();
 
-			// Interesting experiment, this produces an extreamely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
-#if false
-			DMeshAABBTree3 meshAABBTree3 = new DMeshAABBTree3(meshA3, true);
-			meshAABBTree3.FastWindingNumber(Vector3d.Zero);   // build approximation
-			return new MWNImplicit()
+			// Interesting experiment, this produces an extremely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
+			if (numCells == 0)
 			{
-				MeshAABBTree3 = meshAABBTree3
-			};
-#endif
-
-			double meshCellsize = meshA3.CachedBounds.MaxDim / numCells;
-			var signedDistance = new MeshSignedDistanceGrid(meshA3, meshCellsize);
-			signedDistance.Compute();
-			return new DenseGridTrilinearImplicit(signedDistance.Grid, signedDistance.GridOrigin, signedDistance.CellSize);
+				DMeshAABBTree3 meshAABBTree3 = new DMeshAABBTree3(meshA3, true);
+				meshAABBTree3.FastWindingNumber(Vector3d.Zero);   // build approximation
+				return new MWNImplicit()
+				{
+					MeshAABBTree3 = meshAABBTree3
+				};
+			}
+			else
+			{
+				double meshCellsize = meshA3.CachedBounds.MaxDim / numCells;
+				var signedDistance = new MeshSignedDistanceGrid(meshA3, meshCellsize);
+				signedDistance.Compute();
+				return new DenseGridTrilinearImplicit(signedDistance.Grid, signedDistance.GridOrigin, signedDistance.CellSize);
+			}
 		}
 	}
 }
