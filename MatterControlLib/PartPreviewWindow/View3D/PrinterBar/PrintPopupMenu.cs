@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Export;
 using MatterHackers.MatterControl.Plugins.X3GDriver;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -348,7 +349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer,
 						null,
 						CancellationToken.None,
-						true);
+						PrinterConnection.PrintingModes.Normal);
 				});
 			};
 

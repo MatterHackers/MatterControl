@@ -49,6 +49,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RayTracer;
@@ -942,7 +943,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer,
 						null,
 						CancellationToken.None,
-						true).ConfigureAwait(false);
+						PrinterConnection.PrintingModes.Normal).ConfigureAwait(false);
 				});
 			}
 			else if (ProfileManager.Instance.ActiveProfiles.Count() <= 0)
@@ -1053,7 +1054,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer,
 					null,
 					CancellationToken.None,
-					true);
+					PrinterConnection.PrintingModes.Normal);
 			});
 		}
 
