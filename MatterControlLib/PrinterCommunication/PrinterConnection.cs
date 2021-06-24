@@ -2110,24 +2110,31 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 		}
 
-		public bool RecordPrintHistory { get; private set; }
+		public PrintingModes PrintingMode  { get; private set; }
 
 		private CancellationTokenSource printingCancellation;
 
-		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool recordPrintHistory = true)
+		public enum PrintingModes
 		{
-			var gcodeStream = new StreamReader(gcodeFilename);
-			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, recordPrintHistory);
+			Normal,
+			Calibration,
+			AutoPilot,
 		}
 
-		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask, PrintTask printTaskToUse, bool recordPrintHistory)
+		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, PrintingModes printingMode = PrintingModes.Normal)
+		{
+			var gcodeStream = new StreamReader(gcodeFilename);
+			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, printingMode);
+		}
+
+		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask, PrintTask printTaskToUse, PrintingModes printingMode)
 		{
 			if (!this.IsConnected || Printing)
 			{
 				return;
 			}
 
-			this.RecordPrintHistory = recordPrintHistory;
+			this.PrintingMode = printingMode;
 
 			printingCancellation = new CancellationTokenSource();
 
@@ -2170,7 +2177,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 							if (gcodeFileNameForTask != null
 								&& ActivePrintTask == null
-								&& RecordPrintHistory)
+								&& PrintingMode != PrintingModes.Calibration)
 							{
 								// TODO: Fix printerItemID int requirement
 								ActivePrintTask = new PrintTask

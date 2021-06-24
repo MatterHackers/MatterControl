@@ -618,11 +618,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(string.Format("{0:n0}", intValue),
+					string FormateInt(int value)
+					{
+						if (property.PropertyInfo.GetCustomAttributes(true).OfType<DisplayAsTimeAttribute>().FirstOrDefault() != null)
+						{
+							var minutes = intValue / 60;
+							var hours = minutes / 60;
+							return $"{hours:00}:{minutes % 60:00}:{intValue % 60:00}";
+						}
+						else
+						{
+							return string.Format("{0:n0}", intValue);
+						}
+					}
+
+					var valueField = new TextWidget(FormateInt(intValue),
 						textColor: theme.TextColor,
 						pointSize: 10)
 					{
-						AutoExpandBoundsToText = true
+						AutoExpandBoundsToText = true,
+						Margin = new BorderDouble(0, 0, 7, 0),
 					};
 
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
@@ -635,7 +650,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 						{
 							int newValue = (int)property.Value;
-							valueField.Text = string.Format("{0:n0}", newValue);
+							valueField.Text = string.Format(FormateInt(intValue), newValue);
 						}
 					}
 
@@ -773,7 +788,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						var wrapContainer = new GuiWidget()
 						{
-							Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 9, 9, 9),
+							Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
 							HAnchor = HAnchor.Stretch,
 							VAnchor = VAnchor.Fit
 						};

@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using g3;
+using gs;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
@@ -156,10 +157,10 @@ namespace MatterHackers.PolygonMesh
 				{
 					var bounds = root.Bounds();
 
-					var c = new MarchingCubes()
+					var c = new MarchingCubesPro()
 					{
 						Implicit = root,
-						RootMode = MarchingCubes.RootfindingModes.LerpSteps,      // cube-edge convergence method
+						RootMode = MarchingCubesPro.RootfindingModes.LerpSteps,      // cube-edge convergence method
 						RootModeSteps = 5,                                        // number of iterations
 						Bounds = bounds,
 						CubeSize = bounds.MaxDim / numCells,

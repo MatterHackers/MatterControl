@@ -43,6 +43,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -316,7 +317,7 @@ namespace MatterHackers.MatterControl
 				this.Printer,
 				null,
 				CancellationToken.None,
-				true);
+				PrinterConnection.PrintingModes.Normal);
 		}
 
 		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
@@ -337,7 +338,7 @@ namespace MatterHackers.MatterControl
 				this.Printer,
 				null,
 				CancellationToken.None,
-				true);
+				PrinterConnection.PrintingModes.Normal);
 		}
 
 		private GCodeFile loadedGCode;
