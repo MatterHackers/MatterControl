@@ -28,10 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading.Tasks;
+using DualContouring;
 using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -97,10 +99,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
+#if true
+					float[] THRESHOLDS = new float[] { -1.0f, 0.1f, 1.0f, 10.0f, 50.0f };
+
+					// octreeSize must be a power of two!
+					int octreeSize = 64;
+
+					var root = Octree.BuildOctree(new Vector3(-octreeSize / 2, -octreeSize / 2, -octreeSize / 2), octreeSize, THRESHOLDS[0]);
+
+					Octree.GenerateMeshFromOctree(root);
+#else
 					var c = new MarchingCubes();
 					c.Generate();
 					MeshNormals.QuickCompute(c.Mesh); // generate normals
 					Mesh = c.Mesh.ToMesh();
+#endif
 				}
 			}
 
