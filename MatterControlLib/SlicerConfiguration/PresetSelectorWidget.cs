@@ -135,6 +135,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
+						if (presetsContext.PersistenceLayer == null)
+						{
+							return;
+						}
+
 						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext);
 						editMaterialPresetsPage.Closed += (s, e2) =>
 						{
@@ -175,6 +180,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.ActiveQualityKey = "";
 							}
 						};
+
+						if (presetsContext.PersistenceLayer == null)
+						{
+							return;
+						}
 
 						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext);
 						editQualityPresetsWindow.Closed += (s, e2) =>
