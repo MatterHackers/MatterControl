@@ -2234,12 +2234,23 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_PrintFinished(object sender, string e)
 		{
-			if (sender is PrinterConnection printerConnection
-				&& printerConnection.PrintingMode == PrinterConnection.PrintingModes.Normal)
+			if (sender is PrinterConnection printerConnection)
 			{
-				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
-				printHistoryEditor.CollectInfoPrintFinished();
+				var activePrintTask = printerConnection.ActivePrintTask;
+				switch (printerConnection.PrintingMode)
+				{
+					case PrinterConnection.PrintingModes.Normal:
+						var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
+						var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, activePrintTask, printTasks);
+						printHistoryEditor.CollectInfoPrintFinished();
+						break;
+
+					case PrinterConnection.PrintingModes.Calibration:
+						break;
+
+					case PrinterConnection.PrintingModes.AutoPilot:
+						break;
+				}
 			}
 
 			KeepAwakeIfNeeded();

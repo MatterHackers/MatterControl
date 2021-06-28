@@ -64,6 +64,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(printer, internalStream)
 		{
 			printer.Connection.CanceleRequested += Connection_PrintCanceled;
+
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)
+				|| printer.Settings.GetValue<double>(SettingsKey.bed_temperature) == 0)
+			{
+				// If we don't have a bed or we are not going to set the temperature
+				// do not wait for an M190
+				haveSeenM190 = true;
+			}
 		}
 
 		private void Connection_PrintCanceled(object sender, EventArgs e)
