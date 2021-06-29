@@ -2194,6 +2194,11 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									DeviceToken = this.Printer.Settings.GetValue(SettingsKey.device_token),
 								};
 
+								if(gCodeFileSwitcher?.GCodeFile is GCodeMemoryFile memoryFile)
+								{
+									ActivePrintTask.VolumeMm3 = memoryFile.GetFilamentCubicMm(Printer.Settings.GetValue<double>(SettingsKey.filament_diameter));
+								}
+
 								ActivePrintTask.CommitAndPushToServer();
 
 								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
