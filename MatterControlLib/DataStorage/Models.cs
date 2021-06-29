@@ -367,6 +367,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string Note { get; set; }
 
 		public string DeviceToken { get; set; }
+		public double VolumeMm3 { get; internal set; }
 
 		public void CommitAndPushToServer()
 		{
