@@ -146,26 +146,33 @@ namespace MatterHackers.MatterControl
 		/// <typeparam name="T">The type of value being gotten</typeparam>
 		/// <param name="settingsKey">The name of the value to get</param>
 		/// <returns>The typed value</returns>
-		public T GetValue<T>(string settingsKey) where T : IConvertible
+		public T GetValue<T>(string settingsKey, string defaultValue = null) where T : IConvertible
 		{
+			var settingValue = this.get(settingsKey);
+
+			if (settingValue == null)
+			{
+				settingValue = defaultValue;
+			}
+
 			if (typeof(T) == typeof(string))
 			{
 				// this way we can use the common pattern without error
-				return (T)(object)this.get(settingsKey);
+				return (T)(object)settingValue;
 			}
 			else if (typeof(T) == typeof(bool))
 			{
-				return (T)(object)(this.get(settingsKey) == "1");
+				return (T)(object)(settingValue == "1");
 			}
 			else if (typeof(T) == typeof(int))
 			{
 				int result;
-				int.TryParse(this.get(settingsKey), out result);
+				int.TryParse(settingValue, out result);
 				return (T)(object)result;
 			}
 			else if (typeof(T) == typeof(double))
 			{
-				double.TryParse(this.get(settingsKey), out double result);
+				double.TryParse(settingValue, out double result);
 				return (T)(object)result;
 			}
 
@@ -203,10 +210,13 @@ namespace MatterHackers.MatterControl
 				this.Language = value;
 			}
 
-			setting.Value = value;
-			setting.Commit();
+			if (setting.Value != value)
+			{
+				setting.Value = value;
+				setting.Commit();
 
-			SettingChanged?.Invoke(this, new StringEventArgs(key));
+				SettingChanged?.Invoke(this, new StringEventArgs(key));
+			}
 		}
 
 		public double LibraryViewWidth
