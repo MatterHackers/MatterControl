@@ -105,9 +105,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					// octreeSize must be a power of two!
 					int octreeSize = 64;
 
-					var root = Octree.BuildOctree(new Vector3(-octreeSize / 2, -octreeSize / 2, -octreeSize / 2), octreeSize, THRESHOLDS[0]);
+					var root = Octree.BuildOctree(new Vector3(-octreeSize / 2, -octreeSize / 2, -octreeSize / 2), octreeSize, -1);
 
-					Octree.GenerateMeshFromOctree(root);
+					Mesh = Octree.GenerateMeshFromOctree(root);
 #else
 					var c = new MarchingCubes();
 					c.Generate();
