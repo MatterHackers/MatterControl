@@ -35,6 +35,7 @@ using System.Text;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
@@ -101,6 +102,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static int EstimatedMemory(this IObject3D object3D)
 		{
 			return 0;
+		}
+
+		public static void FlattenToPathObject(this IObject3D item, UndoBuffer undoBuffer)
+		{
+			if (item is IPathObject pathObject)
+			{
+				using (item.RebuildLock())
+				{
+					var newPathObject = new PathObject3D();
+					newPathObject.VertexSource = new VertexStorage(pathObject.VertexSource);
+
+					// and replace us with the children
+					var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
+
+					if (undoBuffer != null)
+					{
+						undoBuffer.AddAndDo(replaceCommand);
+					}
+					else
+					{
+						replaceCommand.Do();
+					}
+
+					newPathObject.MakeNameNonColliding();
+				}
+			}
 		}
 
 		public static void DrawPath(this IObject3D item)

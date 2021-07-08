@@ -116,9 +116,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
+			Flatten(undoBuffer, null);
+		}
+
+		protected void Flatten(UndoBuffer undoBuffer, IEnumerable<IObject3D> extraItems)
+		{
 			using (RebuildLock())
 			{
-				List<IObject3D> newChildren = new List<IObject3D>();
+				var newChildren = new List<IObject3D>();
 				// push our matrix into a copy of our children
 				foreach (var child in this.Children)
 				{
@@ -210,7 +215,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			using (RebuildLock())
 			{
-				List<IObject3D> newChildren = new List<IObject3D>();
+				var newChildren = new List<IObject3D>();
 				// push our matrix into a copy of our children
 				foreach (var child in this.SourceContainer.Children)
 				{

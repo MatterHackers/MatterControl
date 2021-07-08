@@ -40,6 +40,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -148,7 +149,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void UpdateHistogramDisplay()
 		{
-			if (_histogramRawCache != null)
+			if (_histogramRawCache != null
+				&& _histogramDisplayCache != null)
 			{
 				var graphics2D = _histogramDisplayCache.NewGraphics2D();
 				graphics2D.Clear(Color.Transparent);
@@ -204,6 +206,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			this.DrawPath();
+		}
+
+		public override bool CanFlatten => true;
+
+		public override void Flatten(UndoBuffer undoBuffer)
+		{
+			this.FlattenToPathObject(undoBuffer);
 		}
 
 		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)

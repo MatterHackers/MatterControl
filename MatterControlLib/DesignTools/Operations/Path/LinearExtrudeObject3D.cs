@@ -39,13 +39,15 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class LinearExtrudeObject3D : Object3D
+	public class LinearExtrudeObject3D : Object3D, IObject3DControlsProvider
 #if DEBUG
 , IPropertyGridModifier
 #endif
@@ -82,6 +84,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				return null;
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			double getHeight() => Height.Value(this);
+			void setHeight(double height) => Height = height;
+			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
+				null,
+				null,
+				null,
+				null,
+				getHeight,
+				setHeight,
+				null,
+				null));
+			object3DControlsLayer.AddControls(ControlTypes.ScaleMatrixXY);
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)
@@ -138,6 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			var rebuildLock = RebuildLock();
 
 			bool valuesChanged = false;
 
@@ -149,8 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var bevelInset = BevelInset.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
 #endif
 
-			var rebuildLock = RebuildLock();
-			// now create a long running task to process the image
+			// now create a long running task to do the extrusion
 			return ApplicationController.Instance.Tasks.Execute(
 				"Linear Extrude".Localize(),
 				null,
@@ -188,6 +208,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					});
+
 					return Task.CompletedTask;
 				});
 		}

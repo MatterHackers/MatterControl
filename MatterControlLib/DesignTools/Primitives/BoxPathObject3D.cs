@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,18 +27,29 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PathObject3D : Object3D, IPathObject, ISelectedEditorDraw
+	public class BoxPathObject3D : PrimitiveObject3D, IPathObject, IObject3DControlsProvider, ISelectedEditorDraw
 	{
+		public BoxPathObject3D()
+		{
+			Name = "Box".Localize();
+			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
+		}
+
+		public override string ThumbnailName => "Box";
+
 		[JsonIgnore]
 		private IVertexSource _vertexSource = new VertexStorage();
 
@@ -57,6 +68,65 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			this.DrawPath();
+		}
+
+		/// <summary>
+		/// This is the actual serialized with that can use expressions
+		/// </summary>
+		[MaxDecimalPlaces(2)]
+		public DoubleOrExpression Width { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
+		public DoubleOrExpression Depth { get; set; } = 20;
+
+		public static async Task<BoxPathObject3D> Create()
+		{
+			var item = new BoxPathObject3D();
+			await item.Rebuild();
+			return item;
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, null);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
+		}
+
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
+		{
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			{
+				await Rebuild();
+			}
+			else
+			{
+				base.OnInvalidate(invalidateArgs);
+			}
+		}
+
+		public override Task Rebuild()
+		{
+			this.DebugDepth("Rebuild");
+
+			using (RebuildLock())
+			{
+				using (new CenterAndHeightMaintainer(this))
+				{
+					var width = Width.Value(this);
+					var depth = Depth.Value(this);
+					VertexSource = new RoundedRect(-width / 2, -depth / 2, width / 2, depth / 2, 0);
+				}
+			}
+
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			return Task.CompletedTask;
 		}
 	}
 }

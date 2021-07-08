@@ -44,13 +44,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
 	{
-		private bool union;
+		private ClipperLib.ClipType clipType;
 		private string operationName;
 
-		public MergePathObject3D(string name, bool union)
+		public MergePathObject3D(string name, ClipperLib.ClipType clipType)
 		{
 			this.operationName = name;
-			this.union = union;
+			this.clipType = clipType;
 			Name = name;
 		}
 
@@ -59,6 +59,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			this.DrawPath();
+		}
+
+		public override bool CanFlatten => true;
+
+		public override void Flatten(UndoBuffer undoBuffer)
+		{
+			this.FlattenToPathObject(undoBuffer);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
@@ -135,14 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var itemVertexSource = pathItem.VertexSource.Transform(item.Matrix);
 
-					if (union)
-					{
-						resultsVertexSource = resultsVertexSource.Union(itemVertexSource);
-					}
-					else
-					{
-						resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, ClipperLib.ClipType.ctIntersection);
-					}
+					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
