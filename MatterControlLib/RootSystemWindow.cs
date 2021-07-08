@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			GuiWidget.DefaultEnforceIntegerBounds = true;
 
 			// TODO: Needs review - doesn't seem like we want to scale on Touchscreen, rather we want device specific, configuration based scaling. Suggest remove
-			if (UserSettings.Instance.IsTouchScreen)
+			if (GuiWidget.TouchScreenMode)
 			{
 				// TODO: This steps on user scaling
 				GuiWidget.DeviceScale = 1.3;
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 		{
 			int width = 0;
 			int height = 0;
-			if (UserSettings.Instance.IsTouchScreen)
+			if (GuiWidget.TouchScreenMode)
 			{
 				minSize = new Vector2(800, 480);
 			}

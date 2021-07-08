@@ -112,11 +112,9 @@ namespace MatterHackers.MatterControl
 				if (this.UpdateRequired && !haveShowUpdateRequired)
 				{
 					haveShowUpdateRequired = true;
-					if (!UserSettings.Instance.IsTouchScreen)
+					if (!GuiWidget.TouchScreenMode)
 					{
-#if !__ANDROID__
 						UiThread.RunOnIdle(() => DialogWindow.Show<CheckForUpdatesPage>());
-#endif
 					}
 				}
 			}
