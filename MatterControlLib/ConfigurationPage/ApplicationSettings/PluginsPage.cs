@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl
 
 			foreach (var plugin in plugins.KnownPlugins)
 			{
-				// Touch Screen Mode
 				formContainer.AddChild(
 					new SettingsItem(
 						plugin.Name,

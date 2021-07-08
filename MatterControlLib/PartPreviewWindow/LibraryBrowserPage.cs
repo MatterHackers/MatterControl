@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 		public override void OnLoad(EventArgs args)
 		{
 			if (itemNameWidget != null
-				&& !UserSettings.Instance.IsTouchScreen)
+				&& !GuiWidget.TouchScreenMode)
 			{
 				UiThread.RunOnIdle(itemNameWidget.Focus);
 			}
