@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Threading;
 using System.Threading.Tasks;
 using DualContouring;
 using g3;
@@ -87,39 +88,49 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			using (RebuildLock())
+			return Task.Run(() =>
 			{
-				using (new CenterAndHeightMaintainer(this))
+				using (RebuildLock())
 				{
+					using (new CenterAndHeightMaintainer(this))
+					{
 #if true
-					ISdf shape = new Sphere()
-					{
-						Radius = Size
-					};
-
-					if (Shape == Shapes.Box)
-					{
-						shape = new Box()
+						ISdf shape = new Sphere()
 						{
-							Size = new Vector3(Size, Size * .8, Size * .6)
+							Radius = Size
 						};
-					}
 
-					var bounds = shape.Bounds;
-					var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
+						if (Shape == Shapes.Box)
+						{
+							shape = new Box()
+							{
+								Size = new Vector3(Size, Size * .8, Size * .6)
+							};
+						}
 
-					Mesh = Octree.GenerateMeshFromOctree(root);
+						var bounds = shape.Bounds;
+						bounds.Expand(.1);
+						if (Iterations > 7)
+						{
+							Iterations = 7;
+						}
+						var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
+
+						Mesh = Octree.GenerateMeshFromOctree(root);
 #else
 					var c = new MarchingCubes();
 					c.Generate();
 					MeshNormals.QuickCompute(c.Mesh); // generate normals
 					Mesh = c.Mesh.ToMesh();
 #endif
+					}
 				}
-			}
 
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
+				Invalidate(InvalidateType.DisplayValues);
+
+				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+				return Task.CompletedTask;
+			});
 		}
 	}
 }
