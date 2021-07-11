@@ -37,27 +37,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MarchingSquaresObject3D : PrimitiveObject3D, IObject3DControlsProvider
+	public class MarchingSquaresObject3D : Object3D
 	{
 		public MarchingSquaresObject3D()
 		{
 			Name = "MarchingSquares".Localize();
 			Color = Agg.Color.Cyan;
 		}
-
-		public override string ThumbnailName => "Cube";
-
-		/// <summary>
-		/// This is the actual serialized with that can use expressions
-		/// </summary>
-		[MaxDecimalPlaces(2)]
-		public DoubleOrExpression Width { get; set; } = 20;
-
-		[MaxDecimalPlaces(2)]
-		public DoubleOrExpression Depth { get; set; } = 20;
-
-		[MaxDecimalPlaces(2)]
-		public DoubleOrExpression Height { get; set; } = 20;
 
 		public static async Task<MarchingSquaresObject3D> Create()
 		{
@@ -66,14 +52,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddHeightControl(this, Width, Depth, Height);
-			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, Height);
+		public int Iterations { get; set; } = 5;
 
-			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
-			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
+		public double Size { get; set; } = 15;
+
+		public double Threshold { get; set; } = .001;
+
+		public enum Shapes
+		{
+			Box,
+			Sphere
 		}
+
+		public Shapes Shape { get; set; } = Shapes.Box;
+
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -100,12 +92,21 @@ namespace MatterHackers.MatterControl.DesignTools
 				using (new CenterAndHeightMaintainer(this))
 				{
 #if true
-					float[] THRESHOLDS = new float[] { -1.0f, 0.1f, 1.0f, 10.0f, 50.0f };
+					ISdf shape = new Sphere()
+					{
+						Radius = Size
+					};
 
-					// octreeSize must be a power of two!
-					int octreeSize = 64;
+					if (Shape == Shapes.Box)
+					{
+						shape = new Box()
+						{
+							Size = new Vector3(Size, Size * .8, Size * .6)
+						};
+					}
 
-					var root = Octree.BuildOctree(new Vector3(-octreeSize / 2, -octreeSize / 2, -octreeSize / 2), octreeSize, -1);
+					var bounds = shape.Bounds;
+					var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
 
 					Mesh = Octree.GenerateMeshFromOctree(root);
 #else
