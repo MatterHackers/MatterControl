@@ -118,10 +118,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						Mesh = Octree.GenerateMeshFromOctree(root);
 #else
-					var c = new MarchingCubes();
-					c.Generate();
-					MeshNormals.QuickCompute(c.Mesh); // generate normals
-					Mesh = c.Mesh.ToMesh();
+						var c = new MarchingCubes();
+						c.Generate();
+						MeshNormals.QuickCompute(c.Mesh); // generate normals
+						Mesh = c.Mesh.ToMesh();
 #endif
 					}
 				}

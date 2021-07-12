@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DualContouring;
 using g3;
 using gs;
 using MatterHackers.Agg;
@@ -176,17 +177,43 @@ namespace MatterHackers.PolygonMesh
 				switch (operation)
 				{
 					case CsgModes.Union:
-						return GenerateMeshF(new ImplicitNaryUnion3d()
 						{
-							Children = implicitMeshs
-						}, marchingCells).ToMesh();
+							var bounds = implicitMeshs.First().Bounds();
+							var root = Octree.BuildOctree((pos) =>
+							{
+								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+								return implicitMeshs.First().Value(ref pos2);
+							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							5,
+							.001);
+							return Octree.GenerateMeshFromOctree(root);
+
+							return GenerateMeshF(new ImplicitNaryUnion3d()
+							{
+								Children = implicitMeshs
+							}, marchingCells).ToMesh();
+						}
 
 					case CsgModes.Subtract:
-						return GenerateMeshF(new ImplicitNaryDifference3d()
 						{
-							A = implicitMeshs.First(),
-							BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
-						}, marchingCells).ToMesh();
+							var bounds = implicitMeshs.First().Bounds();
+							var root = Octree.BuildOctree((pos) =>
+							{
+								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+								return implicitMeshs.First().Value(ref pos2);
+							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							5,
+							.001);
+							return Octree.GenerateMeshFromOctree(root);
+
+							return GenerateMeshF(new ImplicitNaryDifference3d()
+							{
+								A = implicitMeshs.First(),
+								BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
+							}, marchingCells).ToMesh();
+						}
 
 					case CsgModes.Intersect:
 						return GenerateMeshF(new ImplicitNaryIntersection3d()
