@@ -174,11 +174,15 @@ namespace MatterHackers.PolygonMesh
 					case CsgModes.Union:
 						if (processingMode == ProcessingModes.Dual_Contouring)
 						{
-							var bounds = implicitMeshs.First().Bounds();
+							var union = new ImplicitNaryUnion3d()
+							{
+								Children = implicitMeshs
+							};
+							var bounds = union.Bounds();
 							var root = Octree.BuildOctree((pos) =>
 							{
 								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-								return implicitMeshs.First().Value(ref pos2);
+								return union.Value(ref pos2);
 							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
 							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
 							(int)outputResolution,
@@ -197,11 +201,15 @@ namespace MatterHackers.PolygonMesh
 						{
 							if (processingMode == ProcessingModes.Dual_Contouring)
 							{
-								var bounds = implicitMeshs.First().Bounds();
+								var subtract = new ImplicitNaryIntersection3d()
+								{
+									Children = implicitMeshs
+								};
+								var bounds = subtract.Bounds();
 								var root = Octree.BuildOctree((pos) =>
 								{
 									var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-									return implicitMeshs.First().Value(ref pos2);
+									return subtract.Value(ref pos2);
 								}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
 								new Vector3(bounds.Width, bounds.Depth, bounds.Height),
 								(int)outputResolution,
@@ -221,11 +229,15 @@ namespace MatterHackers.PolygonMesh
 					case CsgModes.Intersect:
 						if (processingMode == ProcessingModes.Dual_Contouring)
 						{
-							var bounds = implicitMeshs.First().Bounds();
+							var intersect = new ImplicitNaryIntersection3d()
+							{
+								Children = implicitMeshs
+							};
+							var bounds = intersect.Bounds();
 							var root = Octree.BuildOctree((pos) =>
 							{
 								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-								return implicitMeshs.First().Value(ref pos2);
+								return intersect.Value(ref pos2);
 							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
 							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
 							(int)outputResolution,
