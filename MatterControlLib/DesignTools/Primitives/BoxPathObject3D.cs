@@ -27,46 +27,73 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using DualContouring;
-using g3;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MarchingSquaresObject3D : Object3D
+	public class BoxPathObject3D : PrimitiveObject3D, IPathObject, IObject3DControlsProvider, ISelectedEditorDraw
 	{
-		public MarchingSquaresObject3D()
+		public BoxPathObject3D()
 		{
-			Name = "MarchingSquares".Localize();
-			Color = Agg.Color.Cyan;
+			Name = "Box".Localize();
+			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
 		}
 
-		public static async Task<MarchingSquaresObject3D> Create()
+		public override string ThumbnailName => "Box";
+
+		[JsonIgnore]
+		private IVertexSource _vertexSource = new VertexStorage();
+
+		public IVertexSource VertexSource
 		{
-			var item = new MarchingSquaresObject3D();
+			get => _vertexSource;
+
+			set
+			{
+				_vertexSource = value;
+				// set the mesh to show the path
+				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+			}
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		{
+			this.DrawPath();
+		}
+
+		/// <summary>
+		/// This is the actual serialized with that can use expressions
+		/// </summary>
+		[MaxDecimalPlaces(2)]
+		public DoubleOrExpression Width { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
+		public DoubleOrExpression Depth { get; set; } = 20;
+
+		public static async Task<BoxPathObject3D> Create()
+		{
+			var item = new BoxPathObject3D();
 			await item.Rebuild();
 			return item;
 		}
 
-		public int Iterations { get; set; } = 5;
-
-		public double Size { get; set; } = 15;
-
-		public double Threshold { get; set; } = .001;
-
-		public enum Shapes
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			Box,
-			Sphere
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddWidthDepthControls(this, Width, Depth, null);
+
+			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
+			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
-
-		public Shapes Shape { get; set; } = Shapes.Box;
-
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -88,49 +115,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			return Task.Run(() =>
+			using (RebuildLock())
 			{
-				using (RebuildLock())
+				using (new CenterAndHeightMaintainer(this))
 				{
-					using (new CenterAndHeightMaintainer(this))
-					{
-#if true
-						ISdf shape = new Sphere()
-						{
-							Radius = Size
-						};
-
-						if (Shape == Shapes.Box)
-						{
-							shape = new Box()
-							{
-								Size = new Vector3(Size, Size, Size)
-							};
-						}
-
-						var bounds = shape.Bounds;
-						bounds.Expand(.1);
-						if (Iterations > 7)
-						{
-							Iterations = 7;
-						}
-						var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
-
-						Mesh = Octree.GenerateMeshFromOctree(root);
-#else
-						var c = new MarchingCubes();
-						c.Generate();
-						MeshNormals.QuickCompute(c.Mesh); // generate normals
-						Mesh = c.Mesh.ToMesh();
-#endif
-					}
+					var width = Width.Value(this);
+					var depth = Depth.Value(this);
+					VertexSource = new RoundedRect(-width / 2, -depth / 2, width / 2, depth / 2, 0);
 				}
+			}
 
-				Invalidate(InvalidateType.DisplayValues);
-
-				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-				return Task.CompletedTask;
-			});
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			return Task.CompletedTask;
 		}
 	}
 }

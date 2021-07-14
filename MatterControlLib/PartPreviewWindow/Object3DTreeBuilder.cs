@@ -66,7 +66,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| !hideChildren)
 					&& item.Children?.Any() == true)
 				{
-					foreach (var child in item.Children.OrderBy(i => i.Name))
+					var orderChildrenByIndex = item.Source.GetType().GetCustomAttributes(typeof(OrderChildrenByIndexAttribute), true).Any();
+					IEnumerable<IObject3D> children = item.Children;
+
+					if (!orderChildrenByIndex)
+					{
+						children = item.Children.OrderBy(i => i.Name);
+					}
+					foreach (var child in children)
 					{
 						if (child != null
 							&& !child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())

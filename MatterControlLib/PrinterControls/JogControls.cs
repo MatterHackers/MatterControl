@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),
-				Visible = !UserSettings.Instance.IsTouchScreen,
+				Visible = !GuiWidget.TouchScreenMode,
 				Enabled = false,
 				Selectable = false
 			};

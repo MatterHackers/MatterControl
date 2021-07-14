@@ -77,8 +77,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var distance = Distance.Value(this);
 						var count = Count.Value(this);
-					// add in all the array items
-					for (int i = 0; i < Math.Max(count, 1); i++)
+						
+						// add in all the array items
+						for (int i = 0; i < Math.Max(count, 1); i++)
 						{
 							var next = arrayItem.Clone();
 							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * distance * i);

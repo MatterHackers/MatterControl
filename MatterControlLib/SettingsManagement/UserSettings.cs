@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 						if (globalInstance == null)
 						{
 							globalInstance = new UserSettings();
-							ToolTipManager.AllowToolTips = !UserSettings.Instance.IsTouchScreen;
+							ToolTipManager.AllowToolTips = !GuiWidget.TouchScreenMode;
 						}
 					}
 				}
@@ -242,11 +242,7 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-#if __ANDROID__
-				return true;
-#else
 				return this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
-#endif
 			}
 		}
 
@@ -254,19 +250,14 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-#if __ANDROID__
-				// Always use flat thumbnails on Android - at least until alpha glitch is resolve and compute cost for thumbnails is reduced
-				return "orthographic";
-#else
 				string renderingMode = this.get(UserSettingsKey.ThumbnailRenderingMode);
 				if (string.IsNullOrWhiteSpace(renderingMode))
 				{
 					// If the current value is unset or invalid, use platform defaults
-					return UserSettings.Instance.IsTouchScreen ? "orthographic" : "raytraced";
+					return GuiWidget.TouchScreenMode ? "orthographic" : "raytraced";
 				}
 
 				return renderingMode;
-#endif
 			}
 
 			set

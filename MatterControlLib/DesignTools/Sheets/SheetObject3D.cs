@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -274,6 +275,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// could not find a sheet, try to evaluate the expression directly
 			var evaluator = new Expression(inputExpression.ToLower());
+			if(evaluator.checkSyntax())
+			{
+				Debug.WriteLine(evaluator.getErrorMessage());
+			}
 			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
 		}
 
@@ -282,7 +287,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// </summary>
 		/// <param name="item">The item to start the search from</param>
 		/// <returns></returns>
-		public static SheetObject3D Find(IObject3D item)
+		private static SheetObject3D Find(IObject3D item)
 		{
 			// look through all the parents
 			foreach (var parent in item.Parents())

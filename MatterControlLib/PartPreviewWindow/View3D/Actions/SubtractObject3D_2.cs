@@ -46,18 +46,27 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ISelectedEditorDraw
+	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		public SubtractObject3D_2()
 		{
 			Name = "Subtract";
 		}
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
-
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
@@ -218,6 +227,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							// operation type
 							BooleanProcessing.CsgModes.Subtract,
 							Processing,
+							InputResolution,
+							OutputResolution,
 							// reporting
 							reporter,
 							amountPerOperation,
@@ -281,6 +292,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 				}
 			}
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(OutputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons && MeshAnalysis == BooleanProcessing.IplicitSurfaceMethod.Grid);
 		}
 	}
 }

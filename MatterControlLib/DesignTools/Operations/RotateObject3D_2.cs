@@ -94,14 +94,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(2)]
 		[DisplayName("Angle")]
-		public double AngleDegrees { get; set; } = 0;
+		public DoubleOrExpression AngleDegrees { get; set; } = 0;
 
 		[JsonIgnore]
 		public Matrix4X4 RotationMatrix
 		{
 			get
 			{
-				var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+				var angleRadians = MathHelper.DegreesToRadians(AngleDegrees.Value(this));
 				var rotation = Matrix4X4.CreateTranslation(-RotateAbout.Origin)
 					* Matrix4X4.CreateRotation(RotateAbout.Normal, angleRadians)
 					* Matrix4X4.CreateTranslation(RotateAbout.Origin);
@@ -126,6 +126,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
+			{
+				await Rebuild();
+			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}

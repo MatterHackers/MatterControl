@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DualContouring;
 using g3;
 using gs;
 using MatterHackers.Agg;
@@ -52,7 +53,7 @@ namespace MatterHackers.PolygonMesh
 			Intersect
 		}
 
-		public enum IplicitSurfaceMesh
+		public enum IplicitSurfaceMethod
 		{
 			[Description("Faster but less accurate")]
 			Grid,
@@ -62,10 +63,16 @@ namespace MatterHackers.PolygonMesh
 
 		public enum ProcessingModes
 		{
-			Exact,
-			Volume_64,
-			Volume_128,
-			Volume_256,
+			Polygons,
+			Marching_Cubes,
+			Dual_Contouring,
+		}
+
+		public enum ProcessingResolution
+		{
+			_64 = 6,
+			_128 = 7,
+			_256 = 8,
 		}
 
 		private const string BooleanAssembly = "609_Boolean_bin.dll";
@@ -81,12 +88,13 @@ namespace MatterHackers.PolygonMesh
 
 		public static Mesh DoArray(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
 			CsgModes operation,
-			bool exactSurface,
 			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution,
 			IProgress<ProgressStatus> reporter,
 			CancellationToken cancellationToken)
 		{
-			if (processingMode == ProcessingModes.Exact)
+			if (processingMode == ProcessingModes.Polygons)
 			{
 				var progressStatus = new ProgressStatus();
 				var totalOperations = items.Count() - 1;
@@ -114,6 +122,8 @@ namespace MatterHackers.PolygonMesh
 						// operation
 						operation,
 						processingMode,
+						inputResolution,
+						outputResolution,
 						// reporting
 						reporter,
 						amountPerOperation,
@@ -133,24 +143,10 @@ namespace MatterHackers.PolygonMesh
 			}
 			else
 			{
-				var resolution = 64;
-				switch (processingMode)
-				{
-					case ProcessingModes.Volume_128:
-						resolution = 128;
-						break;
-
-					case ProcessingModes.Volume_256:
-						resolution = 256;
-						break;
-				}
-				var marchingCells = resolution;
-				var implicitCells = exactSurface ? 0 : resolution * 4;
-
 				var implicitMeshs = new List<BoundedImplicitFunction3d>();
 				foreach (var item in items)
 				{
-					implicitMeshs.Add(GetImplicitFromMesh(item.mesh, item.matrix, implicitCells));
+					implicitMeshs.Add(GetImplicitFunction(item.mesh, item.matrix, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
 				}
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
@@ -176,23 +172,85 @@ namespace MatterHackers.PolygonMesh
 				switch (operation)
 				{
 					case CsgModes.Union:
-						return GenerateMeshF(new ImplicitNaryUnion3d()
+						if (processingMode == ProcessingModes.Dual_Contouring)
 						{
-							Children = implicitMeshs
-						}, marchingCells).ToMesh();
+							var union = new ImplicitNaryUnion3d()
+							{
+								Children = implicitMeshs
+							};
+							var bounds = union.Bounds();
+							var root = Octree.BuildOctree((pos) =>
+							{
+								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+								return union.Value(ref pos2);
+							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							(int)outputResolution,
+							.001);
+							return Octree.GenerateMeshFromOctree(root);
+						}
+						else
+						{
+							return GenerateMeshF(new ImplicitNaryUnion3d()
+							{
+								Children = implicitMeshs
+							}, 1 << (int)outputResolution).ToMesh();
+						}
 
 					case CsgModes.Subtract:
-						return GenerateMeshF(new ImplicitNaryDifference3d()
 						{
-							A = implicitMeshs.First(),
-							BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
-						}, marchingCells).ToMesh();
+							if (processingMode == ProcessingModes.Dual_Contouring)
+							{
+								var subtract = new ImplicitNaryIntersection3d()
+								{
+									Children = implicitMeshs
+								};
+								var bounds = subtract.Bounds();
+								var root = Octree.BuildOctree((pos) =>
+								{
+									var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+									return subtract.Value(ref pos2);
+								}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+								new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+								(int)outputResolution,
+								.001);
+								return Octree.GenerateMeshFromOctree(root);
+							}
+							else
+							{
+								return GenerateMeshF(new ImplicitNaryDifference3d()
+								{
+									A = implicitMeshs.First(),
+									BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
+								}, 1 << (int)outputResolution).ToMesh();
+							}
+						}
 
 					case CsgModes.Intersect:
-						return GenerateMeshF(new ImplicitNaryIntersection3d()
+						if (processingMode == ProcessingModes.Dual_Contouring)
 						{
-							Children = implicitMeshs
-						}, marchingCells).ToMesh();
+							var intersect = new ImplicitNaryIntersection3d()
+							{
+								Children = implicitMeshs
+							};
+							var bounds = intersect.Bounds();
+							var root = Octree.BuildOctree((pos) =>
+							{
+								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+								return intersect.Value(ref pos2);
+							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							(int)outputResolution,
+							.001);
+							return Octree.GenerateMeshFromOctree(root);
+						}
+						else
+						{
+							return GenerateMeshF(new ImplicitNaryIntersection3d()
+							{
+								Children = implicitMeshs
+							}, 1 << (int)outputResolution).ToMesh();
+						}
 				}
 			}
 
@@ -207,6 +265,8 @@ namespace MatterHackers.PolygonMesh
 			// operation
 			CsgModes operation,
 			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution,
 			// reporting
 			IProgress<ProgressStatus> reporter,
 			double amountPerOperation,
@@ -215,7 +275,7 @@ namespace MatterHackers.PolygonMesh
 			CancellationToken cancellationToken)
 		{
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
-			if (processingMode == ProcessingModes.Exact)
+			if (processingMode == ProcessingModes.Polygons)
 			{
 				// only try to run the improved booleans if we are 64 bit and it is there
 				if (externalAssemblyExists && IntPtr.Size == 8)
@@ -334,21 +394,8 @@ namespace MatterHackers.PolygonMesh
 			}
 			else
 			{
-				var resolution = 64;
-				switch (processingMode)
-				{
-					case ProcessingModes.Volume_128:
-						resolution = 128;
-						break;
-
-					case ProcessingModes.Volume_256:
-						resolution = 256;
-						break;
-				}
-				var marchingCells = resolution;
-				var implicitCells = resolution;
-				var implicitA = GetImplicitFromMesh(inMeshA, matrixA, implicitCells);
-				var implicitB = GetImplicitFromMesh(inMeshB, matrixB, implicitCells);
+				var implicitA = GetImplicitFunction(inMeshA, matrixA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitB = GetImplicitFunction(inMeshB, matrixB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
 				{
@@ -370,6 +417,7 @@ namespace MatterHackers.PolygonMesh
 					return c.Mesh;
 				}
 
+				var marchingCells = 1 << (int)outputResolution;
 				switch (operation)
 				{
 					case CsgModes.Union:
@@ -408,7 +456,8 @@ namespace MatterHackers.PolygonMesh
 			}
 		}
 
-		public static BoundedImplicitFunction3d GetImplicitFromMesh(Mesh mesh, Matrix4X4 matrix, int numCells)
+
+		public static BoundedImplicitFunction3d GetImplicitFunction(Mesh mesh, Matrix4X4 matrix, bool exact, int numCells)
 		{
 			var meshCopy = mesh.Copy(CancellationToken.None);
 			meshCopy.Transform(matrix);
@@ -416,7 +465,7 @@ namespace MatterHackers.PolygonMesh
 			var meshA3 = meshCopy.ToDMesh3();
 
 			// Interesting experiment, this produces an extremely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
-			if (numCells == 0)
+			if (exact)
 			{
 				DMeshAABBTree3 meshAABBTree3 = new DMeshAABBTree3(meshA3, true);
 				meshAABBTree3.FastWindingNumber(Vector3d.Zero);   // build approximation

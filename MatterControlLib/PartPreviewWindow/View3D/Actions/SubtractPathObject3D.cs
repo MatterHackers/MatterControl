@@ -89,6 +89,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+		public override bool CanFlatten => true;
+
+		public override void Flatten(UndoBuffer undoBuffer)
+		{
+			this.FlattenToPathObject(undoBuffer);
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -112,7 +119,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					// set the mesh to show the path
-					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+					var extrudeMesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+					if(extrudeMesh.Vertices.Count() > 5)
+					{
+						this.Mesh = extrudeMesh;
+					}
+					else
+					{
+						this.Mesh = null;
+					}
 
 					UiThread.RunOnIdle(() =>
 					{

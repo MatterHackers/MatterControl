@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static bool BooleanCandidate(IObject3D selectedItem, bool includePaths = true)
+		private static bool BooleanCandidate(IObject3D selectedItem, bool includePaths)
 		{
 			if (selectedItem != null)
 			{
@@ -722,7 +722,6 @@ namespace MatterHackers.MatterControl
 					return true;
 				}
 
-				includePaths = false;
 				// path items
 				if (includePaths
 					&& selectedItem.VisiblePaths().Count() > 1
@@ -790,6 +789,7 @@ namespace MatterHackers.MatterControl
 						PinchOperation(),
 						TwistOperation(),
 						PlaneCutOperation(),
+						FindSliceOperation(),
 						HollowOutOperation(),
 					}
 				},
@@ -931,7 +931,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
-						new MergePathObject3D("Combine".Localize(), true).WrapSelectedItemAndSelect(sceneContext.Scene);
+						new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
 					{
@@ -940,7 +940,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("combine.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
 
@@ -1133,7 +1133,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
-						new MergePathObject3D("Intersect".Localize(), false).WrapSelectedItemAndSelect(sceneContext.Scene);
+						new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
 					{
@@ -1142,7 +1142,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("intersect.png", 16, 16),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
 
@@ -1235,6 +1235,24 @@ namespace MatterHackers.MatterControl
 				Action = (sceneContext) =>
 				{
 					var cut = new PlaneCutObject3D();
+					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
+				},
+				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
+				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
+			};
+		}
+
+		private static SceneOperation FindSliceOperation()
+		{
+			return new SceneOperation("Find Slice")
+			{
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(PlaneCutObject3D),
+				TitleResolver = () => "Find Slice".Localize(),
+				Action = (sceneContext) =>
+				{
+					var cut = new FindSliceObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
@@ -1369,7 +1387,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
 
