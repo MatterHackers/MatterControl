@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class IntersectionObject3D_2 : OperationSourceContainerObject3D
+	public class IntersectionObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public IntersectionObject3D_2()
 		{
@@ -50,10 +50,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Exact;
+		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.IplicitSurfaceMesh MeshAnalysis { get; set; }
+		public BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
 
 		public override Task Rebuild()
 		{
@@ -114,8 +120,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				BooleanProcessing.CsgModes.Intersect,
-				MeshAnalysis == BooleanProcessing.IplicitSurfaceMesh.Exact,
 				Processing,
+				InputResolution,
+				OutputResolution,
 				reporter,
 				cancellationToken);
 
@@ -126,6 +133,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
 			this.Children.Add(resultsItem);
 			SourceContainer.Visible = false;
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(OutputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons && MeshAnalysis == BooleanProcessing.IplicitSurfaceMethod.Grid);
 		}
 	}
 }

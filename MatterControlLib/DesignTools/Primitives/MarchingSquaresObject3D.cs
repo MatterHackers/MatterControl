@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							shape = new Box()
 							{
-								Size = new Vector3(Size, Size * .8, Size * .6)
+								Size = new Vector3(Size, Size, Size)
 							};
 						}
 
