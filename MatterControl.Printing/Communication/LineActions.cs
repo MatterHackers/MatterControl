@@ -40,35 +40,46 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public Dictionary<string, List<Action<string>>> registeredActions = new Dictionary<string, List<Action<string>>>();
 
+		protected object locker = new object();
+
 		public void Register(string key, Action<string> value)
 		{
-			if (registeredActions.ContainsKey(key))
+			lock (locker)
 			{
-				registeredActions[key].Add(value);
-			}
-			else
-			{
-				registeredActions.Add(key, new List<Action<string>>() { value });
+				if (registeredActions.ContainsKey(key))
+				{
+					registeredActions[key].Add(value);
+				}
+				else
+				{
+					registeredActions.Add(key, new List<Action<string>>() { value });
+				}
 			}
 		}
 
 		public void Clear()
 		{
-			registeredActions.Clear();
+			lock (locker)
+			{
+				registeredActions.Clear();
+			}
 		}
 
 		public void Unregister(string key, Action<string> value)
 		{
-			if (registeredActions.ContainsKey(key))
+			lock (locker)
 			{
-				if (registeredActions[key].Contains(value))
+				if (registeredActions.ContainsKey(key))
 				{
-					registeredActions[key].Remove(value);
+					if (registeredActions[key].Contains(value))
+					{
+						registeredActions[key].Remove(value);
+					}
 				}
-			}
-			else
-			{
-				throw new Exception();
+				else
+				{
+					throw new Exception();
+				}
 			}
 		}
 
@@ -79,13 +90,16 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public override void ProcessLine(string line)
 		{
-			foreach (var kvp in this.registeredActions)
+			lock (locker)
 			{
-				if (line.StartsWith(kvp.Key))
+				foreach (var kvp in this.registeredActions)
 				{
-					foreach (var value in kvp.Value)
+					if (line.StartsWith(kvp.Key))
 					{
-						value(line);
+						foreach (var value in kvp.Value)
+						{
+							value(line);
+						}
 					}
 				}
 			}
@@ -96,13 +110,16 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public override void ProcessLine(string line)
 		{
-			foreach (var kvp in this.registeredActions)
+			lock (locker)
 			{
-				if (line.Contains(kvp.Key))
+				foreach (var kvp in this.registeredActions)
 				{
-					foreach (var value in kvp.Value)
+					if (line.Contains(kvp.Key))
 					{
-						value(line);
+						foreach (var value in kvp.Value)
+						{
+							value(line);
+						}
 					}
 				}
 			}
