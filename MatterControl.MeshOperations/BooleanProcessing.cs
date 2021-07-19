@@ -179,12 +179,13 @@ namespace MatterHackers.PolygonMesh
 								Children = implicitMeshs
 							};
 							var bounds = union.Bounds();
+							var size = bounds.Max - bounds.Min;
 							var root = Octree.BuildOctree((pos) =>
 							{
 								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
 								return union.Value(ref pos2);
 							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
-							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							new Vector3(size.x, size.y, size.z),
 							(int)outputResolution,
 							.001);
 							return Octree.GenerateMeshFromOctree(root);
