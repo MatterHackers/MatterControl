@@ -73,6 +73,7 @@ namespace MatterHackers.PolygonMesh
 			_64 = 6,
 			_128 = 7,
 			_256 = 8,
+			_512 = 9,
 		}
 
 		private const string BooleanAssembly = "609_Boolean_bin.dll";
@@ -395,6 +396,15 @@ namespace MatterHackers.PolygonMesh
 			}
 			else
 			{
+				if (inMeshA.Faces.Count < 4)
+				{
+					return inMeshB;
+				}
+				else if (inMeshB.Faces.Count > 4)
+				{
+					return inMeshA;
+				}
+				
 				var implicitA = GetImplicitFunction(inMeshA, matrixA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 				var implicitB = GetImplicitFunction(inMeshB, matrixB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 

@@ -72,13 +72,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void Initialize(int tabIndex)
 		{
 			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ')));
+			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ').Trim()));
 
 			string GetDescription(Enum value)
 			{
 				if (GetAttribute<DescriptionAttribute>(value) is DescriptionAttribute attr)
 				{
-					return attr.Description;
+					return attr.Description.Trim();
 				}
 
 				return null;
