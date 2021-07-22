@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return destImage;
 		}
 
-		private void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
+		private async void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
 			UiThread.RunOnIdle(async () =>
 			{
@@ -538,7 +538,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 								ApplicationController.Instance.Workspaces.Add(workspace);
 
-								var partTab = mainViewWidget.CreatePartTab(workspace);
+								var partTab = await mainViewWidget.CreatePartTab(workspace, true);
 								mainViewWidget.TabControl.ActiveTab = partTab;
 
 								// Load content after UI widgets to support progress notification during acquire/load

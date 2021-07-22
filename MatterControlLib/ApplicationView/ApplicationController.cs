@@ -713,7 +713,7 @@ namespace MatterHackers.MatterControl
 
 		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			this.MainView.CreatePartTab().ContinueWith(task =>
+			this.MainView.CreatePartTab(true).ContinueWith(task =>
 			{
 				var workspace = this.Workspaces.Last();
 				workspace.SceneContext.AddToPlate(selectedLibraryItems);

@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void MoveTabRight(ITab tab)
+		public async void MoveTabRight(ITab tab)
 		{
 			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;
@@ -322,13 +322,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex + 1, moving);
 
+				await ApplicationController.Instance.PersistUserTabs();
+
 				TabBar.ActionArea.PerformLayout();
 
 				ActiveTab = tab;
 			}
 		}
 
-		public void MoveTabLeft(ITab tab)
+		public async void MoveTabLeft(ITab tab)
 		{
 			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;
@@ -347,6 +349,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var moving = ApplicationController.Instance.Workspaces[savedIndex];
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex - 1, moving);
+
+				await ApplicationController.Instance.PersistUserTabs();
 
 				TabBar.ActionArea.PerformLayout();
 
