@@ -147,7 +147,10 @@ namespace MatterHackers.PolygonMesh
 				var implicitMeshs = new List<BoundedImplicitFunction3d>();
 				foreach (var item in items)
 				{
-					implicitMeshs.Add(GetImplicitFunction(item.mesh, item.matrix, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
+					var meshCopy = item.mesh.Copy(CancellationToken.None);
+					meshCopy.Transform(item.matrix);
+
+					implicitMeshs.Add(GetImplicitFunction(meshCopy, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
 				}
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
@@ -396,17 +399,23 @@ namespace MatterHackers.PolygonMesh
 			}
 			else
 			{
-				if (inMeshA.Faces.Count < 4)
+				var meshA = inMeshA.Copy(CancellationToken.None);
+				meshA.Transform(matrixA);
+				
+				var meshB = inMeshB.Copy(CancellationToken.None);
+				meshB.Transform(matrixB);
+
+				if (meshA.Faces.Count < 4)
 				{
-					return inMeshB;
+					return meshB;
 				}
-				else if (inMeshB.Faces.Count > 4)
+				else if (meshB.Faces.Count < 4)
 				{
-					return inMeshA;
+					return meshA;
 				}
 				
-				var implicitA = GetImplicitFunction(inMeshA, matrixA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
-				var implicitB = GetImplicitFunction(inMeshB, matrixB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitA = GetImplicitFunction(inMeshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitB = GetImplicitFunction(inMeshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
 				{
@@ -468,12 +477,9 @@ namespace MatterHackers.PolygonMesh
 		}
 
 
-		public static BoundedImplicitFunction3d GetImplicitFunction(Mesh mesh, Matrix4X4 matrix, bool exact, int numCells)
+		public static BoundedImplicitFunction3d GetImplicitFunction(Mesh mesh, bool exact, int numCells)
 		{
-			var meshCopy = mesh.Copy(CancellationToken.None);
-			meshCopy.Transform(matrix);
-
-			var meshA3 = meshCopy.ToDMesh3();
+			var meshA3 = mesh.ToDMesh3();
 
 			// Interesting experiment, this produces an extremely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
 			if (exact)
