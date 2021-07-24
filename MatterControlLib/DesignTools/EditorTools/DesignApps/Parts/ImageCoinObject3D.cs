@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					coinBlank = coinBlank.Plus(hook);
 				}
 
-				var imageToPath = new ImageToPathObject3D();
+				var imageToPath = new ImageToPathObject3D_2();
 
 				imageToPath.Children.Add(imageObject);
 
