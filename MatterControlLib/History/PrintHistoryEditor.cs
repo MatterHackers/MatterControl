@@ -289,12 +289,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 			var menuButtonText = menuButton.Descendants<TextWidget>().First();
 			menuButtonText.AutoExpandBoundsToText = true;
 
-			void AddSelection(PopupMenu menu, string text, bool other = false)
+			void AddSelection(PopupMenu menu, string text, string helpUrl = "", bool other = false)
 			{
 				var menuItem = menu.CreateMenuItem(text);
 
 				menuItem.Click += (s, e) =>
 				{
+					textField.Name = helpUrl;
+
+					var markdownWidget = textField.Parents<SystemWindow>().First().Descendants<MarkdownWidget>().LastOrDefault();
+					if (markdownWidget != null)
+					{
+						markdownWidget.Markdown = textField.Name;
+						markdownWidget.Visible = !string.IsNullOrEmpty(markdownWidget.Markdown);
+					}
+
 					if (other)
 					{
 						textField.Text = "";
@@ -313,6 +322,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 				};
 			}
 
+			string TroubleShooting(string type, int issue)
+			{
+				return $"For help with {type} and other issues, please read MatterHackers [Troubleshooting Guide](https://www.matterhackers.com/articles/3d-printer-troubleshooting-guide#Issue{issue})";
+			}
+
 			menuButton.DynamicPopupContent = () =>
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
@@ -321,21 +335,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 					theme,
 					(menu) =>
 					{
-						AddSelection(menu, "First Layer Bad Quality".Localize());
-						AddSelection(menu, "Initial Z Height Incorrect".Localize());
+						AddSelection(menu, "First Layer Bad Quality".Localize(), TroubleShooting("the first layer", 1));
+						AddSelection(menu, "Initial Z Height Incorrect".Localize(), TroubleShooting("initial Z height", 1));
 					});
 				popupMenu.CreateSubMenu("Quality".Localize(),
 					theme,
 					(menu) =>
 					{
-						AddSelection(menu, "General Quality".Localize());
+						AddSelection(menu, "General Quality".Localize(), TroubleShooting("general quality", 100));
 						AddSelection(menu, "Rough Overhangs".Localize());
 						AddSelection(menu, "Skipped Layers".Localize());
-						AddSelection(menu, "Some Parts Lifted".Localize());
-						AddSelection(menu, "Stringing / Poor retractions".Localize());
-						AddSelection(menu, "Warping".Localize());
-						AddSelection(menu, "Dislodged From Bed".Localize());
-						AddSelection(menu, "Layer Shift".Localize());
+						AddSelection(menu, "Some Parts Lifted".Localize(), TroubleShooting("lifting", 6));
+						AddSelection(menu, "Stringing / Poor retractions".Localize(), TroubleShooting("stringing", 9));
+						AddSelection(menu, "Warping".Localize(), TroubleShooting("warping", 6));
+						AddSelection(menu, "Dislodged From Bed".Localize(), TroubleShooting("adhesion", 2));
+						AddSelection(menu, "Layer Shift".Localize(), TroubleShooting("layer shifting", 8));
 					});
 				popupMenu.CreateSubMenu("Mechanical".Localize(),
 					theme,
@@ -343,7 +357,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					{
 						AddSelection(menu, "Bed Dislodged".Localize());
 						AddSelection(menu, "Bowden Tube Popped Out".Localize());
-						AddSelection(menu, "Extruder Slipping".Localize());
+						AddSelection(menu, "Extruder Slipping".Localize(), TroubleShooting("the extruder", 13));
 						AddSelection(menu, "Flooded Hot End".Localize());
 						AddSelection(menu, "Power Outage".Localize());
 					});
@@ -377,7 +391,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					});
 				AddSelection(popupMenu, "Test Print".Localize());
 				AddSelection(popupMenu, "User Error".Localize());
-				AddSelection(popupMenu, "Other".Localize(), true);
+				AddSelection(popupMenu, "Other".Localize(), "", true);
 
 				return popupMenu;
 			};
