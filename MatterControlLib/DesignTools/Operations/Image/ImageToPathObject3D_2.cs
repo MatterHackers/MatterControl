@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[JsonIgnore]
+		[ImageDisplay(AddGoogleSearch = true, Margin = new int[] { 11 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer ImageWithAlpha
 		{
 			get

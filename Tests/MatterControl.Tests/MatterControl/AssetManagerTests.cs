@@ -50,6 +50,11 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(0, assetManager.PublishCount, "No files should have been published");
 		}
 
+		class AssetTestObject3D : AssetObject3D
+		{
+			public override string AssetPath { get; set ; }
+		}
+
 		[Test]
 		public async Task StoreAsset()
 		{
@@ -61,7 +66,7 @@ namespace MatterControl.Tests.MatterControl
 			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
 			File.WriteAllText(tempFile, "Sample Text");
 
-			var object3D = new AssetObject3D()
+			var object3D = new AssetTestObject3D()
 			{
 				AssetPath = tempFile
 			};

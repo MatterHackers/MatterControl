@@ -592,12 +592,34 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
+				var imageDisplayAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<ImageDisplayAttribute>().FirstOrDefault();
+
 				rowContainer = CreateSettingsColumn(property);
-				rowContainer.AddChild(new ImageWidget(imageBuffer)
+				GuiWidget imageWidget;
+				if (imageDisplayAttribute?.Stretch == true)
 				{
-					HAnchor = HAnchor.Left,
-					Margin = new BorderDouble(0, 3)
-				});
+					imageWidget = new ResponsiveImageWidget(imageBuffer);
+				}
+				else
+				{
+					imageWidget = new ResponsiveImageWidget(imageBuffer);
+				}
+				if (imageDisplayAttribute != null)
+				{
+					imageWidget.MaximumSize = new Vector2(imageDisplayAttribute.MaxXSize * GuiWidget.DeviceScale, int.MaxValue);
+					imageWidget.Margin = imageDisplayAttribute.GetMargin();
+				}
+				else
+				{
+					imageWidget.Margin = new BorderDouble(0, 3);
+				}
+
+				rowContainer.AddChild(imageWidget);
+
+				if (imageDisplayAttribute?.AddGoogleSearch == true)
+				{
+					rowContainer.AddChild(ImageEditor.GetImageSearchWidget(theme));
+				}
 			}
 			else if (propertyValue is List<string> stringList)
 			{

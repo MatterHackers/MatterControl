@@ -66,42 +66,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var emptyText = "Search Google".Localize();
 
-			var searchRow = new FlowLayoutWidget()
+			string imageType = " silhouette";
+
+			if (item.Parent.GetType().Name.Contains("Lithophane"))
 			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(5, 0)
-			};
+				imageType = "";
+			}
 
-			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Center
-			};
-			searchRow.AddChild(searchField);
-			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
-			{
-				ToolTipText = "Search".Localize(),
-			};
-			searchRow.AddChild(searchButton);
-
-			void DoSearch(object s, EventArgs e)
-			{
-				string imageType = " silhouette";
-
-				if (item.Parent.GetType().Name.Contains("Lithophane"))
-				{
-					imageType = "";
-				}
-
-				var search = HttpUtility.UrlEncode(searchField.Text);
-				if (!string.IsNullOrEmpty(search))
-				{
-					ApplicationController.LaunchBrowser($"http://www.google.com/search?q={search}{imageType}&tbm=isch");
-				}
-			};
-
-			searchField.ActualTextEditWidget.EditComplete += DoSearch;
-			searchButton.Click += DoSearch;
+			var searchRow = GetImageSearchWidget(theme, imageType);
 
 			theme.ApplyBoxStyle(imageSection, margin: 0);
 
@@ -232,6 +204,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 
 			return column;
+		}
+
+		public static GuiWidget GetImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
+		{
+			var searchRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(5, 0)
+			};
+
+			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			searchRow.AddChild(searchField);
+			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+			searchRow.AddChild(searchButton);
+
+			void DoSearch(object s, EventArgs e)
+			{
+				var search = HttpUtility.UrlEncode(searchField.Text);
+				if (!string.IsNullOrEmpty(search))
+				{
+					ApplicationController.LaunchBrowser($"http://www.google.com/search?q={search} {postPend}&tbm=isch");
+				}
+			};
+
+			searchField.ActualTextEditWidget.EditComplete += DoSearch;
+			searchButton.Click += DoSearch;
+			return searchRow;
 		}
 
 		private ImageBuffer SetImage(ThemeConfig theme, ImageObject3D imageObject)
