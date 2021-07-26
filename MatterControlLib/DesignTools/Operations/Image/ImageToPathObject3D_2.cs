@@ -324,6 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var image = leftHandle.Image;
 			var leftGraphics = image.NewGraphics2D();
 			leftGraphics.Line(image.Width, 0, image.Width, image.Height, theme.TextColor);
+			leftGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
 			historgramWidget.AddChild(leftHandle);
 
 			var rightHandle = new ImageWidget((int)(handleWidth), (int)historgramWidget.Height);
@@ -331,7 +332,33 @@ namespace MatterHackers.MatterControl.DesignTools
 			image = rightHandle.Image;
 			var rightGraphics = image.NewGraphics2D();
 			rightGraphics.Line(0, 0, 0, image.Height, theme.TextColor);
+			rightGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
 			historgramWidget.AddChild(rightHandle);
+
+			var leftDown = false;
+			var rightDown = false;
+			historgramWidget.MouseDown += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Left)
+				{
+					if (leftHandle.BoundsRelativeToParent.Contains(e.Position.X, 0))
+					{
+						leftDown = true;
+					}
+				}
+			};
+			historgramWidget.MouseMove += (s, e) =>
+			{
+				if (leftDown)
+				{
+					RangeStart = e.Position.X / _histogramRawCache.Width;
+					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+				}
+			};
+			historgramWidget.MouseUp += (s, e) =>
+			{
+				leftDown = false;
+			};
 
 			return historgramWidget;
 		}
