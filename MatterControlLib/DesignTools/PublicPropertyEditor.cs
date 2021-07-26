@@ -30,9 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Web;
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -42,6 +44,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -614,11 +617,93 @@ namespace MatterHackers.MatterControl.DesignTools
 					imageWidget.Margin = new BorderDouble(0, 3);
 				}
 
-				rowContainer.AddChild(imageWidget);
-
-				if (imageDisplayAttribute?.AddGoogleSearch == true)
+				ImageBuffer GetImageCheckingForErrors()
 				{
-					rowContainer.AddChild(ImageEditor.GetImageSearchWidget(theme));
+					var image = imageBuffer;
+					if (object3D is ImageObject3D imageObject2)
+					{
+						image = imageObject2.Image;
+					}
+					
+					// Show image load error if needed
+					if (image == null)
+					{
+						image = new ImageBuffer(185, 185).SetPreMultiply();
+						var graphics2D = image.NewGraphics2D();
+
+						graphics2D.FillRectangle(0, 0, 185, 185, theme.MinimalShade);
+						graphics2D.Rectangle(0, 0, 185, 185, theme.SlightShade);
+						graphics2D.DrawString("Error Loading Image".Localize() + "...", 10, 185 / 2, baseline: Agg.Font.Baseline.BoundsCenter, color: Color.Red, pointSize: theme.DefaultFontSize, drawFromHintedCach: true);
+					}
+
+					return image;
+				}
+
+				void UpdateEditorImage()
+				{
+					if (imageWidget is ResponsiveImageWidget responsive)
+					{
+						responsive.Image = GetImageCheckingForErrors();
+					}
+					else
+					{
+						((ImageWidget)imageWidget).Image = GetImageCheckingForErrors();
+					}
+				}
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						UpdateEditorImage();
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
+
+				if (object3D is ImageObject3D imageObject)
+				{
+					imageWidget.Click += (s, e) =>
+					{
+						if (e.Button == MouseButtons.Right)
+						{
+							var popupMenu = new PopupMenu(theme);
+
+							var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+							pasteMenu.Click += (s2, e2) =>
+				{
+								var activeImage = Clipboard.Instance.GetImage();
+
+								// Persist
+								string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+								ImageIO.SaveImageData(
+									filePath,
+									activeImage);
+
+								imageObject.AssetPath = filePath;
+								imageObject.Mesh = null;
+
+								UpdateEditorImage();
+
+								imageObject.Invalidate(InvalidateType.Image);
+							};
+
+							pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+							var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+							copyMenu.Click += (s2, e2) =>
+							{
+								Clipboard.Instance.SetImage(imageObject.Image);
+							};
+
+							popupMenu.ShowMenu(imageWidget, e);
+						}
+					};
+				}
+
+				rowContainer.AddChild(imageWidget);
 				}
 			}
 			else if (propertyValue is List<string> stringList)
@@ -789,6 +874,51 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is string stringValue)
 			{
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
+				{
+					rowContainer = GetImageSearchWidget(theme);
+				}
+				else if(object3D is AssetObject3D assetObject
+					&& property.PropertyInfo.Name == "AssetPath")
+				{
+					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
+					// Change button
+					var changeButton = new TextButton(property.Description, theme)
+					{
+						BackgroundColor = theme.MinimalShade,
+						Margin = 3
+					};
+
+					rowContainer = new SettingsRow(property.DisplayName,
+						null,
+						changeButton,
+						theme);
+
+
+					changeButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							// we do this using to make sure that the stream is closed before we try and insert the Picture
+							AggContext.FileDialogs.OpenFileDialog(
+								new OpenFileDialogParams(
+									"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
+									multiSelect: false,
+									title: "Add Image".Localize()),
+									(openParams) =>
+									{
+										if (!File.Exists(openParams.FileName))
+										{
+											return;
+										}
+
+										assetObject.AssetPath = openParams.FileName;
+									});
+						});
+					};
+				}
+				else
+			{
 				if (readOnly)
 				{
 					WrappedTextWidget wrappedTextWidget = null;
@@ -872,6 +1002,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						rowContainer = CreateSettingsRow(property, field, theme, rows);
 					}
 				}
+			}
 			}
 			else if (propertyValue is StringOrExpression stringOrExpression)
 			{
@@ -997,6 +1128,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
 
 			return rowContainer;
+		}
+
+		public static GuiWidget GetImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
+		{
+			var searchRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(5, 0)
+			};
+
+			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			searchRow.AddChild(searchField);
+			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+			searchRow.AddChild(searchButton);
+
+			void DoSearch(object s, EventArgs e)
+			{
+				var search = HttpUtility.UrlEncode(searchField.Text);
+				if (!string.IsNullOrEmpty(search))
+				{
+					ApplicationController.LaunchBrowser($"http://www.google.com/search?q={search} {postPend}&tbm=isch");
+				}
+			};
+
+			searchField.ActualTextEditWidget.EditComplete += DoSearch;
+			searchButton.Click += DoSearch;
+			return searchRow;
 		}
 
 		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)

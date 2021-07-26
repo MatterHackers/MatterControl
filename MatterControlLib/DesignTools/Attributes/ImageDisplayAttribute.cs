@@ -36,7 +36,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Property)]
 	public class ImageDisplayAttribute : Attribute
 	{
-		public bool AddGoogleSearch { get; set; }
 		public bool Stretch { get; set; }
 
 		/// <summary>
@@ -54,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				case 2:
 					return new BorderDouble(Margin[0], Margin[1]);
-				
+
 				case 4:
 					return new BorderDouble(Margin[0], Margin[1], Margin[2], Margin[3]);
 
@@ -62,5 +61,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return new BorderDouble();
 		}
+	}
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class GoogleSearchAttribute : Attribute
+	{
 	}
 }
