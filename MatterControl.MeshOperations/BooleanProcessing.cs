@@ -73,6 +73,7 @@ namespace MatterHackers.PolygonMesh
 			_64 = 6,
 			_128 = 7,
 			_256 = 8,
+			_512 = 9,
 		}
 
 		private const string BooleanAssembly = "609_Boolean_bin.dll";
@@ -146,7 +147,10 @@ namespace MatterHackers.PolygonMesh
 				var implicitMeshs = new List<BoundedImplicitFunction3d>();
 				foreach (var item in items)
 				{
-					implicitMeshs.Add(GetImplicitFunction(item.mesh, item.matrix, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
+					var meshCopy = item.mesh.Copy(CancellationToken.None);
+					meshCopy.Transform(item.matrix);
+
+					implicitMeshs.Add(GetImplicitFunction(meshCopy, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
 				}
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
@@ -179,12 +183,13 @@ namespace MatterHackers.PolygonMesh
 								Children = implicitMeshs
 							};
 							var bounds = union.Bounds();
+							var size = bounds.Max - bounds.Min;
 							var root = Octree.BuildOctree((pos) =>
 							{
 								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
 								return union.Value(ref pos2);
 							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
-							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+							new Vector3(size.x, size.y, size.z),
 							(int)outputResolution,
 							.001);
 							return Octree.GenerateMeshFromOctree(root);
@@ -394,8 +399,23 @@ namespace MatterHackers.PolygonMesh
 			}
 			else
 			{
-				var implicitA = GetImplicitFunction(inMeshA, matrixA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
-				var implicitB = GetImplicitFunction(inMeshB, matrixB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var meshA = inMeshA.Copy(CancellationToken.None);
+				meshA.Transform(matrixA);
+				
+				var meshB = inMeshB.Copy(CancellationToken.None);
+				meshB.Transform(matrixB);
+
+				if (meshA.Faces.Count < 4)
+				{
+					return meshB;
+				}
+				else if (meshB.Faces.Count < 4)
+				{
+					return meshA;
+				}
+				
+				var implicitA = GetImplicitFunction(inMeshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitB = GetImplicitFunction(inMeshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
 				{
@@ -457,12 +477,9 @@ namespace MatterHackers.PolygonMesh
 		}
 
 
-		public static BoundedImplicitFunction3d GetImplicitFunction(Mesh mesh, Matrix4X4 matrix, bool exact, int numCells)
+		public static BoundedImplicitFunction3d GetImplicitFunction(Mesh mesh, bool exact, int numCells)
 		{
-			var meshCopy = mesh.Copy(CancellationToken.None);
-			meshCopy.Transform(matrix);
-
-			var meshA3 = meshCopy.ToDMesh3();
+			var meshA3 = mesh.ToDMesh3();
 
 			// Interesting experiment, this produces an extremely accurate surface representation but is quite slow (even though fast) compared to voxel lookups.
 			if (exact)

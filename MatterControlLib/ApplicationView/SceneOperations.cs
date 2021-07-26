@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 					var sceneItem = scene.SelectedItem;
 					var imageObject = sceneItem.Clone() as ImageObject3D;
 
-					var path = new ImageToPathObject3D();
+					var path = new ImageToPathObject3D_2();
 					path.Children.Add(imageObject);
 
 					var smooth = new SmoothPathObject3D();
@@ -315,10 +315,10 @@ namespace MatterHackers.MatterControl
 						ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
 						SurfacedEditors = new List<string>
 							{
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>.Children<ImageObject3D>",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Children<ImageObject3D>",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>",
 								"$.Children<BaseObject3D>",
 							}
 					};
@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(ImageObject3D),
 				TitleResolver = () => "Image to Path".Localize(),
-				ResultType = typeof(ImageToPathObject3D),
+				ResultType = typeof(ImageToPathObject3D_2),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -354,9 +354,9 @@ namespace MatterHackers.MatterControl
 					if (sceneItem is IObject3D imageObject)
 					{
 						// TODO: make it look like this (and get rid of all the other stuff)
-						// scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
+						// scene.Replace(sceneItem, new ImageToPathObject3D_2(sceneItem.Clone()));
 
-						var path = new ImageToPathObject3D();
+						var path = new ImageToPathObject3D_2();
 
 						var itemClone = sceneItem.Clone();
 						path.Children.Add(itemClone);
@@ -896,7 +896,7 @@ namespace MatterHackers.MatterControl
 			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
 
 			// path operations
-			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation>
+			PrimaryOperations.Add(typeof(ImageToPathObject3D_2), new List<SceneOperation>
 			{
 				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("SmoothPath")
 			});

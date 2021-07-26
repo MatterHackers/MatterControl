@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -16,12 +18,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrimitiveAndSheetsTests
 	{
-		[Test]
-		public void SheetEditorLayoutAndNavigation()
+		[SetUp]
+		public void TestSetup()
 		{
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
 
+		[Test]
+		public void SheetEditorLayoutAndNavigation()
+		{
 			var systemWindow = new SystemWindow(800, 600)
 			{
 				Name = "Main Window",
@@ -157,6 +163,48 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 60);
+		}
+
+		[Test]
+		public void SheetEditorNavigationTests()
+		{
+			var systemWindow = new SystemWindow(800, 600)
+			{
+				Name = "Main Window",
+			};
+
+			Application.AddTextWidgetRightClickMenu();
+
+			AutomationRunner.TimeToMoveMouse = .1;
+
+			var theme = ApplicationController.Instance.Theme;
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			systemWindow.AddChild(container);
+
+			var sheetData = new SheetData(5, 5);
+			var undoBuffer = new UndoBuffer();
+			var sheetEditorWidget = new SheetEditorWidget(sheetData, undoBuffer, theme);
+
+			container.AddChild(sheetEditorWidget);
+
+			systemWindow.RunTest(testRunner =>
+			{
+				testRunner.Delay(60);
+				return Task.CompletedTask;
+			},
+			2000);
+		}
+	}
+
+	public static class RunnerX
+	{
+		public static Task RunTest(this SystemWindow systemWindow, AutomationTest automationTest, int timeout)
+		{
+			return AutomationRunner.ShowWindowAndExecuteTests(systemWindow, automationTest, timeout);
 		}
 	}
 }

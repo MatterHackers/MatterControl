@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -56,28 +51,42 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[Obsolete("Use ImageToPathObject3D_2 instead", false)]
-	public class ImageToPathObject3D : Object3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class ImageToPathObject3D_2 : Object3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
 	{
-		private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
+		private ThresholdFunctions _featureDetector = ThresholdFunctions.Intensity;
 
 		private ImageBuffer _histogramRawCache = null;
 		private ImageBuffer _histogramDisplayCache = null;
 
-		public ImageToPathObject3D()
+		public ImageToPathObject3D_2()
 		{
 			Name = "Image to Path".Localize();
 		}
 
 		public enum ThresholdFunctions
 		{
-			Silhouette,
+			Transparency,
+			Colors,
 			Intensity,
-			Alpha,
-			Hue
 		}
 
-		[EnumRename("Alpha", "Transparency")]
+		[JsonIgnore]
+		public ImageBuffer ImageWithAlpha
+		{
+			get
+			{
+				var imageObject = (ImageObject3D)Children.Where(i => i is ImageObject3D).FirstOrDefault();
+
+				return imageObject.Image;
+			}
+
+			set
+			{
+			}
+		}
+
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public ThresholdFunctions FeatureDetector
 		{
 			get
@@ -187,16 +196,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				switch (FeatureDetector)
 				{
-					case ThresholdFunctions.Silhouette:
-						return new SilhouetteThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
-
 					case ThresholdFunctions.Intensity:
 						return new MapOnMaxIntensity(RangeStart.Value(this), RangeEnd.Value(this));
 
-					case ThresholdFunctions.Alpha:
+					case ThresholdFunctions.Transparency:
 						return new AlphaThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
 
-					case ThresholdFunctions.Hue:
+					case ThresholdFunctions.Colors:
 						return new HueThresholdFunction(RangeStart.Value(this), RangeEnd.Value(this));
 				}
 

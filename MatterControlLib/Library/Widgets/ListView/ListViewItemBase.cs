@@ -346,6 +346,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Invalidate();
 		}
 
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (!keyEvent.Handled)
+			{
+				var listView = listViewItem.ListView;
+				if (listView != null
+					&& listView.SelectedItems.Count == 1
+					&& listView.SelectedItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+					&& !firstItem.IsProtected
+					&& listView.ActiveContainer is ILibraryWritableContainer)
+				{
+					switch (keyEvent.KeyCode)
+					{
+						case Keys.F2:
+							listView.ActiveContainer.Rename(firstItem);
+							listView.SelectedItems.Clear();
+							break;
+					}
+				}
+			}
+
+			base.OnKeyDown(keyEvent);
+		}
+
 		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			var bounds = this.LocalBounds;

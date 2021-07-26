@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Height")]
 		public DoubleOrExpression ExtrusionHeight { get; set; } = 5;
 
+		[DisplayName("")]
 		[ReadOnly(true)]
 		public string NoBaseMessage { get; set; } = "No base is added under your part. Switch to a different base option to create a base.";
 
