@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
+			typeof(Historgram),
 			typeof(List<string>)
 		};
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -605,7 +606,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					imageWidget = new ResponsiveImageWidget(imageBuffer);
+					imageWidget = new ImageWidget(imageBuffer);
 				}
 				if (imageDisplayAttribute != null)
 				{
@@ -662,7 +663,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				object3D.Invalidated += RefreshField;
 				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-
 				if (object3D is ImageObject3D imageObject)
 				{
 					imageWidget.Click += (s, e) =>
@@ -673,7 +673,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
 							pasteMenu.Click += (s2, e2) =>
-				{
+							{
 								var activeImage = Clipboard.Instance.GetImage();
 
 								// Persist
@@ -704,7 +704,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				rowContainer.AddChild(imageWidget);
+			}
+			else if (propertyValue is Historgram historgram)
+			{
+				rowContainer = CreateSettingsColumn(property);
+				var histogramWidget = historgram.NewEditWidget(theme);
+				rowContainer.AddChild(histogramWidget);
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						historgram.ProcessOutputImage();
+					}
 				}
+
+				object3D.Invalidated += RefreshField;
+				rowContainer.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is List<string> stringList)
 			{
@@ -918,91 +933,91 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 				}
 				else
-			{
-				if (readOnly)
 				{
-					WrappedTextWidget wrappedTextWidget = null;
-					if (!string.IsNullOrEmpty(property.DisplayName))
+					if (readOnly)
 					{
-						rowContainer = new GuiWidget()
+						WrappedTextWidget wrappedTextWidget = null;
+						if (!string.IsNullOrEmpty(property.DisplayName))
 						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit,
-							Margin = 9
-						};
+							rowContainer = new GuiWidget()
+							{
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Fit,
+								Margin = 9
+							};
 
-						var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
-							textColor: theme.TextColor,
-							pointSize: 10)
-						{
-							VAnchor = VAnchor.Center,
-						});
+							var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
+								textColor: theme.TextColor,
+								pointSize: 10)
+							{
+								VAnchor = VAnchor.Center,
+							});
 
-						var wrapContainer = new GuiWidget()
+							var wrapContainer = new GuiWidget()
+							{
+								Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Fit
+							};
+							wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+							{
+								HAnchor = HAnchor.Stretch
+							};
+							wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
+							wrapContainer.AddChild(wrappedTextWidget);
+							rowContainer.AddChild(wrapContainer);
+						}
+						else
 						{
-							Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit
-						};
-						wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+							rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
+													textColor: theme.TextColor,
+													pointSize: 10)
+							{
+								Margin = 9
+							};
+						}
+
+						void RefreshField(object s, InvalidateArgs e)
 						{
-							HAnchor = HAnchor.Stretch
-						};
-						wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
-						wrapContainer.AddChild(wrappedTextWidget);
-						rowContainer.AddChild(wrapContainer);
+							if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+							{
+								wrappedTextWidget.Text = property.Value.ToString();
+							}
+						}
+
+						object3D.Invalidated += RefreshField;
+						wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 					}
-					else
+					else // normal edit row
 					{
-						rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
-												textColor: theme.TextColor,
-												pointSize: 10)
+						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
 						{
-							Margin = 9
-						};
-					}
-
-					void RefreshField(object s, InvalidateArgs e)
-					{
-						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+							// create a a multi-line string editor
+							var field = new MultilineStringField(theme);
+							field.Initialize(0);
+							field.SetValue(stringValue, false);
+							field.ClearUndoHistory();
+							field.Content.HAnchor = HAnchor.Stretch;
+							field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+							field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+							field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+							field.Content.Margin = new BorderDouble(0, 0, 0, 5);
+							RegisterValueChanged(field, (valueString) => valueString);
+							rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+						}
+						else
 						{
-							wrappedTextWidget.Text = property.Value.ToString();
+							// create a string editor
+							var field = new TextField(theme);
+							field.Initialize(0);
+							field.SetValue(stringValue, false);
+							field.ClearUndoHistory();
+							field.Content.HAnchor = HAnchor.Stretch;
+							RegisterValueChanged(field, (valueString) => valueString);
+							rowContainer = CreateSettingsRow(property, field, theme, rows);
 						}
 					}
-
-					object3D.Invalidated += RefreshField;
-					wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 				}
-				else // normal edit row
-				{
-					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
-					{
-						// create a a multi-line string editor
-						var field = new MultilineStringField(theme);
-						field.Initialize(0);
-						field.SetValue(stringValue, false);
-						field.ClearUndoHistory();
-						field.Content.HAnchor = HAnchor.Stretch;
-						field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
-						field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
-						field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
-						field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
-					}
-					else
-					{
-						// create a string editor
-						var field = new TextField(theme);
-						field.Initialize(0);
-						field.SetValue(stringValue, false);
-						field.ClearUndoHistory();
-						field.Content.HAnchor = HAnchor.Stretch;
-						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsRow(property, field, theme, rows);
-					}
-				}
-			}
 			}
 			else if (propertyValue is StringOrExpression stringOrExpression)
 			{
