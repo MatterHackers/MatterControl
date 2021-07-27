@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				BackgroundColor = theme.SlightShade
 			};
 
-			var handleWidth = 5 * GuiWidget.DeviceScale;
+			var handleWidth = 10 * GuiWidget.DeviceScale;
 			var historgramBackground = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -327,6 +327,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			leftGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
 			historgramWidget.AddChild(leftHandle);
 
+			bool leftDown = false;
+			var leftX = 0.0;
+			leftHandle.MouseDown += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Left)
+				{
+					leftDown = true;
+					leftX = e.Position.X;
+				}
+			};
+			leftHandle.MouseMove += (s, e) =>
+			{
+				if (leftDown)
+				{
+					var offset = e.Position.X - leftX;
+					RangeStart += offset / _histogramRawCache.Width;
+					RangeStart = Math.Max(0, Math.Min(RangeStart, RangeEnd));
+					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+				}
+			};
+			leftHandle.MouseUp += (s, e) =>
+			{
+				leftDown = false;
+			};
+
 			var rightHandle = new ImageWidget((int)(handleWidth), (int)historgramWidget.Height);
 			rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
 			image = rightHandle.Image;
@@ -335,29 +360,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			rightGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
 			historgramWidget.AddChild(rightHandle);
 
-			var leftDown = false;
-			var rightDown = false;
-			historgramWidget.MouseDown += (s, e) =>
+			bool rightDown = false;
+			var rightX = 0.0;
+			rightHandle.MouseDown += (s, e) =>
 			{
 				if (e.Button == MouseButtons.Left)
 				{
-					if (leftHandle.BoundsRelativeToParent.Contains(e.Position.X, 0))
-					{
-						leftDown = true;
-					}
+					rightDown = true;
+					rightX = e.Position.X;
 				}
 			};
-			historgramWidget.MouseMove += (s, e) =>
+			rightHandle.MouseMove += (s, e) =>
 			{
-				if (leftDown)
+				if (rightDown)
 				{
-					RangeStart = e.Position.X / _histogramRawCache.Width;
-					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+					var offset = e.Position.X - rightX;
+					RangeEnd += offset / _histogramRawCache.Width;
+					RangeEnd = Math.Min(1, Math.Max(RangeStart, RangeEnd));
+					rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
 				}
 			};
-			historgramWidget.MouseUp += (s, e) =>
+			rightHandle.MouseUp += (s, e) =>
 			{
-				leftDown = false;
+				rightDown = false;
 			};
 
 			return historgramWidget;
