@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +44,13 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageObject3D : AssetObject3D, IObject3DControlsProvider
+	public interface IImageProvider
+	{
+		ImageBuffer Image { get; }
+	}
+
+	[HideMeterialAndColor]
+	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -58,22 +65,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Image".Localize();
 		}
 
-		public override string AssetPath
-		{
-			get => _assetPath;
-			set
-			{
-				if (_assetPath != value)
-				{
-					_assetPath = value;
-					_image = null;
-				}
-			}
-		}
-
 		public override bool CanFlatten => false;
 
+		[GoogleSearch]
+		public string ImageSearch { get; set; } = "";
+
+
+		[DisplayName("")]
 		[JsonIgnore]
+		[ImageDisplay(Margin = new int[] { 30, 3, 30, 3 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer Image
 		{
 			get
@@ -108,9 +108,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					// send the invalidate on image change
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Image));
+					Invalidate(InvalidateType.DisplayValues);
 				}
 
 				return _image;
+			}
+
+			set
+			{
 			}
 		}
 
@@ -123,8 +128,29 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					_invert = value;
 					_image = null;
+					var _ = Image;
 
 					Invalidate(InvalidateType.Image);
+				}
+			}
+		}
+
+
+		[DisplayName("Open new image")]
+		[Description("Open")]
+		public override string AssetPath
+		{
+			get => _assetPath;
+			set
+			{
+				if (_assetPath != value)
+				{
+					_assetPath = value;
+					_image = null;
+
+					InitMesh(this.Image);
+
+					this.Invalidate(InvalidateType.DisplayValues);
 				}
 			}
 		}

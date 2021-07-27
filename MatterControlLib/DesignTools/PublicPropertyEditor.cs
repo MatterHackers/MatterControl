@@ -30,9 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Web;
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -42,6 +44,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -68,6 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
+			typeof(Historgram),
 			typeof(List<string>)
 		};
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -592,12 +596,133 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
+				var imageDisplayAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<ImageDisplayAttribute>().FirstOrDefault();
+
 				rowContainer = CreateSettingsColumn(property);
-				rowContainer.AddChild(new ImageWidget(imageBuffer)
+				GuiWidget imageWidget;
+				if (imageDisplayAttribute?.Stretch == true)
 				{
-					HAnchor = HAnchor.Left,
-					Margin = new BorderDouble(0, 3)
-				});
+					imageWidget = new ResponsiveImageWidget(imageBuffer);
+				}
+				else
+				{
+					imageWidget = new ImageWidget(imageBuffer);
+				}
+				if (imageDisplayAttribute != null)
+				{
+					imageWidget.MaximumSize = new Vector2(imageDisplayAttribute.MaxXSize * GuiWidget.DeviceScale, int.MaxValue);
+					imageWidget.Margin = imageDisplayAttribute.GetMargin();
+				}
+				else
+				{
+					imageWidget.Margin = new BorderDouble(0, 3);
+				}
+
+				ImageBuffer GetImageCheckingForErrors()
+				{
+					var image = imageBuffer;
+					if (object3D is ImageObject3D imageObject2)
+					{
+						image = imageObject2.Image;
+					}
+					
+					// Show image load error if needed
+					if (image == null)
+					{
+						image = new ImageBuffer(185, 185).SetPreMultiply();
+						var graphics2D = image.NewGraphics2D();
+
+						graphics2D.FillRectangle(0, 0, 185, 185, theme.MinimalShade);
+						graphics2D.Rectangle(0, 0, 185, 185, theme.SlightShade);
+						graphics2D.DrawString("Error Loading Image".Localize() + "...", 10, 185 / 2, baseline: Agg.Font.Baseline.BoundsCenter, color: Color.Red, pointSize: theme.DefaultFontSize, drawFromHintedCach: true);
+					}
+
+					return image;
+				}
+
+				void UpdateEditorImage()
+				{
+					if (imageWidget is ResponsiveImageWidget responsive)
+					{
+						responsive.Image = GetImageCheckingForErrors();
+					}
+					else
+					{
+						((ImageWidget)imageWidget).Image = GetImageCheckingForErrors();
+					}
+				}
+
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						UpdateEditorImage();
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
+				if (object3D is ImageObject3D imageObject)
+				{
+					imageWidget.Click += (s, e) =>
+					{
+						if (e.Button == MouseButtons.Right)
+						{
+							var popupMenu = new PopupMenu(theme);
+
+							var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+							pasteMenu.Click += (s2, e2) =>
+							{
+								var activeImage = Clipboard.Instance.GetImage();
+
+								// Persist
+								string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+								ImageIO.SaveImageData(
+									filePath,
+									activeImage);
+
+								imageObject.AssetPath = filePath;
+								imageObject.Mesh = null;
+
+								UpdateEditorImage();
+
+								imageObject.Invalidate(InvalidateType.Image);
+							};
+
+							pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+							var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+							copyMenu.Click += (s2, e2) =>
+							{
+								Clipboard.Instance.SetImage(imageObject.Image);
+							};
+
+							popupMenu.ShowMenu(imageWidget, e);
+						}
+					};
+				}
+
+				rowContainer.AddChild(imageWidget);
+			}
+			else if (propertyValue is Historgram historgram)
+			{
+				rowContainer = CreateSettingsColumn(property);
+				var histogramWidget = historgram.NewEditWidget(theme);
+				rowContainer.AddChild(histogramWidget);
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					{
+						if (object3D is IImageProvider imageProvider)
+						{
+							var _ = imageProvider.Image;
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				rowContainer.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is List<string> stringList)
 			{
@@ -767,87 +892,133 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is string stringValue)
 			{
-				if (readOnly)
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
 				{
-					WrappedTextWidget wrappedTextWidget = null;
-					if (!string.IsNullOrEmpty(property.DisplayName))
-					{
-						rowContainer = new GuiWidget()
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit,
-							Margin = 9
-						};
-
-						var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
-							textColor: theme.TextColor,
-							pointSize: 10)
-						{
-							VAnchor = VAnchor.Center,
-						});
-
-						var wrapContainer = new GuiWidget()
-						{
-							Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit
-						};
-						wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
-						{
-							HAnchor = HAnchor.Stretch
-						};
-						wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
-						wrapContainer.AddChild(wrappedTextWidget);
-						rowContainer.AddChild(wrapContainer);
-					}
-					else
-					{
-						rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
-												textColor: theme.TextColor,
-												pointSize: 10)
-						{
-							Margin = 9
-						};
-					}
-
-					void RefreshField(object s, InvalidateArgs e)
-					{
-						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
-						{
-							wrappedTextWidget.Text = property.Value.ToString();
-						}
-					}
-
-					object3D.Invalidated += RefreshField;
-					wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+					rowContainer = GetImageSearchWidget(theme);
 				}
-				else // normal edit row
+				else if(object3D is AssetObject3D assetObject
+					&& property.PropertyInfo.Name == "AssetPath")
 				{
-					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
+					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
+					// Change button
+					var changeButton = new TextButton(property.Description, theme)
 					{
-						// create a a multi-line string editor
-						var field = new MultilineStringField(theme);
-						field.Initialize(0);
-						field.SetValue(stringValue, false);
-						field.ClearUndoHistory();
-						field.Content.HAnchor = HAnchor.Stretch;
-						field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
-						field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
-						field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
-						field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+						BackgroundColor = theme.MinimalShade,
+						Margin = 3
+					};
+
+					rowContainer = new SettingsRow(property.DisplayName,
+						null,
+						changeButton,
+						theme);
+
+
+					changeButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							// we do this using to make sure that the stream is closed before we try and insert the Picture
+							AggContext.FileDialogs.OpenFileDialog(
+								new OpenFileDialogParams(
+									"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
+									multiSelect: false,
+									title: "Add Image".Localize()),
+									(openParams) =>
+									{
+										if (!File.Exists(openParams.FileName))
+										{
+											return;
+										}
+
+										assetObject.AssetPath = openParams.FileName;
+									});
+						});
+					};
+				}
+				else
+				{
+					if (readOnly)
+					{
+						WrappedTextWidget wrappedTextWidget = null;
+						if (!string.IsNullOrEmpty(property.DisplayName))
+						{
+							rowContainer = new GuiWidget()
+							{
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Fit,
+								Margin = 9
+							};
+
+							var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
+								textColor: theme.TextColor,
+								pointSize: 10)
+							{
+								VAnchor = VAnchor.Center,
+							});
+
+							var wrapContainer = new GuiWidget()
+							{
+								Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Fit
+							};
+							wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+							{
+								HAnchor = HAnchor.Stretch
+							};
+							wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
+							wrapContainer.AddChild(wrappedTextWidget);
+							rowContainer.AddChild(wrapContainer);
+						}
+						else
+						{
+							rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
+													textColor: theme.TextColor,
+													pointSize: 10)
+							{
+								Margin = 9
+							};
+						}
+
+						void RefreshField(object s, InvalidateArgs e)
+						{
+							if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+							{
+								wrappedTextWidget.Text = property.Value.ToString();
+							}
+						}
+
+						object3D.Invalidated += RefreshField;
+						wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 					}
-					else
+					else // normal edit row
 					{
-						// create a string editor
-						var field = new TextField(theme);
-						field.Initialize(0);
-						field.SetValue(stringValue, false);
-						field.ClearUndoHistory();
-						field.Content.HAnchor = HAnchor.Stretch;
-						RegisterValueChanged(field, (valueString) => valueString);
-						rowContainer = CreateSettingsRow(property, field, theme, rows);
+						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
+						{
+							// create a a multi-line string editor
+							var field = new MultilineStringField(theme);
+							field.Initialize(0);
+							field.SetValue(stringValue, false);
+							field.ClearUndoHistory();
+							field.Content.HAnchor = HAnchor.Stretch;
+							field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+							field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+							field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+							field.Content.Margin = new BorderDouble(0, 0, 0, 5);
+							RegisterValueChanged(field, (valueString) => valueString);
+							rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+						}
+						else
+						{
+							// create a string editor
+							var field = new TextField(theme);
+							field.Initialize(0);
+							field.SetValue(stringValue, false);
+							field.ClearUndoHistory();
+							field.Content.HAnchor = HAnchor.Stretch;
+							RegisterValueChanged(field, (valueString) => valueString);
+							rowContainer = CreateSettingsRow(property, field, theme, rows);
+						}
 					}
 				}
 			}
@@ -975,6 +1146,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
 
 			return rowContainer;
+		}
+
+		public static GuiWidget GetImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
+		{
+			var searchRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(5, 0)
+			};
+
+			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			searchRow.AddChild(searchField);
+			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+			searchRow.AddChild(searchButton);
+
+			void DoSearch(object s, EventArgs e)
+			{
+				var search = HttpUtility.UrlEncode(searchField.Text);
+				if (!string.IsNullOrEmpty(search))
+				{
+					ApplicationController.LaunchBrowser($"http://www.google.com/search?q={search} {postPend}&tbm=isch");
+				}
+			};
+
+			searchField.ActualTextEditWidget.EditComplete += DoSearch;
+			searchButton.Click += DoSearch;
+			return searchRow;
 		}
 
 		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)
