@@ -77,9 +77,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				var imageObject = (ImageObject3D)Children.Where(i => i is ImageObject3D).FirstOrDefault();
+				if (IntensityHistogram.AlphaImage == null)
+				{
+					IntensityHistogram.SourceImage = SourceImage;
+					IntensityHistogram.RebuildAlphaImage();
+				}
 
-				return imageObject.Image;
+				return IntensityHistogram.AlphaImage;
 			}
 
 			set
@@ -223,7 +227,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();
-					var thresholdFunction = new AlphaThresholdFunction(0, 1);					
+					var thresholdFunction = new AlphaThresholdFunction(0, 1);
 					this.GenerateMarchingSquaresAndLines(
 						(progress0to1, status) =>
 						{
@@ -259,41 +263,103 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
 		}
 
+		[JsonIgnore]
+		public ImageBuffer AlphaImage { get; private set; }
+
+		[JsonIgnore]
+		public ImageBuffer SourceImage { get; set; }
+
+		public void RebuildAlphaImage()
+		{
+			if (SourceImage == null)
+			{
+				return;
+			}
+
+			// build the alpha image
+			if (AlphaImage == null)
+			{
+				AlphaImage = new ImageBuffer(SourceImage.Width, SourceImage.Height);
+			}
+			else if (AlphaImage.Width != SourceImage.Width
+				|| AlphaImage.Height != SourceImage.Height)
+			{
+				AlphaImage.Allocate(SourceImage.Width, SourceImage.Height, SourceImage.BitDepth, SourceImage.GetRecieveBlender());
+			}
+
+			byte GetAlphaFromIntensity(byte r, byte g, byte b)
+			{
+				// return (color.Red0To1 * 0.2989) + (color.Green0To1 * 0.1140) + (color.Blue0To1 * 0.5870);
+				var alpha = (r * 76 + g * 29 + b * 150) / 255;
+				if (alpha < RangeStart)
+				{
+					return 0;
+				}
+				else if (alpha > RangeEnd)
+				{
+					return 0;
+				}
+				else
+				{
+					var s1 = (byte)Math.Min(255, ((alpha - RangeStart) * 255 / (RangeEnd - RangeStart)));
+
+					var s2 = (double)(alpha - RangeStart) / (double)(RangeEnd - RangeStart);
+
+
+					return s1;
+				}
+			}
+
+			byte[] sourceBuffer = SourceImage.GetBuffer();
+			byte[] destBuffer = AlphaImage.GetBuffer();
+			for (int y = 0; y < SourceImage.Height; y++)
+			{
+				int imageOffset = SourceImage.GetBufferOffsetY(y);
+
+				for (int x = 0; x < SourceImage.Width; x++)
+				{
+					int imageBufferOffsetWithX = imageOffset + x * 4;
+					var r = sourceBuffer[imageBufferOffsetWithX + 0];
+					var g = sourceBuffer[imageBufferOffsetWithX + 1];
+					var b = sourceBuffer[imageBufferOffsetWithX + 2];
+					destBuffer[imageBufferOffsetWithX + 0] = r;
+					destBuffer[imageBufferOffsetWithX + 1] = g;
+					destBuffer[imageBufferOffsetWithX + 2] = b;
+					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromIntensity(r, g, b);
+				}
+			}
+
+			AlphaImage.MarkImageChanged();
+		}
+
 		public void Recalculate(ImageBuffer image)
 		{
-			if (_histogramRawCache == null)
+			// build the histogram cache
+			_histogramRawCache = new ImageBuffer(256, 100);
+			var counts = new int[_histogramRawCache.Width];
+			var function = new MapOnMaxIntensity(RangeStart, RangeEnd);
+
+			byte[] buffer = image.GetBuffer();
+			for (int y = 0; y < image.Height; y++)
 			{
-				_histogramRawCache = new ImageBuffer(256, 100);
-				if (image != null)
+				int imageBufferOffset = image.GetBufferOffsetY(y);
+
+				for (int x = 0; x < image.Width; x++)
 				{
-					var counts = new int[_histogramRawCache.Width];
-					var function =  new MapOnMaxIntensity(RangeStart, RangeEnd);
-
-					byte[] buffer = image.GetBuffer();
-					int strideInBytes = image.StrideInBytes();
-					for (int y = 0; y < image.Height; y++)
-					{
-						int imageBufferOffset = image.GetBufferOffsetY(y);
-						int thresholdBufferOffset = y * image.Width;
-
-						for (int x = 0; x < image.Width; x++)
-						{
-							int imageBufferOffsetWithX = imageBufferOffset + x * 4;
-							var color = GetRGBA(buffer, imageBufferOffsetWithX);
-							counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
-						}
-					}
-
-					double max = counts.Select((value, index) => new { value, index })
-						.OrderByDescending(vi => vi.value)
-						.First().value;
-					var graphics2D2 = _histogramRawCache.NewGraphics2D();
-					graphics2D2.Clear(Color.White);
-					for (int i = 0; i < 256; i++)
-					{
-						graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
-					}
+					int imageBufferOffsetWithX = imageBufferOffset + x * 4;
+					var color = GetRGBA(buffer, imageBufferOffsetWithX);
+					counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
 				}
+			}
+
+			double max = counts.Select((value, index) => new { value, index })
+				.OrderByDescending(vi => vi.value)
+				.First().value;
+			var graphics2D2 = _histogramRawCache.NewGraphics2D();
+			graphics2D2.Clear(Color.White);
+			for (int i = 0; i < 256; i++)
+			{
+				graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
 			}
 		}
 
@@ -345,6 +411,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					RangeStart += offset / _histogramRawCache.Width;
 					RangeStart = Math.Max(0, Math.Min(RangeStart, RangeEnd));
 					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+					RebuildAlphaImage();
 				}
 			};
 			leftHandle.MouseUp += (s, e) =>
@@ -378,6 +445,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					RangeEnd += offset / _histogramRawCache.Width;
 					RangeEnd = Math.Min(1, Math.Max(RangeStart, RangeEnd));
 					rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+					RebuildAlphaImage();
 				}
 			};
 			rightHandle.MouseUp += (s, e) =>
@@ -396,10 +464,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			graphics2D.Render(_histogramRawCache, 0, 0);
 			var background = _histogramRawCache;
 			graphics2D.FillRectangle(rangeStart * background.Width, 0, rangeEnd * background.Width, background.Height, theme.PrimaryAccentColor.WithAlpha(60));
-		}
-
-		public void ProcessOutputImage()
-		{
 		}
 	}
 }

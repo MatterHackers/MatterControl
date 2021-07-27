@@ -714,7 +714,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						historgram.ProcessOutputImage();
+						if (object3D is IImageProvider imageProvider)
+						{
+							var _ = imageProvider.Image;
+						}
 					}
 				}
 
