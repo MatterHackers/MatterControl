@@ -287,23 +287,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				AlphaImage.Allocate(SourceImage.Width, SourceImage.Height, SourceImage.BitDepth, SourceImage.GetRecieveBlender());
 			}
 
+			var startInt = (int)(RangeStart * 255);
+			var endInt = (int)(RangeEnd * 255);
+			var rangeInt = (int)((RangeEnd - RangeStart) * 255);
+
 			byte GetAlphaFromIntensity(byte r, byte g, byte b)
 			{
 				// return (color.Red0To1 * 0.2989) + (color.Green0To1 * 0.1140) + (color.Blue0To1 * 0.5870);
 				var alpha = (r * 76 + g * 29 + b * 150) / 255;
-				if (alpha < RangeStart)
+				if (alpha < startInt)
 				{
 					return 0;
 				}
-				else if (alpha > RangeEnd)
+				else if (alpha > endInt)
 				{
 					return 0;
 				}
 				else
 				{
-					var s1 = (byte)Math.Min(255, ((alpha - RangeStart) * 255 / (RangeEnd - RangeStart)));
+					var s1 = (byte)Math.Min(255, ((alpha - startInt) * 255 / rangeInt));
 
-					var s2 = (double)(alpha - RangeStart) / (double)(RangeEnd - RangeStart);
+					var s2 = (double)(alpha / 255.0 - RangeStart) / (double)(RangeEnd - RangeStart);
 
 
 					return s1;
