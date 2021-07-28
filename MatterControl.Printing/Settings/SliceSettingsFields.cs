@@ -597,6 +597,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.flat_seam_placement,
+					PresentationName = "Flat Seam Placement".Localize(),
+					HelpText = "What to do when there is not a good place to hide the seam.".Localize(),
+					DataEditType = DataEditTypes.LIST,
+					ListValues = "Place in back,Randomize",
+					DefaultValue = "Place in back",
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.merge_overlapping_lines,
 					PresentationName = "Merge Overlapping Lines".Localize(),
 					HelpText = "Detect perimeters that cross over themselves and combine them.".Localize(),
@@ -846,24 +855,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0"
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.gcode_flavor,
-					PresentationName = "G-Code Flavor".Localize(),
-					HelpText = "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.".Localize(),
-					DataEditType = DataEditTypes.LIST,
-					ListValues = "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion",
-					DefaultValue = "reprap"
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.gcode_output_type,
-					PresentationName = "G-Code Output".Localize(),
-					HelpText = "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.".Localize(),
-					DataEditType = DataEditTypes.LIST,
-					ListValues = "REPRAP,ULTIGCODE,BFB,MACH3",
-					DefaultValue = "REPRAP"
 				},
 				new SliceSettingData()
 				{
@@ -1669,14 +1660,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Number of layers to print before printing any parts.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "layers".Localize(),
-					DefaultValue = "0"
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.randomize_start,
-					PresentationName = "Randomize Starting Points".Localize(),
-					HelpText = "Start each new layer from a different vertex to reduce seams.".Localize(),
-					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
