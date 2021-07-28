@@ -44,7 +44,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
@@ -54,8 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	[HideMeterialAndColor]
 	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
 	{
-		private ThresholdFunctions _featureDetector = ThresholdFunctions.Intensity;
-
 		public ImageToPathObject3D_2()
 		{
 			Name = "Image to Path".Localize();
@@ -68,6 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Intensity,
 		}
 
+		private ImageBuffer _image;
 		/// <summary>
 		/// This is the image after it has been processed into an alpha image
 		/// </summary>
@@ -77,13 +75,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				if (IntensityHistogram.AlphaImage == null)
+				if (_image == null)
 				{
-					IntensityHistogram.SourceImage = SourceImage;
-					IntensityHistogram.RebuildAlphaImage();
+					_image = new ImageBuffer(SourceImage);
+					IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+					IntensityHistogram.RangeChanged += (s, e) =>
+					{
+						this.Invalidate(InvalidateType.Properties);
+					};
 				}
 
-				return IntensityHistogram.AlphaImage;
+				return _image;
 			}
 
 			set
@@ -93,27 +95,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
-		public ThresholdFunctions FeatureDetector
-		{
-			get
-			{
-				return _featureDetector;
-			}
-
-			set
-			{
-				if (value != _featureDetector)
-				{
-					_featureDetector = value;
-					IntensityHistogram.Recalculate(SourceImage);
-				}
-			}
-		}
+		public ThresholdFunctions FeatureDetector { get; set; } = ThresholdFunctions.Intensity;
 
 		[JsonIgnore]
 		private ImageBuffer SourceImage => ((IImageProvider)this.Descendants().Where(i => i is IImageProvider).FirstOrDefault())?.Image;
 
-		public Historgram IntensityHistogram { get; set; } = new Historgram();
+		public Histogram IntensityHistogram { get; set; } = new Histogram();
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -201,6 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
+				IntensityHistogram.BuildHistogramFromImage(SourceImage);
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -227,16 +215,32 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();
-					var thresholdFunction = new AlphaThresholdFunction(0, 1);
-					this.GenerateMarchingSquaresAndLines(
-						(progress0to1, status) =>
-						{
-							progressStatus.Progress0To1 = progress0to1;
-							progressStatus.Status = status;
-							reporter.Report(progressStatus);
-						},
-						Image,
-						thresholdFunction);
+					switch (FeatureDetector)
+					{
+						case ThresholdFunctions.Transparency:
+							this.GenerateMarchingSquaresAndLines(
+								(progress0to1, status) =>
+								{
+									progressStatus.Progress0To1 = progress0to1;
+									progressStatus.Status = status;
+									reporter.Report(progressStatus);
+								},
+								SourceImage,
+								new AlphaFunction());
+							break;
+
+						case ThresholdFunctions.Intensity:
+							this.GenerateMarchingSquaresAndLines(
+								(progress0to1, status) =>
+								{
+									progressStatus.Progress0To1 = progress0to1;
+									progressStatus.Status = status;
+									reporter.Report(progressStatus);
+								},
+								Image,
+								new AlphaFunction());
+							break;
+					}
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -246,228 +250,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
-		}
-	}
-
-	public class Historgram
-	{
-		private ImageBuffer _histogramRawCache = new ImageBuffer(256, 100);
-		private ThemeConfig theme;
-
-		public double RangeStart { get; set; } = .1;
-
-		public double RangeEnd { get; set; } = 1;
-
-		private Color GetRGBA(byte[] buffer, int offset)
-		{
-			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
-		}
-
-		[JsonIgnore]
-		public ImageBuffer AlphaImage { get; private set; }
-
-		[JsonIgnore]
-		public ImageBuffer SourceImage { get; set; }
-
-		public void RebuildAlphaImage()
-		{
-			if (SourceImage == null)
-			{
-				return;
-			}
-
-			// build the alpha image
-			if (AlphaImage == null)
-			{
-				AlphaImage = new ImageBuffer(SourceImage.Width, SourceImage.Height);
-			}
-			else if (AlphaImage.Width != SourceImage.Width
-				|| AlphaImage.Height != SourceImage.Height)
-			{
-				AlphaImage.Allocate(SourceImage.Width, SourceImage.Height, SourceImage.BitDepth, SourceImage.GetRecieveBlender());
-			}
-
-			var startInt = (int)(RangeStart * 255);
-			var endInt = (int)(RangeEnd * 255);
-			var rangeInt = (int)((RangeEnd - RangeStart) * 255);
-
-			byte GetAlphaFromIntensity(byte r, byte g, byte b)
-			{
-				// return (color.Red0To1 * 0.2989) + (color.Green0To1 * 0.1140) + (color.Blue0To1 * 0.5870);
-				var alpha = (r * 76 + g * 29 + b * 150) / 255;
-				if (alpha < startInt)
-				{
-					return 0;
-				}
-				else if (alpha > endInt)
-				{
-					return 0;
-				}
-				else
-				{
-					var s1 = (byte)Math.Min(255, ((alpha - startInt) * 255 / rangeInt));
-
-					var s2 = (double)(alpha / 255.0 - RangeStart) / (double)(RangeEnd - RangeStart);
-
-
-					return s1;
-				}
-			}
-
-			byte[] sourceBuffer = SourceImage.GetBuffer();
-			byte[] destBuffer = AlphaImage.GetBuffer();
-			for (int y = 0; y < SourceImage.Height; y++)
-			{
-				int imageOffset = SourceImage.GetBufferOffsetY(y);
-
-				for (int x = 0; x < SourceImage.Width; x++)
-				{
-					int imageBufferOffsetWithX = imageOffset + x * 4;
-					var r = sourceBuffer[imageBufferOffsetWithX + 0];
-					var g = sourceBuffer[imageBufferOffsetWithX + 1];
-					var b = sourceBuffer[imageBufferOffsetWithX + 2];
-					destBuffer[imageBufferOffsetWithX + 0] = r;
-					destBuffer[imageBufferOffsetWithX + 1] = g;
-					destBuffer[imageBufferOffsetWithX + 2] = b;
-					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromIntensity(r, g, b);
-				}
-			}
-
-			AlphaImage.MarkImageChanged();
-		}
-
-		public void Recalculate(ImageBuffer image)
-		{
-			// build the histogram cache
-			_histogramRawCache = new ImageBuffer(256, 100);
-			var counts = new int[_histogramRawCache.Width];
-			var function = new MapOnMaxIntensity(RangeStart, RangeEnd);
-
-			byte[] buffer = image.GetBuffer();
-			for (int y = 0; y < image.Height; y++)
-			{
-				int imageBufferOffset = image.GetBufferOffsetY(y);
-
-				for (int x = 0; x < image.Width; x++)
-				{
-					int imageBufferOffsetWithX = imageBufferOffset + x * 4;
-					var color = GetRGBA(buffer, imageBufferOffsetWithX);
-					counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
-				}
-			}
-
-			double max = counts.Select((value, index) => new { value, index })
-				.OrderByDescending(vi => vi.value)
-				.First().value;
-			var graphics2D2 = _histogramRawCache.NewGraphics2D();
-			graphics2D2.Clear(Color.White);
-			for (int i = 0; i < 256; i++)
-			{
-				graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
-			}
-		}
-
-		public GuiWidget NewEditWidget(ThemeConfig theme)
-		{
-			this.theme = theme;
-			var historgramWidget = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Height = 60 * GuiWidget.DeviceScale,
-				Margin = 5,
-				BackgroundColor = theme.SlightShade
-			};
-
-			var handleWidth = 10 * GuiWidget.DeviceScale;
-			var historgramBackground = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(handleWidth, 0)
-			};
-
-			historgramBackground.AfterDraw += HistorgramBackground_AfterDraw;
-			historgramWidget.AddChild(historgramBackground);
-
-			var leftHandle = new ImageWidget((int)(handleWidth), (int)historgramWidget.Height);
-			leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
-			var image = leftHandle.Image;
-			var leftGraphics = image.NewGraphics2D();
-			leftGraphics.Line(image.Width, 0, image.Width, image.Height, theme.TextColor);
-			leftGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
-			historgramWidget.AddChild(leftHandle);
-
-			bool leftDown = false;
-			var leftX = 0.0;
-			leftHandle.MouseDown += (s, e) =>
-			{
-				if (e.Button == MouseButtons.Left)
-				{
-					leftDown = true;
-					leftX = e.Position.X;
-				}
-			};
-			leftHandle.MouseMove += (s, e) =>
-			{
-				if (leftDown)
-				{
-					var offset = e.Position.X - leftX;
-					RangeStart += offset / _histogramRawCache.Width;
-					RangeStart = Math.Max(0, Math.Min(RangeStart, RangeEnd));
-					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
-					RebuildAlphaImage();
-				}
-			};
-			leftHandle.MouseUp += (s, e) =>
-			{
-				leftDown = false;
-			};
-
-			var rightHandle = new ImageWidget((int)(handleWidth), (int)historgramWidget.Height);
-			rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
-			image = rightHandle.Image;
-			var rightGraphics = image.NewGraphics2D();
-			rightGraphics.Line(0, 0, 0, image.Height, theme.TextColor);
-			rightGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
-			historgramWidget.AddChild(rightHandle);
-
-			bool rightDown = false;
-			var rightX = 0.0;
-			rightHandle.MouseDown += (s, e) =>
-			{
-				if (e.Button == MouseButtons.Left)
-				{
-					rightDown = true;
-					rightX = e.Position.X;
-				}
-			};
-			rightHandle.MouseMove += (s, e) =>
-			{
-				if (rightDown)
-				{
-					var offset = e.Position.X - rightX;
-					RangeEnd += offset / _histogramRawCache.Width;
-					RangeEnd = Math.Min(1, Math.Max(RangeStart, RangeEnd));
-					rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
-					RebuildAlphaImage();
-				}
-			};
-			rightHandle.MouseUp += (s, e) =>
-			{
-				rightDown = false;
-			};
-
-			return historgramWidget;
-		}
-
-		private void HistorgramBackground_AfterDraw(object sender, DrawEventArgs e)
-		{
-			var rangeStart = RangeStart;
-			var rangeEnd = RangeEnd;
-			var graphics2D = e.Graphics2D;
-			graphics2D.Render(_histogramRawCache, 0, 0);
-			var background = _histogramRawCache;
-			graphics2D.FillRectangle(rangeStart * background.Width, 0, rangeEnd * background.Width, background.Height, theme.PrimaryAccentColor.WithAlpha(60));
 		}
 	}
 }

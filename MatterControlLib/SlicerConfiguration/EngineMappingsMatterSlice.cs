@@ -91,6 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.infill_overlap_perimeter] = new ExportField("infillExtendIntoPerimeter"),
 				[SettingsKey.infill_speed] = new ExportField("infillSpeed"),
 				[SettingsKey.infill_type] = new ExportField("infillType"),
+				[SettingsKey.flat_seam_placement] = new ExportField("flatSeamPlacement"),
 				[SettingsKey.min_extrusion_before_retract] = new ExportField("minimumExtrusionBeforeRetraction"),
 				[SettingsKey.min_print_speed] = new ExportField("minimumPrintingSpeed"),
 				[SettingsKey.perimeter_acceleration] = new ExportField("perimeterAcceleration"),

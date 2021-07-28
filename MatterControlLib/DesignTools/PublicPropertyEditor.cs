@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
-			typeof(Historgram),
+			typeof(Histogram),
 			typeof(List<string>)
 		};
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -705,10 +705,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer.AddChild(imageWidget);
 			}
-			else if (propertyValue is Historgram historgram)
+			else if (propertyValue is Histogram histogram)
 			{
 				rowContainer = CreateSettingsColumn(property);
-				var histogramWidget = historgram.NewEditWidget(theme);
+				var histogramWidget = histogram.NewEditWidget(theme);
 				rowContainer.AddChild(histogramWidget);
 				void RefreshField(object s, InvalidateArgs e)
 				{

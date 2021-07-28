@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_diameter = nameof(filament_diameter);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
 		public const string filament_runout_sensor = nameof(filament_runout_sensor);
+		public const string flat_seam_placement = nameof(flat_seam_placement);
 		public const string enable_firmware_sounds = nameof(enable_firmware_sounds);
 		public const string fill_angle = nameof(fill_angle);
 		public const string fill_density = nameof(fill_density);
@@ -113,8 +114,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string first_layer_speed = nameof(first_layer_speed);
 		public const string first_layer_temperature = nameof(first_layer_temperature);
 		public const string g0 = nameof(g0);
-		public const string gcode_flavor = nameof(gcode_flavor);
-		public const string gcode_output_type = nameof(gcode_output_type);
 		public const string has_c_axis = nameof(has_c_axis);
 		public const string has_fan = nameof(has_fan);
 		public const string has_fan_per_extruder = nameof(has_fan_per_extruder);
@@ -196,7 +195,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string raft_extruder = nameof(raft_extruder);
 		public const string raft_layers = nameof(raft_layers);
 		public const string raft_print_speed = nameof(raft_print_speed);
-		public const string randomize_start = nameof(randomize_start);
 		public const string read_regex = nameof(read_regex);
 		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
 		public const string recover_is_enabled = nameof(recover_is_enabled);
