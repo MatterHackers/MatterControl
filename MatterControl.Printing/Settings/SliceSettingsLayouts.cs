@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.external_perimeters_first,
 						SettingsKey.perimeter_start_end_overlap,
 						SettingsKey.merge_overlapping_lines,
-						SettingsKey.flat_seam_placement,
+						SettingsKey.seam_placement,
 						SettingsKey.expand_thin_walls,
 						SettingsKey.coast_at_end_distance
 					}),

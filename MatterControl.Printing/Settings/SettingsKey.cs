@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_diameter = nameof(filament_diameter);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
 		public const string filament_runout_sensor = nameof(filament_runout_sensor);
-		public const string flat_seam_placement = nameof(flat_seam_placement);
 		public const string enable_firmware_sounds = nameof(enable_firmware_sounds);
 		public const string fill_angle = nameof(fill_angle);
 		public const string fill_density = nameof(fill_density);
@@ -220,6 +219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string running_clean_markdown2 = nameof(running_clean_markdown2);
 		public const string runout_sensor_check_distance = nameof(runout_sensor_check_distance);
 		public const string runout_sensor_trigger_ratio = nameof(runout_sensor_trigger_ratio);
+		public const string seam_placement = nameof(seam_placement);
 		public const string seconds_to_reheat = nameof(seconds_to_reheat);
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);

@@ -597,8 +597,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.flat_seam_placement,
-					PresentationName = "Flat Seam Placement".Localize(),
+					SlicerConfigName = SettingsKey.seam_placement,
+					PresentationName = "Seam Placement".Localize(),
 					HelpText = "What to do when there is not a good place to hide the seam.".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ListValues = "Place in back,Randomize",
