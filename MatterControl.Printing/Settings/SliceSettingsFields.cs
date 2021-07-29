@@ -1497,7 +1497,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.min_skirt_length,
 					PresentationName = "Minimum Extrusion Length".Localize(),
-					HelpText = "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.".Localize(),
+					HelpText = "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value. NOTE: This is measure as input into the extruder not mm on the bed.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.create_skirt,
