@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (afterGcodeToQueue.Trim().Length > 0)
 			{
-				gcode.Append(printer.Settings.ReplaceMacroValues(afterGcodeToQueue));
+				gcode.Append(printer.Settings.ReplaceSettingsNamesWithValues(afterGcodeToQueue));
 			}
 
 			// move to selected tool to the last tool position at the travel speed
@@ -507,7 +507,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				var gcode = new StringBuilder();
 				if (beforeGcodeToQueue.Trim().Length > 0)
 				{
-					gcode.Append(printer.Settings.ReplaceMacroValues(beforeGcodeToQueue));
+					gcode.Append(printer.Settings.ReplaceSettingsNamesWithValues(beforeGcodeToQueue));
 				}
 
 				gcode.Append("\n");

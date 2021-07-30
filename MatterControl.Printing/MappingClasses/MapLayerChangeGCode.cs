@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				value += "; LAYER:[layer_num]\n";
 			}
 
-			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
+			return settings.ReplaceSettingsNamesWithValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

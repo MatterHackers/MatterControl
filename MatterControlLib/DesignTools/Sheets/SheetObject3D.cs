@@ -32,12 +32,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -224,8 +226,60 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 		}
 
+		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+		private static Random rand = new Random();
+
+		private static Dictionary<string, Func<double>> constants = new Dictionary<string, Func<double>>()
+		{
+			// length
+			["cm"] = () => 10,
+			["m"] = () => 1000,
+			["inch"] = () => 25.4,
+			["ft"] = () => 304.8,
+			// math constant
+			["pi"] = () => Math.PI,
+			["tau"] = () => Math.PI * 2,
+			["e"] = () => Math.E,
+			// functions
+			["rand"] = () => rand.NextDouble(),
+		};
+
+		private static string ReplaceConstantsWithValues(string stringWithConstants)
+		{
+			string Replace(string inputString, string setting)
+			{
+				if (constants.ContainsKey(setting))
+				{
+					var value = constants[setting];
+
+					// braces then brackets replacement
+					inputString = inputString.Replace("[" + setting + "]", value().ToString());
+				}
+
+				return inputString;
+			}
+
+			MatchCollection matches = ConstantFinder.Matches(stringWithConstants);
+
+			for (int i = 0; i < matches.Count; i++)
+			{
+				var replacementTerm = matches[i].Value;
+				stringWithConstants = Replace(stringWithConstants, replacementTerm);
+			}
+
+			return stringWithConstants;
+		}
+
 		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
 		{
+			var printer = owner.ContainingPrinter();
+			if (printer != null)
+			{
+				inputExpression = printer.Settings.ReplaceSettingsNamesWithValues(inputExpression, false);
+			}
+
+			inputExpression = ReplaceConstantsWithValues(inputExpression);
+
 			// check if the expression is not an equation (does not start with "=")
 			if (inputExpression.Length > 0 && inputExpression[0] != '=')
 			{
@@ -279,6 +333,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Debug.WriteLine(evaluator.getErrorMessage());
 			}
+
 			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
 		}
 
