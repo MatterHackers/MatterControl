@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -236,8 +237,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private IObjectSlicer _slicer = null;
 
-		private HashSet<string> replacementTerms;
-
 		static PrinterSettings()
 		{
 			// Convert settings array into dictionary on initial load using settings key (SlicerConfigName)
@@ -252,43 +251,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PrinterSettings()
 		{
 			this.Helpers = new SettingsHelpers(this);
-
-			replacementTerms = new HashSet<string>()
-			{
-				SettingsKey.first_layer_speed,
-				SettingsKey.external_perimeter_speed,
-				SettingsKey.raft_print_speed,
-				SettingsKey.bed_remove_part_temperature,
-				SettingsKey.bridge_fan_speed,
-				SettingsKey.bridge_speed,
-				SettingsKey.air_gap_speed,
-				SettingsKey.extruder_wipe_temperature,
-				SettingsKey.filament_diameter,
-				SettingsKey.first_layer_bed_temperature,
-				SettingsKey.first_layer_temperature,
-				SettingsKey.max_fan_speed,
-				SettingsKey.min_fan_speed,
-				SettingsKey.retract_length,
-				SettingsKey.temperature,
-				SettingsKey.bed_temperature,
-				SettingsKey.temperature1,
-				SettingsKey.temperature2,
-				SettingsKey.temperature3,
-				SettingsKey.infill_speed,
-				SettingsKey.min_print_speed,
-				SettingsKey.perimeter_speed,
-				SettingsKey.perimeter_acceleration,
-				SettingsKey.default_acceleration,
-				SettingsKey.retract_speed,
-				SettingsKey.support_material_speed,
-				SettingsKey.travel_speed,
-				SettingsKey.load_filament_speed,
-				SettingsKey.trim_filament_markdown,
-				SettingsKey.insert_filament_markdown2,
-				SettingsKey.insert_filament_1_markdown,
-				SettingsKey.running_clean_markdown2,
-				SettingsKey.running_clean_1_markdown,
-			};
 		}
 
 		public static event EventHandler<StringEventArgs> AnyPrinterSettingChanged;
@@ -1042,37 +1004,57 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		public string ReplaceMacroValues(string gcodeWithMacros)
+		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+		private static readonly Regex SettingsFinder = new Regex("(?<=\\[).+?(?=\\])|(?<=\\{).+?(?=\\})", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		public string ReplaceSettingsNamesWithValues(string stringWithSettingsNames, bool includeCurlyBrackets = true)
 		{
-			foreach (string replacementTerm in replacementTerms)
+			string Replace(string inputString, string setting)
 			{
-				// first check if this setting is anywhere in the line
-				if (gcodeWithMacros.Contains(replacementTerm))
+				var value = this.ResolveValue(setting);
+
+				if(string.IsNullOrEmpty(value))
 				{
-					// Acquire the replacement value
-					string value = this.ResolveValue(replacementTerm);
-
-					if (ScaledSpeedFields.Contains(replacementTerm)
-						&& double.TryParse(value, out double doubleValue))
-					{
-						doubleValue *= 60;
-						value = $"{doubleValue:0.###}";
-					}
-
-					// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
-					if (replacementTerm == SettingsKey.first_layer_bed_temperature
-						&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
-					{
-						value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
-					}
-
-					// braces then brackets replacement
-					gcodeWithMacros = gcodeWithMacros.Replace("{" + replacementTerm + "}", value);
-					gcodeWithMacros = gcodeWithMacros.Replace("[" + replacementTerm + "]", value);
+					return inputString;
 				}
+
+				if (ScaledSpeedFields.Contains(setting)
+					&& double.TryParse(value, out double doubleValue))
+				{
+					doubleValue *= 60;
+					value = $"{doubleValue:0.###}";
+				}
+
+				// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
+				if (setting == SettingsKey.first_layer_bed_temperature
+					&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
+				{
+					value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
+				}
+
+				// braces then brackets replacement
+				inputString = inputString.Replace("{" + setting + "}", value);
+				inputString = inputString.Replace("[" + setting + "]", value);
+				return inputString;
 			}
 
-			return gcodeWithMacros;
+			MatchCollection matches;
+			if (includeCurlyBrackets)
+			{
+				matches = SettingsFinder.Matches(stringWithSettingsNames);
+			}
+			else
+			{
+				matches = ConstantFinder.Matches(stringWithSettingsNames);
+			}
+
+			for (int i=0; i< matches.Count; i++)
+			{
+				var replacementTerm = matches[i].Value;
+				stringWithSettingsNames = Replace(stringWithSettingsNames, replacementTerm);
+			}
+
+			return stringWithSettingsNames;
 		}
 
 		/// <summary>

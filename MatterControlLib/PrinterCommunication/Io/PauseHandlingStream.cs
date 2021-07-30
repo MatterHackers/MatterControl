@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void InjectPauseGCode(string codeToInject)
 		{
-			codeToInject = printer.Settings.ReplaceMacroValues(codeToInject);
+			codeToInject = printer.Settings.ReplaceSettingsNamesWithValues(codeToInject);
 
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');

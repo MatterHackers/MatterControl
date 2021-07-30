@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			value = value.Replace("\\n", "\n");
 
 			// Macro replace and restore escaped newlines
-			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
+			return settings.ReplaceSettingsNamesWithValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

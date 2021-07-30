@@ -86,7 +86,7 @@ namespace MatterControl.Tests.MatterControl
 
 			void TestMacroReplacement(string inputText, string outputControl)
 			{
-				Assert.AreEqual(outputControl, settings.ReplaceMacroValues(inputText));
+				Assert.AreEqual(outputControl, settings.ReplaceSettingsNamesWithValues(inputText));
 			}
 
 			TestMacroReplacement("[temperature]", "200");
