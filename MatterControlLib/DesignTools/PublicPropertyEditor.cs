@@ -618,6 +618,24 @@ namespace MatterHackers.MatterControl.DesignTools
 					imageWidget.Margin = new BorderDouble(0, 3);
 				}
 
+				imageWidget.BeforeDraw += (s, e) =>
+				{
+					// render a checkerboard that can show through the alpha mask
+					var g = e.Graphics2D;
+					var w = (int)(10 * GuiWidget.DeviceScale);
+					for (int x = 0; x < g.Width / w; x ++)
+					{
+						for (int y = 0; y < g.Height / w; y ++)
+						{
+							if (y % 2 == 0 && x % 2 == 1
+								|| y % 2 == 1 && x % 2 == 0)
+							{
+								g.FillRectangle(x * w, y * w, x * w + w, y * w + w, Color.LightGray);
+							}
+						}
+					}
+				};
+
 				ImageBuffer GetImageCheckingForErrors()
 				{
 					var image = imageBuffer;
@@ -665,42 +683,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (object3D is ImageObject3D imageObject)
 				{
-					imageWidget.Click += (s, e) =>
-					{
-						if (e.Button == MouseButtons.Right)
-						{
-							var popupMenu = new PopupMenu(theme);
-
-							var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
-							pasteMenu.Click += (s2, e2) =>
-							{
-								var activeImage = Clipboard.Instance.GetImage();
-
-								// Persist
-								string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
-								ImageIO.SaveImageData(
-									filePath,
-									activeImage);
-
-								imageObject.AssetPath = filePath;
-								imageObject.Mesh = null;
-
-								UpdateEditorImage();
-
-								imageObject.Invalidate(InvalidateType.Image);
-							};
-
-							pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
-
-							var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
-							copyMenu.Click += (s2, e2) =>
-							{
-								Clipboard.Instance.SetImage(imageObject.Image);
-							};
-
-							popupMenu.ShowMenu(imageWidget, e);
-						}
-					};
+					imageObject.AddEditorExtra(imageWidget, theme, UpdateEditorImage);
 				}
 
 				rowContainer.AddChild(imageWidget);

@@ -36,8 +36,10 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
@@ -239,6 +241,46 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			return null;
+		}
+
+		public void AddEditorExtra(GuiWidget imageWidget, ThemeConfig theme, Action updateEditorImage)
+		{
+			imageWidget.Click += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Right)
+				{
+					var popupMenu = new PopupMenu(theme);
+
+					var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+					pasteMenu.Click += (s2, e2) =>
+					{
+						var activeImage = Clipboard.Instance.GetImage();
+
+						// Persist
+						string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+						ImageIO.SaveImageData(
+							filePath,
+							activeImage);
+
+						this.AssetPath = filePath;
+						this.Mesh = null;
+
+						updateEditorImage();
+
+						this.Invalidate(InvalidateType.Image);
+					};
+
+					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+					var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+					copyMenu.Click += (s2, e2) =>
+					{
+						Clipboard.Instance.SetImage(this.Image);
+					};
+
+					popupMenu.ShowMenu(imageWidget, e);
+				}
+			};
 		}
 	}
 }

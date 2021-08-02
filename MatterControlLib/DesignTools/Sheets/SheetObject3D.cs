@@ -249,29 +249,46 @@ namespace MatterHackers.MatterControl.DesignTools
 			["index2"] = (owner) => RetrieveArrayIndex(owner, 2),
 		};
 
-		private static ArrayObject3D FindParentArray(IObject3D item, int level)
+		private static ArrayObject3D FindParentArray(IObject3D item, int wantLevel)
 		{
+			int foundLevel = 0;
 			// look through all the parents
 			foreach (var parent in item.Parents())
 			{
-				// then each child of any give parent
-				foreach (var sibling in parent.Children)
+				// if it is a sheet
+				if (parent is ArrayObject3D arrayObject)
 				{
-					// if it is a sheet
-					if (sibling != item
-						&& sibling is SheetObject3D sheet)
+					if (foundLevel == wantLevel)
 					{
-						return sheet;
+						return arrayObject;
 					}
+
+					foundLevel++;
 				}
 			}
 
 			return null;
 		}
 
-		private static double RetrieveArrayIndex(IObject3D owner, int level)
+		private static int RetrieveArrayIndex(IObject3D owner, int level)
 		{
-			throw new NotImplementedException();
+			var arrayObject = FindParentArray(owner, level);
+
+			if (arrayObject != null)
+			{
+				int index = 0;
+				foreach(var child in arrayObject.Children)
+				{
+					if (child == owner)
+					{
+						return index;
+					}
+
+					index++;
+				}
+			}
+
+			return 0;
 		}
 
 		private static string ReplaceConstantsWithValues(IObject3D owner, string stringWithConstants)

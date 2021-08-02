@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Image.ThresholdFunctions;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -42,9 +43,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		private ImageBuffer _histogramRawCache = new ImageBuffer(256, 100);
 		private ThemeConfig theme;
 
-		public double RangeStart { get; set; } = .1;
+		public double RangeStart { get; set; } = 0;
 
-		public double RangeEnd { get; set; } = 1;
+		public double RangeEnd { get; set; } = .9;
 
 		private Color GetRGBA(byte[] buffer, int offset)
 		{
@@ -52,6 +53,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public event EventHandler RangeChanged;
+		
+		public event EventHandler EditComplete;
 
 		public void RebuildAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
 		{
@@ -97,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			byte[] sourceBuffer = sourceImage.GetBuffer();
 			byte[] destBuffer = alphaImage.GetBuffer();
-			for (int y = 0; y < sourceImage.Height; y++)
+			Parallel.For(0, sourceImage.Height, (y) =>
 			{
 				int imageOffset = sourceImage.GetBufferOffsetY(y);
 
@@ -112,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					destBuffer[imageBufferOffsetWithX + 2] = b;
 					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromIntensity(r, g, b);
 				}
-			}
+			});
 
 			alphaImage.MarkImageChanged();
 		}
@@ -122,7 +125,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			// build the histogram cache
 			_histogramRawCache = new ImageBuffer(256, 100);
 			var counts = new int[_histogramRawCache.Width];
-			var function = new MapOnMaxIntensity(RangeStart, RangeEnd);
+			IThresholdFunction function = new MapOnMaxIntensity(RangeStart, RangeEnd);
+			function = new HueThresholdFunction(RangeStart, RangeEnd);
 
 			byte[] buffer = image.GetBuffer();
 			for (int y = 0; y < image.Height; y++)
@@ -141,7 +145,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				.OrderByDescending(vi => vi.value)
 				.First().value;
 			var graphics2D2 = _histogramRawCache.NewGraphics2D();
-			graphics2D2.Clear(Color.White);
+			graphics2D2.Clear(ApplicationController.Instance.Theme.SlightShade);
 			for (int i = 0; i < 256; i++)
 			{
 				graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
@@ -156,7 +160,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				HAnchor = HAnchor.Stretch,
 				Height = 60 * GuiWidget.DeviceScale,
 				Margin = 5,
-				BackgroundColor = theme.SlightShade
 			};
 
 			var handleWidth = 10 * GuiWidget.DeviceScale;
@@ -167,15 +170,39 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(handleWidth, 0)
 			};
 
-			histogramBackground.AfterDraw += HistogramBackground_AfterDraw;
+			histogramBackground.AfterDraw += (s, e) =>
+			{
+				var rangeStart = RangeStart;
+				var rangeEnd = RangeEnd;
+				var graphics2D = e.Graphics2D;
+				graphics2D.Render(_histogramRawCache, 0, 0);
+				var background = _histogramRawCache;
+				graphics2D.FillRectangle(rangeStart * background.Width, 0, rangeEnd * background.Width, background.Height, theme.PrimaryAccentColor.WithAlpha(60));
+			};
+
 			histogramWidget.AddChild(histogramBackground);
+
+			void RenderHandle(Graphics2D g, double s, double e)
+			{
+				var w = g.Width;
+				var h = g.Height;
+				g.Line(w * e, 0, w * e, h, theme.TextColor);
+				var leftEdge = new VertexStorage();
+				leftEdge.MoveTo(w * e, h * .80);
+				leftEdge.curve3(w * e, h * .70, w * .5, h * .70);
+				leftEdge.curve3(w * s, h * .60);
+				leftEdge.LineTo(w * s, h * .40);
+				leftEdge.curve3(w * s, h * .30, w * .5, h * .30);
+				leftEdge.curve3(w * e, h * .20);
+				g.Render(new FlattenCurves(leftEdge), theme.TextColor);
+				g.Line(w * .35, h * .6, w * .35, h * .4, theme.BackgroundColor);
+				g.Line(w * .65, h * .6, w * .65, h * .4, theme.BackgroundColor);
+			}
 
 			var leftHandle = new ImageWidget((int)(handleWidth), (int)histogramWidget.Height);
 			leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
 			var image = leftHandle.Image;
-			var leftGraphics = image.NewGraphics2D();
-			leftGraphics.Line(image.Width, 0, image.Width, image.Height, theme.TextColor);
-			leftGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
+			RenderHandle(image.NewGraphics2D(), 0, 1);
 			histogramWidget.AddChild(leftHandle);
 
 			bool leftDown = false;
@@ -193,23 +220,29 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (leftDown)
 				{
 					var offset = e.Position.X - leftX;
-					RangeStart += offset / _histogramRawCache.Width;
-					RangeStart = Math.Max(0, Math.Min(RangeStart, RangeEnd));
-					leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
-					RangeChanged?.Invoke(this, null);
+					var newStart = RangeStart + offset / _histogramRawCache.Width;
+					newStart = agg_basics.Clamp(newStart, 0, RangeEnd);
+					if (RangeStart != newStart)
+					{
+						RangeStart = newStart;
+						leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+						RangeChanged?.Invoke(this, null);
+					}
 				}
 			};
 			leftHandle.MouseUp += (s, e) =>
 			{
-				leftDown = false;
+				if (leftDown)
+				{
+					leftDown = false;
+					EditComplete?.Invoke(this, null);
+				}
 			};
 
 			var rightHandle = new ImageWidget((int)(handleWidth), (int)histogramWidget.Height);
 			rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
 			image = rightHandle.Image;
-			var rightGraphics = image.NewGraphics2D();
-			rightGraphics.Line(0, 0, 0, image.Height, theme.TextColor);
-			rightGraphics.FillRectangle(0, image.Height / 4, image.Width, image.Height / 4 * 3, theme.TextColor);
+			RenderHandle(image.NewGraphics2D(), 1, 0);
 			histogramWidget.AddChild(rightHandle);
 
 			bool rightDown = false;
@@ -227,28 +260,26 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (rightDown)
 				{
 					var offset = e.Position.X - rightX;
-					RangeEnd += offset / _histogramRawCache.Width;
-					RangeEnd = Math.Min(1, Math.Max(RangeStart, RangeEnd));
-					rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
-					RangeChanged?.Invoke(this, null);
+					var newEnd = RangeEnd + offset / _histogramRawCache.Width;
+					newEnd = agg_basics.Clamp(newEnd, RangeStart, 1);
+					if (RangeEnd != newEnd)
+					{
+						RangeEnd = newEnd;
+						rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+						RangeChanged?.Invoke(this, null);
+					}
 				}
 			};
 			rightHandle.MouseUp += (s, e) =>
 			{
-				rightDown = false;
+				if (rightDown)
+				{
+					rightDown = false;
+					EditComplete?.Invoke(this, null);
+				}
 			};
 
 			return histogramWidget;
-		}
-
-		private void HistogramBackground_AfterDraw(object sender, DrawEventArgs e)
-		{
-			var rangeStart = RangeStart;
-			var rangeEnd = RangeEnd;
-			var graphics2D = e.Graphics2D;
-			graphics2D.Render(_histogramRawCache, 0, 0);
-			var background = _histogramRawCache;
-			graphics2D.FillRectangle(rangeStart * background.Width, 0, rangeEnd * background.Width, background.Height, theme.PrimaryAccentColor.WithAlpha(60));
 		}
 	}
 }

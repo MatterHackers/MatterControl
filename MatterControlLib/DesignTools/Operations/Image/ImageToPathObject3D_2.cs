@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,14 +52,14 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideMeterialAndColor]
-	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider, IPropertyGridModifier
 	{
 		public ImageToPathObject3D_2()
 		{
 			Name = "Image to Path".Localize();
 		}
 
-		public enum ThresholdFunctions
+		public enum FeatureDetectors
 		{
 			Transparency,
 			Colors,
@@ -75,14 +76,31 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				if (_image == null)
+				if (_image == null
+					&& SourceImage != null)
 				{
 					_image = new ImageBuffer(SourceImage);
-					IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+					IntensityHistogram.BuildHistogramFromImage(SourceImage);
 					IntensityHistogram.RangeChanged += (s, e) =>
+					{
+						IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+					};
+
+					IntensityHistogram.EditComplete += (s, e) =>
 					{
 						this.Invalidate(InvalidateType.Properties);
 					};
+
+					switch (FeatureDetector)
+					{
+						case FeatureDetectors.Intensity:
+							IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+							break;
+
+						case FeatureDetectors.Transparency:
+							_image.CopyFrom(SourceImage);
+							break;
+					}
 				}
 
 				return _image;
@@ -94,8 +112,38 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 
+		private FeatureDetectors _featureDetector = FeatureDetectors.Intensity; 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
-		public ThresholdFunctions FeatureDetector { get; set; } = ThresholdFunctions.Intensity;
+		public FeatureDetectors FeatureDetector
+		{
+			get
+			{
+				return _featureDetector;
+			}
+
+			set
+			{
+				if (_featureDetector != value)
+				{
+					_featureDetector = value;
+					switch (FeatureDetector)
+					{
+						case FeatureDetectors.Intensity:
+							IntensityHistogram.RebuildAlphaImage(SourceImage, Image);
+							break;
+
+						case FeatureDetectors.Transparency:
+							Image?.CopyFrom(SourceImage);
+							break;
+					}
+				}
+			}
+		}
+
+		[DisplayName("")]
+		[ReadOnly(true)]
+		public string TransparencyMessage { get; set; } = "Your image is processed as is with no modifications. Transparent pixels are ignored, only opaque pixels are considered in feature detection.";
+
 
 		[JsonIgnore]
 		private ImageBuffer SourceImage => ((IImageProvider)this.Descendants().Where(i => i is IImageProvider).FirstOrDefault())?.Image;
@@ -189,6 +237,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !RebuildLocked)
 			{
 				IntensityHistogram.BuildHistogramFromImage(SourceImage);
+				IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -217,7 +266,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var progressStatus = new ProgressStatus();
 					switch (FeatureDetector)
 					{
-						case ThresholdFunctions.Transparency:
+						case FeatureDetectors.Transparency:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -229,7 +278,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								new AlphaFunction());
 							break;
 
-						case ThresholdFunctions.Intensity:
+						case FeatureDetectors.Intensity:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -250,6 +299,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(IntensityHistogram), () => FeatureDetector == FeatureDetectors.Intensity);
+			change.SetRowVisible(nameof(TransparencyMessage), () => FeatureDetector == FeatureDetectors.Transparency);
 		}
 	}
 }
