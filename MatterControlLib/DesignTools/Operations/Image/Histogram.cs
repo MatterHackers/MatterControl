@@ -146,10 +146,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				.First().value;
 			var graphics2D2 = _histogramRawCache.NewGraphics2D();
 			graphics2D2.Clear(ApplicationController.Instance.Theme.SlightShade);
+
+			var graphShape = new VertexStorage();
+			graphShape.MoveTo(0, 0);
 			for (int i = 0; i < 256; i++)
 			{
-				graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
+				graphShape.LineTo(i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height);
 			}
+			graphShape.LineTo(image.Width, 0);
+			graphics2D2.Render(graphShape, 0, 0, theme.TextColor);
 		}
 
 		public GuiWidget NewEditWidget(ThemeConfig theme)
@@ -194,7 +199,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				leftEdge.LineTo(w * s, h * .40);
 				leftEdge.curve3(w * s, h * .30, w * .5, h * .30);
 				leftEdge.curve3(w * e, h * .20);
-				g.Render(new FlattenCurves(leftEdge), theme.TextColor);
+				g.Render(new FlattenCurves(leftEdge), theme.PrimaryAccentColor);
 				g.Line(w * .35, h * .6, w * .35, h * .4, theme.BackgroundColor);
 				g.Line(w * .65, h * .6, w * .65, h * .4, theme.BackgroundColor);
 			}
