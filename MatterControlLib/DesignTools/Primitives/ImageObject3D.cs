@@ -247,6 +247,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			imageWidget.Click += (s, e) =>
 			{
+				if (e.Button == MouseButtons.Left)
+				{
+					ShowOpenDialog();
+				}
+
 				if (e.Button == MouseButtons.Right)
 				{
 					var popupMenu = new PopupMenu(theme);
@@ -281,6 +286,28 @@ namespace MatterHackers.MatterControl.DesignTools
 					popupMenu.ShowMenu(imageWidget, e);
 				}
 			};
+		}
+
+		private void ShowOpenDialog()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// we do this using to make sure that the stream is closed before we try and insert the Picture
+				AggContext.FileDialogs.OpenFileDialog(
+					new OpenFileDialogParams(
+						"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
+						multiSelect: false,
+						title: "Add Image".Localize()),
+						(openParams) =>
+						{
+							if (!File.Exists(openParams.FileName))
+							{
+								return;
+							}
+
+							AssetPath = openParams.FileName;
+						});
+			});
 		}
 	}
 }

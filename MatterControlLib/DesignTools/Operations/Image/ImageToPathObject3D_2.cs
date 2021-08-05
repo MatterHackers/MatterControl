@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Image to Path".Localize();
 		}
 
-		public enum FeatureDetectors
+		public enum AnalysisTypes
 		{
 			Transparency,
 			Colors,
@@ -80,24 +80,24 @@ namespace MatterHackers.MatterControl.DesignTools
 					&& SourceImage != null)
 				{
 					_image = new ImageBuffer(SourceImage);
-					IntensityHistogram.BuildHistogramFromImage(SourceImage);
-					IntensityHistogram.RangeChanged += (s, e) =>
+					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+					Histogram.RangeChanged += (s, e) =>
 					{
-						IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+						Histogram.RebuildAlphaImage(SourceImage, _image);
 					};
 
-					IntensityHistogram.EditComplete += (s, e) =>
+					Histogram.EditComplete += (s, e) =>
 					{
 						this.Invalidate(InvalidateType.Properties);
 					};
 
-					switch (FeatureDetector)
+					switch (AnalysisType)
 					{
-						case FeatureDetectors.Intensity:
-							IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+						case AnalysisTypes.Intensity:
+							Histogram.RebuildAlphaImage(SourceImage, _image);
 							break;
 
-						case FeatureDetectors.Transparency:
+						case AnalysisTypes.Transparency:
 							_image.CopyFrom(SourceImage);
 							break;
 					}
@@ -112,9 +112,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 
-		private FeatureDetectors _featureDetector = FeatureDetectors.Intensity; 
+		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity; 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
-		public FeatureDetectors FeatureDetector
+		public AnalysisTypes AnalysisType
 		{
 			get
 			{
@@ -126,15 +126,25 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (_featureDetector != value)
 				{
 					_featureDetector = value;
-					switch (FeatureDetector)
+					var sourceImage = SourceImage;
+					if (sourceImage != null)
 					{
-						case FeatureDetectors.Intensity:
-							IntensityHistogram.RebuildAlphaImage(SourceImage, Image);
-							break;
+						switch (AnalysisType)
+						{
+							case AnalysisTypes.Intensity:
+								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
+								Histogram.RebuildAlphaImage(sourceImage, Image);
+								break;
 
-						case FeatureDetectors.Transparency:
-							Image?.CopyFrom(SourceImage);
-							break;
+							case AnalysisTypes.Colors:
+								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
+								Histogram.RebuildAlphaImage(sourceImage, Image);
+								break;
+
+							case AnalysisTypes.Transparency:
+								Image?.CopyFrom(sourceImage);
+								break;
+						}
 					}
 				}
 			}
@@ -148,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonIgnore]
 		private ImageBuffer SourceImage => ((IImageProvider)this.Descendants().Where(i => i is IImageProvider).FirstOrDefault())?.Image;
 
-		public Histogram IntensityHistogram { get; set; } = new Histogram();
+		public Histogram Histogram { get; set; } = new Histogram();
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -236,8 +246,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				IntensityHistogram.BuildHistogramFromImage(SourceImage);
-				IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
+				Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+				Histogram.RebuildAlphaImage(SourceImage, _image);
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -264,9 +274,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();
-					switch (FeatureDetector)
+					switch (AnalysisType)
 					{
-						case FeatureDetectors.Transparency:
+						case AnalysisTypes.Transparency:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -278,7 +288,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								new AlphaFunction());
 							break;
 
-						case FeatureDetectors.Intensity:
+						case AnalysisTypes.Intensity:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -303,8 +313,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(IntensityHistogram), () => FeatureDetector == FeatureDetectors.Intensity);
-			change.SetRowVisible(nameof(TransparencyMessage), () => FeatureDetector == FeatureDetectors.Transparency);
+			change.SetRowVisible(nameof(Histogram), () => AnalysisType != AnalysisTypes.Transparency);
+			change.SetRowVisible(nameof(TransparencyMessage), () => AnalysisType == AnalysisTypes.Transparency);
 		}
 	}
 }

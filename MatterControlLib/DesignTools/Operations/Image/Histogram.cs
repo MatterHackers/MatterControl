@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class Histogram
 	{
 		private ImageBuffer _histogramRawCache = new ImageBuffer(256, 100);
-		private ThemeConfig theme;
 
 		public double RangeStart { get; set; } = 0;
 
@@ -120,13 +119,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			alphaImage.MarkImageChanged();
 		}
 
-		public void BuildHistogramFromImage(ImageBuffer image)
+		public void BuildHistogramFromImage(ImageBuffer image, ImageToPathObject3D_2.AnalysisTypes analysisType)
 		{
 			// build the histogram cache
-			_histogramRawCache = new ImageBuffer(256, 100);
+			var height = (int)(100 * GuiWidget.DeviceScale);
+			_histogramRawCache = new ImageBuffer(256, height);
 			var counts = new int[_histogramRawCache.Width];
 			IThresholdFunction function = new MapOnMaxIntensity(RangeStart, RangeEnd);
-			function = new HueThresholdFunction(RangeStart, RangeEnd);
+			var bottom = 0;
+			if (analysisType == ImageToPathObject3D_2.AnalysisTypes.Colors)
+			{
+				function = new HueThresholdFunction(RangeStart, RangeEnd);
+				bottom = (int)(10 * GuiWidget.DeviceScale);
+			}
 
 			byte[] buffer = image.GetBuffer();
 			for (int y = 0; y < image.Height; y++)
@@ -144,22 +149,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			double max = counts.Select((value, index) => new { value, index })
 				.OrderByDescending(vi => vi.value)
 				.First().value;
-			var graphics2D2 = _histogramRawCache.NewGraphics2D();
-			graphics2D2.Clear(ApplicationController.Instance.Theme.SlightShade);
+			var graphics = _histogramRawCache.NewGraphics2D();
+			var theme = ApplicationController.Instance.Theme;
+			graphics.Clear(theme.SlightShade);
 
 			var graphShape = new VertexStorage();
-			graphShape.MoveTo(0, 0);
+			var graphHeight = height - bottom;
+			graphShape.MoveTo(0, bottom);
 			for (int i = 0; i < 256; i++)
 			{
-				graphShape.LineTo(i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height);
+				graphShape.LineTo(i, bottom + Easing.Exponential.Out(counts[i] / max) * graphHeight);
 			}
-			graphShape.LineTo(image.Width, 0);
-			graphics2D2.Render(graphShape, 0, 0, theme.TextColor);
+			graphShape.LineTo(image.Width, bottom);
+			graphics.Render(graphShape, 0, 0, theme.TextColor);
+
+			for(int i=0; i<256; i++)
+			{
+				var hue = ColorF.FromHSL(i / 255.0, 1, .49).ToColor();
+				graphics.Line(i, 0, i, bottom, hue);
+			}
 		}
 
 		public GuiWidget NewEditWidget(ThemeConfig theme)
 		{
-			this.theme = theme;
 			var histogramWidget = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
