@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
@@ -60,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.CloseChildren();
 
-			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20).SetToColor(theme.TextColor), theme)
+			var backButton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20).SetToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,
@@ -69,14 +68,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = theme.ButtonSpacing,
 				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight)
 			};
-			upbutton.Click += (s, e) =>
+			backButton.Click += (s, e) =>
 			{
-				if (libraryContext.ActiveContainer.Parent != null)
-				{
-					UiThread.RunOnIdle(() => libraryContext.ActiveContainer = libraryContext.ActiveContainer.Parent);
-				}
+				NavigateBack();
 			};
-			this.AddChild(upbutton);
+			this.AddChild(backButton);
 
 			bool firstItem = true;
 
@@ -157,6 +153,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.SetContainer(libraryContext.ActiveContainer);
 			base.OnLoad(args);
+		}
+
+		public void NavigateBack()
+		{
+			if (libraryContext.ActiveContainer.Parent != null)
+			{
+				UiThread.RunOnIdle(() => libraryContext.ActiveContainer = libraryContext.ActiveContainer.Parent);
+			}
 		}
 	}
 }
