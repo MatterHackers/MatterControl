@@ -127,6 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						pauseButton.Visible = true;
 						resumeButton.Visible = false;
 					}
+
 					if (this.HasBeenClosed)
 					{
 						UiThread.ClearInterval(runningInterval);

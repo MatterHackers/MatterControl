@@ -2012,7 +2012,7 @@ namespace MatterHackers.MatterControl
 					}),
 					IsPaused = () =>
 					{
-						return printer.Connection.Paused;
+						return printer.Connection.Paused || printer.Connection.WaitingToPause;
 					},
 					PauseToolTip = "Pause Print".Localize(),
 					PauseText = "Pause".Localize(),
