@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
 					Histogram.RangeChanged += (s, e) =>
 					{
-						Histogram.RebuildAlphaImage(SourceImage, _image);
+						Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
 					};
 
 					Histogram.EditComplete += (s, e) =>
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					switch (AnalysisType)
 					{
 						case AnalysisTypes.Intensity:
-							Histogram.RebuildAlphaImage(SourceImage, _image);
+							Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
 							break;
 
 						case AnalysisTypes.Transparency:
@@ -132,13 +132,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						switch (AnalysisType)
 						{
 							case AnalysisTypes.Intensity:
-								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
-								Histogram.RebuildAlphaImage(sourceImage, Image);
-								break;
-
 							case AnalysisTypes.Colors:
 								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
-								Histogram.RebuildAlphaImage(sourceImage, Image);
+								Histogram.RebuildAlphaImage(sourceImage, Image, AnalysisType);
 								break;
 
 							case AnalysisTypes.Transparency:
@@ -246,8 +242,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
-				Histogram.RebuildAlphaImage(SourceImage, _image);
+				if (AnalysisType != AnalysisTypes.Transparency)
+				{
+					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+					Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
+				}
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -288,6 +287,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								new AlphaFunction());
 							break;
 
+						case AnalysisTypes.Colors:
 						case AnalysisTypes.Intensity:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>

@@ -55,7 +55,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		
 		public event EventHandler EditComplete;
 
-		public void RebuildAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
+		public void RebuildAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage, ImageToPathObject3D_2.AnalysisTypes analysisType)
+		{
+			if (analysisType == ImageToPathObject3D_2.AnalysisTypes.Colors)
+			{
+				RebuildColorToAlphaImage(sourceImage, alphaImage);
+			}
+			else
+			{
+				RebuildIntensityToAlphaImage(sourceImage, alphaImage);
+			}
+		}
+
+		private void RebuildIntensityToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
 		{
 			if (sourceImage == null)
 			{
@@ -106,17 +118,154 @@ namespace MatterHackers.MatterControl.DesignTools
 				for (int x = 0; x < sourceImage.Width; x++)
 				{
 					int imageBufferOffsetWithX = imageOffset + x * 4;
-					var r = sourceBuffer[imageBufferOffsetWithX + 0];
+					var b = sourceBuffer[imageBufferOffsetWithX + 0];
 					var g = sourceBuffer[imageBufferOffsetWithX + 1];
-					var b = sourceBuffer[imageBufferOffsetWithX + 2];
-					destBuffer[imageBufferOffsetWithX + 0] = r;
+					var r = sourceBuffer[imageBufferOffsetWithX + 2];
+					destBuffer[imageBufferOffsetWithX + 0] = b;
 					destBuffer[imageBufferOffsetWithX + 1] = g;
-					destBuffer[imageBufferOffsetWithX + 2] = b;
+					destBuffer[imageBufferOffsetWithX + 2] = r;
 					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromIntensity(r, g, b);
 				}
 			});
 
 			alphaImage.MarkImageChanged();
+		}
+
+		private static (float hue, float saturation) GetHue(byte bR, byte bG, byte bB)
+		{
+			var r = bR / 255.0f;
+			var g = bG / 255.0f;
+			var b = bB / 255.0f;
+			var maxRGB = Math.Max(r, Math.Max(g, b));
+			var minRGB = Math.Min(r, Math.Min(g, b));
+			var deltaMaxToMin = maxRGB - minRGB;
+			float r2, g2, b2;
+
+			var lightness0To1 = (minRGB + maxRGB) / 2.0;
+			if (lightness0To1 <= 0.0)
+			{
+				return (0, 0);
+			}
+
+			var saturation0To1 = deltaMaxToMin;
+			if (saturation0To1 > 0.0)
+			{
+				saturation0To1 /= (lightness0To1 <= 0.5f) ? (maxRGB + minRGB) : (2.0f - maxRGB - minRGB);
+			}
+			else
+			{
+				return (0, 0);
+			}
+
+			r2 = (maxRGB - r) / deltaMaxToMin;
+			g2 = (maxRGB - g) / deltaMaxToMin;
+			b2 = (maxRGB - b) / deltaMaxToMin;
+			var hue0To1 = 0.0f;
+			if (r == maxRGB)
+			{
+				if (g == minRGB)
+				{
+					hue0To1 = 5.0f + b2;
+				}
+				else
+				{
+					hue0To1 = 1.0f - g2;
+				}
+			}
+			else if (g == maxRGB)
+			{
+				if (b == minRGB)
+				{
+					hue0To1 = 1.0f + r2;
+				}
+				else
+				{
+					hue0To1 = 3.0f - b2;
+				}
+			}
+			else
+			{
+				if (r == minRGB)
+				{
+					hue0To1 = 3.0f + g2;
+				}
+				else
+				{
+					hue0To1 = 5.0f - r2;
+				}
+			}
+
+			hue0To1 /= 6.0f;
+
+			return (hue0To1, saturation0To1);
+		}
+
+		private static byte GetAlphaFromHue(byte r, byte g, byte b, double start, double end)
+		{
+			var hs = GetHue(r, g, b);
+			if (hs.saturation > .6 && hs.hue <= end && hs.hue > start)
+			{
+				return 255;
+			}
+
+			return 0;
+		}
+
+		private void RebuildColorToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
+		{
+			if (sourceImage == null)
+			{
+				return;
+			}
+
+			// build the alpha image
+			if (alphaImage == null)
+			{
+				alphaImage = new ImageBuffer(sourceImage.Width, sourceImage.Height);
+			}
+			else if (alphaImage.Width != sourceImage.Width
+				|| alphaImage.Height != sourceImage.Height)
+			{
+				alphaImage.Allocate(sourceImage.Width, sourceImage.Height, sourceImage.BitDepth, sourceImage.GetRecieveBlender());
+			}
+
+			byte[] sourceBuffer = sourceImage.GetBuffer();
+			byte[] destBuffer = alphaImage.GetBuffer();
+			//Parallel.For(0, sourceImage.Height, (y) =>
+			for(int y = 0; y < sourceImage.Height; y++)
+			{
+				int imageOffset = sourceImage.GetBufferOffsetY(y);
+
+				for (int x = 0; x < sourceImage.Width; x++)
+				{
+					int imageBufferOffsetWithX = imageOffset + x * 4;
+					var b = sourceBuffer[imageBufferOffsetWithX + 0];
+					var g = sourceBuffer[imageBufferOffsetWithX + 1];
+					var r = sourceBuffer[imageBufferOffsetWithX + 2];
+					destBuffer[imageBufferOffsetWithX + 0] = b;
+					destBuffer[imageBufferOffsetWithX + 1] = g;
+					destBuffer[imageBufferOffsetWithX + 2] = r;
+					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromHue(r, g, b, RangeStart, RangeEnd);
+				}
+			}
+			//});
+
+			alphaImage.MarkImageChanged();
+		}
+
+		class QuickHue : IThresholdFunction
+		{
+			public Color ZeroColor => throw new NotImplementedException();
+
+			public double Threshold(Color color)
+			{
+				throw new NotImplementedException();
+			}
+
+			public double Transform(Color color)
+			{
+				return GetHue(color.red, color.green, color.blue).hue;
+			}
 		}
 
 		public void BuildHistogramFromImage(ImageBuffer image, ImageToPathObject3D_2.AnalysisTypes analysisType)
@@ -125,11 +274,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			var height = (int)(100 * GuiWidget.DeviceScale);
 			_histogramRawCache = new ImageBuffer(256, height);
 			var counts = new int[_histogramRawCache.Width];
-			IThresholdFunction function = new MapOnMaxIntensity(RangeStart, RangeEnd);
+			IThresholdFunction function = new MapOnMaxIntensity(0, 1);
 			var bottom = 0;
 			if (analysisType == ImageToPathObject3D_2.AnalysisTypes.Colors)
 			{
-				function = new HueThresholdFunction(RangeStart, RangeEnd);
+				function = new QuickHue();
 				bottom = (int)(10 * GuiWidget.DeviceScale);
 			}
 
@@ -158,9 +307,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			graphShape.MoveTo(0, bottom);
 			for (int i = 0; i < 256; i++)
 			{
-				graphShape.LineTo(i, bottom + Easing.Exponential.Out(counts[i] / max) * graphHeight);
+				graphShape.LineTo(i, bottom + counts[i] * graphHeight / max );
 			}
-			graphShape.LineTo(image.Width, bottom);
+			graphShape.LineTo(256, bottom);
+			graphShape.LineTo(0, bottom);
 			graphics.Render(graphShape, 0, 0, theme.TextColor);
 
 			for(int i=0; i<256; i++)
@@ -292,6 +442,51 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (rightDown)
 				{
 					rightDown = false;
+					EditComplete?.Invoke(this, null);
+				}
+			};
+
+			// grabing the center
+			bool centerDown = false;
+			var centerX = 0.0;
+			histogramBackground.MouseDown += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Left)
+				{
+					centerDown = true;
+					centerX = e.Position.X;
+				}
+			};
+
+			histogramBackground.MouseMove += (s, e) =>
+			{
+				if (centerDown)
+				{
+					var offset = e.Position.X - centerX;
+					var newEnd = RangeEnd + offset / _histogramRawCache.Width;
+					newEnd = agg_basics.Clamp(newEnd, RangeStart, 1);
+
+					var newStart = RangeStart + offset / _histogramRawCache.Width;
+					newStart = agg_basics.Clamp(newStart, 0, newEnd);
+
+					if (RangeStart != newStart
+						&& RangeEnd != newEnd)
+					{
+						RangeStart = newStart;
+						RangeEnd = newEnd;
+						leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+						rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+						RangeChanged?.Invoke(this, null);
+						histogramBackground.Invalidate();
+					}
+				}
+			};
+
+			histogramBackground.MouseUp += (s, e) =>
+			{
+				if (centerDown)
+				{
+					centerDown = false;
 					EditComplete?.Invoke(this, null);
 				}
 			};
