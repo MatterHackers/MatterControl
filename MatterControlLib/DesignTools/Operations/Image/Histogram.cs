@@ -122,10 +122,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					var b = sourceBuffer[imageBufferOffsetWithX + 0];
 					var g = sourceBuffer[imageBufferOffsetWithX + 1];
 					var r = sourceBuffer[imageBufferOffsetWithX + 2];
+					var a = sourceBuffer[imageBufferOffsetWithX + 3];
 					destBuffer[imageBufferOffsetWithX + 0] = b;
 					destBuffer[imageBufferOffsetWithX + 1] = g;
 					destBuffer[imageBufferOffsetWithX + 2] = r;
-					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromIntensity(r, g, b);
+					destBuffer[imageBufferOffsetWithX + 3] = (byte)(GetAlphaFromIntensity(r, g, b) * a / 255);
 				}
 			});
 

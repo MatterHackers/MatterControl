@@ -97,6 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					switch (AnalysisType)
 					{
 						case AnalysisTypes.Intensity:
+						case AnalysisTypes.Colors:
 							Histogram.RebuildAlphaImage(SourceImage, alphaImage, _image, AnalysisType);
 							break;
 
