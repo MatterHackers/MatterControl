@@ -46,13 +46,18 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	public interface IEditorWidgetModifier
+	{
+		void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate);
+	}
+
 	public interface IImageProvider
 	{
 		ImageBuffer Image { get; }
 	}
 
 	[HideMeterialAndColor]
-	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider
+	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider, IEditorWidgetModifier
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -243,18 +248,38 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public void AddEditorExtra(GuiWidget imageWidget, ThemeConfig theme, Action updateEditorImage)
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
 		{
-			imageWidget.Click += (s, e) =>
+			ModifyImageObjectEditorWidget(this, widget, theme, requestWidgetUpdate);
+		}
+
+		public static void ModifyImageObjectEditorWidget(ImageObject3D imageObject, GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		{
+			widget.Click += (s, e) =>
 			{
 				if (e.Button == MouseButtons.Left)
 				{
-					ShowOpenDialog();
+					ShowOpenDialog(imageObject);
 				}
 
 				if (e.Button == MouseButtons.Right)
 				{
 					var popupMenu = new PopupMenu(theme);
+
+					var openMenu = popupMenu.CreateMenuItem("Open".Localize());
+					openMenu.Click += (s2, e2) =>
+					{
+						popupMenu.Close();
+						ShowOpenDialog(imageObject);
+					};
+
+					popupMenu.CreateSeparator();
+
+					var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+					copyMenu.Click += (s2, e2) =>
+					{
+						Clipboard.Instance.SetImage(imageObject.Image);
+					};
 
 					var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
 					pasteMenu.Click += (s2, e2) =>
@@ -267,28 +292,22 @@ namespace MatterHackers.MatterControl.DesignTools
 							filePath,
 							activeImage);
 
-						this.AssetPath = filePath;
-						this.Mesh = null;
+						imageObject.AssetPath = filePath;
+						imageObject.Mesh = null;
 
-						updateEditorImage();
+						requestWidgetUpdate();
 
-						this.Invalidate(InvalidateType.Image);
+						imageObject.Invalidate(InvalidateType.Image);
 					};
 
 					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
 
-					var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
-					copyMenu.Click += (s2, e2) =>
-					{
-						Clipboard.Instance.SetImage(this.Image);
-					};
-
-					popupMenu.ShowMenu(imageWidget, e);
+					popupMenu.ShowMenu(widget, e);
 				}
 			};
 		}
 
-		private void ShowOpenDialog()
+		public static void ShowOpenDialog(IAssetObject assetObject)
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -305,7 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								return;
 							}
 
-							AssetPath = openParams.FileName;
+							assetObject.AssetPath = openParams.FileName;
 						});
 			});
 		}

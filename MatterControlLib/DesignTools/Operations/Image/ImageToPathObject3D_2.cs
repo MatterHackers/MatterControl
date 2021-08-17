@@ -52,7 +52,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideMeterialAndColor]
-	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider, IPropertyGridModifier
+	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
 	{
 		public ImageToPathObject3D_2()
 		{
@@ -314,6 +314,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		{
+			var child = this.Children.First();
+			if (child is ImageObject3D imageObject)
+			{
+				ImageObject3D.ModifyImageObjectEditorWidget(imageObject, widget, theme, requestWidgetUpdate);
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

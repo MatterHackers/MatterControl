@@ -681,9 +681,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				object3D.Invalidated += RefreshField;
 				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-				if (object3D is ImageObject3D imageObject)
+				if (object3D is IEditorWidgetModifier editorWidgetModifier)
 				{
-					imageObject.AddEditorExtra(imageWidget, theme, UpdateEditorImage);
+					editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, UpdateEditorImage);
 				}
 
 				rowContainer.AddChild(imageWidget);
@@ -900,21 +900,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							// we do this using to make sure that the stream is closed before we try and insert the Picture
-							AggContext.FileDialogs.OpenFileDialog(
-								new OpenFileDialogParams(
-									"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
-									multiSelect: false,
-									title: "Add Image".Localize()),
-									(openParams) =>
-									{
-										if (!File.Exists(openParams.FileName))
-										{
-											return;
-										}
-
-										assetObject.AssetPath = openParams.FileName;
-									});
+							ImageObject3D.ShowOpenDialog(assetObject);
 						});
 					};
 				}

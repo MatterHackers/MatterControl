@@ -477,12 +477,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			// grabing the center
 			bool centerDown = false;
 			var centerX = 0.0;
+			var downStart = 0.0;
+			var downEnd = 0.0;
 			histogramBackground.MouseDown += (s, e) =>
 			{
 				if (e.Button == MouseButtons.Left)
 				{
 					centerDown = true;
 					centerX = e.Position.X;
+					downStart = RangeStart;
+					downEnd = RangeEnd;
 				}
 			};
 
@@ -490,12 +494,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (centerDown)
 				{
+					var newStart = RangeStart;
+					var newEnd = RangeEnd;
 					var offset = e.Position.X - centerX;
-					var newEnd = RangeEnd + offset / _histogramRawCache.Width;
-					newEnd = agg_basics.Clamp(newEnd, RangeStart, 1);
-
-					var newStart = RangeStart + offset / _histogramRawCache.Width;
-					newStart = agg_basics.Clamp(newStart, 0, newEnd);
+					if (offset < 0)
+					{
+						newStart = Math.Max(downStart + offset / _histogramRawCache.Width, 0);
+						newEnd = newStart + (downEnd - downStart);
+					}
+					else
+					{
+						newEnd = Math.Min(downEnd + offset / _histogramRawCache.Width, 1);
+						newStart = newEnd - (downEnd - downStart);
+					}
 
 					if (RangeStart != newStart
 						&& RangeEnd != newEnd)
