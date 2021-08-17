@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Intensity,
 		}
 
+		private ImageBuffer alphaImage;
+
 		private ImageBuffer _image;
 		/// <summary>
 		/// This is the image after it has been processed into an alpha image
@@ -80,10 +82,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					&& SourceImage != null)
 				{
 					_image = new ImageBuffer(SourceImage);
+					alphaImage = new ImageBuffer(SourceImage);
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
 					Histogram.RangeChanged += (s, e) =>
 					{
-						Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
+						Histogram.RebuildAlphaImage(SourceImage, alphaImage, _image, AnalysisType);
 					};
 
 					Histogram.EditComplete += (s, e) =>
@@ -94,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					switch (AnalysisType)
 					{
 						case AnalysisTypes.Intensity:
-							Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
+							Histogram.RebuildAlphaImage(SourceImage, alphaImage, _image, AnalysisType);
 							break;
 
 						case AnalysisTypes.Transparency:
@@ -134,7 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							case AnalysisTypes.Intensity:
 							case AnalysisTypes.Colors:
 								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
-								Histogram.RebuildAlphaImage(sourceImage, Image, AnalysisType);
+								Histogram.RebuildAlphaImage(sourceImage, alphaImage, Image, AnalysisType);
 								break;
 
 							case AnalysisTypes.Transparency:
@@ -245,7 +248,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (AnalysisType != AnalysisTypes.Transparency)
 				{
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
-					Histogram.RebuildAlphaImage(SourceImage, _image, AnalysisType);
+					var _ = Image; // call this to make sure it is built
+					Histogram.RebuildAlphaImage(SourceImage, alphaImage, Image, AnalysisType);
 				}
 				await Rebuild();
 			}
@@ -296,7 +300,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									progressStatus.Status = status;
 									reporter.Report(progressStatus);
 								},
-								Image,
+								alphaImage,
 								new AlphaFunction());
 							break;
 					}

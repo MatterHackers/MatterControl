@@ -55,19 +55,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		
 		public event EventHandler EditComplete;
 
-		public void RebuildAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage, ImageToPathObject3D_2.AnalysisTypes analysisType)
+		public void RebuildAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage, ImageBuffer displayImage, ImageToPathObject3D_2.AnalysisTypes analysisType)
 		{
 			if (analysisType == ImageToPathObject3D_2.AnalysisTypes.Colors)
 			{
-				RebuildColorToAlphaImage(sourceImage, alphaImage);
+				RebuildColorToAlphaImage(sourceImage, alphaImage, displayImage);
 			}
 			else
 			{
-				RebuildIntensityToAlphaImage(sourceImage, alphaImage);
+				RebuildIntensityToAlphaImage(sourceImage, alphaImage, displayImage);
 			}
 		}
 
-		private void RebuildIntensityToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
+		private void RebuildIntensityToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage, ImageBuffer displayImage)
 		{
 			if (sourceImage == null)
 			{
@@ -75,14 +75,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// build the alpha image
-			if (alphaImage == null)
-			{
-				alphaImage = new ImageBuffer(sourceImage.Width, sourceImage.Height);
-			}
-			else if (alphaImage.Width != sourceImage.Width
+			if (alphaImage.Width != sourceImage.Width
 				|| alphaImage.Height != sourceImage.Height)
 			{
 				alphaImage.Allocate(sourceImage.Width, sourceImage.Height, sourceImage.BitDepth, sourceImage.GetRecieveBlender());
+				displayImage.Allocate(sourceImage.Width, sourceImage.Height, sourceImage.BitDepth, sourceImage.GetRecieveBlender());
 			}
 
 			var startInt = (int)(RangeStart * 255);
@@ -103,9 +100,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					var s1 = 255 - Math.Min(255, ((alpha - startInt) * 255 / rangeInt));
+					if (rangeInt > 64)
+					{
+						var s1 = 255 - Math.Min(255, ((alpha - startInt) * 255 / rangeInt));
+						return (byte)s1;
+					}
 
-					return (byte)s1;
+					return 255;
 				}
 			}
 
@@ -129,6 +130,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 
 			alphaImage.MarkImageChanged();
+
+			byte[] displayBuffer = displayImage.GetBuffer();
+			Parallel.For(0, sourceImage.Height, (y) =>
+			{
+				int imageOffset = displayImage.GetBufferOffsetY(y);
+
+				for (int x = 0; x < displayImage.Width; x++)
+				{
+					int imageBufferOffsetWithX = imageOffset + x * 4;
+					displayBuffer[imageBufferOffsetWithX + 0] = destBuffer[imageBufferOffsetWithX + 0];
+					displayBuffer[imageBufferOffsetWithX + 1] = destBuffer[imageBufferOffsetWithX + 1];
+					displayBuffer[imageBufferOffsetWithX + 2] = destBuffer[imageBufferOffsetWithX + 2];
+					if (destBuffer[imageBufferOffsetWithX + 3] > 1)
+					{
+						displayBuffer[imageBufferOffsetWithX + 3] = 255;
+					}
+					else
+					{
+						displayBuffer[imageBufferOffsetWithX + 3] = 0;
+					}
+				}
+			});
+
+			displayImage.MarkImageChanged();
 		}
 
 		private static (float hue, float saturation) GetHue(byte bR, byte bG, byte bB)
@@ -211,7 +236,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return 0;
 		}
 
-		private void RebuildColorToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage)
+		private void RebuildColorToAlphaImage(ImageBuffer sourceImage, ImageBuffer alphaImage, ImageBuffer displayImage)
 		{
 			if (sourceImage == null)
 			{
@@ -251,6 +276,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			//});
 
 			alphaImage.MarkImageChanged();
+
+			displayImage.CopyFrom(alphaImage);
 		}
 
 		class QuickHue : IThresholdFunction
