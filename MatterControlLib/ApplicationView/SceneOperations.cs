@@ -315,10 +315,15 @@ namespace MatterHackers.MatterControl
 						ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
 						SurfacedEditors = new List<string>
 							{
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Children<ImageObject3D>",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Children<ImageObject3D>.ImageSearch",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Image",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Children<ImageObject3D>.Invert",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Children<ImageObject3D>.AssetPath",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.AnalysisType",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.TransparencyMessage",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Histogram",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>",
 								"$.Children<BaseObject3D>",
 							}
 					};

@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
@@ -51,38 +51,60 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideMeterialAndColor]
-	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
 	{
 		public ImageToPathObject3D_2()
 		{
 			Name = "Image to Path".Localize();
 		}
 
-		public enum ThresholdFunctions
+		public enum AnalysisTypes
 		{
 			Transparency,
 			Colors,
 			Intensity,
 		}
 
+		private ImageBuffer alphaImage;
+
 		private ImageBuffer _image;
 		/// <summary>
 		/// This is the image after it has been processed into an alpha image
 		/// </summary>
+		[DisplayName("")]
 		[JsonIgnore]
 		[ImageDisplay(Margin = new int[] { 30, 3, 30, 3 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer Image
 		{
 			get
 			{
-				if (_image == null)
+				if (_image == null
+					&& SourceImage != null)
 				{
 					_image = new ImageBuffer(SourceImage);
-					IntensityHistogram.RebuildAlphaImage(SourceImage, _image);
-					IntensityHistogram.RangeChanged += (s, e) =>
+					alphaImage = new ImageBuffer(SourceImage);
+					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+					Histogram.RangeChanged += (s, e) =>
+					{
+						Histogram.RebuildAlphaImage(SourceImage, alphaImage, _image, AnalysisType);
+					};
+
+					Histogram.EditComplete += (s, e) =>
 					{
 						this.Invalidate(InvalidateType.Properties);
 					};
+
+					switch (AnalysisType)
+					{
+						case AnalysisTypes.Intensity:
+						case AnalysisTypes.Colors:
+							Histogram.RebuildAlphaImage(SourceImage, alphaImage, _image, AnalysisType);
+							break;
+
+						case AnalysisTypes.Transparency:
+							_image.CopyFrom(SourceImage);
+							break;
+					}
 				}
 
 				return _image;
@@ -94,13 +116,51 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 
+		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity; 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
-		public ThresholdFunctions FeatureDetector { get; set; } = ThresholdFunctions.Intensity;
+		public AnalysisTypes AnalysisType
+		{
+			get
+			{
+				return _featureDetector;
+			}
 
+			set
+			{
+				if (_featureDetector != value)
+				{
+					_featureDetector = value;
+					var sourceImage = SourceImage;
+					if (sourceImage != null)
+					{
+						switch (AnalysisType)
+						{
+							case AnalysisTypes.Intensity:
+							case AnalysisTypes.Colors:
+								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
+								Histogram.RebuildAlphaImage(sourceImage, alphaImage, Image, AnalysisType);
+								break;
+
+							case AnalysisTypes.Transparency:
+								Image?.CopyFrom(sourceImage);
+								break;
+						}
+					}
+				}
+			}
+		}
+
+		[DisplayName("")]
+		[ReadOnly(true)]
+		public string TransparencyMessage { get; set; } = "Your image is processed as is with no modifications. Transparent pixels are ignored, only opaque pixels are considered in feature detection.";
+
+
+		[DisplayName("")]
 		[JsonIgnore]
 		private ImageBuffer SourceImage => ((IImageProvider)this.Descendants().Where(i => i is IImageProvider).FirstOrDefault())?.Image;
 
-		public Histogram IntensityHistogram { get; set; } = new Histogram();
+		[DisplayName("Select Range")]
+		public Histogram Histogram { get; set; } = new Histogram();
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -188,7 +248,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				IntensityHistogram.BuildHistogramFromImage(SourceImage);
+				if (AnalysisType != AnalysisTypes.Transparency)
+				{
+					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+					var _ = Image; // call this to make sure it is built
+					Histogram.RebuildAlphaImage(SourceImage, alphaImage, Image, AnalysisType);
+				}
+				else
+				{
+					Image?.CopyFrom(SourceImage);
+				}
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -215,9 +284,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();
-					switch (FeatureDetector)
+					switch (AnalysisType)
 					{
-						case ThresholdFunctions.Transparency:
+						case AnalysisTypes.Transparency:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -229,7 +298,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								new AlphaFunction());
 							break;
 
-						case ThresholdFunctions.Intensity:
+						case AnalysisTypes.Colors:
+						case AnalysisTypes.Intensity:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
@@ -237,7 +307,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									progressStatus.Status = status;
 									reporter.Report(progressStatus);
 								},
-								Image,
+								alphaImage,
 								new AlphaFunction());
 							break;
 					}
@@ -250,6 +320,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		{
+			var child = this.Children.First();
+			if (child is ImageObject3D imageObject)
+			{
+				ImageObject3D.ModifyImageObjectEditorWidget(imageObject, widget, theme, requestWidgetUpdate);
+			}
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(Histogram), () => AnalysisType != AnalysisTypes.Transparency);
+			change.SetRowVisible(nameof(TransparencyMessage), () => AnalysisType == AnalysisTypes.Transparency);
 		}
 	}
 }

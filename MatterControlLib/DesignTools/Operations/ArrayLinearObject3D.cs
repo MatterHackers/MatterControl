@@ -92,6 +92,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.AddRange(newChildren);
 						});
 
+						foreach(var child in Children)
+						{
+							if(SheetObject3D.HasParametersWithActiveFunctions(child))
+							{
+								child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
+							}
+						}
+
 						SourceContainer.Visible = false;
 						UiThread.RunOnIdle(() =>
 						{

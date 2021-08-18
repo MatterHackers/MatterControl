@@ -36,21 +36,28 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	public interface IEditorWidgetModifier
+	{
+		void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate);
+	}
+
 	public interface IImageProvider
 	{
 		ImageBuffer Image { get; }
 	}
 
 	[HideMeterialAndColor]
-	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider
+	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider, IEditorWidgetModifier
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -239,6 +246,87 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			return null;
+		}
+
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		{
+			ModifyImageObjectEditorWidget(this, widget, theme, requestWidgetUpdate);
+		}
+
+		public static void ModifyImageObjectEditorWidget(ImageObject3D imageObject, GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		{
+			widget.Click += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Left)
+				{
+					ShowOpenDialog(imageObject);
+				}
+
+				if (e.Button == MouseButtons.Right)
+				{
+					var popupMenu = new PopupMenu(theme);
+
+					var openMenu = popupMenu.CreateMenuItem("Open".Localize());
+					openMenu.Click += (s2, e2) =>
+					{
+						popupMenu.Close();
+						ShowOpenDialog(imageObject);
+					};
+
+					popupMenu.CreateSeparator();
+
+					var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+					copyMenu.Click += (s2, e2) =>
+					{
+						Clipboard.Instance.SetImage(imageObject.Image);
+					};
+
+					var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+					pasteMenu.Click += (s2, e2) =>
+					{
+						var activeImage = Clipboard.Instance.GetImage();
+
+						// Persist
+						string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+						ImageIO.SaveImageData(
+							filePath,
+							activeImage);
+
+						imageObject.AssetPath = filePath;
+						imageObject.Mesh = null;
+
+						requestWidgetUpdate();
+
+						imageObject.Invalidate(InvalidateType.Image);
+					};
+
+					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+					popupMenu.ShowMenu(widget, e);
+				}
+			};
+		}
+
+		public static void ShowOpenDialog(IAssetObject assetObject)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// we do this using to make sure that the stream is closed before we try and insert the Picture
+				AggContext.FileDialogs.OpenFileDialog(
+					new OpenFileDialogParams(
+						"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
+						multiSelect: false,
+						title: "Add Image".Localize()),
+						(openParams) =>
+						{
+							if (!File.Exists(openParams.FileName))
+							{
+								return;
+							}
+
+							assetObject.AssetPath = openParams.FileName;
+						});
+			});
 		}
 	}
 }

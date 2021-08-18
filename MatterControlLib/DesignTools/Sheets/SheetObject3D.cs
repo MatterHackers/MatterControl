@@ -229,22 +229,69 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		private static Random rand = new Random();
 
-		private static Dictionary<string, Func<double>> constants = new Dictionary<string, Func<double>>()
+		private static Dictionary<string, Func<IObject3D, double>> constants = new Dictionary<string, Func<IObject3D, double>>()
 		{
 			// length
-			["cm"] = () => 10,
-			["m"] = () => 1000,
-			["inch"] = () => 25.4,
-			["ft"] = () => 304.8,
+			["cm"] = (owner) => 10,
+			["m"] = (owner) => 1000,
+			["inch"] = (owner) => 25.4,
+			["ft"] = (owner) => 304.8,
 			// math constant
-			["pi"] = () => Math.PI,
-			["tau"] = () => Math.PI * 2,
-			["e"] = () => Math.E,
+			["pi"] = (owner) => Math.PI,
+			["tau"] = (owner) => Math.PI * 2,
+			["e"] = (owner) => Math.E,
 			// functions
-			["rand"] = () => rand.NextDouble(),
+			["rand"] = (owner) => rand.NextDouble(),
+			// array function
+			["index"] = (owner) => RetrieveArrayIndex(owner, 0),
+			["index0"] = (owner) => RetrieveArrayIndex(owner, 0),
+			["index1"] = (owner) => RetrieveArrayIndex(owner, 1),
+			["index2"] = (owner) => RetrieveArrayIndex(owner, 2),
 		};
 
-		private static string ReplaceConstantsWithValues(string stringWithConstants)
+		private static ArrayObject3D FindParentArray(IObject3D item, int wantLevel)
+		{
+			int foundLevel = 0;
+			// look through all the parents
+			foreach (var parent in item.Parents())
+			{
+				// if it is a sheet
+				if (parent is ArrayObject3D arrayObject)
+				{
+					if (foundLevel == wantLevel)
+					{
+						return arrayObject;
+					}
+
+					foundLevel++;
+				}
+			}
+
+			return null;
+		}
+
+		private static int RetrieveArrayIndex(IObject3D owner, int level)
+		{
+			var arrayObject = FindParentArray(owner, level);
+
+			if (arrayObject != null)
+			{
+				int index = 0;
+				foreach(var child in arrayObject.Children)
+				{
+					if (child == owner)
+					{
+						return index;
+					}
+
+					index++;
+				}
+			}
+
+			return 0;
+		}
+
+		private static string ReplaceConstantsWithValues(IObject3D owner, string stringWithConstants)
 		{
 			string Replace(string inputString, string setting)
 			{
@@ -253,7 +300,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var value = constants[setting];
 
 					// braces then brackets replacement
-					inputString = inputString.Replace("[" + setting + "]", value().ToString());
+					inputString = inputString.Replace("[" + setting + "]", value(owner).ToString());
 				}
 
 				return inputString;
@@ -278,7 +325,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				inputExpression = printer.Settings.ReplaceSettingsNamesWithValues(inputExpression, false);
 			}
 
-			inputExpression = ReplaceConstantsWithValues(inputExpression);
+			inputExpression = ReplaceConstantsWithValues(owner, inputExpression);
 
 			// check if the expression is not an equation (does not start with "=")
 			if (inputExpression.Length > 0 && inputExpression[0] != '=')
@@ -319,7 +366,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// look through all the parents
-			var sheet = Find(owner);
+			var sheet = FindFirstSheet(owner);
 			if (sheet != null)
 			{
 				// try to manage the cell into the correct data type
@@ -342,7 +389,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// </summary>
 		/// <param name="item">The item to start the search from</param>
 		/// <returns></returns>
-		private static SheetObject3D Find(IObject3D item)
+		private static SheetObject3D FindFirstSheet(IObject3D item)
 		{
 			// look through all the parents
 			foreach (var parent in item.Parents())
@@ -378,23 +425,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateArgs.Source is SheetObject3D sheet)
 			{
 				// Check if the sheet is the first sheet parent of this item (if not it will not change it's data).
-				if (Find(itemToCheck) == sheet)
+				if (FindFirstSheet(itemToCheck) == sheet)
 				{
-					foreach (var item in itemToCheck.DescendantsAndSelf())
-					{
-						// Find all the OrReference properties on this item and check if any start with an '='.
-						foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
-						{
-							var propertyValue = property.Value;
+					return HasParametersWithActiveFunctions(itemToCheck);
+				}
+			}
 
-							if (propertyValue is IDirectOrExpression directOrExpression)
-							{
-								if (directOrExpression.Expression.StartsWith("="))
-								{
-									// WIP: check if the value has actually changed, this will update every object on any cell change
-									return true;
-								}
-							}
+			return false;
+		}
+
+		public static bool HasParametersWithActiveFunctions(IObject3D itemToCheck)
+		{
+			foreach (var item in itemToCheck.DescendantsAndSelf())
+			{
+				// Find all the OrReference properties on this item and check if any start with an '='.
+				foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
+				{
+					var propertyValue = property.Value;
+
+					if (propertyValue is IDirectOrExpression directOrExpression)
+					{
+						if (directOrExpression.Expression.StartsWith("="))
+						{
+							// WIP: check if the value has actually changed, this will update every object on any cell change
+							return true;
 						}
 					}
 				}

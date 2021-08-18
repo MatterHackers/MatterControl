@@ -2857,6 +2857,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		public ExtrusionMultiplierStream ExtrusionMultiplierStream { get; private set; }
 
 		public FeedRateMultiplierStream FeedRateMultiplierStream { get; private set; }
+		public bool WaitingToPause => pauseHandlingStream?.WaitingToPause == true;
 
 		public void TurnOffPartCoolingFan()
 		{

@@ -602,7 +602,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				GuiWidget imageWidget;
 				if (imageDisplayAttribute?.Stretch == true)
 				{
-					imageWidget = new ResponsiveImageWidget(imageBuffer);
+					var responsiveImageWidget = new ResponsiveImageWidget(imageBuffer);
+					responsiveImageWidget.RenderCheckerboard = true;
+					imageWidget = responsiveImageWidget;
 				}
 				else
 				{
@@ -663,44 +665,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				object3D.Invalidated += RefreshField;
 				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-				if (object3D is ImageObject3D imageObject)
+				if (object3D is IEditorWidgetModifier editorWidgetModifier)
 				{
-					imageWidget.Click += (s, e) =>
-					{
-						if (e.Button == MouseButtons.Right)
-						{
-							var popupMenu = new PopupMenu(theme);
-
-							var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
-							pasteMenu.Click += (s2, e2) =>
-							{
-								var activeImage = Clipboard.Instance.GetImage();
-
-								// Persist
-								string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
-								ImageIO.SaveImageData(
-									filePath,
-									activeImage);
-
-								imageObject.AssetPath = filePath;
-								imageObject.Mesh = null;
-
-								UpdateEditorImage();
-
-								imageObject.Invalidate(InvalidateType.Image);
-							};
-
-							pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
-
-							var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
-							copyMenu.Click += (s2, e2) =>
-							{
-								Clipboard.Instance.SetImage(imageObject.Image);
-							};
-
-							popupMenu.ShowMenu(imageWidget, e);
-						}
-					};
+					editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, UpdateEditorImage);
 				}
 
 				rowContainer.AddChild(imageWidget);
@@ -894,7 +861,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
 				{
-					rowContainer = GetImageSearchWidget(theme);
+					rowContainer = NewImageSearchWidget(theme);
 				}
 				else if(object3D is AssetObject3D assetObject
 					&& property.PropertyInfo.Name == "AssetPath")
@@ -917,21 +884,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							// we do this using to make sure that the stream is closed before we try and insert the Picture
-							AggContext.FileDialogs.OpenFileDialog(
-								new OpenFileDialogParams(
-									"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
-									multiSelect: false,
-									title: "Add Image".Localize()),
-									(openParams) =>
-									{
-										if (!File.Exists(openParams.FileName))
-										{
-											return;
-										}
-
-										assetObject.AssetPath = openParams.FileName;
-									});
+							ImageObject3D.ShowOpenDialog(assetObject);
 						});
 					};
 				}
@@ -1148,7 +1101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		public static GuiWidget GetImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
+		public static GuiWidget NewImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
 		{
 			var searchRow = new FlowLayoutWidget()
 			{
