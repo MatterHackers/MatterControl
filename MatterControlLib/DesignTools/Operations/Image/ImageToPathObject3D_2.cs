@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
@@ -72,6 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// <summary>
 		/// This is the image after it has been processed into an alpha image
 		/// </summary>
+		[DisplayName("")]
 		[JsonIgnore]
 		[ImageDisplay(Margin = new int[] { 30, 3, 30, 3 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer Image
@@ -155,9 +155,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string TransparencyMessage { get; set; } = "Your image is processed as is with no modifications. Transparent pixels are ignored, only opaque pixels are considered in feature detection.";
 
 
+		[DisplayName("")]
 		[JsonIgnore]
 		private ImageBuffer SourceImage => ((IImageProvider)this.Descendants().Where(i => i is IImageProvider).FirstOrDefault())?.Image;
 
+		[DisplayName("Select Range")]
 		public Histogram Histogram { get; set; } = new Histogram();
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
@@ -251,6 +253,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
 					var _ = Image; // call this to make sure it is built
 					Histogram.RebuildAlphaImage(SourceImage, alphaImage, Image, AnalysisType);
+				}
+				else
+				{
+					Image?.CopyFrom(SourceImage);
 				}
 				await Rebuild();
 			}

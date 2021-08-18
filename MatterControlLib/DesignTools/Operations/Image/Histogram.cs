@@ -257,8 +257,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			byte[] sourceBuffer = sourceImage.GetBuffer();
 			byte[] destBuffer = alphaImage.GetBuffer();
-			//Parallel.For(0, sourceImage.Height, (y) =>
-			for(int y = 0; y < sourceImage.Height; y++)
+			Parallel.For(0, sourceImage.Height, (y) =>
+			//for(int y = 0; y < sourceImage.Height; y++)
 			{
 				int imageOffset = sourceImage.GetBufferOffsetY(y);
 
@@ -273,8 +273,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					destBuffer[imageBufferOffsetWithX + 2] = r;
 					destBuffer[imageBufferOffsetWithX + 3] = GetAlphaFromHue(r, g, b, RangeStart, RangeEnd);
 				}
-			}
-			//});
+			//}
+			});
 
 			alphaImage.MarkImageChanged();
 

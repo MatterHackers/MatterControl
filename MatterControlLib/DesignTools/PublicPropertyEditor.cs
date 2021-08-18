@@ -602,7 +602,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				GuiWidget imageWidget;
 				if (imageDisplayAttribute?.Stretch == true)
 				{
-					imageWidget = new ResponsiveImageWidget(imageBuffer);
+					var responsiveImageWidget = new ResponsiveImageWidget(imageBuffer);
+					responsiveImageWidget.RenderCheckerboard = true;
+					imageWidget = responsiveImageWidget;
 				}
 				else
 				{
@@ -617,24 +619,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					imageWidget.Margin = new BorderDouble(0, 3);
 				}
-
-				imageWidget.BeforeDraw += (s, e) =>
-				{
-					// render a checkerboard that can show through the alpha mask
-					var g = e.Graphics2D;
-					var w = (int)(10 * GuiWidget.DeviceScale);
-					for (int x = 0; x < g.Width / w; x ++)
-					{
-						for (int y = 0; y < g.Height / w; y ++)
-						{
-							if (y % 2 == 0 && x % 2 == 1
-								|| y % 2 == 1 && x % 2 == 0)
-							{
-								g.FillRectangle(x * w, y * w, x * w + w, y * w + w, Color.LightGray);
-							}
-						}
-					}
-				};
 
 				ImageBuffer GetImageCheckingForErrors()
 				{
@@ -877,7 +861,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
 				{
-					rowContainer = GetImageSearchWidget(theme);
+					rowContainer = NewImageSearchWidget(theme);
 				}
 				else if(object3D is AssetObject3D assetObject
 					&& property.PropertyInfo.Name == "AssetPath")
@@ -1117,7 +1101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		public static GuiWidget GetImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
+		public static GuiWidget NewImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
 		{
 			var searchRow = new FlowLayoutWidget()
 			{
