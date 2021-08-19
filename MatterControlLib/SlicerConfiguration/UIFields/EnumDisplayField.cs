@@ -109,11 +109,51 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private static void EnableReduceWidth(GuiWidget enumTab, int minSize)
+		{
+			var deviceScale = GuiWidget.DeviceScale;
+			enumTab.MinimumSize = new Vector2(minSize * deviceScale, enumTab.Height);
+			enumTab.HAnchor = HAnchor.Stretch;
+
+			// delay this for an update so that the layout of the text widget has happened and its size has been updated.
+			var textWidget = enumTab.Descendants<TextWidget>().First();
+			textWidget.TextChanged += (s, e) => UiThread.RunOnIdle(UpadetMaxWidth);
+
+			UpadetMaxWidth();
+
+			void UpadetMaxWidth()
+			{
+				// the text
+				var width = textWidget.Width + enumTab.Margin.Width * deviceScale;
+				enumTab.MaximumSize = new Vector2(width, enumTab.MaximumSize.Y);
+				enumTab.Width -= 1;
+
+				if (string.IsNullOrEmpty(enumTab.ToolTipText))
+				{
+					// wait for this size change to take effect and update the tool tip
+					enumTab.BoundsChanged += (s, e) =>
+					{
+						if (enumTab.Width < enumTab.MaximumSize.X)
+						{
+							enumTab.ToolTipText = textWidget.Text;
+						}
+						else
+						{
+							enumTab.ToolTipText = "";
+						}
+					};
+				}
+			}
+
+			enumTab.HAnchor = HAnchor.Stretch;
+		}
+
 		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
 		{
 			var menuRow = new FlowLayoutWidget()
 			{
-				Margin = 5
+				Margin = 5,
+				HAnchor = HAnchor.Stretch,
 			};
 
 			int index = 0;
@@ -123,7 +163,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var radioButton = new RadioTextButton(enumItem.Value, theme)
 				{
-					ToolTipText = descriptions[index]
+					ToolTipText = descriptions[index],
+					Margin = new BorderDouble(9, 0),
+					Padding = 0,
 				};
 
 				menuRow.AfterDraw += (s, e) =>
@@ -145,7 +187,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					radioButton.Checked = true;
 				}
 
-				menuRow.AddChild(radioButton);
+				var container = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+				};
+
+				container.AddChild(radioButton);
+
+				EnableReduceWidth(container, 40);
+
+				menuRow.AddChild(container);
 
 				var localItem = enumItem;
 				radioButton.CheckedStateChanged += (s, e) =>
