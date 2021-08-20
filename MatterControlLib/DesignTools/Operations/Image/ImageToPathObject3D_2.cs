@@ -44,6 +44,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
@@ -185,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.FlattenToPathObject(undoBuffer);
 		}
 
-		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction, int minimumSurfaceArea)
+		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)
 		{
 			if (image != null)
 			{
@@ -204,9 +205,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				int pixelsToIntPointsScale = 1000;
 				var lineLoops = marchingSquaresData.CreateLineLoops(pixelsToIntPointsScale);
 
-				if (minimumSurfaceArea > 0)
+				if (MinSurfaceArea > 0)
 				{
-					for(int i=lineLoops.Count - 1; i >=0; i--)
+					var minimumSurfaceArea = Math.Pow(MinSurfaceArea * 1000, 2);
+
+					for (int i=lineLoops.Count - 1; i >=0; i--)
 					{
 						var area = Math.Abs(Clipper.Area(lineLoops[i]));
 						if (area < minimumSurfaceArea)
@@ -260,12 +263,67 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private bool ColorDetected(ImageBuffer sourceImage, out double hueDetected)
+		{
+			byte[] sourceBuffer = sourceImage.GetBuffer();
+			var min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+			var max = new Vector3(double.MinValue, double.MinValue, double.MinValue);
+
+			for(int y = 0; y < sourceImage.Height; y++)
+			{
+				int imageOffset = sourceImage.GetBufferOffsetY(y);
+				for (int x = 0; x < sourceImage.Width; x++)
+				{
+					int offset = imageOffset + x * 4;
+					var b = sourceBuffer[offset + 0];
+					var g = sourceBuffer[offset + 1];
+					var r = sourceBuffer[offset + 2];
+
+					var color = new ColorF(r / 255.0, g / 255.0, b / 255.0);
+					color.GetHSL(out double hue, out double saturation, out double lightness);
+
+					min = Vector3.ComponentMin(min, new Vector3(hue, saturation, lightness));
+					max = Vector3.ComponentMax(max, new Vector3(hue, saturation, lightness));
+
+					if (saturation > .4 && lightness > .1 && lightness < .9)
+					{
+						hueDetected = hue;
+						return true;
+					}
+				}
+			}
+
+			hueDetected = 0;
+			return false;
+		}
+
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Image)
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
+				// try to pick the best processing mode
+				if (SourceImage.HasTransparency)
+				{
+					AnalysisType = AnalysisTypes.Transparency;
+					Histogram.RangeStart = 0;
+					Histogram.RangeEnd = .9;
+				}
+				else if (ColorDetected(SourceImage, out double hue))
+				{
+					AnalysisType = AnalysisTypes.Colors;
+					Histogram.RangeStart = Math.Max(0, hue - .2);
+					Histogram.RangeEnd = Math.Min(1, hue + .2);
+				}
+				else
+				{
+					AnalysisType = AnalysisTypes.Intensity;
+					Histogram.RangeStart = 0;
+					Histogram.RangeEnd = .9;
+				}
+
+
 				if (AnalysisType != AnalysisTypes.Transparency)
 				{
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
@@ -277,6 +335,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					Image?.CopyFrom(SourceImage);
 				}
 				await Rebuild();
+
+				this.ReloadEditorPannel();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
 			{
@@ -313,8 +373,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									reporter.Report(progressStatus);
 								},
 								SourceImage,
-								new AlphaFunction(),
-								(int)(MinSurfaceArea * 1000));
+								new AlphaFunction());
 							break;
 
 						case AnalysisTypes.Colors:
@@ -327,8 +386,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									reporter.Report(progressStatus);
 								},
 								alphaImage,
-								new AlphaFunction(),
-								(int)(Math.Pow(MinSurfaceArea * 1000, 2)));
+								new AlphaFunction());
 							break;
 					}
 
