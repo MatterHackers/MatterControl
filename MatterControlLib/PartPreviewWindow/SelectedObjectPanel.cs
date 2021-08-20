@@ -305,6 +305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
 			{
+				var context = new PPEContext();
 				PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
 				foreach (var selector in componentObject.SurfacedEditors)
 				{
@@ -356,8 +357,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
 							{
-								var context = new PPEContext();
-
 								if (reflectionTarget.Source is IObject3D editedChild)
 								{
 									context.item = editedChild;
@@ -374,6 +373,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									editorPanel.AddChild(editor);
 								}
+
+								// Init with custom 'UpdateControls' hooks
+								(context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
 							}
 						}
 					}

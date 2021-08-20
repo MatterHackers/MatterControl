@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 
-		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity; 
+		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity;
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public AnalysisTypes AnalysisType
 		{
@@ -162,6 +162,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Select Range")]
 		public Histogram Histogram { get; set; } = new Histogram();
 
+		[Slider(0, 10, 1)]
+		[Description("The minimum area each loop needs to be for inclusion")]
+		public double MinSurfaceArea {get; set; } = 1;
+
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
@@ -181,7 +185,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.FlattenToPathObject(undoBuffer);
 		}
 
-		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)
+		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction, int minimumSurfaceArea)
 		{
 			if (image != null)
 			{
@@ -200,34 +204,48 @@ namespace MatterHackers.MatterControl.DesignTools
 				int pixelsToIntPointsScale = 1000;
 				var lineLoops = marchingSquaresData.CreateLineLoops(pixelsToIntPointsScale);
 
+				if (minimumSurfaceArea > 0)
+				{
+					for(int i=lineLoops.Count - 1; i >=0; i--)
+					{
+						var area = Math.Abs(Clipper.Area(lineLoops[i]));
+						if (area < minimumSurfaceArea)
+						{
+							lineLoops.RemoveAt(i);
+						}
+					}
+				}
+
 				progressReporter?.Invoke(.15, null);
 
 				var min = new IntPoint(-10, -10);
 				var max = new IntPoint(10 + image.Width * pixelsToIntPointsScale, 10 + image.Height * pixelsToIntPointsScale);
 
-				var boundingPoly = new Polygon();
-				boundingPoly.Add(min);
-				boundingPoly.Add(new IntPoint(min.X, max.Y));
-				boundingPoly.Add(max);
-				boundingPoly.Add(new IntPoint(max.X, min.Y));
+				var boundingPoly = new Polygon
+				{
+					min,
+					new IntPoint(min.X, max.Y),
+					max,
+					new IntPoint(max.X, min.Y)
+				};
 
 				// now clip the polygons to get the inside and outside polys
 				var clipper = new Clipper();
 				clipper.AddPaths(lineLoops, PolyType.ptSubject, true);
 				clipper.AddPath(boundingPoly, PolyType.ptClip, true);
 
-				var polygonShape = new Polygons();
+				var polygonShapes = new Polygons();
 				progressReporter?.Invoke(.3, null);
 
-				clipper.Execute(ClipType.ctIntersection, polygonShape);
+				clipper.Execute(ClipType.ctIntersection, polygonShapes);
 
 				progressReporter?.Invoke(.55, null);
 
-				polygonShape = Clipper.CleanPolygons(polygonShape, 100);
+				polygonShapes = Clipper.CleanPolygons(polygonShapes, 100);
 
 				progressReporter?.Invoke(.75, null);
 
-				VertexStorage rawVectorShape = polygonShape.PolygonToPathStorage();
+				VertexStorage rawVectorShape = polygonShapes.PolygonToPathStorage();
 
 				var aabb = this.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
 				var xScale = aabb.XSize / image.Width;
@@ -295,7 +313,8 @@ namespace MatterHackers.MatterControl.DesignTools
 									reporter.Report(progressStatus);
 								},
 								SourceImage,
-								new AlphaFunction());
+								new AlphaFunction(),
+								(int)(MinSurfaceArea * 1000));
 							break;
 
 						case AnalysisTypes.Colors:
@@ -308,7 +327,8 @@ namespace MatterHackers.MatterControl.DesignTools
 									reporter.Report(progressStatus);
 								},
 								alphaImage,
-								new AlphaFunction());
+								new AlphaFunction(),
+								(int)(Math.Pow(MinSurfaceArea * 1000, 2)));
 							break;
 					}
 
@@ -334,6 +354,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void UpdateControls(PublicPropertyChange change)
 		{
 			change.SetRowVisible(nameof(Histogram), () => AnalysisType != AnalysisTypes.Transparency);
+			change.SetRowVisible(nameof(MinSurfaceArea), () => AnalysisType != AnalysisTypes.Transparency);
 			change.SetRowVisible(nameof(TransparencyMessage), () => AnalysisType == AnalysisTypes.Transparency);
 		}
 	}
