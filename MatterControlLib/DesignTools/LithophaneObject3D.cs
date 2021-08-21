@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		[DisplayName("Pixels Per mm"), Range(0.5, 3, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double PixelsPerMM { get; set; } = 1.5;
 
-		[Range(0.5, 3, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(0.5, 3, .2)]
 		public double Height { get; set; } = 2.5;
 
 		public int Width { get; set; } = 150;

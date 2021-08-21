@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DescriptionImage("https://lh3.googleusercontent.com/h-s2FyBKO5etYDr_9YSLtGmGmQTcmSGMu4p0mRqX4_7Z62Ndn2QRLoFICC6X9scbhr1EP29RiYRj4EmhLMUwiNTAG-PIiFbzI_jAses")]		
 		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
-		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(0, 100, 1)]
 		[Description("Where to start the bend as a percent from the left side")]
 		[DescriptionImage("https://lh3.googleusercontent.com/eOeWjr98uz_E924PnNaXrasepv15nWEuvhqH-jbaQyvrOVdX5MHXF00HdZQGC8NLpJc9ok1sToMtyPx1wnnDgFwTTGA5MjoMFu612AY1")]
 		public double StartPercent { get; set; } = 50;
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
 
-		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(3, 360, 1)]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
 		public double MinSidesPerRotation { get; set; } = 30;

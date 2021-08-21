@@ -99,6 +99,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return null;
 		}
 
+		public static InteractiveScene ContainingScene(this IObject3D object3D)
+		{
+			foreach (var workspace in ApplicationController.Instance.Workspaces)
+			{
+				if (workspace.SceneContext.Scene.Descendants().Contains(object3D))
+				{
+					return workspace.SceneContext.Scene;
+				}
+			}
+
+			return null;
+		}
+
+		public static void ReloadEditorPannel(this IObject3D object3D)
+		{
+			// de-select and select this object
+			var scene = object3D.ContainingScene();
+			if (scene != null
+				&& (object3D.Parents().Contains(scene.SelectedItem)
+				|| object3D == scene.SelectedItem))
+			{
+				var selection = scene.SelectedItem;
+				scene.SelectedItem = null;
+				scene.SelectedItem = selection;
+			}
+		}
+
 		public static int EstimatedMemory(this IObject3D object3D)
 		{
 			return 0;

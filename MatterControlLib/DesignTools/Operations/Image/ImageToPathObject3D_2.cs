@@ -44,6 +44,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 
-		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity; 
+		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity;
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public AnalysisTypes AnalysisType
 		{
@@ -162,6 +163,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Select Range")]
 		public Histogram Histogram { get; set; } = new Histogram();
 
+		[Slider(0, 10, 1)]
+		[Description("The minimum area each loop needs to be for inclusion")]
+		public double MinSurfaceArea {get; set; } = 1;
+
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
@@ -200,34 +205,50 @@ namespace MatterHackers.MatterControl.DesignTools
 				int pixelsToIntPointsScale = 1000;
 				var lineLoops = marchingSquaresData.CreateLineLoops(pixelsToIntPointsScale);
 
+				if (MinSurfaceArea > 0)
+				{
+					var minimumSurfaceArea = Math.Pow(MinSurfaceArea * 1000, 2);
+
+					for (int i=lineLoops.Count - 1; i >=0; i--)
+					{
+						var area = Math.Abs(Clipper.Area(lineLoops[i]));
+						if (area < minimumSurfaceArea)
+						{
+							lineLoops.RemoveAt(i);
+						}
+					}
+				}
+
 				progressReporter?.Invoke(.15, null);
 
 				var min = new IntPoint(-10, -10);
 				var max = new IntPoint(10 + image.Width * pixelsToIntPointsScale, 10 + image.Height * pixelsToIntPointsScale);
 
-				var boundingPoly = new Polygon();
-				boundingPoly.Add(min);
-				boundingPoly.Add(new IntPoint(min.X, max.Y));
-				boundingPoly.Add(max);
-				boundingPoly.Add(new IntPoint(max.X, min.Y));
+				var boundingPoly = new Polygon
+				{
+					min,
+					new IntPoint(min.X, max.Y),
+					max,
+					new IntPoint(max.X, min.Y)
+				};
 
 				// now clip the polygons to get the inside and outside polys
 				var clipper = new Clipper();
 				clipper.AddPaths(lineLoops, PolyType.ptSubject, true);
 				clipper.AddPath(boundingPoly, PolyType.ptClip, true);
 
-				var polygonShape = new Polygons();
+				var polygonShapes = new Polygons();
 				progressReporter?.Invoke(.3, null);
 
-				clipper.Execute(ClipType.ctIntersection, polygonShape);
+				clipper.Execute(ClipType.ctIntersection, polygonShapes);
 
 				progressReporter?.Invoke(.55, null);
 
-				polygonShape = Clipper.CleanPolygons(polygonShape, 100);
+				polygonShapes = Clipper.CleanPolygons(polygonShapes, 100);
 
 				progressReporter?.Invoke(.75, null);
 
-				VertexStorage rawVectorShape = polygonShape.PolygonToPathStorage();
+				VertexStorage rawVectorShape = polygonShapes.PolygonToPathStorage();
 
 				var aabb = this.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
 				var xScale = aabb.XSize / image.Width;
@@ -242,12 +263,67 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private bool ColorDetected(ImageBuffer sourceImage, out double hueDetected)
+		{
+			byte[] sourceBuffer = sourceImage.GetBuffer();
+			var min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+			var max = new Vector3(double.MinValue, double.MinValue, double.MinValue);
+
+			for(int y = 0; y < sourceImage.Height; y++)
+			{
+				int imageOffset = sourceImage.GetBufferOffsetY(y);
+				for (int x = 0; x < sourceImage.Width; x++)
+				{
+					int offset = imageOffset + x * 4;
+					var b = sourceBuffer[offset + 0];
+					var g = sourceBuffer[offset + 1];
+					var r = sourceBuffer[offset + 2];
+
+					var color = new ColorF(r / 255.0, g / 255.0, b / 255.0);
+					color.GetHSL(out double hue, out double saturation, out double lightness);
+
+					min = Vector3.ComponentMin(min, new Vector3(hue, saturation, lightness));
+					max = Vector3.ComponentMax(max, new Vector3(hue, saturation, lightness));
+
+					if (saturation > .4 && lightness > .1 && lightness < .9)
+					{
+						hueDetected = hue;
+						return true;
+					}
+				}
+			}
+
+			hueDetected = 0;
+			return false;
+		}
+
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Image)
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
+				// try to pick the best processing mode
+				if (SourceImage.HasTransparency)
+				{
+					AnalysisType = AnalysisTypes.Transparency;
+					Histogram.RangeStart = 0;
+					Histogram.RangeEnd = .9;
+				}
+				else if (ColorDetected(SourceImage, out double hue))
+				{
+					AnalysisType = AnalysisTypes.Colors;
+					Histogram.RangeStart = Math.Max(0, hue - .2);
+					Histogram.RangeEnd = Math.Min(1, hue + .2);
+				}
+				else
+				{
+					AnalysisType = AnalysisTypes.Intensity;
+					Histogram.RangeStart = 0;
+					Histogram.RangeEnd = .9;
+				}
+
+
 				if (AnalysisType != AnalysisTypes.Transparency)
 				{
 					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
@@ -259,6 +335,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					Image?.CopyFrom(SourceImage);
 				}
 				await Rebuild();
+
+				this.ReloadEditorPannel();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
 			{
@@ -334,6 +412,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void UpdateControls(PublicPropertyChange change)
 		{
 			change.SetRowVisible(nameof(Histogram), () => AnalysisType != AnalysisTypes.Transparency);
+			change.SetRowVisible(nameof(MinSurfaceArea), () => AnalysisType != AnalysisTypes.Transparency);
 			change.SetRowVisible(nameof(TransparencyMessage), () => AnalysisType == AnalysisTypes.Transparency);
 		}
 	}

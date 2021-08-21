@@ -109,11 +109,74 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private void EnableReduceWidth(RadioTextButton enumTab)
+		{
+			var deviceScale = GuiWidget.DeviceScale;
+			var padingSize = enumTab.Padding.Left * deviceScale;
+			enumTab.MinimumSize = new Vector2(padingSize * 3, enumTab.Height);
+			enumTab.HAnchor = HAnchor.Stretch;
+
+			// delay this for an update so that the layout of the text widget has happened and its size has been updated.
+			var textWidget = enumTab.Descendants<TextWidget>().First();
+			textWidget.Margin = new BorderDouble(enumTab.Padding.Left, 0, 0, 0);
+			textWidget.HAnchor = HAnchor.Left;
+
+			enumTab.AfterDraw += (s, e) =>
+			{
+				if (enumTab.Width < enumTab.MaximumSize.X)
+				{
+					var bounds = enumTab.LocalBounds;
+					var g = e.Graphics2D;
+					var color = enumTab.SelectedBackgroundColor;
+					if (!enumTab.Checked)
+					{
+						foreach (var parent in enumTab.Parents<GuiWidget>())
+						{
+							if (parent.BackgroundColor.alpha > 200)
+							{
+								color = parent.BackgroundColor;
+								break;
+							}
+						}
+					}
+					// cover the text with an alpha mask
+					for (int i = 0; i < padingSize + 1; i++)
+					{
+						var x = bounds.Right - padingSize + i;
+						g.Line(x, bounds.Bottom, x, bounds.Top, color.WithAlpha(Math.Min(255, i / 10.0 * deviceScale)));
+					}
+				}
+			};
+
+			// the text
+			var maxWidth = textWidget.Width + enumTab.Padding.Width * deviceScale;
+			enumTab.MaximumSize = new Vector2(maxWidth, enumTab.MaximumSize.Y);
+			enumTab.Padding = new BorderDouble(0, enumTab.Padding.Bottom, 0, enumTab.Padding.Top);
+
+			if (string.IsNullOrEmpty(enumTab.ToolTipText))
+			{
+				// wait for this size change to take effect and update the tool tip
+				enumTab.BoundsChanged += (s, e) =>
+				{
+					if (enumTab.Width < enumTab.MaximumSize.X)
+					{
+						enumTab.ToolTipText = textWidget.Text;
+					}
+					else
+					{
+						enumTab.ToolTipText = "";
+					}
+				};
+			}
+
+			enumTab.HAnchor = HAnchor.Stretch;
+		}
+
 		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
 		{
 			var menuRow = new FlowLayoutWidget()
 			{
-				Margin = 5
+				Margin = 5,
 			};
 
 			int index = 0;
@@ -123,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var radioButton = new RadioTextButton(enumItem.Value, theme)
 				{
-					ToolTipText = descriptions[index]
+					ToolTipText = descriptions[index],
 				};
 
 				menuRow.AfterDraw += (s, e) =>
@@ -144,6 +207,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					radioButton.Checked = true;
 				}
+
+				EnableReduceWidth(radioButton);
 
 				menuRow.AddChild(radioButton);
 

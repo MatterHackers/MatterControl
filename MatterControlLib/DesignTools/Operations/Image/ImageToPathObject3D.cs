@@ -173,10 +173,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonIgnore]
 		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
-		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(0, 1, .05)]
 		public DoubleOrExpression RangeStart { get; set; } = .1;
 
-		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(0, 1, .05)]
 		public DoubleOrExpression RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();

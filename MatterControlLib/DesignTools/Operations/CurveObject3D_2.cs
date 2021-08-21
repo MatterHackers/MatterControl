@@ -64,11 +64,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Diameter { get; set; } = double.MaxValue;
 
-		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(3, 360, 1)]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		public double MinSidesPerRotation { get; set; } = 30;
 
-		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Slider(0, 100, 1)]
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
