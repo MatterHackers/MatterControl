@@ -294,6 +294,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget CreatePropertyEditor(List<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
+			var localItem = context.item;
 			var object3D = property.Item;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
@@ -323,20 +324,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
 						{
 							property.SetValue(valueFromString(oldValue));
-							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						},
 						() =>
 						{
 							property.SetValue(valueFromString(newValue));
-							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						}));
 					}
 					else
 					{
 						property.SetValue(valueFromString(newValue));
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
@@ -410,7 +411,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Color);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -484,7 +485,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -535,7 +536,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 				field2.ValueChanged += (s, e) =>
@@ -545,7 +546,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -578,11 +579,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
 						Action selected = null;
-						if (!(context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
+						if (!(localItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
 						{
 							selected = () =>
 							{
-								object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+								object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							};
 						}
 
@@ -1001,7 +1002,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -1049,7 +1050,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Value.ToString() != field.Value)
 					{
 						property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
