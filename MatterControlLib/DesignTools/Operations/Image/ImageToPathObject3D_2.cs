@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// </summary>
 		[DisplayName("")]
 		[JsonIgnore]
-		[ImageDisplay(Margin = new int[] { 30, 3, 30, 3 }, MaxXSize = 400, Stretch = true)]
+		[ImageDisplay(Margin = new int[] { 9, 3, 9, 3 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer Image
 		{
 			get
@@ -131,22 +131,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (_featureDetector != value)
 				{
 					_featureDetector = value;
-					var sourceImage = SourceImage;
-					if (sourceImage != null)
-					{
-						switch (AnalysisType)
-						{
-							case AnalysisTypes.Intensity:
-							case AnalysisTypes.Colors:
-								Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
-								Histogram.RebuildAlphaImage(sourceImage, alphaImage, Image, AnalysisType);
-								break;
+					RebuildFromImageData();
+				}
+			}
+		}
 
-							case AnalysisTypes.Transparency:
-								Image?.CopyFrom(sourceImage);
-								break;
-						}
-					}
+		private void RebuildFromImageData()
+		{
+			var sourceImage = SourceImage;
+			if (sourceImage != null)
+			{
+				switch (AnalysisType)
+				{
+					case AnalysisTypes.Intensity:
+					case AnalysisTypes.Colors:
+						Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
+						Histogram.RebuildAlphaImage(sourceImage, alphaImage, Image, AnalysisType);
+						break;
+
+					case AnalysisTypes.Transparency:
+						Image?.CopyFrom(sourceImage);
+						break;
 				}
 			}
 		}
@@ -322,7 +327,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					Histogram.RangeStart = 0;
 					Histogram.RangeEnd = .9;
 				}
-
 
 				if (AnalysisType != AnalysisTypes.Transparency)
 				{

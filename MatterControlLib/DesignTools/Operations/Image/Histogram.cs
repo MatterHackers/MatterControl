@@ -357,7 +357,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = 5,
 			};
 
-			var handleWidth = 10 * GuiWidget.DeviceScale;
+			var handleWidth = 10;
+			var handleDeviceWidth = handleWidth * GuiWidget.DeviceScale;
 			var histogramBackground = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -370,9 +371,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var rangeStart = RangeStart;
 				var rangeEnd = RangeEnd;
 				var graphics2D = e.Graphics2D;
-				graphics2D.Render(_histogramRawCache, 0, 0);
-				var background = _histogramRawCache;
-				graphics2D.FillRectangle(rangeStart * background.Width, 0, rangeEnd * background.Width, background.Height, theme.PrimaryAccentColor.WithAlpha(60));
+				graphics2D.Render(_histogramRawCache, 0, 0, histogramBackground.Width, histogramBackground.Height);
+				graphics2D.FillRectangle(rangeStart * histogramBackground.Width, 0, rangeEnd * histogramBackground.Width, histogramBackground.Height, theme.PrimaryAccentColor.WithAlpha(60));
 			};
 
 			histogramWidget.AddChild(histogramBackground);
@@ -394,8 +394,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				g.Line(w * .65, h * .6, w * .65, h * .4, theme.BackgroundColor);
 			}
 
-			var leftHandle = new ImageWidget((int)(handleWidth), (int)histogramWidget.Height);
-			leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+			var leftHandle = new ImageWidget((int)(handleDeviceWidth), (int)histogramWidget.Height);
+			leftHandle.Position = new Vector2(RangeStart * histogramBackground.Width, 0);
 			var image = leftHandle.Image;
 			RenderHandle(image.NewGraphics2D(), 0, 1);
 			histogramWidget.AddChild(leftHandle);
@@ -415,12 +415,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (leftDown)
 				{
 					var offset = e.Position.X - leftX;
-					var newStart = RangeStart + offset / _histogramRawCache.Width;
+					var newStart = RangeStart + offset / histogramBackground.Width;
 					newStart = agg_basics.Clamp(newStart, 0, RangeEnd);
 					if (RangeStart != newStart)
 					{
 						RangeStart = newStart;
-						leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
+						leftHandle.Position = new Vector2(RangeStart * histogramBackground.Width, 0);
 						RangeChanged?.Invoke(this, null);
 					}
 				}
@@ -434,8 +434,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			};
 
-			var rightHandle = new ImageWidget((int)(handleWidth), (int)histogramWidget.Height);
-			rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+			var rightHandle = new ImageWidget((int)(handleDeviceWidth), (int)histogramWidget.Height);
+			rightHandle.Position = new Vector2(RangeEnd * histogramBackground.Width + handleDeviceWidth, 0);
 			image = rightHandle.Image;
 			RenderHandle(image.NewGraphics2D(), 1, 0);
 			histogramWidget.AddChild(rightHandle);
@@ -455,12 +455,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (rightDown)
 				{
 					var offset = e.Position.X - rightX;
-					var newEnd = RangeEnd + offset / _histogramRawCache.Width;
+					var newEnd = RangeEnd + offset / histogramBackground.Width;
 					newEnd = agg_basics.Clamp(newEnd, RangeStart, 1);
 					if (RangeEnd != newEnd)
 					{
 						RangeEnd = newEnd;
-						rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+						rightHandle.Position = new Vector2(RangeEnd * histogramBackground.Width + handleDeviceWidth, 0);
 						RangeChanged?.Invoke(this, null);
 					}
 				}
@@ -499,12 +499,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					var offset = e.Position.X - centerX;
 					if (offset < 0)
 					{
-						newStart = Math.Max(downStart + offset / _histogramRawCache.Width, 0);
+						newStart = Math.Max(downStart + offset / histogramBackground.Width, 0);
 						newEnd = newStart + (downEnd - downStart);
 					}
 					else
 					{
-						newEnd = Math.Min(downEnd + offset / _histogramRawCache.Width, 1);
+						newEnd = Math.Min(downEnd + offset / histogramBackground.Width, 1);
 						newStart = newEnd - (downEnd - downStart);
 					}
 
@@ -513,8 +513,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						RangeStart = newStart;
 						RangeEnd = newEnd;
-						leftHandle.Position = new Vector2(RangeStart * _histogramRawCache.Width, 0);
-						rightHandle.Position = new Vector2(RangeEnd * _histogramRawCache.Width + handleWidth, 0);
+						leftHandle.Position = new Vector2(RangeStart * histogramBackground.Width, 0);
+						rightHandle.Position = new Vector2(RangeEnd * histogramBackground.Width + handleDeviceWidth, 0);
 						RangeChanged?.Invoke(this, null);
 						histogramBackground.Invalidate();
 					}
@@ -528,6 +528,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					centerDown = false;
 					EditComplete?.Invoke(this, null);
 				}
+			};
+
+			histogramBackground.BoundsChanged += (s, e) =>
+			{
+				leftHandle.Position = new Vector2(RangeStart * histogramBackground.Width, 0);
+				rightHandle.Position = new Vector2(RangeEnd * histogramBackground.Width + handleDeviceWidth, 0);
 			};
 
 			return histogramWidget;

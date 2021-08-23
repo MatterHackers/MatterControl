@@ -211,9 +211,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static SettingsRow CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme, List<SettingsRow> rows = null)
+		private static SettingsRow CreateSettingsRow(EditableProperty property, GuiWidget content, ThemeConfig theme, List<SettingsRow> rows = null)
 		{
-			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, field.Content, theme);
+			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, content, theme);
 			if (rows != null)
 			{
 				rows.Add(row);
@@ -263,11 +263,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				ToolTipText = toolTipText
 			};
 
-			var label = SettingsRow.CreateSettingsLabel(labelText, toolTipText, theme.TextColor);
-			label.VAnchor = VAnchor.Absolute;
-			label.HAnchor = HAnchor.Left;
+			if (!string.IsNullOrEmpty(labelText))
+			{
+				var label = SettingsRow.CreateSettingsLabel(labelText, toolTipText, theme.TextColor);
+				label.VAnchor = VAnchor.Absolute;
+				label.HAnchor = HAnchor.Left;
 
-			column.AddChild(label);
+				column.AddChild(label);
+			}
 
 			return column;
 		}
@@ -292,8 +295,58 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
+		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, UIField field)
+		{
+			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
+			if (sliderAttribute != null)
+			{
+				var slider = new Slider(new Vector2(0, 0), 60 * GuiWidget.DeviceScale, sliderAttribute.Min, sliderAttribute.Max)
+				{
+					VAnchor = VAnchor.Center,
+				};
+
+				if (field is DoubleField doubleField)
+				{
+					slider.Value = doubleField.DoubleValue;
+					var changeDueToSlider = false;
+					doubleField.ValueChanged += (s, e) =>
+					{
+						if (!changeDueToSlider)
+						{
+							slider.Value = doubleField.DoubleValue;
+						}
+					};
+
+					slider.ValueChanged += (s, e) =>
+					{
+						changeDueToSlider = true;
+						doubleField.SetValue(slider.Value.ToString(), true);
+						changeDueToSlider = false;
+					};
+
+					var content = new FlowLayoutWidget();
+					content.AddChild(slider);
+					content.AddChild(new GuiWidget()
+					{
+						Width = 11 * GuiWidget.DeviceScale,
+						Height = 3
+					});
+					content.AddChild(field.Content);
+
+					return content;
+				}
+				else if (field is ExpressionField expressionField)
+				{
+
+				}
+			}
+
+			return field.Content;
+		}
+
 		public static GuiWidget CreatePropertyEditor(List<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
+			var localItem = context.item;
 			var object3D = property.Item;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
@@ -323,20 +376,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
 						{
 							property.SetValue(valueFromString(oldValue));
-							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						},
 						() =>
 						{
 							property.SetValue(valueFromString(newValue));
-							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						}));
 					}
 					else
 					{
 						property.SetValue(valueFromString(newValue));
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
@@ -400,7 +453,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
 
-					rowContainer = CreateSettingsRow(property, field, theme);
+					rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme);
 				}
 			}
 			else if (propertyValue is Color color)
@@ -410,11 +463,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Color);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field, theme);
+				rowContainer = CreateSettingsRow(property, field.Content, theme);
 			}
 			else if (propertyValue is Vector2 vector2)
 			{
@@ -484,11 +537,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field, theme);
+				rowContainer = CreateSettingsRow(property, field.Content, theme);
 			}
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
@@ -535,7 +588,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 				field2.ValueChanged += (s, e) =>
@@ -545,7 +598,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -570,7 +623,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							return childrenSelector;
 						});
 
-					rowContainer = CreateSettingsRow(property, field, theme);
+					rowContainer = CreateSettingsRow(property, field.Content, theme);
 				}
 				else // show the subtract editor for boolean subtract and subtract and replace
 				{
@@ -578,11 +631,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
 						Action selected = null;
-						if (!(context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
+						if (!(localItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
 						{
 							selected = () =>
 							{
-								object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+								object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 							};
 						}
 
@@ -610,6 +663,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					imageWidget = new ImageWidget(imageBuffer);
 				}
+				
 				if (imageDisplayAttribute != null)
 				{
 					imageWidget.MaximumSize = new Vector2(imageDisplayAttribute.MaxXSize * GuiWidget.DeviceScale, int.MaxValue);
@@ -773,7 +827,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					object3D.Invalidated += RefreshField;
 					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-					rowContainer = CreateSettingsRow(property, field, theme);
+					rowContainer = CreateSettingsRow(property, field.Content, theme);
 				}
 			}
 			else if (propertyValue is bool boolValue)
@@ -786,7 +840,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				RegisterValueChanged(field,
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
-				rowContainer = CreateSettingsRow(property, field, theme);
+				rowContainer = CreateSettingsRow(property, field.Content, theme);
 			}
 			else if (propertyValue is DoubleOrExpression doubleExpresion)
 			{
@@ -797,6 +851,17 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 				field.Initialize(0);
 				field.SetValue(doubleExpresion.Expression, false);
+				void EnsureFormating(double value)
+				{
+					var format = "0." + new string('#', 5);
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+					{
+						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+					}
+
+					field.TextValue = value.ToString(format);
+				}
+				EnsureFormating(doubleExpresion.Value(object3D));
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
 					(valueString) => new DoubleOrExpression(valueString),
@@ -804,7 +869,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						return ((DoubleOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field, theme, rows);
+
+				rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -813,13 +879,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
 						if (newValue.Expression != field.Value)
 						{
-							var format = "0." + new string('#', 5);
-							if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
-							{
-								format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
-							}
-
-							field.TextValue = newValue.Value(object3D).ToString(format);
+							EnsureFormating(newValue.Value(object3D));
 						}
 					}
 				}
@@ -840,7 +900,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						return ((IntOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field, theme, rows);
+				rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -970,7 +1030,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							field.ClearUndoHistory();
 							field.Content.HAnchor = HAnchor.Stretch;
 							RegisterValueChanged(field, (valueString) => valueString);
-							rowContainer = CreateSettingsRow(property, field, theme, rows);
+							rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
 						}
 					}
 				}
@@ -989,7 +1049,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						return ((StringOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field, theme, rows);
+				rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
 			}
 			else if (propertyValue is char charValue)
 			{
@@ -1001,11 +1061,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field, theme);
+				rowContainer = CreateSettingsRow(property, field.Content, theme);
 			}
 			else if (property.PropertyType.IsEnum)
 			{
@@ -1049,14 +1109,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Value.ToString() != field.Value)
 					{
 						property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
 
 				if (addToSettingsRow)
 				{
-					rowContainer = CreateSettingsRow(property, field, theme);
+					rowContainer = CreateSettingsRow(property, field.Content, theme);
 				}
 				else
 				{

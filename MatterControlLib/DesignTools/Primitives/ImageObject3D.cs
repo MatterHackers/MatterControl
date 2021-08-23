@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("")]
 		[JsonIgnore]
-		[ImageDisplay(Margin = new int[] { 30, 3, 30, 3 }, MaxXSize = 400, Stretch = true)]
+		[ImageDisplay(Margin = new int[] { 9, 3, 9, 3 }, MaxXSize = 400, Stretch = true)]
 		public ImageBuffer Image
 		{
 			get
