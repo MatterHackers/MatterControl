@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// This is the actual serialized with that can use expressions
 		/// </summary>
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 100, 1)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
