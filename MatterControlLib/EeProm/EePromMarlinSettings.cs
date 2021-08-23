@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public string avb = "0";
 		public string avx = "0";
 		public string avz = "0";
+		public string avj = "0";
 		public string ave = "0";
 		public string ppid = "0";
 		public string ipid = "0";
@@ -85,20 +86,19 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public bool update(string line)
 		{
-			bool foundSetting = false;
-			// string[] lines = line.Substring(5).Split(' ');
-			string[] test = line.Split(' ');
+			bool foundAnySetting = false;
+			string[] splitOnSpace = line.Split(' ');
 			string mode = "";
 			bool foundFirstM92E = false;
-			foreach (string token in test)
+			foreach (string token in splitOnSpace)
 			{
 				if(string.IsNullOrWhiteSpace(token))
 				{
 					continue;
 				}
-				if (((token == "M92") || (mode == "M92")))
+				if ((token == "M92") || (mode == "M92"))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					if (mode != "M92")
 					{
 						foundFirstM92E = false;
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M203") || (mode == "M203")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M203";
 					if (token[0] == 'X')
 					{
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M201") || (mode == "M201")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M201";
 					if (token[0] == 'X')
 					{
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M204") || (mode == "M204")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M204";
 					if (token[0] == 'S') // legacy printing
 					{
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M205") || (mode == "M205")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M205";
 					if (token[0] == 'S')
 					{
@@ -210,10 +210,14 @@ namespace MatterHackers.MatterControl.EeProm
 					{
 						avz = token.Substring(1);
 					}
+					if (token[0] == 'J')
+					{
+						avj = token.Substring(1);
+					}
 				}
 				if (((token == "M301") || (mode == "M301")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M301";
 					hasPID = true;
 					if (token[0] == 'P')
@@ -231,7 +235,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M304") || (mode == "M304")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M304";
 					bed_HasPID = true;
 					if (token[0] == 'P')
@@ -249,7 +253,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 				if (((token == "M206") || (mode == "M206")))
 				{
-					foundSetting = true;
+					foundAnySetting = true;
 					mode = "M206";
 					hasPID = true;
 					if (token[0] == 'X')
@@ -268,7 +272,7 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 			changed = false;
 
-			return foundSetting;
+			return foundAnySetting;
 		}
 
 		public void Save()
@@ -285,9 +289,13 @@ namespace MatterHackers.MatterControl.EeProm
 			if (acc_retraction != "0") cmdacc += $" R{acc_retraction}";
 
 			string cmdav = "M205 S" + avs + " T" + avt + " B" + avb + " X" + avx + " Z" + avz;
+			if (avj != "0")
+			{
+				cmdav += " J" + avj;
+			}
 			string cmdho = "M206 X" + hox + " Y" + hoy + " Z" + hoz;
 			string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
-			string cmdbed_pid = "M304 P" + bed_ppid + " I" + bed_ipid + " D" + bed_dpid;
+			// string cmdbed_pid = "M304 P" + bed_ppid + " I" + bed_ipid + " D" + bed_dpid;
 
 			printerConnection.QueueLine(cmdsteps);
 			printerConnection.QueueLine(cmdfeed);
@@ -388,13 +396,14 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			valueToSetTo = valueToSetTo.Replace("\"", "").Trim();
 
-			List<string> lines = new List<string>();
 			FieldInfo[] fields;
 			fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
 			foreach (FieldInfo field in fields)
 			{
-				List<string> possibleNames = new List<string>();
-				possibleNames.Add(field.Name);
+				var possibleNames = new List<string>
+				{
+					field.Name
+				};
 
 				if (possibleNames.Contains(keyToSet))
 				{
@@ -559,6 +568,12 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			get { return avz; }
 			set { if (avz.Equals(value)) return; avz = value; changed = true; }
+		}
+
+		public string AVJ
+		{
+			get { return avj; }
+			set { if (avj.Equals(value)) return; avj = value; changed = true; }
 		}
 
 		public string AVE
