@@ -194,7 +194,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.skirt_distance] = new ExportField("skirtDistanceFromObject"),
 				[SettingsKey.min_skirt_length] = new ExportField("skirtMinLength"),
 				// Brim settings
-				[SettingsKey.brims] = new ExportField("numberOfBrimLoops")
+				[SettingsKey.brims] = new ExportField("numberOfBrimLoops"),
+				[SettingsKey.brims_layers] = new ExportField("numberOfBrimLayers")
 			};
 
 			matterSliceSettingNames = new HashSet<string>(this.Exports.Select(m => m.Key));

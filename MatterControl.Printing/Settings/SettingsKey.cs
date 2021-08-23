@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bridge_over_infill = nameof(bridge_over_infill);
 		public const string bridge_speed = nameof(bridge_speed);
 		public const string brims = nameof(brims);
+		public const string brims_layers = nameof(brims_layers);
 		public const string build_height = nameof(build_height);
 		public const string calibration_files = nameof(calibration_files);
 		public const string cancel_gcode = nameof(cancel_gcode);
