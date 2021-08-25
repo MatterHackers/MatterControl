@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ItemColorButton(ThemeConfig theme, Color selectedColor)
 		{
 			this.ToolTipText = "Color".Localize();
-			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
+			var scaledButtonSize = 24 * GuiWidget.DeviceScale;
 			this.PopupBorderColor = theme.PopupBorderColor;
 
 			Width = 30 * GuiWidget.DeviceScale;
@@ -71,6 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,
+				BackgroundRadius = scaledButtonSize / 2,
+				BackgroundOutlineWidth = 1,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
 				DisabledColor = theme.MinimalShade,

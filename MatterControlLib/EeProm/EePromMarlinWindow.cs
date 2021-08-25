@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private MHNumberEdit maxXYJerk;
 		private MHNumberEdit maxZJerk;
 		private MHNumberEdit maxEJerk;
+		private MHNumberEdit maxDeviation;
 
 		private EventHandler unregisterEvents;
 
@@ -154,6 +155,7 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]".Localize() + ":", ref maxXYJerk));
 			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]".Localize() + ":", ref maxZJerk));
 			conterContent.AddChild(CreateField("Maximum E jerk [mm/s]".Localize() + ":", ref maxEJerk));
+			conterContent.AddChild(CreateField("Junction Deviation [mm/s]".Localize() + ":", ref maxDeviation));
 
 			// the bottom button bar
 			var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
@@ -386,6 +388,7 @@ namespace MatterHackers.MatterControl.EeProm
 			maxXYJerk.Text = currentEePromSettings.AVX;
 			maxZJerk.Text = currentEePromSettings.AVZ;
 			maxEJerk.Text = currentEePromSettings.AVE;
+			maxDeviation.Text = currentEePromSettings.AVJ;
 			pidP.Enabled = pidI.Enabled = pidD.Enabled = currentEePromSettings.hasPID;
 			pidP.Text = currentEePromSettings.PPID;
 			pidI.Text = currentEePromSettings.IPID;
@@ -422,6 +425,7 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.AVX = maxXYJerk.Text;
 			currentEePromSettings.AVZ = maxZJerk.Text;
 			currentEePromSettings.AVE = maxEJerk.Text;
+			currentEePromSettings.AVJ = maxDeviation.Text;
 			currentEePromSettings.PPID = pidP.Text;
 			currentEePromSettings.IPID = pidI.Text;
 			currentEePromSettings.DPID = pidD.Text;

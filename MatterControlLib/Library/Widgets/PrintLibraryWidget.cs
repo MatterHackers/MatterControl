@@ -202,6 +202,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button == MouseButtons.XButton1)
+			{
+				// user pressed the back button
+				breadCrumbWidget.NavigateBack();
+			}
+
+			base.OnMouseDown(mouseEvent);
+		}
+
 		private void ClearSearch()
 		{
 			if (searchContainer == null)

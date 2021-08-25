@@ -156,6 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.create_brim,
 						SettingsKey.brims,
+						SettingsKey.brims_layers,
 						SettingsKey.brim_extruder,
 					}),
 				}),

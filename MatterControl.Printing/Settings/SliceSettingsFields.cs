@@ -1892,6 +1892,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.brims_layers,
+					PresentationName = "Layers".Localize(),
+					HelpText = "The number of layers to create the brims. This can make the brim stronger when needed.".Localize(),
+					DataEditType = DataEditTypes.INT,
+					EnableIfSet = SettingsKey.create_brim,
+					DefaultValue = "1",
+					Converter = new ValueConverter(),
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.slowdown_below_layer_time,
 					PresentationName = "Slow Down If Layer Print Time Is Below".Localize(),
 					HelpText = "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.".Localize(),
