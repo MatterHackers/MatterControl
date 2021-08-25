@@ -274,6 +274,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			var min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
 			var max = new Vector3(double.MinValue, double.MinValue, double.MinValue);
 
+			var hueCount = new int[10];
+			var colorPixels = 0;
+
 			for(int y = 0; y < sourceImage.Height; y++)
 			{
 				int imageOffset = sourceImage.GetBufferOffsetY(y);
@@ -292,10 +295,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					if (saturation > .4 && lightness > .1 && lightness < .9)
 					{
-						hueDetected = hue;
-						return true;
+						hueCount[(int)(hue * 9)]++;
+						colorPixels++;
 					}
 				}
+			}
+
+
+			if (colorPixels / (double)(sourceImage.Width * sourceImage.Height) > .1)
+			{
+				var indexAtMax = hueCount.ToList().IndexOf(hueCount.Max());
+				hueDetected = indexAtMax / 10.0;
+				return true;
 			}
 
 			hueDetected = 0;
