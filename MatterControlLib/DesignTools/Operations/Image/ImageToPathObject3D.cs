@@ -173,10 +173,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonIgnore]
 		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
-		[Slider(0, 1, .05)]
+		[Slider(0, 1)]
 		public DoubleOrExpression RangeStart { get; set; } = .1;
 
-		[Slider(0, 1, .05)]
+		[Slider(0, 1)]
 		public DoubleOrExpression RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();

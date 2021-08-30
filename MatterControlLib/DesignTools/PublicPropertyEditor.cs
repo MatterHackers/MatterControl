@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		};
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		private List<SettingsRow> rows = new List<SettingsRow>();
+		private SafeList<SettingsRow> rows = new SafeList<SettingsRow>();
 
 		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static SettingsRow CreateSettingsRow(EditableProperty property, GuiWidget content, ThemeConfig theme, List<SettingsRow> rows = null)
+		private static SettingsRow CreateSettingsRow(EditableProperty property, GuiWidget content, ThemeConfig theme, SafeList<SettingsRow> rows = null)
 		{
 			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, content, theme);
 			if (rows != null)
@@ -307,20 +307,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (field is DoubleField doubleField)
 				{
-					slider.Value = doubleField.DoubleValue;
+					slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
+						sliderAttribute.EaseOption,
+						doubleField.DoubleValue);
 					var changeDueToSlider = false;
 					doubleField.ValueChanged += (s, e) =>
 					{
 						if (!changeDueToSlider)
 						{
-							slider.Value = doubleField.DoubleValue;
+							slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
+								sliderAttribute.EaseOption,
+								doubleField.DoubleValue); ;
 						}
 					};
 
 					slider.ValueChanged += (s, e) =>
 					{
 						changeDueToSlider = true;
-						doubleField.SetValue(slider.Value.ToString(), true);
+						doubleField.SetValue(Easing.Calculate(sliderAttribute.EasingType,
+							sliderAttribute.EaseOption,
+							slider.Value).ToString(), true);
 						changeDueToSlider = false;
 					};
 
@@ -344,7 +350,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return field.Content;
 		}
 
-		public static GuiWidget CreatePropertyEditor(List<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
+		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
 			var localItem = context.item;
 			var object3D = property.Item;

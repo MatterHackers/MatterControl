@@ -335,7 +335,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			graphShape.MoveTo(0, bottom);
 			for (int i = 0; i < 256; i++)
 			{
-				graphShape.LineTo(i, bottom + counts[i] * graphHeight / max );
+				graphShape.LineTo(i, bottom + Easing.Exponential.Out(counts[i] / max) * graphHeight);
+				// graphShape.LineTo(i, bottom + Easing.Cubic.Out(counts[i] / max) * graphHeight);
+				// graphShape.LineTo(i, bottom + Easing.Exponential.Out(counts[i] / max) * graphHeight);
+				// graphShape.LineTo(i, bottom + counts[i] / max * graphHeight);
 			}
 			graphShape.LineTo(256, bottom);
 			graphShape.LineTo(0, bottom);

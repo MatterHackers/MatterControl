@@ -66,13 +66,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Bend Up")]
 		public bool BendCcw { get; set; } = true;
 
+		[Slider(1, 400, Easing.EaseType.Quadratic)]
 		public double Diameter { get; set; } = double.MinValue;
 
-		[Slider(3, 360, 1)]
+		[Slider(3, 360)]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		public double MinSidesPerRotation { get; set; } = 3;
 
-		[Slider(0, 100, 1)]
+		[Slider(0, 100)]
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 

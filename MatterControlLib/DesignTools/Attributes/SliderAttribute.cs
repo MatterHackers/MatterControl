@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.VectorMath;
 using System;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -34,15 +35,17 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Property)]
 	public class SliderAttribute : Attribute
 	{
-		public SliderAttribute(double min, double max, double increment)
+		public SliderAttribute(double min, double max, Easing.EaseType easingType = Easing.EaseType.Linear, Easing.EaseOption easeOption = Easing.EaseOption.Out)
 		{
 			this.Min = min;
 			this.Max = max;
-			this.Incement = increment;
+			this.EasingType = easingType;
+			this.EaseOption = easeOption;
 		}
 
 		public double Min { get; set; }
 		public double Max { get; set; }
-		public double Incement { get; set; }
+		public Easing.EaseType EasingType { get; set; }
+		public Easing.EaseOption EaseOption { get; }
 	}
 }

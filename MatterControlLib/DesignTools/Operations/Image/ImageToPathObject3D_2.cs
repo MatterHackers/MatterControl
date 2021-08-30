@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Select Range")]
 		public Histogram Histogram { get; set; } = new Histogram();
 
-		[Slider(0, 10, 1)]
+		[Slider(0, 150, Easing.EaseType.Quadratic)]
 		[Description("The minimum area each loop needs to be for inclusion")]
 		public double MinSurfaceArea {get; set; } = 1;
 
@@ -185,6 +185,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override bool CanFlatten => true;
+
+		[HideFromEditor]
+		public int NumLineLoops { get; set; }
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
@@ -210,7 +213,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				int pixelsToIntPointsScale = 1000;
 				var lineLoops = marchingSquaresData.CreateLineLoops(pixelsToIntPointsScale);
 
-				if (MinSurfaceArea > 0)
+				NumLineLoops = lineLoops.Count;
+
+				if (NumLineLoops > 1 && MinSurfaceArea > 0)
 				{
 					var minimumSurfaceArea = Math.Pow(MinSurfaceArea * 1000, 2);
 
@@ -429,6 +434,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Histogram), () => AnalysisType != AnalysisTypes.Transparency);
 			change.SetRowVisible(nameof(MinSurfaceArea), () => AnalysisType != AnalysisTypes.Transparency);
 			change.SetRowVisible(nameof(TransparencyMessage), () => AnalysisType == AnalysisTypes.Transparency);
+			change.SetRowVisible(nameof(MinSurfaceArea), () => NumLineLoops > 1);
 		}
 	}
 }
