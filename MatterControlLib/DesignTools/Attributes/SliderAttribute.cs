@@ -35,17 +35,26 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Property)]
 	public class SliderAttribute : Attribute
 	{
-		public SliderAttribute(double min, double max, Easing.EaseType easingType = Easing.EaseType.Linear, Easing.EaseOption easeOption = Easing.EaseOption.Out)
+		public SliderAttribute(double min, 
+			double max, 
+			Easing.EaseType easingType = Easing.EaseType.Linear, 
+			Easing.EaseOption easeOption = Easing.EaseOption.In,
+			double snapDistance = 0,
+			bool useSnappingGrid = false)
 		{
 			this.Min = min;
 			this.Max = max;
 			this.EasingType = easingType;
 			this.EaseOption = easeOption;
+			this.SnapDistance = snapDistance;
+			this.UseSnappingGrid = useSnappingGrid;
 		}
 
 		public double Min { get; set; }
 		public double Max { get; set; }
 		public Easing.EaseType EasingType { get; set; }
 		public Easing.EaseOption EaseOption { get; }
+		public double SnapDistance { get; }
+		public bool UseSnappingGrid { get; }
 	}
 }

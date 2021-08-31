@@ -295,56 +295,166 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
+		private static void EnsureFormating(EditableProperty property, UIField field)
+		{
+			if (!field.Value.StartsWith("=")
+				&& double.TryParse(field.Value, out double value))
+			{
+				var format = "0." + new string('#', 5);
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+				{
+					format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+				}
+
+				field.SetValue(value.ToString(format), false);
+			}
+		}
+
 		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, UIField field)
 		{
 			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
 			if (sliderAttribute != null)
 			{
-				var slider = new Slider(new Vector2(0, 0), 60 * GuiWidget.DeviceScale, sliderAttribute.Min, sliderAttribute.Max)
+				var min = sliderAttribute.Min;
+				var max = sliderAttribute.Max;
+				var delta = max - min;
+
+				// the slider values go from 0 to 1 and are then mapped during translation to the field
+				var slider = new Slider(new Vector2(0, 0), 80 * GuiWidget.DeviceScale, 0, 1)
 				{
 					VAnchor = VAnchor.Center,
 				};
 
+				Func<double> getFieldValue = null;
+				Action<double> setFieldValue = null;
+
+				double GetSlider0To1FromField()
+				{
+					var mapped0To1 = Math.Max(0, Math.Min(1, (getFieldValue() - min) / delta));
+					return Easing.CalculateInverse(sliderAttribute.EasingType, sliderAttribute.EaseOption, mapped0To1);
+				}
+
+				double GetFieldFromSlider0To1()
+				{
+					var fieldValue = Easing.Calculate(sliderAttribute.EasingType,
+						sliderAttribute.EaseOption,
+						slider.Value) * delta + min;
+
+					var snapGridDistance = sliderAttribute.SnapDistance;
+					if (sliderAttribute.UseSnappingGrid)
+					{
+						snapGridDistance = SnapGridDistance();
+					}
+					if (snapGridDistance > 0)
+					{
+						// snap this position to the grid
+						// snap this position to the grid
+						fieldValue = ((int)((fieldValue / snapGridDistance) + .5)) * snapGridDistance;
+					}
+
+					return fieldValue;
+				}
+
+				double SnapGridDistance()
+				{
+					var view3DWidget = slider.Parents<View3DWidget>().FirstOrDefault();
+					if (view3DWidget != null)
+					{
+						var object3DControlLayer = view3DWidget.Descendants<Object3DControlsLayer>().FirstOrDefault();
+						if (object3DControlLayer != null)
+						{
+							return object3DControlLayer.SnapGridDistance;
+						}
+					}
+
+					return 0;
+				}
+
+				var changeDueToSlider = false;
+				var initialSliderValue = true;
+				slider.ValueChanged += (s, e) =>
+				{
+					changeDueToSlider = true;
+					setFieldValue(GetFieldFromSlider0To1());
+					changeDueToSlider = false;
+				};
+
+				GuiWidget content = null;
+				var sliderRightMargin = 11;
 				if (field is DoubleField doubleField)
 				{
-					slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
-						sliderAttribute.EaseOption,
-						doubleField.DoubleValue);
-					var changeDueToSlider = false;
+					getFieldValue = () => doubleField.DoubleValue;
+					setFieldValue = (value) =>
+					{
+						if (!initialSliderValue)
+						{
+							field.SetValue(value.ToString(), true);
+							EnsureFormating(property, field);
+						}
+					};
+
 					doubleField.ValueChanged += (s, e) =>
 					{
 						if (!changeDueToSlider)
 						{
-							slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
-								sliderAttribute.EaseOption,
-								doubleField.DoubleValue); ;
+							slider.Value = GetSlider0To1FromField();
 						}
 					};
 
-					slider.ValueChanged += (s, e) =>
-					{
-						changeDueToSlider = true;
-						doubleField.SetValue(Easing.Calculate(sliderAttribute.EasingType,
-							sliderAttribute.EaseOption,
-							slider.Value).ToString(), true);
-						changeDueToSlider = false;
-					};
-
-					var content = new FlowLayoutWidget();
+					content = new FlowLayoutWidget();
 					content.AddChild(slider);
 					content.AddChild(new GuiWidget()
 					{
-						Width = 11 * GuiWidget.DeviceScale,
+						Width = sliderRightMargin * GuiWidget.DeviceScale,
 						Height = 3
 					});
 					content.AddChild(field.Content);
-
-					return content;
 				}
 				else if (field is ExpressionField expressionField)
 				{
+					getFieldValue = () =>
+					{
+						if (double.TryParse(expressionField.Value, out double value))
+						{
+							return value;
+						}
 
+						return 0;
+					};
+
+					expressionField.ValueChanged += (s, e) =>
+					{
+						if (!changeDueToSlider)
+						{
+							slider.Value = GetSlider0To1FromField();
+						}
+					};
+
+					setFieldValue = (value) =>
+					{
+						if (!initialSliderValue)
+						{
+							expressionField.SetValue(value.ToString("0.##"), true);
+						}
+					};
+
+					var leftHold = new FlowLayoutWidget()
+					{
+						HAnchor = HAnchor.Stretch,
+						Margin = new BorderDouble(0, 0, field.Content.Children.First().Width / GuiWidget.DeviceScale + sliderRightMargin, 0)
+					};
+					leftHold.AddChild(new HorizontalSpacer());
+					leftHold.AddChild(slider);
+					field.Content.AddChild(leftHold, 0);
+
+					content = field.Content;
 				}
+
+				// set the initial value of the slider
+				slider.Value = GetSlider0To1FromField();
+				initialSliderValue = false;
+
+				return content;
 			}
 
 			return field.Content;

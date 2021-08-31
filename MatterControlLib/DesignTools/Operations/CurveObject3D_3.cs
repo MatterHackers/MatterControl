@@ -74,11 +74,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		[Description("Set the radius that the bend will wrap around")]
 		[DescriptionImage("https://lh3.googleusercontent.com/PpQKIIOqD-49UMhgM_HCvig9Mw_UtUwO08UoRVSLJlCv9h5cGBLMvaXbtORrVQrWYPcKZ4_DfrDoKfcu2TuyYVQOl3AeZNoYflgnijc")]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public double Diameter { get; set; } = double.MaxValue;
 
 		[MaxDecimalPlaces(1)]
 		[Description("Set the angle of the curvature")]
 		[DescriptionImage("https://lh3.googleusercontent.com/TYe-CZfwJMKvP2JWBQihkvHD1PyB_nvyf0h3DhvyJu1RBjQWgqeOEsSH3sYcwA4alJjJmziueYGCbB_mic_QoYKuhKrmipkV2eG4_A")]
+		[Slider(1, 360, snapDistance: 1)]
 		public double Angle { get; set; } = 90;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
