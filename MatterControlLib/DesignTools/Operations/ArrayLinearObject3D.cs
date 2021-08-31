@@ -96,7 +96,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						{
 							if(SheetObject3D.HasParametersWithActiveFunctions(child))
 							{
-								child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
+								// This really needs to be 'Has Perameters With index at this level'
+								// And is not the source object (only the copies should try to re-build (that might fix the recursion bug without the extra filtering)
+								//child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
 							}
 						}
 

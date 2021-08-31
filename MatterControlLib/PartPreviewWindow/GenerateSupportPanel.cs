@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add an editor field for the SupportGenerator.SupportType
 			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
 
-			var rows = new List<SettingsRow>();
+			var rows = new SafeList<SettingsRow>();
 
 			var editor = PublicPropertyEditor.CreatePropertyEditor(
 				rows,

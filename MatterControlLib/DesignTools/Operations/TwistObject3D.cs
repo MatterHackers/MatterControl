@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							// look for an x value that equals the goal
 							for (int j = 0; j < 64; j++)
 							{
-								var xAtY = Easing.Specify(EasingType, EasingOption, current);
+								var xAtY = Easing.Calculate(EasingType, EasingOption, current);
 								if (xAtY < goal)
 								{
 									current += next;
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								else
 								{
 									ratio = (position.Z - bottom) / size;
-									ratio = Easing.Specify(EasingType, EasingOption, ratio);
+									ratio = Easing.Calculate(EasingType, EasingOption, ratio);
 								}
 							}
 

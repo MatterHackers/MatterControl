@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SettingsRow("Material".Localize(), null, materialField.Content, theme));
 			}
 
-			var rows = new List<SettingsRow>();
+			var rows = new SafeList<SettingsRow>();
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject

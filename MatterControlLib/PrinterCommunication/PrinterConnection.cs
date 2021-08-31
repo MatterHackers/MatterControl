@@ -2140,7 +2140,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 			haveReportedError = false;
 			PrintWasCanceled = false;
-			printMarkedCanceled = false;
+			cancelPrintNextWriteLine = false;
 
 			waitingForPosition.Reset();
 			PositionReadType = PositionReadType.None;
@@ -2310,7 +2310,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 
 				// let the process know we canceled not ended normally.
-				this.printMarkedCanceled = true;
+				this.cancelPrintNextWriteLine = true;
 				CanceleRequested?.Invoke(this, null);
 				if (markPrintCanceled
 					&& ActivePrintTask != null)
@@ -2739,7 +2739,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 							}
 						}
 					}
-					else if (this.printMarkedCanceled)
+					else if (this.cancelPrintNextWriteLine)
 					{
 						CommunicationState = CommunicationStates.Connected;
 						// never leave the extruder and the bed hot
@@ -2747,7 +2747,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 						TurnOffPartCoolingFan();
 						TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						this.PrintWasCanceled = true;
-						this.printMarkedCanceled = false;
+						this.cancelPrintNextWriteLine = false;
 						// and finally notify anyone that wants to know
 						CancelCompleted?.Invoke(this, null);
 					}
@@ -3134,7 +3134,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		private Vector3 _homingPosition = Vector3.NegativeInfinity;
 		private int noOkResendCount;
 		private ProcessWriteRegexStream processWriteRegexStream;
-		private bool printMarkedCanceled;
+		private bool cancelPrintNextWriteLine;
 
 		public class ReadThread
 		{

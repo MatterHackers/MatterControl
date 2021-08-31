@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.PerformLayout();
 		}
 
-		public SettingsRow SetTextRightMargin(List<SettingsRow> rows)
+		public SettingsRow SetTextRightMargin(SafeList<SettingsRow> rows)
 		{
 			var spacing = 11 * GuiWidget.DeviceScale;
 			var maxTextWidth = 0.0;
