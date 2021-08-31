@@ -50,9 +50,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.UseSnappingGrid = useSnappingGrid;
 		}
 
-		public double Min { get; set; }
-		public double Max { get; set; }
-		public Easing.EaseType EasingType { get; set; }
+		public double Min { get; }
+		public double Max { get; }
+		public Easing.EaseType EasingType { get; }
 		public Easing.EaseOption EaseOption { get; }
 		public double SnapDistance { get; }
 		public bool UseSnappingGrid { get; }
