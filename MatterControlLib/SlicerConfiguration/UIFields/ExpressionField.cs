@@ -82,15 +82,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = aligner;
 		}
 
+		private double startingTextEditWidth = 0;
+
 		private void ActualTextEditWidget_TextChanged(object sender, System.EventArgs e)
 		{
+			if (startingTextEditWidth == 0)
+			{
+				startingTextEditWidth = textEditWidget.Width;
+			}
+
 			if (textEditWidget.Text.StartsWith("="))
 			{
+				textEditWidget.MaximumSize = new VectorMath.Vector2(double.MaxValue, textEditWidget.MaximumSize.Y);
 				textEditWidget.HAnchor = HAnchor.Stretch;
 			}
 			else
 			{
-				textEditWidget.HAnchor = HAnchor.Fit | HAnchor.Right;
+				textEditWidget.MaximumSize = new VectorMath.Vector2(startingTextEditWidth, textEditWidget.MaximumSize.Y);
+				textEditWidget.HAnchor = HAnchor.Right;
 			}
 		}
 
