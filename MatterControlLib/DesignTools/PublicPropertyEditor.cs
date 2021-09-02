@@ -857,17 +857,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 				field.Initialize(0);
 				field.SetValue(doubleExpresion.Expression, false);
-				void EnsureFormating(double value)
-				{
-					var format = "0." + new string('#', 5);
-					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
-					{
-						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
-					}
-
-					field.TextValue = value.ToString(format);
-				}
-				EnsureFormating(doubleExpresion.Value(object3D));
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
 					(valueString) => new DoubleOrExpression(valueString),
@@ -880,12 +869,27 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
+					// This code only executes when the in scene controls are updating the objects data and the display needs to tack them.
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
 						if (newValue.Expression != field.Value)
 						{
-							EnsureFormating(newValue.Value(object3D));
+							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
+							if (newValue.Expression.StartsWith("="))
+							{
+								field.TextValue = newValue.Expression;
+							}
+							else
+							{
+								var format = "0." + new string('#', 5);
+								if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+								{
+									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+								}
+
+								field.TextValue = newValue.Value(object3D).ToString(format);
+							}
 						}
 					}
 				}
