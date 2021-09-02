@@ -76,27 +76,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
 				DisabledColor = theme.MinimalShade,
-				Border = 1,
-				BorderColor = theme.BorderColor20,
+				BorderColor = theme.TextColor,
 				Selectable = false
 			};
 
 			this.DynamicPopupContent = () =>
 			{
-#if true
 				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color);
-#else
-				return new ColorSwatchSelector(menuTheme,
-					buttonSize: 16,
-					buttonSpacing: new BorderDouble(1, 1, 0, 0),
-					colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
-				{
-					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = menuTheme.BackgroundColor,
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit
-				};
-#endif
 				return popupContent;
 			};
 
@@ -106,6 +92,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.AddChild(colorButton);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
 		}
 
 		public static GuiWidget NewColorSelector(ThemeConfig theme, Color selectedColor, ThemeConfig menuTheme, Action<Color> update)
@@ -167,6 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit
 			};
+
 			var htmlColor = rightContent.AddChild(rowContainer);
 
 			var colorContent = rightContent.AddChild(new FlowLayoutWidget()
@@ -204,6 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute,
 				ToolTipText = "Clear any assigned color. This may allow component colors to be visible.".Localize(),
 			});
+
 			resetButton.Click += (s, e) =>
 			{
 				// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
@@ -217,6 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Absolute
 			});
+
 			selectButton.Click += (s, e) =>
 			{
 				// change to an eye dropper mode in the design view to allow for color selection
@@ -226,6 +220,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					picker.SelectedColor = color;
 				});
 			};
+
 			selectButton.Visible = false;
 
 			if (selectButton.Width < resetButton.Width)

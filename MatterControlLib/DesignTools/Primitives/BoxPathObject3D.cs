@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;
 		}
 	}

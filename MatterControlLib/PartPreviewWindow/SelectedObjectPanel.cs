@@ -257,12 +257,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				colorField.Content.MouseDown += (s, e) =>
 				{
-				// make sure the render mode is set to shaded or outline
-				if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
-						&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
+					// make sure the render mode is set to shaded or outline
+					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
+							&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
 					{
-					// make sure the render mode is set to outline
-					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
+						// make sure the render mode is set to outline
+						sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
 					}
 				};
 
@@ -289,8 +289,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Materials)
 					{
-					// make sure the render mode is set to material
-					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
+						// make sure the render mode is set to material
+						sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
 					}
 				};
 

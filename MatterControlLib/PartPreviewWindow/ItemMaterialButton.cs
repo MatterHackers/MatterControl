@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.currentIndex = initialMaterialIndex;
 			this.ToolTipText = "Material".Localize();
-			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
+			var scaledButtonSize = 24 * GuiWidget.DeviceScale;
 
 			Width = 30 * GuiWidget.DeviceScale;
 			Height = 30 * GuiWidget.DeviceScale;
@@ -83,12 +83,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,
+				BackgroundRadius = scaledButtonSize / 2,
+				BackgroundOutlineWidth = 1,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
-				DrawGrid = true,
 				DisabledColor = theme.MinimalShade,
-				Border = 1,
-				BorderColor = theme.BorderColor20,
+				BorderColor = theme.TextColor,
 				Selectable = false,
 			};
 
