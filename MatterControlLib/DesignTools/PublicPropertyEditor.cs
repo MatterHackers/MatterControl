@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, UIField field)
+		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, PPEContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString)
 		{
 			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
 			if (sliderAttribute != null)
@@ -379,6 +379,38 @@ namespace MatterHackers.MatterControl.DesignTools
 					changeDueToSlider = false;
 				};
 
+				double sliderDownValue = 0;
+				slider.SliderGrabed += (s, e) =>
+				{
+					sliderDownValue = getFieldValue();
+				};
+
+				slider.SliderReleased += (s, e) =>
+				{
+					var currentValue = GetFieldFromSlider0To1();
+					changeDueToSlider = true;
+					setFieldValue(currentValue);
+					changeDueToSlider = false;
+
+					var localItem = context.item;
+					var object3D = property.Item;
+					var propertyGridModifier = property.Item as IPropertyGridModifier;
+
+					// save the undo information
+					undoBuffer.Add(new UndoRedoActions(() =>
+					{
+						property.SetValue(valueFromString(sliderDownValue.ToString()));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(valueFromString(currentValue.ToString()));
+						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
+				};
+
 				GuiWidget content = null;
 				var sliderRightMargin = 11;
 				if (field is DoubleField doubleField)
@@ -388,7 +420,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (!initialSliderValue)
 						{
-							field.SetValue(value.ToString(), true);
+							field.SetValue(value.ToString(), false);
 							EnsureFormating(property, field);
 						}
 					};
@@ -434,7 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (!initialSliderValue)
 						{
-							expressionField.SetValue(value.ToString("0.##"), true);
+							expressionField.SetValue(value.ToString("0.##"), false);
 						}
 					};
 
@@ -487,7 +519,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// field.Content
-					if (undoBuffer != null)
+					if (undoBuffer != null
+						&& e.UserInitiated)
 					{
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
 						{
@@ -569,7 +602,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
 
-					rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme);
+					rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }), theme);
 				}
 			}
 			else if (propertyValue is Color color)
@@ -966,7 +999,21 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				field.SetValue(doubleExpresion.Expression, false);
+				if (doubleExpresion.Expression.Contains("="))
+				{
+					field.SetValue(doubleExpresion.Expression, false);
+				}
+				else // make sure it is formatted
+				{
+					var format = "0." + new string('#', 5);
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+					{
+						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+					}
+
+					field.SetValue(doubleExpresion.Value(object3D).ToString(format), false);
+				}
+
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
 					(valueString) => new DoubleOrExpression(valueString),
@@ -975,7 +1022,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						return ((DoubleOrExpression)value).Expression;
 					});
 
-				rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme, rows);
+				rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => new DoubleOrExpression(valueString)), theme, rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{

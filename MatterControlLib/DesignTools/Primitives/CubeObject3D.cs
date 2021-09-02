@@ -49,15 +49,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// This is the actual serialized with that can use expressions
 		/// </summary>
 		[MaxDecimalPlaces(2)]
-		//[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		//[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		//[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()
