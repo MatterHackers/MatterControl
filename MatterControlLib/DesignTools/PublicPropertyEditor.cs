@@ -295,211 +295,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private static void EnsureFormating(EditableProperty property, UIField field)
-		{
-			if (!field.Value.StartsWith("=")
-				&& double.TryParse(field.Value, out double value))
-			{
-				var format = "0." + new string('#', 5);
-				if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
-				{
-					format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
-				}
-
-				field.SetValue(value.ToString(format), false);
-			}
-		}
-
-		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, PPEContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString)
-		{
-			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
-			if (sliderAttribute != null)
-			{
-				var min = sliderAttribute.Min;
-				var max = sliderAttribute.Max;
-				var delta = max - min;
-
-				// the slider values go from 0 to 1 and are then mapped during translation to the field
-				var slider = new Slider(new Vector2(0, 0), 80 * GuiWidget.DeviceScale, 0, 1)
-				{
-					VAnchor = VAnchor.Center,
-				};
-
-				Func<double> getFieldValue = null;
-				Action<double> setFieldValue = null;
-
-				double GetSlider0To1FromField()
-				{
-					var mapped0To1 = Math.Max(0, Math.Min(1, (getFieldValue() - min) / delta));
-					return Easing.CalculateInverse(sliderAttribute.EasingType, sliderAttribute.EaseOption, mapped0To1);
-				}
-
-				double GetFieldFromSlider0To1()
-				{
-					var fieldValue = Easing.Calculate(sliderAttribute.EasingType,
-						sliderAttribute.EaseOption,
-						slider.Value) * delta + min;
-
-					var snapGridDistance = sliderAttribute.SnapDistance;
-					if (sliderAttribute.UseSnappingGrid)
-					{
-						snapGridDistance = SnapGridDistance();
-					}
-					if (snapGridDistance > 0)
-					{
-						// snap this position to the grid
-						// snap this position to the grid
-						fieldValue = ((int)((fieldValue / snapGridDistance) + .5)) * snapGridDistance;
-					}
-
-					return fieldValue;
-				}
-
-				double SnapGridDistance()
-				{
-					var view3DWidget = slider.Parents<View3DWidget>().FirstOrDefault();
-					if (view3DWidget != null)
-					{
-						var object3DControlLayer = view3DWidget.Descendants<Object3DControlsLayer>().FirstOrDefault();
-						if (object3DControlLayer != null)
-						{
-							return object3DControlLayer.SnapGridDistance;
-						}
-					}
-
-					return 0;
-				}
-
-				var changeDueToSlider = false;
-				var changeDueToField = false;
-				var initialSliderValue = true;
-				slider.ValueChanged += (s, e) =>
-				{
-					if (!changeDueToField)
-					{
-						changeDueToSlider = true;
-						setFieldValue(GetFieldFromSlider0To1());
-						changeDueToSlider = false;
-					}
-				};
-
-				double sliderDownValue = 0;
-				slider.SliderGrabed += (s, e) =>
-				{
-					sliderDownValue = getFieldValue();
-				};
-
-				slider.SliderReleased += (s, e) =>
-				{
-					var currentValue = GetFieldFromSlider0To1();
-					changeDueToSlider = true;
-					setFieldValue(currentValue);
-					changeDueToSlider = false;
-
-					var localItem = context.item;
-					var object3D = property.Item;
-					var propertyGridModifier = property.Item as IPropertyGridModifier;
-
-					// save the undo information
-					undoBuffer.Add(new UndoRedoActions(() =>
-					{
-						property.SetValue(valueFromString(sliderDownValue.ToString()));
-						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
-					{
-						property.SetValue(valueFromString(currentValue.ToString()));
-						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
-				};
-
-				GuiWidget content = null;
-				var sliderRightMargin = 11;
-				if (field is DoubleField doubleField)
-				{
-					getFieldValue = () => doubleField.DoubleValue;
-					setFieldValue = (value) =>
-					{
-						if (!initialSliderValue)
-						{
-							field.SetValue(value.ToString(), false);
-							EnsureFormating(property, field);
-						}
-					};
-
-					doubleField.ValueChanged += (s, e) =>
-					{
-						if (!changeDueToSlider)
-						{
-							changeDueToField = true;
-							slider.Value = GetSlider0To1FromField();
-							changeDueToField = false;
-						}
-					};
-
-					content = new FlowLayoutWidget();
-					content.AddChild(slider);
-					content.AddChild(new GuiWidget()
-					{
-						Width = sliderRightMargin * GuiWidget.DeviceScale,
-						Height = 3
-					});
-					content.AddChild(field.Content);
-				}
-				else if (field is ExpressionField expressionField)
-				{
-					getFieldValue = () =>
-					{
-						if (double.TryParse(expressionField.Value, out double value))
-						{
-							return value;
-						}
-
-						return 0;
-					};
-
-					expressionField.ValueChanged += (s, e) =>
-					{
-						if (!changeDueToSlider)
-						{
-							changeDueToField = true;
-							slider.Value = GetSlider0To1FromField();
-							changeDueToField = false;
-						}
-					};
-
-					setFieldValue = (value) =>
-					{
-						if (!initialSliderValue)
-						{
-							expressionField.SetValue(value.ToString("0.##"), false);
-						}
-					};
-
-					var leftHold = new FlowLayoutWidget()
-					{
-						HAnchor = HAnchor.Stretch,
-						Margin = new BorderDouble(0, 0, field.Content.Children.First().Width / GuiWidget.DeviceScale + sliderRightMargin, 0)
-					};
-					leftHold.AddChild(new HorizontalSpacer());
-					leftHold.AddChild(slider);
-					field.Content.AddChild(leftHold, 0);
-
-					content = field.Content;
-				}
-
-				// set the initial value of the slider
-				slider.Value = GetSlider0To1FromField();
-				initialSliderValue = false;
-
-				return content;
-			}
-
-			return field.Content;
-		}
-
 		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
 			var localItem = context.item;
@@ -610,7 +405,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
 
-					rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }), theme);
+					rowContainer = CreateSettingsRow(property,
+						PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }),
+						theme);
 				}
 			}
 			else if (propertyValue is Color color)
@@ -1024,13 +821,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
-					(valueString) => new DoubleOrExpression(valueString),
+					(valueString) =>
+					{
+						doubleExpresion.Expression = valueString;
+						return doubleExpresion;
+					},
 					(value) =>
 					{
 						return ((DoubleOrExpression)value).Expression;
 					});
 
-				rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => new DoubleOrExpression(valueString)), theme, rows);
+				rowContainer = CreateSettingsRow(property,
+					PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) =>
+					{
+						doubleExpresion.Expression = valueString;
+						return doubleExpresion;
+					}),
+					theme,
+					rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -1053,7 +861,8 @@ namespace MatterHackers.MatterControl.DesignTools
 									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 								}
 
-								field.TextValue = newValue.Value(object3D).ToString(format);
+								var rawValue = newValue.Value(object3D);
+								field.TextValue = rawValue.ToString(format);
 							}
 						}
 					}

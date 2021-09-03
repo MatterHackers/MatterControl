@@ -75,13 +75,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Set the radius that the bend will wrap around")]
 		[DescriptionImage("https://lh3.googleusercontent.com/PpQKIIOqD-49UMhgM_HCvig9Mw_UtUwO08UoRVSLJlCv9h5cGBLMvaXbtORrVQrWYPcKZ4_DfrDoKfcu2TuyYVQOl3AeZNoYflgnijc")]
 		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
-		public double Diameter { get; set; } = double.MaxValue;
+		public DoubleOrExpression Diameter { get; set; } = double.MaxValue;
 
 		[MaxDecimalPlaces(1)]
 		[Description("Set the angle of the curvature")]
 		[DescriptionImage("https://lh3.googleusercontent.com/TYe-CZfwJMKvP2JWBQihkvHD1PyB_nvyf0h3DhvyJu1RBjQWgqeOEsSH3sYcwA4alJjJmziueYGCbB_mic_QoYKuhKrmipkV2eG4_A")]
 		[Slider(1, 360, snapDistance: 1)]
-		public double Angle { get; set; } = 90;
+		public DoubleOrExpression Angle { get; set; } = 90;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		[Description("The part will bend around the z axis either up or down")]
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(0, 100, snapDistance: 1)]
 		[Description("Where to start the bend as a percent from the left side")]
 		[DescriptionImage("https://lh3.googleusercontent.com/eOeWjr98uz_E924PnNaXrasepv15nWEuvhqH-jbaQyvrOVdX5MHXF00HdZQGC8NLpJc9ok1sToMtyPx1wnnDgFwTTGA5MjoMFu612AY1")]
-		public double StartPercent { get; set; } = 50;
+		public DoubleOrExpression StartPercent { get; set; } = 50;
 
 		[DescriptionImage("https://lh3.googleusercontent.com/arAJFTHAOPKn9BQtm1xEyct4LuA2jUAxW11q4cdQPz_JfoCTjS1rxtVTUdE1ND0Q_eigUa27Yc28U08zY2LDiQgS7kKkXKY_FY838p-5")]
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
@@ -100,24 +100,28 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(3, 360, Easing.EaseType.Cubic, snapDistance: 1)]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
-		public double MinSidesPerRotation { get; set; } = 30;
+		public DoubleOrExpression MinSidesPerRotation { get; set; } = 30;
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
+			var diameter = Diameter.Value(this);
+			var startPercent = StartPercent.Value(this);
+			var minSidesPerRotation = MinSidesPerRotation.Value(this);
+
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var distance = Diameter / 2 + sourceAabb.YSize / 2;
+			var distance = diameter / 2 + sourceAabb.YSize / 2;
 			var center = sourceAabb.Center + new Vector3(0, BendDirection == BendDirections.Bend_Up ? distance : -distance, 0);
-			center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
+			center.X -= sourceAabb.XSize / 2 - (startPercent / 100.0) * sourceAabb.XSize;
 
 			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
 
 			// render the split lines
-			var radius = Diameter / 2;
+			var radius = diameter / 2;
 			var circumference = MathHelper.Tau * radius;
-			var xxx = sourceAabb.XSize * (StartPercent / 100.0);
+			var xxx = sourceAabb.XSize * (startPercent / 100.0);
 			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, minSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
@@ -125,11 +129,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void DiameterFromAngle()
 		{
+			var diameter = Diameter.Value(this);
+			var angle = Angle.Value(this);
+
 			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var angleR = MathHelper.DegreesToRadians(Angle);
+			var angleR = MathHelper.DegreesToRadians(angle);
 			var ratio = angleR / MathHelper.Tau;
 			var newDiameter = (aabb.XSize / ratio) / Math.PI;
-			if (Math.Abs(Diameter - newDiameter) > .0001)
+			if (Math.Abs(diameter - newDiameter) > .0001)
 			{
 				Diameter = newDiameter;
 				Invalidate(InvalidateType.DisplayValues);
@@ -139,11 +146,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void AngleFromDiameter()
 		{
+			var diameter = Diameter.Value(this);
+			var angle = Angle.Value(this);
+
 			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var ratio = aabb.XSize / (MathHelper.Tau * Diameter / 2);
+			var ratio = aabb.XSize / (MathHelper.Tau * diameter / 2);
 			var angleR = MathHelper.Tau * ratio;
 			var newAngle = MathHelper.RadiansToDegrees(angleR);
-			if (Math.Abs(Angle - newAngle) > .00001)
+			if (Math.Abs(angle - newAngle) > .00001)
 			{
 				Angle = MathHelper.RadiansToDegrees(angleR);
 				Invalidate(InvalidateType.DisplayValues);
@@ -157,9 +167,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 
 			// ensure we have good values
-			StartPercent = agg_basics.Clamp(StartPercent, 0, 100, ref valuesChanged);
+			var startPercent = StartPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
 
-			if (Diameter == double.MaxValue)
+			var diameter = Diameter.Value(this);
+			if (diameter == double.MaxValue)
 			{
 				DiameterFromAngle();
 			}
@@ -174,13 +185,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				DiameterFromAngle();
 			}
 
-			if (Diameter < 1 || Diameter > 100000)
+			if (diameter < 1 || diameter > 100000)
 			{
-				Diameter = Math.Min(10000000, Math.Max(.1, Diameter));
+				Diameter = Math.Min(10000000, Math.Max(.1, diameter));
 				valuesChanged = true;
 			}
 
-			MinSidesPerRotation = agg_basics.Clamp(MinSidesPerRotation, 3, 360, ref valuesChanged);
+
+			var minSidesPerRotation = MinSidesPerRotation.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
 
 			var rebuildLocks = this.RebuilLockAll();
 
@@ -191,10 +203,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
-					var radius = Diameter / 2;
+					var radius = diameter / 2;
 					var circumference = MathHelper.Tau * radius;
 					double numRotations = sourceAabb.XSize / circumference;
-					double numberOfCuts = numRotations * MinSidesPerRotation;
+					double numberOfCuts = numRotations * minSidesPerRotation;
 					double cutSize = sourceAabb.XSize / numberOfCuts;
 					double cutPosition = sourceAabb.MinXYZ.X + cutSize;
 					var cuts = new List<double>();
@@ -204,7 +216,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						cutPosition += cutSize;
 					}
 
-					var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (StartPercent / 100),
+					var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (startPercent / 100),
 						BendDirection == BendDirections.Bend_Up ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
 						sourceAabb.Center.Z);
 
@@ -271,7 +283,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						curvedChild.Translate(new Vector3(rotationCenter));
 						if (BendDirection == BendDirections.Bend_Down)
 						{
-							curvedChild.Translate(0, -sourceAabb.YSize - Diameter, 0);
+							curvedChild.Translate(0, -sourceAabb.YSize - diameter, 0);
 						}
 
 						curvedChildren.Add(curvedChild);
