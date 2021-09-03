@@ -371,12 +371,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				var changeDueToSlider = false;
+				var changeDueToField = false;
 				var initialSliderValue = true;
 				slider.ValueChanged += (s, e) =>
 				{
-					changeDueToSlider = true;
-					setFieldValue(GetFieldFromSlider0To1());
-					changeDueToSlider = false;
+					if (!changeDueToField)
+					{
+						changeDueToSlider = true;
+						setFieldValue(GetFieldFromSlider0To1());
+						changeDueToSlider = false;
+					}
 				};
 
 				double sliderDownValue = 0;
@@ -429,7 +433,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (!changeDueToSlider)
 						{
+							changeDueToField = true;
 							slider.Value = GetSlider0To1FromField();
+							changeDueToField = false;
 						}
 					};
 
@@ -458,7 +464,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (!changeDueToSlider)
 						{
+							changeDueToField = true;
 							slider.Value = GetSlider0To1FromField();
+							changeDueToField = false;
 						}
 					};
 
