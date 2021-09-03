@@ -78,37 +78,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			editSelectionGroup.AddChild(editSelectedExpression);
 			editSelectedExpression.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete1;
 
-			// put in the header row
-			var topRow = this.AddChild(new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			});
+			var dataGrid = new GridWidget(sheetData.Width + 1, sheetData.Height + 1, theme: theme);
 
+			this.AddChild(dataGrid);
 
-			topRow.AddChild(new GuiWidget(cellWidth, 1));
 			for (int x = 0; x < sheetData.Width; x++)
 			{
-				topRow.AddChild(new TextWidget(((char)('A' + x)).ToString())
+				dataGrid.GetCell(x + 1, 0).AddChild(new TextWidget(((char)('A' + x)).ToString())
 				{
-					HAnchor = HAnchor.Stretch,
-					TextColor = theme.TextColor
+					HAnchor = HAnchor.Center,
+					VAnchor = VAnchor.Center,
+					TextColor = theme.TextColor,
 				});
 			}
 
+			dataGrid.SetColumnWidth(0, 20);
+
 			for (int y = 0; y < sheetData.Height; y++)
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-				};
-				this.AddChild(row);
-
 				// add row count
-				row.AddChild(new TextWidget((y + 1).ToString())
+				dataGrid.GetCell(0, y + 1).AddChild(new TextWidget((y + 1).ToString())
 				{
 					TextColor = theme.TextColor,
+					VAnchor = VAnchor.Center
 				});
 
 				for (int x = 0; x < sheetData.Width; x++)
@@ -122,11 +114,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						SelectAllOnFocus = true,
 					};
 
+					edit.VAnchor |= VAnchor.Center;
+
 					CellWidgetsByLocation.Add((capturedX, capturedY), edit);
 
 					edit.MouseDown += (s, e) => SelectCell(capturedX, capturedY);
 
-					row.AddChild(edit);
+					dataGrid.GetCell(x + 1, y + 1).AddChild(edit);
 					edit.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
 						editSelectedExpression.Text = edit.Text;
@@ -134,6 +128,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						sheetData.Recalculate();
 					};
 				}
+
+				dataGrid.ExpandToFitContent();
 			}
 		}
 
