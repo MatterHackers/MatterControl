@@ -174,7 +174,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			var name = agg_basics.GetNonCollidingName(editSelectedName.Text, existingNames);
 			editSelectedName.Text = name;
 			sheetData[selectedCell.x, selectedCell.y].Name = name;
+			sheetData.Recalculate();
 		}
+
 		private void SelectCell(int x, int y)
 		{
 			if (selectedCell.x != -1)

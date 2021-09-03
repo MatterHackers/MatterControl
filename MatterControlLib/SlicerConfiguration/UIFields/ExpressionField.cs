@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				textEditWidget.MaximumSize = new VectorMath.Vector2(startingTextEditWidth, textEditWidget.MaximumSize.Y);
-				textEditWidget.HAnchor = HAnchor.Right;
+				textEditWidget.HAnchor = HAnchor.Right | HAnchor.Fit;
 			}
 		}
 

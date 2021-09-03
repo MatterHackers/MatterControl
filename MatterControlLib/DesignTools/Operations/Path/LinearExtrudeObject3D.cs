@@ -47,7 +47,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class LinearExtrudeObject3D : Object3D, IObject3DControlsProvider
+	public class LinearExtrudeObject3D : Object3D
 #if DEBUG
 , IPropertyGridModifier
 #endif
@@ -84,24 +84,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				return null;
 			}
-		}
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			double getHeight() => Height.Value(this);
-			void setHeight(double height) => Height = height;
-			object3DControlsLayer.Object3DControls.Add(new ScaleHeightControl(object3DControlsLayer,
-				null,
-				null,
-				null,
-				null,
-				getHeight,
-				setHeight,
-				null,
-				null));
-			object3DControlsLayer.AddControls(ControlTypes.ScaleMatrixXY);
-			object3DControlsLayer.AddControls(ControlTypes.MoveInZ);
-			object3DControlsLayer.AddControls(ControlTypes.RotateXYZ);
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)

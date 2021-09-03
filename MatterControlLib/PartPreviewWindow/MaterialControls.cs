@@ -66,13 +66,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit
 				};
 
-				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
+				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
 
 				GuiWidget colorButton;
 				buttonView.AddChild(colorButton = new ItemColorButton(theme, MaterialRendering.Color(printer, extruderIndex, theme.BorderColor))
 				{
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
+					BackgroundRadius = scaledButtonSize / 2,
+					BackgroundOutlineWidth = 1,
+					BorderColor = theme.TextColor,
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0, 5, 0),
 				});
@@ -84,7 +87,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var radioButtonView = new RadioButtonView(buttonView)
 				{
-					TextColor = theme.TextColor
+					TextColor = theme.TextColor,
+					Selectable = false
 				};
 				radioButtonView.RadioCircle.Margin = radioButtonView.RadioCircle.Margin.Clone(right: 5);
 
@@ -98,35 +102,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
-
-				radioButton.MouseMove += (s, e) =>
-				{
-					var screenSpace = radioButton.TransformToScreenSpace(e.Position);
-					var colorButtonSpace = colorButton.TransformFromScreenSpace(screenSpace);
-					if (colorButton.LocalBounds.Contains(colorButtonSpace))
-					{
-						var parent = colorButton.Parent;
-						while (parent != radioButton)
-						{
-							parent.Selectable = true;
-							parent = parent.Parent;
-						}
-					}
-					else
-					{
-						var parent = colorButton.Parent;
-						while (parent != radioButton)
-						{
-							parent.Selectable = false;
-							parent = parent.Parent;
-						}
-					}
-				};
-
-				radioButton.MouseLeaveBounds += (s, e) =>
-				{
-
-				};
 
 				int localExtruderIndex = extruderIndex;
 				radioButton.Click += (sender, e) =>

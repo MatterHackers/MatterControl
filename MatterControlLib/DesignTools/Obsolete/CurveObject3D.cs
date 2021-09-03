@@ -69,11 +69,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(1, 400, Easing.EaseType.Quadratic)]
 		public double Diameter { get; set; } = double.MinValue;
 
-		[Slider(3, 360)]
+		[Slider(3, 360, Easing.EaseType.Cubic, snapDistance: 1)]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		public double MinSidesPerRotation { get; set; } = 3;
 
-		[Slider(0, 100)]
+		[Slider(0, 100, snapDistance: 1)]
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 

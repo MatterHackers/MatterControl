@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[DisplayName("Text")]
-		public string Text { get; set; } = "Text";
+		public StringOrExpression Text { get; set; } = "Text";
 
-		public double PointSize { get; set; } = 24;
+		public DoubleOrExpression PointSize { get; set; } = 24;
 
 		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				double pointsToMm = 0.352778;
 
-				var printer = new TypeFacePrinter(Text, new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+				var printer = new TypeFacePrinter(Text.Value(this), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize.Value(this)))
 				{
 					ResolutionScale = 10
 				};
@@ -147,7 +147,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				vertexSource = (VertexStorage)vertexSource.Union(vertexSource);
 
 				this.VertexSource = vertexSource;
-				base.Mesh = null;
+
+				// set the mesh to show the path
+				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
@@ -163,6 +165,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					using (this.RebuildLock())
 					{
 						var bounds = this.VertexSource.GetBounds();
+
+						if (bounds.Width == 0 || bounds.Height == 0)
+						{
+							bounds = new Agg.RectangleDouble(0, 0, 60, 20);
+						}
+
 						var center = bounds.Center;
 						var mesh = PlatonicSolids.CreateCube(Math.Max(8, bounds.Width), Math.Max(8, bounds.Height), 0.2);
 
@@ -178,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Mesh InitMesh()
 		{
-			if (!string.IsNullOrWhiteSpace(Text))
+			if (!string.IsNullOrWhiteSpace(Text.Value(this)))
 			{
 			}
 

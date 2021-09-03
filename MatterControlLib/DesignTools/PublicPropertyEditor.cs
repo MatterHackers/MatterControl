@@ -295,61 +295,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, UIField field)
-		{
-			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
-			if (sliderAttribute != null)
-			{
-				var slider = new Slider(new Vector2(0, 0), 60 * GuiWidget.DeviceScale, sliderAttribute.Min, sliderAttribute.Max)
-				{
-					VAnchor = VAnchor.Center,
-				};
-
-				if (field is DoubleField doubleField)
-				{
-					slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
-						sliderAttribute.EaseOption,
-						doubleField.DoubleValue);
-					var changeDueToSlider = false;
-					doubleField.ValueChanged += (s, e) =>
-					{
-						if (!changeDueToSlider)
-						{
-							slider.Value = Easing.CalculateInverse(sliderAttribute.EasingType,
-								sliderAttribute.EaseOption,
-								doubleField.DoubleValue); ;
-						}
-					};
-
-					slider.ValueChanged += (s, e) =>
-					{
-						changeDueToSlider = true;
-						doubleField.SetValue(Easing.Calculate(sliderAttribute.EasingType,
-							sliderAttribute.EaseOption,
-							slider.Value).ToString(), true);
-						changeDueToSlider = false;
-					};
-
-					var content = new FlowLayoutWidget();
-					content.AddChild(slider);
-					content.AddChild(new GuiWidget()
-					{
-						Width = 11 * GuiWidget.DeviceScale,
-						Height = 3
-					});
-					content.AddChild(field.Content);
-
-					return content;
-				}
-				else if (field is ExpressionField expressionField)
-				{
-
-				}
-			}
-
-			return field.Content;
-		}
-
 		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
 			var localItem = context.item;
@@ -377,7 +322,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// field.Content
-					if (undoBuffer != null)
+					if (undoBuffer != null
+						&& e.UserInitiated)
 					{
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
 						{
@@ -459,7 +405,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
 
-					rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme);
+					rowContainer = CreateSettingsRow(property,
+						PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }),
+						theme);
 				}
 			}
 			else if (propertyValue is Color color)
@@ -856,8 +804,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				field.SetValue(doubleExpresion.Expression, false);
-				void EnsureFormating(double value)
+				if (doubleExpresion.Expression.Contains("="))
+				{
+					field.SetValue(doubleExpresion.Expression, false);
+				}
+				else // make sure it is formatted
 				{
 					var format = "0." + new string('#', 5);
 					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
@@ -865,27 +816,54 @@ namespace MatterHackers.MatterControl.DesignTools
 						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 					}
 
-					field.TextValue = value.ToString(format);
+					field.SetValue(doubleExpresion.Value(object3D).ToString(format), false);
 				}
-				EnsureFormating(doubleExpresion.Value(object3D));
+
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
-					(valueString) => new DoubleOrExpression(valueString),
+					(valueString) =>
+					{
+						doubleExpresion.Expression = valueString;
+						return doubleExpresion;
+					},
 					(value) =>
 					{
 						return ((DoubleOrExpression)value).Expression;
 					});
 
-				rowContainer = CreateSettingsRow(property, GetFieldContentWithSlider(property, field), theme, rows);
+				rowContainer = CreateSettingsRow(property,
+					PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) =>
+					{
+						doubleExpresion.Expression = valueString;
+						return doubleExpresion;
+					}),
+					theme,
+					rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
+					// This code only executes when the in scene controls are updating the objects data and the display needs to tack them.
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
 						if (newValue.Expression != field.Value)
 						{
-							EnsureFormating(newValue.Value(object3D));
+							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
+							if (newValue.Expression.StartsWith("="))
+							{
+								field.TextValue = newValue.Expression;
+							}
+							else
+							{
+								var format = "0." + new string('#', 5);
+								if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+								{
+									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+								}
+
+								var rawValue = newValue.Value(object3D);
+								field.TextValue = rawValue.ToString(format);
+							}
 						}
 					}
 				}
