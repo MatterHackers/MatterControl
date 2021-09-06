@@ -125,6 +125,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
+			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			{
+				await Rebuild();
+			}
 			else
 			{
 				base.OnInvalidate(invalidateArgs);
