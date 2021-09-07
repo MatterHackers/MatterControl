@@ -34,17 +34,20 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using System.Linq;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class SheetEditorWidget : FlowLayoutWidget
 	{
-		private SheetData sheetData;
+		public SheetData SheetData { get; private set; }
 		Point2D selectedCell = new Point2D(-1, -1);
 		Dictionary<(int, int), GuiWidget> CellWidgetsByLocation = new Dictionary<(int, int), GuiWidget>();
 		private ThemeConfig theme;
 		private MHTextEditWidget editSelectedName;
-		private MHTextEditWidget editSelectedExpression;
+		public MHTextEditWidget EditSelectedExpression { get; private set; }
+		private GridWidget gridWidget;
 
 		public SheetEditorWidget(SheetData sheetData, UndoBuffer undoBuffer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -52,9 +55,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.theme = theme;
 			HAnchor = HAnchor.MaxFitOrStretch;
 
-			this.sheetData = sheetData;
+			this.SheetData = sheetData;
 			var countWidth = 10 * GuiWidget.DeviceScale;
-			var cellWidth = 50 * GuiWidget.DeviceScale;
+			var cellEditNameWidth = 80 * GuiWidget.DeviceScale;
 
 			// put in the edit row
 			var editSelectionGroup = this.AddChild(new FlowLayoutWidget()
@@ -63,77 +66,65 @@ namespace MatterHackers.MatterControl.DesignTools
 				VAnchor = VAnchor.Fit,
 			});
 
-			editSelectedName = new MHTextEditWidget("", theme, cellWidth, messageWhenEmptyAndNotSelected: "Name".Localize())
+			editSelectedName = new MHTextEditWidget("", theme, cellEditNameWidth, messageWhenEmptyAndNotSelected: "Name".Localize())
 			{
 				HAnchor = HAnchor.Absolute,
-				SelectAllOnFocus = true,
 			};
 			editSelectedName.ActualTextEditWidget.EditComplete += SelectedName_EditComplete;
 			editSelectionGroup.AddChild(editSelectedName);
-			editSelectedExpression = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
+			EditSelectedExpression = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
-				SelectAllOnFocus = true,
 			};
-			editSelectionGroup.AddChild(editSelectedExpression);
-			editSelectedExpression.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete1;
+			editSelectionGroup.AddChild(EditSelectedExpression);
+			EditSelectedExpression.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete1;
 
-			// put in the header row
-			var topRow = this.AddChild(new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			});
+			gridWidget = new GridWidget(sheetData.Width + 1, sheetData.Height + 1, theme: theme);
 
+			this.AddChild(gridWidget);
 
-			topRow.AddChild(new GuiWidget(cellWidth, 1));
 			for (int x = 0; x < sheetData.Width; x++)
 			{
-				topRow.AddChild(new TextWidget(((char)('A' + x)).ToString())
+				var letterCell = gridWidget.GetCell(x + 1, 0);
+				letterCell.AddChild(new TextWidget(((char)('A' + x)).ToString())
 				{
-					HAnchor = HAnchor.Stretch,
-					TextColor = theme.TextColor
+					HAnchor = HAnchor.Center,
+					VAnchor = VAnchor.Center,
+					TextColor = theme.TextColor,
 				});
+			
+				letterCell.BackgroundColor = theme.SlightShade;
 			}
+
+			gridWidget.SetColumnWidth(0, 20);
 
 			for (int y = 0; y < sheetData.Height; y++)
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-				};
-				this.AddChild(row);
-
 				// add row count
-				row.AddChild(new TextWidget((y + 1).ToString())
+				var numCell = gridWidget.GetCell(0, y + 1);
+				numCell.AddChild(new TextWidget((y + 1).ToString())
 				{
 					TextColor = theme.TextColor,
+					VAnchor = VAnchor.Center,
 				});
+
+				numCell.BackgroundColor = theme.SlightShade;
 
 				for (int x = 0; x < sheetData.Width; x++)
 				{
 					var capturedX = x;
 					var capturedY = y;
 
-					var edit = new MHTextEditWidget(sheetData[x, y].Expression, theme)
-					{
-						HAnchor = HAnchor.Stretch,
-						SelectAllOnFocus = true,
-					};
+					var edit = new SheetFieldWidget(this, x, y, theme);
 
 					CellWidgetsByLocation.Add((capturedX, capturedY), edit);
 
-					edit.MouseDown += (s, e) => SelectCell(capturedX, capturedY);
+					edit.MouseUp += (s, e) => SelectCell(capturedX, capturedY);
 
-					row.AddChild(edit);
-					edit.ActualTextEditWidget.EditComplete += (s, e) =>
-					{
-						editSelectedExpression.Text = edit.Text;
-						sheetData[capturedX, capturedY].Expression = edit.Text;
-						sheetData.Recalculate();
-					};
+					gridWidget.GetCell(x + 1, y + 1).AddChild(edit);
 				}
+
+				gridWidget.ExpandToFitContent();
 			}
 		}
 
@@ -144,8 +135,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				return;
 			}
 
-			sheetData[selectedCell.x, selectedCell.y].Expression = editSelectedExpression.Text;
-			CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].Text = editSelectedExpression.Text;
+			SheetData[selectedCell.x, selectedCell.y].Expression = EditSelectedExpression.Text;
+			CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].Text = EditSelectedExpression.Text;
+			SheetData.Recalculate();
 		}
 
 		private void SelectedName_EditComplete(object sender, EventArgs e)
@@ -156,13 +148,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			var existingNames = new HashSet<string>();
-			for (int y = 0; y < sheetData.Height; y++)
+			for (int y = 0; y < SheetData.Height; y++)
 			{
-				for (int x = 0; x < sheetData.Width; x++)
+				for (int x = 0; x < SheetData.Width; x++)
 				{
 					if (x != selectedCell.x || y != selectedCell.y)
 					{
-						var currentName = sheetData[x, y].Name;
+						var currentName = SheetData[x, y].Name;
 						if (!string.IsNullOrEmpty(currentName))
 						{
 							existingNames.Add(currentName);
@@ -173,12 +165,36 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var name = agg_basics.GetNonCollidingName(editSelectedName.Text, existingNames);
 			editSelectedName.Text = name;
-			sheetData[selectedCell.x, selectedCell.y].Name = name;
-			sheetData.Recalculate();
+			SheetData[selectedCell.x, selectedCell.y].Name = name;
+			SheetData.Recalculate();
 		}
 
-		private void SelectCell(int x, int y)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
+			base.OnDraw(graphics2D);
+
+			// draw the selected widget
+			var x = selectedCell.x;
+			var y = selectedCell.y;
+			if (x < 0 || x >= SheetData.Width || y < 0 || y >= SheetData.Height)
+			{
+				// out of bounds
+				return;
+			}
+
+			var cell = gridWidget.GetCell(x + 1, y + 1);
+			var bounds = cell.TransformToParentSpace(this, cell.LocalBounds);
+			graphics2D.Rectangle(bounds, theme.PrimaryAccentColor);
+		}
+
+		public void SelectCell(int x, int y)
+		{
+			if (x < 0 || x >= SheetData.Width || y < 0 || y >= SheetData.Height)
+			{
+				// out of bounds
+				return;
+			}
+
 			if (selectedCell.x != -1)
 			{
 				CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].BorderColor = Color.Transparent;
@@ -186,15 +202,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			selectedCell.x = x;
 			selectedCell.y = y;
 			CellWidgetsByLocation[(selectedCell.x, selectedCell.y)].BorderColor = theme.PrimaryAccentColor;
-			editSelectedExpression.Text = sheetData[x, y].Expression;
-			if (string.IsNullOrEmpty(sheetData[x, y].Name))
+			EditSelectedExpression.Text = SheetData[x, y].Expression;
+			if (string.IsNullOrEmpty(SheetData[x, y].Name))
 			{
 				editSelectedName.Text = $"{(char)('A' + x)}{y + 1}";
 			}
 			else
 			{
-				editSelectedName.Text = sheetData[x, y].Name;
+				editSelectedName.Text = SheetData[x, y].Name;
 			}
+
+			gridWidget.GetCell(x + 1, y + 1).Children.FirstOrDefault()?.Focus();
 		}
 	}
 

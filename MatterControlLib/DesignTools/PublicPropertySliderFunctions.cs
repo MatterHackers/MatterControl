@@ -211,7 +211,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// set the initial value of the slider
+				changeDueToField = true;
 				slider.Value = GetSlider0To1FromField();
+				changeDueToField = false;
 
 				return content;
 			}

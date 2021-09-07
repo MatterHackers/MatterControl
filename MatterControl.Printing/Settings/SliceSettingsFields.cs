@@ -601,7 +601,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Seam Placement".Localize(),
 					HelpText = "What to do when there is not a good place to hide the seam.".Localize(),
 					DataEditType = DataEditTypes.LIST,
-					ListValues = "Furthest Back,Centered In Back,Randomized,Closest",
+					ListValues = "Furthest Back,Centered In Back,Randomized,Fastest",
 					DefaultValue = "Furthest Back",
 				},
 				new SliceSettingData()

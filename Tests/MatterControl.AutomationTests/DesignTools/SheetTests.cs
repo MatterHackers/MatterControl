@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var cube = testRunner.GetObjectByName(primitive, out _) as CubeObject3D;
 
-				Assert.AreEqual(20, cube.Width.Value(cube));
+				Assert.AreEqual(20, cube.Width.Value(cube), .001);
 
 				// Select scene object
 				testRunner.Select3DPart(primitive);
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.Greater(cube.Width.Value(cube), 20.0);
 				
 				testRunner.ClickByName("3D View Undo");
-				Assert.AreEqual(20, cube.Width.Value(cube));
+				Assert.AreEqual(20, cube.Width.Value(cube), .0001);
 
 				// try scaling by text entry
 				testRunner.ClickByName("ScaleWidthLeft")
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(35, cube.Width.Value(cube));
 
 				testRunner.ClickByName("3D View Undo");
-				Assert.AreEqual(20, cube.Width.Value(cube));
+				Assert.AreEqual(20, cube.Width.Value(cube), .0001);
 
 				// try scaling by text entry of an equation
 				testRunner.ClickByName("Width Field")
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.NameExists("ScaleWidthRight", .2));
 
 				testRunner.ClickByName("3D View Undo");
-				Assert.AreEqual(20, cube.Width.Value(cube));
+				Assert.AreEqual(20, cube.Width.Value(cube), .0001);
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 60);

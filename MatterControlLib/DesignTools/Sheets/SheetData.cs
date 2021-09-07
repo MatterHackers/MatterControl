@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (!tabelCalculated)
 				{
-					Recalculate();
+					BuildTableConstants();
 				}
 
 				if(expression.StartsWith("="))
@@ -243,43 +243,79 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Recalculate()
 		{
+			BuildTableConstants();
+
+			Recalculated?.Invoke(this, null);
+		}
+
+		private void BuildTableConstants()
+		{
+			double GetValue((int x, int y, TableCell cell) xyCell)
+			{
+				var expression = xyCell.cell.Expression;
+				if (expression.StartsWith("="))
+				{
+					expression = expression.Substring(1);
+				}
+				if (expression.StartsWith("."))
+				{
+					expression = "0" + expression;
+				}
+				var evaluator = new Expression(expression.ToLower());
+				AddConstants(evaluator);
+				var value = evaluator.calculate();
+				return value;
+			}
+
 			lock (locker)
 			{
 				constants.Clear();
 
-				// WIP: sort the cell by reference (needs to be DAG)
-				var list = EnumerateCells().OrderByDescending(i => i.cell.Expression).ToList();
-				foreach (var xyc in list)
+				var list = EnumerateCells().ToList();
+				var noSolution = new List<(int, int, TableCell)>();
+				var addedConstant = false;
+
+				// process all the cells until we can no longer solve a new value (needs to be DAG)
+				do
 				{
-					var expression = xyc.cell.Expression;
-					if (expression.StartsWith("="))
+					addedConstant = false;
+					foreach (var xyCell in list)
 					{
-						expression = expression.Substring(1);
-					}
-					if (expression.StartsWith("."))
-					{
-						expression = "0" + expression;
-					}
-					var evaluator = new Expression(expression.ToLower());
-					AddConstants(evaluator);
-					var value = evaluator.calculate();
-					if (double.IsNaN(value)
-						|| double.IsInfinity(value))
-					{
-						value = 0;
+						double value = GetValue(xyCell);
+						if (double.IsNaN(value)
+							|| double.IsInfinity(value))
+						{
+							noSolution.Add(xyCell);
+						}
+						else
+						{
+							constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), value);
+							if (!string.IsNullOrEmpty(xyCell.cell.Name))
+							{
+								constants.Add(xyCell.cell.Name.ToLower(), value);
+							}
+
+							addedConstant = true;
+						}
 					}
 
-					constants.Add(CellId(xyc.x, xyc.y).ToLower(), value);
-					if (!string.IsNullOrEmpty(xyc.cell.Name))
+					list.Clear();
+					list.AddRange(noSolution);
+					noSolution.Clear();
+				} while (list.Count > 0 && addedConstant);
+
+				// add the rest of the cells to constants as 0's
+				foreach (var xyCell in list)
+				{
+					constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), 0);
+					if (!string.IsNullOrEmpty(xyCell.cell.Name))
 					{
-						constants.Add(xyc.cell.Name.ToLower(), value);
+						constants.Add(xyCell.cell.Name.ToLower(), 0);
 					}
 				}
 
 				tabelCalculated = true;
 			}
-
-			Recalculated?.Invoke(this, null);
 		}
 
 		private void AddConstants(Expression evaluator)

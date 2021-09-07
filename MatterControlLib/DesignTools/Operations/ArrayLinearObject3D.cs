@@ -94,11 +94,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						foreach(var child in Children)
 						{
-							if(SheetObject3D.HasParametersWithActiveFunctions(child))
+							if(!(child is OperationSourceContainerObject3D)
+								&&  SheetObject3D.HasParametersWithActiveFunctions(child))
 							{
 								// This really needs to be 'Has Perameters With index at this level'
-								// And is not the source object (only the copies should try to re-build (that might fix the recursion bug without the extra filtering)
-								//child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
+								child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
 							}
 						}
 

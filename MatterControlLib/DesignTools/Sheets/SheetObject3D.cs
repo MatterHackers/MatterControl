@@ -277,14 +277,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (arrayObject != null)
 			{
 				int index = 0;
-				foreach(var child in arrayObject.Children)
+				foreach (var child in arrayObject.Children)
 				{
-					if (child == owner)
+					if (!(child is OperationSourceContainerObject3D))
 					{
-						return index;
-					}
+						if (child.DescendantsAndSelf().Where(i => i == owner).Any())
+						{
+							return index;
+						}
 
-					index++;
+						index++;
+					}
 				}
 			}
 
