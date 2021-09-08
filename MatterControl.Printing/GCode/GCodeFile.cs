@@ -114,20 +114,34 @@ namespace MatterControl.Printing
 			"; LAYER:",
 			";LAYER:",
 			"; layer ",
+			";LAYER_CHANGE" // prusa slicer default
 		};
 
 		public static bool IsLayerChange(string line)
 		{
-			return LayerLineStartTokens.Any(l => line.StartsWith(l));
+			return LayerChangeString(line) != null;
+		}
+
+		public static string LayerChangeString(string line)
+		{
+			for (int i = 0; i < LayerLineStartTokens.Length; i++)
+			{
+				if (line.StartsWith(LayerLineStartTokens[i]))
+				{
+					return LayerLineStartTokens[i];
+				}
+			}
+
+			return null;
 		}
 
 		public static int GetLayerNumber(string line)
 		{
-			var layerToken = LayerLineStartTokens.FirstOrDefault(t => line.StartsWith(t));
+			var layerChangeString = LayerChangeString(line);
 
-			if (layerToken != null)
+			if (layerChangeString != null)
 			{
-				line = line.Substring(layerToken.Length);
+				line = line.Substring(layerChangeString.Length);
 
 				// Find the first digits after the layer start token
 				var match = FirstDigitsAfterToken.Match(line);

@@ -224,14 +224,15 @@ namespace MatterControl.Printing
 						double ePosition = lastEPosition;
 						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
 						{
-							if (instruction.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
+							if (instruction.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Relative
+								|| instruction.ExtuderRelativeOverride)
 							{
-								double deltaEPosition = ePosition - lastEPosition;
-								filamentMm += deltaEPosition;
+								filamentMm += ePosition;
 							}
 							else
 							{
-								filamentMm += ePosition;
+								double deltaEPosition = ePosition - lastEPosition;
+								filamentMm += deltaEPosition;
 							}
 
 							lastEPosition = ePosition;
@@ -650,7 +651,7 @@ namespace MatterControl.Printing
 							break;
 
 						case 'M':
-							loadedGCodeFile.ParseMLine(lineString);
+							loadedGCodeFile.ParseMLine(lineString, machineInstructionForLine);
 							break;
 
 						case 'T':
@@ -878,7 +879,7 @@ namespace MatterControl.Printing
 					{
 						double ePosition = processingMachineState.EPosition;
 						var position = processingMachineState.Position;
-						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Relative)
+						if (processingMachineState.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Relative)
 						{
 							position = Vector3.Zero;
 							ePosition = 0;
@@ -895,15 +896,23 @@ namespace MatterControl.Printing
 							processingMachineState.FeedRate = (float)feedrate;
 						}
 
-						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
+						if (processingMachineState.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Absolute)
 						{
 							processingMachineState.Position = position;
-							processingMachineState.EPosition = (float)ePosition;
 						}
 						else
 						{
 							processingMachineState.Position += position;
+						}
+
+						if (processingMachineState.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Relative
+							|| processingMachineState.ExtuderRelativeOverride)
+						{
 							processingMachineState.EPosition += (float)ePosition;
+						}
+						else
+						{
+							processingMachineState.EPosition = (float)ePosition;
 						}
 					}
 
@@ -942,11 +951,11 @@ namespace MatterControl.Printing
 					break;
 
 				case "90": // G90 is Absolute Distance Mode
-					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Absolute;
+					processingMachineState.XyzeMovementType = PrinterMachineInstruction.MovementTypes.Absolute;
 					break;
 
 				case "91": // G91 is Incremental Distance Mode
-					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Relative;
+					processingMachineState.XyzeMovementType = PrinterMachineInstruction.MovementTypes.Relative;
 					break;
 
 				case "92":
@@ -997,7 +1006,7 @@ namespace MatterControl.Printing
 			}
 		}
 
-		private void ParseMLine(string lineString)
+		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
 			// take off any comments before we check its length
 			int commentIndex = lineString.IndexOf(';');
@@ -1039,10 +1048,12 @@ namespace MatterControl.Printing
 
 				case "82":
 					// set extruder to absolute mode
+					processingMachineState.ExtuderRelativeOverride = false;
 					break;
 
 				case "83":
 					// Set extruder to relative mode
+					processingMachineState.ExtuderRelativeOverride = true;
 					break;
 
 				case "84":

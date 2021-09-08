@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 	{
 		public override string Convert(string value, PrinterSettings settings)
 		{
-			// Unescape newlines
+			// Un-escape newlines
 			value = value.Replace("\\n", "\n");
 
 			if (!value.Contains("; LAYER:")

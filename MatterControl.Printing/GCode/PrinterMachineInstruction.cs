@@ -48,7 +48,12 @@ namespace MatterControl.Printing
 		public byte[] byteLine;
 
 		// Absolute is the RepRap default
-		public MovementTypes MovementType = MovementTypes.Absolute;
+		public MovementTypes XyzeMovementType { get; internal set; } = MovementTypes.Absolute;
+
+		/// <summary>
+		/// Overrides the 
+		/// </summary>
+		public bool ExtuderRelativeOverride { get; internal set; } = false;
 
 		public float SecondsThisLine;
 
@@ -69,7 +74,8 @@ namespace MatterControl.Printing
 			xyzPosition = copy.xyzPosition;
 			FeedRate = copy.FeedRate;
 			EPosition = copy.EPosition;
-			MovementType = copy.MovementType;
+			XyzeMovementType = copy.XyzeMovementType;
+			ExtuderRelativeOverride = copy.ExtuderRelativeOverride;
 			SecondsToEndFromHere = copy.SecondsToEndFromHere;
 			ToolIndex = copy.ToolIndex;
 		}
@@ -111,7 +117,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.X; }
 			set
 			{
-				if (MovementType == MovementTypes.Absolute)
+				if (XyzeMovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.X = (float)value;
 				}
@@ -127,7 +133,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.Y; }
 			set
 			{
-				if (MovementType == MovementTypes.Absolute)
+				if (XyzeMovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.Y = (float)value;
 				}
@@ -143,7 +149,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.Z; }
 			set
 			{
-				if (MovementType == MovementTypes.Absolute)
+				if (XyzeMovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.Z = (float)value;
 				}
