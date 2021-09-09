@@ -882,6 +882,11 @@ namespace MatterControl.Printing
 						if (processingMachineState.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Relative)
 						{
 							position = Vector3.Zero;
+						}
+
+						if (processingMachineState.XyzeMovementType == PrinterMachineInstruction.MovementTypes.Relative
+							|| processingMachineState.ExtuderRelativeOverride)
+						{
 							ePosition = 0;
 						}
 
