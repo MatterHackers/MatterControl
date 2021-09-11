@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void InsetPath()
 		{
-			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
+			var path = this.Children.OfType<IPathObject>()?.FirstOrDefault();
 			if (path == null)
 			{
 				// clear our existing data

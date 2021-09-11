@@ -258,18 +258,21 @@ namespace MatterHackers.MatterControl
 			renameMenuItem.Click += (s, e) =>
 			{
 				var selectedItem = sceneContext.Scene.SelectedItem;
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						selectedItem.Name,
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
+				if (selectedItem != null)
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							selectedItem.Name,
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
 							// TODO: add undo data to this operation
 							selectedItem.Name = newName;
-						}));
+							}));
+				}
 			};
 
 			popupMenu.CreateSeparator();
