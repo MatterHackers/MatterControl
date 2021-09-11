@@ -43,7 +43,7 @@ namespace MatterHackers.GCodeVisualizer
 		private Color gray;
 
 		public RenderFeatureExtrusion(int instructionIndex, Vector3 start, Vector3 end, int toolIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color, Color gray)
-			: base(instructionIndex, start, end, toolIndex, travelSpeed)
+			: base(instructionIndex, start, end, toolIndex, travelSpeed, false)
 		{
 			this.color = color;
 			this.gray = gray;

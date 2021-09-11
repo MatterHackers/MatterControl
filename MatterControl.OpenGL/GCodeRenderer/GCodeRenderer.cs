@@ -55,6 +55,7 @@ namespace MatterHackers.GCodeVisualizer
 		public static double ExtruderWidth { get; set; } = .4;
 
 		public static Color TravelColor = Color.Green;
+		public static Color RetractionColor = Color.FireEngineRed;
 
 		internal class Layer
 		{
@@ -149,6 +150,9 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else
 				{
+					var extrusionAmount = currentInstruction.EPosition - previousInstruction.EPosition;
+					var filamentDiameterMm = gCodeFileToDraw.GetFilamentDiameter();
+
 					if (gCodeFileToDraw.IsExtruding(instructionIndex))
 					{
 						double layerThickness = gCodeFileToDraw.GetLayerHeight(layerToCreate);
@@ -161,21 +165,32 @@ namespace MatterHackers.GCodeVisualizer
 								currentInstruction.Position,
 								currentInstruction.ToolIndex,
 								currentInstruction.FeedRate,
-								currentInstruction.EPosition - previousInstruction.EPosition,
-								gCodeFileToDraw.GetFilamentDiameter(),
+								extrusionAmount,
+								filamentDiameterMm,
 								layerThickness,
 								extrusionColor,
 								this.Gray));
 					}
 					else
 					{
+						if (extrusionAmount < 0)
+						{
+							double moveLength = (currentInstruction.Position - previousInstruction.Position).Length;
+							double filamentRadius = filamentDiameterMm / 2;
+							double areaSquareMm = (filamentRadius * filamentRadius) * Math.PI;
+
+							var extrusionVolumeMm3 = (float)(areaSquareMm * extrusionAmount);
+							var area = extrusionVolumeMm3 / moveLength;
+						}
+
 						renderFeaturesForLayer.Add(
 							new RenderFeatureTravel(
 								instructionIndex,
 								previousInstruction.Position,
 								currentInstruction.Position,
 								currentInstruction.ToolIndex,
-								currentInstruction.FeedRate));
+								currentInstruction.FeedRate,
+								extrusionAmount < 0));
 					}
 				}
 			}
