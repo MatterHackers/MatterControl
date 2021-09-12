@@ -374,7 +374,11 @@ namespace MatterHackers.MatterControl
 		public Action EnterShareCode { get; set; }
 
 		// check permission to an IObject3D instance
+#if DEBUG
+		public Func<IObject3D, bool> UserHasPermission { get; set; } = (item) => true;
+#else
 		public Func<IObject3D, bool> UserHasPermission { get; set; } = (item) => false;
+#endif
 
 		// check permission to a purchase
 		public Func<bool> UserHasPro { get; set; }
