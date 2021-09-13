@@ -170,6 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Slider(0, 150, Easing.EaseType.Quadratic)]
 		[Description("The minimum area each loop needs to be for inclusion")]
+		[MaxDecimalPlaces(2)]
 		public double MinSurfaceArea {get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();

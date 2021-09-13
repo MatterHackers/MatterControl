@@ -344,7 +344,7 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 GetEdgePosition(IObject3D item, double angle, ObjectSpace.Placement placement)
 			{
 				var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-				var centerPosition = aabb.Center;
+				var centerPosition = default(Vector3);
 				switch (placement)
 				{
 					case ObjectSpace.Placement.Bottom:

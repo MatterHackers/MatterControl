@@ -1313,10 +1313,12 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 				CommunicationState = CommunicationStates.Disconnecting;
 				currentReadThreadIndex++;
-				if (serialPort != null)
+				// protect against multi-threading
+				var localSerialPort = serialPort;
+				if (localSerialPort != null)
 				{
-					serialPort.Close();
-					serialPort.Dispose();
+					localSerialPort.Close();
+					localSerialPort.Dispose();
 				}
 
 				serialPort = null;

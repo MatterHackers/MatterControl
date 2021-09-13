@@ -76,8 +76,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Diameter { get; set; } = 20;
 
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
@@ -87,11 +89,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more sphere options.";
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
+		[Slider(3, 180, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression LatitudeSides { get; set; } = 30;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
@@ -117,12 +122,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				var sides = Sides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
-				var latitudeSides = LatitudeSides.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
+				var latitudeSides = LatitudeSides.ClampIfNotCalculated(this, 3, 180, ref valuesChanged);
 				var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
 				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
 				var diameter = Diameter.Value(this);
 
-				using (new CenterAndHeightMaintainer(this))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
 				{
 					if (sides != lastSides
 						|| latitudeSides != lastLatitudeSides

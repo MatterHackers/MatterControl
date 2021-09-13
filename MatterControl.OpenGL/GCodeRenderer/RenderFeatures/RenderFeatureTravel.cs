@@ -40,25 +40,27 @@ namespace MatterHackers.GCodeVisualizer
 		protected Vector3Float end;
 
 		protected float travelSpeed;
+		private bool retractionTravel;
 
 		public Vector3Float Start => start;
 
 		public Vector3Float End => end;
 
-		public RenderFeatureTravel(int instructionIndex, Vector3 start, Vector3 end, int toolIndex, double travelSpeed)
+		public RenderFeatureTravel(int instructionIndex, Vector3 start, Vector3 end, int toolIndex, double travelSpeed, bool retractionTravel)
 			: base(instructionIndex, toolIndex)
 		{
 			this.toolIndex = toolIndex;
 			this.start = new Vector3Float(start);
 			this.end = new Vector3Float(end);
 			this.travelSpeed = (float)travelSpeed;
+			this.retractionTravel = retractionTravel;
 		}
 
 		public override void CreateRender3DData(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, GCodeRenderInfo renderInfo)
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
-				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), .1, 6, GCodeRenderer.TravelColor, .2);
+				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), .1, 6, retractionTravel ?  GCodeRenderer.RetractionColor : GCodeRenderer.TravelColor, .2);
 			}
 		}
 
@@ -84,9 +86,14 @@ namespace MatterHackers.GCodeVisualizer
 					var endPoint = new Vector2(end.X, end.Y);
 					renderInfo.Transform.transform(ref endPoint);
 
+					if (retractionTravel)
+					{
+						movementColor = GCodeRenderer.RetractionColor;
+					}
+
 					if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
 					{
-						movementColor = new Color(movementColor, 200);
+						movementColor = movementColor.WithAlpha(120);
 					}
 
 					graphics2DGl.DrawAALineRounded(startPoint, endPoint, movementLineWidth, movementColor);

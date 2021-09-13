@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var rebuildLock = this.RebuildLock();
 			SourceContainer.Visible = true;
 
-			using (new CenterAndHeightMaintainer(this, CenterAndHeightMaintainer.MaintainFlags.Height))
+			using (new CenterAndHeightMaintainer(this, MaintainFlags.Bottom))
 			{
 				await ApplicationController.Instance.Tasks.Execute(
 					"Linear Array".Localize(),

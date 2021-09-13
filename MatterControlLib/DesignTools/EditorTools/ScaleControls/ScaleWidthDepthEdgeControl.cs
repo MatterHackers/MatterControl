@@ -559,8 +559,20 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public static Vector3 GetCenterPosition(IObject3D item, Placement placement)
 		{
-			var aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-			var cornerPosition = aabb.Center;
+			var invertedMatrix = item.Matrix.Inverted;
+			var aabb = item.GetAxisAlignedBoundingBox(invertedMatrix);
+
+			Vector3 cornerPosition;
+			var useOriginXy = true;
+			if (useOriginXy)
+			{
+				cornerPosition = Vector3.Zero;
+			}
+			else
+			{
+				cornerPosition = aabb.Center;
+			}
+
 			switch (placement)
 			{
 				case Placement.Bottom:

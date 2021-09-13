@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
-		private void DiameterFromAngle()
+		private double DiameterFromAngle()
 		{
 			var diameter = Diameter.Value(this);
 			var angle = Angle.Value(this);
@@ -141,6 +141,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				Diameter = newDiameter;
 				Invalidate(InvalidateType.DisplayValues);
 			}
+
+			return diameter;
 		}
 
 
@@ -170,9 +172,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var startPercent = StartPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
 
 			var diameter = Diameter.Value(this);
-			if (diameter == double.MaxValue)
+			if (diameter == double.MaxValue
+				|| diameter == 0)
 			{
-				DiameterFromAngle();
+				diameter = DiameterFromAngle();
 			}
 
 			// keep the unused type synced so we don't change the bend when clicking the tabs
@@ -182,15 +185,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				DiameterFromAngle();
+				diameter = DiameterFromAngle();
 			}
 
-			if (diameter < 1 || diameter > 100000)
-			{
-				Diameter = Math.Min(10000000, Math.Max(.1, diameter));
-				valuesChanged = true;
-			}
-
+			diameter = Diameter.ClampIfNotCalculated(this, .1, 100000, ref valuesChanged);
 
 			var minSidesPerRotation = MinSidesPerRotation.ClampIfNotCalculated(this, 3, 360, ref valuesChanged);
 

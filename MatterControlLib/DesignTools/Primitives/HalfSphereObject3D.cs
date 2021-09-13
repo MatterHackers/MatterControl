@@ -70,8 +70,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Diameter { get; set; } = 20;
+		
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression LongitudeSides { get; set; } = 40;
+		
+		[Slider(3, 180, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression LatitudeSides { get; set; } = 10;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)

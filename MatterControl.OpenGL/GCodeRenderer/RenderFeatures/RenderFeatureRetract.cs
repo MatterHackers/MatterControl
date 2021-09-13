@@ -111,7 +111,7 @@ namespace MatterHackers.GCodeVisualizer
 				else if (extrusionAmount > 0)
 				{
 					// unretraction
-					retractionColor = new Color(Color.Blue, 200);
+					retractionColor = Color.Blue.WithAlpha(120);
 				}
 
 				if (graphics2D is Graphics2DOpenGL graphics2DGl)

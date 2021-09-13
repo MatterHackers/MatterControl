@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
 
-		public List<LibraryAction> MenuExtensions { get; } = new List<LibraryAction>();
+		public SafeList<LibraryAction> MenuExtensions { get; } = new SafeList<LibraryAction>();
 
 		public PlatingHistoryContainer PlatingHistory { get; internal set; }
 

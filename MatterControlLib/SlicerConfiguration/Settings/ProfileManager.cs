@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfileManager.UserChanged?.Invoke(loadedInstance, null);
 
 			// Ensure SQLite printers are imported
-			loadedInstance.EnsurePrintersImported();
+			loadedInstance?.EnsurePrintersImported();
 
 			return loadedInstance;
 		}

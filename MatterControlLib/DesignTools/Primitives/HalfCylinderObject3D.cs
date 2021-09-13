@@ -57,12 +57,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
