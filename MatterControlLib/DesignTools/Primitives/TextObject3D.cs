@@ -67,9 +67,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Text")]
 		public StringOrExpression NameToWrite { get; set; } = "Text";
 
+		[Slider(1, 48, snapDistance: 1)]
 		public DoubleOrExpression PointSize { get; set; } = 24;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 5;
 
 		[Sortable]

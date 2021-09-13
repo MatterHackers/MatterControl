@@ -120,12 +120,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MaxDecimalPlaces(2)]
 		[Description("The width from one side to the opposite side.")]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Diameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
 		[Description("The number of segments around the perimeter.")]
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
@@ -135,12 +138,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more cylinder options.";
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression DiameterTop { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
@@ -178,7 +184,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMaintainer(this))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
 				{
 					if (!Advanced)
 					{

@@ -845,7 +845,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// This code only executes when the in scene controls are updating the objects data and the display needs to tack them.
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						DoubleOrExpression newValue = (DoubleOrExpression)property.Value;
+						var newValue = (DoubleOrExpression)property.Value;
 						if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
@@ -874,26 +874,71 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is IntOrExpression intExpresion)
 			{
 				// create a string editor
-				var field = new ExpressionField(theme);
+				var field = new ExpressionField(theme)
+				{
+					Name = property.DisplayName + " Field"
+				};
 				field.Initialize(0);
-				field.SetValue(intExpresion.Expression, false);
+				if (intExpresion.Expression.Contains("="))
+				{
+					field.SetValue(intExpresion.Expression, false);
+				}
+				else // make sure it is formatted
+				{
+					var format = "0." + new string('#', 5);
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+					{
+						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+					}
+
+					field.SetValue(intExpresion.Value(object3D).ToString(format), false);
+				}
+
 				field.ClearUndoHistory();
 				RegisterValueChanged(field,
-					(valueString) => new IntOrExpression(valueString),
+					(valueString) =>
+					{
+						intExpresion.Expression = valueString;
+						return intExpresion;
+					},
 					(value) =>
 					{
 						return ((IntOrExpression)value).Expression;
 					});
-				rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
+
+				rowContainer = CreateSettingsRow(property,
+					PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) =>
+					{
+						intExpresion.Expression = valueString;
+						return intExpresion;
+					}),
+					theme,
+					rows);
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
+					// This code only executes when the in scene controls are updating the objects data and the display needs to tack them.
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						IntOrExpression newValue = (IntOrExpression)property.Value;
+						var newValue = (IntOrExpression)property.Value;
 						if (newValue.Expression != field.Value)
 						{
-							field.TextValue = newValue.Value(object3D).ToString();
+							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
+							if (newValue.Expression.StartsWith("="))
+							{
+								field.TextValue = newValue.Expression;
+							}
+							else
+							{
+								var format = "0." + new string('#', 5);
+								if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+								{
+									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
+								}
+
+								var rawValue = newValue.Value(object3D);
+								field.TextValue = rawValue.ToString(format);
+							}
 						}
 					}
 				}

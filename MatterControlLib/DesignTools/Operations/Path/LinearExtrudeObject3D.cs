@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 , IPropertyGridModifier
 #endif
 	{
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 5;
 
 #if DEBUG

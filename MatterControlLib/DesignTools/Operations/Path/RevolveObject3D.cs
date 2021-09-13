@@ -52,11 +52,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DoubleOrExpression AxisPosition { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 45;
 
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 30;
 
 		public override bool CanFlatten => true;

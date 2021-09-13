@@ -83,11 +83,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression CalculationHeight { get; set; } = .1;
 
 		[DisplayName("Expand")]
+		[Slider(1, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression BaseSize { get; set; } = 3;
 
+		[Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
 		public DoubleOrExpression InfillAmount { get; set; } = 3;
 
 		[DisplayName("Height")]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression ExtrusionHeight { get; set; } = 5;
 
 		[DisplayName("")]
@@ -231,7 +234,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMaintainer(this, CenterAndHeightMaintainer.MaintainFlags.Height))
+					using (new CenterAndHeightMaintainer(this, MaintainFlags.Bottom))
 					{
 						var firstChild = this.Children.FirstOrDefault();
 

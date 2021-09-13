@@ -59,11 +59,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Cubic, snapDistance: .1)]
 		public DoubleOrExpression OuterDiameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Cubic, snapDistance: .1)]
 		public DoubleOrExpression InnerDiameter { get; set; } = 10;
 
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
@@ -73,14 +76,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more torus options.";
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
+		[Slider(3, 260, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression RingSides { get; set; } = 15;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 90, snapDistance: 1)]
 		public DoubleOrExpression RingPhaseAngle { get; set; } = 0;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
@@ -124,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				innerDiameter = Math.Min(outerDiameter - .1, innerDiameter);
 
-				using (new CenterAndHeightMaintainer(this))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
 				{
 					var poleRadius = (outerDiameter / 2 - innerDiameter / 2) / 2;
 					var toroidRadius = innerDiameter / 2 + poleRadius;

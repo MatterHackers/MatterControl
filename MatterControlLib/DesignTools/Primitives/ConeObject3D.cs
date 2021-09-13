@@ -36,6 +36,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.Plugins.EditorTools;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -57,11 +58,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Diameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 40;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)

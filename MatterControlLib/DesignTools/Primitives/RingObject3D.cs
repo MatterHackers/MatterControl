@@ -43,6 +43,13 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
+		public enum BevelTypes
+		{
+			None,
+			In,
+			Out,
+		}
+
 		public RingObject3D()
 		{
 			Name = "Ring".Localize();
@@ -71,14 +78,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression OuterDiameter { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression InnerDiameter { get; set; } = 15;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 5;
 
+		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
@@ -87,10 +98,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("")] // clear the display name so this text will be the full width of the editor
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more ring options.";
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public BevelTypes Bevel { get; set; } = BevelTypes.None;
+
+		[Slider(2, 90, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public IntOrExpression RoundSegments { get; set; } = 2;
+
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
@@ -121,8 +140,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
 				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
 				var height = Height.Value(this);
+				var roundSegments = RoundSegments.ClampIfNotCalculated(this, 2, 90, ref valuesChanged);
 
-				using (new CenterAndHeightMaintainer(this))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
 				{
 					if (!Advanced)
 					{
@@ -133,11 +153,40 @@ namespace MatterHackers.MatterControl.DesignTools
 					innerDiameter = Math.Min(outerDiameter - .1, innerDiameter);
 
 					var path = new VertexStorage();
-					path.MoveTo(outerDiameter / 2, -height / 2);
-					path.LineTo(outerDiameter / 2, height / 2);
-					path.LineTo(innerDiameter / 2, height / 2);
-					path.LineTo(innerDiameter / 2, -height / 2);
-					path.LineTo(outerDiameter / 2, -height / 2);
+					var width = (outerDiameter - innerDiameter) / 2;
+					var r = innerDiameter / 2;
+					path.MoveTo(r, 0);
+					path.LineTo(r + width, 0);
+					var range = 360 / 4.0;
+
+					switch (Bevel)
+					{
+						case BevelTypes.None:
+							path.LineTo(r + width, height);
+							path.LineTo(r, height);
+							break;
+
+						case BevelTypes.In:
+							path.LineTo(r + width, height);
+							for (int i = 1; i < roundSegments - 1; i++)
+							{
+								var angle = range / (roundSegments - 1) * i;
+								var rad = MathHelper.DegreesToRadians(angle);
+								path.LineTo(r + width - Math.Sin(rad) * width, Math.Cos(rad) * height);
+							}
+							break;
+
+						case BevelTypes.Out:
+							for (int i = 1; i < roundSegments - 1; i++)
+							{
+								var angle = range / (roundSegments - 1) * i;
+								var rad = MathHelper.DegreesToRadians(angle);
+								path.LineTo(r + width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+							}
+							path.LineTo(r, height);
+							break;
+					}
+
 
 					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
@@ -156,6 +205,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
+			change.SetRowVisible(nameof(Bevel), () => Advanced);
+			change.SetRowVisible(nameof(RoundSegments), () => Advanced || Bevel != BevelTypes.None);
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);

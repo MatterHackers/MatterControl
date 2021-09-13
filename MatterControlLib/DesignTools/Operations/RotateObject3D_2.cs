@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[MaxDecimalPlaces(2)]
 		[DisplayName("Angle")]
+		[Slider(3, 360, Easing.EaseType.Cubic, snapDistance: 1)]
 		public DoubleOrExpression AngleDegrees { get; set; } = 0;
 
 		[JsonIgnore]

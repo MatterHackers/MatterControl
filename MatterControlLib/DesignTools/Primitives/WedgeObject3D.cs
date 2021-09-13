@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
+	public class WedgeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public WedgeObject3D()
 		{
@@ -59,17 +59,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
+		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
-		public bool Round { get; set; } = false;
-
-		public IntOrExpression RoundSegments { get; set; } = 15;
+		[Slider(2, 90, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public IntOrExpression RoundSegments { get; set; } = 2;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -92,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 3, 360 / 4 - 2, ref valuesChanged);
+			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 2, 90, ref valuesChanged);
 
 			if (valuesChanged)
 			{
@@ -101,24 +103,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
+				var height = Height.Value(this);
+				var width = Width.Value(this);
 				using (new CenterAndHeightMaintainer(this))
 				{
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
-					path.LineTo(Width.Value(this), 0);
+					path.LineTo(width, 0);
 
-					if (Round)
+					var range = 360 / 4.0;
+					for (int i = 1; i < roundSegments - 1; i++)
 					{
-						var range = 360 / 4.0;
-						for (int i = 1; i < roundSegments - 1; i++)
-						{
-							var angle = range / (roundSegments - 1) * i;
-							var rad = MathHelper.DegreesToRadians(angle);
-							path.LineTo(Width.Value(this) - Math.Sin(rad) * Width.Value(this), Height.Value(this) - Math.Cos(rad) * Height.Value(this));
-						}
+						var angle = range / (roundSegments - 1) * i;
+						var rad = MathHelper.DegreesToRadians(angle);
+						path.LineTo(width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
 					}
 
-					path.LineTo(0, Height.Value(this));
+					path.LineTo(0, height);
 
 					Mesh = VertexSourceToMesh.Extrude(path, Depth.Value(this));
 					Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
@@ -128,14 +129,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 
 			return Task.CompletedTask;
-		}
-
-		public void UpdateControls(PublicPropertyChange change)
-		{
-			if (change.Context.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
-			{
-				segmentsWidget.Visible = Round;
-			}
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
