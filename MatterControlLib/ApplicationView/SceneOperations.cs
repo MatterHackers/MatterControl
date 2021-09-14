@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextResolver = () => "*A component must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && (sceneContext.Scene.SelectedItem is ComponentObject3D),
 			};
 		}
 
@@ -738,6 +738,26 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
+		public static string GetKey(string opperationGroupName)
+		{
+			return $"scene_operation_key_{opperationGroupName}";
+		}
+
+		public static bool GetCollapseValue(SceneOperation sceneOperation)
+		{
+			return GetCollapseValue(sceneOperation.Id);
+		}
+
+		public static void SetCollapseValue(SceneOperation sceneOperation, bool value)
+		{
+			UserSettings.Instance.Fields.SetBool(GetKey(sceneOperation.Id), value);
+		}
+
+		public static bool GetCollapseValue(string sceneOperationId)
+		{
+			return UserSettings.Instance.Fields.GetBool(GetKey(sceneOperationId), true);
+		}
+
 		private static void Build()
 		{
 			if (built)
@@ -762,7 +782,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Transform")
 				{
-					Collapse = false,
+					Collapse = GetCollapseValue("Transform"),
 					TitleResolver = () => "Transform".Localize(),
 					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
@@ -775,7 +795,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Placement")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Placement"),
 					TitleResolver = () => "Placement".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -785,7 +805,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Reshape")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Reshape"),
 					TitleResolver = () => "Reshape".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -793,13 +813,15 @@ namespace MatterHackers.MatterControl
 						PinchOperation(),
 						TwistOperation(),
 						PlaneCutOperation(),
+#if DEBUG
 						FindSliceOperation(),
+#endif
 						HollowOutOperation(),
 					}
 				},
 				new OperationGroup("Image")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Image"),
 					TitleResolver = () => "Image".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -809,7 +831,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Path")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Path"),
 					TitleResolver = () => "Path".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -822,7 +844,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Merge")
 				{
-					Collapse = false,
+					Collapse = GetCollapseValue("Merge"),
 					TitleResolver = () => "Merge".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
@@ -835,7 +857,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Duplication")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Duplication"),
 					TitleResolver = () => "Duplication".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -846,7 +868,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Mesh")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Mesh"),
 					TitleResolver = () => "Mesh".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
@@ -858,7 +880,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Printing")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Printing"),
 					TitleResolver = () => "Printing".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -868,7 +890,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Design Apps")
 				{
-					Collapse = true,
+					Collapse = GetCollapseValue("Design Apps"),
 					TitleResolver = () => "Design Apps".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -1427,7 +1449,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("edit_support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};

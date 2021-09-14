@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = workspace.SceneContext;
 			this.workspace = workspace;
 
+			this.RowPadding = 0;
+
 			this.AddChild(CreateOpenButton(sceneContext, theme));
 
 			this.AddChild(CreateOpenFileButton(theme));
@@ -187,125 +189,88 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 				}
 
-				GuiWidget button = null;
-
 				if (namedAction is OperationGroup operationGroup)
 				{
-					if (operationGroup.Collapse)
+					var expandoSet = new FlowLayoutWidget();
+
+					var actionDropDown = CreateActionDropDown(theme, operationGroup);
+					var operationButtonGroup = CreateOperationButtonGroup(theme, operationGroup);
+
+					void UpdateVisability(object s, EventArgs e)
 					{
-						var defaultOperation = operationGroup.GetDefaultOperation();
-
-						PopupMenuButton groupButton = null;
-
-						groupButton = theme.CreateSplitButton(
-							new SplitButtonParams()
-							{
-								Icon = defaultOperation.Icon(theme),
-								ButtonAction = (menuButton) =>
-								{
-									defaultOperation.Action.Invoke(sceneContext);
-								},
-								ButtonTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
-								ButtonName = defaultOperation.Title,
-								ExtendPopupMenu = (PopupMenu popupMenu) =>
-								{
-									foreach (var operation in operationGroup.Operations)
-									{
-										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme));
-
-										operationMenu.Enabled = operation.IsEnabled(sceneContext);
-										operationMenu.ToolTipText = operation.Title;
-
-										if (!operationMenu.Enabled
-											&& !string.IsNullOrEmpty(operation.HelpText))
-										{
-											operationMenu.ToolTipText += "\n\n" + operation.HelpText;
-										}
-
-										operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
-										{
-											if (defaultOperation != operation)
-											{
-												// Update button
-												var iconButton = groupButton.Children.OfType<IconButton>().First();
-												iconButton.SetIcon(operation.Icon(theme));
-												iconButton.ToolTipText = operation.HelpText ?? operation.Title;
-
-												UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
-
-												defaultOperation = operation;
-
-												iconButton.Invalidate();
-											}
-
-											operation.Action?.Invoke(sceneContext);
-										});
-									}
-								}
-							},
-							operationGroup);
-
-						button = groupButton;
-					}
-					else
-					{
-						if (!(this.Children.LastOrDefault() is ToolbarSeparator))
+						if (operationGroup.Collapse)
 						{
-							this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
+							actionDropDown.Visible = true;
+							operationButtonGroup.Visible = false;
 						}
-
-						foreach (var operation in operationGroup.Operations)
+						else
 						{
-							var operationButton = new OperationIconButton(operation, sceneContext, theme);
-							operationButtons.Add(operationButton, operation);
-
-							this.AddChild(operationButton);
+							actionDropDown.Visible = false;
+							operationButtonGroup.Visible = true;
 						}
-
-						this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 					}
-				}
-				else if (namedAction.Icon != null)
-				{
-					button = new IconButton(namedAction.Icon(theme), theme)
+
+					UserSettings.Instance.SettingChanged += UpdateVisability;
+					operationGroup.CollapseChanged += UpdateVisability;
+					this.Closed += (s, e) =>
 					{
-						Name = namedAction.Title + " Button",
-						ToolTipText = namedAction.Title,
-						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.ToolbarButtonBackground,
-						HoverColor = theme.ToolbarButtonHover,
-						MouseDownColor = theme.ToolbarButtonDown,
+						operationGroup.CollapseChanged -= UpdateVisability;
+						UserSettings.Instance.SettingChanged -= UpdateVisability;
 					};
+
+					UpdateVisability(operationGroup, null);
+
+					expandoSet.AddChild(actionDropDown);
+					expandoSet.AddChild(operationButtonGroup);
+
+					this.AddChild(expandoSet);
 				}
 				else
 				{
-					button = new TextButton(namedAction.Title, theme)
-					{
-						Name = namedAction.Title + " Button",
-						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.ToolbarButtonBackground,
-						HoverColor = theme.ToolbarButtonHover,
-						MouseDownColor = theme.ToolbarButtonDown,
-					};
-				}
+					GuiWidget button = null;
 
-				if (button != null)
-				{
-					operationButtons.Add(button, namedAction);
-
-					// Only bind Click event if not a SplitButton
-					if (!(button is PopupMenuButton))
+					if (namedAction.Icon != null)
 					{
-						button.Click += (s, e) => UiThread.RunOnIdle(() =>
+						button = new IconButton(namedAction.Icon(theme), theme)
 						{
-							namedAction.Action.Invoke(sceneContext);
-							var partTab = button.Parents<PartTabPage>().FirstOrDefault();
-							var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
-							view3D.Object3DControlLayer.Focus();
-						});
+							Name = namedAction.Title + " Button",
+							ToolTipText = namedAction.Title,
+							Margin = theme.ButtonSpacing,
+							BackgroundColor = theme.ToolbarButtonBackground,
+							HoverColor = theme.ToolbarButtonHover,
+							MouseDownColor = theme.ToolbarButtonDown,
+						};
+					}
+					else
+					{
+						button = new TextButton(namedAction.Title, theme)
+						{
+							Name = namedAction.Title + " Button",
+							Margin = theme.ButtonSpacing,
+							BackgroundColor = theme.ToolbarButtonBackground,
+							HoverColor = theme.ToolbarButtonHover,
+							MouseDownColor = theme.ToolbarButtonDown,
+						};
 					}
 
-					this.AddChild(button);
+					if (button != null)
+					{
+						operationButtons.Add(button, namedAction);
+
+						// Only bind Click event if not a SplitButton
+						if (!(button is PopupMenuButton))
+						{
+							button.Click += (s, e) => UiThread.RunOnIdle(() =>
+							{
+								namedAction.Action.Invoke(sceneContext);
+								var partTab = button.Parents<PartTabPage>().FirstOrDefault();
+								var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
+								view3D.Object3DControlLayer.Focus();
+							});
+						}
+
+						this.AddChild(button);
+					}
 				}
 			}
 
@@ -316,6 +281,106 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			UpdateToolbarButtons(null, null);
+		}
+
+		private FlowLayoutWidget CreateOperationButtonGroup(ThemeConfig theme, OperationGroup operationGroup)
+		{
+			var buttonGroup = new FlowLayoutWidget();
+
+			foreach (var operation in operationGroup.Operations)
+			{
+				var operationButton = new OperationIconButton(operation, sceneContext, theme);
+				operationButtons.Add(operationButton, operation);
+
+				buttonGroup.AddChild(operationButton);
+			}
+
+			var collapseButton = buttonGroup.AddChild(new IconButton(StaticData.Instance.LoadIcon("collapse_single.png", 8, 16).SetToColor(theme.TextColor), theme));
+			collapseButton.Width = 16 * DeviceScale;
+			collapseButton.ToolTipText = "Collapse".Localize();
+
+			collapseButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				operationGroup.Collapse = true;
+				SceneOperations.SetCollapseValue(operationGroup, true);
+				DoWrappingLayout();
+			});
+
+			buttonGroup.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
+
+			return buttonGroup;
+		}
+
+		private GuiWidget CreateActionDropDown(ThemeConfig theme, OperationGroup operationGroup)
+		{
+			var buttonGroup = new FlowLayoutWidget();
+
+			var defaultOperation = operationGroup.GetDefaultOperation();
+
+			PopupMenuButton actionAndDropDown = null;
+
+			actionAndDropDown = theme.CreateSplitButton(
+				new SplitButtonParams()
+				{
+					Icon = defaultOperation.Icon(theme),
+					ButtonAction = (menuButton) =>
+					{
+						defaultOperation.Action.Invoke(sceneContext);
+					},
+					ButtonTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
+					ButtonName = defaultOperation.Title,
+					ExtendPopupMenu = (PopupMenu popupMenu) =>
+					{
+						foreach (var operation in operationGroup.Operations)
+						{
+							var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme));
+
+							operationMenu.Enabled = operation.IsEnabled(sceneContext);
+							operationMenu.ToolTipText = operation.Title;
+
+							if (!operationMenu.Enabled
+								&& !string.IsNullOrEmpty(operation.HelpText))
+							{
+								operationMenu.ToolTipText += "\n\n" + operation.HelpText;
+							}
+
+							operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
+							{
+								if (defaultOperation != operation)
+								{
+									// Update button
+									var iconButton = actionAndDropDown.Children.OfType<IconButton>().First();
+									iconButton.SetIcon(operation.Icon(theme));
+									iconButton.ToolTipText = operation.HelpText ?? operation.Title;
+
+									UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
+
+									defaultOperation = operation;
+
+									iconButton.Invalidate();
+								}
+
+								operation.Action?.Invoke(sceneContext);
+							});
+						}
+
+						var expandMenuItem = popupMenu.CreateMenuItem("Expand".Localize(), StaticData.Instance.LoadIcon("expand_single.png", 8, 16).SetToColor(theme.TextColor));
+
+						expandMenuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+						{
+							operationGroup.Collapse = false;
+							SceneOperations.SetCollapseValue(operationGroup, false);
+							DoWrappingLayout();
+						});
+					}
+				},
+				operationGroup);
+
+			buttonGroup.AddChild(actionAndDropDown);
+			buttonGroup.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
+
+
+			return buttonGroup;
 		}
 
 		public void NotifyResetView()
@@ -659,7 +724,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
 			}
 
-			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor), theme)
+			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("edit_support.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
