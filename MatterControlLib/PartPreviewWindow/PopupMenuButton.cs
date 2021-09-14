@@ -60,6 +60,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
+		public PopupMenuButton(string text, ImageBuffer imageBuffer, ThemeConfig theme)
+			: this(new TextIconButton(text, imageBuffer, theme)
+			{
+				Padding = new BorderDouble(5, 0, 5, 0),
+			}, theme)
+		{
+		}
+
 		public PopupMenuButton(GuiWidget viewWidget, ThemeConfig theme)
 			: base(viewWidget)
 		{

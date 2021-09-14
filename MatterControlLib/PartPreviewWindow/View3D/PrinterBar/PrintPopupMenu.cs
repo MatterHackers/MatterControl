@@ -210,6 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var exportGCodeButton = menuTheme.CreateSplitButton(new SplitButtonParams()
 					{
 						ButtonText = "Export".Localize(),
+						BackgroundColor = theme.MinimalShade,
 						ButtonTooltip = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason,
 						ExtendPopupMenu = (popupMenu) =>
 						{

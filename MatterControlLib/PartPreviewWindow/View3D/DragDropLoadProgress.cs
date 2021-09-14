@@ -93,6 +93,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				e.Graphics2D.PopTransform();
 			}
+
+			if (view3DWidget?.Scene?.Contains(TrackingObject) != true)
+			{
+				RemoveProgressBar();
+			}
 		}
 
 		public void ProgressReporter(double progress0To1, string processingState)
@@ -104,13 +109,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (progress0To1 > 1.1)
 			{
-				view3DWidget?.Invalidate();
-				progressBar.Close();
-				if (view3DWidget != null)
-				{
-					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
-				}
+				RemoveProgressBar();
 			}
+		}
+
+		private void RemoveProgressBar()
+		{
+			progressBar.Close();
+			if (view3DWidget != null)
+			{
+				view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
+			}
+			view3DWidget?.Invalidate();
 		}
 	}
 }

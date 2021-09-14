@@ -1057,10 +1057,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (mouseEvent.Button == MouseButtons.XButton1)
 			{
 				// user pressed the back button
-				breadCrumbWidget.NavigateBack();
+				NavigateBack();
 			}
 
 			base.OnMouseDown(mouseEvent);
+		}
+
+		public void NavigateBack()
+		{
+			breadCrumbWidget.NavigateBack();
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)

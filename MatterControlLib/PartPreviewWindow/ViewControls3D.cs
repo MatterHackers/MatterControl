@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly Dictionary<GuiWidget, SceneOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
 		private readonly PopupMenuButton bedMenuButton;
-		private readonly ThemeConfig theme;
 		private readonly UndoBuffer undoBuffer;
 		private readonly IconButton undoButton;
 		private readonly IconButton redoButton;
@@ -95,7 +94,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3D(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
 		{
-			this.theme = theme;
 			this.undoBuffer = undoBuffer;
 			this.ActionArea.Click += (s, e) =>
 			{
@@ -127,16 +125,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = workspace.SceneContext;
 			this.workspace = workspace;
 
-			string iconPath;
+			this.AddChild(CreateOpenButton(sceneContext, theme));
 
-			this.AddChild(CreateAddButton(sceneContext, theme));
+			this.AddChild(CreateOpenFileButton(theme));
+
+			this.AddChild(CreateSaveButton(theme));
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			bedMenuButton = new PopupMenuButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
+			bedMenuButton = new PopupMenuButton("Bed".Localize(), StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Options Menu",
-				ToolTipText = "Bed",
 				Enabled = true,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center,
@@ -144,12 +143,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.AddChild(bedMenuButton);
-
-			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
-
-			this.AddChild(CreateOpenButton(theme));
-
-			this.AddChild(CreateSaveButton(theme));
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
@@ -509,14 +502,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
 		}
 
-		private IconButton CreateOpenButton(ThemeConfig theme)
+		private GuiWidget CreateOpenFileButton(ThemeConfig theme)
 		{
-			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var popupMenu = new PopupMenuButton("", theme)
 			{
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Open File".Localize(),
 				Name = "Open File Button"
 			};
+
+			if (popupMenu.Children<SimpleButton>().FirstOrDefault() is SimpleButton simpleButton)
+			{
+				simpleButton.Padding = 0;
+			};
+
+			var openMenuItems = new PopupMenu(ApplicationController.Instance.MenuTheme);
+			popupMenu.PopupContent = openMenuItems;
+
+			var openButton = openMenuItems.CreateMenuItem("Open File".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
+
 			openButton.Click += (s, e) =>
 			{
 				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
@@ -543,7 +545,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 				}, .1);
 			};
-			return openButton;
+
+			return popupMenu;
 		}
 
 		private void UpdateToolbarButtons(object sender, EventArgs e)
@@ -576,30 +579,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateAddButton(ISceneContext sceneContext, ThemeConfig theme)
+		private GuiWidget CreateOpenButton(ISceneContext sceneContext, ThemeConfig theme)
 		{
-			var buttonView = new TextIconButton(
-				"",
-				StaticData.Instance.LoadIcon("cube_add.png", 16, 16).SetToColor(theme.TextColor),
-				theme);
-
-			// Remove right Padding for drop style
-			buttonView.Padding = buttonView.Padding.Clone(right: 0);
-
-			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-			};
-
 			var openColor = theme.ResolveColor(theme.BackgroundColor, theme.SlightShade);
 
 			PopupMenuButton libraryPopup = null;
-			libraryPopup = new PopupMenuButton(buttonView, theme)
+			libraryPopup = new PopupMenuButton("Open".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				MakeScrollable = false,
 				Name = "Add Content Menu",
-				ToolTipText = "Add Content".Localize(),
 				AlwaysKeepOpen = true,
 				DynamicPopupContent = () =>
 				{
@@ -678,8 +666,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
 				OpenColor = openColor,
-				DrawArrow = true,
-				Margin = theme.ButtonSpacing,
+				// DrawArrow = true,
+				Margin = 0,
 				PopupBorderColor = Color.Transparent,
 				PopupHAnchor = HAnchor.Fit,
 				PopupVAnchor = VAnchor.Fit
@@ -720,6 +708,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			return theme.CreateSplitButton(new SplitButtonParams()
 			{
+				ButtonText = "Save".Localize(),
 				ButtonName = "Save",
 				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16).SetToColor(theme.TextColor),
 				ButtonAction = (menuButton) =>
@@ -740,7 +729,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						menuButton.Enabled = true;
 					}).ConfigureAwait(false);
 				},
-				ButtonTooltip = "Save".Localize(),
 				ExtendPopupMenu = (PopupMenu popupMenu) =>
 				{
 					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());
