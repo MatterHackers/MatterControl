@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
 		internal ISceneContext sceneContext;
-		protected ViewControls3D viewControls3D;
+		protected ViewToolBarControls viewToolBarControls;
 		protected ThemeConfig theme;
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			viewControls3D = new ViewControls3D(workspace, theme, sceneContext.Scene.UndoBuffer, isPrinterType, !(this is PrinterTabPage))
+			viewToolBarControls = new ViewToolBarControls(workspace, theme, sceneContext.Scene.UndoBuffer, isPrinterType, !(this is PrinterTabPage))
 			{
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
@@ -78,28 +78,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Shade border if toolbar is secondary rather than primary
-			theme.ApplyBottomBorder(viewControls3D, shadedBorder: this is PrinterTabPage);
+			theme.ApplyBottomBorder(viewToolBarControls, shadedBorder: this is PrinterTabPage);
 
-			viewControls3D.ResetView += (sender, e) =>
+			viewToolBarControls.ResetView += (sender, e) =>
 			{
 				if (view3DWidget.Visible)
 				{
 					this.view3DWidget.ResetView();
 				}
 			};
-			viewControls3D.ExtendOverflowMenu = this.GetViewControls3DOverflowMenu;
-			viewControls3D.OverflowButton.Name = "View3D Overflow Menu";
 
 			// The 3D model view
 			view3DWidget = new View3DWidget(
 				Printer,
 				sceneContext,
-				viewControls3D,
+				viewToolBarControls,
 				theme,
 				this,
 				editorType: isPrinterType ? Object3DControlsLayer.EditorType.Printer : Object3DControlsLayer.EditorType.Part);
 
-			viewControls3D.SetView3DWidget(view3DWidget);
+			viewToolBarControls.SetView3DWidget(view3DWidget);
 
 			this.AddChild(topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -125,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			toolbarAndView3DWidget.AddChild(viewControls3D);
+			toolbarAndView3DWidget.AddChild(viewToolBarControls);
 
 			var favoritesBarContext = new LibraryConfig()
 			{

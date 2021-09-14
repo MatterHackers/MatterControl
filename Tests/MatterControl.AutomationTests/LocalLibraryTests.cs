@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter();
 
 				testRunner.AddItemToBed()
-					.ClickByName("Save Menu SplitButton", offset: new Agg.Point2D(10, 0))
+					.ClickByName("Save Menu SplitButton", offset: new Agg.Point2D(30, 0))
 					.ClickByName("Save As Menu Item")
 					.DoubleClickByName("Library Row Item Collection")
 					.DoubleClickByName("Local Library Row Item Collection")

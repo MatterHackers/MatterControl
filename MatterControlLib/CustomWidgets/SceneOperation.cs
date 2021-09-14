@@ -97,7 +97,22 @@ namespace MatterHackers.Agg.UI
 
 		public string GroupRecordId => $"ActiveButton_{this.Id}_Group";
 
-		public bool Collapse { get; set; }
+		public EventHandler CollapseChanged;
+
+		private bool _collapse;
+
+		public bool Collapse
+		{
+			get => _collapse;
+			set
+			{
+				if (_collapse != value)
+				{
+					_collapse = value;
+					CollapseChanged?.Invoke(this, null);
+				}
+			}
+		}
 
 		public SceneOperation GetDefaultOperation()
 		{
