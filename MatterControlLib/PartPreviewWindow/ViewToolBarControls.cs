@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					GuiWidget button = null;
+					GuiWidget button;
 
 					if (namedAction.Icon != null)
 					{
@@ -253,24 +253,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						};
 					}
 
-					if (button != null)
+					operationButtons.Add(button, namedAction);
+
+					button.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						operationButtons.Add(button, namedAction);
+						namedAction.Action.Invoke(sceneContext);
+						var partTab = button.Parents<PartTabPage>().FirstOrDefault();
+						var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
+						view3D.Object3DControlLayer.Focus();
+					});
 
-						// Only bind Click event if not a SplitButton
-						if (!(button is PopupMenuButton))
-						{
-							button.Click += (s, e) => UiThread.RunOnIdle(() =>
-							{
-								namedAction.Action.Invoke(sceneContext);
-								var partTab = button.Parents<PartTabPage>().FirstOrDefault();
-								var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
-								view3D.Object3DControlLayer.Focus();
-							});
-						}
-
-						this.AddChild(button);
-					}
+					this.AddChild(button);
 				}
 			}
 
@@ -318,7 +311,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var defaultOperation = operationGroup.GetDefaultOperation();
 
 			PopupMenuButton actionAndDropDown = null;
-
 			actionAndDropDown = theme.CreateSplitButton(
 				new SplitButtonParams()
 				{
@@ -376,9 +368,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				operationGroup);
 
+			operationButtons.Add(actionAndDropDown, operationGroup);
+
 			buttonGroup.AddChild(actionAndDropDown);
 			buttonGroup.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
-
 
 			return buttonGroup;
 		}
