@@ -1427,7 +1427,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("edit_support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};

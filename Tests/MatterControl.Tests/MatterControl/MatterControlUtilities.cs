@@ -757,7 +757,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static AutomationRunner SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
 		{
-			return testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(8, 0))
+			return testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(30, 0))
 				.ClickByName("Save As Menu Item")
 				.Delay(1)
 				.Type(newFileName)
