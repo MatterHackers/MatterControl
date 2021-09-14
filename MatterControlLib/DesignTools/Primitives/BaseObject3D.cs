@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression CalculationHeight { get; set; } = .1;
 
 		[DisplayName("Expand")]
-		[Slider(1, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
+		[Slider(1, 30, Easing.EaseType.Quadratic, snapDistance: .5)]
 		public DoubleOrExpression BaseSize { get; set; } = 3;
 
 		[Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
@@ -257,6 +257,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();
+						Invalidate(InvalidateType.DisplayValues);
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

@@ -49,7 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Back Ratio")]
 		[Description("Describes the percent that the back of the part will be pinched")]
 		[DescriptionImage("https://lh3.googleusercontent.com/CAi26qYHHdneoU0yhaY2bdVU4RJP7PDCjEUrC3i-smstyvm2FC_dteHU16eYyEyK9krCyK3C2TkSpE5YDcAkHBwq40ddaLBQ13yVdQCB")]
-		public double PinchPercent { get; set; } = 50;
+		[Slider(0, 300, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public DoubleOrExpression PinchPercent { get; set; } = 50;
 
 		public override Task Rebuild()
 		{
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					bool valuesChanged = false;
 
-					PinchPercent = agg_basics.Clamp(PinchPercent, 0, 3, ref valuesChanged);
+					var pinchPercent = PinchPercent.ClampIfNotCalculated(this, 0, 300, ref valuesChanged);
 
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var pos = originalMesh.Vertices[i];
 							pos = pos.Transform(itemMatrix);
 
-							var ratioToApply = PinchPercent / 100.0;
+							var ratioToApply = pinchPercent / 100.0;
 
 							var distFromCenter = pos.X - aabb.Center.X;
 							var distanceToPinch = distFromCenter * (1 - ratioToApply);
@@ -116,10 +117,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
 
-					if (valuesChanged)
-					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
+					Invalidate(InvalidateType.DisplayValues);
 
 					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;

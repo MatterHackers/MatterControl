@@ -108,7 +108,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						var ratioToApply = PinchRatio;
 
 						var distFromCenter = pos.X - aabb.Center.X;
-						var distanceToPinch = distFromCenter * (1 - PinchRatio);
 						var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
 
 						// find out how much to pinch based on y position

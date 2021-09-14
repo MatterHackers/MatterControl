@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 
 			string thumbnailId = libraryItem.ID;
 
-			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height);
+			var thumbnail = GenerateThumbnail(object3D, thumbnailId, width, height);
 			if (thumbnail != null)
 			{
 				// Cache content thumbnail
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Limit to private scope until need returns
-		private ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
+		private ImageBuffer GenerateThumbnail(IObject3D item, string thumbnailId, int width, int height)
 		{
 			if (item == null)
 			{

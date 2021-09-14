@@ -549,6 +549,7 @@ namespace MatterHackers.MatterControl
 						Name = buttonParams.ButtonName,
 						Enabled = buttonParams.ButtonEnabled,
 						ToolTipText = buttonParams.ButtonTooltip,
+						Padding = new BorderDouble(5, 0, 5, 0)
 					};
 				}
 			}
@@ -578,13 +579,10 @@ namespace MatterHackers.MatterControl
 			};
 
 			menuButton.Name = buttonParams.ButtonName + " Menu SplitButton";
-			if (buttonParams.ButtonText == null)
+			menuButton.BackgroundColor = buttonParams.BackgroundColor;
+			if (menuButton.BackgroundColor == Color.Transparent)
 			{
 				menuButton.BackgroundColor = this.ToolbarButtonBackground;
-			}
-			else
-			{
-				menuButton.BackgroundColor = this.MinimalShade;
 			}
 
 			menuButton.HoverColor = this.ToolbarButtonHover;
@@ -768,5 +766,7 @@ namespace MatterHackers.MatterControl
 		public Action<PopupMenu> ExtendPopupMenu { get; set; }
 
 		public string ButtonText { get; set; }
+
+		public Color BackgroundColor { get; set; }
 	}
 }
