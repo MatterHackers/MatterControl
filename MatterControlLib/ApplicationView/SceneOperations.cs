@@ -762,7 +762,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Transform")
 				{
-					Collapse = true,
+					Collapse = false,
 					TitleResolver = () => "Transform".Localize(),
 					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
@@ -822,7 +822,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Merge")
 				{
-					Collapse = true,
+					Collapse = false,
 					TitleResolver = () => "Merge".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()

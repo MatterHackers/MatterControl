@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton zoomButton;
 		private RadioIconButton partSelectButton;
 
-		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewToolBarControls viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
@@ -2140,7 +2140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
-		protected ViewControls3D viewControls3D { get; }
+		protected ViewToolBarControls viewControls3D { get; }
 
 		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 

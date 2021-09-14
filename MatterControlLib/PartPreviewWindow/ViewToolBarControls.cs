@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3DButtons TransformMode { get; set; }
 	}
 
-	public class ViewControls3D : OverflowBar
+	public class ViewToolBarControls : FlowLeftRightWithWrapping
 	{
 		public event EventHandler ResetView;
 
@@ -91,36 +91,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly IconButton undoButton;
 		private readonly IconButton redoButton;
 
-		public ViewControls3D(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
-			: base(theme)
+		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 		{
 			this.undoBuffer = undoBuffer;
-			this.ActionArea.Click += (s, e) =>
-			{
-				view3DWidget.Object3DControlLayer.Focus();
-			};
-
-			this.OverflowButton.ToolTipText = "Tool Bar Overflow".Localize();
-
-			this.OverflowButton.DynamicPopupContent = () =>
-			{
-				bool IncludeInMenu(SceneOperation operation)
-				{
-					foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
-					{
-						if (operationButtons.TryGetValue(widget, out SceneOperation buttonOperation)
-							&& buttonOperation == operation)
-						{
-							return true;
-						}
-					}
-
-					return false;
-				}
-
-				return SceneOperations.GetToolbarOverflowMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
-			};
-
 			this.IsPrinterMode = isPrinterType;
 			this.sceneContext = workspace.SceneContext;
 			this.workspace = workspace;
@@ -276,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else
 					{
-						if (!(this.ActionArea.Children.LastOrDefault() is ToolbarSeparator))
+						if (!(this.Children.LastOrDefault() is ToolbarSeparator))
 						{
 							this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 						}

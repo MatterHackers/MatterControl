@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			view3DWidget.Object3DControlLayer.EditorMode = Object3DControlsLayer.EditorType.Printer;
 
-			viewControls3D.TransformStateChanged += (s, e) =>
+			viewToolBarControls.TransformStateChanged += (s, e) =>
 			{
 				switch (e.TransformMode)
 				{
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			viewControls3D.ResetView += (sender, e) =>
+			viewToolBarControls.ResetView += (sender, e) =>
 			{
 				if (gcode2DWidget?.Visible == true)
 				{
