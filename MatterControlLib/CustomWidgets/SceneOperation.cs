@@ -30,9 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
@@ -99,17 +97,41 @@ namespace MatterHackers.Agg.UI
 
 		public EventHandler CollapseChanged;
 
-		private bool _collapse;
+		private static string CollapseKey(string opperationGroupName)
+		{
+			return $"scene_operation_collapse_{opperationGroupName}";
+		}
 
 		public bool Collapse
 		{
-			get => _collapse;
+			get
+			{
+				return UserSettings.Instance.Fields.GetBool(CollapseKey(this.Id), true);
+			}
+
 			set
 			{
-				if (_collapse != value)
+				if (Collapse != value)
 				{
-					_collapse = value;
+					UserSettings.Instance.Fields.SetBool(CollapseKey(Id), value);
 					CollapseChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		public EventHandler VisibleChanged;
+
+		private bool _visible;
+
+		public bool Visible
+		{
+			get => _visible;
+			set
+			{
+				if (_visible != value)
+				{
+					_visible = value;
+					VisibleChanged?.Invoke(this, null);
 				}
 			}
 		}

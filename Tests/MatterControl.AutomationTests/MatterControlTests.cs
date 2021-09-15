@@ -60,21 +60,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task View3DOverflowMenus()
-		{
-			await MatterControlUtilities.RunTest(testRunner =>
-			{
-				testRunner.WaitForFirstDraw();
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
-				testRunner.ClickByName("Model View Button");
-				testRunner.ClickByName("View3D Overflow Menu");
-
-				return Task.CompletedTask;
-			});
-		}
-
-		[Test]
 		public async Task ViewGenerateSupportMenu()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

@@ -99,6 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.workspace = workspace;
 
 			this.RowPadding = 0;
+			this.RowBoarder = new BorderDouble(0, 0, 0, 1);
+			this.RowBoarderColor = theme.GetBorderColor(50);
 
 			this.AddChild(CreateOpenButton(sceneContext, theme));
 
@@ -295,7 +297,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			collapseButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				operationGroup.Collapse = true;
-				SceneOperations.SetCollapseValue(operationGroup, true);
 				DoWrappingLayout();
 			});
 
@@ -361,7 +362,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						expandMenuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 						{
 							operationGroup.Collapse = false;
-							SceneOperations.SetCollapseValue(operationGroup, false);
 							DoWrappingLayout();
 						});
 					}
