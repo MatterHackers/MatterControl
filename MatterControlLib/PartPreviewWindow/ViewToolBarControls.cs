@@ -269,6 +269,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			// add the options menu
+			var optionsButton = new OverflowBar.OverflowMenuButton(theme);
+			this.AddChild(optionsButton);
+			optionsButton.Name = "Printer Overflow Menu";
+			optionsButton.ToolTipText = "Printer Options".Localize();
+			GeneratePrinterOverflowMenu(optionsButton, theme);
+
 			// Register listeners
 			undoBuffer.Changed += UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged += UpdateToolbarButtons;
@@ -276,6 +283,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			UpdateToolbarButtons(null, null);
+		}
+
+		private void GeneratePrinterOverflowMenu(PopupMenuButton optionsButton, ThemeConfig theme)
+		{
+			optionsButton.DynamicPopupContent = () =>
+			{
+				return new GuiWidget(50, 100);
+			};
 		}
 
 		private FlowLayoutWidget CreateOperationButtonGroup(ThemeConfig theme, OperationGroup operationGroup)
