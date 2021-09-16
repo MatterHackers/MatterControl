@@ -102,9 +102,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RowBoarder = new BorderDouble(0, 0, 0, 1);
 			this.RowBoarderColor = theme.GetBorderColor(50);
 
-			this.AddChild(CreateOpenButton(sceneContext, theme));
+			var openLibraryButton = CreateOpenLibraryButton(sceneContext, theme);
 
-			this.AddChild(CreateOpenFileButton(theme));
+			this.AddChild(CreateOpenFileButton(openLibraryButton, theme));
 
 			this.AddChild(CreateSaveButton(theme));
 
@@ -307,6 +307,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UpdateToolbarButtons(null, null);
 		}
 
+		private string Collapsed;
+		private string Expanded;
+		private string Hidden;
+
 		private GuiWidget GenerateToolBarOptionsMenu(ThemeConfig theme)
 		{
 			var popupMenu = new PopupMenu(theme)
@@ -316,36 +320,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonData = new (string, string)[]
 			{
-				("Collapsed".Localize(), "Collapsed"),
-				("Expanded".Localize(), "Expanded"),
-				("Hidden".Localize(), "Hidden"),
+				(nameof(Collapsed), "Collapse".Localize()),
+				(nameof(Expanded), "Expand".Localize()),
+				(nameof(Hidden), "Hide".Localize()),
 			};
 
 			foreach (var namedAction in SceneOperations.All)
 			{
 				if (namedAction is OperationGroup operationGroup)
 				{
-					var startingValue = operationGroup.Collapse ? "Collapsed" : "Expanded";
+					var startingValue = operationGroup.Collapse ? nameof(Collapsed) : nameof(Expanded);
 					if(!operationGroup.Visible)
 					{
-						startingValue = "Hidden";
+						startingValue = nameof(Hidden);
 					}
 
 					popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
 					{
 						switch (value)
 						{
-							case "Expanded":
+							case nameof(Expanded):
 								operationGroup.Collapse = false;
 								operationGroup.Visible = true;
 								break;
 
-							case "Collapsed":
+							case nameof(Collapsed):
 								operationGroup.Collapse = true;
 								operationGroup.Visible = true;
 								break;
 
-							case "Hidden":
+							case nameof(Hidden):
 								operationGroup.Visible = false;
 								break;
 						}
@@ -611,7 +615,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
 		}
 
-		private GuiWidget CreateOpenFileButton(ThemeConfig theme)
+		private GuiWidget CreateOpenFileButton(GuiWidget openLibraryButton, ThemeConfig theme)
 		{
 			var popupMenu = new PopupMenuButton("", theme)
 			{
@@ -655,6 +659,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}, .1);
 			};
 
+			popupMenu.AddChild(openLibraryButton, 0);
+
 			return popupMenu;
 		}
 
@@ -688,7 +694,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateOpenButton(ISceneContext sceneContext, ThemeConfig theme)
+		private GuiWidget CreateOpenLibraryButton(ISceneContext sceneContext, ThemeConfig theme)
 		{
 			var openColor = theme.ResolveColor(theme.BackgroundColor, theme.SlightShade);
 
