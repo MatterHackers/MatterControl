@@ -808,6 +808,7 @@ namespace MatterHackers.MatterControl
 				new OperationGroup("Path")
 				{
 					TitleResolver = () => "Path".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						LinearExtrudeOperation(),
@@ -815,6 +816,7 @@ namespace MatterHackers.MatterControl
 						SmoothPathOperation(),
 						InflatePathOperation(),
 						OutlinePathOperation(),
+						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Merge")
@@ -847,12 +849,12 @@ namespace MatterHackers.MatterControl
 					{
 						ReduceOperation(),
 						RepairOperation(),
-						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Printing")
 				{
 					TitleResolver = () => "Printing".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						ToggleSupportOperation(),
@@ -862,6 +864,7 @@ namespace MatterHackers.MatterControl
 				new OperationGroup("Design Apps")
 				{
 					TitleResolver = () => "Design Apps".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						FitToBoundsOperation(),

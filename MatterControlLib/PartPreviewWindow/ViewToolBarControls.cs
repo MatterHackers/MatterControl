@@ -200,24 +200,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					void UpdateVisability(object s, EventArgs e)
 					{
-						if (operationGroup.Collapse)
+						if (operationGroup.Visible)
 						{
-							actionDropDown.Visible = true;
-							operationButtonGroup.Visible = false;
+							if (operationGroup.Collapse)
+							{
+								actionDropDown.Visible = true;
+								operationButtonGroup.Visible = false;
+
+								DoWrappingLayout();
+							}
+							else
+							{
+								actionDropDown.Visible = false;
+								operationButtonGroup.Visible = true;
+
+								DoWrappingLayout();
+							}
 						}
 						else
 						{
 							actionDropDown.Visible = false;
-							operationButtonGroup.Visible = true;
+							operationButtonGroup.Visible = false;
+
+							DoWrappingLayout();
 						}
 					}
 
 					UserSettings.Instance.SettingChanged += UpdateVisability;
 					operationGroup.CollapseChanged += UpdateVisability;
+					operationGroup.VisibleChanged += UpdateVisability;
 					this.Closed += (s, e) =>
 					{
-						operationGroup.CollapseChanged -= UpdateVisability;
 						UserSettings.Instance.SettingChanged -= UpdateVisability;
+						operationGroup.CollapseChanged -= UpdateVisability;
+						operationGroup.VisibleChanged -= UpdateVisability;
 					};
 
 					UpdateVisability(operationGroup, null);
@@ -270,11 +286,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// add the options menu
-			var optionsButton = new OverflowBar.OverflowMenuButton(theme);
+			this.AddChild(new HorizontalSpacer());
+
+			var overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
+			var optionsButton = new PopupMenuButton(overflowIcon, theme)
+			{
+				AlignToRightEdge = true
+			};
 			this.AddChild(optionsButton);
-			optionsButton.Name = "Printer Overflow Menu";
-			optionsButton.ToolTipText = "Printer Options".Localize();
-			GeneratePrinterOverflowMenu(optionsButton, theme);
+			optionsButton.Name = "ToolBar Overflow Menu";
+			optionsButton.ToolTipText = "Tool Bar Options".Localize();
+			optionsButton.DynamicPopupContent = () => GenerateToolBarOptionsMenu(theme);
 
 			// Register listeners
 			undoBuffer.Changed += UndoBuffer_Changed;
@@ -285,12 +307,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UpdateToolbarButtons(null, null);
 		}
 
-		private void GeneratePrinterOverflowMenu(PopupMenuButton optionsButton, ThemeConfig theme)
+		private GuiWidget GenerateToolBarOptionsMenu(ThemeConfig theme)
 		{
-			optionsButton.DynamicPopupContent = () =>
+			var popupMenu = new PopupMenu(theme)
 			{
-				return new GuiWidget(50, 100);
+				Padding = new BorderDouble(0, 7),
 			};
+
+			var buttonData = new (string, string)[]
+			{
+				("Collapsed".Localize(), "Collapsed"),
+				("Expanded".Localize(), "Expanded"),
+				("Hidden".Localize(), "Hidden"),
+			};
+
+			foreach (var namedAction in SceneOperations.All)
+			{
+				if (namedAction is OperationGroup operationGroup)
+				{
+					var startingValue = operationGroup.Collapse ? "Collapsed" : "Expanded";
+					if(!operationGroup.Visible)
+					{
+						startingValue = "Hidden";
+					}
+
+					popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
+					{
+						switch (value)
+						{
+							case "Expanded":
+								operationGroup.Collapse = false;
+								operationGroup.Visible = true;
+								break;
+
+							case "Collapsed":
+								operationGroup.Collapse = true;
+								operationGroup.Visible = true;
+								break;
+
+							case "Hidden":
+								operationGroup.Visible = false;
+								break;
+						}
+					});
+				}
+			};
+
+			return popupMenu;
 		}
 
 		private FlowLayoutWidget CreateOperationButtonGroup(ThemeConfig theme, OperationGroup operationGroup)

@@ -236,47 +236,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var localIndex = index;
 
-				var radioButton = new RadioTextButton(enumItem.Value, theme)
-				{
-					VAnchor = VAnchor.Center | VAnchor.Fit,
-					DrawUnderline = false,
-					BackgroundRadius = theme.ButtonRadius + 4,
-					Margin = new BorderDouble(5, 0, 0, 0),
-					Padding = new BorderDouble(9, 5),
-					// BackgroundInset = new BorderDouble(5, 4),
-					SelectedBackgroundColor = theme.PrimaryAccentColor,
-					UnselectedBackgroundColor = theme.MinimalShade,
-					BackgroundColor = theme.MinimalShade,
-					ToolTipText = descriptions[index]
-				};
-
-				radioButton.CheckedStateChanged += (s, e) =>
-				{
-					var button = s as RadioTextButton;
-					button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
-				};
-
-				// set it if checked
-				if (enumItem.Key == this.InitialValue)
-				{
-					radioButton.Checked = true;
-				}
+				var radioButton = CreateThemedRadioButton(enumItem.Value, enumItem.Key, descriptions[index], this.InitialValue == enumItem.Key, () => this.SetValue(enumItem.Key, true), theme);
 
 				menuRow.AddChild(radioButton);
 
 				var localItem = enumItem;
-				radioButton.CheckedStateChanged += (s, e) =>
-				{
-					if (radioButton.Checked)
-					{
-						this.SetValue(localItem.Key, true);
-					}
-				};
 
 				index++;
 			}
 
 			this.Content = menuRow;
+		}
+
+		public static RadioTextButton CreateThemedRadioButton(string text, string key, string toolTipText, bool startChecked, Action setChecked, ThemeConfig theme)
+		{
+			var radioButton = new RadioTextButton(text, theme)
+			{
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				DrawUnderline = false,
+				BackgroundRadius = theme.ButtonRadius + 4,
+				Margin = new BorderDouble(5, 0, 0, 0),
+				Padding = new BorderDouble(9, 5),
+				// BackgroundInset = new BorderDouble(5, 4),
+				SelectedBackgroundColor = theme.PrimaryAccentColor,
+				UnselectedBackgroundColor = theme.MinimalShade,
+				BackgroundColor = theme.MinimalShade,
+				ToolTipText = toolTipText
+			};
+
+			radioButton.CheckedStateChanged += (s, e) =>
+			{
+				var button = s as RadioTextButton;
+				button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
+			};
+
+			// set it if checked
+			radioButton.Checked = startChecked;
+
+			radioButton.CheckedStateChanged += (s, e) =>
+			{
+				if (radioButton.Checked)
+				{
+					setChecked?.Invoke();
+				}
+			};
+
+			return radioButton;
 		}
 
 		private void AddIconRow(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)

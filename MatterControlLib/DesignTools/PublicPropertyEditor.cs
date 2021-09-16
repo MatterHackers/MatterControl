@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rowContainer = CreateSettingsRow(property,
-						PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }),
+						PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) => { return double.Parse(valueString); }, theme),
 						theme);
 				}
 			}
@@ -836,7 +836,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						doubleExpresion.Expression = valueString;
 						return doubleExpresion;
-					}),
+					}, theme),
 					theme,
 					rows);
 
@@ -911,7 +911,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						intExpresion.Expression = valueString;
 						return intExpresion;
-					}),
+					}, theme),
 					theme,
 					rows);
 

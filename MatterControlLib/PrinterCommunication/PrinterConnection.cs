@@ -1910,7 +1910,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 						resetSerialPort.Close();
 
-						// let the process know we canceled not ended normally.
 						CommunicationState = CommunicationStates.Disconnected;
 					}
 				}
@@ -2114,8 +2113,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public PrintingModes PrintingMode  { get; private set; }
 
-		private CancellationTokenSource printingCancellation;
-
 		public enum PrintingModes
 		{
 			Normal,
@@ -2138,8 +2135,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 			this.PrintingMode = printingMode;
 
-			printingCancellation = new CancellationTokenSource();
-
 			haveReportedError = false;
 			PrintWasCanceled = false;
 			cancelPrintNextWriteLine = false;
@@ -2149,6 +2144,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 			ClearQueuedGCode();
 			ActivePrintTask = printTaskToUse;
+			CanceledPrintTask = null;
 
 			await Task.Run(() =>
 			{
@@ -2203,7 +2199,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 								ActivePrintTask.CommitAndPushToServer();
 
-								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
+								Task.Run(() => this.SyncProgressToDB());
 
 								PrintStarted?.Invoke(this, null);
 							}
@@ -2297,9 +2293,10 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		{
 			lock (locker)
 			{
-				// Flag as canceled, wait briefly for listening threads to catch up
-				printingCancellation.Cancel();
-				Thread.Sleep(15);
+				TerminalLog.WriteLine("Print Canceled");
+
+				// Flag as canceled
+				this.cancelPrintNextWriteLine = true;
 
 				CancelInProgressStreamProcessors();
 				// get rid of all the gcode we have left to print
@@ -2312,7 +2309,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 
 				// let the process know we canceled not ended normally.
-				this.cancelPrintNextWriteLine = true;
 				CanceleRequested?.Invoke(this, null);
 				if (markPrintCanceled
 					&& ActivePrintTask != null)
@@ -2509,13 +2505,17 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public GCodeStream TotalGCodeStream => totalGCodeStream;
 
-		private void SyncProgressToDB(CancellationToken cancellationToken)
+		private void SyncProgressToDB()
 		{
-			// var timer = Stopwatch.StartNew();
+			bool WatingForPrintToFinish()
+			{
+				var canceled = cancelPrintNextWriteLine || PrintWasCanceled;
+				var stillPrinting = this.CommunicationState != CommunicationStates.FinishedPrint && this.CommunicationState != CommunicationStates.Connected;
 
-			while (!cancellationToken.IsCancellationRequested
-				&& this.CommunicationState != CommunicationStates.FinishedPrint
-				&& this.CommunicationState != CommunicationStates.Connected)
+				return !canceled && stillPrinting;
+			}
+
+			while (WatingForPrintToFinish())
 			{
 				double secondsSinceStartedPrint = timePrinting.Elapsed.TotalSeconds;
 

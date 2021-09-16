@@ -121,16 +121,28 @@ namespace MatterHackers.Agg.UI
 
 		public EventHandler VisibleChanged;
 
-		private bool _visible;
+		private static string VisibleKey(string opperationGroupName)
+		{
+			return $"scene_operation_visible_{opperationGroupName}";
+		}
+
+		public static bool GetVisible(string id, bool defaultIfNotSet)
+		{
+			return UserSettings.Instance.Fields.GetBool(VisibleKey(id), defaultIfNotSet);
+		}
 
 		public bool Visible
 		{
-			get => _visible;
+			get
+			{
+				return GetVisible(this.Id, true);
+			}
+
 			set
 			{
-				if (_visible != value)
+				if (Visible != value)
 				{
-					_visible = value;
+					UserSettings.Instance.Fields.SetBool(VisibleKey(Id), value);
 					VisibleChanged?.Invoke(this, null);
 				}
 			}
