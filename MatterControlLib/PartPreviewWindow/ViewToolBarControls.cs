@@ -353,7 +353,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								operationGroup.Visible = false;
 								break;
 						}
-					}, 20 * GuiWidget.DeviceScale);
+					}, 40 * GuiWidget.DeviceScale);
+
+					popupMenu.CreateSeparator();
 				}
 			};
 
@@ -617,10 +619,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget CreateOpenFileButton(GuiWidget openLibraryButton, ThemeConfig theme)
 		{
-			var popupMenu = new PopupMenuButton("", theme)
+			var popupMenu = new PopupMenuButton(openLibraryButton, theme)
 			{
 				Name = "Open File Button"
 			};
+			popupMenu.DistinctPopupButton = true;
+			popupMenu.DrawArrow = true;
+			openLibraryButton.Selectable = true;
 
 			if (popupMenu.Children<SimpleButton>().FirstOrDefault() is SimpleButton simpleButton)
 			{
@@ -630,9 +635,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openMenuItems = new PopupMenu(ApplicationController.Instance.MenuTheme);
 			popupMenu.PopupContent = openMenuItems;
 
-			var openButton = openMenuItems.CreateMenuItem("Open File".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
+			var openFileButton = openMenuItems.CreateMenuItem("Open File".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
 
-			openButton.Click += (s, e) =>
+			openFileButton.Click += (s, e) =>
 			{
 				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
 
@@ -659,7 +664,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}, .1);
 			};
 
-			popupMenu.AddChild(openLibraryButton, 0);
+			// popupMenu.AddChild(openLibraryButton, 0);
 
 			return popupMenu;
 		}

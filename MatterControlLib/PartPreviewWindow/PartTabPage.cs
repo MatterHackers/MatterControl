@@ -97,6 +97,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this,
 				editorType: isPrinterType ? Object3DControlsLayer.EditorType.Printer : Object3DControlsLayer.EditorType.Part);
 
+			// add in the task display
+			view3DWidget.AddChild(new RunningTasksWidget(theme, Printer)
+			{
+				MinimumSize = new Vector2(100, 0),
+				Margin = new BorderDouble(9, 0, 0, 9),
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				HAnchor = HAnchor.Left | HAnchor.Fit,
+			});
+
 			viewToolBarControls.SetView3DWidget(view3DWidget);
 
 			this.AddChild(topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)

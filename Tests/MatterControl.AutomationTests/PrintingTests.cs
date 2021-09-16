@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
 						.ClickByName("Disconnect from printer button")
 						.ClickByName("Yes Button") // accept the disconnect
-						.ClickByName("Cancel Wizard Button") // click the close on the collect info dialog
+						//.ClickByName("Cancel Wizard Button") // click the close on the collect info dialog
 						.ClickByName("Connect to printer button") // Reconnect
 						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
