@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public static class PublicPropertySliderFunctions
 	{
-		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, PPEContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString)
+		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, PPEContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString, ThemeConfig theme)
 		{
 			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
 			if (sliderAttribute != null)
@@ -54,6 +54,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					VAnchor = VAnchor.Center,
 				};
+
+				slider.View.TrackColor = theme.TextColor;
+				slider.View.ThumbColor = theme.PrimaryAccentColor;
+				slider.View.TrackHeight = 1 * GuiWidget.DeviceScale;
 
 				Func<double> getFieldValue = null;
 

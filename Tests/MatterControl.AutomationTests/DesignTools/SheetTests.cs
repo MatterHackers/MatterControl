@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			systemWindow.RunTest(testRunner =>
 			{
-				testRunner.Delay(60);
+				//testRunner.Delay(60);
 				return Task.CompletedTask;
 			},
 			2000);

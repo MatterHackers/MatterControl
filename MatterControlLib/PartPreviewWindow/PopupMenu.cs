@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -410,6 +411,73 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
+		/// <summary>
+		/// Create and add a new menu item
+		/// </summary>
+		/// <param name="text">The text of the item</param>
+		/// <param name="items"></param>
+		/// <param name="getter"></param>
+		/// <param name="setter"></param>
+		/// <returns></returns>
+		public MenuItem CreateButtonSelectMenuItem(string text, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		{
+			var textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Padding = MenuPadding,
+				VAnchor = VAnchor.Center,
+			};
+
+			return this.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter);
+		}
+
+		public MenuItem CreateButtonSelectMenuItem(string text, ImageBuffer icon, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				Selectable = false
+			};
+			row.AddChild(new IconButton(icon, theme));
+
+			var textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Padding = MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			row.AddChild(textWidget);
+
+			return this.CreateButtonSelectMenuItem(row, text, buttonKvps, startingValue, setter);
+		}
+
+		public MenuItem CreateButtonSelectMenuItem(GuiWidget guiWidget, string name, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Name = name + " Menu Item",
+			};
+
+			row.AddChild(guiWidget);
+			row.AddChild(new HorizontalSpacer());
+
+			foreach(var buttonKvp in buttonKvps)
+			{
+				var localKey = buttonKvp.key;
+				var button = EnumDisplayField.CreateThemedRadioButton(buttonKvp.text, buttonKvp.key, "", startingValue == buttonKvp.key, () =>
+				{
+					setter?.Invoke(localKey);
+				}, theme);
+				row.AddChild(button);
+			}
+			
+			var menuItem = new MenuItemHoldOpen(row, theme)
+			{
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
+		}
+
 		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name, ImageBuffer icon = null)
 		{
 			var menuItem = new MenuItem(guiWidget, theme)
@@ -483,6 +551,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			public bool KeepMenuOpen => false;
+
 			public override void OnDraw(Graphics2D graphics2D)
 			{
 				if (this.Image != null)
@@ -495,6 +565,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				base.OnDraw(graphics2D);
 			}
+		}
+
+		public class MenuItemHoldOpen : MenuItem, IIgnoredPopupChild
+		{
+			public MenuItemHoldOpen(GuiWidget content, ThemeConfig theme)
+				: base(content, theme)
+			{
+			}
+
+			public bool KeepMenuOpen => false;
 		}
 	}
 

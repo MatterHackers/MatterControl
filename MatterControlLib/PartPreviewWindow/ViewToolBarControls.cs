@@ -99,6 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.workspace = workspace;
 
 			this.RowPadding = 0;
+			this.RowBoarder = new BorderDouble(0, 0, 0, 1);
+			this.RowBoarderColor = theme.GetBorderColor(50);
 
 			this.AddChild(CreateOpenButton(sceneContext, theme));
 
@@ -198,24 +200,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					void UpdateVisability(object s, EventArgs e)
 					{
-						if (operationGroup.Collapse)
+						if (operationGroup.Visible)
 						{
-							actionDropDown.Visible = true;
-							operationButtonGroup.Visible = false;
+							if (operationGroup.Collapse)
+							{
+								actionDropDown.Visible = true;
+								operationButtonGroup.Visible = false;
+
+								DoWrappingLayout();
+							}
+							else
+							{
+								actionDropDown.Visible = false;
+								operationButtonGroup.Visible = true;
+
+								DoWrappingLayout();
+							}
 						}
 						else
 						{
 							actionDropDown.Visible = false;
-							operationButtonGroup.Visible = true;
+							operationButtonGroup.Visible = false;
+
+							DoWrappingLayout();
 						}
 					}
 
 					UserSettings.Instance.SettingChanged += UpdateVisability;
 					operationGroup.CollapseChanged += UpdateVisability;
+					operationGroup.VisibleChanged += UpdateVisability;
 					this.Closed += (s, e) =>
 					{
-						operationGroup.CollapseChanged -= UpdateVisability;
 						UserSettings.Instance.SettingChanged -= UpdateVisability;
+						operationGroup.CollapseChanged -= UpdateVisability;
+						operationGroup.VisibleChanged -= UpdateVisability;
 					};
 
 					UpdateVisability(operationGroup, null);
@@ -267,6 +285,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			// add the options menu
+			this.AddChild(new HorizontalSpacer());
+
+			var overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
+			var optionsButton = new PopupMenuButton(overflowIcon, theme)
+			{
+				AlignToRightEdge = true
+			};
+			this.AddChild(optionsButton);
+			optionsButton.Name = "ToolBar Overflow Menu";
+			optionsButton.ToolTipText = "Tool Bar Options".Localize();
+			optionsButton.DynamicPopupContent = () => GenerateToolBarOptionsMenu(theme);
+
 			// Register listeners
 			undoBuffer.Changed += UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged += UpdateToolbarButtons;
@@ -274,6 +305,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			UpdateToolbarButtons(null, null);
+		}
+
+		private GuiWidget GenerateToolBarOptionsMenu(ThemeConfig theme)
+		{
+			var popupMenu = new PopupMenu(theme)
+			{
+				Padding = new BorderDouble(0, 7),
+			};
+
+			var buttonData = new (string, string)[]
+			{
+				("Collapsed".Localize(), "Collapsed"),
+				("Expanded".Localize(), "Expanded"),
+				("Hidden".Localize(), "Hidden"),
+			};
+
+			foreach (var namedAction in SceneOperations.All)
+			{
+				if (namedAction is OperationGroup operationGroup)
+				{
+					var startingValue = operationGroup.Collapse ? "Collapsed" : "Expanded";
+					if(!operationGroup.Visible)
+					{
+						startingValue = "Hidden";
+					}
+
+					popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
+					{
+						switch (value)
+						{
+							case "Expanded":
+								operationGroup.Collapse = false;
+								operationGroup.Visible = true;
+								break;
+
+							case "Collapsed":
+								operationGroup.Collapse = true;
+								operationGroup.Visible = true;
+								break;
+
+							case "Hidden":
+								operationGroup.Visible = false;
+								break;
+						}
+					});
+				}
+			};
+
+			return popupMenu;
 		}
 
 		private FlowLayoutWidget CreateOperationButtonGroup(ThemeConfig theme, OperationGroup operationGroup)
@@ -295,7 +375,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			collapseButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				operationGroup.Collapse = true;
-				SceneOperations.SetCollapseValue(operationGroup, true);
 				DoWrappingLayout();
 			});
 
@@ -361,7 +440,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						expandMenuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 						{
 							operationGroup.Collapse = false;
-							SceneOperations.SetCollapseValue(operationGroup, false);
 							DoWrappingLayout();
 						});
 					}

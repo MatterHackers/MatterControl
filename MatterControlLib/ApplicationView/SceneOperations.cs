@@ -738,26 +738,6 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		public static string GetKey(string opperationGroupName)
-		{
-			return $"scene_operation_key_{opperationGroupName}";
-		}
-
-		public static bool GetCollapseValue(SceneOperation sceneOperation)
-		{
-			return GetCollapseValue(sceneOperation.Id);
-		}
-
-		public static void SetCollapseValue(SceneOperation sceneOperation, bool value)
-		{
-			UserSettings.Instance.Fields.SetBool(GetKey(sceneOperation.Id), value);
-		}
-
-		public static bool GetCollapseValue(string sceneOperationId)
-		{
-			return UserSettings.Instance.Fields.GetBool(GetKey(sceneOperationId), true);
-		}
-
 		private static void Build()
 		{
 			if (built)
@@ -782,7 +762,6 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Transform")
 				{
-					Collapse = GetCollapseValue("Transform"),
 					TitleResolver = () => "Transform".Localize(),
 					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
@@ -795,7 +774,6 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Placement")
 				{
-					Collapse = GetCollapseValue("Placement"),
 					TitleResolver = () => "Placement".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -805,7 +783,6 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Reshape")
 				{
-					Collapse = GetCollapseValue("Reshape"),
 					TitleResolver = () => "Reshape".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -821,7 +798,6 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Image")
 				{
-					Collapse = GetCollapseValue("Image"),
 					TitleResolver = () => "Image".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -831,8 +807,8 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Path")
 				{
-					Collapse = GetCollapseValue("Path"),
 					TitleResolver = () => "Path".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						LinearExtrudeOperation(),
@@ -840,11 +816,11 @@ namespace MatterHackers.MatterControl
 						SmoothPathOperation(),
 						InflatePathOperation(),
 						OutlinePathOperation(),
+						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Merge")
 				{
-					Collapse = GetCollapseValue("Merge"),
 					TitleResolver = () => "Merge".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
@@ -857,7 +833,6 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Duplication")
 				{
-					Collapse = GetCollapseValue("Duplication"),
 					TitleResolver = () => "Duplication".Localize(),
 					Operations = new List<SceneOperation>()
 					{
@@ -868,20 +843,18 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Mesh")
 				{
-					Collapse = GetCollapseValue("Mesh"),
 					TitleResolver = () => "Mesh".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
 						ReduceOperation(),
 						RepairOperation(),
-						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Printing")
 				{
-					Collapse = GetCollapseValue("Printing"),
 					TitleResolver = () => "Printing".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						ToggleSupportOperation(),
@@ -890,8 +863,8 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Design Apps")
 				{
-					Collapse = GetCollapseValue("Design Apps"),
 					TitleResolver = () => "Design Apps".Localize(),
+					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
 						FitToBoundsOperation(),
