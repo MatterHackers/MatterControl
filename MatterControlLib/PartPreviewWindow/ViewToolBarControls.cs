@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								operationGroup.Visible = false;
 								break;
 						}
-					});
+					}, 20 * GuiWidget.DeviceScale);
 				}
 			};
 

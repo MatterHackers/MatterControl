@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var height = Height.Value(this);
 				var roundSegments = RoundSegments.ClampIfNotCalculated(this, 2, 90, ref valuesChanged);
 
-				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin | MaintainFlags.Bottom))
 				{
 					if (!Advanced)
 					{
