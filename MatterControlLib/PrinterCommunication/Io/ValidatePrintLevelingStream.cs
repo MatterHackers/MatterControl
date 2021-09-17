@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return lineToSend;
 			}
 
-			if (lineToSend == "; Software Leveling Applied")
+			if (lineToSend == PrintLevelingStream.SoftwareLevelingAppliedMessage)
 			{
 				gcodeAlreadyLeveled = true;
 			}

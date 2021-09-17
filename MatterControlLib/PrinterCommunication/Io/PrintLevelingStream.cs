@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -55,6 +56,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		private GCodeFile loadedGCode;
+
 		public bool AllowLeveling { get; set; }
 
 		private PrinterMove inputUnleveled = PrinterMove.Unknown;
@@ -69,25 +72,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public static string SoftwareLevelingAppliedMessage => "; Software Leveling Applied";
+
 		public override string ReadLine()
 		{
-			if (!wroteLevelingStatus && LevelingActive)
+			string lineToSend = base.ReadLine();
+
+			if (lineToSend == SoftwareLevelingAppliedMessage)
 			{
-				wroteLevelingStatus = true;
-				return "; Software Leveling Applied";
+				gcodeAlreadyLeveled = true;
 			}
 
-			string lineToSend = base.ReadLine();
+			if (!gcodeAlreadyLeveled
+				&& !wroteLevelingStatus
+				&& LevelingActive)
+			{
+				// make sure we are not reading a gcode file that already has leveling applied
+				if (loadedGCode?.Instruction(0)?.Line != SoftwareLevelingAppliedMessage)
+				{
+					wroteLevelingStatus = true;
+					return SoftwareLevelingAppliedMessage;
+				}
+			}
 
 			if (lineToSend != null
 				&& lineToSend.EndsWith("; NO_PROCESSING"))
 			{
 				return lineToSend;
-			}
-
-			if (lineToSend == "; Software Leveling Applied")
-			{
-				gcodeAlreadyLeveled = true;
 			}
 
 			if (lineToSend != null

@@ -198,7 +198,7 @@ namespace MatterControl.Tests.MatterControl
 
 			string[] expected = new string[]
 			{
-				"; Software Leveling Applied",
+				PrintLevelingStream.SoftwareLevelingAppliedMessage,
 				"G1 X0 Y0 Z-0.1 E0 F1000",
 				"G1 E1",
 				"G1 X1 Y0 Z-0.1",
@@ -247,7 +247,7 @@ namespace MatterControl.Tests.MatterControl
 
 			string[] expected = new string[]
 			{
-				"; Software Leveling Applied",
+				PrintLevelingStream.SoftwareLevelingAppliedMessage,
 				"G1 X0 Y0 Z-0.1 E0 F1000",
 				"G1 E1",
 				"G1 X1 Y0 Z-0.1",

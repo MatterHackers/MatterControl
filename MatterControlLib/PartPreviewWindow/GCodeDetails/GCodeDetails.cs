@@ -232,9 +232,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else if (line.StartsWith("M106")) // fan on
 				{
 					double speed = 0;
-					if (GCodeFile.GetFirstNumberAfter("M106", line, ref speed, 0, ""))
+					if (GCodeFile.GetFirstNumberAfter("S", line, ref speed, 0, ""))
 					{
-						fanSpeeds += separator + $"{speed / 255 * 100:0}%";
+						fanSpeeds += separator + $"{speed * 100 / 255:0}%";
 						separator = ", ";
 					}
 				}
