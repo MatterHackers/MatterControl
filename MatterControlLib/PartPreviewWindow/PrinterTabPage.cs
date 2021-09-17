@@ -195,14 +195,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			splitContainer.AddChild(gcodeContainer);
 
-			view3DContainer.AddChild(new RunningTasksWidget(theme, Printer)
-			{
-				MinimumSize = new Vector2(100, 0),
-				Margin = new BorderDouble(top: PrinterActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
-				VAnchor = VAnchor.Top | VAnchor.Fit,
-				HAnchor = HAnchor.Left | HAnchor.Fit,
-			});
-
 			// Create and append new widget
 			gcode2DWidget = new GCode2DWidget(Printer, theme)
 			{

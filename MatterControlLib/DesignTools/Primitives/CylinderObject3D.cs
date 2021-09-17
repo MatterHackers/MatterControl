@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin | MaintainFlags.Bottom))
 				{
 					if (!Advanced)
 					{

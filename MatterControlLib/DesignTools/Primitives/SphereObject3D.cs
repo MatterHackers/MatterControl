@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
 				var diameter = Diameter.Value(this);
 
-				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin | MaintainFlags.Bottom))
 				{
 					if (sides != lastSides
 						|| latitudeSides != lastLatitudeSides

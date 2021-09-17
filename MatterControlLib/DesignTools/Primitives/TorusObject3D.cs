@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				innerDiameter = Math.Min(outerDiameter - .1, innerDiameter);
 
-				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin))
+				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin | MaintainFlags.Bottom))
 				{
 					var poleRadius = (outerDiameter / 2 - innerDiameter / 2) / 2;
 					var toroidRadius = innerDiameter / 2 + poleRadius;

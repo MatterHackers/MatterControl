@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <param name="getter"></param>
 		/// <param name="setter"></param>
 		/// <returns></returns>
-		public MenuItem CreateButtonSelectMenuItem(string text, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		public MenuItem CreateButtonSelectMenuItem(string text, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter, double minSpacerWidth = 0)
 		{
 			var textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
@@ -427,7 +427,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center,
 			};
 
-			return this.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter);
+			return this.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter, minSpacerWidth);
 		}
 
 		public MenuItem CreateButtonSelectMenuItem(string text, ImageBuffer icon, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
@@ -448,7 +448,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return this.CreateButtonSelectMenuItem(row, text, buttonKvps, startingValue, setter);
 		}
 
-		public MenuItem CreateButtonSelectMenuItem(GuiWidget guiWidget, string name, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		public MenuItem CreateButtonSelectMenuItem(GuiWidget guiWidget, string name, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter, double minSpacerWidth = 0)
 		{
 			var row = new FlowLayoutWidget()
 			{
@@ -457,7 +457,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			row.AddChild(guiWidget);
-			row.AddChild(new HorizontalSpacer());
+			row.AddChild(new HorizontalSpacer()
+			{
+				MinimumSize = new Vector2(minSpacerWidth, 0)
+			}); ;
 
 			foreach(var buttonKvp in buttonKvps)
 			{
