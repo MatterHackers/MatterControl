@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					() => "Wedge".Localize(),
-					async () => await WedgeObject3D.Create())
+					async () => await WedgeObject3D_2.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Wedge".Localize(),
@@ -163,6 +163,7 @@ namespace MatterHackers.MatterControl.Library
 				Items.Add(item);
 			}
 
+#if DEBUG
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Primitives 2D".Localize(),
@@ -172,6 +173,7 @@ namespace MatterHackers.MatterControl.Library
 				{
 					IsReadOnly = true
 				});
+#endif
 
 		}
 	}
@@ -205,7 +207,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					() => "Trapezoid".Localize(),
-					async () => await WedgeObject3D.Create())
+					async () => await WedgeObject3D_2.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					() => "Text".Localize(),

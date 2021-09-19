@@ -27,20 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using System;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D, IObject3DControlsProvider
+	[Obsolete("Use WedgeObject3D_2 instead", false)]
+	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
 		public WedgeObject3D()
 		{
@@ -69,9 +73,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
+		public bool Round { get; set; } = false;
 
 		[Slider(2, 90, Easing.EaseType.Quadratic, snapDistance: 1)]
-		public IntOrExpression RoundSegments { get; set; } = 2;
+		public IntOrExpression RoundSegments { get; set; } = 15; 
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -111,12 +116,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					path.MoveTo(0, 0);
 					path.LineTo(width, 0);
 
-					var range = 360 / 4.0;
-					for (int i = 1; i < roundSegments - 1; i++)
+					if (Round)
 					{
-						var angle = range / (roundSegments - 1) * i;
-						var rad = MathHelper.DegreesToRadians(angle);
-						path.LineTo(width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+						var range = 360 / 4.0;
+						for (int i = 1; i < roundSegments - 1; i++)
+						{
+							var angle = range / (roundSegments - 1) * i;
+							var rad = MathHelper.DegreesToRadians(angle);
+							path.LineTo(width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+						}
 					}
 
 					path.LineTo(0, height);
@@ -129,6 +137,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 
 			return Task.CompletedTask;
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			if (change.Context.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
+			{
+				segmentsWidget.Visible = Round;
+			}
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
