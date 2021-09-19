@@ -726,6 +726,7 @@ namespace MatterHackers.MatterControl
 					return true;
 				}
 
+#if DEBUG
 				// path items
 				if (includePaths
 					&& selectedItem.VisiblePaths().Count() > 1
@@ -733,6 +734,7 @@ namespace MatterHackers.MatterControl
 				{
 					return true;
 				}
+#endif
 			}
 
 			return false;
@@ -936,11 +938,13 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
+#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
+#endif
 					{
 						new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1138,11 +1142,13 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
+#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
+#endif
 					{
 						new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1383,11 +1389,13 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
+#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
+#endif
 					{
 						new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}

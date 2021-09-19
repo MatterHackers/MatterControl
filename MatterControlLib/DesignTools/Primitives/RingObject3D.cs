@@ -43,11 +43,10 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObject3DControlsProvider
 	{
-		public enum BevelTypes
+		public enum RoundDirection
 		{
-			None,
-			In,
-			Out,
+			Inner,
+			Outter,
 		}
 
 		public RingObject3D()
@@ -98,12 +97,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("")] // clear the display name so this text will be the full width of the editor
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more ring options.";
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BevelTypes Bevel { get; set; } = BevelTypes.None;
-
-		[Slider(2, 90, Easing.EaseType.Quadratic, snapDistance: 1)]
-		public IntOrExpression RoundSegments { get; set; } = 2;
-
 		[MaxDecimalPlaces(2)]
 		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
@@ -111,6 +104,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public RoundTypes Round { get; set; } = RoundTypes.None;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public RoundDirection Direction { get; set; } = RoundDirection.Outter;
+
+		[Slider(2, 90, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public IntOrExpression RoundSegments { get; set; } = 15;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -159,34 +161,67 @@ namespace MatterHackers.MatterControl.DesignTools
 					path.LineTo(r + width, 0);
 					var range = 360 / 4.0;
 
-					switch (Bevel)
+					if (!Advanced)
 					{
-						case BevelTypes.None:
-							path.LineTo(r + width, height);
-							path.LineTo(r, height);
-							break;
-
-						case BevelTypes.In:
-							path.LineTo(r + width, height);
-							for (int i = 1; i < roundSegments - 1; i++)
-							{
-								var angle = range / (roundSegments - 1) * i;
-								var rad = MathHelper.DegreesToRadians(angle);
-								path.LineTo(r + width - Math.Sin(rad) * width, Math.Cos(rad) * height);
-							}
-							break;
-
-						case BevelTypes.Out:
-							for (int i = 1; i < roundSegments - 1; i++)
-							{
-								var angle = range / (roundSegments - 1) * i;
-								var rad = MathHelper.DegreesToRadians(angle);
-								path.LineTo(r + width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
-							}
-							path.LineTo(r, height);
-							break;
+						path.LineTo(r + width, height);
+						path.LineTo(r, height);
 					}
+					else
+					{
+						switch (Round)
+						{
+							case RoundTypes.None:
+								path.LineTo(r + width, height);
+								path.LineTo(r, height);
+								break;
 
+							case RoundTypes.Down:
+								if (Direction == RoundDirection.Inner)
+								{
+									for (int i = 1; i < roundSegments - 1; i++)
+									{
+										var angle = range / (roundSegments - 1) * i;
+										var rad = MathHelper.DegreesToRadians(angle);
+										path.LineTo(r + width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+									}
+									path.LineTo(r, height);
+								}
+								else
+								{
+									for (int i = 1; i < roundSegments - 1; i++)
+									{
+										var angle = range / (roundSegments - 1) * i;
+										var rad = MathHelper.DegreesToRadians(angle);
+										path.LineTo(r + width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+									}
+									path.LineTo(r, height);
+								}
+								break;
+
+							case RoundTypes.Up:
+								if (Direction == RoundDirection.Inner)
+								{
+									path.LineTo(r + width, height);
+									for (int i = 1; i < roundSegments - 1; i++)
+									{
+										var angle = range / (roundSegments - 1) * i;
+										var rad = MathHelper.DegreesToRadians(angle);
+										path.LineTo(r + width - Math.Sin(rad) * width, Math.Cos(rad) * height);
+									}
+								}
+								else
+								{
+									path.LineTo(r + width, height);
+									for (int i = 1; i < roundSegments - 1; i++)
+									{
+										var angle = range / (roundSegments - 1) * i;
+										var rad = MathHelper.DegreesToRadians(angle);
+										path.LineTo(r + width - Math.Sin(rad) * width, Math.Cos(rad) * height);
+									}
+								}
+								break;
+						}
+					}
 
 					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
@@ -205,11 +240,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(Bevel), () => Advanced);
-			change.SetRowVisible(nameof(RoundSegments), () => Advanced || Bevel != BevelTypes.None);
+			change.SetRowVisible(nameof(Round), () => Advanced);
+			change.SetRowVisible(nameof(RoundSegments), () => Advanced || Round != RoundTypes.None);
 			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);
+			change.SetRowVisible(nameof(RoundDirection), () => Advanced && Round != RoundTypes.None);
+			change.SetRowVisible(nameof(RoundSegments), () => Advanced && Round != RoundTypes.None);
+			change.SetRowVisible(nameof(Direction), () => Advanced && Round != RoundTypes.None);
 		}
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
