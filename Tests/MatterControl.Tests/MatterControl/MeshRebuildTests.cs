@@ -105,7 +105,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			// set the cube width to the sheet value, but with a bad description (needs an equals to work)
 			cube1.Width = "A1";
 			cube1.Invalidate(InvalidateType.Properties);
-			Assert.AreEqual(0, cube1.Width.Value(cube1), "Should be 0 as the reference is bad");
+			Assert.AreEqual(CubeObject3D.MinEdgeSize, cube1.Width.Value(cube1), "Should be the minimum cube value as the reference is bad");
 			// now fix the reference
 			cube1.Width = "=A1";
 			cube1.Invalidate(InvalidateType.Properties);

@@ -74,9 +74,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static string SoftwareLevelingAppliedMessage => "; Software Leveling Applied";
 
+		string pendingLine = null;
+
 		public override string ReadLine()
 		{
-			string lineToSend = base.ReadLine();
+			string lineToSend;
+
+			if (pendingLine != null)
+			{
+				lineToSend = pendingLine;
+				pendingLine = null;
+			}
+			else
+			{
+				lineToSend = base.ReadLine();
+			}
 
 			if (lineToSend == SoftwareLevelingAppliedMessage)
 			{
@@ -91,6 +103,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (loadedGCode?.Instruction(0)?.Line != SoftwareLevelingAppliedMessage)
 				{
 					wroteLevelingStatus = true;
+					pendingLine = lineToSend;
 					return SoftwareLevelingAppliedMessage;
 				}
 			}

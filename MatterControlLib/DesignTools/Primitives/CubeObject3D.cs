@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
 		}
 
+		public static double MinEdgeSize = .001;
+
 		public override string ThumbnailName => "Cube";
 
 		/// <summary>
@@ -121,9 +123,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			var width = Width.ClampIfNotCalculated(this, .001, 1000000, ref valuesChanged);
-			var depth = Depth.ClampIfNotCalculated(this, .001, 1000000, ref valuesChanged);
-			var height = Height.ClampIfNotCalculated(this, .001, 1000000, ref valuesChanged);
+			var width = Width.ClampIfNotCalculated(this, MinEdgeSize, 1000000, ref valuesChanged);
+			var depth = Depth.ClampIfNotCalculated(this, MinEdgeSize, 1000000, ref valuesChanged);
+			var height = Height.ClampIfNotCalculated(this, MinEdgeSize, 1000000, ref valuesChanged);
 			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 1, 90, ref valuesChanged);
 			var roundRadius = Radius.ClampIfNotCalculated(this, 0, Math.Min(width, Math.Min(depth, height)) / 2, ref valuesChanged);
 
