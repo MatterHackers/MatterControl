@@ -71,8 +71,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ').Trim()));
+			(string key, string name) GetKeyName(Enum value)
+			{
+				var name = value.ToString();
+
+				if (GetAttribute<EnumNameAttribute>(value) is EnumNameAttribute attr)
+				{
+					return (name, attr.Name);
+				}
+
+				return (name, name.Replace('_', ' ').Trim());
+			}
 
 			string GetDescription(Enum value)
 			{
@@ -84,24 +93,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return null;
 			}
 
-			var enumDescriptions = new List<string>();
+			var enumDescriptions = new List<(string key, string name, string description)>();
 			foreach (var value in Enum.GetValues(property.PropertyType))
 			{
-				enumDescriptions.Add(GetDescription((Enum)value));
+				var keyName = GetKeyName((Enum)value);
+				enumDescriptions.Add((keyName.key, keyName.name, GetDescription((Enum)value)));
 			}
 
 			switch (enumDisplayAttibute.Mode)
 			{
 				case EnumDisplayAttribute.PresentationMode.IconRow:
-					AddIconRow(enumItems, enumDescriptions);
+					AddIconRow(enumDescriptions);
 					break;
 
 				case EnumDisplayAttribute.PresentationMode.Tabs:
-					AddTabs(enumItems, enumDescriptions);
+					AddTabs(enumDescriptions);
 					break;
 
 				case EnumDisplayAttribute.PresentationMode.Buttons:
-					AddButtons(enumItems, enumDescriptions);
+					AddButtons(enumDescriptions);
 					break;
 
 				default:
@@ -172,7 +182,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			enumTab.HAnchor = HAnchor.Stretch;
 		}
 
-		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
+		private void AddTabs(List<(string key, string name, string description)> items)
 		{
 			var menuRow = new FlowLayoutWidget()
 			{
@@ -180,13 +190,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			int index = 0;
-			foreach (var enumItem in enumItems)
+			foreach (var item in items)
 			{
 				var localIndex = index;
 
-				var radioButton = new RadioTextButton(enumItem.Value, theme)
+				var radioButton = new RadioTextButton(item.name, theme)
 				{
-					ToolTipText = descriptions[index],
+					ToolTipText = item.description,
 				};
 
 				menuRow.AfterDraw += (s, e) =>
@@ -203,7 +213,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				radioButton.SelectedBackgroundColor = theme.PrimaryAccentColor;
 
 				// set it if checked
-				if (enumItem.Key == this.InitialValue)
+				if (item.key == this.InitialValue)
 				{
 					radioButton.Checked = true;
 				}
@@ -212,12 +222,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				menuRow.AddChild(radioButton);
 
-				var localItem = enumItem;
+				var localItem = item;
 				radioButton.CheckedStateChanged += (s, e) =>
 				{
 					if (radioButton.Checked)
 					{
-						this.SetValue(localItem.Key, true);
+						this.SetValue(localItem.key, true);
 					}
 				};
 
@@ -227,20 +237,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = menuRow;
 		}
 
-		private void AddButtons(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
+		private void AddButtons(List<(string key, string name, string description)> items)
 		{
 			var menuRow = new FlowLayoutWidget();
 
 			int index = 0;
-			foreach (var enumItem in enumItems)
+			foreach (var item in items)
 			{
 				var localIndex = index;
 
-				var radioButton = CreateThemedRadioButton(enumItem.Value, enumItem.Key, descriptions[index], this.InitialValue == enumItem.Key, () => this.SetValue(enumItem.Key, true), theme);
+				var radioButton = CreateThemedRadioButton(item.name, item.key, item.description, this.InitialValue == item.key, () => this.SetValue(item.key, true), theme);
 
 				menuRow.AddChild(radioButton);
 
-				var localItem = enumItem;
+				var localItem = item;
 
 				index++;
 			}
@@ -284,13 +294,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return radioButton;
 		}
 
-		private void AddIconRow(IEnumerable<(string Key, string Value)> enumItems, List<string> descriptions)
+		private void AddIconRow(List<(string key, string name, string description)> items)
 		{
 			var iconsRow = new FlowLayoutWidget();
 
 			int index = 0;
 			var radioButtonSize = new Vector2(enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight);
-			foreach (var enumItem in enumItems)
+			foreach (var item in items)
 			{
 				var localIndex = index;
 				ImageBuffer iconImage = null;
@@ -309,25 +319,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					var radioButton = new RadioIconButton(iconImage, theme)
 					{
-						ToolTipText = descriptions[index] == null ? enumItem.Key : descriptions[index],
+						ToolTipText = item.description == null ? item.name : item.description,
 					};
 
 					radioButtonSize = new Vector2(radioButton.Width, radioButton.Height);
 
 					// set it if checked
-					if (enumItem.Key == this.InitialValue)
+					if (item.key == this.InitialValue)
 					{
 						radioButton.Checked = true;
 					}
 
 					iconsRow.AddChild(radioButton);
 
-					var localItem = enumItem;
+					var localItem = item;
 					radioButton.CheckedStateChanged += (s, e) =>
 					{
 						if (radioButton.Checked)
 						{
-							this.SetValue(localItem.Key, true);
+							this.SetValue(localItem.key, true);
 						}
 					};
 				}

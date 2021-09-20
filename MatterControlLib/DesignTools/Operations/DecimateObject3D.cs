@@ -49,12 +49,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public enum ReductionMode
 		{
+			[EnumName("Count")]
 			Polygon_Count,
+			[EnumName("Percent")]
 			Polygon_Percent
 		}
 
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ReductionMode Mode { get; set; } = ReductionMode.Polygon_Percent;
 
 		[ReadOnly(true)]
