@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.nozzle_diameter] = new ExportField("extrusionWidth"),
 				[SettingsKey.extruder_count] = new ExportField("extruderCount"),
 				[SettingsKey.avoid_crossing_perimeters] = new ExportField("avoidCrossingPerimeters"),
+				[SettingsKey.montonic_solid_infill] = new ExportField("monotonicSolidInfill"),
 				[SettingsKey.create_raft] = new ExportField("enableRaft"),
 				[SettingsKey.external_perimeters_first] = new ExportField("outsidePerimetersFirst"),
 				[SettingsKey.output_only_first_layer] = new ExportField("outputOnlyFirstLayer"),

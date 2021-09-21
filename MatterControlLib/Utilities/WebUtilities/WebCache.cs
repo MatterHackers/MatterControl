@@ -382,12 +382,10 @@ namespace MatterHackers.MatterControl
 				double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
 				imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
 				imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
-				imageToLoadInto.MarkImageChanged();
 			}
 			else
 			{
 				StaticData.Instance.LoadImageData(stream, imageToLoadInto);
-				imageToLoadInto.MarkImageChanged();
 			}
 		}
 	}

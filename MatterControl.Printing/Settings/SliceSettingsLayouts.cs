@@ -76,7 +76,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.merge_overlapping_lines,
 						SettingsKey.seam_placement,
 						SettingsKey.expand_thin_walls,
-						SettingsKey.coast_at_end_distance
+						SettingsKey.coast_at_end_distance,
+						SettingsKey.montonic_solid_infill,
 					}),
 					("Infill", new[]
 					{
