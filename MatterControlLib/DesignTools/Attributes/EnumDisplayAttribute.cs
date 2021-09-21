@@ -57,4 +57,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool InvertIcons { get; set; } = false;
 	}
+
+	public class EnumNameAttribute : Attribute
+	{
+		public EnumNameAttribute(string name)
+		{
+			this.Name = name;
+		}
+
+		public string Name { get; set; }
+	}
 }

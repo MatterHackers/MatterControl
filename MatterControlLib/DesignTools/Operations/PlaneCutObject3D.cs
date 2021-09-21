@@ -48,7 +48,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Plane Cut".Localize();
 		}
 
-		public double CutHeight { get; set; } = 10;
+
+		[Slider(1, 200, Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		public DoubleOrExpression CutHeight { get; set; } = 10;
 
 		private double cutMargin = .01;
 
@@ -59,18 +61,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			var itemMatrix = item.WorldMatrix(this);
 			mesh.Transform(itemMatrix);
 
+			var cutHeight = CutHeight.Value(this);
+
 			// calculate and add the PWN face from the loops
-			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, CutHeight));
+			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, cutHeight));
 			var slice = SliceLayer.CreateSlice(mesh, cutPlane);
 
 			// copy every face that is on or below the cut plane
 			// cut the faces at the cut plane
-			mesh.Split(new Plane(Vector3.UnitZ, CutHeight), cutMargin, cleanAndMerge: false);
+			mesh.Split(new Plane(Vector3.UnitZ, cutHeight), cutMargin, cleanAndMerge: false);
 
 			// remove every face above the cut plane
 			RemoveFacesAboveCut(mesh);
 
-			slice.Vertices().TriangulateFaces(null, mesh, CutHeight);
+			slice.Vertices().TriangulateFaces(null, mesh, cutHeight);
 
 			mesh.Transform(itemMatrix.Inverted);
 
@@ -83,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var newFaces = new List<Face>();
 			var facesToRemove = new HashSet<int>();
 
-			var cutRemove = CutHeight - cutMargin;
+			var cutRemove = CutHeight.Value(this) - cutMargin;
 			for (int i = 0; i < mesh.Faces.Count; i++)
 			{
 				var face = mesh.Faces[i];

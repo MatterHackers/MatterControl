@@ -166,6 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string min_print_speed = nameof(min_print_speed);
 		public const string min_skirt_length = nameof(min_skirt_length);
 		public const string model = nameof(model);
+		public const string montonic_solid_infill = nameof(montonic_solid_infill);
 		public const string nozzle_diameter = nameof(nozzle_diameter);
 		public const string number_of_first_layers = nameof(number_of_first_layers);
 		public const string oem_profile_token = nameof(oem_profile_token);

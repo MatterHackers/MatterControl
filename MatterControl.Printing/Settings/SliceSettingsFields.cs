@@ -77,6 +77,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.montonic_solid_infill,
+					PresentationName = "Monotonic Solid Infill".Localize().Localize(),
+					HelpText = "When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					DefaultValue = "1",
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					Converter = new MappedToBoolString(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.sla_mirror_mode,
 					PresentationName = "Mirror Mode".Localize(),
 					HelpText = "Set how the printed output should be altered to compensate for the printers mirror.".Localize(),
@@ -601,7 +612,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Seam Placement".Localize(),
 					HelpText = "What to do when there is not a good place to hide the seam.".Localize(),
 					DataEditType = DataEditTypes.LIST,
-					ListValues = "Furthest Back,Centered In Back,Randomized,Fastest",
+					ListValues = "Furthest Back,Centered In Back,Always Centered In Back,Randomized,Fastest",
 					DefaultValue = "Furthest Back",
 				},
 				new SliceSettingData()

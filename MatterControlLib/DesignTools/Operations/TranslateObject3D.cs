@@ -27,11 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -72,11 +70,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return translate;
 		}
 
-		#region // editable properties
-
 		public Vector3 Translation { get; set; } = Vector3.Zero;
-
-		#endregion // editable properties
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
