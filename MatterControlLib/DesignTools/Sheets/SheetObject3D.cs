@@ -138,6 +138,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			internal IObject3D item;
 			internal RebuildLock rebuildLock;
 		}
+
 		private void SendInvalidateToAll(object s, EventArgs e)
 		{
 			var updateItems = new List<UpdateItem>();
@@ -279,7 +280,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				int index = 0;
 				foreach (var child in arrayObject.Children)
 				{
-					if (!(child is OperationSourceContainerObject3D))
+					if (!(child is OperationSourceContainerObject3D)
+						&& !(child is OperationSourceObject3D))
 					{
 						if (child.DescendantsAndSelf().Where(i => i == owner).Any())
 						{

@@ -39,7 +39,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
 	public class ArrayLinearObject3D : ArrayObject3D
 	{
 		public ArrayLinearObject3D()
@@ -103,11 +102,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 
 						SourceContainer.Visible = false;
-						UiThread.RunOnIdle(() =>
+
+						void UnlockWhenDone()
 						{
-							rebuildLock.Dispose();
-							Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-						});
+							if (this.Descendants().Where(c => c.RebuildLocked).Any())
+							{
+								UiThread.RunOnIdle(UnlockWhenDone, .05);
+							}
+							else
+							{
+								rebuildLock.Dispose();
+								Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+							}
+						}
+
+						UiThread.RunOnIdle(UnlockWhenDone);
 						return Task.CompletedTask;
 					});
 			}
