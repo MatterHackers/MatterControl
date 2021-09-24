@@ -76,11 +76,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more torus options.";
 
 		[MaxDecimalPlaces(2)]
-		[Slider(3, 360, snapDistance: 1)]
+		[Slider(0, 359, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		[Slider(3, 360, snapDistance: 1)]
+		[Slider(1, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		[Slider(3, 260, Easing.EaseType.Quadratic, snapDistance: 1)]
