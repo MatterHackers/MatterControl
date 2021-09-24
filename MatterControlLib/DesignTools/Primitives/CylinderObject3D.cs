@@ -138,11 +138,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more cylinder options.";
 
 		[MaxDecimalPlaces(2)]
-		[Slider(3, 360, snapDistance: 1)]
+		[Slider(0, 359, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		[Slider(3, 360, snapDistance: 1)]
+		[Slider(1, 360, snapDistance: 1)]
 		public DoubleOrExpression EndingAngle { get; set; } = 360;
 
 		[MaxDecimalPlaces(2)]
@@ -177,11 +177,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
 			var endingAngle = EndingAngle.ClampIfNotCalculated(this, StartingAngle.Value(this) + .01, 360, ref valuesChanged);
 
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
-
 			using (RebuildLock())
 			{
 				using (new CenterAndHeightMaintainer(this, MaintainFlags.Origin | MaintainFlags.Bottom))
@@ -208,6 +203,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 			}
+			
+			Invalidate(InvalidateType.DisplayValues);
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;

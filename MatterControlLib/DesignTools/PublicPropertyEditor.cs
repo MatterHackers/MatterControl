@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						var newValue = (DoubleOrExpression)property.Value;
-						if (newValue.Expression != field.Value)
+						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
 							if (newValue.Expression.StartsWith("="))
@@ -921,7 +921,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						var newValue = (IntOrExpression)property.Value;
-						if (newValue.Expression != field.Value)
+						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
 							if (newValue.Expression.StartsWith("="))

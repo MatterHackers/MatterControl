@@ -66,14 +66,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MaxDecimalPlaces(2)]
 		[Description("The angle to rotate the top of the part")]
-		public double Angle { get; set; } = 135;
+		[Slider(3, 360, snapDistance: 1)]
+		public DoubleOrExpression Angle { get; set; } = 45;
 
 		[Description("The distance along the circumference to rotate the top in mm")]
-		public double RotationDistance { get; set; } = 10;
+		[Slider(1, 50, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public DoubleOrExpression RotationDistance { get; set; } = 10;
 
 		[Description("Specifies the number of vertical cuts required to ensure the part can be twist well.")]
-		[Range(3, 300, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		public double RotationSlices { get; set; } = 5;
+		[Slider(3, 50, snapDistance: 1)]
+		public IntOrExpression RotationSlices { get; set; } = 5;
 
 		[Description("The source part is specifying a preferred radius. You can turn this off to set a specific radius.")]
 		public bool EditRadius { get; set; } = false;
@@ -83,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double PreferedRadius { get; set; } = 0;
 
 		[Description("Specify the radius to use when calculating the circumference.")]
-		public double OverrideRadius { get; set; } = .01;
+		public DoubleOrExpression OverrideRadius { get; set; } = .01;
 
 		[DisplayName("Twist Right")]
 		public bool TwistCw { get; set; } = true;
@@ -103,11 +105,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public Easing.EaseOption EasingOption { get; set; } = Easing.EaseOption.InOut;
 
-		[Description("The percentage up from the bottom to start the twist")]
-		public double StartHeightPercent { get; set; } = 0;
-
 		[Description("The percentage up from the bottom to end the twist")]
-		public double EndHeightPercent { get; set; } = 100;
+		[Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public DoubleOrExpression EndHeightPercent { get; set; } = 100;
+
+		[Description("The percentage up from the bottom to start the twist")]
+		[Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
+		public DoubleOrExpression StartHeightPercent { get; set; } = 0;
 
 		public IRadiusProvider RadiusProvider
 		{
@@ -143,41 +147,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			bool valuesChanged = false;
 
-			if (Angle < 1 || Angle > 100000)
-			{
-				Angle = Math.Min(100000, Math.Max(1, Angle));
-				valuesChanged = true;
-			}
+			var aabb = this.GetAxisAlignedBoundingBox();
 
-			if (RotationDistance < 0 || RotationDistance > 100000)
-			{
-				RotationDistance = Math.Min(100000, Math.Max(0, RotationDistance));
-				valuesChanged = true;
-			}
-
-			if (RotationSlices < 3 || RotationSlices > 300)
-			{
-				RotationSlices = Math.Min(300, Math.Max(3, RotationSlices));
-				valuesChanged = true;
-			}
-
-			if (EndHeightPercent < 1 || EndHeightPercent > 100)
-			{
-				EndHeightPercent = Math.Min(100, Math.Max(1, EndHeightPercent));
-				valuesChanged = true;
-			}
-
-			if (StartHeightPercent < 0 || StartHeightPercent > EndHeightPercent - 1)
-			{
-				StartHeightPercent = Math.Min(EndHeightPercent - 1, Math.Max(0, StartHeightPercent));
-				valuesChanged = true;
-			}
-
-			if (OverrideRadius < .01)
-			{
-				OverrideRadius = Math.Max(this.GetAxisAlignedBoundingBox().XSize, this.GetAxisAlignedBoundingBox().YSize);
-				valuesChanged = true;
-			}
+			var angle = Angle.ClampIfNotCalculated(this, 0, 10000, ref valuesChanged);
+			var rotationDistance = RotationDistance.ClampIfNotCalculated(this, 0, 10000, ref valuesChanged);
+			var rotationSlices = RotationSlices.ClampIfNotCalculated(this, 3, 300, ref valuesChanged);
+			var endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
+			endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 1, 100, ref valuesChanged);
+			var startHeightPercent = StartHeightPercent.ClampIfNotCalculated(this, 0, endHeightPercent - 1, ref valuesChanged);
+			startHeightPercent = Math.Min(endHeightPercent - 1, startHeightPercent);
+			var overrideRadius = OverrideRadius.ClampIfNotCalculated(this, 1, Math.Max(aabb.XSize, aabb.YSize), ref valuesChanged);
 
 			var rebuildLocks = this.RebuilLockAll();
 
@@ -189,15 +168,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
 					var bottom = sourceAabb.MinXYZ.Z;
-					var top = sourceAabb.ZSize * EndHeightPercent / 100.0;
+					var top = sourceAabb.ZSize * endHeightPercent / 100.0;
 					var size = sourceAabb.ZSize;
 					if (Advanced)
 					{
-						bottom += sourceAabb.ZSize * StartHeightPercent / 100.0;
+						bottom += sourceAabb.ZSize * startHeightPercent / 100.0;
 						size = top - bottom;
 					}
 
-					double numberOfCuts = RotationSlices;
+					double numberOfCuts = rotationSlices;
 
 					double cutSize = size / numberOfCuts;
 					var cuts = new List<double>();
@@ -279,13 +258,13 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 							}
 
-							var angleToRotate = ratio * Angle / 360.0 * MathHelper.Tau;
+							var angleToRotate = ratio * angle / 360.0 * MathHelper.Tau;
 							if (RotationType == RotationTypes.Distance)
 							{
 								IRadiusProvider radiusProvider = RadiusProvider;
 
 								// start off with assuming we want to set the radius
-								var radius = this.OverrideRadius;
+								var radius = overrideRadius;
 								if (radiusProvider != null && !this.EditRadius)
 								{
 									// have a radius provider and not wanting to edit
@@ -300,11 +279,11 @@ namespace MatterHackers.MatterControl.DesignTools
 								if (this.PreferedRadius != radius)
 								{
 									this.PreferedRadius = radius;
-									this.OverrideRadius = radius;
+									this.OverrideRadius.ClampIfNotCalculated(this, radius, radius, ref valuesChanged);
 									UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 								}
 
-								angleToRotate = ratio * (RotationDistance / radius);
+								angleToRotate = ratio * (rotationDistance / radius);
 							}
 
 							if (!TwistCw)
@@ -342,15 +321,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.AddRange(twistedChildren);
 					});
 
-					if (valuesChanged)
-					{
-						Invalidate(InvalidateType.DisplayValues);
-					}
-
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						Invalidate(InvalidateType.DisplayValues);
 					});
 
 					return Task.CompletedTask;

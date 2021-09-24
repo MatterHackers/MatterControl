@@ -298,10 +298,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
-						if (valuesChanged)
-						{
-							Invalidate(InvalidateType.DisplayValues);
-						}
+						Invalidate(InvalidateType.DisplayValues);
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 
