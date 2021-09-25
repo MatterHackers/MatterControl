@@ -178,13 +178,13 @@ namespace MatterHackers.MatterControl.DesignTools
 							case RoundTypes.Down:
 								if (Direction == RoundDirection.Inner)
 								{
+									path.LineTo(r + width, height);
 									for (int i = 1; i < roundSegments - 1; i++)
 									{
 										var angle = range / (roundSegments - 1) * i;
 										var rad = MathHelper.DegreesToRadians(angle);
-										path.LineTo(r + width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+										path.LineTo(r + Math.Cos(rad) * width, height - Math.Sin(rad) * height);
 									}
-									path.LineTo(r, height);
 								}
 								else
 								{
@@ -211,13 +211,13 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 								else
 								{
-									path.LineTo(r + width, height);
 									for (int i = 1; i < roundSegments - 1; i++)
 									{
 										var angle = range / (roundSegments - 1) * i;
 										var rad = MathHelper.DegreesToRadians(angle);
-										path.LineTo(r + width - Math.Sin(rad) * width, Math.Cos(rad) * height);
+										path.LineTo(r + Math.Cos(rad) * width, Math.Sin(rad) * height);
 									}
+									path.LineTo(r, height);
 								}
 								break;
 						}

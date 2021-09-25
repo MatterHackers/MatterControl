@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							{
 								var angle = range / (roundSegments - 1) * i;
 								var rad = MathHelper.DegreesToRadians(angle);
-								path.LineTo(width - Math.Sin(rad) * width, height - Math.Cos(rad) * height);
+								path.LineTo(Math.Cos(rad) * width, Math.Sin(rad) * height);
 							}
 							break;
 
