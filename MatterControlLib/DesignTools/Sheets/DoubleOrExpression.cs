@@ -118,10 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				currentValue = agg_basics.Clamp(currentValue, min, max, ref changed);
 
-				if (currentValue != databaseValue)
-				{
-					UserSettings.Instance.Fields.SetDouble(keyName, currentValue);
-				}
+				Expression = currentValue.ToString();
 			}
 
 			return currentValue;
