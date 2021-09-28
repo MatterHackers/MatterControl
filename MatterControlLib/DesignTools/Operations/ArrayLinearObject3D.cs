@@ -48,10 +48,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
+		[Slider(2, 10, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public override IntOrExpression Count { get; set; } = 3;
 
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 
+		[Slider(0, 200, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Distance { get; set; } = 30;
 
 		public override async Task Rebuild()

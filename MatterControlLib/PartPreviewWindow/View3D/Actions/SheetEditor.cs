@@ -35,7 +35,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using System.Linq;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
