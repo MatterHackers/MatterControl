@@ -132,77 +132,104 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool Persistable => false;
 
-		internal class UpdateItem
+		public class UpdateItem
 		{
 			internal int depth;
 			internal IObject3D item;
 			internal RebuildLock rebuildLock;
+
+			public override string ToString()
+			{
+				var state = rebuildLock == null ? "unlocked" : "locked";
+				return $"{depth} {state} - {item}";
+			}
 		}
 
-		private void SendInvalidateToAll(object s, EventArgs e)
+		public static List<UpdateItem> SortAndLockUpdateItems(IObject3D root, Func<IObject3D, bool> includeObject)
 		{
-			var updateItems = new List<UpdateItem>();
-			foreach (var sibling in this.Parent.Children)
+			var requiredUpdateItems = new Dictionary<IObject3D, UpdateItem>();
+			foreach (var child in root.Children)
 			{
-				if (sibling != this)
+				if (includeObject(child))
 				{
-					AddItemsToList(sibling, updateItems, 0);
+					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, 0);
 				}
 			}
-			if (updateItems.Count == 0)
-			{
-				return;
-			}
 
+			var updateItems = requiredUpdateItems.Values.ToList();
 			// sort them
 			updateItems.Sort((a, b) => a.depth.CompareTo(b.depth));
+
 			// lock everything
 			foreach (var depthItem in updateItems)
 			{
 				depthItem.rebuildLock = depthItem.item.RebuildLock();
 			}
 
+			return updateItems;
+		}
+
+		private void SendInvalidateToAll(object s, EventArgs e)
+		{
+			var updateItems = SortAndLockUpdateItems(this.Parent, (item) => item != this);
+
+			SendInvalidateInRebuildOrder(updateItems, InvalidateType.SheetUpdated, this);
+		}
+
+		public static RunningInterval SendInvalidateInRebuildOrder(List<UpdateItem> updateItems,
+			InvalidateType sheetUpdated,
+			IObject3D sender = null)
+		{
 			// and send the invalidate
 			RunningInterval runningInterval = null;
 			void RebuildWhenUnlocked()
 			{
-				// get the last item from the list
-				var index = updateItems.Count - 1;
-				var updateItem = updateItems[index];
-				// if it is locked from above
-				if (updateItem.rebuildLock != null)
+				var count = updateItems.Count;
+				if (count > 0)
 				{
-					// release the lock and rebuild
-					// and ask it to update
-					var depthToBuild = updateItem.depth;
-					for (int i = 0; i < updateItems.Count; i++)
-					{
-						if (updateItems[i].depth == updateItem.depth)
+					// get the last item from the list
+					var lastIndex = count - 1;
+					var lastUpdateItem = updateItems[lastIndex];
+					// if it is locked from above
+					var wating
+					if (updateItems.Where(i =>
 						{
-							updateItems[i].rebuildLock.Dispose();
-							updateItems[i].rebuildLock = null;
-							updateItems[i].item.Invalidate(new InvalidateArgs(this, InvalidateType.SheetUpdated));
+							return i.depth == lastUpdateItem.depth && i.item.RebuildLocked;
+						}).Any())
+					{
+						// wait for the current rebuild to end
+						return;
+					}
+					else if (lastUpdateItem.rebuildLock != null)
+					{
+						// release the lock and rebuild
+						// and ask it to update
+						var depthToBuild = lastUpdateItem.depth;
+						for (int i = 0; i < updateItems.Count; i++)
+						{
+							if (updateItems[i].depth == lastUpdateItem.depth)
+							{
+								updateItems[i].rebuildLock.Dispose();
+								updateItems[i].rebuildLock = null;
+								var updateSender = sender == null ? updateItems[i].item : sender;
+								updateItems[i].item.Invalidate(new InvalidateArgs(updateSender, sheetUpdated));
+							}
 						}
 					}
-				}
-				else if (updateItems.Where(i => i.depth == updateItem.depth && i.item.RebuildLocked).Any())
-				{
-					// wait for the current rebuild to end
-					return;
+					else
+					{
+						// remove all items at this level
+						for (int i = updateItems.Count - 1; i >= 0; i--)
+						{
+							if (updateItems[i].depth == lastUpdateItem.depth)
+							{
+								updateItems.RemoveAt(i);
+							}
+						}
+					}
+
 				}
 				else
-				{
-					// remove all items at this level
-					for (int i = updateItems.Count - 1; i >= 0; i--)
-					{
-						if (updateItems[i].depth == updateItem.depth)
-						{
-							updateItems.RemoveAt(i);
-						}
-					}
-				}
-
-				if (updateItems.Count == 0)
 				{
 					UiThread.ClearInterval(runningInterval);
 				}
@@ -210,21 +237,33 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// rebuild depth first
 			runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .01);
+
+			return runningInterval;
 		}
 
-		private void AddItemsToList(IObject3D inItem, List<UpdateItem> updatedItems, int inDepth)
+		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem, Dictionary<IObject3D, UpdateItem> updatedItems, int inDepth)
 		{
 			// process depth first
 			foreach(var child in inItem.Children)
 			{
-				AddItemsToList(child, updatedItems, inDepth + 1);
+				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1);
 			}
 
-			updatedItems.Add(new UpdateItem()
+			var depth2 = inDepth;
+			if (HasParametersWithActiveFunctions(inItem))
 			{
-				depth = inDepth,
-				item = inItem
-			});
+				var item2 = inItem;
+				while (depth2 >= 0)
+				{
+					updatedItems[item2] = new UpdateItem()
+					{
+						depth = depth2,
+						item = item2
+					};
+					depth2--;
+					item2 = item2?.Parent;
+				}
+			}
 		}
 
 		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);
