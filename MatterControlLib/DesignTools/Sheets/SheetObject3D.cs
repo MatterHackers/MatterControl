@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
 	[HideMeterialAndColor]
-	[WebPageLink("Documentation", "Open", "https://matterhackers.com/support/mattercontrol-variable-support")]
+	[WebPageLink("Documentation", "Open", "https://www.matterhackers.com/support/mattercontrol-variable-support")]
 	[MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
 	public class SheetObject3D : Object3D, IObject3DControlsProvider
 	{
@@ -132,77 +132,103 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool Persistable => false;
 
-		internal class UpdateItem
+		public class UpdateItem
 		{
 			internal int depth;
 			internal IObject3D item;
 			internal RebuildLock rebuildLock;
+
+			public override string ToString()
+			{
+				var state = rebuildLock == null ? "unlocked" : "locked";
+				return $"{depth} {state} - {item}";
+			}
 		}
 
-		private void SendInvalidateToAll(object s, EventArgs e)
+		public static List<UpdateItem> SortAndLockUpdateItems(IObject3D root, Func<IObject3D, bool> includeObject)
 		{
-			var updateItems = new List<UpdateItem>();
-			foreach (var sibling in this.Parent.Children)
+			var requiredUpdateItems = new Dictionary<IObject3D, UpdateItem>();
+			foreach (var child in root.Children)
 			{
-				if (sibling != this)
+				if (includeObject(child))
 				{
-					AddItemsToList(sibling, updateItems, 0);
+					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, 0);
 				}
 			}
-			if (updateItems.Count == 0)
-			{
-				return;
-			}
 
+			var updateItems = requiredUpdateItems.Values.ToList();
 			// sort them
 			updateItems.Sort((a, b) => a.depth.CompareTo(b.depth));
+
 			// lock everything
 			foreach (var depthItem in updateItems)
 			{
 				depthItem.rebuildLock = depthItem.item.RebuildLock();
 			}
 
+			return updateItems;
+		}
+
+		private void SendInvalidateToAll(object s, EventArgs e)
+		{
+			var updateItems = SortAndLockUpdateItems(this.Parent, (item) => item != this);
+
+			SendInvalidateInRebuildOrder(updateItems, InvalidateType.SheetUpdated, this);
+		}
+
+		public static RunningInterval SendInvalidateInRebuildOrder(List<UpdateItem> updateItems,
+			InvalidateType sheetUpdated,
+			IObject3D sender = null)
+		{
 			// and send the invalidate
 			RunningInterval runningInterval = null;
 			void RebuildWhenUnlocked()
 			{
-				// get the last item from the list
-				var index = updateItems.Count - 1;
-				var updateItem = updateItems[index];
-				// if it is locked from above
-				if (updateItem.rebuildLock != null)
+				var count = updateItems.Count;
+				if (count > 0)
 				{
-					// release the lock and rebuild
-					// and ask it to update
-					var depthToBuild = updateItem.depth;
-					for (int i = 0; i < updateItems.Count; i++)
+					// get the last item from the list
+					var lastIndex = count - 1;
+					var lastUpdateItem = updateItems[lastIndex];
+					// we start with everything locked, so unlock the last layer and tell it to rebuild
+					if (lastUpdateItem.rebuildLock != null)
 					{
-						if (updateItems[i].depth == updateItem.depth)
+						// release the lock and rebuild
+						// and ask it to update
+						var depthToBuild = lastUpdateItem.depth;
+						for (int i = 0; i < updateItems.Count; i++)
 						{
-							updateItems[i].rebuildLock.Dispose();
-							updateItems[i].rebuildLock = null;
-							updateItems[i].item.Invalidate(new InvalidateArgs(this, InvalidateType.SheetUpdated));
+							if (updateItems[i].depth == lastUpdateItem.depth)
+							{
+								updateItems[i].rebuildLock.Dispose();
+								updateItems[i].rebuildLock = null;
+								var updateSender = sender == null ? updateItems[i].item : sender;
+								updateItems[i].item.Invalidate(new InvalidateArgs(updateSender, sheetUpdated));
+							}
 						}
 					}
-				}
-				else if (updateItems.Where(i => i.depth == updateItem.depth && i.item.RebuildLocked).Any())
-				{
-					// wait for the current rebuild to end
-					return;
+					else if (updateItems.Where(i =>
+						{
+							return i.depth == lastUpdateItem.depth && i.item.RebuildLocked;
+						}).Any())
+					{
+						// wait for the current rebuild to end (the one we requested above)
+						return;
+					}
+					else
+					{
+						// now that all the items at this level have rebuilt, remove them from out tracking
+						for (int i = updateItems.Count - 1; i >= 0; i--)
+						{
+							if (updateItems[i].depth == lastUpdateItem.depth)
+							{
+								updateItems.RemoveAt(i);
+							}
+						}
+					}
+
 				}
 				else
-				{
-					// remove all items at this level
-					for (int i = updateItems.Count - 1; i >= 0; i--)
-					{
-						if (updateItems[i].depth == updateItem.depth)
-						{
-							updateItems.RemoveAt(i);
-						}
-					}
-				}
-
-				if (updateItems.Count == 0)
 				{
 					UiThread.ClearInterval(runningInterval);
 				}
@@ -210,21 +236,34 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// rebuild depth first
 			runningInterval = UiThread.SetInterval(RebuildWhenUnlocked, .01);
+
+			return runningInterval;
 		}
 
-		private void AddItemsToList(IObject3D inItem, List<UpdateItem> updatedItems, int inDepth)
+		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem, Dictionary<IObject3D, UpdateItem> updatedItems, int inDepth)
 		{
 			// process depth first
 			foreach(var child in inItem.Children)
 			{
-				AddItemsToList(child, updatedItems, inDepth + 1);
+				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1);
 			}
 
-			updatedItems.Add(new UpdateItem()
+			var depth2 = inDepth;
+			if (HasParametersWithActiveFunctions(inItem))
 			{
-				depth = inDepth,
-				item = inItem
-			});
+				var itemToAdd = inItem;
+				while (itemToAdd != null
+					&& depth2 >= 0)
+				{
+					updatedItems[itemToAdd] = new UpdateItem()
+					{
+						depth = depth2,
+						item = itemToAdd
+					};
+					depth2--;
+					itemToAdd = itemToAdd?.Parent;
+				}
+			}
 		}
 
 		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);

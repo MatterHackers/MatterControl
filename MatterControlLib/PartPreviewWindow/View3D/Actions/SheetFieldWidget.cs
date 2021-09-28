@@ -112,6 +112,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				this.content.Text += keyPressEvent.KeyChar.ToString();
 
+				keyPressEvent.Handled = true;
+
 				UpdateSheetEditField();
 			}
 		}

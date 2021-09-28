@@ -51,27 +51,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return AddTree(BuildItemView(rootItem), null, keyValues, theme);
 		}
 
-		private static TreeNode AddTree(ObjectView item, TreeNode parent, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
+		private static TreeNode AddTree(ObjectView objectView, TreeNode parentTreeNode, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
 			// Suppress MeshWrapper and OperationSource nodes in tree
-			bool shouldCollapseToParent = item.Source is ModifiedMeshObject3D || item.Source is OperationSourceObject3D;
-			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, keyValues, theme);
+			bool shouldCollapseToParent = objectView.Source is ModifiedMeshObject3D || objectView.Source is OperationSourceObject3D;
+			TreeNode contextNode;
+			if (shouldCollapseToParent
+				&& parentTreeNode != null
+				&& !keyValues.ContainsKey(objectView.Source))
+			{
+				contextNode = parentTreeNode;
+			}
+			else
+			{
+				var itemName = GetName(objectView);
+				contextNode = AddItem(objectView.Source, itemName, parentTreeNode, keyValues, theme);
+			}
 
 			using (contextNode.LayoutLock())
 			{
-				var componentObject3D = item.Source as ComponentObject3D;
-				var hideChildren = item.Source.GetType().GetCustomAttributes(typeof(HideChildrenFromTreeViewAttribute), true).Any();
+				var componentObject3D = objectView.Source as ComponentObject3D;
+				var hideChildren = objectView.Source.GetType().GetCustomAttributes(typeof(HideChildrenFromTreeViewAttribute), true).Any();
 
 				if ((componentObject3D?.Finalized == false
 					|| !hideChildren)
-					&& item.Children?.Any() == true)
+					&& objectView.Children?.Any() == true)
 				{
-					var orderChildrenByIndex = item.Source.GetType().GetCustomAttributes(typeof(OrderChildrenByIndexAttribute), true).Any();
-					IEnumerable<IObject3D> children = item.Children;
+					var orderChildrenByIndex = objectView.Source.GetType().GetCustomAttributes(typeof(OrderChildrenByIndexAttribute), true).Any();
+					IEnumerable<IObject3D> children = objectView.Children;
 
 					if (!orderChildrenByIndex)
 					{
-						children = item.Children.OrderBy(i => i.Name);
+						children = objectView.Children.OrderBy(i => i.Name);
 					}
 					foreach (var child in children)
 					{
@@ -87,14 +98,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return contextNode;
 		}
 
-		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
+		private static TreeNode AddItem(IObject3D item, string itemName, TreeNode parentNode, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
-			if (item.Source is InsertionGroupObject3D insertionGroup)
+			if (item is InsertionGroupObject3D insertionGroup)
 			{
 				return new TreeNode(theme)
 				{
 					Text = "Loading".Localize(),
-					Tag = item.Source,
+					Tag = item,
 					TextColor = theme.TextColor,
 					PointSize = theme.DefaultFontSize,
 				};
@@ -102,16 +113,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var node = new TreeNode(theme)
 			{
-				Text = GetName(item),
-				Tag = item.Source,
+				Text = itemName,
+				Tag = item,
 				TextColor = theme.TextColor,
 				PointSize = theme.DefaultFontSize,
 			};
 
-			keyValues.Add(item.Source, node);
+			keyValues.Add(item, node);
 
 			// Check for operation resulting in the given type
-			var image = SceneOperations.GetIcon(item.Source.GetType(), theme);
+			var image = SceneOperations.GetIcon(item.GetType(), theme);
 
 			if (image != null)
 			{
@@ -123,8 +134,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				node.Load += (s, e) =>
 				{
-					string contentID = item.Source.MeshRenderId().ToString();
-					if (item.Source is IStaticThumbnail staticThumbnail)
+					string contentID = item.MeshRenderId().ToString();
+					if (item is IStaticThumbnail staticThumbnail)
 					{
 						contentID = $"MatterHackers/ItemGenerator/{staticThumbnail.ThumbnailName}".GetLongHashCode().ToString();
 					}
@@ -146,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			node.ExpandedChanged += (s, e) =>
 			{
-				if (item.Source is Object3D object3D)
+				if (item is Object3D object3D)
 				{
 					object3D.Expanded = node.Expanded;
 				}

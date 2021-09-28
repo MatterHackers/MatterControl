@@ -58,7 +58,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
-		public bool Finalized { get; set; } = true;
+		private bool _finalizade = true;
+		public bool Finalized
+		{
+			get => _finalizade;
+			
+			set
+			{
+				_finalizade = value;
+				// on any invalidate ensure that the visibility setting are correct for embedded sheet objects
+				foreach (var child in this.Descendants())
+				{
+					if (child is SheetObject3D)
+					{
+						child.Visible = !this.Finalized;
+					}
+				}
+			}
+		}
 
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
 

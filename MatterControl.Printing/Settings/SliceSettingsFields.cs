@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Monotonic Solid Infill".Localize().Localize(),
 					HelpText = "When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					DefaultValue = "1",
+					DefaultValue = "0",
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					Converter = new MappedToBoolString(),

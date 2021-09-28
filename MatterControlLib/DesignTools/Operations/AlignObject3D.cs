@@ -188,6 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align XAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
+		[Slider(-20, 20, useSnappingGrid: true)]
 		public DoubleOrExpression XOffset { get; set; } = 0;
 
 		[SectionStart("Y Axis"), DisplayName("Align")]
@@ -199,6 +200,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align YAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
+		[Slider(-20, 20, useSnappingGrid: true)]
 		public DoubleOrExpression YOffset { get; set; } = 0;
 
 		[SectionStart("Z Axis"), DisplayName("Align")]
@@ -210,6 +212,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align ZAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
+		[Slider(-20, 20, useSnappingGrid: true)]
 		public DoubleOrExpression ZOffset { get; set; } = 0;
 
 		public override bool CanFlatten => true;
