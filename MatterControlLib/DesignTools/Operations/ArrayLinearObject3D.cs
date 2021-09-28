@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -78,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var distance = Distance.Value(this);
 						var count = Count.Value(this);
-						
+
 						// add in all the array items
 						for (int i = 0; i < Math.Max(count, 1); i++)
 						{
@@ -93,32 +94,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.AddRange(newChildren);
 						});
 
-						foreach(var child in Children)
+						var updateItems = SheetObject3D.SortAndLockUpdateItems(this, (item) =>
 						{
-							if(!(child is OperationSourceContainerObject3D)
-								&&  SheetObject3D.HasParametersWithActiveFunctions(child))
-							{
-								// This really needs to be 'Has Perameters With index at this level'
-								child.Invalidate(new InvalidateArgs(child, InvalidateType.Properties));
-							}
+							return !(item.Parent is ArrayObject3D && item is OperationSourceObject3D);
+						});
+
+						var runningInterval = SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties);
+
+						while (runningInterval.Active)
+						{
+							Thread.Sleep(10);
 						}
 
 						SourceContainer.Visible = false;
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
-						void UnlockWhenDone()
-						{
-							if (this.Descendants().Where(c => c.RebuildLocked).Any())
-							{
-								UiThread.RunOnIdle(UnlockWhenDone, .05);
-							}
-							else
-							{
-								rebuildLock.Dispose();
-								Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-							}
-						}
-
-						UiThread.RunOnIdle(UnlockWhenDone);
 						return Task.CompletedTask;
 					});
 			}
