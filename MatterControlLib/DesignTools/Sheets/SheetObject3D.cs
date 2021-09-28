@@ -190,17 +190,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					// get the last item from the list
 					var lastIndex = count - 1;
 					var lastUpdateItem = updateItems[lastIndex];
-					// if it is locked from above
-					var wating
-					if (updateItems.Where(i =>
-						{
-							return i.depth == lastUpdateItem.depth && i.item.RebuildLocked;
-						}).Any())
-					{
-						// wait for the current rebuild to end
-						return;
-					}
-					else if (lastUpdateItem.rebuildLock != null)
+					// we start with everything locked, so unlock the last layer and tell it to rebuild
+					if (lastUpdateItem.rebuildLock != null)
 					{
 						// release the lock and rebuild
 						// and ask it to update
@@ -216,9 +207,17 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 					}
+					else if (updateItems.Where(i =>
+						{
+							return i.depth == lastUpdateItem.depth && i.item.RebuildLocked;
+						}).Any())
+					{
+						// wait for the current rebuild to end (the one we requested above)
+						return;
+					}
 					else
 					{
-						// remove all items at this level
+						// now that all the items at this level have rebuilt, remove them from out tracking
 						for (int i = updateItems.Count - 1; i >= 0; i--)
 						{
 							if (updateItems[i].depth == lastUpdateItem.depth)
@@ -252,16 +251,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			var depth2 = inDepth;
 			if (HasParametersWithActiveFunctions(inItem))
 			{
-				var item2 = inItem;
-				while (depth2 >= 0)
+				var itemToAdd = inItem;
+				while (itemToAdd != null
+					&& depth2 >= 0)
 				{
-					updatedItems[item2] = new UpdateItem()
+					updatedItems[itemToAdd] = new UpdateItem()
 					{
 						depth = depth2,
-						item = item2
+						item = itemToAdd
 					};
 					depth2--;
-					item2 = item2?.Parent;
+					itemToAdd = itemToAdd?.Parent;
 				}
 			}
 		}
