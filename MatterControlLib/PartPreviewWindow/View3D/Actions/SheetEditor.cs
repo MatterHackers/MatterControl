@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public MHTextEditWidget EditSelectedExpression { get; private set; }
 		private GridWidget gridWidget;
 
-		public SheetEditorWidget(SheetData sheetData, UndoBuffer undoBuffer, ThemeConfig theme)
+		public SheetEditorWidget(SheetData sheetData, SheetObject3D sheetObject, UndoBuffer undoBuffer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
@@ -124,6 +124,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				gridWidget.ExpandToFitContent();
+			}
+
+			if (sheetObject != null)
+			{
+				PublicPropertyEditor.AddWebPageLinkIfRequired(sheetObject, this, theme);
 			}
 		}
 
@@ -225,7 +230,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (item is SheetObject3D sheetObject)
 			{
-				return new SheetEditorWidget(sheetObject.SheetData, undoBuffer, theme);
+				return new SheetEditorWidget(sheetObject.SheetData, sheetObject, undoBuffer, theme);
 			}
 
 			return null;

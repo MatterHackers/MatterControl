@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				AddWebPageLinkIfRequired(context, mainContainer, theme);
+				AddWebPageLinkIfRequired(context.item, mainContainer, theme);
 
 				// add in an Update button if applicable
 				if (context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate)
@@ -1463,9 +1463,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new SettingsRow("Demo Mode".Localize(), null, detailsLink, theme);
 		}
 
-		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		public static void AddWebPageLinkIfRequired(IObject3D item, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
+			if (item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
 				var detailsLink = new TextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{

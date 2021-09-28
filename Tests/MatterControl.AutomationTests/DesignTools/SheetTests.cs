@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var sheetData = new SheetData(5, 5);
 			var undoBuffer = new UndoBuffer();
 			var theme = ApplicationController.Instance.Theme;
-			var sheetEditor = new SheetEditorWidget(sheetData, undoBuffer, theme);
+			var sheetEditor = new SheetEditorWidget(sheetData, null, undoBuffer, theme);
 
 			systemWindow.AddChild(sheetEditor);
 
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var sheetData = new SheetData(5, 5);
 			var undoBuffer = new UndoBuffer();
-			var sheetEditorWidget = new SheetEditorWidget(sheetData, undoBuffer, theme);
+			var sheetEditorWidget = new SheetEditorWidget(sheetData, null, undoBuffer, theme);
 
 			container.AddChild(sheetEditorWidget);
 
