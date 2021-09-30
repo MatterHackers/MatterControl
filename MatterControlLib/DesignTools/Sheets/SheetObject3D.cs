@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static List<UpdateItem> SortAndLockUpdateItems(IObject3D root, Func<IObject3D, bool> includeObject)
 		{
 			var requiredUpdateItems = new Dictionary<IObject3D, UpdateItem>();
-			foreach (var child in root.Children)
+			foreach (var child in root.Descendants())
 			{
 				if (includeObject(child))
 				{
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			var depth2 = inDepth;
-			if (HasParametersWithActiveFunctions(inItem))
+			if (HasExpressionWithString(inItem, "=", true))
 			{
 				var itemToAdd = inItem;
 				while (itemToAdd != null
@@ -471,14 +471,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Check if the sheet is the first sheet parent of this item (if not it will not change it's data).
 				if (FindFirstSheet(itemToCheck) == sheet)
 				{
-					return HasParametersWithActiveFunctions(itemToCheck);
+					return HasExpressionWithString(itemToCheck, "=", true);
 				}
 			}
 
 			return false;
 		}
 
-		public static bool HasParametersWithActiveFunctions(IObject3D itemToCheck)
+		public static bool HasExpressionWithString(IObject3D itemToCheck, string checkForString, bool startsWith)
 		{
 			foreach (var item in itemToCheck.DescendantsAndSelf())
 			{
@@ -489,10 +489,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					if (propertyValue is IDirectOrExpression directOrExpression)
 					{
-						if (directOrExpression.Expression.StartsWith("="))
+						if (startsWith)
 						{
-							// WIP: check if the value has actually changed, this will update every object on any cell change
-							return true;
+							if (directOrExpression.Expression.StartsWith(checkForString))
+							{
+								// WIP: check if the value has actually changed, this will update every object on any cell change
+								return true;
+							}
+						}
+						else
+						{
+							return directOrExpression.Expression.Contains(checkForString);
 						}
 					}
 				}

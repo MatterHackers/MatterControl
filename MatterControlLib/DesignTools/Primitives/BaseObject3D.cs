@@ -83,10 +83,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression CalculationHeight { get; set; } = .1;
 
 		[DisplayName("Expand")]
-		[Slider(1, 30, Easing.EaseType.Quadratic, snapDistance: .5)]
+		[Slider(0, 30, Easing.EaseType.Quadratic, snapDistance: .5)]
 		public DoubleOrExpression BaseSize { get; set; } = 3;
 
-		[Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
+		[Slider(0, 10, Easing.EaseType.Quadratic, snapDistance: .1)]
 		public DoubleOrExpression InfillAmount { get; set; } = 3;
 
 		[DisplayName("Height")]
@@ -360,21 +360,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			return boundingCircle;
 		}
 
-		private static PolyTree GetPolyTree(Polygons basePolygons)
-		{
-			// create a bounding polygon to clip against
-			Polygon boundingPoly = GetBoundingPolygon(basePolygons);
-
-			var polyTreeForTrace = new PolyTree();
-
-			var clipper = new Clipper();
-			clipper.AddPaths(basePolygons, PolyType.ptSubject, true);
-			clipper.AddPath(boundingPoly, PolyType.ptClip, true);
-			clipper.Execute(ClipType.ctIntersection, polyTreeForTrace);
-
-			return polyTreeForTrace;
-		}
-
 		public void GenerateBase(Polygons polygonShape, double bottomWithoutBase)
 		{
 			if (polygonShape != null
@@ -393,11 +378,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						break;
 
 					case BaseTypes.Outline:
-						PolyTree polyTreeForBase = GetPolyTree(polygonShape);
-						foreach (PolyNode polyToOffset in polyTreeForBase.Childs)
-						{
-							polysToOffset.Add(polyToOffset.Contour);
-						}
+						polysToOffset.AddRange(polygonShape);
 						break;
 				}
 

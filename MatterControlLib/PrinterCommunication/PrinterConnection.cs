@@ -872,7 +872,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string PrintJobName { get; private set; } = null;
 
-		public bool PrintWasCanceled { get; set; } = false;
+		public bool PrintWasCanceled { get; private set; } = false;
 
 		public double RatioIntoCurrentLayerSeconds
 		{
