@@ -96,7 +96,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var updateItems = SheetObject3D.SortAndLockUpdateItems(this, (item) =>
 						{
-							return !(item.Parent is ArrayObject3D && item is OperationSourceObject3D);
+							// WIP
+							if (item.Parent == this)
+							{
+								// only process our children that are not the source object
+								return !(item is OperationSourceObject3D);
+							}
+							else if (item.Parent is OperationSourceContainerObject3D)
+							{
+								// If we find another source container
+								// Only process its children that are the source container (they will be replicated and modified correctly by the source container)
+								return item is OperationSourceObject3D;
+							}
+
+							// process everything else
+							return true;
 						});
 
 						var runningInterval = SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties);
