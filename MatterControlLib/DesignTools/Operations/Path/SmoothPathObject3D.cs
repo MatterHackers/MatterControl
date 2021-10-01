@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Smooth Path".Localize();
 		}
 
+		[MaxDecimalPlaces(2)]
+		[Slider(.01, 1, VectorMath.Easing.EaseType.Quadratic, snapDistance: .01)]
 		public DoubleOrExpression SmoothDistance { get; set; } = .3;
 
 		public IntOrExpression Iterations { get; set; } = 3;
@@ -103,6 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();
+						this.Invalidate(InvalidateType.DisplayValues);
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					});
 					return Task.CompletedTask;

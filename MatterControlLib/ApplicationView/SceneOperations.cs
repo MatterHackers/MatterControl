@@ -921,6 +921,10 @@ namespace MatterHackers.MatterControl
 			{
 				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath")
 			});
+			PrimaryOperations.Add(typeof(LinearExtrudeObject3D), new List<SceneOperation>
+			{
+				SceneOperations.ById("AddBase")
+			});
 
 			// default operations
 			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
