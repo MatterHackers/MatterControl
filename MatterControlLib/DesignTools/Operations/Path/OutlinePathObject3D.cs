@@ -111,10 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
+			Invalidate(InvalidateType.DisplayValues);
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;

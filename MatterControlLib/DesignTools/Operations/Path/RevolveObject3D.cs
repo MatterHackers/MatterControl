@@ -168,10 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				Sides = agg_basics.Clamp(sides, 3, 360, ref valuesChanged);
 			}
 
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
+			Invalidate(InvalidateType.DisplayValues);
 
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image

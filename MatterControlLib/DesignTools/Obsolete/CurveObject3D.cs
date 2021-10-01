@@ -195,10 +195,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
+			Invalidate(InvalidateType.DisplayValues);
 
 			return Task.CompletedTask;
 		}

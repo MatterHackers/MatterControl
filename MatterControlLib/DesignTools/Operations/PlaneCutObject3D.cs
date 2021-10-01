@@ -155,20 +155,22 @@ namespace MatterHackers.MatterControl.DesignTools
 						newChildren.Add(newMesh);
 					}
 
-					RemoveAllButSource();
-					SourceContainer.Visible = false;
-					foreach (var child in newChildren)
+					var sourceContainer = SourceContainer;
+					this.Children.Modify(list =>
 					{
-						this.Children.Add(child);
-					}
+						list.Clear();
+						list.Add(sourceContainer);
+						foreach (var child in newChildren)
+						{
+							list.Add(child);
+						}
+						sourceContainer.Visible = false;
+					});
 
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
-						if (valuesChanged)
-						{
-							Invalidate(InvalidateType.DisplayValues);
-						}
+						Invalidate(InvalidateType.DisplayValues);
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 
