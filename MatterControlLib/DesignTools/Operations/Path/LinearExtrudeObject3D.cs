@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 , IPropertyGridModifier
 #endif
 	{
-		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 5;
 
 #if DEBUG
@@ -185,10 +185,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();
-						if (valuesChanged)
-						{
-							Invalidate(InvalidateType.DisplayValues);
-						}
+						Invalidate(InvalidateType.DisplayValues);
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					});
 

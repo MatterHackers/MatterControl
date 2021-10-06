@@ -101,10 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 2, 90, ref valuesChanged);
 
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
+			Invalidate(InvalidateType.DisplayValues);
 
 			using (RebuildLock())
 			{

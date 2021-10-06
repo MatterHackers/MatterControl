@@ -129,10 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var roundSegments = RoundSegments.ClampIfNotCalculated(this, 1, 90, ref valuesChanged);
 			var roundRadius = Radius.ClampIfNotCalculated(this, 0, Math.Min(width, Math.Min(depth, height)) / 2, ref valuesChanged);
 
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
+			Invalidate(InvalidateType.DisplayValues);
 			
 			using (RebuildLock())
 			{

@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression InfillAmount { get; set; } = 3;
 
 		[DisplayName("Height")]
-		[Slider(1, 400, Easing.EaseType.Quadratic, snapDistance: 1)]
+		[Slider(1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression ExtrusionHeight { get; set; } = 5;
 
 		[DisplayName("")]

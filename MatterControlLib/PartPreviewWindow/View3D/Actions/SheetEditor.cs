@@ -167,7 +167,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			var name = agg_basics.GetNonCollidingName(editSelectedName.Text, existingNames);
+			// first replace spaces with '_'
+			var name = editSelectedName.Text.Replace(' ', '_');
+			// next make sure we don't have the exact name already
+			name = agg_basics.GetNonCollidingName(name, existingNames, false);
 			editSelectedName.Text = name;
 			SheetData[selectedCell.x, selectedCell.y].Name = name;
 			SheetData.Recalculate();
