@@ -152,7 +152,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (includeObject(child))
 				{
-					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, 0);
+					var parent = child;
+					var depthToThis = 0;
+					while(parent.Parent != root)
+					{
+						depthToThis++;
+						parent = parent.Parent;
+					}
+
+					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, depthToThis, includeObject);
 				}
 			}
 
@@ -171,7 +179,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void SendInvalidateToAll(object s, EventArgs e)
 		{
-			var updateItems = SortAndLockUpdateItems(this.Parent, (item) => item != this);
+			var updateItems = SortAndLockUpdateItems(this.Parent, (item) =>
+			{
+				if (item == this || item.Parent == this)
+				{
+					// don't process this
+					return false;
+				}
+				else if (item.Parent is ArrayObject3D arrayObject3D
+					&& arrayObject3D.SourceContainer != item)
+				{
+					// don't process the copied children of an array object
+					return false;
+				}
+
+				return true;
+			});
 
 			SendInvalidateInRebuildOrder(updateItems, InvalidateType.SheetUpdated, this);
 		}
@@ -198,12 +221,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						var depthToBuild = lastUpdateItem.depth;
 						for (int i = 0; i < updateItems.Count; i++)
 						{
-							if (updateItems[i].depth == lastUpdateItem.depth)
+							var updateItem = updateItems[i];
+							if (updateItem.depth == lastUpdateItem.depth)
 							{
-								updateItems[i].rebuildLock.Dispose();
-								updateItems[i].rebuildLock = null;
-								var updateSender = sender == null ? updateItems[i].item : sender;
-								updateItems[i].item.Invalidate(new InvalidateArgs(updateSender, sheetUpdated));
+								updateItem.rebuildLock.Dispose();
+								updateItem.rebuildLock = null;
+								var updateSender = sender == null ? updateItem.item : sender;
+								updateItem.item.Invalidate(new InvalidateArgs(updateSender, sheetUpdated));
 							}
 						}
 					}
@@ -226,7 +250,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 					}
-
 				}
 				else
 				{
@@ -240,16 +263,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			return runningInterval;
 		}
 
-		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem, Dictionary<IObject3D, UpdateItem> updatedItems, int inDepth)
+		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem, Dictionary<IObject3D, UpdateItem> updatedItems, int inDepth, Func<IObject3D, bool> includeObject)
 		{
 			// process depth first
 			foreach(var child in inItem.Children)
 			{
-				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1);
+				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1, includeObject);
 			}
 
 			var depth2 = inDepth;
-			if (HasExpressionWithString(inItem, "=", true))
+			if (includeObject(inItem)
+				&& HasExpressionWithString(inItem, "=", true))
 			{
 				var itemToAdd = inItem;
 				while (itemToAdd != null

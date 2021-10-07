@@ -96,6 +96,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var updateItems = SheetObject3D.SortAndLockUpdateItems(this, (item) =>
 						{
+							if (!SheetObject3D.HasExpressionWithString(item, "[index]", false))
+							{
+								return false;
+							}
+
 							// WIP
 							if (item.Parent == this)
 							{
@@ -107,6 +112,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 								// If we find another source container
 								// Only process its children that are the source container (they will be replicated and modified correctly by the source container)
 								return item is OperationSourceObject3D;
+							}
+							else if (item.Parent is OperationSourceObject3D operationSourceObject3D
+								&& operationSourceObject3D.Parent == this)
+							{
+								// we don't need to rebuild our source object
+								return false;
 							}
 
 							// process everything else
