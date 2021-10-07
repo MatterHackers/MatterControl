@@ -50,7 +50,7 @@
                     "widget_url": "https://lh3.googleusercontent.com/l6wOtVA8e3bY9h9DnOyLte4gXCZlC0w9dPBB0_N4yZevH0qofb0wCqYcuf2wuyzDygDTgyhNqAV5q3C_9bv_eFVR"
                 }, 
                 {
-                    "banner_url": "https://lh3.googleusercontent.com/_Hh2xOwPmBLfIi6RUZztlw6xIR13vAvn5t_jU83PVx_UyRy0hX_qXqzhmlG7oinvUy9E3yW3nG0TBMLjdbeXfJwAVw4", 
+                    "banner_url": "https://lh3.googleusercontent.com/D_cYz-OBIzOhpC2_RBT3nY8J7KzKvUvo6SNqBLZ4n6wNm3pxCErHNgLPm_KEIJA-gWYPcfYFTUNFFj_Rhx01QPuHo5wm18GUQ3C4ORTz", 
                     "icon_url": null, 
                     "link": "https://www.matterhackers.com/store/c/mh-build-series", 
                     "subtitle": "MH Build Series 3D printing filament is the best 3D printer plastic available for producing high quality 3D printed parts at an affordable price.", 
@@ -208,14 +208,6 @@
                     "subtitle": "", 
                     "title": "ColorFabb PLA/PHA Series", 
                     "widget_url": "https://lh3.googleusercontent.com/A2lkbwT7ZxHVLykEpvRX6FkdnfNLIlYQYDRPOZ8yYKWi6LmFlBNBMqLSTsxNmIzja8k6s9MbzjQaXFjlzOdb5L1RwA"
-                }, 
-                {
-                    "banner_url": null, 
-                    "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/MadeSolid", 
-                    "subtitle": "Affordable materials from MadeSolid - hurry while supplies last on this inexpensive yet reliable filament. ", 
-                    "title": "MadeSolid", 
-                    "widget_url": "https://lh3.googleusercontent.com/RzamHBX_U3UcD4Wu_lmGpbBSdpr4booEWyo0kCbK76V8WrOTWaphOQ9zwTMEUfR9xgxsPHNUHtXIAt8z_pRFsxB6l1g"
                 }, 
                 {
                     "banner_url": "https://lh3.googleusercontent.com/7i4QR-NWvq1Ztku28Why5txrtoPxnheklnmS2ULH0OuaLtQYXFKWqxAvj0_Y6-DVGKMECShrmArNBnY2wJMyjB60qA", 
@@ -376,14 +368,6 @@
                     "subtitle": "An eye-catching line of colorful PLA filament that is manufactured with accuracy in mind making it extremely easy to print.", 
                     "title": "Polyalchemy 3D Printing Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/pJyqPnq6TYHTPn5tmRwGPGF19Yc1H5gGy6QXuWaV7W9VRZk_hPYoIx4ZIrrnBdzwKAQxGOon2CkD24o0ZgPcsty3Mg"
-                }, 
-                {
-                    "banner_url": null, 
-                    "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/greencycles-pva-filament", 
-                    "subtitle": "Green Cycles PVA is biodegradable and non-toxic support material. In favorable environmental conditions, it will break down into its component parts leaving behind no footprint.", 
-                    "title": "GreenCycles PVA Filament", 
-                    "widget_url": "https://lh3.googleusercontent.com/yS7_Pb6QvabW0lTfedK04zCdVUEicsw-EhM4d8Rv3U0Cx_xZ2arse7woNAiNsL3mcEcHPPR37-QixAlCYPG5NanA"
                 }, 
                 {
                     "banner_url": "https://lh3.googleusercontent.com/VEXNiNkvveeIy8h4nbQrKqs9wLyNGMornsYU1ItCkzaf33xSwq_9VIl8HaWjzDHv14GX91UUMozWioO1c6ur14mh", 
@@ -624,6 +608,14 @@
                     "subtitle": "From carbon fiber-infused PET to glass fiber polypropylene, BASF has created industrial-strength 3D printing materials designed specifically for desktop machines. ", 
                     "title": "BASF Advanced Specialty Materials", 
                     "widget_url": "https://lh3.googleusercontent.com/ylAVPK8vr_uQ_bOROiM0CGFamBAoPh6wEUtYmmnLUla2SPPoHq7twRycy_gqIxoZCag8SKbVzW_5yedJn9I3Tw3n_Q"
+                }, 
+                {
+                    "banner_url": "https://lh3.googleusercontent.com/zoeAVfuTMGjJEWwPOtovPjpZurshB9mYtk769HX2n7nBMD4t0dGfyQRvb_sjCQm_vhc7kpDdnueItmhSAxRgFiBTJA", 
+                    "icon_url": null, 
+                    "link": "https://www.matterhackers.com/store/c/clearance-items-materials", 
+                    "subtitle": "Filament and resins on special Clearance Sale. Check back every day for amazing deals!", 
+                    "title": "Clearance Items - Materials", 
+                    "widget_url": "https://lh3.googleusercontent.com/LRvINOjf8Y51lbpXJAW7sZLky5cKOBcs2qfcnYEHgWBMvv0uapDm-aDNx4fq3fntt7cnYASvRJds44uIoOfspqdfaQ"
                 }
             ], 
             "group_link": "https://www.matterhackers.com/store/c/3d-printer-filament", 

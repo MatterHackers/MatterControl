@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl
 			theme.ApplyBoxStyle(optionsSection);
 
 			AddUserBoolToggle(optionsPanel,
-				"Collect Print History Data".Localize(),
+				"Allow User Rattings After Print".Localize(),
 				UserSettingsKey.CollectPrintHistoryData,
 				false,
 				false);
@@ -528,7 +528,7 @@ namespace MatterHackers.MatterControl
 								if (requiresRestart)
 								{
 									StyledMessageBox.ShowMessageBox(
-										"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
+										"To apply settings changes you need to restart MatterControl.".Localize(),
 										"Restart Required".Localize());
 								}
 
