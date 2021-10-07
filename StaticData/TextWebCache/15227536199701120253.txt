@@ -1,3 +1,127 @@
+
+# MatterControl 2.21.10 (October, 7, 2021)
+[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgPDU_bySCgwLEgZVcGxvYWQYgIDwyuugmAsM)
+ 
+[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgPDM9JiSCwwLEgZVcGxvYWQYgIDw8qOJswsM)
+ 
+## Changes
+ 
+- Features
+  - Montonic Infill  
+  ![](https://lh3.googleusercontent.com/uZyP83p9sYBG061toxj1Mb6tFqlxBjYaaH5DKV6MoQnvCIXa-m29APu6tCFCu4W5ejSxS5fxs3fPX6D-q4peRB482lVmpxMSC2Xksb0=w300)
+  - Image Editor Improvements
+    - Auto detection of best image mode
+    - Improved histogram slider  
+    ![](https://lh3.googleusercontent.com/SPt08ttQM-YzvWjeO8ePnP9eB6S5HKY7MRNrtzqnaATwMSRcrg0zqm0MdHBEYWxlfIyDU-VBkU_We6aQlbypXVZQLY523namJ6CIdOU=w300)
+  - Added Sliders  
+![](https://lh3.googleusercontent.com/A7u88XsBgE-T0M74CFwyTuRc59fglmaA9GTrqXaUXZyHmEaSB_i9VoJ0LB21QdVa5mib-K1AnqvSCkKej3BkUHYYsolHuPnajhF9Wq4=w300)
+  - Added the ability to expand and colapse toolbar groups  
+![](https://lh3.googleusercontent.com/DJdJGw2ewQ7FUv0aKdfQxu2ypNfxXoc5JeFSQkDTSpxixY26cQ8AaWHXp-5Q4MAr-AaqWWvWrO0QW6J6LiYA2YR960oJX8aW_fTqNjrO)
+  - New seam modes  
+  ![](https://lh3.googleusercontent.com/6_Hdof_ZKHVHxlXtl_ZaGHi95qn7PqWMD4R1IV5HN0VFVfPmsRIPKQA4B0BUMKzC6Lb1sUSyIFbJcyMHT4bvExQh8I4pnXNYJ72JD_Fo=w400)
+  - Library, Save and Bed menus improved  
+  ![](https://lh3.googleusercontent.com/wSsFanpHW5BRmqr1flzqd_dfk0IRngw36cxd8RHVF6YuPKDXF7LwvVHVbAsHZz0iSoGljRQbZPTM5LYfqsHoUJ9q9vZifPelkrb_36kF)
+  - Experimental support for auto printing with MatterControl Pro 'Autopilot'  
+ 
+- UI improvements
+  - Added F2 rename to objects and folders
+  - Added back button support to library
+  - Improved [Sheet Editor](https://www.matterhackers.com/support/mattercontrol-variable-support)
+ 
+- Bugs
+  - Web image cache misses
+  - Fixed bug with culling back faces
+  - Crash on invalid bounding box
+  - Bug with wrapping on right side
+  - Bug with image comparisons
+
+
+# MatterControl 2.21.6 (June, 15, 2021)
+[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgPDElujkCgwLEgZVcGxvYWQYgIDwzNbT6AsM)
+ 
+[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgPDkiIOBCwwLEgZVcGxvYWQYgIDwtKbT5wsM)
+ 
+## Changes
+ 
+- Features
+  - Added Experimental [Beta] support for variables  
+  ![](https://lh3.googleusercontent.com/N42j6qs0BeqEVwJe-GemETGdKX_QLwYJ4OVl13y6INv1CJslyVBaCRdiF4Msd-ERMr8wZEaoTnlDVn8TetoZdYbK199mPLVy-ADTvg)
+    - A Sheet can be added to the scene and referenced by designs (think Google Sheets or Excel)
+    - Designs properties can reference cell data
+      - Add '=' to the start of the line and type in a table cell
+    - Designs can include equations as well as references
+      - Add '=' to the start of the line and type in an equation
+  - Support for Zoom to selection  
+  ![Zoom to Selection](https://lh3.googleusercontent.com/I-KbkRArp1LNSWKvBGNWDQDA84dA0pwJI1iuYgvQfL4Xmmst5GUGMw7Sn04IHg4S3wAvRR0uuZUM6aEPxcFHNRz3-tv9icio-hXSr9g)
+  - Support for Turntable mode (up always stays up)  
+    ![turntable](https://lh3.googleusercontent.com/zV2LYJ2jxee-5fdpHyydU-Khe6xSXceIuzqjRPD-cKMKr2hsJdFlTMIJGSTMDzauUDjZTM58T72i6XhgOZRDFhlv0NVIafWVQdq7ow=w300)
+  - Improved Scale controls  
+  ![](https://lh3.googleusercontent.com/vsJlLNlNKXUs6wzo-8vl0S4AHCnBxYoeyaUfi095wKebd8Qq2gKbXTPa3BdoRDLAuwVjccv9PAf-x5n5pK3tq7AQ5cFosLRTlR4-0w)
+  - Firmware Sounds can be disable in printer settings  
+  ![](https://lh3.googleusercontent.com/bR_NoIwkiHiYrqnt51S-R_7TXbxE_UcUTviCe1gDFDzCFISpSmLaNAyClfBG_TiaW6nRhdz-XsdQ2ZAlPF-1nxgZYznNwDv2YoVnkSo)
+ 
+- UI improvements
+  - Added new Scene controls  
+  ![Image](https://lh3.googleusercontent.com/bH075aNWgD014bn8a9Bxk451UWsvWu6sirHe2QuQKveqmm9nwPmM0ZRl0QcuxANfItaeq_KtzlPlatxH1H4jAokgmuHT8SajTqW7eQ)
+  - Icons match the theme more closely
+  - Added hints to mouse actions
+  - F2 to rename items
+ 
+- Bugs
+  - Slicing regression  with thin features
+  - Better pathing while outputting support
+  - Design Apps rebuilds more consistent
+
+  # MatterControl 2.21.5 (May, 10, 2021)
+[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgPDkwMDeCwwLEgZVcGxvYWQYgIDwhP_WkgkM)
+
+[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgPDExri_CwwLEgZVcGxvYWQYgIDwhP-pvAoM)
+
+## Changes
+
+- Features
+  - Zoom to mouse cursor (thanks to visdauas for his [work](https://github.com/MatterHackers/MatterControl/pull/5012))  
+  ![Zoom To Cursor](https://lh3.googleusercontent.com/xQhvyUeWY3Q9tDGkJ2ZqMdMlgbOR1fvaeODUChIqae2KQ7hV-nd2UdIgI6LsqXwajOBkYihyT9510dwFV7WZT-yI0lusdbVlE5ZOeOY=w350)
+  - Curve Tool now has angle and improve help  
+  ![Curve Tool](https://lh3.googleusercontent.com/5GBDL_rMcGKp7VgnT2vSeUg8McqYwNUVweBatH47WpaanK7mCuSyG9ixCTvQrhKXwy8O8cz8RJw-MNOY00CAVl1Yaa_MDXppWOab2Uo=w350)
+  - Measure tool shows size  
+  ![Measure Tool](https://lh3.googleusercontent.com/CpTp_-DaBuxcymdrZ8d6N2Dd__vIeKdirxXYaNAQg99VFX_BoIvRYk6vfECg0e8qp1vAUtYMW4MXckqU-orVkO7n8Klriyoo37zcfxg)
+  - New Description Tool  
+  ![Description Tool](https://lh3.googleusercontent.com/RcMVPVZliJiuayIVi0aV57wAk-S5vFi3Ghgmr3F-LnjqGhxz4wCx7zmrhg-yIZ-dYU1glqmo4QPs1V_f3UN0xazKmijWOYi_CbhW5A=w350)
+  - New Edge Controls  
+  ![Edge Controls](https://lh3.googleusercontent.com/Ic8DeDnRvqrf_iL_MeN2nIAWdKvlP_0XqL7bJNjqOUeN0byCMDnSvIB9oHq95rPhFudJDFH-hB81w5V3UieuQGOsYmrnjSQlNjflrXlP)
+  - Improved merge overlapping  lines in slicer
+  - More warning messages for bad settings
+  - Measure lines always in front
+
+- Bugs
+  - Parts sheets working again
+  - Fixed bad moves when path planning supports
+  - Fixed bad transparency when looking up from the bed
+
+# MatterControl 2.21.4 (March, 23, 2021)
+[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgLDf3NehCwwLEgZVcGxvYWQYgIDwiKGSlggM)
+
+[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgLCf2Ib9CQwLEgZVcGxvYWQYgIDwiP7tkgkM)
+
+## Changes
+
+- Features
+  - Improved dual extrusion wipe tower (mad hollow, primes in center, random edge starts)
+  - Added plane cut operator
+  - Allow setting extruder for brim
+  - Adding support for conductive probing
+
+- UI improvements
+  - Added export options to main export button  
+  ![Export Options](https://lh3.googleusercontent.com/FdAwQh48iivycVfGzJB8gNAN7tttlrib5lOFij9Ba0U3_SkkOF6_yUb_DPmb0Iq61uP5PZrJbk2INpr_ERB1RgeBF4wjrUVSPEjRRAZn=w310)
+  - Can move printer tabs (right click menu)  
+
+- Bugs
+  - Made leveling validate cancelable
+  - Fixd crash with Convex Hull (locking when ungrouping)
+  - Fixed error with leveling plane on Extruder 2 with dual
+
 # MatterControl 2.21.2 (February, 5, 2021)
 [Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgLCHpunuCwwLEgZVcGxvYWQYgICwr_uutAgM)
 

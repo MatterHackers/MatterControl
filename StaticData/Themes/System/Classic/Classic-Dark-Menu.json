@@ -1,0 +1,80 @@
+{
+  "DefaultFontSize": 11,
+  "TextColor": "#EEEEEE",
+  "PresetColors": {
+    "MaterialPreset": "#FF7F00",
+    "QualityPreset": "#FFFF00",
+    "UserOverride": "#445FDC96"
+  },
+  "IsDarkTheme": true,
+  "SlightShade": "#00000028",
+  "MinimalShade": "#0000000F",
+  "Shade": "#00000078",
+  "DarkShade": "#000000BE",
+  "BackgroundColor": "#404040",
+  "TabBarBackground": "#B1B1B1",
+  "InactiveTabColor": "#D0D0D0",
+  "InteractionLayerOverlayColor": "#D0D0D0F0",
+  "SplitterBackground": "#B5B5B5",
+  "TabBodyBackground": "#00000000",
+  "ToolbarButtonBackground": "#00000000",
+  "ThumbnailBackground": "#00000000",
+  "AccentMimimalOverlay": "#B5890050",
+  "EditFieldColors": {
+    "Focused": {
+      "BackgroundColor": "#CCCCCC",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#222222"
+    },
+    "Hovered": {
+      "BackgroundColor": "#333333",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#FFFFFF"
+    },
+    "Inactive": {
+      "BackgroundColor": "#303030",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#282828",
+      "TextColor": "#EEEEEE"
+    }
+  },
+  "LightTextColor": "#00000000",
+  "BorderColor": "#C8C8C8",
+  "BorderColor40": "#00000000",
+  "BorderColor20": "#00000000",
+  "PopupBorderColor": "#2D2D2D",
+  "RowBorder": "#333",
+  "DropList": {
+    "Open": {
+      "BackgroundColor": "#282828",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#00000000",
+      "TextColor": "#839496"
+    },
+    "Focused": {
+      "BackgroundColor": "#CCCCCC",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#222222"
+    },
+    "Hovered": {
+      "BackgroundColor": "#303030",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#BA5900",
+      "TextColor": "#EEE"
+    },
+    "Inactive": {
+      "BackgroundColor": "#303030",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#282828",
+      "TextColor": "#EEE"
+    }
+  },
+  "DisabledColor": "#FBFBFB",
+  "SplashAccentColor": "#00000000",
+  "BedBackgroundColor": "#3B3B3B",
+  "PrimaryAccentColor": "#00000000",
+  "SectionBackgroundColor": "#3B3B3B"
+}
