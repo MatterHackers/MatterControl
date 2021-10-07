@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl
 			theme.ApplyBoxStyle(optionsSection);
 
 			AddUserBoolToggle(optionsPanel,
-				"Allow User Rattings After Print".Localize(),
+				"Show Rattings Dialog After Print".Localize(),
 				UserSettingsKey.CollectPrintHistoryData,
 				false,
 				false);
