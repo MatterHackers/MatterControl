@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var updateItems = SheetObject3D.SortAndLockUpdateItems(this, (item) =>
 						{
-							if (!SheetObject3D.HasExpressionWithString(item, "[index]", false))
+							if (!SheetObject3D.HasExpressionWithString(item, "=", true))
 							{
 								return false;
 							}
