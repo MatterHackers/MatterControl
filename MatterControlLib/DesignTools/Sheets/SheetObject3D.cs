@@ -343,8 +343,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				int index = 0;
 				foreach (var child in arrayObject.Children)
 				{
-					if (!(child is OperationSourceContainerObject3D)
-						&& !(child is OperationSourceObject3D))
+					if (!(child is OperationSourceObject3D))
 					{
 						if (child.DescendantsAndSelf().Where(i => i == owner).Any())
 						{
@@ -385,8 +384,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return stringWithConstants;
 		}
 
-		public static T EvaluateExpression<T>(IObject3D owner, string inputExpression)
+		public static T EvaluateExpression<T>(IObject3D owner, string inExpression)
 		{
+			var inputExpression = inExpression;
 			var printer = owner.ContainingPrinter();
 			if (printer != null)
 			{
