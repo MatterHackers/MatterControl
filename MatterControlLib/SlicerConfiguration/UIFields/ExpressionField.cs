@@ -61,12 +61,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Fit
 			};
 
-			aligner.AddChild(textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
+			aligner.AddChild(textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex, unitsLabel: "mm")
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,
 				Name = this.Name,
 			});
+
 			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
 				if (this.Value != textEditWidget.Text)

@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl
 		private readonly ThemeConfig theme;
 		private bool mouseInBounds = false;
 
-		public MHTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
+		public MHTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null,
+			string unitsLabel = "")
 		{
 			this.Padding = new BorderDouble(3);
 			this.HAnchor = HAnchor.Fit;
@@ -55,12 +56,36 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = Color.Transparent
 			};
 
+			TextWidget labelWidget = null;
+
+			if (!string.IsNullOrEmpty(unitsLabel))
+			{
+				labelWidget = new TextWidget(unitsLabel, pointSize: theme.DefaultFontSize - 2, textColor: theme.PrimaryAccentColor)
+				{
+					Margin = new BorderDouble(right: 2),
+					HAnchor = HAnchor.Right,
+					VAnchor = VAnchor.Center,
+					Selectable = false
+				};
+
+				this.AddChild(labelWidget);
+
+				var labelWidth = labelWidget.Width + labelWidget.Margin.Right;
+				ActualTextEditWidget.Margin = ActualTextEditWidget.Margin.Clone(right: labelWidth + 2);
+			}
+
 			var internalWidget = this.ActualTextEditWidget.InternalTextEditWidget;
 			internalWidget.TextColor = theme.EditFieldColors.Inactive.TextColor;
 			internalWidget.FocusChanged += (s, e) =>
 			{
 				internalWidget.TextColor = internalWidget.Focused ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
 				noContentFieldDescription.TextColor = internalWidget.Focused ? theme.EditFieldColors.Focused.LightTextColor : theme.EditFieldColors.Inactive.LightTextColor;
+
+				if (labelWidget != null)
+				{
+					var labelDetailsColor = theme.PrimaryAccentColor.WithContrast(theme.EditFieldColors.Focused.BackgroundColor, 3).ToColor();
+					labelWidget.TextColor = (internalWidget.Focused) ? labelDetailsColor : theme.PrimaryAccentColor;
+				}
 			};
 
 			this.ActualTextEditWidget.InternalTextEditWidget.BackgroundColor = Color.Transparent;

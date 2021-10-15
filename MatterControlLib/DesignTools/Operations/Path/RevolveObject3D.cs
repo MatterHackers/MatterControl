@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var vertexSource = this.VertexSource.Transform(Matrix);
+					var vertexSource = this.VertexSource;
 					var pathBounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
 					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
@@ -188,8 +188,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					// take the axis offset out
 					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + axisPosition, 0, 0));
-					// move back to object space
-					mesh.Transform(this.Matrix.Inverted);
 
 					if (mesh.Vertices.Count == 0)
 					{
@@ -203,6 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						rebuildLock.Dispose();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
+
 					return Task.CompletedTask;
 				});
 		}

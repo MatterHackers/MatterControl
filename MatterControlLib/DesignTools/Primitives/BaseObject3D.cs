@@ -422,10 +422,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
+			var changeSet = new Dictionary<string, bool>();
 			changeSet.Clear();
 
 			changeSet.Add(nameof(NoBaseMessage), BaseType == BaseTypes.None);

@@ -496,13 +496,13 @@ namespace MatterHackers.MatterControl
 			theme.ApplyBoxStyle(optionsSection);
 
 			AddUserBoolToggle(optionsPanel,
-				"Show Rattings Dialog After Print".Localize(),
+				"Show Ratings Dialog After Print".Localize(),
 				UserSettingsKey.CollectPrintHistoryData,
 				false,
 				false);
 
 			AddUserBoolToggle(optionsPanel,
-				"Shown Welcome Message".Localize(),
+				"Show Welcome Message".Localize(),
 				UserSettingsKey.ShownWelcomeMessage,
 				false,
 				false);
