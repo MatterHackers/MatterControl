@@ -630,7 +630,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Start();
 								}
 							}
+							break;
 
+						case CommunicationStates.PreparingToPrint:
+							// clear the canceled flag as soon as we start to prepare the print
+							cancelPrintNextWriteLine = false;
+							PrintWasCanceled = false;
 							break;
 
 						default:
