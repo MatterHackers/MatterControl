@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Temperature { get; set; } = 210;
 
-		public override bool Persistable => false;
+		public override bool Printable => false;
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{

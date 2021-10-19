@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[HideFromEditor]
 		public bool PositionsHaveBeenSet { get; set; } = false;
 
-		public override bool Persistable => false;
+		public override bool Printable => false;
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{

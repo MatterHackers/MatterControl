@@ -526,7 +526,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.clear_bed_gcode,
 					PresentationName = "Clear Bed G-Code".Localize(),
-					HelpText = "G-Code used by Auto Pilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.".Localize(),
+					HelpText = "G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "",

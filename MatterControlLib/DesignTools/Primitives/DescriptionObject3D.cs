@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public Widths Width { get; set; } = Widths.Normal;
 
-		public override bool Persistable => false;
+		public override bool Printable => false;
 
 		private TracedPositionObject3DControl tracedPositionControl;
 		private bool mouseDownOnWidget;

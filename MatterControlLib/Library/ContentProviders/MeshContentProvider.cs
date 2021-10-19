@@ -107,6 +107,8 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
+		private static object locker = new object();
+
 		public async Task<ImageBuffer> GetThumbnail(ILibraryItem libraryItem, int width, int height)
 		{
 			IObject3D object3D = null;
@@ -136,15 +138,22 @@ namespace MatterHackers.MatterControl
 			var thumbnail = GenerateThumbnail(object3D, thumbnailId, width, height);
 			if (thumbnail != null)
 			{
-				// Cache content thumbnail
-				ImageIO.SaveImageData(
-					ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height),
-					thumbnail);
+				lock (locker)
+				{
+					var filename = ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height);
+					if (!File.Exists(filename))
+					{
+						// Cache content thumbnail
+						ImageIO.SaveImageData(filename, thumbnail);
+					}
 
-				// Cache library thumbnail
-				ImageIO.SaveImageData(
-					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
-					thumbnail);
+					// Cache library thumbnail
+					filename = ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height);
+					if (!File.Exists(filename))
+					{
+						ImageIO.SaveImageData(filename, thumbnail);
+					}
+				}
 			}
 
 			return thumbnail ?? DefaultImage;
