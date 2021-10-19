@@ -2254,7 +2254,7 @@ namespace MatterHackers.MatterControl
 					case PrinterConnection.PrintingModes.Calibration:
 						break;
 
-					case PrinterConnection.PrintingModes.AutoPilot:
+					case PrinterConnection.PrintingModes.Autopilot:
 						break;
 				}
 			}

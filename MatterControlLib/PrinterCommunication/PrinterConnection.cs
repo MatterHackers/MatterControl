@@ -2122,7 +2122,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		{
 			Normal,
 			Calibration,
-			AutoPilot,
+			Autopilot,
 		}
 
 		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, PrintingModes printingMode = PrintingModes.Normal)
