@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public override bool Persistable => false;
+		public override bool Printable => false;
 
 		public class UpdateItem
 		{
