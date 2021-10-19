@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						return true;
 					}
 
-					return item.Persistable == true;
+					return item.Persistable == true && item.Printable == true;
 				}).ToList();
 				var transformData = new List<TransformData>();
 				foreach (var child in children)
