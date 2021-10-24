@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.UI;
@@ -142,6 +143,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var newChildren = new List<Object3D>();
+					var root = SourceContainer.Children.First();
+					root = root == null ? SourceContainer : root;
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var reducedMesh = Cut(sourceItem);
@@ -151,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							Mesh = reducedMesh,
 							OwnerID = sourceItem.ID
 						};
-						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
+						newMesh.CopyWorldProperties(sourceItem, root, Object3DPropertyFlags.All);
 						newChildren.Add(newMesh);
 					}
 

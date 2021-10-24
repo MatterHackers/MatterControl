@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(3, 360, snapDistance: 1)]
 		public DoubleOrExpression Angle { get; set; } = 45;
 
+		[MaxDecimalPlaces(2)]
 		[Description("The distance along the circumference to rotate the top in mm")]
 		[Slider(1, 50, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public DoubleOrExpression RotationDistance { get; set; } = 10;
@@ -84,6 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[ReadOnly(true)]
 		public double PreferedRadius { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		[Description("Specify the radius to use when calculating the circumference.")]
 		public DoubleOrExpression OverrideRadius { get; set; } = .01;
 
