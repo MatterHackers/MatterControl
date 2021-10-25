@@ -89,7 +89,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// try to cut it up into multiple meshes
 							progressStatus.Status = "Split".Localize();
-							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(selectedItem.Mesh, cancellationToken, (double progress0To1, string processingState) =>
+							
+							var cleanMesh = selectedItem.Mesh.Copy(cancellationToken);
+							cleanMesh.MergeVertices(.01);
+
+							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(cleanMesh, cancellationToken, (double progress0To1, string processingState) =>
 							{
 								progressStatus.Progress0To1 = .5 + progress0To1 * .5;
 								progressStatus.Status = processingState;
