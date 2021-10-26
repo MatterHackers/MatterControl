@@ -52,7 +52,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 , IPropertyGridModifier
 #endif
 	{
+		[Description("The height of the extrusion")]
 		[Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[MaxDecimalPlaces(2)]
 		public DoubleOrExpression Height { get; set; } = 5;
 
 #if DEBUG

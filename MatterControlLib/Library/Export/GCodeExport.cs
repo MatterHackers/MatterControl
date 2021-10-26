@@ -142,13 +142,13 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), theme.TextColor, 10)
 				{
-					Checked = true,
+					Checked = UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, "1"),
 					Cursor = Cursors.Hand,
 					Margin = new BorderDouble(left: 10)
 				};
 				levelingCheckbox.CheckedStateChanged += (s, e) =>
 				{
-					this.ApplyLeveling = levelingCheckbox.Checked;
+					UserSettings.Instance.set(UserSettingsKey.ApplyLevelingDurringExport, levelingCheckbox.Checked ? "1" : "0");
 				};
 				container.AddChild(levelingCheckbox);
 			}
@@ -289,8 +289,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 		}
 
-		public bool ApplyLeveling { get; set; } = true;
-
 		public bool CenterOnBed { get; set; }
 
 		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
@@ -346,7 +344,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var finalStream = GetExportStream(Printer, gCodeFileStream, this.ApplyLeveling);
+				var finalStream = GetExportStream(Printer, gCodeFileStream, UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, "1"));
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
