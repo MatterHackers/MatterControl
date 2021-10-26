@@ -323,6 +323,7 @@ namespace MatterHackers.MatterControl
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.TransparencyMessage",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.Histogram",
 								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D_2>.MinSurfaceArea",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
 								"$.Children<BaseObject3D>",
 							}
 					};
