@@ -330,6 +330,7 @@ namespace MatterControl.Tests.MatterControl
 				fit.Width = 50;
 				fit.Depth = 20;
 				fit.Height = 20;
+				fit.Invalidate(InvalidateType.Properties);
 				root.Children.Add(fit);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), .001));
@@ -530,6 +531,7 @@ namespace MatterControl.Tests.MatterControl
 			fit.Width = 10;
 			fit.Depth = 10;
 			fit.Height = 6;
+			fit.Invalidate(InvalidateType.Properties);
 
 			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
 
@@ -640,6 +642,7 @@ namespace MatterControl.Tests.MatterControl
 			fit.Width = 50;
 			fit.Depth = 20;
 			fit.Height = 20;
+			fit.Invalidate(InvalidateType.Properties);
 
 			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), 1.0));
 
