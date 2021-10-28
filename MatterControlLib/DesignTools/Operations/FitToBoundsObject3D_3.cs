@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class FitToBoundsObject3D_3 : TransformWrapperObject3D, ISelectedEditorDraw
 	{
-		private Vector3 boundsSize;
 		private InvalidateType additonalInvalidate;
 
 		public FitToBoundsObject3D_3()
@@ -60,46 +59,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
 
 		[MaxDecimalPlaces(3)]
-		public double Width
-		{
-			get => boundsSize.X;
-			set
-			{
-				boundsSize.X = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
+		public DoubleOrExpression Width { get; set; }
 
 		[MaxDecimalPlaces(3)]
-		public double Depth
-		{
-			get => boundsSize.Y;
-			set
-			{
-				boundsSize.Y = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
+		public DoubleOrExpression Depth { get; set; }
 
 		[MaxDecimalPlaces(3)]
-		public double Height
-		{
-			get => boundsSize.Z;
-			set
-			{
-				boundsSize.Z = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
+		public DoubleOrExpression Height { get; set; }
 
 		[Description("Allows you turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
@@ -133,9 +99,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// add the item that holds the bounds
 				fitToBounds.Children.Add(fitBounds);
 
-				fitToBounds.boundsSize.X = startingAabb.XSize;
-				fitToBounds.boundsSize.Y = startingAabb.YSize;
-				fitToBounds.boundsSize.Z = startingAabb.ZSize;
+				fitToBounds.Width = startingAabb.XSize;
+				fitToBounds.Depth = startingAabb.YSize;
+				fitToBounds.Height = startingAabb.ZSize;
 				await fitToBounds.Rebuild();
 
 				var finalAabb = fitToBounds.GetAxisAlignedBoundingBox();
@@ -151,8 +117,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var center = aabb.Center;
 			var worldMatrix = this.WorldMatrix();
 
-			var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
-			var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
+			var width = Width.Value(this);
+			var depth = Depth.Value(this);
+			var height = Height.Value(this);
+
+			var minXyz = center - new Vector3(width / 2, depth / 2, height / 2);
+			var maxXyz = center + new Vector3(width / 2, depth / 2, height / 2);
 			var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
 			layer.World.RenderAabb(bounds, worldMatrix, Color.Red, 1, 1);
 		}
@@ -232,17 +202,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 				ItemWithTransform.Matrix = Matrix4X4.Identity;
 				var scale = Vector3.One;
+				var width = Width.Value(this);
+				var depth = Depth.Value(this);
+				var height = Height.Value(this); 
 				if (StretchX)
 				{
-					scale.X = Width / aabb.XSize;
+					scale.X = width / aabb.XSize;
 				}
 				if (StretchY)
 				{
-					scale.Y = Depth / aabb.YSize;
+					scale.Y = depth / aabb.YSize;
 				}
 				if (StretchZ)
 				{
-					scale.Z = Height / aabb.ZSize;
+					scale.Z = height / aabb.ZSize;
 				}
 
 				switch (LockProportion)
@@ -278,6 +251,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var transformAabb = ItemWithTransform.GetAxisAlignedBoundingBox();
 				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
 				var fitSize = fitAabb.Size;
+				var width = Width.Value(this);
+				var depth = Depth.Value(this);
+				var height = Height.Value(this);
+				var boundsSize = new Vector3(width, depth, height);
 				if (boundsSize.X != 0 && boundsSize.Y != 0 && boundsSize.Z != 0
 					&& (fitSize != boundsSize
 					|| fitAabb.Center != transformAabb.Center))

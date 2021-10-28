@@ -69,13 +69,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
 
-		public DoubleOrExpression  Width { get; set; }
+		public double Width { get; set; }
 
-		public DoubleOrExpression Depth { get; set; }
+		public double Depth { get; set; }
 
-		public DoubleOrExpression Diameter { get; set; }
+		public double Diameter { get; set; }
 
-		public DoubleOrExpression Height { get; set; }
+		public double Height { get; set; }
 
 		[Description("Set the rules for how to maintain the part while scaling.")]
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
@@ -209,23 +209,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var aabb = base.GetAxisAlignedBoundingBox(matrix);
 			var size = aabb.Size;
 
-			var width = Width.Value(this);
-			var depth = Depth.Value(this);
-			var height = Height.Value(this);
-
 			if (StretchX)
 			{
-				size.X = width;
+				size.X = Width;
 			}
 
 			if (StretchY)
 			{
-				size.Y = depth;
+				size.Y = Depth;
 			}
 
 			if (StretchZ)
 			{
-				size.Z = height;
+				size.Z = Height;
 			}
 
 			var half = size / 2;
@@ -237,24 +233,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var aabb = ItemToScale.GetAxisAlignedBoundingBox();
 			ScaleItem.Matrix = Matrix4X4.Identity;
 			var scale = Vector3.One;
-
-			var width = Width.Value(this);
-			var depth = Depth.Value(this);
-			var height = Height.Value(this);
-
 			if (StretchX)
 			{
-				scale.X = width / aabb.XSize;
+				scale.X = Width / aabb.XSize;
 			}
 
 			if (StretchY)
 			{
-				scale.Y = depth / aabb.YSize;
+				scale.Y = Depth / aabb.YSize;
 			}
 
 			if (StretchZ)
 			{
-				scale.Z = height / aabb.ZSize;
+				scale.Z = Height / aabb.ZSize;
 			}
 
 			switch (MaintainRatio)
@@ -284,27 +275,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var aabb = ItemToScale.GetAxisAlignedBoundingBox();
 
-				var width = Width.Value(this);
-				var depth = Depth.Value(this);
-				var height = Height.Value(this);
-				var diameter = Diameter.Value(this);
-
 				if (FitType == FitType.Box)
 				{
 					var center = aabb.Center;
 					var worldMatrix = this.WorldMatrix();
 
-					var minXyz = center - new Vector3(width / 2, depth / 2, height / 2);
-					var maxXyz = center + new Vector3(width / 2, depth / 2, height / 2);
+					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
+					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
 					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
 					// var leftW = Vector3Ex.Transform(, worldMatrix);
-					var right = Vector3Ex.Transform(center + new Vector3(width / 2, 0, 0), worldMatrix);
+					var right = Vector3Ex.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
 					// layer.World.Render3DLine(left, right, Agg.Color.Red);
 					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
 				}
 				else
 				{
-					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, diameter, height, 30, Color.Red, 1, 1);
+					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, Height, 30, Color.Red, 1, 1);
 				}
 
 				// turn the lighting back on
