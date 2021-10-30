@@ -54,7 +54,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ClickByName("PrintPopupMenu")
 					.ClickByName("Export GCode Button")
 					.Type(fullPathToGcodeFile)
-					.Type("{Enter}");
+					.Type("{Enter}")
+					.Delay();
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 

@@ -55,7 +55,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool DrawOnTop { get; protected set; }
 
-		public virtual bool Visible { get; set; }
+		public bool Visible { get; set; }
 
 		public virtual string UiHint { get; }
 
