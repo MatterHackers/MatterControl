@@ -119,7 +119,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PointSize = theme.DefaultFontSize,
 			};
 
-			keyValues.Add(item, node);
+			if (keyValues.ContainsKey(item))
+			{
+				throw new Exception("Duplcate item entry");
+			}
+			else
+			{ 
+				keyValues.Add(item, node);
+			}
 
 			// Check for operation resulting in the given type
 			var image = SceneOperations.GetIcon(item.GetType(), theme);

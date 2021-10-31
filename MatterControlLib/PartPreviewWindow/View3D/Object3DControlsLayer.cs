@@ -444,27 +444,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						overControl = true;
 
-						if (HoveredObject3DControl != null)
+						// we have found the control that got hit, wait 200 ms to see if we are still over the same control
+						UiThread.RunOnIdle(() =>
 						{
-							// we have found the control that got hit, wait 200 ms to see if we are still over the same control
-							UiThread.RunOnIdle(() =>
-							{
-								var ray2 = this.World.GetRayForLocalBounds(lastMouseMovePosition);
-								this.FindHitObject3DControl(ray2, out IObject3DControl stillOver3DControl, out _);
+							var ray2 = this.World.GetRayForLocalBounds(lastMouseMovePosition);
+							this.FindHitObject3DControl(ray2, out IObject3DControl stillOver3DControl, out _);
 
-								if (stillOver3DControl == hitObject3DControl)
-								{
-									// we are over the same control as the last mouse move so set the hovered object to it
-									HoveredObject3DControl = object3DControl;
-									object3DControl.OnMouseMove(mouseEvent3D, true);
-								}
-							}, .2);
-						}
-						else
-						{
-							HoveredObject3DControl = object3DControl;
-							object3DControl.OnMouseMove(mouseEvent3D, true);
-						}
+							if (stillOver3DControl == hitObject3DControl)
+							{
+								// we are over the same control as the last mouse move so set the hovered object to it
+								HoveredObject3DControl = object3DControl;
+								object3DControl.OnMouseMove(mouseEvent3D, true);
+							}
+						}, .2);
 					}
 					else
 					{
@@ -480,7 +472,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					HoveredObject3DControl = null;
 					ApplicationController.Instance.UiHint = "";
 				}
 			}
