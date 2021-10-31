@@ -37,6 +37,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -408,8 +409,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		Vector2 lastMouseMovePosition;
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			lastMouseMovePosition = mouseEvent.Position;
 			base.OnMouseMove(mouseEvent);
 
 			if (SuppressObject3DControls
@@ -433,17 +436,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var object3DControls = this.Object3DControls;
 
+				var overControl = false;
 				foreach (var object3DControl in object3DControls)
 				{
-					if (hitObject3DControl == object3DControl)
+					if (hitObject3DControl == object3DControl
+						&& hitObject3DControl.Visible)
 					{
-						HoveredObject3DControl = object3DControl;
-						object3DControl.OnMouseMove(mouseEvent3D, true);
+						overControl = true;
+
+						// we have found the control that got hit, wait 200 ms to see if we are still over the same control
+						UiThread.RunOnIdle(() =>
+						{
+							var ray2 = this.World.GetRayForLocalBounds(lastMouseMovePosition);
+							this.FindHitObject3DControl(ray2, out IObject3DControl stillOver3DControl, out _);
+
+							if (stillOver3DControl == hitObject3DControl)
+							{
+								// we are over the same control as the last mouse move so set the hovered object to it
+								HoveredObject3DControl = object3DControl;
+								object3DControl.OnMouseMove(mouseEvent3D, true);
+							}
+						}, .2);
 					}
 					else
 					{
 						object3DControl.OnMouseMove(mouseEvent3D, false);
 					}
+				}
+
+				if (overControl
+					&& hitObject3DControl is Object3DControl object3DControl2
+					&& object3DControl2.RootSelection != null)
+				{
+					ApplicationController.Instance.UiHint = "Click to edit values".Localize();
+				}
+				else
+				{
+					ApplicationController.Instance.UiHint = "";
 				}
 			}
 		}

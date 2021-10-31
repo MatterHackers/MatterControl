@@ -59,13 +59,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
 
 		[MaxDecimalPlaces(3)]
-		public DoubleOrExpression Width { get; set; }
+		public DoubleOrExpression Width { get; set; } = 0;
 
 		[MaxDecimalPlaces(3)]
-		public DoubleOrExpression Depth { get; set; }
+		public DoubleOrExpression Depth { get; set; } = 0;
 
 		[MaxDecimalPlaces(3)]
-		public DoubleOrExpression Height { get; set; }
+		public DoubleOrExpression Height { get; set; } = 0;
 
 		[Description("Allows you turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
