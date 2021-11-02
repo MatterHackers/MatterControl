@@ -307,7 +307,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				babySteppingValue[i] = 0;
 			}
 
-			yield return new CalibrateProbeLastPageInstructions(this, this.Title + " " + "Wizard".Localize());
+			var pageTitle = this.Title + " " + "Wizard".Localize();
+
+			if (hotendCount == 1 // this could be improved for dual extrusion calibration in the future. But for now it is single extrusion.
+							&& probeBeingUsed
+							&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset))
+			{
+				// let the user know we are done with the manual part
+				yield return new CalibrateProbeRemovePaperInstructions(this, pageTitle, false);
+				// tell them about the automatic part and any settings that should be changed
+				yield return new ZProbePrintCalibrationPartPage(
+					this,
+					printer,
+					"Validating Z Offset".Localize(),
+					"We will now improve accuracy by measure the probe offset from the top of a printed calibration object.".Localize());
+				// measure the top of the part we just printed
+				yield return new ZProbeCalibrateRetrieveTopProbeData(this, pageTitle);
+				// tell the user we are done and everything should be working
+				yield return new ZCalibrationValidateComplete(this, pageTitle);
+			}
+			else
+			{
+				yield return new CalibrateProbeRemovePaperInstructions(this, pageTitle);
+			}
 		}
 
 		private void SetExtruderOffset(List<PrintLevelingWizard.ProbePosition> autoProbePositions, List<List<PrintLevelingWizard.ProbePosition>> manualProbePositions, bool probeBeingUsed, int extruderIndex)

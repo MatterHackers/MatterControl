@@ -925,6 +925,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.validate_probe_offset,
+					PresentationName = "Validate Probe Offset Automatically".Localize(),
+					HelpText = "If the printer has a physically touching z probe (like a BLTouch) this will enable automatic validation of the distance between the nozzle and the z probe.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "0",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe",
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.conductive_pad_center,
 					PresentationName = "Conductive Pad Center".Localize(),
 					HelpText = "The center of the conductive pad used for nozzle probing.".Localize(),

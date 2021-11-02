@@ -34,20 +34,23 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPageInstructions : WizardPage
+	public class CalibrateProbeRemovePaperInstructions : WizardPage
 	{
-		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
+		public CalibrateProbeRemovePaperInstructions(ISetupWizard setupWizard, string headerText, bool lastPage = true)
 			: base(setupWizard, headerText, "")
 		{
 			contentRow.AddChild(
 				this.CreateTextField(
-					"Z Calibration complete.".Localize() +
+					"Manual Z Calibration complete.".Localize() +
 					"\n    • " +
 					"Remove the paper".Localize()));
 
 			contentRow.BackgroundColor = theme.MinimalShade;
 
-			this.ShowWizardFinished();
+			if (lastPage)
+			{
+				this.ShowWizardFinished();
+			}
 		}
 
 		public override void OnLoad(EventArgs args)

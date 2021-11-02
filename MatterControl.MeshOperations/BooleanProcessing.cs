@@ -414,8 +414,8 @@ namespace MatterHackers.PolygonMesh
 					return meshA;
 				}
 				
-				var implicitA = GetImplicitFunction(inMeshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
-				var implicitB = GetImplicitFunction(inMeshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitA = GetImplicitFunction(meshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitB = GetImplicitFunction(meshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
 				{

@@ -32,6 +32,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -75,6 +77,39 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(nextButton);
 
 			this.NextButton = nextButton;
+		}
+
+		public static void AddSettingsRow(GuiWidget contentRow, PrinterConfig printer, string warning, string key, ThemeConfig theme, ref int tabIndex)
+		{
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+
+			contentRow.AddChild(
+				new TextWidget(
+					"Recommended Settings Changes".Localize() + ":",
+					textColor: theme.TextColor,
+					pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(10, 0, 0, 20)
+				});
+
+			contentRow.AddChild(
+				new WrappedTextWidget(
+					warning,
+					textColor: theme.TextColor,
+					pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, 10, 0, 20)
+				});
+
+			var settingsData = PrinterSettings.SettingsData[key];
+			var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+
+			if (row is SliceSettingsRow settingsRow)
+			{
+				settingsRow.ArrowDirection = ArrowDirection.Left;
+			}
+
+			contentRow.AddChild(row);
 		}
 
 		protected void MoveToNextPage()
