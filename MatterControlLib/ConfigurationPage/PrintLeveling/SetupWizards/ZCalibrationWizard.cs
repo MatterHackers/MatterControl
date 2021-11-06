@@ -192,107 +192,115 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"T0");
 			}
 
+			var pageTitle = this.Title + " " + "Wizard".Localize();
 			bool probeBeingUsed = printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 
-			if (probeBeingUsed)
+			bool doManualOffset = false;
+			if (doManualOffset)
 			{
-				// do the automatic probing of the center position
-				yield return new AutoProbeFeedback(
-					this,
-					probeStartPosition,
-					"Probe at bed center".Localize(),
-					"Sample the bed center position to determine the probe distance to the bed".Localize(),
-					autoProbePositions,
-					0);
-			}
-
-			if (hotendCount == 1
-				&& probeBeingUsed
-				&& printer.Settings.GetValue<bool>(SettingsKey.has_conductive_nozzle)
-				&& printer.Settings.GetValue<bool>(SettingsKey.measure_probe_offset_conductively))
-			{
-				var conductiveProbeFeedback = new ConductiveProbeFeedback(
-					this,
-					probeStartPosition,
-					"Conductive Probing".Localize(),
-					"Measure the nozzle to probe offset using the conductive pad.".Localize(),
-					manualProbePositions[0]);
-				yield return conductiveProbeFeedback;
-
-				if (conductiveProbeFeedback.MovedBelowMinZ)
+				if (probeBeingUsed)
 				{
-					// show an error message
+					// do the automatic probing of the center position
+					yield return new AutoProbeFeedback(
+						this,
+						probeStartPosition,
+						"Probe at bed center".Localize(),
+						"Sample the bed center position to determine the probe distance to the bed".Localize(),
+						autoProbePositions,
+						0);
+				}
+
+				if (hotendCount == 1
+					&& probeBeingUsed
+					&& printer.Settings.GetValue<bool>(SettingsKey.has_conductive_nozzle)
+					&& printer.Settings.GetValue<bool>(SettingsKey.measure_probe_offset_conductively))
+				{
+					var conductiveProbeFeedback = new ConductiveProbeFeedback(
+						this,
+						probeStartPosition,
+						"Conductive Probing".Localize(),
+						"Measure the nozzle to probe offset using the conductive pad.".Localize(),
+						manualProbePositions[0]);
+					yield return conductiveProbeFeedback;
+
+					if (conductiveProbeFeedback.MovedBelowMinZ)
+					{
+						// show an error message
+						yield return new WizardPage(
+							this,
+							"Error: Below Conductive Probe Min Z".Localize(),
+							"The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.".Localize());
+					}
+					else // found a good probe height
+					{
+						SetExtruderOffset(autoProbePositions, manualProbePositions, false, 0);
+					}
+				}
+				else // collect the probe information manually
+				{
+					// show what steps will be taken
 					yield return new WizardPage(
 						this,
-						"Error: Below Conductive Probe Min Z".Localize(),
-						"The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.".Localize());
-				}
-				else // found a good probe height
-				{
-					SetExtruderOffset(autoProbePositions, manualProbePositions, false, 0);
-				}
-			}
-			else // collect the probe information manually
-			{
-				// show what steps will be taken
-				yield return new WizardPage(
-					this,
-					"Measure the nozzle offset".Localize(),
-					"{0}:\n\n\t• {1}\n\n{2}\n\n{3}".FormatWith(
-						"To complete the next few steps you will need".Localize(),
-						"A sheet of paper".Localize(),
-						"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
-						"Click 'Next' to continue.".Localize()));
+						"Measure the nozzle offset".Localize(),
+						"{0}:\n\n\t• {1}\n\n{2}\n\n{3}".FormatWith(
+							"To complete the next few steps you will need".Localize(),
+							"A sheet of paper".Localize(),
+							"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
+							"Click 'Next' to continue.".Localize()));
 
-				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
-				{
-					if (extruderCount > 1)
+					for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 					{
-						// reset the extruder that was active
-						printer.Connection.QueueLine($"T{extruderIndex}");
+						if (extruderCount > 1)
+						{
+							// reset the extruder that was active
+							printer.Connection.QueueLine($"T{extruderIndex}");
+						}
+
+						// do the manual probe of the same position
+						yield return new GetCoarseBedHeight(
+							this,
+							new Vector3(probePosition, startProbeHeight),
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(totalSteps),
+								"Position".Localize(),
+								1,
+								"Low Precision".Localize()),
+							manualProbePositions[extruderIndex],
+							0,
+							levelingStrings);
+
+						yield return new GetFineBedHeight(
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(totalSteps),
+								"Position".Localize(),
+								1,
+								"Medium Precision".Localize()),
+							manualProbePositions[extruderIndex],
+							0,
+							levelingStrings);
+
+						yield return new GetUltraFineBedHeight(
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(totalSteps),
+								"Position".Localize(),
+								1,
+								"High Precision".Localize()),
+							manualProbePositions[extruderIndex],
+							0,
+							levelingStrings);
+
+						SetExtruderOffset(autoProbePositions, manualProbePositions, probeBeingUsed, extruderIndex);
 					}
-
-					// do the manual probe of the same position
-					yield return new GetCoarseBedHeight(
-						this,
-						new Vector3(probePosition, startProbeHeight),
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(totalSteps),
-							"Position".Localize(),
-							1,
-							"Low Precision".Localize()),
-						manualProbePositions[extruderIndex],
-						0,
-						levelingStrings);
-
-					yield return new GetFineBedHeight(
-						this,
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(totalSteps),
-							"Position".Localize(),
-							1,
-							"Medium Precision".Localize()),
-						manualProbePositions[extruderIndex],
-						0,
-						levelingStrings);
-
-					yield return new GetUltraFineBedHeight(
-						this,
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(totalSteps),
-							"Position".Localize(),
-							1,
-							"High Precision".Localize()),
-						manualProbePositions[extruderIndex],
-						0,
-						levelingStrings);
-
-					SetExtruderOffset(autoProbePositions, manualProbePositions, probeBeingUsed, extruderIndex);
 				}
+
+				// let the user know we are done with the manual part
+				yield return new CalibrateProbeRemovePaperInstructions(this, pageTitle, false);
 			}
 
 			if (extruderCount > 1)
@@ -307,20 +315,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				babySteppingValue[i] = 0;
 			}
 
-			var pageTitle = this.Title + " " + "Wizard".Localize();
-
 			if (hotendCount == 1 // this could be improved for dual extrusion calibration in the future. But for now it is single extrusion.
-							&& probeBeingUsed
-							&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset))
+					&& probeBeingUsed
+					&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset))
 			{
-				// let the user know we are done with the manual part
-				yield return new CalibrateProbeRemovePaperInstructions(this, pageTitle, false);
 				// tell them about the automatic part and any settings that should be changed
 				yield return new ZProbePrintCalibrationPartPage(
 					this,
 					printer,
 					"Validating Z Offset".Localize(),
-					"We will now improve accuracy by measure the probe offset from the top of a printed calibration object.".Localize());
+					"We will now measure the probe offset from the top of a printed calibration object.".Localize());
 				// measure the top of the part we just printed
 				yield return new ZProbeCalibrateRetrieveTopProbeData(this, pageTitle);
 				// tell the user we are done and everything should be working

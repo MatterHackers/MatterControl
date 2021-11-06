@@ -34,16 +34,21 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using ClipperLib;
 using DualContouring;
 using g3;
 using gs;
 using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
 {
+	using Polygon = List<IntPoint>;
+	using Polygons = List<List<IntPoint>>;
+
 	public static class BooleanProcessing
 	{
 		public enum CsgModes
@@ -64,6 +69,7 @@ namespace MatterHackers.PolygonMesh
 		public enum ProcessingModes
 		{
 			Polygons,
+			Polygons2,
 			Marching_Cubes,
 			Dual_Contouring,
 		}
@@ -138,6 +144,102 @@ namespace MatterHackers.PolygonMesh
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
 					reporter?.Report(progressStatus);
+				}
+
+				return resultsMesh;
+			}
+			else if (processingMode == ProcessingModes.Polygons2)
+			{
+				var progressStatus = new ProgressStatus();
+				var totalOperations = 0;
+				foreach (var item in items)
+				{
+					totalOperations += item.mesh.Faces.Count;
+				}
+
+				double amountPerOperation = 1.0 / totalOperations;
+				double percentCompleted = 0;
+
+				var resultsMesh = new Mesh();
+				foreach (var item1 in items)
+				{
+					var mesh1 = item1.mesh.Copy(CancellationToken.None);
+					mesh1.Transform(item1.matrix);
+					foreach (var face in mesh1.Faces)
+					{
+						var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
+						var totalSlice = new Polygons();
+						var first = true;
+						foreach (var item2 in items)
+						{
+							if (item1 == item2)
+							{
+								continue;
+							}
+
+							var mesh2 = item2.mesh.Copy(CancellationToken.None);
+							mesh2.Transform(item2.matrix);
+							// calculate and add the PWN face from the loops
+							var slice = SliceLayer.CreateSlice(mesh2, cutPlane);
+							if (first)
+							{
+								totalSlice = slice;
+								first = false;
+							}
+							else
+							{
+								totalSlice.Union(slice);
+							}
+							// now we have the total loops that this polygon can intersect from the other meshes
+
+							// make a polygon for this face
+							var rotation = new Quaternion(cutPlane.Normal, Vector3.UnitZ);
+							var flattenedMatrix = Matrix4X4.CreateRotation(rotation);
+							flattenedMatrix *= Matrix4X4.CreateTranslation(0, 0, -cutPlane.DistanceFromOrigin);
+							var meshTo0Plane = flattenedMatrix * Matrix4X4.CreateScale(1000);
+
+							var facePolygon = new Polygon();
+							var intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v0].AsVector3(), meshTo0Plane);
+							facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
+							intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v1].AsVector3(), meshTo0Plane);
+							facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
+							intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v2].AsVector3(), meshTo0Plane);
+							facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
+
+							var polygonShape = new Polygons();
+							// clip against the slice based on the parameters
+							var clipper = new Clipper();
+							clipper.AddPath(facePolygon, PolyType.ptSubject, true);
+							clipper.AddPaths(totalSlice, PolyType.ptClip, true);
+
+							switch (operation)
+							{
+								case CsgModes.Union:
+									clipper.Execute(ClipType.ctDifference, polygonShape);
+									break;
+
+								case CsgModes.Subtract:
+									clipper.Execute(ClipType.ctDifference, polygonShape);
+									break;
+
+								case CsgModes.Intersect:
+									clipper.Execute(ClipType.ctIntersection, polygonShape);
+									break;
+							}
+
+							// mesh the new polygon and add it to the resultsMesh
+							polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+						}
+
+						percentCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = percentCompleted;
+						reporter?.Report(progressStatus);
+
+						if (cancellationToken.IsCancellationRequested)
+						{
+							return null;
+						}
+					}
 				}
 
 				return resultsMesh;

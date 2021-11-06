@@ -115,13 +115,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static IObject3D CreateCalibrationObject(PrinterConfig printer)
 		{
-			var nozzleDiameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-			var size = Math.Min(30, nozzleDiameter * 20);
+			var printObject = new Object3D();
 
-			return new Object3D()
+			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
+			var baseSize = 20;
+			var inset = 2.5;
+			// add a base
+			var mesh = PlatonicSolids.CreateCube(baseSize, baseSize, CalibrationObjectHeight(printer) - layerHeight);
+			mesh.Translate(0, 0, mesh.GetAxisAlignedBoundingBox().ZSize / 2);
+			printObject.Children.Add(new Object3D()
 			{
-				Mesh = PlatonicSolids.CreateCube(size, size, CalibrationObjectHeight(printer))
-			};
+				Mesh = mesh
+			});
+
+			// add a middle part where we will probe to find the height and the edges of
+			mesh = PlatonicSolids.CreateCube(baseSize - inset, baseSize - inset, CalibrationObjectHeight(printer));
+			mesh.Translate(0, 0, mesh.GetAxisAlignedBoundingBox().ZSize / 2);
+			printObject.Children.Add(new Object3D()
+			{
+				Mesh = mesh
+			});
+
+			return printObject;
 		}
 	}
 }
