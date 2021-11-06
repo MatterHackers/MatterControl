@@ -121,11 +121,12 @@ namespace MatterHackers.PolygonMesh
 					}
 
 					var itemWorldMatrix = item.matrix;
-					resultsMesh = Do(item.mesh,
-						itemWorldMatrix,
+					resultsMesh = Do(
 						// other mesh
 						resultsMesh,
 						firstWorldMatrix,
+						item.mesh,
+						itemWorldMatrix,
 						// operation
 						operation,
 						processingMode,
@@ -160,6 +161,7 @@ namespace MatterHackers.PolygonMesh
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
+				var firstMesh = true;
 				var resultsMesh = new Mesh();
 				foreach (var item1 in items)
 				{
@@ -219,7 +221,17 @@ namespace MatterHackers.PolygonMesh
 									break;
 
 								case CsgModes.Subtract:
-									clipper.Execute(ClipType.ctDifference, polygonShape);
+									if (firstMesh)
+									{
+										clipper.Execute(ClipType.ctDifference, polygonShape);
+									}
+									else
+									{
+										clipper.Execute(ClipType.ctIntersection, polygonShape);
+										// the face needs to be added reversed
+										polygonShape.Reverse();
+									}
+
 									break;
 
 								case CsgModes.Intersect:
@@ -240,6 +252,8 @@ namespace MatterHackers.PolygonMesh
 							return null;
 						}
 					}
+
+					firstMesh = false;
 				}
 
 				return resultsMesh;

@@ -41,7 +41,6 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -221,6 +220,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				};
 				foreach (var keep in keepVisibleItems)
 				{
+#if true
+					var items = removeVisibleItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
+					items.Insert(0, (keep.Mesh, keep.Matrix));
+					var resultsMesh = BooleanProcessing.DoArray(items,
+						BooleanProcessing.CsgModes.Subtract,
+						Processing,
+						InputResolution,
+						OutputResolution,
+						reporter,
+						cancellationToken);
+#else
 					var resultsMesh = keep.Mesh;
 					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
 
@@ -243,8 +253,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							progressStatus,
 							cancellationToken);
 
-						// after the first time we get a result the results mesh is in the right coordinate space
-						keepWorldMatrix = Matrix4X4.Identity;
+					// after the first time we get a result the results mesh is in the right coordinate space
+					keepWorldMatrix = Matrix4X4.Identity;
 
 						// report our progress
 						percentCompleted += amountPerOperation;
@@ -252,6 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						reporter?.Report(progressStatus);
 					}
 
+#endif
 					// store our results mesh
 					var resultsItem = new Object3D()
 					{
