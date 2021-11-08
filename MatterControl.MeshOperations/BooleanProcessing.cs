@@ -171,9 +171,10 @@ namespace MatterHackers.PolygonMesh
 					{
 						var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
 						var totalSlice = new Polygons();
-						var first = true;
 						foreach (var item2 in items)
 						{
+							var firstSlice = true;
+							
 							if (item1 == item2)
 							{
 								continue;
@@ -183,17 +184,17 @@ namespace MatterHackers.PolygonMesh
 							mesh2.Transform(item2.matrix);
 							// calculate and add the PWN face from the loops
 							var slice = SliceLayer.CreateSlice(mesh2, cutPlane);
-							if (first)
+							if (firstSlice)
 							{
 								totalSlice = slice;
-								first = false;
+								firstSlice = false;
 							}
 							else
 							{
 								totalSlice.Union(slice);
 							}
-							// now we have the total loops that this polygon can intersect from the other meshes
 
+							// now we have the total loops that this polygon can intersect from the other meshes
 							// make a polygon for this face
 							var rotation = new Quaternion(cutPlane.Normal, Vector3.UnitZ);
 							var flattenedMatrix = Matrix4X4.CreateRotation(rotation);
@@ -229,7 +230,10 @@ namespace MatterHackers.PolygonMesh
 									{
 										clipper.Execute(ClipType.ctIntersection, polygonShape);
 										// the face needs to be added reversed
-										polygonShape.Reverse();
+										foreach (var polygon in polygonShape)
+										{
+											polygon.Reverse();
+										}
 									}
 
 									break;
