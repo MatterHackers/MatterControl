@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -73,6 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
 		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
 #endif
+		public bool RemoveSubtractObjects { get; set; } = true;
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
@@ -253,8 +255,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							progressStatus,
 							cancellationToken);
 
-					// after the first time we get a result the results mesh is in the right coordinate space
-					keepWorldMatrix = Matrix4X4.Identity;
+						// after the first time we get a result the results mesh is in the right coordinate space
+						keepWorldMatrix = Matrix4X4.Identity;
 
 						// report our progress
 						percentCompleted += amountPerOperation;
@@ -275,6 +277,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					resultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
 					this.Children.Add(resultsItem);
+
+					if (!RemoveSubtractObjects)
+					{
+						this.Children.Modify((list) =>
+						{
+							foreach (var item in removeVisibleItems)
+							{
+								var newObject = new Object3D()
+								{
+									Mesh = item.Mesh
+								};
+
+								newObject.CopyWorldProperties(item, SourceContainer, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Visible));
+								list.Add(newObject);
+							}
+						});
+					}
 				}
 
 				bool first = true;
@@ -282,7 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					if (first)
 					{
-						// hid the source item
+						// hide the source item
 						child.Visible = false;
 						first = false;
 					}
