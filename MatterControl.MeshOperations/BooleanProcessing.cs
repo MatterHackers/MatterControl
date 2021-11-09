@@ -69,7 +69,7 @@ namespace MatterHackers.PolygonMesh
 		public enum ProcessingModes
 		{
 			Polygons,
-			Polygons2,
+			ExactLegacy,
 			Marching_Cubes,
 			Dual_Contouring,
 		}
@@ -103,11 +103,11 @@ namespace MatterHackers.PolygonMesh
 		{
 			if (processingMode == ProcessingModes.Polygons)
 			{
-				return LegacyPolygons(items, operation, processingMode, inputResolution, outputResolution, reporter, cancellationToken);
+				return ExactBySlicing(items, operation, reporter, cancellationToken);
 			}
-			else if (processingMode == ProcessingModes.Polygons2)
+			else if (processingMode == ProcessingModes.ExactLegacy)
 			{
-				return NewPolygons(items, operation, reporter, cancellationToken);
+				return ExactLegacy(items, operation, processingMode, inputResolution, outputResolution, reporter, cancellationToken);
 			}
 			else
 			{
@@ -239,7 +239,7 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static Mesh NewPolygons(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = 0;
@@ -257,8 +257,10 @@ namespace MatterHackers.PolygonMesh
 			{
 				var mesh1 = item1.mesh.Copy(CancellationToken.None);
 				mesh1.Transform(item1.matrix);
-				foreach (var face in mesh1.Faces)
+				for (int faceIndex = 0; faceIndex < mesh1.Faces.Count; faceIndex++)
 				{
+					var face = mesh1.Faces[faceIndex];
+
 					var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
 					var totalSlice = new Polygons();
 					foreach (var item2 in items)
@@ -292,12 +294,16 @@ namespace MatterHackers.PolygonMesh
 						var meshTo0Plane = flattenedMatrix * Matrix4X4.CreateScale(1000);
 
 						var facePolygon = new Polygon();
-						var intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v0].AsVector3(), meshTo0Plane);
-						facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
-						intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v1].AsVector3(), meshTo0Plane);
-						facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
-						intPoint = Vector3Ex.Transform(mesh1.Vertices[face.v2].AsVector3(), meshTo0Plane);
-						facePolygon.Add(new IntPoint(intPoint.X, intPoint.Y));
+						var vertices = mesh1.Vertices;
+						var vertIndices = new int[] { face.v0, face.v1, face.v2 };
+						var vertsOnPlane = new Vector3[3];
+						var pointsOnPlane = new IntPoint[3];
+						for (int i = 0; i < 3; i++)
+						{
+							vertsOnPlane[i] = Vector3Ex.Transform(vertices[vertIndices[i]].AsVector3(), meshTo0Plane);
+							pointsOnPlane[i] = new IntPoint(vertsOnPlane[i].X, vertsOnPlane[i].Y);
+							facePolygon.Add(pointsOnPlane[i]);
+						}
 
 						var polygonShape = new Polygons();
 						// clip against the slice based on the parameters
@@ -305,6 +311,7 @@ namespace MatterHackers.PolygonMesh
 						clipper.AddPath(facePolygon, PolyType.ptSubject, true);
 						clipper.AddPaths(totalSlice, PolyType.ptClip, true);
 						var faceWinding = facePolygon.GetWindingDirection();
+						var isSubtractFace = false;
 
 						switch (operation)
 						{
@@ -319,6 +326,7 @@ namespace MatterHackers.PolygonMesh
 								}
 								else
 								{
+									isSubtractFace = true;
 									clipper.Execute(ClipType.ctIntersection, polygonShape);
 									// the face needs to be added reversed so flip the expected winding
 									faceWinding *= -1;
@@ -336,12 +344,36 @@ namespace MatterHackers.PolygonMesh
 						{
 							if (polygon.GetWindingDirection() != faceWinding)
 							{
+								isSubtractFace = true;
 								polygon.Reverse();
 							}
 						}
 
-						// mesh the new polygon and add it to the resultsMesh
-						polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+						if (polygonShape.Count == 1
+							&& polygonShape[0].Count == 3
+							&& pointsOnPlane.Contains(polygonShape[0][0])
+							&& pointsOnPlane.Contains(polygonShape[0][1])
+							&& pointsOnPlane.Contains(polygonShape[0][2]))
+						{
+							var newFace = resultsMesh.CopyFace(mesh1, faceIndex);
+							if (isSubtractFace)
+							{
+								// flip the face normal and winding
+								var hold = newFace.v0;
+								newFace.v0 = newFace.v2;
+								newFace.v2 = hold;
+								newFace.normal *= -1;
+							}
+						}
+						else
+						{
+							// mesh the new polygon and add it to the resultsMesh
+							var asVertices = polygonShape.Vertices();
+
+							// MoveToOriginalPositions();
+
+							asVertices.TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+						}
 					}
 
 					percentCompleted += amountPerOperation;
@@ -360,7 +392,7 @@ namespace MatterHackers.PolygonMesh
 			return resultsMesh;
 		}
 
-		private static Mesh LegacyPolygons(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = items.Count() - 1;
