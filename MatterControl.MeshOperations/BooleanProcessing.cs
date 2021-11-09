@@ -267,7 +267,7 @@ namespace MatterHackers.PolygonMesh
 					{
 						var firstSlice = true;
 
-						if (item1 == item2)
+						if (item1.mesh == item2.mesh)
 						{
 							continue;
 						}
