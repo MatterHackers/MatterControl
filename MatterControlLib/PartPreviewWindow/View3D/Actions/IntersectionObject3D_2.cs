@@ -133,13 +133,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				reporter,
 				cancellationToken);
 
-			var resultsItem = new Object3D()
+			if (resultsMesh != null)
 			{
-				Mesh = resultsMesh
-			};
-			resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-			this.Children.Add(resultsItem);
-			SourceContainer.Visible = false;
+				var resultsItem = new Object3D()
+				{
+					Mesh = resultsMesh
+				};
+				resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+				this.Children.Add(resultsItem);
+				SourceContainer.Visible = false;
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

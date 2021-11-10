@@ -77,11 +77,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.montonic_solid_infill,
+					SlicerConfigName = SettingsKey.monotonic_solid_infill,
 					PresentationName = "Monotonic Solid Infill".Localize().Localize(),
 					HelpText = "When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					DefaultValue = "0",
+					DefaultValue = "1",
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()

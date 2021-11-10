@@ -239,41 +239,44 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = 0;
-			foreach (var (mesh, matrix) in items)
+			var transformedMeshes = new List<Mesh>();
+			foreach (var (mesh, matrix) in items2)
 			{
 				totalOperations += mesh.Faces.Count;
+				transformedMeshes.Add(mesh.Copy(CancellationToken.None));
+				transformedMeshes.Last().Transform(matrix);
 			}
 
 			double amountPerOperation = 1.0 / totalOperations;
 			double percentCompleted = 0;
 
-			var firstMesh = true;
 			var resultsMesh = new Mesh();
-			foreach (var item1 in items)
+			for (var faceMeshIndex = 0; faceMeshIndex < transformedMeshes.Count; faceMeshIndex++)
 			{
-				var mesh1 = item1.mesh.Copy(CancellationToken.None);
-				mesh1.Transform(item1.matrix);
+				var mesh1 = transformedMeshes[faceMeshIndex];
+
 				for (int faceIndex = 0; faceIndex < mesh1.Faces.Count; faceIndex++)
 				{
 					var face = mesh1.Faces[faceIndex];
 
 					var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
 					var totalSlice = new Polygons();
-					foreach (var item2 in items)
-					{
-						var firstSlice = true;
+					var accumulatedSlices = 0;
 
-						if (item1.mesh == item2.mesh)
+					var firstSlice = true;
+
+					for (var sliceMeshIndex = 0; sliceMeshIndex < transformedMeshes.Count; sliceMeshIndex++)
+					{
+						if (faceMeshIndex == sliceMeshIndex)
 						{
 							continue;
 						}
 
-						var mesh2 = item2.mesh.Copy(CancellationToken.None);
-						mesh2.Transform(item2.matrix);
+						var mesh2 = transformedMeshes[sliceMeshIndex];
 						// calculate and add the PWN face from the loops
 						var slice = SliceLayer.CreateSlice(mesh2, cutPlane);
 						if (firstSlice)
@@ -283,96 +286,102 @@ namespace MatterHackers.PolygonMesh
 						}
 						else
 						{
-							totalSlice.Union(slice);
+							totalSlice = totalSlice.Union(slice);
 						}
 
-						// now we have the total loops that this polygon can intersect from the other meshes
-						// make a polygon for this face
-						var rotation = new Quaternion(cutPlane.Normal, Vector3.UnitZ);
-						var flattenedMatrix = Matrix4X4.CreateRotation(rotation);
-						flattenedMatrix *= Matrix4X4.CreateTranslation(0, 0, -cutPlane.DistanceFromOrigin);
-						var meshTo0Plane = flattenedMatrix * Matrix4X4.CreateScale(1000);
+						// keep track of how many slices we have added in
+						accumulatedSlices++;
 
-						var facePolygon = new Polygon();
-						var vertices = mesh1.Vertices;
-						var vertIndices = new int[] { face.v0, face.v1, face.v2 };
-						var vertsOnPlane = new Vector3[3];
-						var pointsOnPlane = new IntPoint[3];
-						for (int i = 0; i < 3; i++)
+						if (accumulatedSlices == transformedMeshes.Count - 1)
 						{
-							vertsOnPlane[i] = Vector3Ex.Transform(vertices[vertIndices[i]].AsVector3(), meshTo0Plane);
-							pointsOnPlane[i] = new IntPoint(vertsOnPlane[i].X, vertsOnPlane[i].Y);
-							facePolygon.Add(pointsOnPlane[i]);
-						}
+							// now we have the total loops that this polygon can intersect from the other meshes
+							// make a polygon for this face
+							var rotation = new Quaternion(cutPlane.Normal, Vector3.UnitZ);
+							var flattenedMatrix = Matrix4X4.CreateRotation(rotation);
+							flattenedMatrix *= Matrix4X4.CreateTranslation(0, 0, -cutPlane.DistanceFromOrigin);
+							var meshTo0Plane = flattenedMatrix * Matrix4X4.CreateScale(1000);
 
-						var polygonShape = new Polygons();
-						// clip against the slice based on the parameters
-						var clipper = new Clipper();
-						clipper.AddPath(facePolygon, PolyType.ptSubject, true);
-						clipper.AddPaths(totalSlice, PolyType.ptClip, true);
-						var faceWinding = facePolygon.GetWindingDirection();
-						var isSubtractFace = false;
+							var facePolygon = new Polygon();
+							var vertices = mesh1.Vertices;
+							var vertIndices = new int[] { face.v0, face.v1, face.v2 };
+							var vertsOnPlane = new Vector3[3];
+							var pointsOnPlane = new IntPoint[3];
+							for (int i = 0; i < 3; i++)
+							{
+								vertsOnPlane[i] = Vector3Ex.Transform(vertices[vertIndices[i]].AsVector3(), meshTo0Plane);
+								pointsOnPlane[i] = new IntPoint(vertsOnPlane[i].X, vertsOnPlane[i].Y);
+								facePolygon.Add(pointsOnPlane[i]);
+							}
 
-						switch (operation)
-						{
-							case CsgModes.Union:
-								clipper.Execute(ClipType.ctDifference, polygonShape);
-								break;
+							var polygonShape = new Polygons();
+							// clip against the slice based on the parameters
+							var clipper = new Clipper();
+							clipper.AddPath(facePolygon, PolyType.ptSubject, true);
+							clipper.AddPaths(totalSlice, PolyType.ptClip, true);
+							var faceWinding = facePolygon.GetWindingDirection();
+							var isSubtractFace = false;
 
-							case CsgModes.Subtract:
-								if (firstMesh)
-								{
+							switch (operation)
+							{
+								case CsgModes.Union:
 									clipper.Execute(ClipType.ctDifference, polygonShape);
-								}
-								else
+									break;
+
+								case CsgModes.Subtract:
+									if (faceMeshIndex == 0)
+									{
+										clipper.Execute(ClipType.ctDifference, polygonShape);
+									}
+									else
+									{
+										isSubtractFace = true;
+										clipper.Execute(ClipType.ctIntersection, polygonShape);
+										// the face needs to be added reversed so flip the expected winding
+										faceWinding *= -1;
+									}
+
+									break;
+
+								case CsgModes.Intersect:
+									clipper.Execute(ClipType.ctIntersection, polygonShape);
+									break;
+							}
+
+							// make sure the face we are adding is facing the right direction
+							foreach (var polygon in polygonShape)
+							{
+								if (polygon.GetWindingDirection() != faceWinding)
 								{
 									isSubtractFace = true;
-									clipper.Execute(ClipType.ctIntersection, polygonShape);
-									// the face needs to be added reversed so flip the expected winding
-									faceWinding *= -1;
+									polygon.Reverse();
 								}
-
-								break;
-
-							case CsgModes.Intersect:
-								clipper.Execute(ClipType.ctIntersection, polygonShape);
-								break;
-						}
-
-						// make sure the face we are adding is facing the right direction
-						foreach (var polygon in polygonShape)
-						{
-							if (polygon.GetWindingDirection() != faceWinding)
-							{
-								isSubtractFace = true;
-								polygon.Reverse();
 							}
-						}
 
-						if (polygonShape.Count == 1
-							&& polygonShape[0].Count == 3
-							&& pointsOnPlane.Contains(polygonShape[0][0])
-							&& pointsOnPlane.Contains(polygonShape[0][1])
-							&& pointsOnPlane.Contains(polygonShape[0][2]))
-						{
-							var newFace = resultsMesh.CopyFace(mesh1, faceIndex);
-							if (isSubtractFace)
+							if (polygonShape.Count == 1
+								&& polygonShape[0].Count == 3
+								&& pointsOnPlane.Contains(polygonShape[0][0])
+								&& pointsOnPlane.Contains(polygonShape[0][1])
+								&& pointsOnPlane.Contains(polygonShape[0][2]))
 							{
-								// flip the face normal and winding
-								var hold = newFace.v0;
-								newFace.v0 = newFace.v2;
-								newFace.v2 = hold;
-								newFace.normal *= -1;
+								var newFace = resultsMesh.CopyFace(mesh1, faceIndex);
+								if (isSubtractFace)
+								{
+									// flip the face normal and winding
+									var hold = newFace.v0;
+									newFace.v0 = newFace.v2;
+									newFace.v2 = hold;
+									newFace.normal *= -1;
+								}
 							}
-						}
-						else
-						{
-							// mesh the new polygon and add it to the resultsMesh
-							var asVertices = polygonShape.Vertices();
+							else
+							{
+								// mesh the new polygon and add it to the resultsMesh
+								var asVertices = polygonShape.Vertices();
 
-							// MoveToOriginalPositions();
+								// MoveToOriginalPositions();
 
-							asVertices.TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+								asVertices.TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+							}
 						}
 					}
 
@@ -385,8 +394,6 @@ namespace MatterHackers.PolygonMesh
 						return null;
 					}
 				}
-
-				firstMesh = false;
 			}
 
 			return resultsMesh;
@@ -460,6 +467,16 @@ namespace MatterHackers.PolygonMesh
 		{
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
 			if (processingMode == ProcessingModes.Polygons)
+			{
+				return BooleanProcessing.DoArray(new (Mesh, Matrix4X4)[] { (inMeshA, matrixA), (inMeshB, matrixB) },
+					CsgModes.Subtract,
+					processingMode,
+					inputResolution,
+					outputResolution,
+					reporter,
+					cancellationToken);
+			}
+			else if (processingMode == ProcessingModes.ExactLegacy)
 			{
 				// only try to run the improved booleans if we are 64 bit and it is there
 				if (externalAssemblyExists && IntPtr.Size == 8)
@@ -550,7 +567,7 @@ namespace MatterHackers.PolygonMesh
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
-						
+
 						case CsgModes.Subtract:
 							return Csg.CsgOperations.Subtract(meshA,
 								meshB,
@@ -561,7 +578,7 @@ namespace MatterHackers.PolygonMesh
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
-						
+
 						case CsgModes.Intersect:
 							return Csg.CsgOperations.Intersect(meshA,
 								meshB,
@@ -580,7 +597,7 @@ namespace MatterHackers.PolygonMesh
 			{
 				var meshA = inMeshA.Copy(CancellationToken.None);
 				meshA.Transform(matrixA);
-				
+
 				var meshB = inMeshB.Copy(CancellationToken.None);
 				meshB.Transform(matrixB);
 
@@ -592,7 +609,7 @@ namespace MatterHackers.PolygonMesh
 				{
 					return meshA;
 				}
-				
+
 				var implicitA = GetImplicitFunction(meshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 				var implicitB = GetImplicitFunction(meshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 

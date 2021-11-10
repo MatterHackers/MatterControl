@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.seam_placement,
 						SettingsKey.expand_thin_walls,
 						SettingsKey.coast_at_end_distance,
-						SettingsKey.montonic_solid_infill,
+						SettingsKey.monotonic_solid_infill,
 					}),
 					("Infill", new[]
 					{
