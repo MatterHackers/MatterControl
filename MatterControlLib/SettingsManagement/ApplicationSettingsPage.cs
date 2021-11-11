@@ -116,45 +116,6 @@ namespace MatterHackers.MatterControl
 
 			theme.ApplyBoxStyle(generalSection);
 
-#if __ANDROID__
-			// Camera Monitoring
-			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
-
-			var previewButton = new IconButton(configureIcon, theme)
-			{
-				ToolTipText = "Preview".Localize()
-			};
-			previewButton.Click += (s, e) =>
-			{
-				AppContext.Platform.OpenCameraPreview();
-			};
-
-			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
-
-			// TODO: Sort out how handle this better on Android and in a multi-printer setup
-			if (printer != null)
-			{
-				this.AddSettingsRow(
-					new SettingsItem(
-						"Camera Monitoring".Localize(),
-						theme,
-						new SettingsItem.ToggleSwitchConfig()
-						{
-							Checked = printer.Settings.GetValue<bool>(SettingsKey.publish_bed_image),
-							ToggleAction = (itemChecked) =>
-							{
-								printer.Settings.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
-							}
-						},
-						previewButton,
-						StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24))
-					{
-						Enabled = printer.Settings.PrinterSelected
-					},
-					generalPanel
-				);
-			}
-#endif
 			// Print Notifications
 			var configureNotificationsButton = new IconButton(configureIcon, theme)
 			{
@@ -216,7 +177,6 @@ namespace MatterHackers.MatterControl
 
 			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector, theme), generalPanel);
 
-#if !__ANDROID__
 			// ThumbnailRendering
 			var thumbnailsModeDropList = new MHDropDownList("", theme, maxHeight: 200 * GuiWidget.DeviceScale);
 			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
@@ -279,7 +239,6 @@ namespace MatterHackers.MatterControl
 					thumbnailsModeDropList,
 					theme),
 				generalPanel);
-#endif
 
 			// TextSize
 			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTextSize))
