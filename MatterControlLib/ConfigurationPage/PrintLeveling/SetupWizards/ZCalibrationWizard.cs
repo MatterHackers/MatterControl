@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool probeBeingUsed = printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 
-			bool doManualOffset = false;
+			bool doManualOffset = true;
 			if (doManualOffset)
 			{
 				if (probeBeingUsed)
