@@ -617,7 +617,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var activeTexture = new ImageBuffer(sourceTexture);
 			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
 
-			var faces = cube.GetCoplanerFaces(face);
+			var faces = cube.GetCoplanarFaces(face);
 			cube.PlaceTextureOnFaces(faces, activeTexture, cube.GetMaxPlaneProjection(faces, activeTexture, initialRotation));
 
 			textureDatas.Add(new TextureData()
