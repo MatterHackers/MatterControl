@@ -327,8 +327,7 @@ namespace MatterHackers.PolygonMesh
 							var clipper = new Clipper();
 							clipper.AddPath(facePolygon, PolyType.ptSubject, true);
 							clipper.AddPaths(totalSlice, PolyType.ptClip, true);
-							var faceWinding = facePolygon.GetWindingDirection2();
-							var isSubtractFace = false;
+							var expectedFaceNormal = face.normal;
 
 							switch (operation)
 							{
@@ -343,10 +342,8 @@ namespace MatterHackers.PolygonMesh
 									}
 									else
 									{
-										isSubtractFace = true;
+										expectedFaceNormal *= -1;
 										clipper.Execute(ClipType.ctIntersection, polygonShape);
-										// the face needs to be added reversed so flip the expected winding
-										faceWinding *= -1;
 									}
 
 									break;
@@ -354,15 +351,6 @@ namespace MatterHackers.PolygonMesh
 								case CsgModes.Intersect:
 									clipper.Execute(ClipType.ctIntersection, polygonShape);
 									break;
-							}
-
-							// make sure the face we are adding is facing the right direction
-							foreach (var polygon in polygonShape)
-							{
-								if (polygon.GetWindingDirection2() != faceWinding)
-								{
-									polygon.Reverse();
-								}
 							}
 
 							var faceCountPreAdd = resultsMesh.Faces.Count;
@@ -373,15 +361,7 @@ namespace MatterHackers.PolygonMesh
 								&& facePolygon.Contains(polygonShape[0][1])
 								&& facePolygon.Contains(polygonShape[0][2]))
 							{
-								var newFace = resultsMesh.CopyFace(mesh1, faceIndex);
-								if (isSubtractFace)
-								{
-									// flip the face normal and winding
-									var hold = newFace.v0;
-									newFace.v0 = newFace.v2;
-									newFace.v2 = hold;
-									newFace.normal *= -1;
-								}
+								resultsMesh.AddFaceCopy(mesh1, faceIndex);
 							}
 							else
 							{
@@ -389,12 +369,17 @@ namespace MatterHackers.PolygonMesh
 								polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
 							}
 
-							if (false )//faceCountPreAdd < resultsMesh.Faces.Count)
+							if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
 							{
 								// keep track of the adds so we can process the coplanar faces after
 								for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
 								{
 									StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, i);
+									// make sure our added faces are the right direction
+									if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
+                                    {
+										resultsMesh.FlipFace(i);
+									}
 								}
 							}
 							else // we did not add any faces but we will still keep track of this polygons plan
