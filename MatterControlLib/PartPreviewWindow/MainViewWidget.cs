@@ -283,23 +283,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				tab.AfterDraw += (s, e) =>
 				{
-					e.Graphics2D.Circle(tab.LocalBounds.Right - 25 * DeviceScale,
+					var textWidget = tab.Descendants<TextWidget>().FirstOrDefault();
+					e.Graphics2D.Circle(Math.Max(textWidget.Width, tab.LocalBounds.Right - 25 * DeviceScale),
 						tab.LocalBounds.Bottom + tab.Height / 2 - 1 * DeviceScale,
 						5 * DeviceScale,
 						theme.PrimaryAccentColor);
 				};
 			}
-			else
-			{
-				// Store tab
-				tabControl.AddTab(
-					tab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
-					{
-						MinimumSize = new Vector2(0, theme.TabButtonHeight),
-						Name = "Store Tab",
-						Padding = new BorderDouble(15, 0),
-					});
-			}
+
+			// Store tab
+			tabControl.AddTab(
+				tab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Store Tab",
+					Padding = new BorderDouble(15, 0),
+				});
 
 			EnableReduceWidth(tab, theme);
 

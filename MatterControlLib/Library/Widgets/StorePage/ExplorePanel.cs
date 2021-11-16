@@ -203,7 +203,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				case "product_group":
 					if(currentContentContainer == null)
 					{
-						currentContentContainer = new FlowLeftRightWithWrapping();
+						currentContentContainer = new FlowLeftRightWithWrapping()
+                        {
+							Proportional = true,
+                        };
+
 						container.Add(currentContentContainer);
 					}
 					currentContentContainer.AddChild(new ExploreSection(content, theme));
