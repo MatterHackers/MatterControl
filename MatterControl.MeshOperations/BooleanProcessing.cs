@@ -245,6 +245,16 @@ namespace MatterHackers.PolygonMesh
 			int sourceFaceIndex,
 			int destFaceIndex)
         {
+			foreach(var plane in addedFaces.Keys)
+            {
+				// check if they are close enough
+				if (facePlane.Equals(plane))
+                {
+					facePlane = plane;
+					break;
+                }
+            }
+
 			if (!addedFaces.ContainsKey(facePlane))
             {
 				addedFaces[facePlane] = new Dictionary<int, List<(int sourceFace, int destFace)>>();
@@ -289,8 +299,6 @@ namespace MatterHackers.PolygonMesh
 
 					var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
 					var totalSlice = new Polygons();
-					var accumulatedSlices = 0;
-
 					var firstSlice = true;
 
 					for (var sliceMeshIndex = 0; sliceMeshIndex < transformedMeshes.Count; sliceMeshIndex++)
@@ -313,79 +321,73 @@ namespace MatterHackers.PolygonMesh
 							totalSlice = totalSlice.Union(slice);
 						}
 
-						// keep track of how many slices we have added in
-						accumulatedSlices++;
+						// now we have the total loops that this polygon can intersect from the other meshes
+						// make a polygon for this face
+						var facePolygon = GetFacePolygon(mesh1, faceIndex, cutPlane, out Matrix4X4 flattenedMatrix);
 
-						if (accumulatedSlices == transformedMeshes.Count - 1)
+						var polygonShape = new Polygons();
+						// clip against the slice based on the parameters
+						var clipper = new Clipper();
+						clipper.AddPath(facePolygon, PolyType.ptSubject, true);
+						clipper.AddPaths(totalSlice, PolyType.ptClip, true);
+						var expectedFaceNormal = face.normal;
+
+						switch (operation)
 						{
-							// now we have the total loops that this polygon can intersect from the other meshes
-							// make a polygon for this face
-							var facePolygon = GetFacePolygon(mesh1, faceIndex, cutPlane, out Matrix4X4 flattenedMatrix);
+							case CsgModes.Union:
+								clipper.Execute(ClipType.ctDifference, polygonShape);
+								break;
 
-							var polygonShape = new Polygons();
-							// clip against the slice based on the parameters
-							var clipper = new Clipper();
-							clipper.AddPath(facePolygon, PolyType.ptSubject, true);
-							clipper.AddPaths(totalSlice, PolyType.ptClip, true);
-							var expectedFaceNormal = face.normal;
-
-							switch (operation)
-							{
-								case CsgModes.Union:
-									clipper.Execute(ClipType.ctDifference, polygonShape);
-									break;
-
-								case CsgModes.Subtract:
-									if (mesh1Index == 0)
-									{
-										clipper.Execute(ClipType.ctDifference, polygonShape);
-									}
-									else
-									{
-										expectedFaceNormal *= -1;
-										clipper.Execute(ClipType.ctIntersection, polygonShape);
-									}
-
-									break;
-
-								case CsgModes.Intersect:
-									clipper.Execute(ClipType.ctIntersection, polygonShape);
-									break;
-							}
-
-							var faceCountPreAdd = resultsMesh.Faces.Count;
-
-							if (polygonShape.Count == 1
-								&& polygonShape[0].Count == 3
-								&& facePolygon.Contains(polygonShape[0][0])
-								&& facePolygon.Contains(polygonShape[0][1])
-								&& facePolygon.Contains(polygonShape[0][2]))
-							{
-								resultsMesh.AddFaceCopy(mesh1, faceIndex);
-							}
-							else
-							{
-								// mesh the new polygon and add it to the resultsMesh
-								polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
-							}
-
-							if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
-							{
-								// keep track of the adds so we can process the coplanar faces after
-								for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
+							case CsgModes.Subtract:
+								if (mesh1Index == 0)
 								{
-									StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, i);
-									// make sure our added faces are the right direction
-									if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
-                                    {
-										resultsMesh.FlipFace(i);
-									}
+									clipper.Execute(ClipType.ctDifference, polygonShape);
+								}
+								else
+								{
+									expectedFaceNormal *= -1;
+									clipper.Execute(ClipType.ctIntersection, polygonShape);
+								}
+
+								break;
+
+							case CsgModes.Intersect:
+								clipper.Execute(ClipType.ctIntersection, polygonShape);
+								break;
+						}
+
+						var faceCountPreAdd = resultsMesh.Faces.Count;
+
+						if (polygonShape.Count == 1
+							&& polygonShape[0].Count == 3
+							&& facePolygon.Contains(polygonShape[0][0])
+							&& facePolygon.Contains(polygonShape[0][1])
+							&& facePolygon.Contains(polygonShape[0][2]))
+						{
+							resultsMesh.AddFaceCopy(mesh1, faceIndex);
+						}
+						else
+						{
+							// mesh the new polygon and add it to the resultsMesh
+							polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+						}
+
+						if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
+						{
+							// keep track of the adds so we can process the coplanar faces after
+							for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
+							{
+								StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, i);
+								// make sure our added faces are the right direction
+								if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
+								{
+									resultsMesh.FlipFace(i);
 								}
 							}
-							else // we did not add any faces but we will still keep track of this polygons plan
-							{
-								StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, -1);
-							}
+						}
+						else // we did not add any faces but we will still keep track of this polygons plan
+						{
+							StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, -1);
 						}
 					}
 
@@ -422,10 +424,15 @@ namespace MatterHackers.PolygonMesh
 									var meshIndex = kvp2.Key;
 									var faceList = kvp2.Value;
 
+									var addedFaces = new HashSet<int>();
 									var facePolygons = new Polygons();
 									foreach (var (sourceFaceIndex, destFaceIndex) in faceList)
 									{
-										facePolygons.Add(GetFacePolygon(transformedMeshes[meshIndex], sourceFaceIndex, plane, flattenedMatrix));
+										if (!addedFaces.Contains(sourceFaceIndex))
+										{
+											facePolygons.Add(GetFacePolygon(transformedMeshes[meshIndex], sourceFaceIndex, plane, flattenedMatrix));
+											addedFaces.Add(sourceFaceIndex);
+										}
 									}
 
 									totalSlices.Add(facePolygons);
