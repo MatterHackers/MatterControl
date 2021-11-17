@@ -68,9 +68,13 @@ namespace MatterHackers.PolygonMesh
 
 		public enum ProcessingModes
 		{
+			[Description("Default CSG processing")]
 			Polygons,
-			ExactLegacy,
+			[Description("Use libigl (windows only)")]
+			libigl,
+			[Description("Experimental Marching Cubes")]
 			Marching_Cubes,
+			[Description("Experimental Dual Contouring")]
 			Dual_Contouring,
 		}
 
@@ -105,7 +109,7 @@ namespace MatterHackers.PolygonMesh
 			{
 				return ExactBySlicing(items, operation, reporter, cancellationToken);
 			}
-			else if (processingMode == ProcessingModes.ExactLegacy)
+			else if (processingMode == ProcessingModes.libigl)
 			{
 				return ExactLegacy(items, operation, processingMode, inputResolution, outputResolution, reporter, cancellationToken);
 			}
@@ -501,6 +505,7 @@ namespace MatterHackers.PolygonMesh
 				}
 			}
 
+			resultsMesh.CleanAndMerge();
 			return resultsMesh;
 		}
 
@@ -615,7 +620,7 @@ namespace MatterHackers.PolygonMesh
 					reporter,
 					cancellationToken);
 			}
-			else if (processingMode == ProcessingModes.ExactLegacy)
+			else if (processingMode == ProcessingModes.libigl)
 			{
 				// only try to run the improved booleans if we are 64 bit and it is there
 				if (externalAssemblyExists && IntPtr.Size == 8)
