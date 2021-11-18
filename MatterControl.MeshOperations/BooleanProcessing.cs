@@ -46,10 +46,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
 {
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
+    using Polygon = List<IntPoint>;
+    using Polygons = List<List<IntPoint>>;
 
-	public static class BooleanProcessing
+    public static class BooleanProcessing
 	{
 		public enum CsgModes
 		{
@@ -243,35 +243,6 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static void StoreFaceAdd(Dictionary<Plane, Dictionary<int, List<(int sourceFaceIndex, int destFaceIndex)>>> addedFaces,
-			Plane facePlane,
-			int sourceMeshIndex,
-			int sourceFaceIndex,
-			int destFaceIndex)
-        {
-			foreach(var plane in addedFaces.Keys)
-            {
-				// check if they are close enough
-				if (facePlane.Equals(plane))
-                {
-					facePlane = plane;
-					break;
-                }
-            }
-
-			if (!addedFaces.ContainsKey(facePlane))
-            {
-				addedFaces[facePlane] = new Dictionary<int, List<(int sourceFace, int destFace)>>();
-            }
-
-			if (!addedFaces[facePlane].ContainsKey(sourceMeshIndex))
-            {
-				addedFaces[facePlane][sourceMeshIndex] = new List<(int sourceFace, int destFace)>();
-            }
-
-			addedFaces[facePlane][sourceMeshIndex].Add((sourceFaceIndex, destFaceIndex));
-        }
-
 		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
@@ -291,7 +262,7 @@ namespace MatterHackers.PolygonMesh
 
 			// keep track of all the faces that added by their plane
 			// the internal dictionary is sourceMeshIndex, sourceFaceIndex, destFaceIndex
-			var coPlanarFaces = new Dictionary<Plane, Dictionary<int, List<(int sourceFaceIndex, int destFaceIndex)>>>();
+			var coPlanarFaces = new CoPlanarFaces();
 
 			for (var mesh1Index = 0; mesh1Index < transformedMeshes.Count; mesh1Index++)
 			{
@@ -381,7 +352,7 @@ namespace MatterHackers.PolygonMesh
 							// keep track of the adds so we can process the coplanar faces after
 							for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
 							{
-								StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, i);
+								coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, i);
 								// make sure our added faces are the right direction
 								if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
 								{
@@ -391,7 +362,7 @@ namespace MatterHackers.PolygonMesh
 						}
 						else // we did not add any faces but we will still keep track of this polygons plan
 						{
-							StoreFaceAdd(coPlanarFaces, cutPlane, mesh1Index, faceIndex, -1);
+							coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, -1);
 						}
 					}
 
@@ -406,15 +377,14 @@ namespace MatterHackers.PolygonMesh
 				}
 			}
 
-			foreach (var kvp in coPlanarFaces)
+			foreach (var plane in coPlanarFaces.Planes)
 			{
-				var plane = kvp.Key;
-				var flattenedMatrix = GetFlattenedMatrix(plane);
-				var polygonsByMeshIndex = kvp.Value;
-				// check if more than one mesh has this polygons on this plan
-				if (polygonsByMeshIndex.Count > 1)
+				var meshIndices = coPlanarFaces.MeshIndicesForPlane(plane);
+				if (meshIndices.Count() > 1)
 				{
-
+					// check if more than one mesh has this polygons on this plan
+					var flattenedMatrix = GetFlattenedMatrix(plane);
+					
 					// depending on the opperation add or remove polygons that are planar
 					switch (operation)
 					{
@@ -423,14 +393,11 @@ namespace MatterHackers.PolygonMesh
 								// we need to add polygons for the intersection of all the co-planar faces
 								// find the Polygons for each mesh and union per mesh
 								var totalSlices = new List<Polygons>();
-								foreach (var kvp2 in polygonsByMeshIndex)
+								foreach (var meshIndex in coPlanarFaces.MeshIndicesForPlane(plane))
 								{
-									var meshIndex = kvp2.Key;
-									var faceList = kvp2.Value;
-
 									var addedFaces = new HashSet<int>();
 									var facePolygons = new Polygons();
-									foreach (var (sourceFaceIndex, destFaceIndex) in faceList)
+									foreach (var (sourceFaceIndex, destFaceIndex) in coPlanarFaces.PolygonsForPlaneAndMesh(plane, meshIndex))
 									{
 										if (!addedFaces.Contains(sourceFaceIndex))
 										{
@@ -467,13 +434,10 @@ namespace MatterHackers.PolygonMesh
 								// teselate and add what is left
 								var totalSlices = new List<Polygons>();
 								var facesToRemove = new List<int>();
-								foreach (var kvp2 in polygonsByMeshIndex)
+								foreach (var meshIndex in coPlanarFaces.MeshIndicesForPlane(plane))
 								{
-									var meshIndex = kvp2.Key;
-									var faceList = kvp2.Value;
-
 									var facePolygons = new Polygons();
-									foreach (var (sourceFaceIndex, destFaceIndex) in faceList)
+									foreach (var (sourceFaceIndex, destFaceIndex) in coPlanarFaces.PolygonsForPlaneAndMesh(plane, meshIndex))
 									{
 										facePolygons.Add(GetFacePolygon(transformedMeshes[meshIndex], sourceFaceIndex, plane, flattenedMatrix));
 										facesToRemove.Add(destFaceIndex);
