@@ -407,6 +407,7 @@ namespace MatterHackers.PolygonMesh
                             break;
 
 						case CsgModes.Intersect:
+							coPlanarFaces.IntersectFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix, faceIndicesToRemove);
 							break;
 					}
 
