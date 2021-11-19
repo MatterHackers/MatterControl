@@ -455,7 +455,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (meshWithLowest.Vertices[vi] != lowestPosition)
 					{
 						var planSurfaceArea = 0.0;
-						foreach (var coPlanarFace in meshWithLowest.GetCoplanerFaces(faceIndex))
+						foreach (var coPlanarFace in meshWithLowest.GetCoplanarFaces(faceIndex))
 						{
 							planSurfaceArea += meshWithLowest.GetSurfaceArea(coPlanarFace);
 						}

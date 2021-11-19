@@ -119,12 +119,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PointSize = theme.DefaultFontSize,
 			};
 
-			if (keyValues.ContainsKey(item))
+			if (!keyValues.ContainsKey(item))
 			{
-				throw new Exception("Duplcate item entry");
-			}
-			else
-			{ 
 				keyValues.Add(item, node);
 			}
 

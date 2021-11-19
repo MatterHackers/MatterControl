@@ -146,11 +146,17 @@ namespace MatterHackers.MatterControl
 
 		public PopupMenu GetActionMenuForSceneItem(bool addInSubmenu, View3DWidget view3DWidget)
 		{
-			var sceneContext = view3DWidget.sceneContext;
-			var selectedItem = sceneContext.Scene.SelectedItem;
-			var popupMenu = new PopupMenu(this.MenuTheme);
-			var selectedItemType = selectedItem.GetType();
 			var menuTheme = this.MenuTheme;
+			var popupMenu = new PopupMenu(menuTheme);
+
+			var sceneContext = view3DWidget?.sceneContext;
+			var selectedItem = sceneContext?.Scene?.SelectedItem;
+			var selectedItemType = selectedItem?.GetType();
+
+			if (selectedItem == null)
+			{
+				return popupMenu;
+			}
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{

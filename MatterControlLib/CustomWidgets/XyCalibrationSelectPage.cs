@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -36,11 +35,8 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.ConfigurationPage.PrintLeveling.XyCalibrationWizard;
 
 namespace MatterHackers.MatterControl
@@ -50,15 +46,12 @@ namespace MatterHackers.MatterControl
 		private readonly RadioButton coarseCalibration;
 		private readonly RadioButton normalCalibration;
 		private readonly RadioButton fineCalibration;
-		private PartViewMode preCalibrationPrintViewMode;
 
 		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Calibration Print".Localize();
-
-			preCalibrationPrintViewMode = printer.ViewState.ViewMode;
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
@@ -123,58 +116,18 @@ namespace MatterHackers.MatterControl
 				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
 			};
 
-			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			int tabIndex = 0;
-			var  allUiFields = new Dictionary<string, UIField>();
-			var settingAdded = false;
-			
-			void AddSettingsRow(string warning, string key)
-			{
-				if (!settingAdded)
-				{
-					contentRow.AddChild(
-						new TextWidget(
-							"Recommended Settings Changes".Localize() + ":",
-							textColor: theme.TextColor,
-							pointSize: theme.DefaultFontSize)
-						{
-							Margin = new BorderDouble(10, 0, 0, 20)
-						});
-
-					settingAdded = true;
-				}
-
-				contentRow.AddChild(
-					new WrappedTextWidget(
-						warning,
-						textColor: theme.TextColor,
-						pointSize: theme.DefaultFontSize)
-					{
-						Margin = new BorderDouble(0, 10, 0, 20)
-					});
-
-				var settingsData = PrinterSettings.SettingsData[key];
-				var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex, allUiFields);
-
-				if (row is SliceSettingsRow settingsRow)
-				{
-					settingsRow.ArrowDirection = ArrowDirection.Left;
-				}
-
-				contentRow.AddChild(row);
-			}
-
 
 			if (printer.Settings.GetValue<double>(SettingsKey.layer_height) < printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2)
 			{
 				// The layer height is very small and it will be hard to see features. Show a warning.
-				AddSettingsRow("The calibration object will printer better if the layer hight is set to a larger value. It is recommended that your increase it.".Localize(), SettingsKey.layer_height);
+				AddSettingsRow(contentRow, printer, "The calibration object will printer better if the layer hight is set to a larger value. It is recommended that your increase it.".Localize(), SettingsKey.layer_height, theme, ref tabIndex);
 			}
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.create_raft))
 			{
 				// The layer height is very small and it will be hard to see features. Show a warning.
-				AddSettingsRow("A raft is not needed for the calibration object. It is recommended that you turn it off.".Localize(), SettingsKey.create_raft);
+				AddSettingsRow(contentRow, printer, "A raft is not needed for the calibration object. It is recommended that you turn it off.".Localize(), SettingsKey.create_raft, theme, ref tabIndex);
 			}
 
 			this.NextButton.Visible = false;
@@ -185,7 +138,7 @@ namespace MatterHackers.MatterControl
 			alreadyCalibratedButton.Click += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
-				this.FinishWizard();
+				FinishWizard();
 			};
 
 			this.AddPageAction(alreadyCalibratedButton);
@@ -194,97 +147,17 @@ namespace MatterHackers.MatterControl
 			startCalibrationPrint.Name = "Start Calibration Print";
 			startCalibrationPrint.Click += async (s, e) =>
 			{
-				await PrintCalibrationPart(calibrationWizard);
-			};
+				var preCalibrationPrintViewMode = printer.ViewState.ViewMode;
 
-			this.AcceptButton = startCalibrationPrint;
+				// create the calibration objects
+				IObject3D item = await CreateCalibrationObject(printer, calibrationWizard);
 
-			this.AddPageAction(startCalibrationPrint);
-		}
+				var calibrationObjectPrinter = new CalibrationObjectPrinter(printer, item);
+				// hide this window
+				this.DialogWindow.Visible = false;
 
-		private async Task PrintCalibrationPart(XyCalibrationWizard calibrationWizard)
-		{
-			var scene = new Object3D();
+				await calibrationObjectPrinter.PrintCalibrationPart();
 
-			// create the calibration objects
-			IObject3D item = await CreateCalibrationObject(printer, calibrationWizard);
-
-			// add the calibration object to the bed
-			scene.Children.Add(item);
-
-			// move the part to the center of the bed
-			var bedBounds = printer.Settings.BedBounds;
-			var aabb = item.GetAxisAlignedBoundingBox();
-			item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
-
-			// register callbacks for print completion
-			printer.Connection.Disposed += this.Connection_Disposed;
-			printer.Connection.CancelCompleted += this.Connection_PrintCanceled;
-			printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
-
-			// hide this window
-			this.DialogWindow.Visible = false;
-
-			string gcodePath = EditContext.GCodeFilePath(printer, scene);
-
-			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-
-			(bool slicingSucceeded, string finalGCodePath) = await ApplicationController.Instance.SliceItemLoadOutput(
-				printer,
-				scene,
-				gcodePath);
-
-			// Only start print if slicing completed
-			if (slicingSucceeded)
-			{
-				await printer.Bed.LoadContent(new EditContext()
-				{
-					SourceItem = new FileSystemFileItem(gcodePath),
-					ContentStore = null // No content store for GCode
-				});
-
-				await printer.Connection.StartPrint(finalGCodePath, printingMode: PrinterConnection.PrintingModes.Calibration);
-				ApplicationController.Instance.MonitorPrintTask(printer);
-			}
-			else
-			{
-				printer.Connection.CommunicationState = CommunicationStates.Connected;
-			}
-		}
-
-		private void Connection_PrintCanceled(object sender, EventArgs e)
-		{
-			this.ReturnToCalibrationWizard();
-		}
-
-		private void UnregisterPrinterEvents()
-		{
-			printer.Connection.Disposed -= this.Connection_Disposed;
-			printer.Connection.CommunicationStateChanged -= this.Connection_CommunicationStateChanged;
-			printer.Connection.CancelCompleted -= this.Connection_PrintCanceled;
-		}
-
-		private void Connection_CommunicationStateChanged(object sender, EventArgs e)
-		{
-			switch (printer.Connection.CommunicationState)
-			{
-				case CommunicationStates.Disconnected:
-				case CommunicationStates.AttemptingToConnect:
-				case CommunicationStates.FailedToConnect:
-				case CommunicationStates.ConnectionLost:
-				case CommunicationStates.PrintingFromSd:
-				case CommunicationStates.FinishedPrint:
-					// We are no longer printing, exit and return to where we started
-					this.ReturnToCalibrationWizard();
-
-					break;
-			}
-		}
-
-		private void ReturnToCalibrationWizard()
-		{
-			UiThread.RunOnIdle(() =>
-			{
 				// Restore the original DialogWindow
 				this.DialogWindow.Visible = true;
 
@@ -292,14 +165,11 @@ namespace MatterHackers.MatterControl
 				printer.ViewState.ViewMode = preCalibrationPrintViewMode;
 
 				this.MoveToNextPage();
-			});
+			};
 
-			this.UnregisterPrinterEvents();
-		}
+			this.AcceptButton = startCalibrationPrint;
 
-		private void Connection_Disposed(object sender, EventArgs e)
-		{
-			this.UnregisterPrinterEvents();
+			this.AddPageAction(startCalibrationPrint);
 		}
 
 		private static async Task<IObject3D> CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)

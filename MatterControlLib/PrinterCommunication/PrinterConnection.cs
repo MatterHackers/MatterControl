@@ -2822,6 +2822,16 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public bool AllowLeveling
 		{
+			get
+			{
+				if (printLevelingStream != null)
+				{
+					return printLevelingStream.AllowLeveling;
+				}
+
+				return false;
+			}
+
 			set
 			{
 				if (printLevelingStream != null)

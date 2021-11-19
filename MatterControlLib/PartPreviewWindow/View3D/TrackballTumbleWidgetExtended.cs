@@ -377,7 +377,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var delta = worldPosition - world.EyePosition;
 			var deltaLength = delta.Length;
 			var minDist = 3;
-			var maxDist = 2000;
+			var maxDist = 2300;
 			if ((deltaLength < minDist && zoomDelta < 0)
 				|| (deltaLength > maxDist && zoomDelta > 0))
 			{

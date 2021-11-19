@@ -34,17 +34,22 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using ClipperLib;
 using DualContouring;
 using g3;
 using gs;
 using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
 {
-	public static class BooleanProcessing
+    using Polygon = List<IntPoint>;
+    using Polygons = List<List<IntPoint>>;
+
+    public static class BooleanProcessing
 	{
 		public enum CsgModes
 		{
@@ -63,8 +68,13 @@ namespace MatterHackers.PolygonMesh
 
 		public enum ProcessingModes
 		{
+			[Description("Default CSG processing")]
 			Polygons,
+			[Description("Use libigl (windows only)")]
+			libigl,
+			[Description("Experimental Marching Cubes")]
 			Marching_Cubes,
+			[Description("Experimental Dual Contouring")]
 			Dual_Contouring,
 		}
 
@@ -93,173 +103,384 @@ namespace MatterHackers.PolygonMesh
 			ProcessingResolution inputResolution,
 			ProcessingResolution outputResolution,
 			IProgress<ProgressStatus> reporter,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken,
+			double amountPerOperation = 1,
+			double percentCompleted = 0)
 		{
 			if (processingMode == ProcessingModes.Polygons)
 			{
-				var progressStatus = new ProgressStatus();
-				var totalOperations = items.Count() - 1;
-				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
-
-				var first = true;
-				var resultsMesh = items.First().mesh;
-				var firstWorldMatrix = items.First().matrix;
-
-				foreach (var item in items)
-				{
-					if (first)
-					{
-						first = false;
-						continue;
-					}
-
-					var itemWorldMatrix = item.matrix;
-					resultsMesh = Do(item.mesh,
-						itemWorldMatrix,
-						// other mesh
-						resultsMesh,
-						firstWorldMatrix,
-						// operation
-						operation,
-						processingMode,
-						inputResolution,
-						outputResolution,
-						// reporting
-						reporter,
-						amountPerOperation,
-						percentCompleted,
-						progressStatus,
-						cancellationToken);
-
-					// after the first union we are working with the transformed mesh and don't need the first transform
-					firstWorldMatrix = Matrix4X4.Identity;
-
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
-					reporter?.Report(progressStatus);
-				}
-
-				return resultsMesh;
+				return ExactBySlicing(items, operation, reporter, cancellationToken, amountPerOperation, percentCompleted);
+			}
+			else if (processingMode == ProcessingModes.libigl)
+			{
+				return ExactLegacy(items, operation, processingMode, inputResolution, outputResolution, reporter, cancellationToken);
 			}
 			else
 			{
-				var implicitMeshs = new List<BoundedImplicitFunction3d>();
-				foreach (var item in items)
+				return AsImplicitMeshes(items, operation, processingMode, inputResolution, outputResolution);
+			}
+		}
+
+		private static Mesh AsImplicitMeshes(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution)
+		{
+			Mesh implicitResult = null;
+
+			var implicitMeshs = new List<BoundedImplicitFunction3d>();
+			foreach (var (mesh, matrix) in items)
+			{
+				var meshCopy = mesh.Copy(CancellationToken.None);
+				meshCopy.Transform(matrix);
+
+				implicitMeshs.Add(GetImplicitFunction(meshCopy, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
+			}
+
+			DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
+			{
+				var bounds = root.Bounds();
+
+				var c = new MarchingCubesPro()
 				{
-					var meshCopy = item.mesh.Copy(CancellationToken.None);
-					meshCopy.Transform(item.matrix);
+					Implicit = root,
+					RootMode = MarchingCubesPro.RootfindingModes.LerpSteps,      // cube-edge convergence method
+					RootModeSteps = 5,                                        // number of iterations
+					Bounds = bounds,
+					CubeSize = bounds.MaxDim / numCells,
+				};
 
-					implicitMeshs.Add(GetImplicitFunction(meshCopy, processingMode == ProcessingModes.Polygons, 1 << (int)inputResolution));
-				}
+				c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
+				c.Generate();
 
-				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
-				{
-					var bounds = root.Bounds();
+				MeshNormals.QuickCompute(c.Mesh);                           // generate normals
+				return c.Mesh;
+			}
 
-					var c = new MarchingCubesPro()
+			switch (operation)
+			{
+				case CsgModes.Union:
+					if (processingMode == ProcessingModes.Dual_Contouring)
 					{
-						Implicit = root,
-						RootMode = MarchingCubesPro.RootfindingModes.LerpSteps,      // cube-edge convergence method
-						RootModeSteps = 5,                                        // number of iterations
-						Bounds = bounds,
-						CubeSize = bounds.MaxDim / numCells,
-					};
+						var union = new ImplicitNaryUnion3d()
+						{
+							Children = implicitMeshs
+						};
+						var bounds = union.Bounds();
+						var size = bounds.Max - bounds.Min;
+						var root = Octree.BuildOctree((pos) =>
+						{
+							var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+							return union.Value(ref pos2);
+						}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+						new Vector3(size.x, size.y, size.z),
+						(int)outputResolution,
+						.001);
+						implicitResult = Octree.GenerateMeshFromOctree(root);
+					}
+					else
+					{
+						implicitResult = GenerateMeshF(new ImplicitNaryUnion3d()
+						{
+							Children = implicitMeshs
+						}, 1 << (int)outputResolution).ToMesh();
+					}
+					break;
 
-					c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
-					c.Generate();
-
-					MeshNormals.QuickCompute(c.Mesh);                           // generate normals
-					return c.Mesh;
-				}
-
-				switch (operation)
-				{
-					case CsgModes.Union:
+				case CsgModes.Subtract:
+					{
 						if (processingMode == ProcessingModes.Dual_Contouring)
 						{
-							var union = new ImplicitNaryUnion3d()
+							var subtract = new ImplicitNaryIntersection3d()
 							{
 								Children = implicitMeshs
 							};
-							var bounds = union.Bounds();
-							var size = bounds.Max - bounds.Min;
+							var bounds = subtract.Bounds();
 							var root = Octree.BuildOctree((pos) =>
 							{
 								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-								return union.Value(ref pos2);
-							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
-							new Vector3(size.x, size.y, size.z),
-							(int)outputResolution,
-							.001);
-							return Octree.GenerateMeshFromOctree(root);
-						}
-						else
-						{
-							return GenerateMeshF(new ImplicitNaryUnion3d()
-							{
-								Children = implicitMeshs
-							}, 1 << (int)outputResolution).ToMesh();
-						}
-
-					case CsgModes.Subtract:
-						{
-							if (processingMode == ProcessingModes.Dual_Contouring)
-							{
-								var subtract = new ImplicitNaryIntersection3d()
-								{
-									Children = implicitMeshs
-								};
-								var bounds = subtract.Bounds();
-								var root = Octree.BuildOctree((pos) =>
-								{
-									var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-									return subtract.Value(ref pos2);
-								}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
-								new Vector3(bounds.Width, bounds.Depth, bounds.Height),
-								(int)outputResolution,
-								.001);
-								return Octree.GenerateMeshFromOctree(root);
-							}
-							else
-							{
-								return GenerateMeshF(new ImplicitNaryDifference3d()
-								{
-									A = implicitMeshs.First(),
-									BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
-								}, 1 << (int)outputResolution).ToMesh();
-							}
-						}
-
-					case CsgModes.Intersect:
-						if (processingMode == ProcessingModes.Dual_Contouring)
-						{
-							var intersect = new ImplicitNaryIntersection3d()
-							{
-								Children = implicitMeshs
-							};
-							var bounds = intersect.Bounds();
-							var root = Octree.BuildOctree((pos) =>
-							{
-								var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
-								return intersect.Value(ref pos2);
+								return subtract.Value(ref pos2);
 							}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
 							new Vector3(bounds.Width, bounds.Depth, bounds.Height),
 							(int)outputResolution,
 							.001);
-							return Octree.GenerateMeshFromOctree(root);
+							implicitResult = Octree.GenerateMeshFromOctree(root);
 						}
 						else
 						{
-							return GenerateMeshF(new ImplicitNaryIntersection3d()
+							implicitResult = GenerateMeshF(new ImplicitNaryDifference3d()
 							{
-								Children = implicitMeshs
+								A = implicitMeshs.First(),
+								BSet = implicitMeshs.GetRange(0, implicitMeshs.Count - 1)
 							}, 1 << (int)outputResolution).ToMesh();
 						}
+					}
+					break;
+
+				case CsgModes.Intersect:
+					if (processingMode == ProcessingModes.Dual_Contouring)
+					{
+						var intersect = new ImplicitNaryIntersection3d()
+						{
+							Children = implicitMeshs
+						};
+						var bounds = intersect.Bounds();
+						var root = Octree.BuildOctree((pos) =>
+						{
+							var pos2 = new Vector3d(pos.X, pos.Y, pos.Z);
+							return intersect.Value(ref pos2);
+						}, new Vector3(bounds.Min.x, bounds.Min.y, bounds.Min.z),
+						new Vector3(bounds.Width, bounds.Depth, bounds.Height),
+						(int)outputResolution,
+						.001);
+						implicitResult = Octree.GenerateMeshFromOctree(root);
+					}
+					else
+					{
+						implicitResult = GenerateMeshF(new ImplicitNaryIntersection3d()
+						{
+							Children = implicitMeshs
+						}, 1 << (int)outputResolution).ToMesh();
+					}
+					break;
+			}
+
+			return implicitResult;
+		}
+
+		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2,
+			CsgModes operation,
+			IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken,
+			double amountPerOperationIn = 1,
+			double percentCompletedIn = 0)
+		{
+			var progressStatus = new ProgressStatus();
+			var totalOperations = 0;
+			var transformedMeshes = new List<Mesh>();
+			foreach (var (mesh, matrix) in items2)
+			{
+				totalOperations += mesh.Faces.Count;
+				transformedMeshes.Add(mesh.Copy(CancellationToken.None));
+				transformedMeshes.Last().Transform(matrix);
+			}
+
+			double amountPerOperation = 1.0 / totalOperations * amountPerOperationIn;
+			double percentCompleted = percentCompletedIn;
+
+			var resultsMesh = new Mesh();
+
+			// keep track of all the faces that added by their plane
+			// the internal dictionary is sourceMeshIndex, sourceFaceIndex, destFaceIndex
+			var coPlanarFaces = new CoPlanarFaces();
+
+			for (var mesh1Index = 0; mesh1Index < transformedMeshes.Count; mesh1Index++)
+			{
+				var mesh1 = transformedMeshes[mesh1Index];
+
+				for (int faceIndex = 0; faceIndex < mesh1.Faces.Count; faceIndex++)
+				{
+					var face = mesh1.Faces[faceIndex];
+
+					var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
+					var flattenedMatrix = CoPlanarFaces.GetFlattenedMatrix(cutPlane);
+					var flattenedMatrixInverted = flattenedMatrix.Inverted;
+					var totalSlice = new Polygons();
+					var firstSlice = true;
+
+					for (var sliceMeshIndex = 0; sliceMeshIndex < transformedMeshes.Count; sliceMeshIndex++)
+					{
+						if (mesh1Index == sliceMeshIndex)
+						{
+							continue;
+						}
+
+						var mesh2 = transformedMeshes[sliceMeshIndex];
+						// calculate and add the PWN face from the loops
+						var slice = SliceLayer.CreateSlice(mesh2, cutPlane);
+						if (firstSlice)
+						{
+							totalSlice = slice;
+							firstSlice = false;
+						}
+						else
+						{
+							totalSlice = totalSlice.Union(slice);
+						}
+					}
+
+					// now we have the total loops that this polygon can intersect from the other meshes
+					// make a polygon for this face
+					var facePolygon = CoPlanarFaces.GetFacePolygon(mesh1, faceIndex, cutPlane, flattenedMatrix);
+
+					var polygonShape = new Polygons();
+					// clip against the slice based on the parameters
+					var clipper = new Clipper();
+					clipper.AddPath(facePolygon, PolyType.ptSubject, true);
+					clipper.AddPaths(totalSlice, PolyType.ptClip, true);
+					var expectedFaceNormal = face.normal;
+
+					switch (operation)
+					{
+						case CsgModes.Union:
+							clipper.Execute(ClipType.ctDifference, polygonShape);
+							break;
+
+						case CsgModes.Subtract:
+							if (mesh1Index == 0)
+							{
+								clipper.Execute(ClipType.ctDifference, polygonShape);
+							}
+							else
+							{
+								expectedFaceNormal *= -1;
+								clipper.Execute(ClipType.ctIntersection, polygonShape);
+							}
+
+							break;
+
+						case CsgModes.Intersect:
+							clipper.Execute(ClipType.ctIntersection, polygonShape);
+							break;
+					}
+
+					var faceCountPreAdd = resultsMesh.Faces.Count;
+
+					if (polygonShape.Count == 1
+						&& polygonShape[0].Count == 3
+						&& facePolygon.Contains(polygonShape[0][0])
+						&& facePolygon.Contains(polygonShape[0][1])
+						&& facePolygon.Contains(polygonShape[0][2]))
+					{
+						resultsMesh.AddFaceCopy(mesh1, faceIndex);
+					}
+					else
+					{
+						// mesh the new polygon and add it to the resultsMesh
+						polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrixInverted);
+					}
+
+					if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
+					{
+						// keep track of the adds so we can process the coplanar faces after
+						for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
+						{
+							coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, i);
+							// make sure our added faces are the right direction
+							if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
+							{
+								resultsMesh.FlipFace(i);
+							}
+						}
+					}
+					else // we did not add any faces but we will still keep track of this polygons plan
+					{
+						coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, -1);
+					}
+
+					percentCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = percentCompleted;
+					reporter?.Report(progressStatus);
+
+					if (cancellationToken.IsCancellationRequested)
+					{
+						return null;
+					}
 				}
 			}
 
-			return null;
+			var faceIndicesToRemove = new HashSet<int>();
+			foreach (var plane in coPlanarFaces.Planes)
+			{
+				var meshIndices = coPlanarFaces.MeshIndicesForPlane(plane);
+				if (meshIndices.Count() > 1)
+				{
+					// check if more than one mesh has this polygons on this plan
+					var flattenedMatrix = CoPlanarFaces.GetFlattenedMatrix(plane);
+
+					// depending on the opperation add or remove polygons that are planar
+					switch (operation)
+					{
+						case CsgModes.Union:
+							coPlanarFaces.UnionFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix);
+                            break;
+
+						case CsgModes.Subtract:
+							coPlanarFaces.SubtractFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix, faceIndicesToRemove);
+                            break;
+
+						case CsgModes.Intersect:
+							break;
+					}
+
+				}
+			}
+
+			// now rebuild the face list without the remove polygons
+			if (faceIndicesToRemove.Count > 0)
+			{
+				var newFaces = new FaceList();
+				for (int i = 0; i < resultsMesh.Faces.Count; i++)
+				{
+					// if the face is NOT in the remove faces
+					if (!faceIndicesToRemove.Contains(i))
+					{
+						var face = resultsMesh.Faces[i];
+						newFaces.Add(face);
+					}
+				}
+
+				resultsMesh.Faces = newFaces;
+			}
+
+			resultsMesh.CleanAndMerge();
+			return resultsMesh;
+		}
+
+        private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		{
+			var progressStatus = new ProgressStatus();
+			var totalOperations = items.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			var first = true;
+			var resultsMesh = items.First().mesh;
+			var firstWorldMatrix = items.First().matrix;
+
+			foreach (var (mesh, matrix) in items)
+			{
+				if (first)
+				{
+					first = false;
+					continue;
+				}
+
+				var itemWorldMatrix = matrix;
+				resultsMesh = Do(
+					// other mesh
+					resultsMesh,
+					firstWorldMatrix,
+					mesh,
+					itemWorldMatrix,
+					// operation
+					operation,
+					processingMode,
+					inputResolution,
+					outputResolution,
+					// reporting
+					reporter,
+					amountPerOperation,
+					percentCompleted,
+					progressStatus,
+					cancellationToken);
+
+				// after the first union we are working with the transformed mesh and don't need the first transform
+				firstWorldMatrix = Matrix4X4.Identity;
+
+				percentCompleted += amountPerOperation;
+				progressStatus.Progress0To1 = percentCompleted;
+				reporter?.Report(progressStatus);
+			}
+
+			return resultsMesh;
 		}
 
 		public static Mesh Do(Mesh inMeshA,
@@ -281,6 +502,18 @@ namespace MatterHackers.PolygonMesh
 		{
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
 			if (processingMode == ProcessingModes.Polygons)
+			{
+				return BooleanProcessing.DoArray(new (Mesh, Matrix4X4)[] { (inMeshA, matrixA), (inMeshB, matrixB) },
+					operation,
+					processingMode,
+					inputResolution,
+					outputResolution,
+					reporter,
+					cancellationToken,
+					amountPerOperation,
+					percentCompleted);
+			}
+			else if (processingMode == ProcessingModes.libigl)
 			{
 				// only try to run the improved booleans if we are 64 bit and it is there
 				if (externalAssemblyExists && IntPtr.Size == 8)
@@ -325,8 +558,8 @@ namespace MatterHackers.PolygonMesh
 					}
 					catch (Exception ex)
 					{
-						//ApplicationController.Instance.LogInfo("Error performing boolean operation: ");
-						//ApplicationController.Instance.LogInfo(ex.Message);
+						// ApplicationController.Instance.LogInfo("Error performing boolean operation: ");
+						// ApplicationController.Instance.LogInfo(ex.Message);
 					}
 					finally
 					{
@@ -371,7 +604,7 @@ namespace MatterHackers.PolygonMesh
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
-						
+
 						case CsgModes.Subtract:
 							return Csg.CsgOperations.Subtract(meshA,
 								meshB,
@@ -382,7 +615,7 @@ namespace MatterHackers.PolygonMesh
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
-						
+
 						case CsgModes.Intersect:
 							return Csg.CsgOperations.Intersect(meshA,
 								meshB,
@@ -401,7 +634,7 @@ namespace MatterHackers.PolygonMesh
 			{
 				var meshA = inMeshA.Copy(CancellationToken.None);
 				meshA.Transform(matrixA);
-				
+
 				var meshB = inMeshB.Copy(CancellationToken.None);
 				meshB.Transform(matrixB);
 
@@ -413,9 +646,9 @@ namespace MatterHackers.PolygonMesh
 				{
 					return meshA;
 				}
-				
-				var implicitA = GetImplicitFunction(inMeshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
-				var implicitB = GetImplicitFunction(inMeshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+
+				var implicitA = GetImplicitFunction(meshA, processingMode == ProcessingModes.Polygons, (int)inputResolution);
+				var implicitB = GetImplicitFunction(meshB, processingMode == ProcessingModes.Polygons, (int)inputResolution);
 
 				DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numCells)
 				{
@@ -499,5 +732,5 @@ namespace MatterHackers.PolygonMesh
 				return new DenseGridTrilinearImplicit(signedDistance.Grid, signedDistance.GridOrigin, signedDistance.CellSize);
 			}
 		}
-	}
+    }
 }

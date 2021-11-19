@@ -38,6 +38,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Align and merge any vertices that are nearly coincident.")]
 		public bool WeldVertices { get; set; } = true;
 
+
+		[Description("How distant a vertex must be to weld.")]
+		public double WeldTolerance { get; set; }
+
 		[Description("Make all the faces have a consistent orientation.")]
 		public bool FaceOrientation { get; set; } = false;
 
@@ -122,7 +126,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (WeldVertices)
 				{
 					inMesh = sourceMesh.Copy(cancellationToken);
-					inMesh.CleanAndMerge();
+					if (WeldTolerance > 0)
+					{
+						inMesh.MergeVertices(.01);
+					}
+					else
+					{
+						inMesh.CleanAndMerge();
+					}
+
 					if (!FaceOrientation
 						&& RemoveMode == RemoveModes.None
 						&& !WeldEdges

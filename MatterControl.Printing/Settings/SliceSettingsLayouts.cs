@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.seam_placement,
 						SettingsKey.expand_thin_walls,
 						SettingsKey.coast_at_end_distance,
-						SettingsKey.montonic_solid_infill,
+						SettingsKey.monotonic_solid_infill,
 					}),
 					("Infill", new[]
 					{
@@ -316,6 +316,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.z_servo_depolyed_angle,
 						SettingsKey.z_servo_retracted_angle,
 						SettingsKey.measure_probe_offset_conductively,
+						SettingsKey.validate_probe_offset,
 						SettingsKey.conductive_pad_center,
 						SettingsKey.conductive_probe_min_z,
 					}),

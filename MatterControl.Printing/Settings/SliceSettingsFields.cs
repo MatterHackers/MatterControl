@@ -77,11 +77,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.montonic_solid_infill,
+					SlicerConfigName = SettingsKey.monotonic_solid_infill,
 					PresentationName = "Monotonic Solid Infill".Localize().Localize(),
 					HelpText = "When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					DefaultValue = "0",
+					DefaultValue = "1",
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()
@@ -920,6 +920,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					DefaultValue = "0",
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle",
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.validate_probe_offset,
+					PresentationName = "Validate Probe Offset Automatically".Localize(),
+					HelpText = "If the printer has a physically touching z probe (like a BLTouch) this will enable automatic validation of the distance between the nozzle and the z probe.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "0",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},

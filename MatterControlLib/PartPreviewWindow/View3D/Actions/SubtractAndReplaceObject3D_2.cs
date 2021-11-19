@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 #if DEBUG
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
@@ -357,12 +356,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+		private bool ProcessPolygons
+		{
+			get => Processing == BooleanProcessing.ProcessingModes.Polygons || Processing == BooleanProcessing.ProcessingModes.libigl;
+		}
+
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(OutputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != BooleanProcessing.ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(InputResolution), () => Processing != BooleanProcessing.ProcessingModes.Polygons && MeshAnalysis == BooleanProcessing.IplicitSurfaceMethod.Grid);
+			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons);
+			change.SetRowVisible(nameof(OutputResolution), () => !ProcessPolygons);
+			change.SetRowVisible(nameof(MeshAnalysis), () => !ProcessPolygons);
+			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons && MeshAnalysis == BooleanProcessing.IplicitSurfaceMethod.Grid);
 		}
 	}
 }

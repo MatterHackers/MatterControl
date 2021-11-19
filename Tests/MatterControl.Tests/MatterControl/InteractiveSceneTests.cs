@@ -46,9 +46,23 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class InteractiveSceneTests
 	{
+		public static void StartupMC()
+		{
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
+		}
+
 		[Test, Category("InteractiveScene")]
 		public async Task CombineTests()
 		{
+			StartupMC();
+
 			// Combine has correct results
 			{
 				var root = new Object3D();
@@ -309,15 +323,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StartupMC();
 
-			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.InitPluginFinder();
-			AppContext.Platform.ProcessCommandline();
-			
 			// build without pinch
 			{
 				var root = new Object3D();
@@ -516,13 +523,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForAlignedFitObject()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.ProcessCommandline();
+			StartupMC();
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
@@ -564,13 +565,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AlignObjectHasCorrectPositionsOnXAxis()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.ProcessCommandline();
+			StartupMC();
 
 			var scene = new InteractiveScene();
 
@@ -627,13 +622,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.ProcessCommandline();
+			StartupMC();
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
