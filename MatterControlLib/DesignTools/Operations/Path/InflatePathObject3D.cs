@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-	public class InflatePathObject3D : Object3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return joinType;
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}

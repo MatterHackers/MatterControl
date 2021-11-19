@@ -49,7 +49,7 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_3", true)]
-	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, ISelectedEditorDraw
+	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
 		private Vector3 boundsSize;
 		private InvalidateType additonalInvalidate;
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 			var center = aabb.Center;

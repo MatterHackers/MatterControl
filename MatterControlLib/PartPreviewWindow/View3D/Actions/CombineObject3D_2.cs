@@ -43,6 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	[ShowUpdateButton(false)]
 	public class CombineObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public CombineObject3D_2()

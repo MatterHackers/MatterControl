@@ -48,7 +48,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[Obsolete("Use SubtractAndReplaceObject3D_2 instead", false)]
-	[ShowUpdateButton]
+	[ShowUpdateButton(true)]
 	public class SubtractAndReplaceObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
 		public SubtractAndReplaceObject3D()

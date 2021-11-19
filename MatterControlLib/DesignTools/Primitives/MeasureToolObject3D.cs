@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	[MarkDownDescription("Drag the spheres to the locations you would like to measure the distance between. The object on the bed will not print.")]
 	[HideMeterialAndColor]
-	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
+	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, ICustomEditorDraw, IEditorButtonProvider
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
@@ -79,6 +79,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			await item.Rebuild();
 			return item;
 		}
+
+		public bool DoEditorDraw(bool isSelected) => true;
 
 		[HideFromEditor]
 		private Vector3 worldStartPosition
@@ -226,7 +228,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
-		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void AddEditorTransparents(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e) { }
+
+		public void DrawEditor(Object3DControlsLayer controlLayer, DrawEventArgs e)
 		{
 			if (!PositionsHaveBeenSet)
 			{

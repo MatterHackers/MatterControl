@@ -52,7 +52,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideMeterialAndColor]
-	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
+	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IPathObject, IEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
 	{
 		public ImageToPathObject3D_2()
 		{
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}

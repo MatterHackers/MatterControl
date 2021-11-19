@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : ArrayObject3D, ISelectedEditorDraw
+	public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
 		}

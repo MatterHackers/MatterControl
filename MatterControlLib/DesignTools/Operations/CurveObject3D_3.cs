@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, ISelectedEditorDraw
+	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public CurveObject3D_3()
 		{
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
 		public DoubleOrExpression MinSidesPerRotation { get; set; } = 30;
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var diameter = Diameter.Value(this);
 			var startPercent = StartPercent.Value(this);

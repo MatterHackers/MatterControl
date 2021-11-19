@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractPathObject3D : OperationSourceContainerObject3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class SubtractPathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public SubtractPathObject3D()
 		{
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}

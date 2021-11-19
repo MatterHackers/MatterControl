@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, ISelectedEditorDraw
+	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public TwistObject3D()
 		{
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;

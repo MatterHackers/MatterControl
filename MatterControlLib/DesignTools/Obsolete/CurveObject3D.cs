@@ -53,7 +53,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[Obsolete("Use CurveObject3D_3 instead", false)]
-	public class CurveObject3D : MeshWrapperObject3D, ISelectedEditorDraw
+	public class CurveObject3D : MeshWrapperObject3D, IEditorDraw
 	{
 		// holds where we rotate the object
 		private Vector2 rotationCenter;
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())

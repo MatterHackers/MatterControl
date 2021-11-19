@@ -42,6 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	[ShowUpdateButton(false)]
 	public class IntersectionObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public IntersectionObject3D_2()
@@ -124,6 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
+#if false
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				BooleanProcessing.CsgModes.Intersect,
 				Processing,
@@ -131,6 +133,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				OutputResolution,
 				reporter,
 				cancellationToken);
+#else
+			var totalOperations = items.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			var progressStatus = new ProgressStatus();
+
+			var resultsMesh = items.First().Item1;
+			var keepWorldMatrix = items.First().Item2;
+
+			bool first = true;
+			foreach (var next in items)
+			{
+				if (first)
+				{
+					first = false;
+					continue;
+				}
+
+				resultsMesh = BooleanProcessing.Do(resultsMesh,
+					keepWorldMatrix,
+					// other mesh
+					next.Item1,
+					next.Item2,
+					// operation type
+					BooleanProcessing.CsgModes.Intersect,
+					Processing,
+					InputResolution,
+					OutputResolution,
+					// reporting
+					reporter,
+					amountPerOperation,
+					percentCompleted,
+					progressStatus,
+					cancellationToken);
+
+				// after the first time we get a result the results mesh is in the right coordinate space
+				keepWorldMatrix = Matrix4X4.Identity;
+
+				// report our progress
+				percentCompleted += amountPerOperation;
+				progressStatus.Progress0To1 = percentCompleted;
+				reporter?.Report(progressStatus);
+			}
+#endif
 
 			if (resultsMesh != null)
 			{

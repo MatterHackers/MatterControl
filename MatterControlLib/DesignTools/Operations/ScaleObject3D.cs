@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	[Obsolete("Use ScaleObject3D_3 instead", false)]
-	public class ScaleObject3D : TransformWrapperObject3D, ISelectedEditorDraw, IPropertyGridModifier
+	public class ScaleObject3D : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
 	{
 		public enum ScaleType
 		{
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("This is the position to perform the scale about.")]
 		public Vector3 ScaleAbout { get; set; }
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())

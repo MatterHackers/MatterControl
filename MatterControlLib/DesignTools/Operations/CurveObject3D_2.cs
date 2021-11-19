@@ -52,7 +52,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[Obsolete("Use CurveObject3D_3 instead", false)]
-	public class CurveObject3D_2 : OperationSourceContainerObject3D, ISelectedEditorDraw
+	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
 		public CurveObject3D_2()
 		{
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var distance = Diameter / 2 + sourceAabb.YSize / 2;

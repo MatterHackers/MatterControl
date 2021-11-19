@@ -897,15 +897,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Color GetItemColor(IObject3D item, IObject3D selectedItem)
 		{
-			Color drawColor = item.WorldColor();
-			if (item.WorldOutputType() == PrintOutputTypes.Support)
-			{
-				drawColor = new Color(Color.Yellow, 120);
-			}
-			else if (item.WorldOutputType() == PrintOutputTypes.WipeTower)
-			{
-				drawColor = new Color(Color.Cyan, 120);
-			}
+			var drawColor = item.WorldColor();
+			var drawColorWithOutputType = item.WorldColor(checkOutputType: true);
+			if (drawColor != drawColorWithOutputType)
+            {
+				// color bering set by output type
+				drawColor = drawColorWithOutputType;
+            }
 			else if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
 			{
 				// check if we should be rendering materials (this overrides the other colors)
@@ -1079,7 +1077,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			foreach (var item in scene.Descendants().Where(i => i is IAlwaysEditorDraw))
+			foreach (var item in scene.Descendants().Where(i => i is ICustomEditorDraw customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
 			{
 				editorDrawItems.Add(item);
 			}
@@ -1138,6 +1136,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 			}
 
+			// Add transparent draws to the editor
+			foreach (var item in editorDrawItems)
+			{
+				// Invoke existing IEditorDraw when iterating items
+				if (item is ICustomEditorDraw cutomEditorDraw)
+				{
+					cutomEditorDraw.AddEditorTransparents(this, transparentMeshes, e);
+				}
+			}
+
 			// Draw transparent objects
 			foreach (var item in transparentMeshes)
 			{
@@ -1163,9 +1171,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in editorDrawItems)
 			{
 				// Invoke existing IEditorDraw when iterating items
-				if (item is ISelectedEditorDraw editorDraw)
+				if (item is IEditorDraw editorDraw)
 				{
-					editorDraw.DrawEditor(this, transparentMeshes, e);
+					editorDraw.DrawEditor(this, e);
 				}
 			}
 

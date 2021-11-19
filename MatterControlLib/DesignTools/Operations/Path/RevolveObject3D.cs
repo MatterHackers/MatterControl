@@ -46,7 +46,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RevolveObject3D : Object3D, ISelectedEditorDraw
+	public class RevolveObject3D : Object3D, IEditorDraw
 	{
 		[MaxDecimalPlaces(2)]
 		public DoubleOrExpression AxisPosition { get; set; } = 0;
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var child = this.Children.FirstOrDefault();
 			if (child is IPathObject pathObject)

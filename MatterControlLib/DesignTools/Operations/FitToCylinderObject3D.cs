@@ -49,7 +49,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToCylinderObject3D : TransformWrapperObject3D, ISelectedEditorDraw
+	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
 		public FitToCylinderObject3D()
 		{
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var aabb = this.WorldAxisAlignedBoundingBox();
 			layer.World.RenderCylinderOutline(Matrix4X4.Identity, aabb.Center, Diameter, aabb.ZSize, 90, Color.Red);

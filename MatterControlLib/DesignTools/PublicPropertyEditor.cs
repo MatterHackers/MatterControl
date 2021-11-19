@@ -585,7 +585,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
 						Action selected = null;
-						if (!(localItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
+						var showUpdate = localItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+						if (showUpdate == null
+							|| !showUpdate.SuppressPropertyChangeUpdates)
 						{
 							selected = () =>
 							{
