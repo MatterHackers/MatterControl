@@ -9,7 +9,8 @@
     <RootNamespace>MatterControl</RootNamespace>
     <AssemblyName>MatterControl</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+	  <RuntimeIdentifier>win</RuntimeIdentifier>
+	  <FileAlignment>512</FileAlignment>
     <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
