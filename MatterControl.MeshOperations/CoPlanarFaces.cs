@@ -155,6 +155,56 @@ namespace MatterHackers.PolygonMesh
 			polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
 		}
 
+		public void IntersectFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix, HashSet<int> faceIndicesToRemove)
+		{
+			// get all meshes that have faces on this plane
+			var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
+
+			// we need more than one mesh
+			if (meshesWithFaces.Count < 2)
+			{
+				// no faces to add
+				return;
+			}
+
+			// add the faces that we should remove
+			foreach (var meshIndex in meshesWithFaces)
+			{
+				foreach (var faces in FacesSetsForPlaneAndMesh(plane, meshIndex))
+				{
+					faceIndicesToRemove.Add(faces.destFaceIndex);
+				}
+			}
+
+			var polygonsByMesh = new List<Polygons>();
+			// iterate all the meshes that need to be intersected
+			for (int meshIndex = 0; meshIndex < meshesWithFaces.Count; meshIndex++)
+			{
+				var unionedPoygons = new Polygons();
+				foreach (var removeFaceSets in FacesSetsForPlaneAndMesh(plane, meshIndex))
+				{
+					unionedPoygons = unionedPoygons.Union(GetFacePolygon(transformedMeshes[meshIndex], removeFaceSets.sourceFaceIndex, plane, flattenedMatrix));
+				}
+
+				polygonsByMesh.Add(unionedPoygons);
+			}
+
+			var total = new Polygons(polygonsByMesh[0]);
+			for (int i=1; i<polygonsByMesh.Count; i++)
+			{
+				var polygonShape = new Polygons();
+				var clipper = new Clipper();
+				clipper.AddPaths(total, PolyType.ptSubject, true);
+				clipper.AddPaths(polygonsByMesh[i], PolyType.ptClip, true);
+				clipper.Execute(ClipType.ctIntersection, polygonShape);
+
+				total = polygonShape;
+			}
+
+			// teselate and add all the new polygons
+			total.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+		}
+
 		public void UnionFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix)
 		{
 			// get all meshes that have faces on this plane
