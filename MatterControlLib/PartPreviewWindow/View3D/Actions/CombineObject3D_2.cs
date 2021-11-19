@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -49,6 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Combine";
 		}
 
+#if DEBUG
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
@@ -59,7 +61,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
-
+#else
+		private BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
+		private BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		private BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+#endif
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -117,6 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
+#if false
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				BooleanProcessing.CsgModes.Union,
 				Processing,
@@ -124,6 +132,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				OutputResolution,
 				reporter,
 				cancellationToken);
+#else
+			var totalOperations = items.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			var progressStatus = new ProgressStatus();
+
+			var resultsMesh = items.First().Mesh;
+			var keepWorldMatrix = items.First().Item2;
+
+			foreach (var next in items)
+			{
+				if (next == items.First())
+                {
+					continue;
+                }
+
+				resultsMesh = BooleanProcessing.Do(resultsMesh,
+					keepWorldMatrix,
+					// other mesh
+					next.Mesh,
+					next.Item2,
+					// operation type
+					BooleanProcessing.CsgModes.Union,
+					Processing,
+					InputResolution,
+					OutputResolution,
+					// reporting
+					reporter,
+					amountPerOperation,
+					percentCompleted,
+					progressStatus,
+					cancellationToken);
+
+				// after the first time we get a result the results mesh is in the right coordinate space
+				keepWorldMatrix = Matrix4X4.Identity;
+
+				// report our progress
+				percentCompleted += amountPerOperation;
+				progressStatus.Progress0To1 = percentCompleted;
+				reporter?.Report(progressStatus);
+			}
+#endif
 
 			if (resultsMesh != null)
 			{

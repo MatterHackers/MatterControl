@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
+#if DEBUG
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
@@ -66,6 +67,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+#else
+		private BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
+		private BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		private BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+#endif
 
 		public bool RemoveSubtractObjects { get; set; } = true;
 
@@ -205,17 +212,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			if (removeVisibleItems.Any()
 				&& keepVisibleItems.Any())
 			{
-				var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
-				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
-
-				var progressStatus = new ProgressStatus
-				{
-					Status = "Do CSG"
-				};
 				foreach (var keep in keepVisibleItems)
 				{
-#if true
+#if false
 					var items = removeVisibleItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
 					items.Insert(0, (keep.Mesh, keep.Matrix));
 					var resultsMesh = BooleanProcessing.DoArray(items,
@@ -226,6 +225,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						reporter,
 						cancellationToken);
 #else
+					var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
+					double amountPerOperation = 1.0 / totalOperations;
+					double percentCompleted = 0;
+
+					var progressStatus = new ProgressStatus
+					{
+						Status = "Do CSG"
+					};
+
 					var resultsMesh = keep.Mesh;
 					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
 

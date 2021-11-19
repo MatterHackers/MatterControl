@@ -63,7 +63,7 @@ namespace MatterHackers.PolygonMesh
 			}
 		}
 
-		public IEnumerable<(int sourceFaceIndex, int destFaceIndex)> PolygonsForPlaneAndMesh(Plane plane, int meshIndex)
+		public IEnumerable<(int sourceFaceIndex, int destFaceIndex)> FacesSetsForPlaneAndMesh(Plane plane, int meshIndex)
         {
 			if (coPlanarFaces[plane].ContainsKey(meshIndex))
 			{
@@ -102,46 +102,61 @@ namespace MatterHackers.PolygonMesh
 
 		}
 
-		public void SubtractFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix)
+		public void SubtractFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix, HashSet<int> faceIndicesToRemove)
 		{
-			var flattenedMatrixInverted = flattenedMatrix.Inverted;
+			// get all meshes that have faces on this plane
+			var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
 
-			// remove every added co-planar face
+			// we need more than one mesh and one of them needs to be the source (mesh 0)
+			if (meshesWithFaces.Count < 2
+				|| !meshesWithFaces.Contains(0))
+			{
+				// no faces to add
+				return;
+			}
+
+			// sort them so we can process each group into intersections
+			meshesWithFaces.Sort();
+
+			// add the faces that we should
+			foreach(var meshIndex in meshesWithFaces)
+            {
+				foreach(var faces in FacesSetsForPlaneAndMesh(plane, meshIndex))
+                {
+					faceIndicesToRemove.Add(faces.destFaceIndex);
+                }
+            }
+
 			// subtract every face from the mesh 0 faces
 			// teselate and add what is left
-			var totalSlices = new List<Polygons>();
-			var facesToRemove = new List<int>();
-			foreach (var meshIndex in MeshIndicesForPlane(plane))
+			var keepPolygons = new Polygons();
+			foreach (var keepFaceSets in FacesSetsForPlaneAndMesh(plane, 0))
 			{
-				var facePolygons = new Polygons();
-				foreach (var (sourceFaceIndex, destFaceIndex) in PolygonsForPlaneAndMesh(plane, meshIndex))
-				{
-					facePolygons.Add(CoPlanarFaces.GetFacePolygon(transformedMeshes[meshIndex], sourceFaceIndex, plane, flattenedMatrix));
-					facesToRemove.Add(destFaceIndex);
-				}
+				keepPolygons = keepPolygons.Union(GetFacePolygon(transformedMeshes[0], keepFaceSets.sourceFaceIndex, plane, flattenedMatrix));
+			}
 
-				totalSlices.Add(facePolygons);
+			// iterate all the meshes that need to be subtracted
+			var removePoygons = new Polygons();
+			for (int removeMeshIndex= 1; removeMeshIndex < meshesWithFaces.Count; removeMeshIndex++)
+            {
+				foreach (var removeFaceSets in FacesSetsForPlaneAndMesh(plane, removeMeshIndex))
+				{
+					removePoygons = removePoygons.Union(GetFacePolygon(transformedMeshes[removeMeshIndex], removeFaceSets.sourceFaceIndex, plane, flattenedMatrix));
+				}
 			}
 
 			var polygonShape = new Polygons();
-			while (totalSlices.Count > 1)
-			{
-				var clipper = new Clipper();
-				clipper.AddPaths(totalSlices[0], PolyType.ptSubject, true);
-				clipper.AddPaths(totalSlices[1], PolyType.ptClip, true);
-				clipper.Execute(ClipType.ctIntersection, polygonShape);
-
-				totalSlices.RemoveAt(1);
-			}
+			var clipper = new Clipper();
+			clipper.AddPaths(keepPolygons, PolyType.ptSubject, true);
+			clipper.AddPaths(removePoygons, PolyType.ptClip, true);
+			clipper.Execute(ClipType.ctDifference, polygonShape);
 
 			// teselate and add all the new polygons
-			polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrixInverted);
+			polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
 		}
 
 		public void UnionFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix)
 		{
-			var flattenedMatrixInverted = flattenedMatrix.Inverted;
-
 			// get all meshes that have faces on this plane
 			var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
 
@@ -159,7 +174,7 @@ namespace MatterHackers.PolygonMesh
 			{
 				meshPolygons.Add(new Polygons());
 				var addedFaces = new HashSet<int>();
-				foreach (var (sourceFaceIndex, destFaceIndex) in this.PolygonsForPlaneAndMesh(plane, i))
+				foreach (var (sourceFaceIndex, destFaceIndex) in this.FacesSetsForPlaneAndMesh(plane, i))
 				{
 					if (!addedFaces.Contains(sourceFaceIndex))
 					{
@@ -199,7 +214,7 @@ namespace MatterHackers.PolygonMesh
 			}
 
 			// teselate and add all the new polygons
-			totalSlices.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrixInverted);
+			totalSlices.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
 		}
 
 		public void StoreFaceAdd(Plane facePlane,

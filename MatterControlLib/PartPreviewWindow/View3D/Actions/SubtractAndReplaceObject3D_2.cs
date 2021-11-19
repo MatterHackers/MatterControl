@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DisplayName("Part(s) to Subtract and Replace")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
+#if DEBUG
 		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
@@ -69,6 +70,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+#else
+		private BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
+		private BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		private BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+#endif
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{

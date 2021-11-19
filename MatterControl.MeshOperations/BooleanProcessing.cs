@@ -103,11 +103,13 @@ namespace MatterHackers.PolygonMesh
 			ProcessingResolution inputResolution,
 			ProcessingResolution outputResolution,
 			IProgress<ProgressStatus> reporter,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken,
+			double amountPerOperation = 1,
+			double percentCompleted = 0)
 		{
 			if (processingMode == ProcessingModes.Polygons)
 			{
-				return ExactBySlicing(items, operation, reporter, cancellationToken);
+				return ExactBySlicing(items, operation, reporter, cancellationToken, amountPerOperation, percentCompleted);
 			}
 			else if (processingMode == ProcessingModes.libigl)
 			{
@@ -243,7 +245,12 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2, CsgModes operation, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2,
+			CsgModes operation,
+			IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken,
+			double amountPerOperationIn = 1,
+			double percentCompletedIn = 0)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = 0;
@@ -255,8 +262,8 @@ namespace MatterHackers.PolygonMesh
 				transformedMeshes.Last().Transform(matrix);
 			}
 
-			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
+			double amountPerOperation = 1.0 / totalOperations * amountPerOperationIn;
+			double percentCompleted = percentCompletedIn;
 
 			var resultsMesh = new Mesh();
 
@@ -379,6 +386,7 @@ namespace MatterHackers.PolygonMesh
 				}
 			}
 
+			var faceIndicesToRemove = new HashSet<int>();
 			foreach (var plane in coPlanarFaces.Planes)
 			{
 				var meshIndices = coPlanarFaces.MeshIndicesForPlane(plane);
@@ -395,7 +403,7 @@ namespace MatterHackers.PolygonMesh
                             break;
 
 						case CsgModes.Subtract:
-							coPlanarFaces.SubtractFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix);
+							coPlanarFaces.SubtractFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix, faceIndicesToRemove);
                             break;
 
 						case CsgModes.Intersect:
@@ -403,6 +411,23 @@ namespace MatterHackers.PolygonMesh
 					}
 
 				}
+			}
+
+			// now rebuild the face list without the remove polygons
+			if (faceIndicesToRemove.Count > 0)
+			{
+				var newFaces = new FaceList();
+				for (int i = 0; i < resultsMesh.Faces.Count; i++)
+				{
+					// if the face is NOT in the remove faces
+					if (!faceIndicesToRemove.Contains(i))
+					{
+						var face = resultsMesh.Faces[i];
+						newFaces.Add(face);
+					}
+				}
+
+				resultsMesh.Faces = newFaces;
 			}
 
 			resultsMesh.CleanAndMerge();
@@ -479,12 +504,14 @@ namespace MatterHackers.PolygonMesh
 			if (processingMode == ProcessingModes.Polygons)
 			{
 				return BooleanProcessing.DoArray(new (Mesh, Matrix4X4)[] { (inMeshA, matrixA), (inMeshB, matrixB) },
-					CsgModes.Subtract,
+					operation,
 					processingMode,
 					inputResolution,
 					outputResolution,
 					reporter,
-					cancellationToken);
+					cancellationToken,
+					amountPerOperation,
+					percentCompleted);
 			}
 			else if (processingMode == ProcessingModes.libigl)
 			{
