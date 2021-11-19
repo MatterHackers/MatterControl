@@ -139,20 +139,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var progressStatus = new ProgressStatus();
 
-			var resultsMesh = items.First().Mesh;
+			var resultsMesh = items.First().Item1;
 			var keepWorldMatrix = items.First().Item2;
 
+			bool first = true;
 			foreach (var next in items)
 			{
-				if (next == items.First())
+				if (first)
                 {
+					first = false;
 					continue;
                 }
 
 				resultsMesh = BooleanProcessing.Do(resultsMesh,
 					keepWorldMatrix,
 					// other mesh
-					next.Mesh,
+					next.Item1,
 					next.Item2,
 					// operation type
 					BooleanProcessing.CsgModes.Union,
