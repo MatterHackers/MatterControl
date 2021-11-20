@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	[HideMeterialAndColor]
 	[WebPageLink("Resources", "Markdown Help", "https://guides.github.com/features/mastering-markdown/")]
 	[MarkDownDescription("Used to add description within then scene. The object on the bed will not print.")]
-	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
+	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, ICustomEditorDraw, IEditorButtonProvider
 	{
 		private MarkdownWidget markdownWidget;
 		private Object3DControlsLayer controlLayer;
@@ -103,7 +103,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				LocalPosition = value.Transform(this.WorldMatrix().Inverted);
 			}
 		}
-		
+
+		public bool DoEditorDraw(bool isSelected) => true;
+
+
 		[HideFromEditor]
 		public Vector3 LocalPosition { get; set; }
 
@@ -239,7 +242,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void AddEditorTransparents(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e) { }
+
+		public void DrawEditor(Object3DControlsLayer controlLayer, DrawEventArgs e)
 		{
 			EnsureTracedPositionControl(controlLayer);
 

@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
+	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		private ClipperLib.ClipType clipType;
 		private string operationName;
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}

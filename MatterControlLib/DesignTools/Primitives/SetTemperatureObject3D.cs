@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, ISelectedEditorDraw
+	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, IEditorDraw
 	{
 		private bool hasBeenReached;
 		private double accumulatedLayerHeight;
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			accumulatedLayerHeight = 0;
 		}
 
-		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e)
 		{
 			if (displayInfo.temp == double.MinValue
 				|| displayInfo.temp != Temperature

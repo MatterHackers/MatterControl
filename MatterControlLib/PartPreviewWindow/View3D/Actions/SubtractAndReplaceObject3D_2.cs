@@ -45,12 +45,17 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButton]
-	public class SubtractAndReplaceObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ISelectedEditorDraw, IPropertyGridModifier
+	[ShowUpdateButton(false)]
+	public class SubtractAndReplaceObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ICustomEditorDraw, IPropertyGridModifier
 	{
 		public SubtractAndReplaceObject3D_2()
 		{
 			Name = "Subtract and Replace";
+		}
+
+		public bool DoEditorDraw(bool isSelected)
+		{
+			return isSelected;
 		}
 
 		[HideFromEditor]
@@ -77,89 +82,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
 #endif
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void AddEditorTransparents(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			var parentOfSourceItems = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
-
-			var sourceItems = parentOfSourceItems.Children.ToList();
-
-			foreach (var paintItem in sourceItems)
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem == this)
 			{
-				var paintItemResults = this.Children.Where(i => i.OwnerID == paintItem.ID);
-				var wasSelected = ComputedChildren.Contains(paintItem.ID);
-				var currentlySelected = SelectedChildren.Contains(paintItem.ID);
+				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
-				if (currentlySelected)
-				{
-					// if this is selected always paint a transparent source
-					foreach (var item in paintItem.VisibleMeshes())
-					{
-						transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 80)));
-					}
+				var removeObjects = parentOfSubtractTargets.Children
+					.Where(i => SelectedChildren.Contains(i.ID))
+					.SelectMany(c => c.VisibleMeshes())
+					.ToList();
 
-					// if it was also selected in before (the results are right)
-					if (wasSelected)
-					{
-						// paint solid results
-						if (paintItemResults != null)
-						{
-							foreach (var paintItemResult in paintItemResults)
-							{
-								foreach (var item in paintItemResult.VisibleMeshes())
-								{
-									GLHelper.Render(item.Mesh,
-										item.WorldColor(),
-										item.WorldMatrix(),
-										RenderTypes.Outlines,
-										item.WorldMatrix() * layer.World.ModelviewMatrix);
-								}
-							}
-						}
-					}
-				}
-				else if (wasSelected)
+				foreach (var item in removeObjects)
 				{
-					// it is not selected now but was selected before (changed state)
-					// pant the solid source
-					foreach (var item in paintItem.VisibleMeshes())
-					{
-						GLHelper.Render(item.Mesh,
-							item.WorldColor(),
-							item.WorldMatrix(),
-							RenderTypes.Outlines,
-							item.WorldMatrix() * layer.World.ModelviewMatrix);
-					}
+					var color = item.WorldColor(checkOutputType: true);
+					transparentMeshes.Add(new Object3DView(item, color.WithAlpha(color.Alpha0To1 * .2)));
 				}
-				else // it is not selected now and was not before (same state)
-				{
-					// paint the results
-					if (paintItemResults != null && paintItemResults.Count() > 0)
-					{
-						foreach (var paintItemResult in paintItemResults)
-						{
-							foreach (var item in paintItemResult.VisibleMeshes())
-							{
-								GLHelper.Render(item.Mesh,
-									item.WorldColor(),
-									item.WorldMatrix(),
-									RenderTypes.Outlines,
-									item.WorldMatrix() * layer.World.ModelviewMatrix);
-							}
-						}
-					}
-					else // we don't have any results yet
-					{
-						foreach (var item in paintItem.VisibleMeshes())
-						{
-							GLHelper.Render(item.Mesh,
-								item.WorldColor(),
-								item.WorldMatrix(),
-								RenderTypes.Outlines,
-								item.WorldMatrix() * layer.World.ModelviewMatrix);
-						}
-					}
-				}
+
 			}
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			return;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

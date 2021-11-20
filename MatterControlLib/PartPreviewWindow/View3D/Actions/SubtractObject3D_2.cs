@@ -45,8 +45,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButton]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ISelectedEditorDraw, IPropertyGridModifier
+	[ShowUpdateButton(false)]
+	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ICustomEditorDraw, IPropertyGridModifier
 	{
 		public SubtractObject3D_2()
 		{
@@ -76,7 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public bool RemoveSubtractObjects { get; set; } = true;
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public bool DoEditorDraw(bool isSelected)
+        {
+			return isSelected;
+        }
+
+		public void AddEditorTransparents(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem == this)
@@ -90,30 +95,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				foreach (var item in removeObjects)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 80)));
+					var color = item.WorldColor(checkOutputType: true);
+					transparentMeshes.Add(new Object3DView(item, color.WithAlpha(color.Alpha0To1 * .2)));
 				}
 
-				var keepItems = parentOfSubtractTargets.Children
-					.Where(i => !SelectedChildren.Contains(i.ID))
-					.ToList();
-
-				foreach (var keepItem in keepItems)
-				{
-					var drawItem = keepItem;
-
-					var keepItemResult = this.Children.Where(i => i.OwnerID == keepItem.ID).FirstOrDefault();
-					drawItem = keepItemResult != null ? keepItemResult : drawItem;
-
-					foreach (var item in drawItem.VisibleMeshes())
-					{
-						GLHelper.Render(item.Mesh,
-							item.WorldColor(),
-							item.WorldMatrix(),
-							RenderTypes.Outlines,
-							item.WorldMatrix() * layer.World.ModelviewMatrix);
-					}
-				}
 			}
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			return;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)

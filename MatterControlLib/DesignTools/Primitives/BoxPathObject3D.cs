@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class BoxPathObject3D : PrimitiveObject3D, IPathObject, IObject3DControlsProvider, ISelectedEditorDraw
+	public class BoxPathObject3D : PrimitiveObject3D, IPathObject, IObject3DControlsProvider, IEditorDraw
 	{
 		public BoxPathObject3D()
 		{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}

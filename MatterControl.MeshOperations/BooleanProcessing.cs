@@ -353,8 +353,15 @@ namespace MatterHackers.PolygonMesh
 					}
 					else
 					{
+						var preAddCount = resultsMesh.Vertices.Count;
 						// mesh the new polygon and add it to the resultsMesh
 						polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrixInverted);
+
+						// TODO: map all the added vertices that can be back to the original polygon positions
+						// for (int i = preAddCount; i< resultsMesh.Vertices.Count; i++)
+                        {
+
+                        }
 					}
 
 					if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
@@ -395,7 +402,7 @@ namespace MatterHackers.PolygonMesh
 					// check if more than one mesh has this polygons on this plan
 					var flattenedMatrix = CoPlanarFaces.GetFlattenedMatrix(plane);
 
-					// depending on the opperation add or remove polygons that are planar
+					// depending on the operation add or remove polygons that are planar
 					switch (operation)
 					{
 						case CsgModes.Union:

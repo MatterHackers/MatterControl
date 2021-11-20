@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	}
 
 	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_3", true)]
-	public class FitToBoundsObject3D : Object3D, ISelectedEditorDraw, IPropertyGridModifier
+	public class FitToBoundsObject3D : Object3D, IEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		Outline
 	}
 
-	public class BaseObject3D : Object3D, IPropertyGridModifier, ISelectedEditorDraw
+	public class BaseObject3D : Object3D, IPropertyGridModifier, IEditorDraw
 	{
 		public enum CenteringTypes
 		{
@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			if (OutlineIsFromMesh)
 			{

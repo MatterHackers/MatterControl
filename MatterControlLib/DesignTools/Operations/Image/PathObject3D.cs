@@ -37,7 +37,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PathObject3D : Object3D, IPathObject, ISelectedEditorDraw
+	public class PathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		[JsonIgnore]
 		private IVertexSource _vertexSource = new VertexStorage();
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
 		}
