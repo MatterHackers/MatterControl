@@ -42,6 +42,7 @@ using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh.Csg;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
@@ -121,7 +122,11 @@ namespace MatterHackers.PolygonMesh
 			}
 		}
 
-		private static Mesh AsImplicitMeshes(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution)
+		private static Mesh AsImplicitMeshes(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
+			CsgModes operation,
+			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution)
 		{
 			Mesh implicitResult = null;
 
@@ -255,11 +260,14 @@ namespace MatterHackers.PolygonMesh
 			var progressStatus = new ProgressStatus();
 			var totalOperations = 0;
 			var transformedMeshes = new List<Mesh>();
+			var bvhAccelerators = new List<ITraceable>();
 			foreach (var (mesh, matrix) in meshAndMatrix)
 			{
 				totalOperations += mesh.Faces.Count;
-				transformedMeshes.Add(mesh.Copy(CancellationToken.None));
-				transformedMeshes.Last().Transform(matrix);
+				var meshCopy = mesh.Copy(CancellationToken.None);
+				transformedMeshes.Add(meshCopy);
+				meshCopy.Transform(matrix);
+				bvhAccelerators.Add(MeshToBVH.Convert(meshCopy));
 			}
 
 			var plansByMesh = new List<List<Plane>>();
@@ -316,7 +324,7 @@ namespace MatterHackers.PolygonMesh
 
 						var mesh2 = transformedMeshes[sliceMeshIndex];
 						// calculate and add the PWN face from the loops
-						var slice = SliceLayer.CreateSlice(mesh2, cutPlane, transformTo0Plane);
+						var slice = SliceLayer.CreateSlice(mesh2, cutPlane, transformTo0Plane, bvhAccelerators[sliceMeshIndex]);
 						if (firstSlice)
 						{
 							totalSlice = slice;
@@ -465,7 +473,13 @@ namespace MatterHackers.PolygonMesh
 			return resultsMesh;
 		}
 
-        private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+        private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
+			CsgModes operation,
+			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution,
+			IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = items.Count() - 1;
