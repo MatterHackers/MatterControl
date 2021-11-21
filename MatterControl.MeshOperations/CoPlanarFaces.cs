@@ -93,59 +93,74 @@ namespace MatterHackers.PolygonMesh
 		}
 
 		public void SubtractFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix, HashSet<int> faceIndicesToRemove)
-		{
-			// get all meshes that have faces on this plane
-			var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
+        {
+            // get all meshes that have faces on this plane
+            var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
 
-			// we need more than one mesh and one of them needs to be the source (mesh 0)
-			if (meshesWithFaces.Count < 2
-				|| !meshesWithFaces.Contains(0))
-			{
-				// no faces to add
-				return;
-			}
+            // we need more than one mesh and one of them needs to be the source (mesh 0)
+            if (meshesWithFaces.Count < 2
+                || !meshesWithFaces.Contains(0))
+            {
+                // no faces to add
+                return;
+            }
 
-			// sort them so we can process each group into intersections
-			meshesWithFaces.Sort();
+            // sort them so we can process each group into intersections
+            meshesWithFaces.Sort();
 
-			// add the faces that we should
-			foreach (var meshIndex in meshesWithFaces)
-			{
-				foreach (var faces in FacesSetsForPlaneAndMesh(plane, meshIndex))
-				{
-					faceIndicesToRemove.Add(faces.destFaceIndex);
-				}
-			}
+            // add the faces that we should
+            foreach (var meshIndex in meshesWithFaces)
+            {
+                foreach (var faces in FacesSetsForPlaneAndMesh(plane, meshIndex))
+                {
+                    faceIndicesToRemove.Add(faces.destFaceIndex);
+                }
+            }
 
-			// subtract every face from the mesh 0 faces
-			// teselate and add what is left
-			var keepPolygons = new Polygons();
-			foreach (var keepFaceSets in FacesSetsForPlaneAndMesh(plane, 0))
-			{
-				keepPolygons = keepPolygons.Union(GetFacePolygon(transformedMeshes[0], keepFaceSets.sourceFaceIndex, flattenedMatrix));
-			}
+            // subtract every face from the mesh 0 faces
+            // teselate and add what is left
+            var keepPolygons = new Polygons();
+            foreach (var keepFaceSets in FacesSetsForPlaneAndMesh(plane, 0))
+            {
+                var facePolygon = GetFacePolygon(transformedMeshes[0], keepFaceSets.sourceFaceIndex, flattenedMatrix);
+                keepPolygons = keepPolygons.Union(facePolygon);
+            }
 
-			// iterate all the meshes that need to be subtracted
-			var removePoygons = new Polygons();
-			for (int removeMeshIndex = 1; removeMeshIndex < meshesWithFaces.Count; removeMeshIndex++)
-			{
-				foreach (var removeFaceSets in FacesSetsForPlaneAndMesh(plane, removeMeshIndex))
-				{
-					removePoygons = removePoygons.Union(GetFacePolygon(transformedMeshes[removeMeshIndex], removeFaceSets.sourceFaceIndex, flattenedMatrix));
-				}
-			}
+            // iterate all the meshes that need to be subtracted
+            var removePoygons = new Polygons();
+            for (int removeMeshIndex = 1; removeMeshIndex < meshesWithFaces.Count; removeMeshIndex++)
+            {
+                foreach (var removeFaceSets in FacesSetsForPlaneAndMesh(plane, removeMeshIndex))
+                {
+                    removePoygons = removePoygons.Union(GetFacePolygon(transformedMeshes[removeMeshIndex], removeFaceSets.sourceFaceIndex, flattenedMatrix));
+                }
+            }
 
-			var polygonShape = new Polygons();
-			var clipper = new Clipper();
-			clipper.AddPaths(keepPolygons, PolyType.ptSubject, true);
-			clipper.AddPaths(removePoygons, PolyType.ptClip, true);
-			clipper.Execute(ClipType.ctDifference, polygonShape);
+            var polygonShape = new Polygons();
+            var clipper = new Clipper();
+            clipper.AddPaths(keepPolygons, PolyType.ptSubject, true);
+            clipper.AddPaths(removePoygons, PolyType.ptClip, true);
+            clipper.Execute(ClipType.ctDifference, polygonShape);
 
-			// teselate and add all the new polygons
-			polygonShape.Vertices(1).TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
-		}
+            // teselate and add all the new polygons
+            var countPreAdd = resultsMesh.Faces.Count;
+            polygonShape.Vertices(1).TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+            EnsureFaceNormals(plane, resultsMesh, countPreAdd);
+        }
 
-		public void IntersectFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix, HashSet<int> faceIndicesToRemove)
+        private static void EnsureFaceNormals(Plane plane, Mesh resultsMesh, int countPreAdd)
+        {
+            // Check that the new face normals are pointed in the right direction
+            if ((new Vector3(resultsMesh.Faces[countPreAdd].normal) - plane.Normal).LengthSquared > .1)
+            {
+                for (int i = countPreAdd; i < resultsMesh.Faces.Count; i++)
+                {
+                    resultsMesh.FlipFace(i);
+                }
+            }
+        }
+
+        public void IntersectFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix, HashSet<int> faceIndicesToRemove)
 		{
 			// get all meshes that have faces on this plane
 			var meshesWithFaces = MeshIndicesForPlane(plane).ToList();
@@ -192,7 +207,9 @@ namespace MatterHackers.PolygonMesh
 			}
 
 			// teselate and add all the new polygons
+			var countPreAdd = resultsMesh.Faces.Count;
 			total.Vertices(1).TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+			EnsureFaceNormals(plane, resultsMesh, countPreAdd);
 		}
 
 		public void UnionFaces(Plane plane, List<Mesh> transformedMeshes, Mesh resultsMesh, Matrix4X4 flattenedMatrix)
@@ -254,7 +271,9 @@ namespace MatterHackers.PolygonMesh
 			}
 
 			// teselate and add all the new polygons
+			var countPreAdd = resultsMesh.Faces.Count;
 			totalSlices.Vertices(1).TriangulateFaces(null, resultsMesh, 0, flattenedMatrix.Inverted);
+			EnsureFaceNormals(plane, resultsMesh, countPreAdd);
 		}
 
 		public void StoreFaceAdd(PlaneNormalXSorter planeSorter,

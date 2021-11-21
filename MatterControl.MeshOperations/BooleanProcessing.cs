@@ -535,15 +535,15 @@ namespace MatterHackers.PolygonMesh
 			Matrix4X4 matrixB,
 			// operation
 			CsgModes operation,
-			ProcessingModes processingMode,
-			ProcessingResolution inputResolution,
-			ProcessingResolution outputResolution,
+			ProcessingModes processingMode = ProcessingModes.Polygons,
+			ProcessingResolution inputResolution = ProcessingResolution._64,
+			ProcessingResolution outputResolution = ProcessingResolution._64,
 			// reporting
-			IProgress<ProgressStatus> reporter,
-			double amountPerOperation,
-			double percentCompleted,
-			ProgressStatus progressStatus,
-			CancellationToken cancellationToken)
+			IProgress<ProgressStatus> reporter = null,
+			double amountPerOperation = 1,
+			double percentCompleted = 0,
+			ProgressStatus progressStatus = null,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
 			if (processingMode == ProcessingModes.Polygons)
