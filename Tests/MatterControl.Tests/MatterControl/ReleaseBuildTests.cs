@@ -47,7 +47,6 @@ namespace MatterControl.Tests
 						Gui.dll
 						Tesselate.dll
 						DataConverters2D.dll
-						RayTracer.dll
 						DataConverters3D.dll
 						Localizations.dll
 						Community.CsharpSqlite.dll

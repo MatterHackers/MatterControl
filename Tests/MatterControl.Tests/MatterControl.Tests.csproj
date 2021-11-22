@@ -18,7 +18,8 @@
     <RootNamespace>MatterControl.Tests</RootNamespace>
     <AssemblyName>MatterControl.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+	  <RuntimeIdentifier>win</RuntimeIdentifier>
+	  <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>

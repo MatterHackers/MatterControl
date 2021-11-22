@@ -42,6 +42,7 @@ using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh.Csg;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
@@ -121,7 +122,11 @@ namespace MatterHackers.PolygonMesh
 			}
 		}
 
-		private static Mesh AsImplicitMeshes(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution)
+		private static Mesh AsImplicitMeshes(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
+			CsgModes operation,
+			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution)
 		{
 			Mesh implicitResult = null;
 
@@ -245,7 +250,7 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items2,
+		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> meshAndMatrix,
 			CsgModes operation,
 			IProgress<ProgressStatus> reporter,
 			CancellationToken cancellationToken,
@@ -255,12 +260,38 @@ namespace MatterHackers.PolygonMesh
 			var progressStatus = new ProgressStatus();
 			var totalOperations = 0;
 			var transformedMeshes = new List<Mesh>();
-			foreach (var (mesh, matrix) in items2)
+			var bvhAccelerators = new List<ITraceable>();
+			foreach (var (mesh, matrix) in meshAndMatrix)
 			{
 				totalOperations += mesh.Faces.Count;
-				transformedMeshes.Add(mesh.Copy(CancellationToken.None));
-				transformedMeshes.Last().Transform(matrix);
+				var meshCopy = mesh.Copy(CancellationToken.None);
+				transformedMeshes.Add(meshCopy);
+				meshCopy.Transform(matrix);
+				bvhAccelerators.Add(MeshToBVH.Convert(meshCopy));
 			}
+
+			var plansByMesh = new List<List<Plane>>();
+			var uniquePlanes = new HashSet<Plane>();
+			for (int i = 0; i < transformedMeshes.Count; i++)
+			{
+				var mesh = transformedMeshes[i];
+				plansByMesh.Add(new List<Plane>());
+				for (int j = 0; j < transformedMeshes[i].Faces.Count; j++)
+                {
+					var face = mesh.Faces[j];
+					var cutPlane = new Plane(mesh.Vertices[face.v0].AsVector3(), mesh.Vertices[face.v1].AsVector3(), mesh.Vertices[face.v2].AsVector3());
+					plansByMesh[i].Add(cutPlane);
+					uniquePlanes.Add(cutPlane);
+				}
+			}
+
+			PlaneNormalXSorter planeSorter = new PlaneNormalXSorter(uniquePlanes);
+			var transformTo0Planes = new Dictionary<Plane, (Matrix4X4 matrix, Matrix4X4 inverted)>();
+			foreach(var plane in uniquePlanes)
+            {
+				var matrix = SliceLayer.GetTransformTo0Plane(plane);
+				transformTo0Planes[plane] = (matrix, matrix.Inverted);
+            }
 
 			double amountPerOperation = 1.0 / totalOperations * amountPerOperationIn;
 			double percentCompleted = percentCompletedIn;
@@ -279,12 +310,11 @@ namespace MatterHackers.PolygonMesh
 				{
 					var face = mesh1.Faces[faceIndex];
 
-					var cutPlane = new Plane(mesh1.Vertices[face.v0].AsVector3(), mesh1.Vertices[face.v1].AsVector3(), mesh1.Vertices[face.v2].AsVector3());
-					var flattenedMatrix = CoPlanarFaces.GetFlattenedMatrix(cutPlane);
-					var flattenedMatrixInverted = flattenedMatrix.Inverted;
+					var cutPlane = plansByMesh[mesh1Index][faceIndex];
 					var totalSlice = new Polygons();
 					var firstSlice = true;
 
+					var transformTo0Plane = transformTo0Planes[cutPlane].matrix;
 					for (var sliceMeshIndex = 0; sliceMeshIndex < transformedMeshes.Count; sliceMeshIndex++)
 					{
 						if (mesh1Index == sliceMeshIndex)
@@ -294,7 +324,7 @@ namespace MatterHackers.PolygonMesh
 
 						var mesh2 = transformedMeshes[sliceMeshIndex];
 						// calculate and add the PWN face from the loops
-						var slice = SliceLayer.CreateSlice(mesh2, cutPlane);
+						var slice = SliceLayer.CreateSlice(mesh2, cutPlane, transformTo0Plane, bvhAccelerators[sliceMeshIndex]);
 						if (firstSlice)
 						{
 							totalSlice = slice;
@@ -308,7 +338,7 @@ namespace MatterHackers.PolygonMesh
 
 					// now we have the total loops that this polygon can intersect from the other meshes
 					// make a polygon for this face
-					var facePolygon = CoPlanarFaces.GetFacePolygon(mesh1, faceIndex, cutPlane, flattenedMatrix);
+					var facePolygon = CoPlanarFaces.GetFacePolygon(mesh1, faceIndex, transformTo0Plane);
 
 					var polygonShape = new Polygons();
 					// clip against the slice based on the parameters
@@ -355,7 +385,7 @@ namespace MatterHackers.PolygonMesh
 					{
 						var preAddCount = resultsMesh.Vertices.Count;
 						// mesh the new polygon and add it to the resultsMesh
-						polygonShape.Vertices().TriangulateFaces(null, resultsMesh, 0, flattenedMatrixInverted);
+						polygonShape.Vertices(1).TriangulateFaces(null, resultsMesh, 0, transformTo0Planes[cutPlane].inverted);
 
 						// TODO: map all the added vertices that can be back to the original polygon positions
 						// for (int i = preAddCount; i< resultsMesh.Vertices.Count; i++)
@@ -369,7 +399,7 @@ namespace MatterHackers.PolygonMesh
 						// keep track of the adds so we can process the coplanar faces after
 						for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
 						{
-							coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, i);
+							coPlanarFaces.StoreFaceAdd(planeSorter, cutPlane, mesh1Index, faceIndex, i);
 							// make sure our added faces are the right direction
 							if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
 							{
@@ -379,7 +409,7 @@ namespace MatterHackers.PolygonMesh
 					}
 					else // we did not add any faces but we will still keep track of this polygons plan
 					{
-						coPlanarFaces.StoreFaceAdd(cutPlane, mesh1Index, faceIndex, -1);
+						coPlanarFaces.StoreFaceAdd(planeSorter, cutPlane, mesh1Index, faceIndex, -1);
 					}
 
 					percentCompleted += amountPerOperation;
@@ -393,6 +423,7 @@ namespace MatterHackers.PolygonMesh
 				}
 			}
 
+			// handle the co-planar faces
 			var faceIndicesToRemove = new HashSet<int>();
 			foreach (var plane in coPlanarFaces.Planes)
 			{
@@ -400,7 +431,7 @@ namespace MatterHackers.PolygonMesh
 				if (meshIndices.Count() > 1)
 				{
 					// check if more than one mesh has this polygons on this plan
-					var flattenedMatrix = CoPlanarFaces.GetFlattenedMatrix(plane);
+					var flattenedMatrix = transformTo0Planes[plane].matrix;
 
 					// depending on the operation add or remove polygons that are planar
 					switch (operation)
@@ -442,7 +473,13 @@ namespace MatterHackers.PolygonMesh
 			return resultsMesh;
 		}
 
-        private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items, CsgModes operation, ProcessingModes processingMode, ProcessingResolution inputResolution, ProcessingResolution outputResolution, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+        private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
+			CsgModes operation,
+			ProcessingModes processingMode,
+			ProcessingResolution inputResolution,
+			ProcessingResolution outputResolution,
+			IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 			var totalOperations = items.Count() - 1;
@@ -498,15 +535,15 @@ namespace MatterHackers.PolygonMesh
 			Matrix4X4 matrixB,
 			// operation
 			CsgModes operation,
-			ProcessingModes processingMode,
-			ProcessingResolution inputResolution,
-			ProcessingResolution outputResolution,
+			ProcessingModes processingMode = ProcessingModes.Polygons,
+			ProcessingResolution inputResolution = ProcessingResolution._64,
+			ProcessingResolution outputResolution = ProcessingResolution._64,
 			// reporting
-			IProgress<ProgressStatus> reporter,
-			double amountPerOperation,
-			double percentCompleted,
-			ProgressStatus progressStatus,
-			CancellationToken cancellationToken)
+			IProgress<ProgressStatus> reporter = null,
+			double amountPerOperation = 1,
+			double percentCompleted = 0,
+			ProgressStatus progressStatus = null,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			bool externalAssemblyExists = File.Exists(BooleanAssembly);
 			if (processingMode == ProcessingModes.Polygons)

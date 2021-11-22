@@ -27,49 +27,67 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
+using System;
+using System.Collections.Generic;
+using ClipperLib;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.PolygonMesh
 {
-	public class SceneTraceDataDrawable : IDrawable
+    public class PlaneNormalXSorter : IComparer<Plane>
 	{
-		private ISceneContext sceneContext;
-		private InteractiveScene scene;
+		private readonly List<Plane> planes;
 
-		public SceneTraceDataDrawable(ISceneContext sceneContext)
+		public PlaneNormalXSorter(IEnumerable<Plane> inputPlanes)
 		{
-			this.sceneContext = sceneContext;
-			this.scene = sceneContext.Scene;
+			planes = new List<Plane>(inputPlanes);
+			planes.Sort(this);
 		}
 
-		public bool Enabled { get; set; }
-
-		public string Title { get; } = "Scene TraceData Render";
-
-		public string Description { get; } = "Render TraceData for the scene";
-
-		public DrawStage DrawStage { get; } = DrawStage.Last;
-
-		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		public int Compare(Plane a, Plane b)
 		{
-			// RenderSceneTraceData
-			var bvhIterator = new BvhIterator(scene?.GetBVHData(), decentFilter: (x) =>
+			return a.Normal.X.CompareTo(b.Normal.X);
+		}
+
+		public Plane? FindPlane(Plane searchPlane,
+			double distanceErrorValue = .01,
+			double normalErrorValue = .0001)
+		{
+			Plane testPlane = searchPlane;
+			int index = planes.BinarySearch(testPlane, this);
+			if (index < 0)
 			{
-				var center = x.Bvh.GetCenter();
-				var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);
-				if (worldCenter.Z > 0)
+				index = ~index;
+			}
+			// we have the starting index now get all the vertices that are close enough starting from here
+			for (int i = index; i < planes.Count; i++)
+			{
+				if (Math.Abs(planes[i].Normal.X - searchPlane.Normal.X) > normalErrorValue)
 				{
-					return true;
+					// we are too far away in x, we are done with this direction
+					break;
 				}
 
-				return false;
-			});
+				if (planes[i].Equals(searchPlane, distanceErrorValue, normalErrorValue))
+				{
+					return planes[i];
+				}
+			}
+			for (int i = index - 1; i >= 0; i--)
+			{
+				if (Math.Abs(planes[i].Normal.X - searchPlane.Normal.X) > normalErrorValue)
+				{
+					// we are too far away in x, we are done with this direction
+					break;
+				}
 
-			Object3DControlsLayer.RenderBounds(e, world, bvhIterator);
+				if (planes[i].Equals(searchPlane, distanceErrorValue, normalErrorValue))
+				{
+					return planes[i];
+				}
+			}
+
+			return null;
 		}
 	}
 }

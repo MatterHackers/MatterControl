@@ -74,7 +74,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj" />
-    <ProjectReference Include="..\Submodules\agg-sharp\RayTracer\RayTracer.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
