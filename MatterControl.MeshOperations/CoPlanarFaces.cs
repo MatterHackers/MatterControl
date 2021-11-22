@@ -150,6 +150,11 @@ namespace MatterHackers.PolygonMesh
 
         private static void EnsureFaceNormals(Plane plane, Mesh resultsMesh, int countPreAdd)
         {
+			if (countPreAdd >= resultsMesh.Faces.Count)
+            {
+				return;
+            }
+
             // Check that the new face normals are pointed in the right direction
             if ((new Vector3(resultsMesh.Faces[countPreAdd].normal) - plane.Normal).LengthSquared > .1)
             {
