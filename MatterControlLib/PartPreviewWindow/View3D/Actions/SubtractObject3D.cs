@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var totalOperations = removeObjects.Count * keepObjects.Count;
 				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
+				double ratioCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
 				foreach (var remove in removeObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
@@ -165,13 +165,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.matrix,
 							remove.obj3D.Mesh,
 							remove.matrix,
-							BooleanProcessing.CsgModes.Subtract,
-							BooleanProcessing.ProcessingModes.Polygons,
-							BooleanProcessing.ProcessingResolution._64,
-							BooleanProcessing.ProcessingResolution._64,
+							CsgModes.Subtract,
+							ProcessingModes.Polygons,
+							ProcessingResolution._64,
+							ProcessingResolution._64,
 							reporter,
 							amountPerOperation,
-							percentCompleted,
+							ratioCompleted,
 							progressStatus,
 							cancellationToken);
 						var inverse = keep.matrix.Inverted;
@@ -182,8 +182,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.obj3D.Mesh = result;
 						}
 
-						percentCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = percentCompleted;
+						ratioCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = ratioCompleted;
 						reporter?.Report(progressStatus);
 					}
 

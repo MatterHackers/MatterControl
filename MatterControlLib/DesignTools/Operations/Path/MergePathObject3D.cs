@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
+			double ratioCompleted = 0;
 
 			var progressStatus = new ProgressStatus();
 			foreach (var item in participants)
@@ -144,8 +144,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
+					ratioCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = ratioCompleted;
 					reporter?.Report(progressStatus);
 				}
 			}
