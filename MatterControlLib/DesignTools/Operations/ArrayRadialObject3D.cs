@@ -128,6 +128,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.Add(next);
 						}
 					});
+
+					ProcessIndexExpressions();
+
 					SourceContainer.Visible = false;
 					UiThread.RunOnIdle(() =>
 					{
