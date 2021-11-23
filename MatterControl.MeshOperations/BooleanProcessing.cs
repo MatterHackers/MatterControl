@@ -39,54 +39,50 @@ using DualContouring;
 using g3;
 using gs;
 using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.PolygonMesh
 {
     using Polygon = List<IntPoint>;
-    using Polygons = List<List<IntPoint>>;
 
-    public static class BooleanProcessing
+    public enum CsgModes
 	{
-		public enum CsgModes
-		{
-			Union,
-			Subtract,
-			Intersect
-		}
+		Union,
+		Subtract,
+		Intersect
+	}
 
-		public enum IplicitSurfaceMethod
-		{
-			[Description("Faster but less accurate")]
-			Grid,
-			[Description("Slower but more accurate")]
-			Exact
-		};
+	public enum IplicitSurfaceMethod
+	{
+		[Description("Faster but less accurate")]
+		Grid,
+		[Description("Slower but more accurate")]
+		Exact
+	};
 
-		public enum ProcessingModes
-		{
-			[Description("Default CSG processing")]
-			Polygons,
-			[Description("Use libigl (windows only)")]
-			libigl,
-			[Description("Experimental Marching Cubes")]
-			Marching_Cubes,
-			[Description("Experimental Dual Contouring")]
-			Dual_Contouring,
-		}
+	public enum ProcessingModes
+	{
+		[Description("Default CSG processing")]
+		Polygons,
+		[Description("Use libigl (windows only)")]
+		libigl,
+		[Description("Experimental Marching Cubes")]
+		Marching_Cubes,
+		[Description("Experimental Dual Contouring")]
+		Dual_Contouring,
+	}
 
-		public enum ProcessingResolution
-		{
-			_64 = 6,
-			_128 = 7,
-			_256 = 8,
-			_512 = 9,
-		}
+	public enum ProcessingResolution
+	{
+		_64 = 6,
+		_128 = 7,
+		_256 = 8,
+		_512 = 9,
+	}
 
+	public static class BooleanProcessing
+	{
 		private const string BooleanAssembly = "609_Boolean_bin.dll";
 
 		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
@@ -106,11 +102,24 @@ namespace MatterHackers.PolygonMesh
 			IProgress<ProgressStatus> reporter,
 			CancellationToken cancellationToken,
 			double amountPerOperation = 1,
-			double percentCompleted = 0)
+			double ratioCompleted = 0)
 		{
 			if (processingMode == ProcessingModes.Polygons)
 			{
-				return ExactBySlicing(items, operation, reporter, cancellationToken, amountPerOperation, percentCompleted);
+				var csgBySlicing = new CsgBySlicing();
+				csgBySlicing.Setup(items, null, cancellationToken);
+
+				return csgBySlicing.Calculate(operation,
+					(ratio, message) =>
+                    {
+						reporter?.Report(new ProgressStatus()
+						{
+							Progress0To1 = ratio * amountPerOperation + ratioCompleted,
+							Status = message
+						});
+
+					},
+					cancellationToken);
 			}
 			else if (processingMode == ProcessingModes.libigl)
 			{
@@ -250,229 +259,6 @@ namespace MatterHackers.PolygonMesh
 			return implicitResult;
 		}
 
-		private static Mesh ExactBySlicing(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> meshAndMatrix,
-			CsgModes operation,
-			IProgress<ProgressStatus> reporter,
-			CancellationToken cancellationToken,
-			double amountPerOperationIn = 1,
-			double percentCompletedIn = 0)
-		{
-			var progressStatus = new ProgressStatus();
-			var totalOperations = 0;
-			var transformedMeshes = new List<Mesh>();
-			var bvhAccelerators = new List<ITraceable>();
-			foreach (var (mesh, matrix) in meshAndMatrix)
-			{
-				totalOperations += mesh.Faces.Count;
-				var meshCopy = mesh.Copy(CancellationToken.None);
-				transformedMeshes.Add(meshCopy);
-				meshCopy.Transform(matrix);
-				bvhAccelerators.Add(MeshToBVH.Convert(meshCopy));
-			}
-
-			var plansByMesh = new List<List<Plane>>();
-			var uniquePlanes = new HashSet<Plane>();
-			for (int i = 0; i < transformedMeshes.Count; i++)
-			{
-				var mesh = transformedMeshes[i];
-				plansByMesh.Add(new List<Plane>());
-				for (int j = 0; j < transformedMeshes[i].Faces.Count; j++)
-                {
-					var face = mesh.Faces[j];
-					var cutPlane = new Plane(mesh.Vertices[face.v0].AsVector3(), mesh.Vertices[face.v1].AsVector3(), mesh.Vertices[face.v2].AsVector3());
-					plansByMesh[i].Add(cutPlane);
-					uniquePlanes.Add(cutPlane);
-				}
-			}
-
-			PlaneNormalXSorter planeSorter = new PlaneNormalXSorter(uniquePlanes);
-			var transformTo0Planes = new Dictionary<Plane, (Matrix4X4 matrix, Matrix4X4 inverted)>();
-			foreach(var plane in uniquePlanes)
-            {
-				var matrix = SliceLayer.GetTransformTo0Plane(plane);
-				transformTo0Planes[plane] = (matrix, matrix.Inverted);
-            }
-
-			double amountPerOperation = 1.0 / totalOperations * amountPerOperationIn;
-			double percentCompleted = percentCompletedIn;
-
-			var resultsMesh = new Mesh();
-
-			// keep track of all the faces that added by their plane
-			// the internal dictionary is sourceMeshIndex, sourceFaceIndex, destFaceIndex
-			var coPlanarFaces = new CoPlanarFaces();
-
-			for (var mesh1Index = 0; mesh1Index < transformedMeshes.Count; mesh1Index++)
-			{
-				var mesh1 = transformedMeshes[mesh1Index];
-
-				for (int faceIndex = 0; faceIndex < mesh1.Faces.Count; faceIndex++)
-				{
-					var face = mesh1.Faces[faceIndex];
-
-					var cutPlane = plansByMesh[mesh1Index][faceIndex];
-					var totalSlice = new Polygons();
-					var firstSlice = true;
-
-					var transformTo0Plane = transformTo0Planes[cutPlane].matrix;
-					for (var sliceMeshIndex = 0; sliceMeshIndex < transformedMeshes.Count; sliceMeshIndex++)
-					{
-						if (mesh1Index == sliceMeshIndex)
-						{
-							continue;
-						}
-
-						var mesh2 = transformedMeshes[sliceMeshIndex];
-						// calculate and add the PWN face from the loops
-						var slice = SliceLayer.CreateSlice(mesh2, cutPlane, transformTo0Plane, bvhAccelerators[sliceMeshIndex]);
-						if (firstSlice)
-						{
-							totalSlice = slice;
-							firstSlice = false;
-						}
-						else
-						{
-							totalSlice = totalSlice.Union(slice);
-						}
-					}
-
-					// now we have the total loops that this polygon can intersect from the other meshes
-					// make a polygon for this face
-					var facePolygon = CoPlanarFaces.GetFacePolygon(mesh1, faceIndex, transformTo0Plane);
-
-					var polygonShape = new Polygons();
-					// clip against the slice based on the parameters
-					var clipper = new Clipper();
-					clipper.AddPath(facePolygon, PolyType.ptSubject, true);
-					clipper.AddPaths(totalSlice, PolyType.ptClip, true);
-					var expectedFaceNormal = face.normal;
-
-					switch (operation)
-					{
-						case CsgModes.Union:
-							clipper.Execute(ClipType.ctDifference, polygonShape);
-							break;
-
-						case CsgModes.Subtract:
-							if (mesh1Index == 0)
-							{
-								clipper.Execute(ClipType.ctDifference, polygonShape);
-							}
-							else
-							{
-								expectedFaceNormal *= -1;
-								clipper.Execute(ClipType.ctIntersection, polygonShape);
-							}
-
-							break;
-
-						case CsgModes.Intersect:
-							clipper.Execute(ClipType.ctIntersection, polygonShape);
-							break;
-					}
-
-					var faceCountPreAdd = resultsMesh.Faces.Count;
-
-					if (polygonShape.Count == 1
-						&& polygonShape[0].Count == 3
-						&& facePolygon.Contains(polygonShape[0][0])
-						&& facePolygon.Contains(polygonShape[0][1])
-						&& facePolygon.Contains(polygonShape[0][2]))
-					{
-						resultsMesh.AddFaceCopy(mesh1, faceIndex);
-					}
-					else
-					{
-						var preAddCount = resultsMesh.Vertices.Count;
-						// mesh the new polygon and add it to the resultsMesh
-						polygonShape.Vertices(1).TriangulateFaces(null, resultsMesh, 0, transformTo0Planes[cutPlane].inverted);
-
-						// TODO: map all the added vertices that can be back to the original polygon positions
-						// for (int i = preAddCount; i< resultsMesh.Vertices.Count; i++)
-                        {
-
-                        }
-					}
-
-					if (resultsMesh.Faces.Count - faceCountPreAdd > 0)
-					{
-						// keep track of the adds so we can process the coplanar faces after
-						for (int i = faceCountPreAdd; i < resultsMesh.Faces.Count; i++)
-						{
-							coPlanarFaces.StoreFaceAdd(planeSorter, cutPlane, mesh1Index, faceIndex, i);
-							// make sure our added faces are the right direction
-							if (resultsMesh.Faces[i].normal.Dot(expectedFaceNormal) < 0)
-							{
-								resultsMesh.FlipFace(i);
-							}
-						}
-					}
-					else // we did not add any faces but we will still keep track of this polygons plan
-					{
-						coPlanarFaces.StoreFaceAdd(planeSorter, cutPlane, mesh1Index, faceIndex, -1);
-					}
-
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
-					reporter?.Report(progressStatus);
-
-					if (cancellationToken.IsCancellationRequested)
-					{
-						return null;
-					}
-				}
-			}
-
-			// handle the co-planar faces
-			var faceIndicesToRemove = new HashSet<int>();
-			foreach (var plane in coPlanarFaces.Planes)
-			{
-				var meshIndices = coPlanarFaces.MeshIndicesForPlane(plane);
-				if (meshIndices.Count() > 1)
-				{
-					// check if more than one mesh has this polygons on this plan
-					var flattenedMatrix = transformTo0Planes[plane].matrix;
-
-					// depending on the operation add or remove polygons that are planar
-					switch (operation)
-					{
-						case CsgModes.Union:
-							coPlanarFaces.UnionFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix);
-                            break;
-
-						case CsgModes.Subtract:
-							coPlanarFaces.SubtractFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix, faceIndicesToRemove);
-                            break;
-
-						case CsgModes.Intersect:
-							coPlanarFaces.IntersectFaces(plane, transformedMeshes, resultsMesh, flattenedMatrix, faceIndicesToRemove);
-							break;
-					}
-
-				}
-			}
-
-			// now rebuild the face list without the remove polygons
-			if (faceIndicesToRemove.Count > 0)
-			{
-				var newFaces = new FaceList();
-				for (int i = 0; i < resultsMesh.Faces.Count; i++)
-				{
-					// if the face is NOT in the remove faces
-					if (!faceIndicesToRemove.Contains(i))
-					{
-						var face = resultsMesh.Faces[i];
-						newFaces.Add(face);
-					}
-				}
-
-				resultsMesh.Faces = newFaces;
-			}
-
-			resultsMesh.CleanAndMerge();
-			return resultsMesh;
-		}
-
         private static Mesh ExactLegacy(IEnumerable<(Mesh mesh, Matrix4X4 matrix)> items,
 			CsgModes operation,
 			ProcessingModes processingMode,
@@ -484,7 +270,7 @@ namespace MatterHackers.PolygonMesh
 			var progressStatus = new ProgressStatus();
 			var totalOperations = items.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
+			double ratioCompleted = 0;
 
 			var first = true;
 			var resultsMesh = items.First().mesh;
@@ -513,15 +299,15 @@ namespace MatterHackers.PolygonMesh
 					// reporting
 					reporter,
 					amountPerOperation,
-					percentCompleted,
+					ratioCompleted,
 					progressStatus,
 					cancellationToken);
 
 				// after the first union we are working with the transformed mesh and don't need the first transform
 				firstWorldMatrix = Matrix4X4.Identity;
 
-				percentCompleted += amountPerOperation;
-				progressStatus.Progress0To1 = percentCompleted;
+				ratioCompleted += amountPerOperation;
+				progressStatus.Progress0To1 = ratioCompleted;
 				reporter?.Report(progressStatus);
 			}
 
@@ -541,7 +327,7 @@ namespace MatterHackers.PolygonMesh
 			// reporting
 			IProgress<ProgressStatus> reporter = null,
 			double amountPerOperation = 1,
-			double percentCompleted = 0,
+			double ratioCompleted = 0,
 			ProgressStatus progressStatus = null,
 			CancellationToken cancellationToken = default(CancellationToken))
 		{
@@ -556,7 +342,7 @@ namespace MatterHackers.PolygonMesh
 					reporter,
 					cancellationToken,
 					amountPerOperation,
-					percentCompleted);
+					ratioCompleted);
 			}
 			else if (processingMode == ProcessingModes.libigl)
 			{
@@ -620,7 +406,7 @@ namespace MatterHackers.PolygonMesh
 
 						if (progressStatus != null)
 						{
-							progressStatus.Progress0To1 = percentCompleted + amountPerOperation;
+							progressStatus.Progress0To1 = ratioCompleted + amountPerOperation;
 							reporter.Report(progressStatus);
 						}
 					}
@@ -645,7 +431,7 @@ namespace MatterHackers.PolygonMesh
 									// Abort if flagged
 									cancellationToken.ThrowIfCancellationRequested();
 									progressStatus.Status = status;
-									progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+									progressStatus.Progress0To1 = ratioCompleted + (amountPerOperation * progress0To1);
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
@@ -656,7 +442,7 @@ namespace MatterHackers.PolygonMesh
 								(status, progress0To1) =>
 								{
 									progressStatus.Status = status;
-									progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+									progressStatus.Progress0To1 = ratioCompleted + (amountPerOperation * progress0To1);
 									reporter?.Report(progressStatus);
 								},
 								cancellationToken);
@@ -668,7 +454,7 @@ namespace MatterHackers.PolygonMesh
 								{
 									// Abort if flagged
 									cancellationToken.ThrowIfCancellationRequested(); progressStatus.Status = status;
-									progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+									progressStatus.Progress0To1 = ratioCompleted + (amountPerOperation * progress0To1);
 									reporter.Report(progressStatus);
 								},
 								cancellationToken);

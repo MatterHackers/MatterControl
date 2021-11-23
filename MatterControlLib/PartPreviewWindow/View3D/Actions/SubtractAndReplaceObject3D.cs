@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var totalOperations = paintObjects.Count * keepObjects.Count;
 				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
+				double ratioCompleted = 0;
 
 				foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 				{
@@ -124,13 +124,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.matrix,
 							paint.obj3D.Mesh,
 							paint.matrix,
-							BooleanProcessing.CsgModes.Subtract,
-							BooleanProcessing.ProcessingModes.Polygons,
-							BooleanProcessing.ProcessingResolution._64,
-							BooleanProcessing.ProcessingResolution._64,
+							CsgModes.Subtract,
+							ProcessingModes.Polygons,
+							ProcessingResolution._64,
+							ProcessingResolution._64,
 							reporter,
 							amountPerOperation,
-							percentCompleted,
+							ratioCompleted,
 							progressStatus,
 							cancellationToken);
 						
@@ -138,13 +138,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.matrix,
 							paint.obj3D.Mesh,
 							paint.matrix,
-							BooleanProcessing.CsgModes.Intersect,
-							BooleanProcessing.ProcessingModes.Polygons,
-							BooleanProcessing.ProcessingResolution._64,
-							BooleanProcessing.ProcessingResolution._64,
+							CsgModes.Intersect,
+							ProcessingModes.Polygons,
+							ProcessingResolution._64,
+							ProcessingResolution._64,
 							reporter,
 							amountPerOperation,
-							percentCompleted,
+							ratioCompleted,
 							progressStatus,
 							cancellationToken);
 
@@ -166,13 +166,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								Matrix4X4.Identity,
 								intersect,
 								Matrix4X4.Identity,
-								BooleanProcessing.CsgModes.Subtract,
-								BooleanProcessing.ProcessingModes.Polygons,
-								BooleanProcessing.ProcessingResolution._64,
-								BooleanProcessing.ProcessingResolution._64,
+								CsgModes.Subtract,
+								ProcessingModes.Polygons,
+								ProcessingResolution._64,
+								ProcessingResolution._64,
 								reporter,
 								amountPerOperation,
-								percentCompleted,
+								ratioCompleted,
 								progressStatus,
 								cancellationToken);
 						}

@@ -52,21 +52,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 #if DEBUG
-		public BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
+		public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		public ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
+		public IplicitSurfaceMethod MeshAnalysis { get; set; }
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		public ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #else
-		private BooleanProcessing.ProcessingModes Processing { get; set; } = BooleanProcessing.ProcessingModes.Polygons;
-		private BooleanProcessing.ProcessingResolution OutputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
-		private BooleanProcessing.IplicitSurfaceMethod MeshAnalysis { get; set; }
-		private BooleanProcessing.ProcessingResolution InputResolution { get; set; } = BooleanProcessing.ProcessingResolution._64;
+		private ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
+		private ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
+		private IplicitSurfaceMethod MeshAnalysis { get; set; }
+		private ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #endif
 		public override Task Rebuild()
 		{
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 #if false
 			var resultsMesh = BooleanProcessing.DoArray(items,
-				BooleanProcessing.CsgModes.Union,
+				CsgModes.Union,
 				Processing,
 				InputResolution,
 				OutputResolution,
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 #else
 			var totalOperations = items.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
+			double ratioCompleted = 0;
 
 			var progressStatus = new ProgressStatus();
 
@@ -158,14 +158,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					next.Item1,
 					next.Item2,
 					// operation type
-					BooleanProcessing.CsgModes.Union,
+					CsgModes.Union,
 					Processing,
 					InputResolution,
 					OutputResolution,
 					// reporting
 					reporter,
 					amountPerOperation,
-					percentCompleted,
+					ratioCompleted,
 					progressStatus,
 					cancellationToken);
 
@@ -173,8 +173,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				keepWorldMatrix = Matrix4X4.Identity;
 
 				// report our progress
-				percentCompleted += amountPerOperation;
-				progressStatus.Progress0To1 = percentCompleted;
+				ratioCompleted += amountPerOperation;
+				progressStatus.Progress0To1 = ratioCompleted;
 				reporter?.Report(progressStatus);
 			}
 #endif
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private bool ProcessPolygons
         {
-			get => Processing == BooleanProcessing.ProcessingModes.Polygons || Processing == BooleanProcessing.ProcessingModes.libigl;
+			get => Processing == ProcessingModes.Polygons || Processing == ProcessingModes.libigl;
         }
 
 		public void UpdateControls(PublicPropertyChange change)
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons);
 			change.SetRowVisible(nameof(OutputResolution), () => !ProcessPolygons);
 			change.SetRowVisible(nameof(MeshAnalysis), () => !ProcessPolygons);
-			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons && MeshAnalysis == BooleanProcessing.IplicitSurfaceMethod.Grid);
+			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
 		}
 	}
 }

@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
+			double ratioCompleted = 0;
 
 			ProgressStatus progressStatus = new ProgressStatus();
 			foreach (var item in participants)
@@ -136,13 +136,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						item.WorldMatrix(),
 						first.Mesh,
 						first.WorldMatrix(),
-						BooleanProcessing.CsgModes.Union,
-						BooleanProcessing.ProcessingModes.Polygons,
-						BooleanProcessing.ProcessingResolution._64,
-						BooleanProcessing.ProcessingResolution._64,
+						CsgModes.Union,
+						ProcessingModes.Polygons,
+						ProcessingResolution._64,
+						ProcessingResolution._64,
 						reporter,
 						amountPerOperation,
-						percentCompleted,
+						ratioCompleted,
 						progressStatus,
 						cancellationToken);
 
@@ -154,8 +154,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						first.Mesh = result;
 					}
 
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
+					ratioCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = ratioCompleted;
 					reporter?.Report(progressStatus);
 				}
 			}

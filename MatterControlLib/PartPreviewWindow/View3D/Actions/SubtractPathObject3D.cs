@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
 				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
+				double ratioCompleted = 0;
 
 				var progressStatus = new ProgressStatus
 				{
@@ -198,8 +198,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						resultsVertexSource = resultsVertexSource.MergePaths(((IPathObject)remove).VertexSource.Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
 
 						// report our progress
-						percentCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = percentCompleted;
+						ratioCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = ratioCompleted;
 						reporter?.Report(progressStatus);
 					}
 
