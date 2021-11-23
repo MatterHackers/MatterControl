@@ -99,7 +99,6 @@ namespace MatterHackers.PolygonMesh
 				var matrix = SliceLayer.GetTransformTo0Plane(plane);
 				transformTo0Planes[plane] = (matrix, matrix.Inverted);
 			}
-
 		}
 
 		public Mesh Calculate(CsgModes operation,
@@ -117,6 +116,11 @@ namespace MatterHackers.PolygonMesh
             for (var mesh1Index = 0; mesh1Index < transformedMeshes.Count; mesh1Index++)
             {
                 var mesh1 = transformedMeshes[mesh1Index];
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
 
                 for (int faceIndex = 0; faceIndex < mesh1.Faces.Count; faceIndex++)
                 {
