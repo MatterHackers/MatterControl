@@ -35,6 +35,7 @@ using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh.Csg;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
@@ -197,11 +198,37 @@ namespace MatterHackers.PolygonMesh
                         var preAddCount = resultsMesh.Vertices.Count;
                         // mesh the new polygon and add it to the resultsMesh
                         polygonShape.Vertices(1).TriangulateFaces(null, resultsMesh, 0, transformTo0Planes[cutPlane].inverted);
+                        var postAddCount = resultsMesh.Vertices.Count;
 
-                        // TODO: map all the added vertices that can be back to the original polygon positions
-                        // for (int i = preAddCount; i< resultsMesh.Vertices.Count; i++)
+                        for (int addedIndex = preAddCount; addedIndex < postAddCount; addedIndex++)
                         {
-
+                            // TODO: map all the added vertices that can be back to the original polygon positions
+                            for (int meshIndex = 0; meshIndex < transformedMeshes.Count; meshIndex++)
+                            {
+                                var bvhAccelerator = bvhAccelerators[meshIndex];
+                                var mesh = transformedMeshes[meshIndex];
+                                var addedPosition = resultsMesh.Vertices[addedIndex];
+                                var touchingBvhItems = bvhAccelerator.GetTouching(new Vector3(addedPosition), .0001);
+                                foreach (var touchingBvhItem in touchingBvhItems)
+                                {
+                                    if (touchingBvhItem is TriangleShape triangleShape)
+                                    {
+                                        var sourceFaceIndex = triangleShape.Index;
+                                        var sourceFace = mesh.Faces[sourceFaceIndex];
+                                        var sourceVertexIndices = new int[] { sourceFace.v0, sourceFace.v1, sourceFace.v2 };
+                                        foreach (var sourceVertexIndex in sourceVertexIndices)
+                                        {
+                                            var sourcePosition = mesh.Vertices[sourceVertexIndex];
+                                            var deltaSquared = (addedPosition - sourcePosition).LengthSquared;
+                                            if (deltaSquared > 0 && deltaSquared < .00001)
+                                            {
+                                                // add the vertex and set the face position index to the new vertex
+                                                resultsMesh.Vertices[addedIndex] = sourcePosition;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
