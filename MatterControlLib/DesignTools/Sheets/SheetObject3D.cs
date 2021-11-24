@@ -334,9 +334,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		private static int RetrieveArrayIndex(IObject3D owner, int level)
+		public static int RetrieveArrayIndex(IObject3D item, int level)
 		{
-			var arrayObject = FindParentArray(owner, level);
+			var arrayObject = FindParentArray(item, level);
 
 			if (arrayObject != null)
 			{
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (!(child is OperationSourceObject3D))
 					{
-						if (child.DescendantsAndSelf().Where(i => i == owner).Any())
+						if (child.DescendantsAndSelf().Where(i => i == item).Any())
 						{
 							return index;
 						}
@@ -502,31 +502,42 @@ namespace MatterHackers.MatterControl.DesignTools
 			return false;
 		}
 
+		public static IEnumerable<IDirectOrExpression> GetActiveExpressions(IObject3D item, string checkForString, bool startsWith)
+        {
+			foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
+			{
+				var propertyValue = property.Value;
+
+				if (propertyValue is IDirectOrExpression directOrExpression)
+				{
+					if (startsWith)
+					{
+						if (directOrExpression.Expression.StartsWith(checkForString))
+						{
+							// WIP: check if the value has actually changed, this will update every object on any cell change
+							yield return directOrExpression;
+						}
+					}
+					else
+					{
+						if(directOrExpression.Expression.Contains(checkForString))
+                        {
+							yield return directOrExpression;
+						}
+					}
+				}
+			}
+		}
+
 		public static bool HasExpressionWithString(IObject3D itemToCheck, string checkForString, bool startsWith)
 		{
 			foreach (var item in itemToCheck.DescendantsAndSelf())
 			{
-				// Find all the OrReference properties on this item and check if any start with an '='.
-				foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
-				{
-					var propertyValue = property.Value;
-
-					if (propertyValue is IDirectOrExpression directOrExpression)
-					{
-						if (startsWith)
-						{
-							if (directOrExpression.Expression.StartsWith(checkForString))
-							{
-								// WIP: check if the value has actually changed, this will update every object on any cell change
-								return true;
-							}
-						}
-						else
-						{
-							return directOrExpression.Expression.Contains(checkForString);
-						}
-					}
-				}
+				if (GetActiveExpressions(item, checkForString, startsWith).Any())
+                {
+					// three is one so return true
+					return true;
+                }
 			}
 
 			return false;

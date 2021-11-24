@@ -27,19 +27,68 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public abstract class ArrayObject3D : OperationSourceContainerObject3D
 	{
 		public abstract IntOrExpression Count { get; set; }
+
+        public override void Flatten(Agg.UI.UndoBuffer undoBuffer)
+        {
+			// convert [index] expressions to their constant values
+			foreach (var item in this.Descendants((item) => !(item is ArrayObject3D)))
+			{
+				foreach(var expression in SheetObject3D.GetActiveExpressions(item, "[index]", false))
+                {
+					expression.Expression = expression.Expression.Replace("[index]", SheetObject3D.RetrieveArrayIndex(item, 0).ToString());
+				}
+			}
+
+			// then call base flatten
+			base.Flatten(undoBuffer);
+        }
+
+        internal void ProcessIndexExpressions()
+        {
+			var updateItems = SheetObject3D.SortAndLockUpdateItems(this, (item) =>
+			{
+				if (!SheetObject3D.HasExpressionWithString(item, "=", true))
+				{
+					return false;
+				}
+
+				// WIP
+				if (item.Parent == this)
+				{
+					// only process our children that are not the source object
+					return !(item is OperationSourceObject3D);
+				}
+				else if (item.Parent is OperationSourceContainerObject3D)
+				{
+					// If we find another source container
+					// Only process its children that are the source container (they will be replicated and modified correctly by the source container)
+					return item is OperationSourceObject3D;
+				}
+				else if (item.Parent is OperationSourceObject3D operationSourceObject3D
+					&& operationSourceObject3D.Parent == this)
+				{
+					// we don't need to rebuild our source object
+					return false;
+				}
+
+				// process everything else
+				return true;
+			});
+
+			var runningInterval = SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties);
+
+			while (runningInterval.Active)
+			{
+				Thread.Sleep(10);
+			}
+		}
 	}
 }
