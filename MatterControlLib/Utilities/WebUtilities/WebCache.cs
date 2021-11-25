@@ -391,6 +391,8 @@ namespace MatterHackers.MatterControl
 			{
 				StaticData.Instance.LoadImageData(stream, imageToLoadInto);
 			}
+
+			imageToLoadInto.MarkImageChanged();
 		}
 	}
 }

@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Center,
 				};
 
-				WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
 				whiteBackground.AddChild(imageWidget);
 			}
 

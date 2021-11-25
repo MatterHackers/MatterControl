@@ -49,8 +49,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private GuiWidget topBanner;
 		private GuiWidget sectionSelectButtons;
 		private GuiWidget contentSection;
+        private bool loaded;
 
-		public ExplorePanel(ThemeConfig theme, string relativeUrl)
+        public ExplorePanel(ThemeConfig theme, string relativeUrl)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.relativeUrl = relativeUrl;
@@ -107,6 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							{
 								this.AddChild(widget);
 							}
+
 							UiThread.RunOnIdle(() =>
 							{
 								// Force layout to change to get it working
@@ -203,7 +205,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								};
 							}
 
-							WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+							AfterDraw += (s, e) =>
+							{
+								if (!loaded)
+								{
+									loaded = true;
+									WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+								}
+							};
 							topBanner.AddChild(imageWidget);
 						}
 					}
