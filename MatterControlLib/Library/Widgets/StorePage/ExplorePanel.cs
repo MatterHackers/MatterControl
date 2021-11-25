@@ -29,15 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -49,6 +46,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private ThemeConfig theme;
 		private object locker = new object();
 
+		private GuiWidget topBanner;
+		private GuiWidget sectionSelectButtons;
+		private GuiWidget contentSection;
+
 		public ExplorePanel(ThemeConfig theme, string relativeUrl)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -59,6 +60,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.Margin = new BorderDouble(30 - 11, 0);
 
 			this.theme = theme;
+
+			topBanner = this.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch, VAnchor = VAnchor.Fit });
+			sectionSelectButtons = this.AddChild(new FlowLeftRightWithWrapping()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Proportional = true,
+				Name = "Select Buttons"
+			});
+			contentSection = this.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch, VAnchor = VAnchor.Fit });
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -89,10 +100,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							GuiWidget currentContentContainer = null;
 							foreach (var content in explorerFeed.Content)
 							{
-								AddContentItem(container, ref currentContentContainer, theme, content);
+								AddContentItem(theme, content);
 							}
 
-							this.CloseChildren();
 							foreach (var widget in container)
 							{
 								this.AddChild(widget);
@@ -110,14 +120,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		}
 
 
-		private static void AddContentItem(List<GuiWidget> container, ref GuiWidget currentContentContainer, ThemeConfig theme, FeedSectionData content)
+		private void AddContentItem(ThemeConfig theme, FeedSectionData content)
 		{
 			switch (content.content_type)
 			{
 				case "headline":
+					/*
 					{
-						break;
-
 						// use the Golden Ratio to calculate an attractive size relative to the banner
 						var image = new ImageBuffer(1520, (int)(170 / 1.618));
 						var imageWidget = new ResponsiveImageWidget(image)
@@ -154,12 +163,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 						container.Add(imageWidget);
 					}
+					*/
 					break;
 
 				case "banner_rotate":
 					// TODO: make this make a carousel rather than add the first item and rotate between all the items
 					var rand = new Random();
-					AddContentItem(container, ref currentContentContainer, theme, content.banner_list[rand.Next(content.banner_list.Count)]);
+					AddContentItem(theme, content.banner_list[rand.Next(content.banner_list.Count)]);
 					break;
 
 				case "banner_image":
@@ -193,24 +203,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								};
 							}
 
-							imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
-							container.Add(imageWidget);
+							WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+							topBanner.AddChild(imageWidget);
 						}
 					}
 					break;
 
 				case "article_group":
-				case "product_group":
-					if(currentContentContainer == null)
 					{
-						currentContentContainer = new FlowLeftRightWithWrapping()
-                        {
-							Proportional = true,
-                        };
-
-						container.Add(currentContentContainer);
+						// add the article group button to the button group
+						// add a content section connected to the button
+						var sectionButton = new TextButton(content.group_title, theme);
+						sectionSelectButtons.AddChild(sectionButton);
+						var exploreSection = new ArticleSection(content, theme)
+						{
+							Visible = false,
+							Name = content.group_title
+						};
+						contentSection.AddChild(exploreSection);
+						sectionButton.Click += (s, e) =>
+						{
+							foreach (var contentWidget in contentSection.Children)
+							{
+								contentWidget.Visible = contentWidget == exploreSection;
+							}
+						};
 					}
-					currentContentContainer.AddChild(new ExploreSection(content, theme));
+					break;
+
+				case "product_group":
+					{
+						var sectionButton = new TextButton(content.group_title, theme);
+						sectionSelectButtons.AddChild(sectionButton);
+						var exploreSection = new ProductSection(content, theme)
+                        {
+							Name = content.group_title
+						};
+						contentSection.AddChild(exploreSection);
+						sectionButton.Click += (s, e) =>
+						{
+							foreach (var contentWidget in contentSection.Children)
+							{
+								contentWidget.Visible = contentWidget == exploreSection;
+							}
+						};
+					}
 					break;
 			}
 		}

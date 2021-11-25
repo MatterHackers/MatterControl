@@ -33,38 +33,24 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class ExploreItem : FlowLayoutWidget
+    public class ProductItem : FlowLayoutWidget
 	{
 		private FeedItemData item;
 		private ThemeConfig theme;
 
-		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
+		public static int IconSize => (int)(200 * GuiWidget.DeviceScale);
 		public static int ItemSpacing { get; } = 10;
 
-		public ExploreItem(FeedItemData item, ThemeConfig theme)
+		public ProductItem(FeedItemData item, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			this.HAnchor = HAnchor.Absolute;
-			this.Width = 400 * GuiWidget.DeviceScale;
-			//this.Border = spacing;
 			this.Padding = ItemSpacing;
 			this.item = item;
 			this.theme = theme;
 
 			var image = new ImageBuffer(IconSize, IconSize);
-
-			if (item.icon != null)
-			{
-				var imageWidget = new ImageWidget(image)
-				{
-					Selectable = false,
-					VAnchor = VAnchor.Top,
-					Margin = new BorderDouble(right: ItemSpacing)
-				};
-
-				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
-				this.AddChild(imageWidget);
-			}
-			else if (item.widget_url != null)
+			
+			if (item.widget_url != null)
 			{
 				var whiteBackground = new GuiWidget(IconSize, IconSize)
 				{
@@ -80,21 +66,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Center,
 				};
 
-				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
 				whiteBackground.AddChild(imageWidget);
 			}
 
-			var wrappedText = new WrappedTextWidget(item.title, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			var titleText = new WrappedTextWidget(item.title, textColor: theme.TextColor, pointSize: theme.FontSize14)
 			{
 				Selectable = false,
-				VAnchor = VAnchor.Center | VAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(3, 3, 3, 9)
+			};
+			this.AddChild(titleText);
+
+			var descriptionText = new WrappedTextWidget(item.subtitle, textColor: theme.TextColor.WithAlpha(.7), pointSize: theme.FontSize8)
+			{
+				Selectable = false,
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
 				Margin = 3
 			};
-			this.AddChild(wrappedText);
-			wrappedText.Load += (s, e) =>
-			{
-				wrappedText.VAnchor = VAnchor.Top | VAnchor.Fit;
-			};
+			this.AddChild(descriptionText);
 
 			this.Cursor = Cursors.Hand;
 		}

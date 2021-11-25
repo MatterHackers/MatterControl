@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public string icon;
 		public string link;
 		public string title;
+		public string subtitle;
 		public string url;
 		public string widget_url;
 	}

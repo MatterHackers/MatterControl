@@ -27,35 +27,32 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class ExploreSection : FlowLayoutWidget
+    public class ProductSection : FlowLeftRightWithWrapping
 	{
-		private List<ExploreItem> allIconViews = new List<ExploreItem>();
+		private List<ProductItem> allIconViews = new List<ProductItem>();
 		private FeedSectionData content;
 		private ThemeConfig theme;
 		private TextButton moreButton;
-		int maxStuff = 7;
 
-		public ExploreSection(FeedSectionData content, ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
+		public ProductSection(FeedSectionData content, ThemeConfig theme)
 		{
+			Proportional = true;
 			VAnchor = VAnchor.Fit | VAnchor.Top;
 			this.content = content;
 			this.theme = theme;
 
 			foreach (var item in content.group_items)
 			{
-				allIconViews.Add(new ExploreItem(item, theme)
+				allIconViews.Add(new ProductItem(item, theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					VAnchor = VAnchor.Fit,
@@ -80,55 +77,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 			this.CloseChildren();
 
-			if (content.group_title != null)
-			{
-				this.AddChild(new TextWidget(content.group_title, pointSize: theme.H1PointSize, textColor: theme.TextColor, bold: true)
-				{
-					HAnchor = HAnchor.Left,
-					Margin = new BorderDouble(leftRightMargin, 5)
-				});
-			}
-
-			int i = 0;
 			foreach (var iconView in allIconViews)
 			{
-				if (i < maxStuff)
-				{
-					iconView.ClearRemovedFlag();
-					iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
-					this.AddChild(iconView);
-				}
-				i++;
-			}
-
-			if (content.group_items.Count > maxStuff)
-			{
-				moreButton = new TextButton("More".Localize() + "...", theme)
-				{
-					VAnchor = VAnchor.Absolute,
-					HAnchor = HAnchor.Right,
-					BackgroundColor = theme.MinimalShade,
-					Margin = new BorderDouble(right: leftRightMargin),
-				};
-				moreButton.Click += (s, e1) =>
-				{
-					// if we can go out to the site than do that
-					if (content.group_link != null)
-					{
-						ApplicationController.LaunchBrowser(content.group_link);
-					}
-					else // show more items in the list
-					{
-						var scroll = this.Parents<ScrollableWidget>().FirstOrDefault();
-						var position = scroll.ScrollPositionFromTop;
-
-						maxStuff += 6;
-						AddContent();
-
-						scroll.ScrollPositionFromTop = position;
-					}
-				};
-				this.AddChild(moreButton);
+				iconView.ClearRemovedFlag();
+				iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
+				this.AddChild(iconView);
 			}
 		}
 	}
