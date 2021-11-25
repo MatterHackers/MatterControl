@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					// these images expect to be on white so change the background to white
 					BackgroundColor = Color.White,
-					Margin = new BorderDouble(right: ItemSpacing)
+					Margin = new BorderDouble(right: ItemSpacing),
+					Selectable = false
 				};
 				this.AddChild(whiteBackground);
 
