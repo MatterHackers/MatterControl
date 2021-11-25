@@ -33,7 +33,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class ExploreItem : FlowLayoutWidget
+    public class ArticleItem : FlowLayoutWidget
 	{
 		private FeedItemData item;
 		private ThemeConfig theme;
@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
 		public static int ItemSpacing { get; } = 10;
 
-		public ExploreItem(FeedItemData item, ThemeConfig theme)
+		public ArticleItem(FeedItemData item, ThemeConfig theme)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.Width = 400 * GuiWidget.DeviceScale;
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
-				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
+				Load += (s, e) => WebCache.RetrieveImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
 				this.AddChild(imageWidget);
 			}
 			else if (item.widget_url != null)
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Center,
 				};
 
-				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
 				whiteBackground.AddChild(imageWidget);
 			}
 

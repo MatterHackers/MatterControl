@@ -51,6 +51,10 @@ namespace MatterHackers.MatterControl
 		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
+			if (scaleToImageX)
+			{
+				longHash = imageToLoadInto.Width.GetLongHashCode(longHash);
+			}
 			var imageFileName = ApplicationController.CacheablePath("Images", longHash.ToString() + ".png");
 
 			if (File.Exists(imageFileName))
@@ -387,6 +391,8 @@ namespace MatterHackers.MatterControl
 			{
 				StaticData.Instance.LoadImageData(stream, imageToLoadInto);
 			}
+
+			imageToLoadInto.MarkImageChanged();
 		}
 	}
 }

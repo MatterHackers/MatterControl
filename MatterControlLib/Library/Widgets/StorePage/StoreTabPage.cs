@@ -64,12 +64,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.WheelDelta != 0)
-			{
-				int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
-				this.ScrollPosition += new Vector2(0, (ExploreItem.IconSize + (ExploreItem.ItemSpacing * 2)) * direction);
-				mouseEvent.WheelDelta = 0;
-			}
+			mouseEvent.WheelDelta *= 3;
+
+			base.OnMouseWheel(mouseEvent);
 		}
 	}
 }
