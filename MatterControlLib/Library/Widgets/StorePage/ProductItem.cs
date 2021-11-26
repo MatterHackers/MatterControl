@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.theme = theme;
 
 			var image = new ImageBuffer(IconSize, IconSize);
+			image.SetRecieveBlender(new BlenderPreMultBGRA());
 			BackgroundRadius = 5 * GuiWidget.DeviceScale;
 			
 			if (item.widget_url != null)
@@ -69,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Center,
 				};
 
-				Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true);
 				whiteBackground.AddChild(imageWidget);
 			}
 
