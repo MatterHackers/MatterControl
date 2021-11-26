@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								if (!loaded)
 								{
 									loaded = true;
-									WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+									WebCache.RetrieveImageAsync(image, content.image_url, false);
 								}
 							};
 							topBanner.AddChild(imageWidget);
@@ -224,17 +224,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						// add a content section connected to the button
 						var sectionButton = new TextButton(content.group_title, theme);
 						sectionSelectButtons.AddChild(sectionButton);
-						var exploreSection = new ArticleSection(content, theme)
+						var articleSection = new ArticleSection(content, theme)
 						{
 							Visible = false,
 							Name = content.group_title
 						};
-						contentSection.AddChild(exploreSection);
+						contentSection.AddChild(articleSection);
 						sectionButton.Click += (s, e) =>
 						{
 							foreach (var contentWidget in contentSection.Children)
 							{
-								contentWidget.Visible = contentWidget == exploreSection;
+								contentWidget.Visible = contentWidget == articleSection;
 							}
 						};
 					}

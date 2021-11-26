@@ -998,7 +998,24 @@ namespace MatterHackers.MatterControl
 			this.InitializeLibrary();
 		}
 
-		public void Connection_ErrorReported(object sender, string line)
+		/// <summary>
+		/// Show a notification on screen. This is usually due to a system error of some kind
+		/// like a bad save or load.
+		/// </summary>
+		/// <param name="message">The message to show</param>
+        public void ShowNotification(string message)
+        {
+			foreach(var printer in ActivePrinters)
+            {
+				var terminal = printer?.Connection?.TerminalLog;
+				if (terminal != null)
+                {
+					terminal.WriteLine(message);
+                }
+            }
+        }
+
+        public void Connection_ErrorReported(object sender, string line)
 		{
 			if (line != null)
 			{

@@ -27,7 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -50,7 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.content = content;
 			this.theme = theme;
 
-			foreach (var item in content.group_items)
+			var cultureInfo = new CultureInfo("en-US");
+
+			foreach (var item in content.group_items.OrderByDescending(i => DateTime.Parse(i.date_published, cultureInfo)))
 			{
 				allIconViews.Add(new ArticleItem(item, theme)
 				{
@@ -67,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			int leftRightMargin = 5;
 			int topBottomMargin = 5;
 
-			// Reflow Children
+			// Remove items and Children (this happens if the feed is different than the inital cach after being retrieved)
 			foreach (var iconView in allIconViews)
 			{
 				if (this.Children.Contains(iconView))

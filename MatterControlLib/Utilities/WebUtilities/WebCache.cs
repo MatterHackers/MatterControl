@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 		private static object locker = new object();
 
 		// Download an image from the web into the specified ImageBuffer
-		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
+		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 			if (scaleToImageX)
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, new StreamReader(imageFileName).BaseStream);
+					LoadImageInto(imageToLoadInto, scaleToImageX, null, new StreamReader(imageFileName).BaseStream);
 					return;
 				}
 				catch
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 				{
 					Stream stream = new MemoryStream(e.Result);
 
-					LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, stream);
+					LoadImageInto(imageToLoadInto, scaleToImageX, new BlenderPreMultBGRA(), stream);
 
 					if (imageToLoadInto.Width > 0
 						&& imageToLoadInto.Height > 0
