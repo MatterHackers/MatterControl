@@ -54,8 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				allIconViews.Add(new ProductItem(item, theme)
 				{
-					BackgroundColor = theme.MinimalShade,
-					VAnchor = VAnchor.Fit,
+					//BackgroundColor = theme.MinimalShade,
 				});
 			}
 
