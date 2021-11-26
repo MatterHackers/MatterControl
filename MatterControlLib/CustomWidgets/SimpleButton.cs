@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonHeight;
 			this.Width = theme.ButtonHeight;
-			this.BackgroundRadius = theme.ButtonRadius;
+			this.BackgroundRadius = theme.ButtonRadius * GuiWidget.DeviceScale;
 
 			imageWidget = new ImageWidget(icon, listenForImageChanged: false)
 			{
@@ -512,7 +512,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = theme.TextButtonPadding;
 			this.TabStop = true;
 
-			this.BackgroundRadius = theme.ButtonRadius;
+			this.BackgroundRadius = theme.ButtonRadius * GuiWidget.DeviceScale;
 
 			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
 
@@ -561,7 +561,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Height = theme.ButtonHeight;
 			this.Padding = theme.TextButtonPadding;
 
-			this.BackgroundRadius = theme.ButtonRadius;
+			this.BackgroundRadius = theme.ButtonRadius * GuiWidget.DeviceScale;
 
 			this.AddChild(ImageWidget = new ImageWidget(icon)
 			{

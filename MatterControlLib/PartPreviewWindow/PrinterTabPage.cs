@@ -684,7 +684,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
-				BackgroundRadius = theme.ButtonRadius,
+				BackgroundRadius = theme.ButtonRadius * GuiWidget.DeviceScale,
 				ToolTipText = "Raise extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
 			});
 
@@ -723,7 +723,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
-				BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0),
+				BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0),
 				ToolTipText = "Lower extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
 			});
 			downButton.Click += (s, e) =>

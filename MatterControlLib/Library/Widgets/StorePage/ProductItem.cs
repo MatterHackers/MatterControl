@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private ThemeConfig theme;
 
 		public static int IconSize => (int)(200 * GuiWidget.DeviceScale);
-		public static int ItemSpacing { get; } = 10;
+		public static int ItemSpacing { get; } = 9;
 
 		public ProductItem(FeedItemData item, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.theme = theme;
 
 			var image = new ImageBuffer(IconSize, IconSize);
+			BackgroundRadius = 5 * GuiWidget.DeviceScale;
 			
 			if (item.widget_url != null)
 			{
@@ -56,7 +57,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					// these images expect to be on white so change the background to white
 					BackgroundColor = Color.White,
-					Margin = new BorderDouble(right: ItemSpacing),
+					BackgroundRadius = 5 * GuiWidget.DeviceScale,
+					Margin = new BorderDouble(3, 0, 3, 3),
 					Selectable = false
 				};
 				this.AddChild(whiteBackground);
