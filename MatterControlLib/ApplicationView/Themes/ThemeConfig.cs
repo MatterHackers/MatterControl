@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl
 			menuButton.DrawArrow = true;
 			menuButton.Margin = this.ButtonSpacing;
 			menuButton.DistinctPopupButton = true;
-			menuButton.BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0);
+			menuButton.BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0);
 
 			innerButton.Selectable = true;
 			return menuButton;

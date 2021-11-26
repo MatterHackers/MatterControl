@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.MouseDownColor = theme.MinimalShade;
 			this.PopupBorderColor = theme.PopupBorderColor;
 
-			this.BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0);
+			this.BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0);
 		}
 
 		public PopupMenuButton(ImageBuffer imageBuffer, ThemeConfig theme)
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.MouseDownColor = theme.ToolbarButtonDown;
 			this.PopupBorderColor = theme.PopupBorderColor;
 
-			this.BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0);
+			this.BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0);
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)
