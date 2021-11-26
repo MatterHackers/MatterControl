@@ -42,6 +42,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {

@@ -39,8 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -323,17 +322,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		private bool ProcessPolygons
-		{
-			get => Processing == ProcessingModes.Polygons || Processing == ProcessingModes.libigl;
-		}
-
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons);
-			change.SetRowVisible(nameof(OutputResolution), () => !ProcessPolygons);
-			change.SetRowVisible(nameof(MeshAnalysis), () => !ProcessPolygons);
-			change.SetRowVisible(nameof(InputResolution), () => !ProcessPolygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
+			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
+			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
 		}
 	}
 }

@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
 
 using MatterHackers.VectorMath;

@@ -18,8 +18,8 @@
     <RootNamespace>MatterControl.Tests</RootNamespace>
     <AssemblyName>MatterControl.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-	  <RuntimeIdentifier>win</RuntimeIdentifier>
-	  <FileAlignment>512</FileAlignment>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
+    <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -53,7 +53,6 @@
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
     <Compile Include="MatterControl\AssetManagerTests.cs" />
     <Compile Include="MatterControl\MeshRebuildTests.cs" />
-    <Compile Include="MatterControl\MeshCsgTests.cs" />
     <Compile Include="MatterControl\PrinterSettingsTests.cs" />
     <Compile Include="MatterControl\SliceSettingsFieldTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
@@ -130,10 +129,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{CD8A3D1A-24D5-4184-8CF3-7B2AD5CD7A71}</Project>
       <Name>PlatformWin32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj">
-      <Project>{7ee4636d-8a92-4015-9562-7fcd6add0645}</Project>
-      <Name>Net3dBool</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
