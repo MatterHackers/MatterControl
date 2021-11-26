@@ -186,18 +186,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			var doStartPosition = worldStartPosition;
 			var doEndPosition = worldEndPosition;
 
-			controlLayer.Scene.UndoBuffer.Add(new UndoRedoActions(() =>
+			var undoBuffer = controlLayer?.Scene?.UndoBuffer;
+			if (undoBuffer != null)
 			{
-				worldStartPosition = undoStartPosition;
-				worldEndPosition = undoEndPosition;
-				this.Invalidate(InvalidateType.Matrix);
-			},
-			() =>
-			{
-				worldStartPosition = doStartPosition;
-				worldEndPosition = doEndPosition;
-				this.Invalidate(InvalidateType.Matrix);
-			}));
+				undoBuffer.Add(new UndoRedoActions(() =>
+				{
+					worldStartPosition = undoStartPosition;
+					worldEndPosition = undoEndPosition;
+					this.Invalidate(InvalidateType.Matrix);
+				},
+				() =>
+				{
+					worldStartPosition = doStartPosition;
+					worldEndPosition = doEndPosition;
+					this.Invalidate(InvalidateType.Matrix);
+				}));
+			}
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

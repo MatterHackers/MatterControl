@@ -948,7 +948,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			lock (writeLock)
 			{
-				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented));
+				try
+				{
+					File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented));
+				}
+				catch (Exception ex)
+                {
+					ApplicationController.Instance.ShowNotification($"Profile Save Error: {ex.Message}");
+                }
 			}
 		}
 
