@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					// these images expect to be on white so change the background to white
 					BackgroundColor = Color.White,
-					Margin = new BorderDouble(right: ItemSpacing)
+					Margin = new BorderDouble(right: ItemSpacing),
+					Selectable = false
 				};
 				this.AddChild(whiteBackground);
 
@@ -70,25 +71,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				whiteBackground.AddChild(imageWidget);
 			}
 
-			var titleText = new WrappedTextWidget(item.title, textColor: theme.TextColor, pointSize: theme.FontSize14)
+			var titleText = new FlowLeftRightWithWrapping()
 			{
 				Selectable = false,
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(3, 3, 3, 9)
+				Margin = new BorderDouble(3, 3, 3, 9),
+				Center = true
 			};
+
+			titleText.AddText(item.title, textColor: theme.TextColor, pointSize: theme.FontSize14);
+
 			this.AddChild(titleText);
 
-			var descriptionText = new WrappedTextWidget(item.subtitle, textColor: theme.TextColor.WithAlpha(.7), pointSize: theme.FontSize8)
+			var descriptionText = new FlowLeftRightWithWrapping()
 			{
 				Selectable = false,
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Stretch,
-				Margin = 3
+				Margin = 3,
+				Center = true
 			};
+
+			descriptionText.AddText(item.subtitle, textColor: theme.TextColor.WithAlpha(.7), pointSize: theme.FontSize8);
+
 			this.AddChild(descriptionText);
 
 			this.Cursor = Cursors.Hand;
+
+			this.VAnchor = VAnchor.Fit | VAnchor.Top;
 		}
 
 		public override Color BackgroundColor
