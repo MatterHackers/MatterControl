@@ -95,8 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 
 			if (enabled
-				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.Helpers.ProbeBeingUsed
 				&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
 			{
 				return false;

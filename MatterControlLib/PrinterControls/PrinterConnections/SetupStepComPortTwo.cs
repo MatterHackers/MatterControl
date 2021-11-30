@@ -45,11 +45,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private GuiWidget nextButton;
 		private GuiWidget connectButton;
-		private TextWidget printerConnectionMessage;
+		private WrappedTextWidget printerConnectionMessage;
 
 		private PrinterConfig printer;
+        private string foundPort;
 
-		public SetupStepComPortTwo(PrinterConfig printer)
+        public SetupStepComPortTwo(PrinterConfig printer)
 		{
 			this.printer = printer;
 
@@ -84,18 +85,33 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				connectButtonHasBeenClicked = true;
 				// Select the first port that's in GetPortNames() but not in startingPortNames
-				string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
-				if (candidatePort == null)
+				foundPort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
+				if (foundPort == null)
 				{
-					printerConnectionMessage.TextColor = Color.Red;
-					printerConnectionMessage.Text = "Oops! Printer could not be detected ".Localize();
+					foundPort = FrostedSerialPort.GetPortNames(includeEmulator: false).LastOrDefault();
+					if (foundPort != null)
+					{
+						// try to connect to the last port found
+						printerConnectionMessage.TextColor = theme.TextColor;
+						printerConnectionMessage.Text = "Attempting to connect to {0}".Localize().FormatWith(foundPort) + "...";
+
+						printer.Settings.Helpers.SetComPort(foundPort);
+						printer.Connection.Connect();
+						connectButton.Visible = false;
+					}
+					else
+					{
+						// no com port was found, attempt to connect to a com port if there is any
+						printerConnectionMessage.TextColor = Color.Red;
+						printerConnectionMessage.Text = "Oops! Printer could not be detected ".Localize();
+					}
 				}
 				else
 				{
 					printerConnectionMessage.TextColor = theme.TextColor;
-					printerConnectionMessage.Text = "Attempting to connect".Localize() + "...";
+					printerConnectionMessage.Text = "Attempting to connect to {0}".Localize().FormatWith(foundPort) + "...";
 
-					printer.Settings.Helpers.SetComPort(candidatePort);
+					printer.Settings.Helpers.SetComPort(foundPort);
 					printer.Connection.Connect();
 					connectButton.Visible = false;
 				}
@@ -155,9 +171,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageFour);
 
-			printerConnectionMessage = new TextWidget("", 0, 0, 10)
+			printerConnectionMessage = new WrappedTextWidget("", 10)
 			{
-				AutoExpandBoundsToText = true,
 				TextColor = Color.Red,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
@@ -185,11 +200,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			if (printer.Connection.IsConnected)
 			{
 				printerConnectionMessage.TextColor = theme.TextColor;
-				printerConnectionMessage.Text = "Connection succeeded".Localize() + "!";
+				printerConnectionMessage.Text = "Connection succeeded (port {0}).".Localize().FormatWith(foundPort);
 				printerConnectionMessage.TextColor = Color.Red;
 				nextButton.Visible = true;
 				connectButton.Visible = false;
-				UiThread.RunOnIdle(() => this?.Parent?.Close(), 1);
+				UiThread.RunOnIdle(() => this?.Parent?.Close(), 2);
 				ApplicationController.Instance.ShowNotification("Connection succeeded");
 			}
 			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)

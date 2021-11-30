@@ -117,8 +117,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+			if (printer.Settings.Helpers.ProbeBeingUsed
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
 				// make sure the servo is deployed

@@ -143,8 +143,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			wizardExited = true;
 
 			// make sure we raise the probe on close
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+			if (printer.Settings.Helpers.ProbeBeingUsed
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
 				// make sure the servo is retracted
@@ -200,7 +199,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new HomePrinterPage(
 				this,
 				levelingStrings.HomingPageInstructions(
-					printer.Settings.Helpers.UseZProbe(),
+					printer.Settings.Helpers.ProbeBeingUsed,
 					printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)));
 
 			// figure out the heating requirements
@@ -211,7 +210,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			}
 
-			if (!printer.Settings.Helpers.UseZProbe())
+			if (!printer.Settings.Helpers.ProbeBeingUsed)
 			{
 				targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(0);
 			}
@@ -260,7 +259,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int i = 0;
 
 			var probePoints = LevelingPlan.GetPositionsToSample(printer.Connection.HomingPosition).ToList();
-			if (printer.Settings.Helpers.UseZProbe())
+			if (printer.Settings.Helpers.ProbeBeingUsed)
 			{
 				var autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);
 				yield return autoProbePage;
@@ -340,14 +339,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new LastPageInstructions(
 				this,
 				"Print Leveling Wizard".Localize(),
-				printer.Settings.Helpers.UseZProbe(),
+				printer.Settings.Helpers.ProbeBeingUsed,
 				probePositions);
 		}
 
 		public static Vector2 EnsureInPrintBounds(PrinterConfig printer, Vector2 probePosition)
 		{
 			// check that the position is within the printing area and if not move it back in
-			if (printer.Settings.Helpers.UseZProbe())
+			if (printer.Settings.Helpers.ProbeBeingUsed)
 			{
 				var probeOffset2D = new Vector2(printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset));
 				var actualNozzlePosition = probePosition - probeOffset2D;

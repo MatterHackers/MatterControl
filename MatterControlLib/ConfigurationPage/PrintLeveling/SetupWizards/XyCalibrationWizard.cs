@@ -122,8 +122,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// we have a probe that we are using and we have not done leveling yet
 			return (required || printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
-				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
+				&& printer.Settings.Helpers.ProbeBeingUsed;
 		}
 
 		public async override void Dispose()

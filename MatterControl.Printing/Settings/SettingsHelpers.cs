@@ -186,12 +186,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public bool ValidateLevelingWithProbe
+		public bool ProbeBeingUsed
 		{
 			get
 			{
 				return printerSettings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printerSettings.GetValue<bool>(SettingsKey.use_z_probe)
+					&& printerSettings.GetValue<bool>(SettingsKey.use_z_probe);
+			}
+		}
+
+		public bool ValidateLevelingWithProbe
+		{
+			get
+			{
+				return ProbeBeingUsed
 					&& printerSettings.GetValue<bool>(SettingsKey.validate_leveling);
 			}
 		}
@@ -342,11 +350,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return printerSettings.GetValue<int>(SettingsKey.extruder_count);
-		}
-
-		public bool UseZProbe()
-		{
-			return printerSettings.GetValue<bool>(SettingsKey.has_z_probe) && printerSettings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 	}
 }

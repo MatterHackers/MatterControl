@@ -1004,7 +1004,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="message">The message to show</param>
 		/// <param name="durationSeconds">The length of time to show the message</param>
-		public void ShowNotification(string message, double durationSeconds = 5)
+		public void ShowNotification(string message, double durationSeconds = 10)
         {
 			foreach(var printer in ActivePrinters)
             {

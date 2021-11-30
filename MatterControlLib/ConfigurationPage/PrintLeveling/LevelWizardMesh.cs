@@ -68,8 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					0);
 			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
+			if (printer.Settings.Helpers.ProbeBeingUsed)
 			{
 				var probeOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 				if (probeOffset.X < 0)
