@@ -1003,7 +1003,8 @@ namespace MatterHackers.MatterControl
 		/// like a bad save or load.
 		/// </summary>
 		/// <param name="message">The message to show</param>
-        public void ShowNotification(string message)
+		/// <param name="durationSeconds">The length of time to show the message</param>
+		public void ShowNotification(string message, double durationSeconds = 5)
         {
 			foreach(var printer in ActivePrinters)
             {
@@ -1013,6 +1014,23 @@ namespace MatterHackers.MatterControl
 					terminal.WriteLine(message);
                 }
             }
+
+			// show the message for the time requested
+			this.Tasks.Execute(message,
+				null,
+				(progress, cancellationToken) =>
+				{
+					var time = UiThread.CurrentTimerMs;
+					var status = new ProgressStatus();
+					while (UiThread.CurrentTimerMs < time + durationSeconds * 1000)
+					{
+						Thread.Sleep(30);
+						status.Progress0To1 = (UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds;
+						progress.Report(status);
+					}
+
+					return Task.CompletedTask;
+				});
         }
 
         public void Connection_ErrorReported(object sender, string line)

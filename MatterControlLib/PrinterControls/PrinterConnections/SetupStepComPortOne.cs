@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var elementMargin = new BorderDouble(top: 5);
 
-			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
+			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect your printer.".Localize(), 0, 0, 10)
 			{
 				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageOne);
 
-			var printerMessageTwo = new TextWidget(string.Format("1.) {0} ({1}).", "Disconnect printer".Localize(), "if currently connected".Localize()), 0, 0, 12)
+			var printerMessageTwo = new WrappedTextWidget(string.Format("1.) {0} ({1}).", "Unplug printer USB cable from computer".Localize(), "if connected".Localize()), 12)
 			{
 				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
