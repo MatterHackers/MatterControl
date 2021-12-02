@@ -38,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 

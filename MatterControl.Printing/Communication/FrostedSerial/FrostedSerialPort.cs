@@ -143,7 +143,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			return filteredPorts.Any() ? filteredPorts : allPorts;
 		}
 
-		public static string[] GetPortNames(bool filter = true)
+		public static string[] GetPortNames(bool filter = true, bool includeEmulator = true)
 		{
 			var p = Environment.OSVersion.Platform;
 			var serial_ports = new List<string>();
@@ -195,7 +195,10 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				}
 			}
 
-			serial_ports.Add("Emulator");
+			if (includeEmulator)
+			{
+				serial_ports.Add("Emulator");
+			}
 
 			return FilterPortsForMac(serial_ports).ToArray();
 		}

@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var probeZOffset = default(Vector3);
 
-			if (printer.Settings.Helpers.UseZProbe())
+			if (printer.Settings.Helpers.ProbeBeingUsed)
 			{
 				probeZOffset = new Vector3(0, 0, printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset).Z);
 			}

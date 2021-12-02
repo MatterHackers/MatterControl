@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static ITraceable CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, int maxRecursion = int.MaxValue)
+		public static ITraceable CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, BvhCreationOptions bvhCreationOptions = BvhCreationOptions.FavorFastTracing)
 		{
 			var allPolys = new List<ITraceable>();
 
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				allPolys.Add(new TriangleShape(vertexList[face.v0], vertexList[face.v1], vertexList[face.v2], null));
 			}
 
-			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
+			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, bvhCreationOptions);
 		}
 
 		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)

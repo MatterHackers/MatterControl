@@ -60,8 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnLoad(EventArgs args)
 		{
 			// make sure the probe is not deployed
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+			if (printer.Settings.Helpers.ProbeBeingUsed
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
 				// make sure the servo is retracted

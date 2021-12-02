@@ -40,6 +40,7 @@ using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {

@@ -32,6 +32,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.PolygonMesh.Processors;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 

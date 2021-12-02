@@ -45,11 +45,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private GuiWidget nextButton;
 		private GuiWidget connectButton;
-		private TextWidget printerErrorMessage;
+		private WrappedTextWidget printerConnectionMessage;
 
 		private PrinterConfig printer;
+        private string foundPort;
 
-		public SetupStepComPortTwo(PrinterConfig printer)
+        public SetupStepComPortTwo(PrinterConfig printer)
 		{
 			this.printer = printer;
 
@@ -61,22 +62,56 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Click += (s, e) => Parent.Close();
 			nextButton.Visible = false;
 
+			var connectButtonHasBeenClicked = false;
+			void CheckOnPorts()
+            {
+				string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
+				if (candidatePort != null)
+				{
+					// we found a new added port click the connect button for the user
+					connectButton.InvokeClick();
+				}
+				else if (!connectButtonHasBeenClicked && this.ActuallyVisibleOnScreen())
+                {
+					// keep checking as long as this is open
+					UiThread.RunOnIdle(CheckOnPorts, .2);
+				}
+			}
+
+			UiThread.RunOnIdle(CheckOnPorts, .2);
+
 			connectButton = theme.CreateDialogButton("Connect".Localize());
 			connectButton.Click += (s, e) =>
 			{
+				connectButtonHasBeenClicked = true;
 				// Select the first port that's in GetPortNames() but not in startingPortNames
-				string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
-				if (candidatePort == null)
+				foundPort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
+				if (foundPort == null)
 				{
-					printerErrorMessage.TextColor = Color.Red;
-					printerErrorMessage.Text = "Oops! Printer could not be detected ".Localize();
+					foundPort = FrostedSerialPort.GetPortNames(includeEmulator: false).LastOrDefault();
+					if (foundPort != null)
+					{
+						// try to connect to the last port found
+						printerConnectionMessage.TextColor = theme.TextColor;
+						printerConnectionMessage.Text = "Attempting to connect to {0}".Localize().FormatWith(foundPort) + "...";
+
+						printer.Settings.Helpers.SetComPort(foundPort);
+						printer.Connection.Connect();
+						connectButton.Visible = false;
+					}
+					else
+					{
+						// no com port was found, attempt to connect to a com port if there is any
+						printerConnectionMessage.TextColor = Color.Red;
+						printerConnectionMessage.Text = "Oops! Printer could not be detected ".Localize();
+					}
 				}
 				else
 				{
-					printerErrorMessage.TextColor = theme.TextColor;
-					printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
+					printerConnectionMessage.TextColor = theme.TextColor;
+					printerConnectionMessage.Text = "Attempting to connect to {0}".Localize().FormatWith(foundPort) + "...";
 
-					printer.Settings.Helpers.SetComPort(candidatePort);
+					printer.Settings.Helpers.SetComPort(foundPort);
 					printer.Connection.Connect();
 					connectButton.Visible = false;
 				}
@@ -120,7 +155,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var elementMargin = new BorderDouble(top: 5);
 
-			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
+			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect your printer.".Localize(), 0, 0, 10)
 			{
 				Margin = elementMargin,
 				TextColor = theme.TextColor,
@@ -128,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageOne);
 
-			var printerMessageFour = new TextWidget(string.Format("1.) {0}.", "Connect printer (make sure it is on)".Localize()), 0, 0, 12)
+			var printerMessageFour = new TextWidget(string.Format("1.) {0}.", "Plug in printer USB cable and turn printer on".Localize()), 0, 0, 12)
 			{
 				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
@@ -136,22 +171,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageFour);
 
-
-			var printerMessageFive = new TextWidget(string.Format("2.) {0} '{1}'.", "Press".Localize(), "Connect".Localize()), 0, 0, 12)
+			printerConnectionMessage = new WrappedTextWidget("", 10)
 			{
-				TextColor = theme.TextColor,
-				HAnchor = HAnchor.Stretch,
-				Margin = elementMargin
-			};
-
-			printerErrorMessage = new TextWidget("", 0, 0, 10)
-			{
-				AutoExpandBoundsToText = true,
 				TextColor = Color.Red,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
-			container.AddChild(printerErrorMessage);
+			container.AddChild(printerConnectionMessage);
 
 			var removeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "insert usb.png")).SetPreMultiply();
 			container.AddChild(new ImageWidget(removeImage)
@@ -173,16 +199,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (printer.Connection.IsConnected)
 			{
-				printerErrorMessage.TextColor = theme.TextColor;
-				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
+				printerConnectionMessage.TextColor = theme.TextColor;
+				printerConnectionMessage.Text = "Connection succeeded (port {0}).".Localize().FormatWith(foundPort);
+				printerConnectionMessage.TextColor = Color.Red;
 				nextButton.Visible = true;
 				connectButton.Visible = false;
-				this?.Parent?.Close();
+				UiThread.RunOnIdle(() => this?.Parent?.Close(), 2);
+				ApplicationController.Instance.ShowNotification("Connection succeeded");
 			}
 			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
-				printerErrorMessage.TextColor = Color.Red;
-				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();
+				printerConnectionMessage.TextColor = Color.Red;
+				printerConnectionMessage.Text = "Uh-oh! Could not connect to printer.".Localize();
 				connectButton.Visible = true;
 				nextButton.Visible = false;
 			}

@@ -35,6 +35,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools
 {

@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Plugins.BrailleBuilder;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

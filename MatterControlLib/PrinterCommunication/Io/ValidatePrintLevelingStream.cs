@@ -117,8 +117,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void RetractProbe()
 		{
 			// make sure we raise the probe on close
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+			if (printer.Settings.Helpers.ProbeBeingUsed
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
 				// make sure the servo is retracted
