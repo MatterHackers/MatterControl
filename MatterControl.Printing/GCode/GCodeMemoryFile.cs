@@ -322,6 +322,7 @@ namespace MatterControl.Printing
 			{
 				layerIndex--;
 				while (layerIndex >= 0
+					&& layerIndex < layerHeights.Count
 					&& layerHeight < .01)
 				{
 					// walk back to find a layer height that seems like it might be right

@@ -69,6 +69,7 @@
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\geometry3Sharp\geometry3Sharp.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
@@ -80,7 +81,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
-    <ProjectReference Include="..\Submodules\geometry3Sharp\geometry3Sharp.csproj" />
     <ProjectReference Include="..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
   </ItemGroup>
 

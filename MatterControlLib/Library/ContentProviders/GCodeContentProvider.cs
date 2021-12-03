@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{
-			System.Diagnostics.Debugger.Break();
+			// System.Diagnostics.Debugger.Break();
 			return null;
 		}
 
