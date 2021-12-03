@@ -238,6 +238,11 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			var selectedItem = this.selectedItem;
 
+			if (selectedItem == null)
+            {
+				return;
+            }
+
 			// make copies of the scale states as they will be save into the undo redo stack
 			doState = new ScaleStates(doState);
 			doState.Matrix = selectedItem.Matrix;
@@ -251,7 +256,7 @@ namespace MatterHackers.Plugins.EditorTools
 				await selectedItem.Rebuild();
 				// we set the matrix again after as the rebuild might move the object
 				selectedItem.Matrix = undoState.Matrix;
-				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+				selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 			},
 			async () =>
 			{
@@ -259,7 +264,7 @@ namespace MatterHackers.Plugins.EditorTools
 				await selectedItem.Rebuild();
 				// we set the matrix again after as the rebuild might move the object
 				selectedItem.Matrix = doState.Matrix;
-				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+				selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 			}));
 		}
 

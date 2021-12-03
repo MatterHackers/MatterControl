@@ -1359,8 +1359,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool InSelectionBounds(BvhIterator x)
+		private bool InSelectionBounds(BvhIterator iterator)
 		{
+			var world = sceneContext?.World;
+			if (world == null || iterator == null)
+            {
+				return false;
+            }
+
 			var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
 
 			var traceBottoms = new Vector2[4];
@@ -1371,14 +1377,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return false;
 			}
 
-			if (x.Bvh is ITriangle tri)
+			if (iterator.Bvh is ITriangle tri)
 			{
 				// check if any vertex in screen rect
 				// calculate all the top and bottom screen positions
 				for (int i = 0; i < 3; i++)
 				{
-					Vector3 bottomStartPosition = Vector3Ex.Transform(tri.GetVertex(i), x.TransformToWorld);
-					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
+					Vector3 bottomStartPosition = Vector3Ex.Transform(tri.GetVertex(i), iterator.TransformToWorld);
+					traceBottoms[i] = world.GetScreenPosition(bottomStartPosition);
 				}
 
 				for (int i = 0; i < 3; i++)
@@ -1395,11 +1401,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// calculate all the top and bottom screen positions
 				for (int i = 0; i < 4; i++)
 				{
-					Vector3 bottomStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
+					Vector3 bottomStartPosition = Vector3Ex.Transform(iterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), iterator.TransformToWorld);
+					traceBottoms[i] = world.GetScreenPosition(bottomStartPosition);
 
-					Vector3 topStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					traceTops[i] = sceneContext.World.GetScreenPosition(topStartPosition);
+					Vector3 topStartPosition = Vector3Ex.Transform(iterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), iterator.TransformToWorld);
+					traceTops[i] = world.GetScreenPosition(topStartPosition);
 				}
 
 				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
