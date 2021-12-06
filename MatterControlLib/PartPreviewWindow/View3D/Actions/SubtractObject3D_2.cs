@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton(false)]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ICustomEditorDraw, IPropertyGridModifier
+	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ICustomEditorDraw, IPropertyGridModifier, IBuildsOnThread
 	{
 		public SubtractObject3D_2()
 		{
@@ -130,6 +130,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+		private CancellationTokenSource cancellationToken;
+
+		public bool IsBuilding => this.cancellationToken != null;
+
+		public void CancelBuild()
+		{
+			var threadSafe = this.cancellationToken;
+			if (threadSafe != null)
+			{
+				threadSafe.Cancel();
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -139,22 +152,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return ApplicationController.Instance.Tasks.Execute(
 				"Subtract".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
+					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
 					try
 					{
-						Subtract(cancellationToken, reporter);
+						Subtract(cancellationTokenSource.Token, reporter);
 					}
 					catch
 					{
 					}
 
+					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

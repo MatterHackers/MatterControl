@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class OperationSourceContainerObject3D : Object3D
 	{
-		public static Func<string, Func<IProgress<ProgressStatus>, CancellationToken, Task>, Task> TaskBuilder { get; set; } =
-			(name, func) => Task.Run(() => func(null, CancellationToken.None));
+		public static Func<string, Func<IProgress<ProgressStatus>, CancellationTokenSource, Task>, Task> TaskBuilder { get; set; } =
+			(name, func) => Task.Run(() => func(null, null));
 
 		public override Mesh Mesh
 		{

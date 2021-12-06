@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.Library.Export
 									Printer,
 									(reporter, cancellationToken2) =>
 									{
-										return Slicer.SliceItem(loadedItem, gcodePath, Printer, reporter, cancellationToken2);
+										return Slicer.SliceItem(loadedItem, gcodePath, Printer, reporter, cancellationToken2.Token);
 									});
 
 								Printer.Settings.SetValue(SettingsKey.spiral_vase, oldSpiralVaseSetting ? "1" : "0");

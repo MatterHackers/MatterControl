@@ -2171,14 +2171,14 @@ namespace MatterHackers.MatterControl
 
 			printer.ViewState.SlicingItem = true;
 
-			await this.Tasks.Execute("Slicing".Localize(), printer, async (reporter, cancellationToken) =>
+			await this.Tasks.Execute("Slicing".Localize(), printer, async (reporter, cancellationTokenSource) =>
 			{
 				slicingSucceeded = await Slicer.SliceItem(
 					object3D,
 					gcodeFilePath,
 					printer,
 					reporter,
-					cancellationToken);
+					cancellationTokenSource.Token);
 			});
 
 			printer.ViewState.SlicingItem = false;
@@ -2217,13 +2217,13 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			await this.Tasks.Execute("Loading GCode".Localize(), printer, (innerProgress, token) =>
+			await this.Tasks.Execute("Loading GCode".Localize(), printer, (innerProgress, concelationTokenSource) =>
 			{
 				var status = new ProgressStatus();
 
 				innerProgress.Report(status);
 
-				printer.Bed.LoadActiveSceneGCode(gcodeFilePath, token, (progress0to1, statusText) =>
+				printer.Bed.LoadActiveSceneGCode(gcodeFilePath, concelationTokenSource.Token, (progress0to1, statusText) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -2434,7 +2434,7 @@ namespace MatterHackers.MatterControl
 
 			public int Priority { get; set; }
 
-			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
+			public Func<IProgress<ProgressStatus>, CancellationTokenSource, Task> Action { get; set; }
 		}
 
 		public class StartupAction

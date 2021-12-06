@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			originalEditContext = printer.Bed.EditContext;
 			Task.Run(() =>
 			{
-				printer.Bed.SaveChanges(null, CancellationToken.None);
+				printer.Bed.SaveChanges(null, null);
 			});
 
 			// loop until we are done calibrating

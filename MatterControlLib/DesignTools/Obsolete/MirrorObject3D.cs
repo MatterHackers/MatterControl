@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Matrix = oldMatrix;
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 			return Task.CompletedTask;

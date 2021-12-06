@@ -106,14 +106,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return ApplicationController.Instance.Tasks.Execute(
 				"Subtract".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
 					try
 					{
-						Subtract(cancellationToken, reporter);
+						Subtract(cancellationTokenSource.Token, reporter);
 					}
 					catch
 					{
@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

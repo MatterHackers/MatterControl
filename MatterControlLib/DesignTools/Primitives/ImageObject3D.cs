@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_image = image;
 
 					// send the invalidate on image change
+					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Image));
 					Invalidate(InvalidateType.DisplayValues);
 				}

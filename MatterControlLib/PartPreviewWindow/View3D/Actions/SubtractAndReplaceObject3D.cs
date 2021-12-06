@@ -202,11 +202,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var rebuildLocks = this.RebuilLockAll();
 
 			// spin up a task to calculate the paint
-			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationTokenSource) =>
 			{
 				try
 				{
-					SubtractAndReplace(cancellationToken, reporter);
+					SubtractAndReplace(cancellationTokenSource.Token, reporter);
 				}
 				catch
 				{
@@ -215,6 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				UiThread.RunOnIdle(() =>
 				{
 					rebuildLocks.Dispose();
+					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
 

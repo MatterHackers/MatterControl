@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return TaskBuilder(
 				"Repair".Localize(),
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						var originalMesh = sourceItem.Mesh;
 						inititialFaces += originalMesh.Faces.Count;
 						inititialVertices += originalMesh.Vertices.Count;
-						var repairedMesh = Repair(originalMesh, cancellationToken);
+						var repairedMesh = Repair(originalMesh, cancellationTokenSource.Token);
 						finalFaces += repairedMesh.Faces.Count;
 						finalVertices += repairedMesh.Vertices.Count;
 
@@ -111,6 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						rebuildLocks.Dispose();
 						Invalidate(InvalidateType.DisplayValues);
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

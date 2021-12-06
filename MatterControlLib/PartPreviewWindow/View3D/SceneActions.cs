@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					await ApplicationController.Instance.Tasks.Execute(
 						"Ungroup".Localize(),
 						null,
-						(reporter, cancellationToken) =>
+						(reporter, cancellationTokenSource) =>
 						{
 							var progressStatus = new ProgressStatus();
 							reporter.Report(progressStatus);
@@ -90,16 +90,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// try to cut it up into multiple meshes
 							progressStatus.Status = "Split".Localize();
 							
-							var cleanMesh = selectedItem.Mesh.Copy(cancellationToken);
+							var cleanMesh = selectedItem.Mesh.Copy(cancellationTokenSource.Token);
 							cleanMesh.MergeVertices(.01);
 
-							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(cleanMesh, cancellationToken, (double progress0To1, string processingState) =>
+							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(cleanMesh, cancellationTokenSource.Token, (double progress0To1, string processingState) =>
 							{
 								progressStatus.Progress0To1 = .5 + progress0To1 * .5;
 								progressStatus.Status = processingState;
 								reporter.Report(progressStatus);
 							});
-							if (cancellationToken.IsCancellationRequested)
+							if (cancellationTokenSource.IsCancellationRequested)
 							{
 								return Task.CompletedTask;
 							}

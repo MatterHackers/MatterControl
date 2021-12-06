@@ -159,12 +159,12 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadGCodeContent(Stream stream)
 		{
-			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), Printer, (reporter, cancellationToken) =>
+			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), Printer, (reporter, cancellationTokenSource) =>
 			{
 				var progressStatus = new ProgressStatus();
 				reporter.Report(progressStatus);
 
-				this.LoadGCode(stream, cancellationToken, (progress0To1, status) =>
+				this.LoadGCode(stream, cancellationTokenSource.Token, (progress0To1, status) =>
 				{
 					progressStatus.Status = status;
 					progressStatus.Progress0To1 = progress0To1;
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl
 			await insertionGroup.LoadingItemsTask;
 
 			// Persist changes
-			await this.SaveChanges(null, CancellationToken.None);
+			await this.SaveChanges(null, null);
 
 			// Slice and print
 			await ApplicationController.Instance.PrintPart(
@@ -650,9 +650,9 @@ namespace MatterHackers.MatterControl
 		/// Persists modified meshes to assets and saves pending changes back to the EditContext
 		/// </summary>
 		/// <param name="progress">Allows for progress reporting</param>
-		/// <param name="cancellationToken">Allows for cancellation during processing</param>
+		/// <param name="cancellationTokenSource">Allows for cancellation during processing</param>
 		/// <returns>A task representing success</returns>
-		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
 		{
 			var progressStatus = new ProgressStatus()
 			{

@@ -84,14 +84,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
 					try
 					{
-						Combine(cancellationToken, reporter);
+						Combine(cancellationTokenSource.Token, reporter);
 					}
 					catch
 					{
@@ -100,10 +100,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 
-					return Task.CompletedTask;
+					return base.Rebuild();
 				});
 		}
 

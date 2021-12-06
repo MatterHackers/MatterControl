@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -88,6 +89,19 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 			}
 		}
 
+		private CancellationTokenSource cancellationToken;
+
+		public bool IsBuilding => this.cancellationToken != null;
+
+		public void CancelBuild()
+		{
+			var threadSafe = this.cancellationToken;
+			if (threadSafe != null)
+			{
+				threadSafe.Cancel();
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -110,8 +124,9 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationTokenSource) =>
 			{
+				this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 				var generatedMesh = Lithophane.Generate(
 					new Lithophane.ImageBufferImageData(activeImage, this.Width),
 					this.Height,
@@ -132,16 +147,18 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				// Apply offset
 				this.Matrix *= Matrix4X4.CreateTranslation(-this.ImageOffset);
 
+				this.cancellationToken = null;
 				UiThread.RunOnIdle(() =>
 				{
 					rebuildLocks.Dispose();
+					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
 
 				return Task.CompletedTask;
 			});
 
-			return Task.CompletedTask;
+			return base.Rebuild();
 		}
 	}
 }

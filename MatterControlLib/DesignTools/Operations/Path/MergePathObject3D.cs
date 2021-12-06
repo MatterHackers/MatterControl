@@ -83,14 +83,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return ApplicationController.Instance.Tasks.Execute(
 				operationName,
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
 					try
 					{
-						Merge(reporter, cancellationToken);
+						Merge(reporter, cancellationTokenSource.Token);
 					}
 					catch
 					{
@@ -102,6 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 					return Task.CompletedTask;

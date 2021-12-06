@@ -145,6 +145,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
+			return Create(progress, null);
+		}
+
+		public Task Create(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
+		{
 			var selectedItem = scene.SelectedItem;
 
 			using (new SelectionMaintainer(scene))

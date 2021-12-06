@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			this.Mesh = null;
 			this.Invalidate(InvalidateType.Children);
-			return Task.CompletedTask;
+			return base.Rebuild();
 		}
 	}
 }

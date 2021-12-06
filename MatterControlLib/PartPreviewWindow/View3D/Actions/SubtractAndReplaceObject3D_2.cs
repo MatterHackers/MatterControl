@@ -129,16 +129,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+		private CancellationTokenSource cancellationToken;
+
+		public bool IsBuilding => this.cancellationToken != null;
+
+		public void CancelBuild()
+		{
+			var threadSafe = this.cancellationToken;
+			if (threadSafe != null)
+			{
+				threadSafe.Cancel();
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			var rebuildLocks = this.RebuilLockAll();
 
 			// spin up a task to calculate the paint
-			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(),
+				null,
+				(reporter, cancellationTokenSource) =>
 			{
+				this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 				try
 				{
-					SubtractAndReplace(cancellationToken, reporter);
+					SubtractAndReplace(cancellationTokenSource.Token, reporter);
 					var newComputedChildren = new SelectedChildren();
 
 					foreach (var id in SelectedChildren)
@@ -152,9 +168,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 				}
 
+				this.cancellationToken = null;
 				UiThread.RunOnIdle(() =>
 				{
 					rebuildLocks.Dispose();
+					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
 

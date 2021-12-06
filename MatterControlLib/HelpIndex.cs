@@ -80,11 +80,11 @@ namespace MatterControlLib
 			return ApplicationController.Instance.Tasks.Execute(
 				"Preparing help index".Localize(),
 				null,
-				(progress, cancellationToken) =>
+				(progress, cancellationTokenSource) =>
 				{
 					string relativePath = System.IO.Path.Combine("OemSettings", "help-docs.zip");
 
-					IndexZipFile(relativePath, progress, cancellationToken);
+					IndexZipFile(relativePath, progress, cancellationTokenSource.Token);
 
 					return Task.CompletedTask;
 				});
