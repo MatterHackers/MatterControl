@@ -150,6 +150,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		private CancellationTokenSource cancellationToken;
+
+		public bool IsBuilding => this.cancellationToken != null;
+
+		public void CancelBuild()
+		{
+			var threadSafe = this.cancellationToken;
+			if (threadSafe != null)
+			{
+				threadSafe.Cancel();
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -176,8 +189,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return ApplicationController.Instance.Tasks.Execute(
 				"Revolve".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
+					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 					var vertexSource = this.VertexSource;
 					var pathBounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
@@ -197,9 +211,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					Mesh = mesh;
 
+					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

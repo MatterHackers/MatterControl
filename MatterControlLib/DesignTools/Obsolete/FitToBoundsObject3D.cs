@@ -120,6 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
@@ -141,6 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
@@ -200,8 +202,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
-			return Task.CompletedTask;
+			return base.Rebuild();
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

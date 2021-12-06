@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public Task Execute(string taskTitle, object owner, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskOptions taskActions = null)
+		public Task Execute(string taskTitle, object owner, Func<IProgress<ProgressStatus>, CancellationTokenSource, Task> func, RunningTaskOptions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					await func?.Invoke(taskDetails, tokenSource.Token);
+					await func?.Invoke(taskDetails, tokenSource);
 				}
 				catch
 				{

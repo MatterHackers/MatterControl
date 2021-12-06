@@ -230,12 +230,12 @@ namespace MatterHackers.MatterControl
 							ApplicationController.Instance.Tasks.Execute(
 								"Saving".Localize() + "...",
 								printer,
-								async (reporter, cancellationToken) =>
+								async (reporter, cancellationTokenSource) =>
 								{
 									string path = openParams.FolderPath;
 									if (!string.IsNullOrEmpty(path))
 									{
-										await exportPlugin.Generate(libraryItems, path, reporter, cancellationToken);
+										await exportPlugin.Generate(libraryItems, path, reporter, cancellationTokenSource.Token);
 									}
 								});
 						});
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl
 							ApplicationController.Instance.Tasks.Execute(
 								"Exporting".Localize() + "...",
 								printer,
-								async (reporter, cancellationToken) =>
+								async (reporter, cancellationTokenSource) =>
 								{
 									string extension = Path.GetExtension(savePath);
 									if (!extension.Equals(targetExtension, StringComparison.OrdinalIgnoreCase))
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl
 											gCodeExport.CenterOnBed = centerOnBed;
 										}
 
-										exportErrors = await exportPlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
+										exportErrors = await exportPlugin.Generate(libraryItems, savePath, reporter, cancellationTokenSource.Token);
 									}
 
 									if (exportErrors == null || exportErrors.Count == 0)

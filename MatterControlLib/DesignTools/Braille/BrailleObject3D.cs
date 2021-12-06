@@ -263,8 +263,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-			return Task.CompletedTask;
+			return base.Rebuild();
 		}
 	}
 }

@@ -153,6 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;
 		}

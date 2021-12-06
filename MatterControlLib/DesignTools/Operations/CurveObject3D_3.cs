@@ -162,6 +162,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private CancellationTokenSource cancellationToken;
+
+		public bool IsBuilding => this.cancellationToken != null;
+
+		public void CancelBuild()
+		{
+			var threadSafe = this.cancellationToken;
+			if (threadSafe != null)
+			{
+				threadSafe.Cancel();
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -197,8 +210,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return ApplicationController.Instance.Tasks.Execute(
 				"Curve".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
+					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
 					var radius = diameter / 2;
@@ -295,10 +309,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.AddRange(curvedChildren);
 					});
 
+					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
 						Invalidate(InvalidateType.DisplayValues);
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

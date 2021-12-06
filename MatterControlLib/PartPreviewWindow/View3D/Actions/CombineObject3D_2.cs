@@ -43,9 +43,11 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton(false)]
-	public class CombineObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
+	public class CombineObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier, IBuildsOnThread
 	{
-		public CombineObject3D_2()
+        private CancellationTokenSource cancellationToken;
+
+        public CombineObject3D_2()
 		{
 			Name = "Combine";
 		}
@@ -67,6 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private IplicitSurfaceMethod MeshAnalysis { get; set; }
 		private ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #endif
+		public bool IsBuilding => this.cancellationToken != null;
+		
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -76,22 +80,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
 				null,
-				(reporter, cancellationToken) =>
+				(reporter, cancellationTokenSource) =>
 				{
+					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
 					try
 					{
-						Combine(cancellationToken, reporter);
+						Combine(cancellationTokenSource.Token, reporter);
 					}
 					catch
 					{
 					}
 
+					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 					return Task.CompletedTask;
@@ -197,5 +204,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
 			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
 		}
-	}
+
+        public void CancelBuild()
+        {
+			var threadSafe = this.cancellationToken;
+			if(threadSafe != null)
+            {
+				threadSafe.Cancel();
+            }
+        }
+    }
 }

@@ -78,14 +78,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationTokenSource) =>
 			{
 				var progressStatus = new ProgressStatus();
 				reporter.Report(progressStatus);
 
 				try
 				{
-					Intersect(cancellationToken, reporter);
+					Intersect(cancellationTokenSource.Token, reporter);
 				}
 				catch
 				{
@@ -94,9 +94,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				UiThread.RunOnIdle(() =>
 				{
 					rebuildLocks.Dispose();
+					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
-				return Task.CompletedTask;
+				return base.Rebuild();
 			});
 		}
 

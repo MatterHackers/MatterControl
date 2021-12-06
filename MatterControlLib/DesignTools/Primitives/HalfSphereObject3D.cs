@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Invalidate(InvalidateType.DisplayValues);
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}

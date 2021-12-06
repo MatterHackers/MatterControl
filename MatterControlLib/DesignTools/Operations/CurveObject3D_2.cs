@@ -227,6 +227,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						rebuildLocks.Dispose();
 						Invalidate(InvalidateType.DisplayValues);
+						this.CancelAllParentBuilding();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 

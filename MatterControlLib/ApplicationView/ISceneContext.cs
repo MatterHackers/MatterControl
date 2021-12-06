@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 		Task LoadLibraryContent(ILibraryItem libraryItem);
 
-		Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
+		Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationToken);
 
 		// TODO: Isolate printer specifics from ISceneContext
 

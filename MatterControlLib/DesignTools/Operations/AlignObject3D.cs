@@ -386,6 +386,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
+			this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
