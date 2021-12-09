@@ -33,6 +33,61 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, RunInApplicationDomain]
+		public void ModifyPrinterProfiles()
+		{
+			return;
+
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			string profilePath = @"C:\\Users\\LarsBrubaker\\Downloads\\Pulse E Profiles";
+			allPrinters = (from printerFile in new DirectoryInfo(profilePath).GetFiles("*.printer", SearchOption.TopDirectoryOnly)
+						   select new PrinterTestDetails
+						   {
+							   PrinterName = printerFile.Name,
+							   Oem = printerFile.Directory.Name,
+							   ConfigPath = printerFile.FullName,
+							   RelativeFilePath = printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),
+							   PrinterSettings = PrinterSettings.LoadFile(printerFile.FullName)
+						   }).ToList();
+
+			void ChangeSettings(PrinterSettings printerSettings)
+            {
+				// general
+				printerSettings.SetValue(SettingsKey.fill_density, "30%");
+				printerSettings.SetValue(SettingsKey.avoid_crossing_perimeters, "1");
+				printerSettings.SetValue(SettingsKey.merge_overlapping_lines, "1");
+				printerSettings.SetValue(SettingsKey.seam_placement, "Centered In Back");
+				printerSettings.SetValue(SettingsKey.expand_thin_walls, "1");
+				printerSettings.SetValue(SettingsKey.coast_at_end_distance, "0");
+				printerSettings.SetValue(SettingsKey.monotonic_solid_infill, "1");
+				printerSettings.SetValue(SettingsKey.infill_overlap_perimeter, "20%");
+				printerSettings.SetValue(SettingsKey.avoid_crossing_max_ratio, "3");
+				printerSettings.SetValue(SettingsKey.perimeter_start_end_overlap, "35");
+				// speed
+				printerSettings.SetValue(SettingsKey.external_perimeter_speed, "25");
+				printerSettings.SetValue(SettingsKey.perimeter_acceleration, "800");
+				printerSettings.SetValue(SettingsKey.default_acceleration, "1300");
+				printerSettings.SetValue(SettingsKey.bridge_over_infill, "1");
+				// adheasion
+				printerSettings.SetValue(SettingsKey.create_skirt, "1");
+				// support
+				printerSettings.SetValue(SettingsKey.retract_lift, ".4");
+				printerSettings.SetValue(SettingsKey.min_extrusion_before_retract, "0");
+				printerSettings.SetValue(SettingsKey.retract_before_travel_avoid, "20");
+			}
+
+			foreach (var printer in allPrinters)
+            {
+				ChangeSettings(printer.PrinterSettings);
+
+				printer.PrinterSettings.Save(Path.Combine(Path.GetDirectoryName(printer.ConfigPath), "output", printer.PrinterName), true);
+            }
+
+			int a = 0;
+		}
+
+		[Test, RunInApplicationDomain]
 		public void LayerGCodeHasExpectedValue()
 		{
 			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"
