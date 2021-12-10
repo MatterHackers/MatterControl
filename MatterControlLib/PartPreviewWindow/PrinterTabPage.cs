@@ -685,7 +685,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
 				BackgroundRadius = theme.ButtonRadius * GuiWidget.DeviceScale,
-				ToolTipText = "Raise extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
+				ToolTipText = "Raise extruder".Localize() + "\n\n" + "First layer only".Localize().Stars(),
 			});
 
 			upButton.Click += (s, e) =>
@@ -724,7 +724,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
 				BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0),
-				ToolTipText = "Lower extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
+				ToolTipText = "Lower extruder".Localize() + "\n\n" + "First layer only".Localize().Stars(),
 			});
 			downButton.Click += (s, e) =>
 			{
@@ -770,7 +770,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Right,
 					Margin = new BorderDouble(0, 0, 7, 0),
 					Name = "Re-Slice Button",
-					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
+					ToolTipText = "Apply changes to this print".Localize() + "\n\n" + "Plating and settings changes can be applied".Localize().Stars()
 				};
 				theme.MakeRoundedButton(resliceButton);
 				bool activelySlicing = false;

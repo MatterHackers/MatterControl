@@ -2003,11 +2003,11 @@ namespace MatterHackers.MatterControl
 
 			if (twoLetterIsoLanguageName == "en")
 			{
-				TranslationMap.ActiveTranslationMap = new TranslationMap();
+				translationFilePath = Path.Combine("Translations", "Master.txt");
 			}
-			else
+
+			using (var stream = StaticData.Instance.OpenStream(translationFilePath))
 			{
-				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
 				using (var streamReader = new StreamReader(stream))
 				{
 					TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, UserSettings.Instance.Language);

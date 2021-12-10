@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						// no com port was found, attempt to connect to a com port if there is any
 						printerConnectionMessage.TextColor = Color.Red;
-						printerConnectionMessage.Text = "Oops! Printer could not be detected ".Localize();
+						printerConnectionMessage.Text = "Oops! Printer could not be detected".Localize();
 					}
 				}
 				else
