@@ -5326,3 +5326,54 @@ Translated:Tools
 English:Saving 
 Translated:Saving 
 
+English:Tool 
+Translated:Tool 
+
+English:Tools 
+Translated:Tools 
+
+English:Open a copy
+Translated:Open a copy
+
+English:Show in Explorer
+Translated:Show in Explorer
+
+English:Click to go back
+Translated:Click to go back
+
+English:Click to edit values
+Translated:Click to edit values
+
+English:Define New
+Translated:Define New
+
+English:Select this option only if your printer does not appear in the list
+Translated:Select this option only if your printer does not appear in the list
+
+English:Runout Check Distance
+Translated:Runout Check Distance
+
+English:The distance that the filament has to extrude before we check the measured distance.
+Translated:The distance that the filament has to extrude before we check the measured distance.
+
+English:Runout Trigger Ratio
+Translated:Runout Trigger Ratio
+
+English:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.
+Translated:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.
+
+English:Saving 
+Translated:Saving 
+
+English:MatterControl will now attempt to auto-detect your printer.
+Translated:MatterControl will now attempt to auto-detect your printer.
+
+English:Unplug printer USB cable from computer
+Translated:Unplug printer USB cable from computer
+
+English:if connected
+Translated:if connected
+
+English:Parts
+Translated:Parts
+
