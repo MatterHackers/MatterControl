@@ -2014,12 +2014,19 @@ namespace MatterHackers.MatterControl
 				translationFilePath = Path.Combine("Translations", "Master.txt");
 			}
 
-			using (var stream = StaticData.Instance.OpenStream(translationFilePath))
+			if (File.Exists(translationFilePath))
 			{
-				using (var streamReader = new StreamReader(stream))
+				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
 				{
-					TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, UserSettings.Instance.Language);
+					using (var streamReader = new StreamReader(stream))
+					{
+						TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader);
+					}
 				}
+			}
+			else
+            {
+				TranslationMap.ActiveTranslationMap = new TranslationMap();
 			}
 		}
 
