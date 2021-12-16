@@ -322,7 +322,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch, 
 				HAnchor = HAnchor.Stretch,
 				Selectable = false,
+				DoubleBuffer = true
 			});
+
+			hudBackground.BackBuffer.SetRecieveBlender(new BlenderBGRA());
 
 			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
 			{
@@ -1362,7 +1365,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool InSelectionBounds(BvhIterator iterator)
 		{
 			var world = sceneContext?.World;
-			if (world == null || iterator == null)
+			if (world == null 
+				|| iterator == null
+				|| iterator.Bvh == null)
             {
 				return false;
             }

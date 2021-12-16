@@ -598,9 +598,17 @@ namespace MatterHackers.MatterControl
 					Title = "Print".Localize(),
 					Shortcut = "Ctrl+P",
 					Action = view3DWidget.PushToPrinterAndPrint,
-					IsEnabled = () => sceneContext.EditableScene
-						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+					IsEnabled = () =>
+					{
+						if (sceneContext.Printer != null)
+                        {
+							return sceneContext.Printer.PrintButtonEnabled();
+                        }
+
+						return sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase));
+					},
 				},
 				new NamedActionGroup()
 				{

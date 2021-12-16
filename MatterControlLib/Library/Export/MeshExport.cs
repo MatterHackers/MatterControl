@@ -69,7 +69,10 @@ namespace MatterHackers.MatterControl.Library.Export
 							using (var result = await streamContent.GetStream(null))
 							{
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
-								return Object3D.Save(item, filePathToSave, CancellationToken.None);
+								if (item != null)
+								{
+									return Object3D.Save(item, filePathToSave, CancellationToken.None);
+								}
 							}
 						}
 					}

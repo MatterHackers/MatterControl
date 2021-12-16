@@ -65,22 +65,34 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
-			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
-			if (firstItem is ILibraryAsset libraryItem)
+			var first = true;
+			List<string> badExports = new List<string>();
+			foreach (var item in libraryItems.OfType<ILibraryAsset>())
 			{
-				bool exportSuccessful = await MeshExport.ExportMesh(libraryItem, outputPath);
-				if (exportSuccessful)
+				var filename = Path.ChangeExtension(Path.Combine(Path.GetDirectoryName(outputPath), item.Name  == null ? item.ID : item.Name), ".stl");
+				if (first)
 				{
-					return null;
+					filename = outputPath;
+					first = false;
+				}
+
+				if (!await MeshExport.ExportMesh(item, filename))
+				{
+					badExports.Add(item.Name);
 				}
 			}
+
+			if (badExports.Count == 0)
+            {
+				return null;
+            }
 
 			return new List<ValidationError>()
 			{
 				new ValidationError(ValidationErrors.ItemToSTLExportInvalid)
 				{
-					Error = "Item cannot be exported as STL".Localize(),
-					Details = firstItem?.ToString() ?? ""
+					Error = "One or more items cannot be exported as STL".Localize(),
+					Details = String.Join("\n", badExports.ToArray())
 				}
 			};
 		}

@@ -37,6 +37,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -55,6 +56,13 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig()
 		{
 			this.Connection = new PrinterConnection(this);
+		}
+
+		public bool PrintButtonEnabled()
+		{
+			var printingOrPause = this.Connection.Printing || this.Connection.Paused;
+			var errors = this.Validate();
+			return !printingOrPause && !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
