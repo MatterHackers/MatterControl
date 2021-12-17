@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 			// Persist all pending changes in all workspaces to disk
 			foreach (var workspace in this.Workspaces.ToArray())
 			{
-				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
 			}
 
 			// Project workspace definitions to serializable structure
@@ -2014,19 +2014,19 @@ namespace MatterHackers.MatterControl
 				translationFilePath = Path.Combine("Translations", "Master.txt");
 			}
 
-			if (File.Exists(translationFilePath))
+			if (StaticData.Instance.FileExists(translationFilePath))
 			{
 				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
 				{
 					using (var streamReader = new StreamReader(stream))
 					{
-						TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader);
+						TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, twoLetterIsoLanguageName);
 					}
 				}
 			}
 			else
             {
-				TranslationMap.ActiveTranslationMap = new TranslationMap();
+				TranslationMap.ActiveTranslationMap = new TranslationMap(twoLetterIsoLanguageName);
 			}
 		}
 
