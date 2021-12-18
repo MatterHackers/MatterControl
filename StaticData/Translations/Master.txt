@@ -73,6 +73,12 @@ Translated:A valid email address
 English:About
 Translated:About
 
+English:About Braille
+Translated:About Braille
+
+English:ABS Temperature Tower
+Translated:ABS Temperature Tower
+
 English:Action
 Translated:Action
 
@@ -82,17 +88,26 @@ Translated:Action Recommended
 English:Add
 Translated:Add
 
+English:Add all the items on the bed to the print queue.
+Translated:Add all the items on the bed to the print queue.
+
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 Translated:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 
 English:Add Base
 Translated:Add Base
 
+English:Add Hook
+Translated:Add Hook
+
 English:Add New Setting
 Translated:Add New Setting
 
 English:Add to Bed
 Translated:Add to Bed
+
+English:Add to Queue
+Translated:Add to Queue
 
 English:Add to Selection
 Translated:Add to Selection
@@ -130,11 +145,20 @@ Translated:All Heaters
 English:Allow M300 commands (play sound) to be sent to the firmware. Disable to turn off sounds.
 Translated:Allow M300 commands (play sound) to be sent to the firmware. Disable to turn off sounds.
 
+English:Alternate Centering
+Translated:Alternate Centering
+
 English:Always Centered In Back
 Translated:Always Centered In Back
 
 English:An image must be selected
 Translated:An image must be selected
+
+English:Anchor
+Translated:Anchor
+
+English:Angle
+Translated:Angle
 
 English:Application Cache
 Translated:Application Cache
@@ -169,11 +193,41 @@ Translated:Auto Uppercase
 English:Automatic
 Translated:Automatic
 
+English:Autopilot
+Translated:Autopilot
+
+English:Autopilot Multi
+Translated:Autopilot Multi
+
 English:Avoid Crossing Perimeters
 Translated:Avoid Crossing Perimeters
 
+English:Axis
+Translated:Axis
+
+English:Axis Position
+Translated:Axis Position
+
+English:Back
+Translated:Back
+
+English:Back Ratio
+Translated:Back Ratio
+
+English:Backing Depth
+Translated:Backing Depth
+
+English:Backlash
+Translated:Backlash
+
 English:Backup Firmware Before Update
 Translated:Backup Firmware Before Update
+
+English:Base
+Translated:Base
+
+English:Base Height
+Translated:Base Height
 
 English:Base Layers
 Translated:Base Layers
@@ -199,8 +253,29 @@ Translated:Bed Size
 English:Bed Temperature
 Translated:Bed Temperature
 
+English:Bed Wipe Temperature
+Translated:Bed Wipe Temperature
+
 English:Behavior
 Translated:Behavior
+
+English:Bend Direction
+Translated:Bend Direction
+
+English:Bevel Inset
+Translated:Bevel Inset
+
+English:Bevel Start
+Translated:Bevel Start
+
+English:Bevel Steps
+Translated:Bevel Steps
+
+English:Bevel Top
+Translated:Bevel Top
+
+English:Bottom Inset
+Translated:Bottom Inset
 
 English:Bottom Solid Layers
 Translated:Bottom Solid Layers
@@ -223,8 +298,26 @@ Translated:Build Height
 English:Calculate and transmit a standard rep-rap checksum for all commands.
 Translated:Calculate and transmit a standard rep-rap checksum for all commands.
 
+English:Calculate Path
+Translated:Calculate Path
+
+English:Calculation Height
+Translated:Calculation Height
+
 English:Calibration
 Translated:Calibration
+
+English:Calibration Face
+Translated:Calibration Face
+
+English:Calibration Faces
+Translated:Calibration Faces
+
+English:Calibration Parts
+Translated:Calibration Parts
+
+English:Calibration Tab
+Translated:Calibration Tab
 
 English:Cancel
 Translated:Cancel
@@ -235,8 +328,23 @@ Translated:Cancel command
 English:Cancel G-Code
 Translated:Cancel G-Code
 
+English:Center Hole Diameter
+Translated:Center Hole Diameter
+
+English:Center Parts Before Printing
+Translated:Center Parts Before Printing
+
 English:Centered In Back
 Translated:Centered In Back
+
+English:Centering
+Translated:Centering
+
+English:Change Amount
+Translated:Change Amount
+
+English:Changing Height
+Translated:Changing Height
 
 English:Check For Update
 Translated:Check For Update
@@ -253,11 +361,17 @@ Translated:Choose the command for showing the print progress on the printer's LC
 English:circular
 Translated:circular
 
+English:Circular Pitch
+Translated:Circular Pitch
+
 English:Clean Filament Page
 Translated:Clean Filament Page
 
 English:Clear
 Translated:Clear
+
+English:Clear Bed
+Translated:Clear Bed
 
 English:Clear Bed G-Code
 Translated:Clear Bed G-Code
@@ -265,11 +379,17 @@ Translated:Clear Bed G-Code
 English:Clear Cache
 Translated:Clear Cache
 
+English:Clear Height
+Translated:Clear Height
+
 English:Clear selection
 Translated:Clear selection
 
 English:Clear ZOffset
 Translated:Clear ZOffset
+
+English:Clearance
+Translated:Clearance
 
 English:Click to edit values
 Translated:Click to edit values
@@ -279,6 +399,9 @@ Translated:Click to go back
 
 English:Close
 Translated:Close
+
+English:Cloud Library
+Translated:Cloud Library
 
 English:Coast At End
 Translated:Coast At End
@@ -337,6 +460,9 @@ Translated:Convert to Wipe Tower
 English:Cooling
 Translated:Cooling
 
+English:Copy
+Translated:Copy
+
 English:Copy all settings including hardware calibration
 Translated:Copy all settings including hardware calibration
 
@@ -346,8 +472,14 @@ Translated:Copy and recalibrate
 English:Copy everything but hardware specific calibration settings
 Translated:Copy everything but hardware specific calibration settings
 
+English:Copy Mesh
+Translated:Copy Mesh
+
 English:Cost
 Translated:Cost
+
+English:Count
+Translated:Count
 
 English:count or mm
 Translated:count or mm
@@ -388,6 +520,12 @@ Translated:Creates a raft under the printed part. Useful to prevent warping when
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
 Translated:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
 
+English:Creating Gear
+Translated:Creating Gear
+
+English:Creating Threads
+Translated:Creating Threads
+
 English:Creation Data
 Translated:Creation Data
 
@@ -399,6 +537,12 @@ Translated:Curve
 
 English:Custom Points
 Translated:Custom Points
+
+English:Cut
+Translated:Cut
+
+English:Cut Height
+Translated:Cut Height
 
 English:Cylinder
 Translated:Cylinder
@@ -420,6 +564,9 @@ Translated:Density
 
 English:Depth
 Translated:Depth
+
+English:Depth Percent
+Translated:Depth Percent
 
 English:Description
 Translated:Description
@@ -445,6 +592,9 @@ Translated:Diagnostics
 English:Diameter
 Translated:Diameter
 
+English:Direction
+Translated:Direction
+
 English:Disable Fan For The First
 Translated:Disable Fan For The First
 
@@ -469,6 +619,9 @@ Translated:Distance or Loops
 English:Done
 Translated:Done
 
+English:Downloading
+Translated:Downloading
+
 English:Downloads
 Translated:Downloads
 
@@ -481,6 +634,12 @@ Translated:Duplicate
 English:Duplication
 Translated:Duplication
 
+English:Easing Option
+Translated:Easing Option
+
+English:Easing Type
+Translated:Easing Type
+
 English:Edit
 Translated:Edit
 
@@ -489,6 +648,9 @@ Translated:Edit Component
 
 English:Edit Page
 Translated:Edit Page
+
+English:Edit Radius
+Translated:Edit Radius
 
 English:Edit Selected Setting
 Translated:Edit Selected Setting
@@ -520,6 +682,12 @@ Translated:Enable this if your printer has hardware support for G30 (automatic b
 English:End G-Code
 Translated:End G-Code
 
+English:End Height Percent
+Translated:End Height Percent
+
+English:Ending Angle
+Translated:Ending Angle
+
 English:Enter Person Access Token
 Translated:Enter Person Access Token
 
@@ -531,6 +699,9 @@ Translated:Evaluate every layer for support requirements. NOTE: If there are any
 
 English:Exact clone
 Translated:Exact clone
+
+English:Expand
+Translated:Expand
 
 English:Expand Distance
 Translated:Expand Distance
@@ -580,6 +751,15 @@ Translated:Extrusion
 English:Extrusion Multiplier
 Translated:Extrusion Multiplier
 
+English:Face Orientation
+Translated:Face Orientation
+
+English:Failure Response A
+Translated:Failure Response A
+
+English:Failure Response B
+Translated:Failure Response B
+
 English:Fan
 Translated:Fan
 
@@ -604,11 +784,26 @@ Translated:File Path
 English:Fill Density
 Translated:Fill Density
 
+English:Fill Holes
+Translated:Fill Holes
+
 English:Fill Thin Gaps
 Translated:Fill Thin Gaps
 
 English:Filters
 Translated:Filters
+
+English:Final Count
+Translated:Final Count
+
+English:Final Faces
+Translated:Final Faces
+
+English:Final Vertices
+Translated:Final Vertices
+
+English:Finalized
+Translated:Finalized
 
 English:Find Slice
 Translated:Find Slice
@@ -687,6 +882,9 @@ Translated:G-Code to run when the printer is paused.
 
 English:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
 Translated:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
+
+English:Gear
+Translated:Gear
 
 English:General
 Translated:General
@@ -772,6 +970,9 @@ Translated:Heated Bed
 English:Height
 Translated:Height
 
+English:Height Percent
+Translated:Height Percent
+
 English:Help
 Translated:Help
 
@@ -780,6 +981,12 @@ Translated:HEXAGON
 
 English:History
 Translated:History
+
+English:Hold 'Shift' to scale proportionally, Type 'Esc' to cancel
+Translated:Hold 'Shift' to scale proportionally, Type 'Esc' to cancel
+
+English:Hollow
+Translated:Hollow
 
 English:Hollow Out
 Translated:Hollow Out
@@ -856,6 +1063,9 @@ Translated:Indicates that the Z axis homes the hot end away from the bed (z-max 
 English:Infill
 Translated:Infill
 
+English:Infill Amount
+Translated:Infill Amount
+
 English:Infill Angle
 Translated:Infill Angle
 
@@ -868,8 +1078,14 @@ Translated:Infill Speeds
 English:Infill Type
 Translated:Infill Type
 
+English:Inflate
+Translated:Inflate
+
 English:Inflate Path
 Translated:Inflate Path
+
+English:Initial Faces
+Translated:Initial Faces
 
 English:Initial Layer Speed
 Translated:Initial Layer Speed
@@ -877,8 +1093,17 @@ Translated:Initial Layer Speed
 English:Initial Layers
 Translated:Initial Layers
 
+English:Initial Vertices
+Translated:Initial Vertices
+
 English:Initializing Library
 Translated:Initializing Library
+
+English:Inner Gear Tooth Count
+Translated:Inner Gear Tooth Count
+
+English:Inner Style
+Translated:Inner Style
 
 English:Input Resolution
 Translated:Input Resolution
@@ -901,11 +1126,20 @@ Translated:Interface Tour
 English:Intersect
 Translated:Intersect
 
+English:Intersection
+Translated:Intersection
+
 English:Inventory
 Translated:Inventory
 
+English:Invert
+Translated:Invert
+
 English:IP Finder
 Translated:IP Finder
+
+English:Iterations
+Translated:Iterations
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -918,6 +1152,9 @@ Translated:Language
 
 English:Laser Speed
 Translated:Laser Speed
+
+English:Latitude Sides
+Translated:Latitude Sides
 
 English:Lay Flat
 Translated:Lay Flat
@@ -949,11 +1186,20 @@ Translated:left click
 English:left drag
 Translated:left drag
 
+English:Left Inset
+Translated:Left Inset
+
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
 Translated:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
 
+English:Letter
+Translated:Letter
+
 English:Leveling
 Translated:Leveling
+
+English:Leveling Data Visualizer
+Translated:Leveling Data Visualizer
 
 English:Leveling Insets
 Translated:Leveling Insets
@@ -994,14 +1240,23 @@ Translated:Load filament
 English:Load Filament Length
 Translated:Load Filament Length
 
+English:Loading
+Translated:Loading
+
 English:Loading Help
 Translated:Loading Help
+
+English:Local Library
+Translated:Local Library
 
 English:Location of the '{0}' setting
 Translated:Location of the '{0}' setting
 
 English:Lock Proportion
 Translated:Lock Proportion
+
+English:Longitude Sides
+Translated:Longitude Sides
 
 English:Lower / Deploy
 Translated:Lower / Deploy
@@ -1014,6 +1269,9 @@ Translated:M73
 
 English:Macros
 Translated:Macros
+
+English:Maintain Surface
+Translated:Maintain Surface
 
 English:Make
 Translated:Make
@@ -1060,6 +1318,9 @@ Translated:Max Acceleration
 English:Max Ratio
 Translated:Max Ratio
 
+English:Max Temperature
+Translated:Max Temperature
+
 English:Max Velocity
 Translated:Max Velocity
 
@@ -1075,6 +1336,9 @@ Translated:Merge
 English:Merge Overlapping Lines
 Translated:Merge Overlapping Lines
 
+English:Merge Vertices
+Translated:Merge Vertices
+
 English:Mesh
 Translated:Mesh
 
@@ -1083,6 +1347,12 @@ Translated:Mesh Analysis
 
 English:middle drag
 Translated:middle drag
+
+English:Min Sides Per Rotation
+Translated:Min Sides Per Rotation
+
+English:Min Surface Area
+Translated:Min Surface Area
 
 English:Minimum Avoid Travel Requiring Retraction
 Translated:Minimum Avoid Travel Requiring Retraction
@@ -1105,6 +1375,9 @@ Translated:Minimum Speed Always
 English:Mirror
 Translated:Mirror
 
+English:Mirror On
+Translated:Mirror On
+
 English:mm
 Translated:mm
 
@@ -1123,6 +1396,9 @@ Translated:mm/s^2
 English:mm/s²
 Translated:mm/s²
 
+English:Mode
+Translated:Mode
+
 English:Model
 Translated:Model
 
@@ -1140,6 +1416,9 @@ Translated:Mouse
 
 English:Move
 Translated:Move
+
+English:Move Direction
+Translated:Move Direction
 
 English:Move Part
 Translated:Move Part
@@ -1168,11 +1447,17 @@ Translated:Move Z negative
 English:Move Z positive
 Translated:Move Z positive
 
+English:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
+Translated:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
+
 English:Movement
 Translated:Movement
 
 English:Movement Requests
 Translated:Movement Requests
+
+English:Movement Speed
+Translated:Movement Speed
 
 English:Moves
 Translated:Moves
@@ -1194,6 +1479,9 @@ Translated:Name
 
 English:Networked Printing
 Translated:Networked Printing
+
+English:New Design
+Translated:New Design
 
 English:New Printer Name
 Translated:New Printer Name
@@ -1231,11 +1519,26 @@ Translated:Nozzle Diameter
 English:Nozzle Offsets
 Translated:Nozzle Offsets
 
+English:Nozzle Width
+Translated:Nozzle Width
+
+English:Num Cells
+Translated:Num Cells
+
 English:Number of Samples
 Translated:Number of Samples
 
+English:Number Printed
+Translated:Number Printed
+
 English:Off
 Translated:Off
+
+English:Offset
+Translated:Offset
+
+English:Offset For Next Push
+Translated:Offset For Next Push
 
 English:'Ok' Responses
 Translated:'Ok' Responses
@@ -1258,14 +1561,29 @@ Translated:Open Folder
 English:Open Package
 Translated:Open Package
 
+English:Open Recent
+Translated:Open Recent
+
 English:Options
 Translated:Options
 
 English:Other Speeds
 Translated:Other Speeds
 
+English:Outer Diameter
+Translated:Outer Diameter
+
+English:Outer Edge Width
+Translated:Outer Edge Width
+
+English:Outer Style
+Translated:Outer Style
+
 English:Outline Path
 Translated:Outline Path
+
+English:Outline Width
+Translated:Outline Width
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
@@ -1279,6 +1597,9 @@ Translated:Outside Perimeter
 English:Outside Perimeters
 Translated:Outside Perimeters
 
+English:Override Radius
+Translated:Override Radius
+
 English:Pan
 Translated:Pan
 
@@ -1287,6 +1608,15 @@ Translated:Pan View
 
 English:Part Cooling Fan
 Translated:Part Cooling Fan
+
+English:Part(s) to Subtract
+Translated:Part(s) to Subtract
+
+English:Part(s) to Subtract and Replace
+Translated:Part(s) to Subtract and Replace
+
+English:Paste
+Translated:Paste
 
 English:Path
 Translated:Path
@@ -1309,14 +1639,35 @@ Translated:Perimeter Speeds
 English:Perimeters
 Translated:Perimeters
 
+English:PETG Temperature Tower
+Translated:PETG Temperature Tower
+
 English:Pinch
 Translated:Pinch
+
+English:Pipe Works
+Translated:Pipe Works
+
+English:Pitch
+Translated:Pitch
+
+English:Pitch Radius
+Translated:Pitch Radius
+
+English:Pixels Per mm
+Translated:Pixels Per mm
+
+English:PLA Temperature Tower
+Translated:PLA Temperature Tower
 
 English:Placement
 Translated:Placement
 
 English:Plane Cut
 Translated:Plane Cut
+
+English:Plating History
+Translated:Plating History
 
 English:Play a Sound
 Translated:Play a Sound
@@ -1336,8 +1687,14 @@ Translated:Port Wizard
 English:Possible Unsupported Parts Detected
 Translated:Possible Unsupported Parts Detected
 
+English:Prefered Radius
+Translated:Prefered Radius
+
 English:Preheat
 Translated:Preheat
+
+English:Pressure Angle
+Translated:Pressure Angle
 
 English:Primitive Shapes
 Translated:Primitive Shapes
@@ -1351,8 +1708,20 @@ Translated:Print
 English:Print Center
 Translated:Print Center
 
+English:Print Delay
+Translated:Print Delay
+
+English:Print History
+Translated:Print History
+
 English:Print Notification Settings
 Translated:Print Notification Settings
+
+English:Print Priming Object
+Translated:Print Priming Object
+
+English:Print Queue
+Translated:Print Queue
 
 English:Print Recovery
 Translated:Print Recovery
@@ -1387,6 +1756,15 @@ Translated:Printers
 English:Printing
 Translated:Printing
 
+English:Prints To Run
+Translated:Prints To Run
+
+English:Pro Only
+Translated:Pro Only
+
+English:Pro Tools
+Translated:Pro Tools
+
 English:Probe
 Translated:Probe
 
@@ -1402,6 +1780,18 @@ Translated:Progress Reporting
 English:Properties
 Translated:Properties
 
+English:Purchased
+Translated:Purchased
+
+English:Push Direction
+Translated:Push Direction
+
+English:Push Speed
+Translated:Push Speed
+
+English:Push With Hotend
+Translated:Push With Hotend
+
 English:Pyramid
 Translated:Pyramid
 
@@ -1411,6 +1801,9 @@ Translated:Quality
 English:Radial Array
 Translated:Radial Array
 
+English:Radius
+Translated:Radius
+
 English:Raft
 Translated:Raft
 
@@ -1419,6 +1812,9 @@ Translated:Raise / Stow
 
 English:Randomized
 Translated:Randomized
+
+English:Ratio
+Translated:Ratio
 
 English:Ratio or %
 Translated:Ratio or %
@@ -1450,11 +1846,26 @@ Translated:Reloading
 English:Remove
 Translated:Remove
 
+English:Remove Mode
+Translated:Remove Mode
+
+English:Remove Subtract Objects
+Translated:Remove Subtract Objects
+
 English:Rename
 Translated:Rename
 
+English:Render As Braille
+Translated:Render As Braille
+
+English:Render Leveling Data on the bed
+Translated:Render Leveling Data on the bed
+
 English:Repair
 Translated:Repair
+
+English:Replacing
+Translated:Replacing
 
 English:Report a Bug
 Translated:Report a Bug
@@ -1504,8 +1915,14 @@ Translated:Retractions
 English:Revolve
 Translated:Revolve
 
+English:Right
+Translated:Right
+
 English:right drag
 Translated:right drag
+
+English:Right Inset
+Translated:Right Inset
 
 English:Ring
 Translated:Ring
@@ -1513,8 +1930,35 @@ Translated:Ring
 English:Rotate
 Translated:Rotate
 
+English:Rotate About
+Translated:Rotate About
+
+English:Rotate Part
+Translated:Rotate Part
+
 English:Rotate View
 Translated:Rotate View
+
+English:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
+Translated:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
+
+English:Rotation Distance
+Translated:Rotation Distance
+
+English:Rotation Offset
+Translated:Rotation Offset
+
+English:Rotation Slices
+Translated:Rotation Slices
+
+English:Rotations
+Translated:Rotations
+
+English:Round
+Translated:Round
+
+English:Round Segments
+Translated:Round Segments
 
 English:Rubber Band Selection
 Translated:Rubber Band Selection
@@ -1540,6 +1984,9 @@ Translated:Sailfish Communication
 English:Save
 Translated:Save
 
+English:Save As
+Translated:Save As
+
 English:Saving
 Translated:Saving
 
@@ -1548,6 +1995,12 @@ Translated:SCAD Script
 
 English:Scale
 Translated:Scale
+
+English:Scale Offset
+Translated:Scale Offset
+
+English:Scale Type
+Translated:Scale Type
 
 English:Seam Placement
 Translated:Seam Placement
@@ -1558,6 +2011,9 @@ Translated:Search
 English:seconds
 Translated:seconds
 
+English:Sections
+Translated:Sections
+
 English:Select a printer to continue
 Translated:Select a printer to continue
 
@@ -1567,11 +2023,17 @@ Translated:Select cell to edit
 English:Select Parts
 Translated:Select Parts
 
+English:Select Range
+Translated:Select Range
+
 English:Select this option only if your printer does not appear in the list
 Translated:Select this option only if your printer does not appear in the list
 
 English:Selected Object Options
 Translated:Selected Object Options
+
+English:Selection
+Translated:Selection
 
 English:Send
 Translated:Send
@@ -1590,6 +2052,9 @@ Translated:Serial Port
 
 English:Services
 Translated:Services
+
+English:Set Temperature
+Translated:Set Temperature
 
 English:Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.
 Translated:Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.
@@ -1611,6 +2076,9 @@ Translated:Setup Wizard
 
 English:Share
 Translated:Share
+
+English:Shared with Me
+Translated:Shared with Me
 
 English:Shop
 Translated:Shop
@@ -1651,6 +2119,9 @@ Translated:Show Welcome Message
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 Translated:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 
+English:Sides
+Translated:Sides
+
 English:Sign Out
 Translated:Sign Out
 
@@ -1669,11 +2140,17 @@ Translated:Slice Advanced
 English:Slice Engine
 Translated:Slice Engine
 
+English:Slice Height
+Translated:Slice Height
+
 English:Slice Settings
 Translated:Slice Settings
 
 English:Slow Down If Layer Print Time Is Below
 Translated:Slow Down If Layer Print Time Is Below
+
+English:Smooth Distance
+Translated:Smooth Distance
 
 English:Smooth Path
 Translated:Smooth Path
@@ -1693,6 +2170,9 @@ Translated:Sorting
 English:Source
 Translated:Source
 
+English:Source Polygon Count
+Translated:Source Polygon Count
+
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
 Translated:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
 
@@ -1708,6 +2188,9 @@ Translated:Sphere
 English:Spiral Vase
 Translated:Spiral Vase
 
+English:Split Mesh
+Translated:Split Mesh
+
 English:Start End Overlap
 Translated:Start End Overlap
 
@@ -1717,8 +2200,23 @@ Translated:Start G-Code
 English:Start Height
 Translated:Start Height
 
+English:Start Height Percent
+Translated:Start Height Percent
+
+English:Start Percent
+Translated:Start Percent
+
 English:Start Print
 Translated:Start Print
+
+English:Start Printing
+Translated:Start Printing
+
+English:Start printing the current bed.
+Translated:Start printing the current bed.
+
+English:Start the printer(s) that are ready to print.
+Translated:Start the printer(s) that are ready to print.
 
 English:Starting Angle
 Translated:Starting Angle
@@ -1738,6 +2236,9 @@ Translated:Stretch Y
 English:Stretch Z
 Translated:Stretch Z
 
+English:Style
+Translated:Style
+
 English:Subtract
 Translated:Subtract
 
@@ -1753,6 +2254,9 @@ Translated:Support Material
 English:Support Type
 Translated:Support Type
 
+English:Surfaced Editors
+Translated:Surfaced Editors
+
 English:Switch
 Translated:Switch
 
@@ -1761,6 +2265,12 @@ Translated:Sync Dashboard
 
 English:Sync To Print
 Translated:Sync To Print
+
+English:Target Count
+Translated:Target Count
+
+English:Target Percent
+Translated:Target Percent
 
 English:Temperature
 Translated:Temperature
@@ -1771,6 +2281,9 @@ Translated:Temperature Requests
 English:Temperature Responses
 Translated:Temperature Responses
 
+English:Temperature Tower
+Translated:Temperature Tower
+
 English:Terminal
 Translated:Terminal
 
@@ -1779,6 +2292,9 @@ Translated:Text
 
 English:Text Size
 Translated:Text Size
+
+English:Text2
+Translated:Text2
 
 English:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
 Translated:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
@@ -2113,6 +2629,12 @@ Translated:This is used to increase the number of downloads allowed when browsin
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 
+English:Thread Scale
+Translated:Thread Scale
+
+English:Threads
+Translated:Threads
+
 English:Thumbnails
 Translated:Thumbnails
 
@@ -2121,6 +2643,12 @@ Translated:Time For Extra Length
 
 English:Time Multiplier
 Translated:Time Multiplier
+
+English:Tip Scale
+Translated:Tip Scale
+
+English:Tip Segments
+Translated:Tip Segments
 
 English:TM
 Translated:TM
@@ -2131,6 +2659,12 @@ Translated:Toggle Selection
 English:Tool Bar Options
 Translated:Tool Bar Options
 
+English:Tooth Count
+Translated:Tooth Count
+
+English:Top Inset
+Translated:Top Inset
+
 English:Top Solid Infill
 Translated:Top Solid Infill
 
@@ -2139,6 +2673,9 @@ Translated:Top Solid Layers
 
 English:Torus
 Translated:Torus
+
+English:Total Time Printed
+Translated:Total Time Printed
 
 English:Touch Screen Mode
 Translated:Touch Screen Mode
@@ -2151,6 +2688,9 @@ Translated:Transform Wrapper
 
 English:Translate
 Translated:Translate
+
+English:Translation
+Translated:Translation
 
 English:Transparent
 Translated:Transparent
@@ -2185,6 +2725,9 @@ Translated:Turntable Mode
 English:Twist
 Translated:Twist
 
+English:Twist Right
+Translated:Twist Right
+
 English:Undo
 Translated:Undo
 
@@ -2206,6 +2749,9 @@ Translated:Unload Filament Length
 English:Unpin
 Translated:Unpin
 
+English:Up
+Translated:Up
+
 English:Update
 Translated:Update
 
@@ -2224,14 +2770,23 @@ Translated:Use G0
 English:Use G0 for moves rather than G1.
 Translated:Use G0 for moves rather than G1.
 
+English:Use Grade 2
+Translated:Use Grade 2
+
 English:User Control
 Translated:User Control
 
 English:Utilize High Res Monitors
 Translated:Utilize High Res Monitors
 
+English:Validate After Clear
+Translated:Validate After Clear
+
 English:Validate Calibration Before Printing
 Translated:Validate Calibration Before Printing
+
+English:Validate G Code
+Translated:Validate G Code
 
 English:Validate Layer Height
 Translated:Validate Layer Height
@@ -2281,6 +2836,15 @@ Translated:WARNING: In order to perform print recovery, your printer must move d
 English:Wedge
 Translated:Wedge
 
+English:Weld Edges
+Translated:Weld Edges
+
+English:Weld Tolerance
+Translated:Weld Tolerance
+
+English:Weld Vertices
+Translated:Weld Vertices
+
 English:What to do when there is not a good place to hide the seam.
 Translated:What to do when there is not a good place to hide the seam.
 
@@ -2299,11 +2863,20 @@ Translated:When upgrading to new firmware, first save a backup of the current fi
 English:Width
 Translated:Width
 
+English:Width Percent
+Translated:Width Percent
+
+English:Wipe Tower Size
+Translated:Wipe Tower Size
+
 English:Write Filter
 Translated:Write Filter
 
 English:X and Y Distance
 Translated:X and Y Distance
+
+English:XY Calibration
+Translated:XY Calibration
 
 English:You are connected to the Emulator not an actual printer.
 Translated:You are connected to the Emulator not an actual printer.
@@ -2340,4 +2913,7 @@ Translated:Zoom to window
 
 English:Zoom View
 Translated:Zoom View
+
+English:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button
+Translated:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button
 

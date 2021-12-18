@@ -31,6 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -356,7 +357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Select Parts".Localize(),
-				Margin = theme.ButtonSpacing
+				Margin = theme.ButtonSpacing,
 			};
 			
 			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
@@ -455,8 +456,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tumbleCubeCenter.X += bottomButtonOffset;
 
 				renderRoundedLine(18, 101);
-				
+
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
+
+				// ImageIO.SaveImageData("C:\\temp\\test.png", hudBackground.BackBuffer);
 			};
 
 			// add the home button
@@ -494,6 +497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
+				//DoubleBuffer = true,
 #if !INCLUDE_ORTHOGRAPHIC
 				BorderColor = hudStrokeColor,
 #endif
