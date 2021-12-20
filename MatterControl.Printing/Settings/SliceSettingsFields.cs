@@ -547,7 +547,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.external_perimeters_first,
 					PresentationName = "External Perimeters First".Localize(),
-					HelpText = "Forces external perimeters to be printed first. By default, they will print last.".Localize(),
+					HelpText = "Forces external perimeters to be printed first. By default, they will print last. Using 3 or more perimeters will result in better quality.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",

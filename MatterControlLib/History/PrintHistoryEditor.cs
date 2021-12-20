@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 						AddSelection(menu, "Flooded Hot End".Localize());
 						AddSelection(menu, "Power Outage".Localize());
 					});
-				popupMenu.CreateSubMenu("Computer / MatterControl    ".Localize(),
+				popupMenu.CreateSubMenu("Computer / MatterControl".Localize() + "    ",
 					theme,
 					(menu) =>
 					{
