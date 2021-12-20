@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new WaitForTempPage(
 				this,
 				"Heating the printer".Localize(),
-				((extruderCount == 1) ? "Waiting for the hotend to heat to ".Localize() + temps[0] + "°C.\n" : "Waiting for the hotends to heat up.".Localize())
+				((extruderCount == 1) ? "Waiting for the hotend to heat to".Localize() + " " + temps[0] + "°C.\n" : "Waiting for the hotends to heat up.".Localize())
 					+ "This will ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 					+ "\n"
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"

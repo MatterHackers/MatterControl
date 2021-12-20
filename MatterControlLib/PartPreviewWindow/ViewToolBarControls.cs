@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly IconButton undoButton;
 		private readonly IconButton redoButton;
 
-		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
+		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 		{
 			this.undoBuffer = undoBuffer;
 			this.IsPrinterMode = isPrinterType;
@@ -305,13 +305,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			UpdateToolbarButtons(null, null);
+
+			this.MouseDown += (s, mouseEvent) =>
+			{
+				if (mouseEvent.Button == MouseButtons.Right)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						var popupMenu = GenerateToolBarOptionsMenu(theme);
+						popupMenu.ShowMenu(this, mouseEvent);
+					});
+				}
+			};
 		}
 
-		private string Collapsed;
+        private string Collapsed;
 		private string Expanded;
 		private string Hidden;
 
-		private GuiWidget GenerateToolBarOptionsMenu(ThemeConfig theme)
+		private PopupMenu GenerateToolBarOptionsMenu(ThemeConfig theme)
 		{
 			var popupMenu = new PopupMenu(theme)
 			{

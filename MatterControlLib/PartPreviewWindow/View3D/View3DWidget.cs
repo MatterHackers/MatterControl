@@ -26,16 +26,8 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
+// #define INCLUDE_ORTHOGRAPHIC
+
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
@@ -58,10 +50,19 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class View3DWidget : GuiWidget, IDrawable
+    public class View3DWidget : GuiWidget, IDrawable
 	{
 		private bool deferEditorTillMouseUp = false;
 
@@ -322,7 +323,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch, 
 				HAnchor = HAnchor.Stretch,
 				Selectable = false,
+				// DoubleBuffer = true
 			});
+
+			// hudBackground.BackBuffer.SetRecieveBlender(new BlenderBGRA());
 
 			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
 			{
@@ -353,7 +357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Select Parts".Localize(),
-				Margin = theme.ButtonSpacing
+				Margin = theme.ButtonSpacing,
 			};
 			
 			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
@@ -430,8 +434,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderRoundedGroup(.3, .25);
 				renderRoundedGroup(.1, .5 + .1);
 
-				// render the perspective and turntable group background				
-				// renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
+				// render the perspective and turntable group background
+#if INCLUDE_ORTHOGRAPHIC
+				renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
+#endif
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -450,8 +456,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tumbleCubeCenter.X += bottomButtonOffset;
 
 				renderRoundedLine(18, 101);
-				
+
 				// e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
+
+				// ImageIO.SaveImageData("C:\\temp\\test.png", hudBackground.BackBuffer);
 			};
 
 			// add the home button
@@ -489,11 +497,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
+				//DoubleBuffer = true,
+#if !INCLUDE_ORTHOGRAPHIC
 				BorderColor = hudStrokeColor,
+#endif
 			};
 
-			// AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
+#if INCLUDE_ORTHOGRAPHIC
+			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
+#else
 			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .30));
+#endif
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
@@ -506,32 +520,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			if (false)
+#if INCLUDE_ORTHOGRAPHIC
+			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
+			TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
+			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
-				var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
-				TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
-				var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
+				ToolTipText = "Perspective Mode".Localize(),
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				SiblingRadioButtonList = new List<GuiWidget>(),
+				Checked = turntableEnabled,
+			};
+			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
+			projectionButton.CheckedStateChanged += (s, e) =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
+				TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
+				if (true)
 				{
-					ToolTipText = "Perspective Mode".Localize(),
-					Margin = theme.ButtonSpacing,
-					ToggleButton = true,
-					SiblingRadioButtonList = new List<GuiWidget>(),
-					Checked = turntableEnabled,
-				};
-				AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
-				projectionButton.CheckedStateChanged += (s, e) =>
-				{
-					UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
-					TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
-					if (true)
-					{
-					// Make sure the view has up going the right direction
-					// WIP, this should fix the current rotation rather than reset the view
-					ResetView();
-					}
-					Invalidate();
-				};
-			}
+						// Make sure the view has up going the right direction
+						// WIP, this should fix the current rotation rather than reset the view
+						ResetView();
+				}
+				Invalidate();
+			};
+#endif
 
 			var startHeight = 180;
 			var ySpacing = 40;
@@ -1362,7 +1375,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool InSelectionBounds(BvhIterator iterator)
 		{
 			var world = sceneContext?.World;
-			if (world == null || iterator == null)
+			if (world == null 
+				|| iterator == null
+				|| iterator.Bvh == null)
             {
 				return false;
             }

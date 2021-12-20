@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 			// Persist all pending changes in all workspaces to disk
 			foreach (var workspace in this.Workspaces.ToArray())
 			{
-				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
 			}
 
 			// Project workspace definitions to serializable structure
@@ -598,9 +598,17 @@ namespace MatterHackers.MatterControl
 					Title = "Print".Localize(),
 					Shortcut = "Ctrl+P",
 					Action = view3DWidget.PushToPrinterAndPrint,
-					IsEnabled = () => sceneContext.EditableScene
-						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+					IsEnabled = () =>
+					{
+						if (sceneContext.Printer != null)
+                        {
+							return sceneContext.Printer.PrintButtonEnabled();
+                        }
+
+						return sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase));
+					},
 				},
 				new NamedActionGroup()
 				{
@@ -2003,15 +2011,22 @@ namespace MatterHackers.MatterControl
 
 			if (twoLetterIsoLanguageName == "en")
 			{
-				TranslationMap.ActiveTranslationMap = new TranslationMap();
+				translationFilePath = Path.Combine("Translations", "Master.txt");
 			}
-			else
+
+			if (StaticData.Instance.FileExists(translationFilePath))
 			{
 				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
-				using (var streamReader = new StreamReader(stream))
 				{
-					TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, UserSettings.Instance.Language);
+					using (var streamReader = new StreamReader(stream))
+					{
+						TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, twoLetterIsoLanguageName);
+					}
 				}
+			}
+			else
+            {
+				TranslationMap.ActiveTranslationMap = new TranslationMap(twoLetterIsoLanguageName);
 			}
 		}
 

@@ -386,11 +386,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
 			graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
 
-			string toolTitle = string.Format("{0} {1}", "Tool ".Localize(), toolIndex + 1);
+			string toolTitle = string.Format("{0} {1}", "Tool".Localize(), toolIndex + 1);
 
 			if (toolIndex == 2)
 			{
-				toolTitle = "Tools ".Localize() + "1 & 2";
+				toolTitle = "Tools".Localize() + " 1 & 2";
 			}
 
 			var stringPrinter = new TypeFacePrinter(toolTitle, theme.DefaultFontSize, bold: true);

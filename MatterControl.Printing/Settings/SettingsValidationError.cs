@@ -67,11 +67,11 @@ namespace MatterHackers.MatterControl
 				setingsSectionName = "Slice Settings";
 			}
 
-			return "Location of the '{0}' setting".Localize().FormatWith(settingData.PresentationName) + ":"
+			return "Location of the '{0}' setting".Localize().FormatWith(settingData.PresentationName.Localize()) + ":"
 				 + "\n" + setingsSectionName.Localize()
-				 + "\n  - " + settingData.OrganizerGroup.Category.Name
-				 + "\n    - " + settingData.OrganizerGroup.Name
-				 + "\n      - " + settingData.PresentationName;
+				 + "\n  - " + settingData.OrganizerGroup.Category.Name.Localize()
+				 + "\n    - " + settingData.OrganizerGroup.Name.Localize()
+				 + "\n      - " + settingData.PresentationName.Localize();
 		}
 	}
 }

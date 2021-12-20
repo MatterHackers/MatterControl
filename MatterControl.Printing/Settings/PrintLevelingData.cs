@@ -116,23 +116,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 Position = new double[] { extraXPosition, vertices[0].Position[1] }
             });
 
-            var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
-
-            // make all the triangle planes for these triangles
-            foreach (var triangle in triangles.Cells)
+            var positions = new List<(Vector3, Vector3, Vector3)>();
+            try
             {
-                var p0 = triangle.Vertices[0].Position;
-                var p1 = triangle.Vertices[1].Position;
-                var p2 = triangle.Vertices[2].Position;
-                if (p0[0] != extraXPosition && p1[0] != extraXPosition && p2[0] != extraXPosition)
+                var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
+
+                // make all the triangle planes for these triangles
+                foreach (var triangle in triangles.Cells)
                 {
-                    var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
-                    var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
-                    var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
-                    // add all the regions
-                    yield return (v0, v1, v2);
+                    var p0 = triangle.Vertices[0].Position;
+                    var p1 = triangle.Vertices[1].Position;
+                    var p2 = triangle.Vertices[2].Position;
+                    if (p0[0] != extraXPosition && p1[0] != extraXPosition && p2[0] != extraXPosition)
+                    {
+                        var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
+                        var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
+                        var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
+                        // add all the regions
+                        positions.Add((v0, v1, v2));
+                    }
                 }
             }
+            catch
+            {
+            }
+
+            foreach(var position in positions)
+            {
+                yield return position;
+            }
         }
-	}
+    }
 }
