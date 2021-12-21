@@ -178,6 +178,9 @@ Translated:Apply
 English:Apply changes to this print
 Translated:Apply changes to this print
 
+English:Are you sure you want to delete printer '{0}'?
+Translated:Are you sure you want to delete printer '{0}'?
+
 English:Arrange All Parts
 Translated:Arrange All Parts
 
@@ -475,6 +478,9 @@ Translated:Connected to Emulator
 English:Connection Failed
 Translated:Connection Failed
 
+English:Continue
+Translated:Continue
+
 English:Controls
 Translated:Controls
 
@@ -594,6 +600,15 @@ Translated:Default Acceleration
 
 English:Define New
 Translated:Define New
+
+English:Delete
+Translated:Delete
+
+English:Delete Printer
+Translated:Delete Printer
+
+English:Delete Printer?
+Translated:Delete Printer?
 
 English:Delete selection
 Translated:Delete selection
@@ -1150,6 +1165,9 @@ Translated:Hotend Temperature
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal for cloning settings across different physical printers
 
+English:if connected
+Translated:if connected
+
 English:If set, the printer will automatically attempt to connect when selected.
 Translated:If set, the printer will automatically attempt to connect when selected.
 
@@ -1176,6 +1194,12 @@ Translated:Import
 
 English:Import Printer
 Translated:Import Printer
+
+English:Import Successful
+Translated:Import Successful
+
+English:Import Wizard
+Translated:Import Wizard
 
 English:In / Out Indicators
 Translated:In / Out Indicators
@@ -1447,6 +1471,9 @@ Translated:Make Selection
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:Make the first layer on top of partial infill use the speed and fan for bridging.
 
+English:Manually Configure Connection
+Translated:Manually Configure Connection
+
 English:MarchingSquares
 Translated:MarchingSquares
 
@@ -1470,6 +1497,9 @@ Translated:MatterControl Help
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl is made possible by the team at MatterHackers and other open source software
+
+English:MatterControl will now attempt to auto-detect your printer.
+Translated:MatterControl will now attempt to auto-detect your printer.
 
 English:Max Acceleration
 Translated:Max Acceleration
@@ -1654,6 +1684,9 @@ Translated:New Printer Name
 English:Next
 Translated:Next
 
+English:No
+Translated:No
+
 English:No Color
 Translated:No Color
 
@@ -1740,6 +1773,9 @@ Translated:Open Recent
 
 English:Options
 Translated:Options
+
+English:or
+Translated:or
 
 English:Other Speeds
 Translated:Other Speeds
@@ -1858,6 +1894,9 @@ Translated:Play a Sound
 English:Play a sound for notifications
 Translated:Play a sound for notifications
 
+English:Please Confirm
+Translated:Please Confirm
+
 English:Plugins
 Translated:Plugins
 
@@ -1878,6 +1917,9 @@ Translated:Preheat
 
 English:Preparing To Print
 Translated:Preparing To Print
+
+English:Press
+Translated:Press
 
 English:Pressure Angle
 Translated:Pressure Angle
@@ -2281,6 +2323,9 @@ Translated:Sets MatterControl to use s3g communication method. (You must disconn
 English:Settings
 Translated:Settings
 
+English:Settings Update Available
+Translated:Settings Update Available
+
 English:Settings View Options
 Translated:Settings View Options
 
@@ -2343,6 +2388,9 @@ Translated:Sign Out
 
 English:Simple Arduino
 Translated:Simple Arduino
+
+English:Skip Connection Setup
+Translated:Skip Connection Setup
 
 English:Skirt
 Translated:Skirt
@@ -2577,6 +2625,9 @@ Translated:The color of the second material (extruder 2).
 
 English:The date this file was originally created.
 Translated:The date this file was originally created.
+
+English:The default settings for this printer have changed and can be updated
+Translated:The default settings for this printer have changed and can be updated
 
 English:The deviation from the last measured value allowed without re-calculating the leveling solution.
 Translated:The deviation from the last measured value allowed without re-calculating the leveling solution.
@@ -3058,6 +3109,9 @@ Translated:Unload Filament Length
 English:Unpin
 Translated:Unpin
 
+English:Unplug printer USB cable from computer
+Translated:Unplug printer USB cable from computer
+
 English:Up
 Translated:Up
 
@@ -3066,6 +3120,9 @@ Translated:Update
 
 English:Update Available
 Translated:Update Available
+
+English:Update Settings...
+Translated:Update Settings...
 
 English:Use Automatic Z Probe
 Translated:Use Automatic Z Probe
@@ -3216,6 +3273,12 @@ Translated:XY Homing Position
 
 English:You are connected to the Emulator not an actual printer.
 Translated:You are connected to the Emulator not an actual printer.
+
+English:You can also
+Translated:You can also
+
+English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
+Translated:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
 
 English:Your Email Address
 Translated:Your Email Address
