@@ -168,45 +168,49 @@ namespace MatterHackers.MatterControl
 					under.AddChild(cover);
 				}
 
-				var currentText = "Current Default".Localize();
-				var settingData = PrinterSettings.SettingsData[setting.key];
-				var group = settingData.OrganizerGroup;
-				var category = group.Category;
-
-				currentText += ": " + category.Name + " > " + group.Name + " > " + settingData.PresentationName;
-
-				AddSetting(printer, currentText, setting.key, theme.SlightShade);
-				AddSetting(oemPrinter, "Will be updated to:".Localize(), setting.key, Color.Transparent);
-
-				var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
+				if (PrinterSettings.SettingsData.ContainsKey(setting.key))
 				{
-					HAnchor = HAnchor.Stretch,
-					Margin = new BorderDouble(0, 25, 0, 3),
-					Border = new BorderDouble(0, 1, 0, 0),
-					BorderColor = theme.MinimalShade,
-				};
+					var settingData = PrinterSettings.SettingsData[setting.key];
 
-				generalPanel.AddChild(buttonContainer);
-				var updateButton = new TextButton("Update Setting".Localize(), theme)
-				{
-					Margin = new BorderDouble(0, 3, 20, 0),
-					Name = setting.key + " Update",
-				};
+					var currentText = "Current Default".Localize();
+					var group = settingData.OrganizerGroup;
+					var category = group.Category;
 
-				theme.ApplyPrimaryActionStyle(updateButton);
+					currentText += ": " + category.Name + " > " + group.Name + " > " + settingData.PresentationName;
 
-				buttonContainer.AddChild(updateButton);
+					AddSetting(printer, currentText, setting.key, theme.SlightShade);
+					AddSetting(oemPrinter, "Will be updated to:".Localize(), setting.key, Color.Transparent);
 
-				updateButton.Click += (s, e) =>
-				{
-					var scrollAmount = this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop;
-					printer.Settings.SetValue(setting.key, setting.newValue, printer.Settings.OemLayer);
-					AddAllContent();
-					UiThread.RunOnIdle(() =>
+					var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
 					{
-						this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop = scrollAmount;
-					});
-				};
+						HAnchor = HAnchor.Stretch,
+						Margin = new BorderDouble(0, 25, 0, 3),
+						Border = new BorderDouble(0, 1, 0, 0),
+						BorderColor = theme.MinimalShade,
+					};
+
+					generalPanel.AddChild(buttonContainer);
+					var updateButton = new TextButton("Update Setting".Localize(), theme)
+					{
+						Margin = new BorderDouble(0, 3, 20, 0),
+						Name = setting.key + " Update",
+					};
+
+					theme.ApplyPrimaryActionStyle(updateButton);
+
+					buttonContainer.AddChild(updateButton);
+
+					updateButton.Click += (s, e) =>
+					{
+						var scrollAmount = this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop;
+						printer.Settings.SetValue(setting.key, setting.newValue, printer.Settings.OemLayer);
+						AddAllContent();
+						UiThread.RunOnIdle(() =>
+						{
+							this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop = scrollAmount;
+						});
+					};
+				}
 			}
 		}
 	}

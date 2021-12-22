@@ -133,7 +133,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				foreach (var item in cache)
 				{
-					yield return (item.key, item.currentValue, item.newValue);
+					if (PrinterSettings.SettingsData.ContainsKey(item.key))
+					{
+						yield return (item.key, item.currentValue, item.newValue);
+					}
 				}
 			}
 		}
