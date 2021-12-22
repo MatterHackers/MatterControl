@@ -4,6 +4,12 @@ Translated:
 English:- none -
 Translated:- none -
 
+English:\nBelow you can find a list of each setting that has changed.
+Translated:\nBelow you can find a list of each setting that has changed.
+
+English:\nUpdating a default setting will not change any override that you have applied.
+Translated:\nUpdating a default setting will not change any override that you have applied.
+
 English:$/kg
 Translated:$/kg
 
@@ -85,6 +91,9 @@ Translated:Action
 English:Action Recommended
 Translated:Action Recommended
 
+English:Action Required
+Translated:Action Required
+
 English:Add
 Translated:Add
 
@@ -138,6 +147,9 @@ Translated:Air Gap
 
 English:Air Gapped Layer
 Translated:Air Gapped Layer
+
+English:Alert
+Translated:Alert
 
 English:Align
 Translated:Align
@@ -409,6 +421,9 @@ Translated:Clear Cache
 English:Clear Height
 Translated:Clear Height
 
+English:Clear Override
+Translated:Clear Override
+
 English:Clear selection
 Translated:Clear selection
 
@@ -468,6 +483,9 @@ Translated:Connect
 
 English:Connect to the currently selected printer
 Translated:Connect to the currently selected printer
+
+English:Connect to your printer to continue
+Translated:Connect to your printer to continue
 
 English:Connected
 Translated:Connected
@@ -573,6 +591,9 @@ Translated:Creation Data
 
 English:Cube
 Translated:Cube
+
+English:Current Default
+Translated:Current Default
 
 English:Curve
 Translated:Curve
@@ -1486,6 +1507,9 @@ Translated:Material
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:Material density. Only used for estimating mass in the Layer View.
 
+English:Material Setting
+Translated:Material Setting
+
 English:Materials
 Translated:Materials
 
@@ -1693,6 +1717,9 @@ Translated:No Color
 English:No part to arrange
 Translated:No part to arrange
 
+English:No setting currently need to be updated.
+Translated:No setting currently need to be updated.
+
 English:None
 Translated:None
 
@@ -1746,6 +1773,9 @@ Translated:Offset
 
 English:Offset For Next Push
 Translated:Offset For Next Push
+
+English:Ok
+Translated:Ok
 
 English:'Ok' Responses
 Translated:'Ok' Responses
@@ -1858,6 +1888,9 @@ Translated:Perimeters Per Extruder
 English:PETG Temperature Tower
 Translated:PETG Temperature Tower
 
+English:Pin
+Translated:Pin
+
 English:Pinch
 Translated:Pinch
 
@@ -1899,6 +1932,9 @@ Translated:Please Confirm
 
 English:Plugins
 Translated:Plugins
+
+English:Port In Use
+Translated:Port In Use
 
 English:Port not available
 Translated:Port not available
@@ -1972,6 +2008,12 @@ Translated:Printer Calibration
 English:Printer Control
 Translated:Printer Control
 
+English:Printer Default
+Translated:Printer Default
+
+English:Printer Disconnected
+Translated:Printer Disconnected
+
 English:Printer Help
 Translated:Printer Help
 
@@ -2037,6 +2079,9 @@ Translated:Pyramid
 
 English:Quality
 Translated:Quality
+
+English:Quality Setting
+Translated:Quality Setting
 
 English:Radial Array
 Translated:Radial Array
@@ -2163,6 +2208,9 @@ Translated:Retraction
 
 English:Retractions
 Translated:Retractions
+
+English:Retry Login
+Translated:Retry Login
 
 English:Revolve
 Translated:Revolve
@@ -2305,8 +2353,14 @@ Translated:Send With Checksum
 English:Serial Port
 Translated:Serial Port
 
+English:Serial port in use
+Translated:Serial port in use
+
 English:Services
 Translated:Services
+
+English:Session Expired
+Translated:Session Expired
 
 English:Set Temperature
 Translated:Set Temperature
@@ -2328,6 +2382,9 @@ Translated:Settings Update Available
 
 English:Settings View Options
 Translated:Settings View Options
+
+English:Setup Needs to be Run
+Translated:Setup Needs to be Run
 
 English:Setup Wizard
 Translated:Setup Wizard
@@ -3121,6 +3178,12 @@ Translated:Update
 English:Update Available
 Translated:Update Available
 
+English:Update Setting
+Translated:Update Setting
+
+English:Update Settings
+Translated:Update Settings
+
 English:Update Settings...
 Translated:Update Settings...
 
@@ -3252,6 +3315,9 @@ Translated:Width
 
 English:Width Percent
 Translated:Width Percent
+
+English:Will be updated to:
+Translated:Will be updated to:
 
 English:Wipe Shield Distance
 Translated:Wipe Shield Distance
