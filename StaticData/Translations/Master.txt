@@ -205,6 +205,9 @@ Translated:At least 1 part must be selected
 English:At least 2 parts must be selected
 Translated:At least 2 parts must be selected
 
+English:Attempting to connect again may address the issue.
+Translated:Attempting to connect again may address the issue.
+
 English:Auto Connect
 Translated:Auto Connect
 
@@ -739,6 +742,9 @@ Translated:Edit Radius
 English:Edit Selected Setting
 Translated:Edit Selected Setting
 
+English:Empty Bed
+Translated:Empty Bed
+
 English:Emulate Endstops
 Translated:Emulate Endstops
 
@@ -801,6 +807,9 @@ Translated:Expand Distance
 
 English:Expand Thin Walls
 Translated:Expand Thin Walls
+
+English:Expand Width
+Translated:Expand Width
 
 English:Experimental
 Translated:Experimental
@@ -1444,6 +1453,9 @@ Translated:Loading
 English:Loading GCode
 Translated:Loading GCode
 
+English:Loading G-Code
+Translated:Loading G-Code
+
 English:Loading Help
 Translated:Loading Help
 
@@ -1716,6 +1728,9 @@ Translated:No Color
 
 English:No part to arrange
 Translated:No part to arrange
+
+English:No printable parts exists within the bounds of the printer bed. Add content to continue
+Translated:No printable parts exists within the bounds of the printer bed. Add content to continue
 
 English:No setting currently need to be updated.
 Translated:No setting currently need to be updated.
@@ -2482,6 +2497,9 @@ Translated:Smooth Path
 English:Smoothie
 Translated:Smoothie
 
+English:Snap Grid
+Translated:Snap Grid
+
 English:Snapping Turned Off
 Translated:Snapping Turned Off
 
@@ -3153,6 +3171,9 @@ Translated:Ungroup
 
 English:Unknown
 Translated:Unknown
+
+English:Unknown Reason
+Translated:Unknown Reason
 
 English:Unload
 Translated:Unload
