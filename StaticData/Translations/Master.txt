@@ -205,6 +205,9 @@ Translated:At least 1 part must be selected
 English:At least 2 parts must be selected
 Translated:At least 2 parts must be selected
 
+English:Attempting to connect again may address the issue.
+Translated:Attempting to connect again may address the issue.
+
 English:Auto Connect
 Translated:Auto Connect
 
@@ -1885,6 +1888,9 @@ Translated:Pause G-Code
 English:Pause Print
 Translated:Pause Print
 
+English:Percentage of
+Translated:Percentage of
+
 English:Perimeter Acceleration
 Translated:Perimeter Acceleration
 
@@ -3168,6 +3174,9 @@ Translated:Ungroup
 
 English:Unknown
 Translated:Unknown
+
+English:Unknown Reason
+Translated:Unknown Reason
 
 English:Unload
 Translated:Unload
