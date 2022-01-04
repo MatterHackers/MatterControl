@@ -297,6 +297,20 @@ namespace MatterHackers.MatterControl.Library
 					this.ReloadContent();
 				}
 			}
+			else if (item is LocalZipContainerLink zipFile)
+            {
+				string sourceFile = zipFile.Path;
+				if (File.Exists(sourceFile))
+				{
+					string extension = Path.GetExtension(sourceFile);
+					string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+					destFile = Path.ChangeExtension(destFile, extension);
+
+					File.Move(sourceFile, destFile);
+
+					this.ReloadContent();
+				}
+			}
 		}
 
 		private void DirectoryContentsChanged(object sender, EventArgs e)

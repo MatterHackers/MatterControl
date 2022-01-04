@@ -193,6 +193,9 @@ Translated:Apply changes to this print
 English:Are you sure you want to delete printer '{0}'?
 Translated:Are you sure you want to delete printer '{0}'?
 
+English:Are you sure you want to remove the currently selected items?
+Translated:Are you sure you want to remove the currently selected items?
+
 English:Arrange All Parts
 Translated:Arrange All Parts
 
@@ -204,6 +207,9 @@ Translated:At least 1 part must be selected
 
 English:At least 2 parts must be selected
 Translated:At least 2 parts must be selected
+
+English:Attempting to connect again may address the issue.
+Translated:Attempting to connect again may address the issue.
 
 English:Auto Connect
 Translated:Auto Connect
@@ -739,6 +745,9 @@ Translated:Edit Radius
 English:Edit Selected Setting
 Translated:Edit Selected Setting
 
+English:Empty Bed
+Translated:Empty Bed
+
 English:Emulate Endstops
 Translated:Emulate Endstops
 
@@ -775,6 +784,9 @@ Translated:End Height Percent
 English:Ending Angle
 Translated:Ending Angle
 
+English:Enter New Name Here
+Translated:Enter New Name Here
+
 English:Enter Person Access Token
 Translated:Enter Person Access Token
 
@@ -801,6 +813,9 @@ Translated:Expand Distance
 
 English:Expand Thin Walls
 Translated:Expand Thin Walls
+
+English:Expand Width
+Translated:Expand Width
 
 English:Experimental
 Translated:Experimental
@@ -1444,6 +1459,9 @@ Translated:Loading
 English:Loading GCode
 Translated:Loading GCode
 
+English:Loading G-Code
+Translated:Loading G-Code
+
 English:Loading Help
 Translated:Loading Help
 
@@ -1515,6 +1533,9 @@ Translated:Materials
 
 English:MatterControl
 Translated:MatterControl
+
+English:MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.
+Translated:MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.
 
 English:MatterControl Help
 Translated:MatterControl Help
@@ -1627,6 +1648,9 @@ Translated:Modify T1 speeds during extrusion moves by the ratio or percent.
 English:Monotonic Solid Infill
 Translated:Monotonic Solid Infill
 
+English:More
+Translated:More
+
 English:More Export Options
 Translated:More Export Options
 
@@ -1717,11 +1741,17 @@ Translated:No Color
 English:No part to arrange
 Translated:No part to arrange
 
+English:No printable parts exists within the bounds of the printer bed. Add content to continue
+Translated:No printable parts exists within the bounds of the printer bed. Add content to continue
+
 English:No setting currently need to be updated.
 Translated:No setting currently need to be updated.
 
 English:None
 Translated:None
+
+English:Non-Manifold
+Translated:Non-Manifold
 
 English:Normal Layers
 Translated:Normal Layers
@@ -1825,6 +1855,9 @@ Translated:Outline Path
 English:Outline Width
 Translated:Outline Width
 
+English:Outlines (default)
+Translated:Outlines (default)
+
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
@@ -1836,6 +1869,9 @@ Translated:Outside Perimeter
 
 English:Outside Perimeters
 Translated:Outside Perimeters
+
+English:Overhang
+Translated:Overhang
 
 English:Override Radius
 Translated:Override Radius
@@ -1872,6 +1908,9 @@ Translated:Pause G-Code
 
 English:Pause Print
 Translated:Pause Print
+
+English:Percentage of
+Translated:Percentage of
 
 English:Perimeter Acceleration
 Translated:Perimeter Acceleration
@@ -1932,6 +1971,9 @@ Translated:Please Confirm
 
 English:Plugins
 Translated:Plugins
+
+English:Polygons
+Translated:Polygons
 
 English:Port In Use
 Translated:Port In Use
@@ -1998,6 +2040,9 @@ Translated:Print Recovery
 
 English:Print Time
 Translated:Print Time
+
+English:Printed Files
+Translated:Printed Files
 
 English:Printer
 Translated:Printer
@@ -2116,6 +2161,9 @@ Translated:Read Filter
 English:Recover Layer Speed
 Translated:Recover Layer Speed
 
+English:recovered once
+Translated:recovered once
+
 English:rectangular
 Translated:rectangular
 
@@ -2140,6 +2188,9 @@ Translated:Reloading
 English:Remove
 Translated:Remove
 
+English:Remove Items?
+Translated:Remove Items?
+
 English:Remove Mode
 Translated:Remove Mode
 
@@ -2148,6 +2199,9 @@ Translated:Remove Subtract Objects
 
 English:Rename
 Translated:Rename
+
+English:Rename Item
+Translated:Rename Item
 
 English:Render As Braille
 Translated:Render As Braille
@@ -2389,6 +2443,9 @@ Translated:Setup Needs to be Run
 English:Setup Wizard
 Translated:Setup Wizard
 
+English:Shaded
+Translated:Shaded
+
 English:Share
 Translated:Share
 
@@ -2481,6 +2538,9 @@ Translated:Smooth Path
 
 English:Smoothie
 Translated:Smoothie
+
+English:Snap Grid
+Translated:Snap Grid
 
 English:Snapping Turned Off
 Translated:Snapping Turned Off
@@ -3153,6 +3213,9 @@ Translated:Ungroup
 
 English:Unknown
 Translated:Unknown
+
+English:Unknown Reason
+Translated:Unknown Reason
 
 English:Unload
 Translated:Unload

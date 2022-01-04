@@ -2007,22 +2007,32 @@ namespace MatterHackers.MatterControl
 				AggContext.DefaultFontBoldItalic = LiberationSansBoldFont.Instance;
 			}
 
-			string translationFilePath = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
+			string machineTranslation = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
+			string humanTranslation = Path.Combine("Translations", twoLetterIsoLanguageName, "override.txt");
 
 			if (twoLetterIsoLanguageName == "en")
 			{
-				translationFilePath = Path.Combine("Translations", "Master.txt");
+				machineTranslation = Path.Combine("Translations", "Master.txt");
+				humanTranslation = null;
 			}
 
-			if (StaticData.Instance.FileExists(translationFilePath))
+			if (StaticData.Instance.FileExists(machineTranslation))
 			{
-				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
+				StreamReader humanTranlationReader = null;
+
+				if (humanTranslation != null
+					&& StaticData.Instance.FileExists(humanTranslation))
 				{
-					using (var streamReader = new StreamReader(stream))
-					{
-						TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, twoLetterIsoLanguageName);
-					}
+					var humanTranslationStream = StaticData.Instance.OpenStream(humanTranslation);
+					humanTranlationReader = new StreamReader(humanTranslationStream);
 				}
+
+				var machineTranslationStream = StaticData.Instance.OpenStream(machineTranslation);
+				var machineTranlationReader = new StreamReader(machineTranslationStream);
+				TranslationMap.ActiveTranslationMap = new TranslationMap(machineTranlationReader, humanTranlationReader, twoLetterIsoLanguageName);
+
+				machineTranlationReader.Close();
+				humanTranlationReader?.Close();
 			}
 			else
             {
