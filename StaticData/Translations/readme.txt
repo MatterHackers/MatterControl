@@ -7,6 +7,9 @@ There is a folder for each langage. The names of these folders
 match the ISO 639 standard which can be found at:
 http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
+Tranlation.txt - is machine generated
+override.txt   - is used to override the machine generated tranlation
+
 Special thanks to:
-Filip Bartoszek - original German Translation
-Nicolas Rambaud - Original French Translation
+Gerson Damke     - Spanish translation
+Mario Lesniewski - Polish translation

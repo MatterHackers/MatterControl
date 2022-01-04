@@ -1149,7 +1149,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Call instance event
 										ConnectionSucceeded?.Invoke(this, null);
 
-										Console.WriteLine("ReadFromPrinter thread created.");
+										Console.WriteLine("ReadFromPrinter thread created.".Localize());
 										ReadThread.Start(this);
 
 										CommunicationState = CommunicationStates.Connected;
@@ -1162,13 +1162,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										TerminalLog.WriteLine("Exception:" + e.Message);
 										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
 										UiThread.RunOnIdle(() => {
-											string message = @"The chosen baud rate is not supported by your operating system. Use a different baud rate, if possible.";
+											string message = @"The chosen baud rate is not supported by your operating system. Use a different baud rate, if possible.".Localize();
 											if (AggContext.OperatingSystem == OSType.X11)
 											{
 												message +=
 @"
 
-On Linux, MatterControl requires a serial helper library in order to use certain baud rates. It is possible that this component is missing or not installed properly. ";
+On Linux, MatterControl requires a serial helper library in order to use certain baud rates. It is possible that this component is missing or not installed properly. ".Localize();
 											}
 											StyledMessageBox.ShowMessageBox(message, "Unsupported Baud Rate".Localize(), useMarkdown: true);
 										});
@@ -1177,7 +1177,7 @@ On Linux, MatterControl requires a serial helper library in order to use certain
 									{
 										TerminalLog.WriteLine("Exception:" + e.Message);
 										OnConnectionFailed(ConnectionFailure.IOException);
-										if (AggContext.OperatingSystem == OSType.X11 && e.Message == "Permission denied")
+										if (AggContext.OperatingSystem == OSType.X11 && e.Message == "Permission denied".Localize())
 										{
 											UiThread.RunOnIdle(() =>
 											{
@@ -1199,11 +1199,11 @@ Arch
 # sudo gpasswd -a $USER lock
 ```
 
-You will then need to logout and log back in to the computer for the changes to take effect. ";
+You will then need to logout and log back in to the computer for the changes to take effect. ".Localize();
 												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize(), useMarkdown: true);
 											});
 										}
-										else if (e.Message == "The semaphore timeout period has expired." || e.Message == "A device attached to the system is not functioning.")
+										else if (e.Message == "The semaphore timeout period has expired.".Localize() || e.Message == "A device attached to the system is not functioning.".Localize())
 										{
 											UiThread.RunOnIdle(() => {
 												string message =
@@ -1212,7 +1212,7 @@ You will then need to logout and log back in to the computer for the changes to 
 Details
 -------
 
-" + e.Message;
+".Localize() + e.Message;
 												StyledMessageBox.ShowMessageBox(message, "Hardware Error".Localize(), useMarkdown: true);
 											});
 										}
@@ -1231,7 +1231,7 @@ Details
 											string message =
 @"MatterControl tried to communicate with your printer, but never received a response.
 
-Make sure that your printer is turned on. Some printers will appear to be connected, even when they are turned off.";
+Make sure that your printer is turned on. Some printers will appear to be connected, even when they are turned off.".Localize();
 											StyledMessageBox.ShowMessageBox(message, "Connection Timeout".Localize(), useMarkdown: true);
 										});
 									}
@@ -1252,7 +1252,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									OnConnectionFailed(ConnectionFailure.PortInUse);
 									UiThread.RunOnIdle(() =>
 									{
-										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.";
+										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.".Localize();
 										StyledMessageBox.ShowMessageBox(message, "Port In Use".Localize(), useMarkdown: true);
 									});
 								}
