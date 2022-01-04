@@ -27,6 +27,7 @@
     <Compile Remove="packages\**" />
     <Compile Remove="PluginSystem\**" />
     <Compile Remove="PrinterDriverInstaller\**" />
+    <Compile Remove="Properties\**" />
     <Compile Remove="StaticData\**" />
     <Compile Remove="Submodules\**" />
     <Compile Remove="Tests\**" />
@@ -39,6 +40,7 @@
     <EmbeddedResource Remove="packages\**" />
     <EmbeddedResource Remove="PluginSystem\**" />
     <EmbeddedResource Remove="PrinterDriverInstaller\**" />
+    <EmbeddedResource Remove="Properties\**" />
     <EmbeddedResource Remove="StaticData\**" />
     <EmbeddedResource Remove="Submodules\**" />
     <EmbeddedResource Remove="Tests\**" />
@@ -51,6 +53,7 @@
     <None Remove="packages\**" />
     <None Remove="PluginSystem\**" />
     <None Remove="PrinterDriverInstaller\**" />
+    <None Remove="Properties\**" />
     <None Remove="StaticData\**" />
     <None Remove="Submodules\**" />
     <None Remove="Tests\**" />
@@ -99,16 +102,13 @@
     <PackageReference Include="PDFsharpNetStandard2" Version="1.51.4845" />
     <PackageReference Include="SocketIOSharp" Version="2.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="Zeroconf" Version="3.4.2" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
