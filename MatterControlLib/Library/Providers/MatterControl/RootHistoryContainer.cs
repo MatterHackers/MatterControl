@@ -73,6 +73,23 @@ namespace MatterHackers.MatterControl.Library
 				{
 					IsReadOnly = true,
 				});
+
+			if (Directory.Exists(ApplicationDataStorage.Instance.PrintHistoryPath))
+			{
+				this.ChildContainers.Add(
+					new DynamicContainerLink(
+						() => "Printed Files".Localize(),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
+						() => new FileSystemContainer(ApplicationDataStorage.Instance.PrintHistoryPath)
+						{
+							UseIncrementedNameDuringTypeChange = true,
+							DefaultSort = new LibrarySortBehavior()
+							{
+								SortKey = SortKey.ModifiedDate,
+							}
+						}));
+			}
 		}
 	}
 }

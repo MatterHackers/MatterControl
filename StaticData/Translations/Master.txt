@@ -193,6 +193,9 @@ Translated:Apply changes to this print
 English:Are you sure you want to delete printer '{0}'?
 Translated:Are you sure you want to delete printer '{0}'?
 
+English:Are you sure you want to remove the currently selected items?
+Translated:Are you sure you want to remove the currently selected items?
+
 English:Arrange All Parts
 Translated:Arrange All Parts
 
@@ -780,6 +783,9 @@ Translated:End Height Percent
 
 English:Ending Angle
 Translated:Ending Angle
+
+English:Enter New Name Here
+Translated:Enter New Name Here
 
 English:Enter Person Access Token
 Translated:Enter Person Access Token
@@ -1642,6 +1648,9 @@ Translated:Modify T1 speeds during extrusion moves by the ratio or percent.
 English:Monotonic Solid Infill
 Translated:Monotonic Solid Infill
 
+English:More
+Translated:More
+
 English:More Export Options
 Translated:More Export Options
 
@@ -1740,6 +1749,9 @@ Translated:No setting currently need to be updated.
 
 English:None
 Translated:None
+
+English:Non-Manifold
+Translated:Non-Manifold
 
 English:Normal Layers
 Translated:Normal Layers
@@ -1843,6 +1855,9 @@ Translated:Outline Path
 English:Outline Width
 Translated:Outline Width
 
+English:Outlines (default)
+Translated:Outlines (default)
+
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
@@ -1854,6 +1869,9 @@ Translated:Outside Perimeter
 
 English:Outside Perimeters
 Translated:Outside Perimeters
+
+English:Overhang
+Translated:Overhang
 
 English:Override Radius
 Translated:Override Radius
@@ -1954,6 +1972,9 @@ Translated:Please Confirm
 English:Plugins
 Translated:Plugins
 
+English:Polygons
+Translated:Polygons
+
 English:Port In Use
 Translated:Port In Use
 
@@ -2019,6 +2040,9 @@ Translated:Print Recovery
 
 English:Print Time
 Translated:Print Time
+
+English:Printed Files
+Translated:Printed Files
 
 English:Printer
 Translated:Printer
@@ -2137,6 +2161,9 @@ Translated:Read Filter
 English:Recover Layer Speed
 Translated:Recover Layer Speed
 
+English:recovered once
+Translated:recovered once
+
 English:rectangular
 Translated:rectangular
 
@@ -2161,6 +2188,9 @@ Translated:Reloading
 English:Remove
 Translated:Remove
 
+English:Remove Items?
+Translated:Remove Items?
+
 English:Remove Mode
 Translated:Remove Mode
 
@@ -2169,6 +2199,9 @@ Translated:Remove Subtract Objects
 
 English:Rename
 Translated:Rename
+
+English:Rename Item
+Translated:Rename Item
 
 English:Render As Braille
 Translated:Render As Braille
@@ -2409,6 +2442,9 @@ Translated:Setup Needs to be Run
 
 English:Setup Wizard
 Translated:Setup Wizard
+
+English:Shaded
+Translated:Shaded
 
 English:Share
 Translated:Share
