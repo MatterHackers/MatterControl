@@ -34,7 +34,6 @@ namespace MatterHackers.MatterControl
 	using System;
 	using System.IO;
 	using System.Threading;
-	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
@@ -78,7 +77,8 @@ namespace MatterHackers.MatterControl
 								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
 
 								// Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
-								if (item is FileSystemFileItem fileItem
+								if (loadedItem != null
+									&& item is FileSystemFileItem fileItem
 									&& !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
 								{
 									loadedItem.MeshPath = fileItem.Path;
