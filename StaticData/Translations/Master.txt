@@ -100,6 +100,9 @@ Translated:Add
 English:Add all the items on the bed to the print queue.
 Translated:Add all the items on the bed to the print queue.
 
+English:Add an.stl, .obj, .3mf, .amf, .gcode or.zip file to the Library
+Translated:Add an.stl, .obj, .3mf, .amf, .gcode or.zip file to the Library
+
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 Translated:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 
@@ -940,6 +943,9 @@ Translated:Final Vertices
 English:Finalized
 Translated:Finalized
 
+English:Find and create supports where needed
+Translated:Find and create supports where needed
+
 English:Find Slice
 Translated:Find Slice
 
@@ -1051,6 +1057,9 @@ Translated:Gear
 English:General
 Translated:General
 
+English:Generate
+Translated:Generate
+
 English:Generate Support
 Translated:Generate Support
 
@@ -1152,6 +1161,9 @@ Translated:Help
 
 English:HEXAGON
 Translated:HEXAGON
+
+English:Hide
+Translated:Hide
 
 English:History
 Translated:History
@@ -1876,6 +1888,9 @@ Translated:Outside Perimeters
 English:Overhang
 Translated:Overhang
 
+English:Overhang Angle
+Translated:Overhang Angle
+
 English:Override Radius
 Translated:Override Radius
 
@@ -1929,6 +1944,9 @@ Translated:Perimeters Per Extruder
 
 English:PETG Temperature Tower
 Translated:PETG Temperature Tower
+
+English:Pillar Size
+Translated:Pillar Size
 
 English:Pin
 Translated:Pin
@@ -2191,6 +2209,9 @@ Translated:Reloading
 English:Remove
 Translated:Remove
 
+English:Remove all auto generated supports
+Translated:Remove all auto generated supports
+
 English:Remove Items?
 Translated:Remove Items?
 
@@ -2367,6 +2388,9 @@ Translated:Seam Placement
 
 English:Search
 Translated:Search
+
+English:Search Results
+Translated:Search Results
 
 English:seconds
 Translated:seconds
@@ -2737,6 +2761,9 @@ Translated:The angle at which the support material lines will be drawn.
 English:The angle of the infill, measured from the X axis. Not used when bridging.
 Translated:The angle of the infill, measured from the X axis. Not used when bridging.
 
+English:The angle to generate support for
+Translated:The angle to generate support for
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 
@@ -3051,6 +3078,9 @@ Translated:The time it takes to heat back up from a cool down.
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
+
+English:The width and depth of the support pillars
+Translated:The width and depth of the support pillars
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
 Translated:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
