@@ -213,6 +213,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				case ".STL":
 					return StlProcessing.GetEstimatedMemoryUse(fileLocation);
 
+				case ".3MF":
 				case ".AMF":
 					return AmfDocument.GetEstimatedMemoryUse(fileLocation);
 

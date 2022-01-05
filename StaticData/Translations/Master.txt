@@ -973,6 +973,9 @@ Translated:Fit to Cylinder
 English:Flat
 Translated:Flat
 
+English:Flattened
+Translated:Flattened
+
 English:Force a retraction when moving between islands (distinct parts on the layer).
 Translated:Force a retraction when moving between islands (distinct parts on the layer).
 
@@ -2574,6 +2577,9 @@ Translated:Sphere
 
 English:Spiral Vase
 Translated:Spiral Vase
+
+English:Split
+Translated:Split
 
 English:Split Mesh
 Translated:Split Mesh

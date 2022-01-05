@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			string fileExtensionLower = Path.GetExtension(fileName).ToLower().Trim('.');
 			return !string.IsNullOrEmpty(fileExtensionLower)
-				&& ApplicationSettings.LibraryMeshFileExtensions.Contains(fileExtensionLower);
+				&& ApplicationSettings.ValidFileExtensions.Contains(fileExtensionLower);
 		}
 
 		public async Task LoadItemThumbnail(Action<ImageBuffer> thumbnailListener, Action<MeshContentProvider> buildThumbnail, ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThemeConfig theme)

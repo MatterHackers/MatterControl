@@ -47,15 +47,11 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationSettings
 	{
-		public static string ValidFileExtensions { get; } =  ".STL;.AMF;.OBJ";
+		public static string ValidFileExtensions { get; } = ".stl,.obj,.3mf,.amf,.mcx";
 
-		public static string LibraryMeshFileExtensions { get; } = ".stl,.obj,.amf,.mcx";
+		public static string LibraryFilterFileExtensions { get; } = ValidFileExtensions + ",.gcode";
 
-		public static string LibraryFilterFileExtensions { get; } = LibraryMeshFileExtensions + ",.gcode";
-
-		public static string OpenPrintableFileParams { get; } = "STL, AMF, OBJ, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
-
-		public static string OpenDesignFileParams { get; } = "STL, AMF, OBJ, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
+		public static string OpenDesignFileParams { get; } = "STL, AMF, OBJ, 3MF, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
 
 		private static ApplicationSettings globalInstance = null;
 

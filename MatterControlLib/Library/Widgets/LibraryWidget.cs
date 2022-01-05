@@ -589,13 +589,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor),
 				Title = "Add".Localize(),
-				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
+				ToolTipText = "Add an.stl, .obj, .3mf, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
 						AggContext.FileDialogs.OpenFileDialog(
-							new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
+							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
 							(openParams) =>
 							{
 								if (openParams.FileNames != null)

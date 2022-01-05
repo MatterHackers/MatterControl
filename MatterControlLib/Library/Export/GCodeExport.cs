@@ -215,8 +215,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						var errors = new List<ValidationError>();
 
-						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
-							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
+						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0)
 						{
 							if (CenterOnBed)
 							{
