@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private Action<bool> nextButtonEnabled;
 		private FlowLayoutWidget printerInfo;
 
-		public AddPrinterWidget(ThemeConfig theme, Action<bool> nextButtonEnabled)
+		public AddPrinterWidget(ThemeConfig theme, Action<bool> nextButtonEnabled, bool filterToPulse)
 			: base(theme)
 		{
 			this.nextButtonEnabled = nextButtonEnabled;
@@ -65,6 +65,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				foreach (var oem in OemSettings.Instance.OemProfiles.OrderBy(o => o.Key))
 				{
+					if (filterToPulse && !oem.Key.Contains("Pulse"))
+                    {
+						continue;
+                    }
 					var rootNode = this.CreateTreeNode(oem);
 					rootNode.Expandable = true;
 					rootNode.TreeView = treeView;
@@ -74,6 +78,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						SetImage(rootNode, image);
 					};
+
+					if (filterToPulse)
+					{
+						rootNode.Expanded = true;
+					}
 
 					contentPanel.AddChild(rootNode);
 				}

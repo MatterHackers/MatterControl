@@ -550,6 +550,9 @@ Translated:Count
 English:count or mm
 Translated:count or mm
 
+English:Create An Account
+Translated:Create An Account
+
 English:Create Brim
 Translated:Create Brim
 
@@ -691,6 +694,9 @@ Translated:Disconnect
 English:Disconnect from current printer
 Translated:Disconnect from current printer
 
+English:Disconnected
+Translated:Disconnected
+
 English:Dismiss
 Translated:Dismiss
 
@@ -705,6 +711,9 @@ Translated:Distance or Loops
 
 English:Done
 Translated:Done
+
+English:Don't remind me again
+Translated:Don't remind me again
 
 English:Downloading
 Translated:Downloading
@@ -795,6 +804,12 @@ Translated:Enter Person Access Token
 
 English:Enter Share Code
 Translated:Enter Share Code
+
+English:Enter your password
+Translated:Enter your password
+
+English:Enter your username or email address
+Translated:Enter your username or email address
 
 English:Estimated Cost
 Translated:Estimated Cost
@@ -999,6 +1014,9 @@ Translated:Forces the printer to heat the nozzle before homing.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
 Translated:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
+
+English:Forgot Password
+Translated:Forgot Password
 
 English:Forums
 Translated:Forums
@@ -1417,6 +1435,9 @@ Translated:Length of filament to extrude after a complete retraction (in additio
 English:Length on Tool Change
 Translated:Length on Tool Change
 
+English:Let's show you around before you get started.
+Translated:Let's show you around before you get started.
+
 English:Letter
 Translated:Letter
 
@@ -1744,6 +1765,9 @@ Translated:New Design
 English:New Printer Name
 Translated:New Printer Name
 
+English:New User?
+Translated:New User?
+
 English:Next
 Translated:Next
 
@@ -1908,6 +1932,9 @@ Translated:Part(s) to Subtract
 
 English:Part(s) to Subtract and Replace
 Translated:Part(s) to Subtract and Replace
+
+English:Password
+Translated:Password
 
 English:Paste
 Translated:Paste
@@ -2440,6 +2467,9 @@ Translated:Serial port in use
 English:Services
 Translated:Services
 
+English:Session Cleared
+Translated:Session Cleared
+
 English:Session Expired
 Translated:Session Expired
 
@@ -2464,8 +2494,23 @@ Translated:Settings Update Available
 English:Settings View Options
 Translated:Settings View Options
 
+English:Setup
+Translated:Setup
+
 English:Setup Needs to be Run
 Translated:Setup Needs to be Run
+
+English:Setup New Printer
+Translated:Setup New Printer
+
+English:Setup New Pulse
+Translated:Setup New Pulse
+
+English:Setup Printer
+Translated:Setup Printer
+
+English:Setup Pulse
+Translated:Setup Pulse
 
 English:Setup Wizard
 Translated:Setup Wizard
@@ -2500,6 +2545,9 @@ Translated:Show in Explorer
 English:Show Materials
 Translated:Show Materials
 
+English:Show Password
+Translated:Show Password
+
 English:Show Print Area
 Translated:Show Print Area
 
@@ -2523,6 +2571,21 @@ Translated:Shows a button at the right side of the Printer Connection Bar used t
 
 English:Sides
 Translated:Sides
+
+English:sign in
+Translated:sign in
+
+English:Sign in
+Translated:Sign in
+
+English:Sign in to access your existing printers
+Translated:Sign in to access your existing printers
+
+English:Sign in to my account
+Translated:Sign in to my account
+
+English:Sign in to your MatterControl account
+Translated:Sign in to your MatterControl account
 
 English:Sign Out
 Translated:Sign Out
@@ -2622,6 +2685,9 @@ Translated:Start Height
 
 English:Start Height Percent
 Translated:Start Height Percent
+
+English:Start New Design
+Translated:Start New Design
 
 English:Start Percent
 Translated:Start Percent
@@ -3286,6 +3352,9 @@ Translated:Update Settings
 English:Update Settings...
 Translated:Update Settings...
 
+English:Upgrade
+Translated:Upgrade
+
 English:Use Automatic Z Probe
 Translated:Use Automatic Z Probe
 
@@ -3306,6 +3375,9 @@ Translated:Used to specify if more than one extruder share a common heater cartr
 
 English:User Control
 Translated:User Control
+
+English:Username or Email
+Translated:Username or Email
 
 English:Utilize High Res Monitors
 Translated:Utilize High Res Monitors
@@ -3378,6 +3450,12 @@ Translated:WARNING: In order to perform print recovery, your printer must move d
 
 English:Wedge
 Translated:Wedge
+
+English:Welcome to MatterControl
+Translated:Welcome to MatterControl
+
+English:Welcome to MatterControl! What would you like to do today?
+Translated:Welcome to MatterControl! What would you like to do today?
 
 English:Weld Edges
 Translated:Weld Edges

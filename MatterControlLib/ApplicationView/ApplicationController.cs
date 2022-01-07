@@ -1599,7 +1599,7 @@ namespace MatterHackers.MatterControl
 			this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
 		}
 
-		private void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
+		public void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
 			this.OnWorkspacesChanged(
 					new WorkspacesChangedEventArgs(
@@ -1707,25 +1707,14 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (this.Workspaces.Count == 0)
+			// If the use does not have a workspace open and has not setup any hardware, show the startup screen
+			if (this.Workspaces.Count == 0
+				&& !ProfileManager.Instance.ActiveProfiles.Any())
 			{
-				var workspace = new PartWorkspace(new BedConfig(history))
+				UiThread.RunOnIdle(() =>
 				{
-					Name = "New Design".Localize()
-				};
-
-				// Load it up
-				workspace.SceneContext.LoadEmptyContent(
-					new EditContext()
-					{
-						ContentStore = history,
-						SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
-					});
-
-				ApplicationController.Instance.MainTabKey = workspace.Name;
-
-				// Open but no need to save
-				this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
+					DialogWindow.Show<StartupPage>();
+				});
 			}
 		}
 

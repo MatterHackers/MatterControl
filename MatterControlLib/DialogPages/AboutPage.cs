@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class AboutPage : DialogPage
+    public class AboutPage : DialogPage
 	{
 		public AboutPage()
 			: base("Close".Localize())

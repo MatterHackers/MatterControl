@@ -74,6 +74,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			mainRow.HAnchor = HAnchor.Stretch;
 			mainRow.AddChild(new HorizontalSpacer());
 
+			// add in the create pulse button
+			var createPulse = new IconButton(StaticData.Instance.LoadIcon("pulse_logo.png", 18, 18).SetToColor(theme.TextColor), theme)
+			{
+				Name = "Setup Pulse",
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing.Clone(left: theme.ButtonSpacing.Right),
+				ToolTipText = "Create Pulse".Localize(),
+				Height = forcedHeight,
+				Width = forcedHeight
+			};
+			createPulse.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowPulseModels));
+			});
+			mainRow.AddChild(createPulse);
+
 			// add in the create printer button
 			var createPrinter = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{

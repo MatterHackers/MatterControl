@@ -963,7 +963,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (ProfileManager.Instance.ActiveProfiles.Count() <= 0)
 			{
 				// If no printer profiles exist, show the printer setup wizard
-				var window = DialogWindow.Show(new SetupStepMakeModelName());
+				var window = DialogWindow.Show(new SetupStepMakeModelName(false));
 				window.Closed += (s2, e2) =>
 				{
 					if (ApplicationController.Instance.ActivePrinters.FirstOrDefault() is PrinterConfig printer

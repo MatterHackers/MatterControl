@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private readonly RadioButton createPrinterRadioButton = null;
 		private readonly RadioButton signInRadioButton;
 
-		public SetupStepMakeModelName()
+		public SetupStepMakeModelName(bool filterToPulse)
 		{
 			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerPanel = new AddPrinterWidget(theme, (enabled) =>
 			{
 				nextButton.Enabled = enabled;
-			})
+			}, filterToPulse)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
