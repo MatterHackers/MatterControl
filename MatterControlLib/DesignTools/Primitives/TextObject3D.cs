@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -91,26 +92,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			foreach (var child in this.Children)
 			{
 				var clone = child.Clone();
-				var newName = index < nameToWrite.Length ? nameToWrite[index++].ToString() : "Letter".Localize();
-				clone.Name = MapIfSymbol(newName);
 				newContainer.Children.Add(clone);
 			}
 
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
 			newContainer.Name = this.Name + " - " + "Flattened".Localize();
-		}
-
-		private string MapIfSymbol(string newName)
-		{
-			switch (newName)
-			{
-				case " ":
-					return "space";
-				default:
-					break;
-			}
-
-			return newName;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
@@ -150,7 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					bool valuesChanged = false;
 					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
-					var nameToWrite = NameToWrite.Value(this);
+					var nameToWrite = NameToWrite.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n");
 					if (string.IsNullOrWhiteSpace(nameToWrite))
 					{
 						Mesh = PlatonicSolids.CreateCube(20, 10, height);
@@ -162,26 +148,62 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							list.Clear();
 
-							var offest = 0.0;
+							var offset = Vector2.Zero;
 							double pointsToMm = 0.352778;
+							var pointSize = PointSize.Value(this);
+							var lineNumber = 1;
+							var leterNumber = 1;
+							var lineObject = new Object3D()
+							{
+								Name = "Line {0}".Localize().FormatWith(lineNumber)
+							};
+							list.Add(lineObject);
 
 							foreach (var letter in nameToWrite.ToCharArray())
 							{
-								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), PointSize.Value(this));
+								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize);
 								var letterPrinter = new TypeFacePrinter(letter.ToString(), style)
 								{
 									ResolutionScale = 10
 								};
 								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 
-								list.Add(new Object3D()
+								if (letter == '\n')
 								{
-									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
-									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
-									Name = letter.ToString()
-								});
+									leterNumber = 0;
+									lineNumber++;
+									offset.X = 0;
+									offset.Y -= style.EmSizeInPoints * pointsToMm * 1.4;
+									lineObject = new Object3D()
+									{
+										Matrix = Matrix4X4.CreateTranslation(0, offset.Y, 0),
+										Name = "Line {0}".Localize().FormatWith(lineNumber)
+									};
+									list.Add(lineObject);
+								}
+								else
+								{
+									var letterObject = new Object3D()
+									{
+										Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
+										Matrix = Matrix4X4.CreateTranslation(offset.X, 0, 0),
+										Name = leterNumber.ToString("000") + " - '" + letter.ToString() + "'"
+									};
+									if (letterObject.Mesh.Faces.Count > 0)
+									{
+										lineObject.Children.Add(letterObject);
+										leterNumber++;
+									}
+									offset.X += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+								}
+							}
 
-								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+							for (int i=list.Count - 1; i >= 0; i--)
+							{
+								if (list[i].Children.Count == 0)
+								{
+									list.RemoveAt(i);
+								}
 							}
 						});
 					}

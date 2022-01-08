@@ -144,19 +144,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var mainViewWidget = ApplicationController.Instance.MainView;
 				var tabControl = mainViewWidget.TabControl;
-				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.AreEqual(5, mainViewWidget.TabControl.AllTabs.Count());
 
 				// open the design for editing
 				testRunner.ClickByName("Library Tab")
 					.DoubleClickByName("Library Row Item Collection")
 					.DoubleClickByName("Local Library Row Item Collection")
 					.DoubleClickByName("Row Item Cube Design")
-					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 7);
+					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 6);
 
 				// we have opened a new tab
-				Assert.AreEqual(7, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
 				// we are on the design tab
-				Assert.AreEqual(6, tabControl.SelectedTabIndex);
+				Assert.AreEqual(5, tabControl.SelectedTabIndex);
 				Assert.AreEqual("Cube Design", tabControl.SelectedTabKey);
 
 				// double click it again and prove that it goes to the currently open tab
@@ -164,9 +164,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.DoubleClickByName("Row Item Cube Design");
 
 				// we have not opened a new tab
-				Assert.AreEqual(7, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
 				// we are on the design tab
-				Assert.AreEqual(6, tabControl.SelectedTabIndex);
+				Assert.AreEqual(5, tabControl.SelectedTabIndex);
 
 				// rename in the library tab
 				// assert tab name has change

@@ -244,12 +244,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
 			testRunner.WaitforDraw(systemWindow);
 
-			// Latest product starts at empty part tab
-
 			// close the welcome message
-			if (testRunner.NameExists("Cancel Wizard Button", 10))
+			if (testRunner.NameExists("Start New Design", 1))
 			{
-				testRunner.ClickByName("Cancel Wizard Button");
+				testRunner.ClickByName("Start New Design");
 			}
 
 			return testRunner;
@@ -468,9 +466,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
-			if (testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
-				&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
-				&& testRunner.NameExists("Cancel Wizard Button", 1))
+			if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+				//&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
+				//&& testRunner.NameExists("Cancel Wizard Button", 1))
+				testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}

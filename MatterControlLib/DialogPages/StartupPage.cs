@@ -150,7 +150,8 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				Margin = new BorderDouble(15)
+				Margin = new BorderDouble(15),
+				Name = "Start New Design"
 			}, "Start New Design".Localize()));
 			lastButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
