@@ -430,6 +430,12 @@ Translated:Cancel G-Code
 English:Cancel Print
 Translated:Cancel Print
 
+English:Cancel Print?
+Translated:Cancel Print?
+
+English:Cancel the current print?
+Translated:Cancel the current print?
+
 English:Center Hole Diameter
 Translated:Center Hole Diameter
 
@@ -579,6 +585,9 @@ Translated:Connection Failed
 
 English:Continue
 Translated:Continue
+
+English:Continue Printing
+Translated:Continue Printing
 
 English:Controls
 Translated:Controls
@@ -750,6 +759,9 @@ Translated:Depth Percent
 
 English:Description
 Translated:Description
+
+English:Description - Markdown Text
+Translated:Description - Markdown Text
 
 English:Design Apps
 Translated:Design Apps
@@ -1495,6 +1507,9 @@ Translated:Initial Vertices
 English:Initializing Library
 Translated:Initializing Library
 
+English:Inner Diameter
+Translated:Inner Diameter
+
 English:Inner Gear Tooth Count
 Translated:Inner Gear Tooth Count
 
@@ -1750,6 +1765,9 @@ Translated:Manually Configure Connection
 English:MarchingSquares
 Translated:MarchingSquares
 
+English:Markdown Help
+Translated:Markdown Help
+
 English:Marlin
 Translated:Marlin
 
@@ -1962,6 +1980,9 @@ Translated:name
 
 English:Name
 Translated:Name
+
+English:Name To Write
+Translated:Name To Write
 
 English:Networked Printing
 Translated:Networked Printing
@@ -2602,8 +2623,17 @@ Translated:Require Leveling To Print
 English:Required
 Translated:Required
 
+English:Reset
+Translated:Reset
+
 English:Reset Long Extrusion
 Translated:Reset Long Extrusion
+
+English:Reset the line ends back to their starting positions
+Translated:Reset the line ends back to their starting positions
+
+English:Reset the position
+Translated:Reset the position
 
 English:Reset to Defaults...
 Translated:Reset to Defaults...
@@ -2685,6 +2715,12 @@ Translated:Right Inset
 
 English:Ring
 Translated:Ring
+
+English:Ring Phase Angle
+Translated:Ring Phase Angle
+
+English:Ring Sides
+Translated:Ring Sides
 
 English:Rotate
 Translated:Rotate
@@ -2896,6 +2932,9 @@ Translated:Setup Wizard
 English:Shaded
 Translated:Shaded
 
+English:Shape
+Translated:Shape
+
 English:Share
 Translated:Share
 
@@ -3006,6 +3045,9 @@ Translated:Simple
 
 English:Simple Arduino
 Translated:Simple Arduino
+
+English:Size
+Translated:Size
 
 English:Skip
 Translated:Skip
@@ -3648,6 +3690,9 @@ Translated:Thread Scale
 
 English:Threads
 Translated:Threads
+
+English:Threshold
+Translated:Threshold
 
 English:Thumbnails
 Translated:Thumbnails
