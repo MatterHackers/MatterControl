@@ -1,0 +1,282 @@
+{
+  "Layout": [
+    {
+      "Name": "QWERTY",
+      "Rows": [
+        {
+          "Keys": [
+            {
+              "Default": "Esc"
+            },
+            {
+              "Default": "'",
+              "Shifted": "~"
+            },
+            {
+              "Default": "1",
+              "Shifted": "!"
+            },
+            {
+              "Default": "2",
+              "Shifted": "@"
+            },
+            {
+              "Default": "3",
+              "Shifted": "#"
+            },
+            {
+              "Default": "4",
+              "Shifted": "$"
+            },
+            {
+              "Default": "5",
+              "Shifted": "%"
+            },
+            {
+              "Default": "6",
+              "Shifted": "^"
+            },
+            {
+              "Default": "7",
+              "Shifted": "&"
+            },
+            {
+              "Default": "8",
+              "Shifted": "*"
+            },
+            {
+              "Default": "9",
+              "Shifted": "("
+            },
+            {
+              "Default": "0",
+              "Shifted": "("
+            },
+            {
+              "Default": "-",
+              "Shifted": "_"
+            },
+            {
+              "Default": "=",
+              "Shifted": "+"
+            },
+            {
+              "Default": "BackSpace",
+              "Size":  1.5
+            }
+          ]
+        },
+        {
+          "Keys": [
+            {
+              "Default": "Tab",
+              "Size": 1.5
+            },
+            {
+              "Default": "q",
+              "Shifted": "Q"
+            },
+            {
+              "Default": "w",
+              "Shifted": "W"
+            },
+            {
+              "Default": "e",
+              "Shifted": "E"
+            },
+            {
+              "Default": "r",
+              "Shifted": "R"
+            },
+            {
+              "Default": "t",
+              "Shifted": "T"
+            },
+            {
+              "Default": "y",
+              "Shifted": "Y"
+            },
+            {
+              "Default": "u",
+              "Shifted": "U"
+            },
+            {
+              "Default": "i",
+              "Shifted": "I"
+            },
+            {
+              "Default": "o",
+              "Shifted": "O"
+            },
+            {
+              "Default": "p",
+              "Shifted": "P"
+            },
+            {
+              "Default": "[",
+              "Shifted": "{"
+            },
+            {
+              "Default": "]",
+              "Shifted": "}"
+            },
+            {
+              "Default": "\\",
+              "Shifted": "|"
+            },
+            {
+              "Default": "Del"
+            }
+          ]
+        },
+        {
+          "Keys": [
+            {
+              "Default": "Caps",
+              "Size": 2
+            },
+            {
+              "Default": "a",
+              "Shifted": "A"
+            },
+            {
+              "Default": "s",
+              "Shifted": "S"
+            },
+            {
+              "Default": "d",
+              "Shifted": "D"
+            },
+            {
+              "Default": "f",
+              "Shifted": "F"
+            },
+            {
+              "Default": "g",
+              "Shifted": "g"
+            },
+            {
+              "Default": "h",
+              "Shifted": "H"
+            },
+            {
+              "Default": "j",
+              "Shifted": "J"
+            },
+            {
+              "Default": "k",
+              "Shifted": "K"
+            },
+            {
+              "Default": "l",
+              "Shifted": "L"
+            },
+            {
+              "Default": ";",
+              "Shifted": ":"
+            },
+            {
+              "Default": "\"",
+              "Shifted": "'"
+            },
+            {
+              "Default": "Enter",
+              "Size":  2.5
+            }
+          ]
+        },
+        {
+          "Keys": [
+            {
+              "Default": "Shift",
+              "Size": 2.5
+            },
+            {
+              "Default": "z",
+              "Shifted": "Z"
+            },
+            {
+              "Default": "x",
+              "Shifted": "X"
+            },
+            {
+              "Default": "c",
+              "Shifted": "C"
+            },
+            {
+              "Default": "v",
+              "Shifted": "V"
+            },
+            {
+              "Default": "b",
+              "Shifted": "B"
+            },
+            {
+              "Default": "n",
+              "Shifted": "N"
+            },
+            {
+              "Default": "m",
+              "Shifted": "M"
+            },
+            {
+              "Default": ",",
+              "Shifted": "<"
+            },
+            {
+              "Default": ".",
+              "Shifted": ">"
+            },
+            {
+              "Default": "/",
+              "Shifted": "?"
+            },
+            {
+              "Default": "UpArrow"
+            },
+            {
+              "Default": "Shift",
+              "Size":  2
+            }
+          ]
+        },
+        {
+          "Keys": [
+            {
+              "Default": "Ctrl"
+            },
+            {
+              "Default": "Windows"
+            },
+            {
+              "Default": "Alt"
+            },
+            {
+              "Default": "Space",
+              "Size": 7
+            },
+            {
+              "Default": "Alt"
+            },
+            {
+              "Default": "Ctrl"
+            },
+            {
+              "Default": "LeftArrow"
+            },
+            {
+              "Default": "DownArrow"
+            },
+            {
+              "Default": "RightArrow"
+            },
+            {
+              "Default": "Empty",
+              "Siz": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

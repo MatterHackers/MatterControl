@@ -183,18 +183,33 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 								else
 								{
-									var letterObject = new Object3D()
-									{
-										Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
-										Matrix = Matrix4X4.CreateTranslation(offset.X, 0, 0),
-										Name = leterNumber.ToString("000") + " - '" + letter.ToString() + "'"
-									};
-									if (letterObject.Mesh.Faces.Count > 0)
+									Object3D letterObject = null;
+									switch (letter)
+                                    {
+										case ' ':
+											offset.X += letterPrinter.GetSize(" ").X * pointsToMm;
+											break;
+
+										case '\t':
+											offset.X += letterPrinter.GetSize("    ").X * pointsToMm;
+											break;
+
+										default:
+											letterObject = new Object3D()
+											{
+												Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
+												Matrix = Matrix4X4.CreateTranslation(offset.X, 0, 0),
+												Name = leterNumber.ToString("000") + " - '" + letter.ToString() + "'"
+											};
+											offset.X += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+											break;
+									}
+
+									if (letterObject?.Mesh.Faces.Count > 0)
 									{
 										lineObject.Children.Add(letterObject);
 										leterNumber++;
 									}
-									offset.X += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
 								}
 							}
 

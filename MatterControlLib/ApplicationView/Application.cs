@@ -67,8 +67,6 @@ namespace MatterHackers.MatterControl
 
 		public static bool EnableNetworkTraffic { get; set; } = true;
 
-		public static MiniTouchScreen MiniTouchScreen { get; set; } = new MiniTouchScreen();
-
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
