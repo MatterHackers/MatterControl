@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
+			//var keyTest = new SoftKeyboard(640, 280);
+			//this.AddChild(keyTest);
 
 			base.OnLoad(args);
 		}

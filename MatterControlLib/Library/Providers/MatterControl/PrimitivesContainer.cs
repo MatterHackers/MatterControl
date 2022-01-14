@@ -111,8 +111,8 @@ namespace MatterHackers.MatterControl.Library
 					async () => await OpenScadScriptObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "MarchingSquares".Localize(),
-					async () => await MarchingSquaresObject3D.Create())
+					() => "Dual Contouring".Localize(),
+					async () => await DualContouringObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 #endif
 				new GeneratorItem(

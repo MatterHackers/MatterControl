@@ -2356,6 +2356,9 @@ Translated:Primitive Shapes
 English:Primitives
 Translated:Primitives
 
+English:Primitives 2D
+Translated:Primitives 2D
+
 English:Print
 Translated:Print
 

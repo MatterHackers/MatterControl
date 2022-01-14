@@ -27,28 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading;
 using System.Threading.Tasks;
 using DualContouring;
-using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MarchingSquaresObject3D : Object3D
+    public class DualContouringObject3D : Object3D
 	{
-		public MarchingSquaresObject3D()
+		public DualContouringObject3D()
 		{
-			Name = "MarchingSquares".Localize();
+			Name = "Dual Contouring".Localize();
 			Color = Agg.Color.Cyan;
 		}
 
-		public static async Task<MarchingSquaresObject3D> Create()
+		public static async Task<DualContouringObject3D> Create()
 		{
-			var item = new MarchingSquaresObject3D();
+			var item = new DualContouringObject3D();
 			await item.Rebuild();
 			return item;
 		}
