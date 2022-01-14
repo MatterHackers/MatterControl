@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HoverColor = theme.SlightShade;
 			this.MouseDownColor = theme.MinimalShade;
 			this.Margin = 0;
+			this.Cursor = Cursors.Hand;
 
 			this.TabStop = true;
 		}

@@ -33,7 +33,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public static class PrinterSetup
 	{
-		public enum StartPageOptions { Default, SkipWifiSetup, ShowMakeModel }
+		public enum StartPageOptions
+		{
+			Default,
+			SkipWifiSetup,
+			ShowMakeModel,
+			ShowPulseModels
+		}
 
 		public static DialogPage GetBestStartPage(StartPageOptions options = StartPageOptions.Default)
 		{
@@ -46,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				return new SetupStepMakeModelName();
+				return new SetupStepMakeModelName(options == StartPageOptions.ShowPulseModels);
 			}
 		}
 	}

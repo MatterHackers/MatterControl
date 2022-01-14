@@ -90,12 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (Application.MiniTouchScreen.Enabled)
-			{
-				var miniTouchScreen = new SystemWindow(800, 480);
-
-				miniTouchScreen.ShowAsSystemWindow();
-			}
+			//var keyTest = new SoftKeyboard(640, 280);
+			//this.AddChild(keyTest);
 
 			base.OnLoad(args);
 		}

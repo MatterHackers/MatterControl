@@ -67,8 +67,6 @@ namespace MatterHackers.MatterControl
 
 		public static bool EnableNetworkTraffic { get; set; } = true;
 
-		public static MiniTouchScreen MiniTouchScreen { get; set; } = new MiniTouchScreen();
-
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
@@ -779,7 +777,9 @@ namespace MatterHackers.MatterControl
 					}
 
 
-					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
+					// If we have not cancled the show welcome message and there is a window open
+					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false"
+						&& ApplicationController.Instance.Workspaces.Count > 0)
 					{
 						UiThread.RunOnIdle(() =>
 						{
