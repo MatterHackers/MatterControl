@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			printer.Connection.CanceleRequested += Connection_PrintCanceled;
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)
-				|| printer.Settings.GetValue<double>(SettingsKey.bed_temperature) == 0)
+				|| printer.Settings.Helpers.ActiveBedTemperature == 0)
 			{
 				// If we don't have a bed or we are not going to set the temperature
 				// do not wait for an M190
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			levelingData.CreationDate = DateTime.Now;
 			// record the temp the bed was when we measured it (or 0 if no heated bed)
 			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
-				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				printer.Settings.Helpers.ActiveBedTemperature
 				: 0;
 			levelingData.IssuedLevelingTempWarning = false;
 

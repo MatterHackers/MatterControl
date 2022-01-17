@@ -383,7 +383,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
-				if (stringEvent.Data == SettingsKey.bed_temperature)
+				if (stringEvent.Data == Printer.Settings.Helpers.ActiveBedTemperatureSetting
+					|| stringEvent.Data == SettingsKey.bed_temperature
+					|| stringEvent.Data == SettingsKey.bed_surface)
 				{
 					if (this.Printing
 						&& this.DetailedPrintingState == DetailedPrintingState.HeatingBed)
@@ -394,7 +396,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						double goalTemp = this.TargetBedTemperature;
 						if (goalTemp > 0)
 						{
-							var newGoal = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+							var newGoal = printer.Settings.Helpers.ActiveBedTemperature;
 							this.TargetBedTemperature = newGoal;
 						}
 					}

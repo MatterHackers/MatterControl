@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// start heating up now so it has more time to heat
 			var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
-				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				printer.Settings.Helpers.ActiveBedTemperature
 				: 0;
 			if (bedTemperature > 0)
 			{
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double targetHotendTemp = 0;
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+				targetBedTemp = printer.Settings.Helpers.ActiveBedTemperature;
 			}
 
 			if (!printer.Settings.Helpers.ProbeBeingUsed)

@@ -46,6 +46,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
 		public const string bed_temperature = nameof(bed_temperature);
+		public const string bed_temperature_blue_tape = nameof(bed_temperature_blue_tape);
+		public const string bed_temperature_buildtak = nameof(bed_temperature_buildtak);
+		public const string bed_temperature_garolite = nameof(bed_temperature_garolite);
+		public const string bed_temperature_glass = nameof(bed_temperature_glass);
+		public const string bed_temperature_kapton = nameof(bed_temperature_kapton);
+		public const string bed_temperature_pei = nameof(bed_temperature_pei);
+		public const string bed_temperature_pp = nameof(bed_temperature_pp);
+		public const string has_swappable_bed = nameof(has_swappable_bed);
+		public const string bed_surface = nameof(bed_surface);
 		public const string before_toolchange_gcode = nameof(before_toolchange_gcode);
 		public const string before_toolchange_gcode_1 = nameof(before_toolchange_gcode_1);
 		public const string before_toolchange_gcode_2 = nameof(before_toolchange_gcode_2);

@@ -204,8 +204,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+        public double ActiveBedTemperature 
+		{
+			get
+            {
+				var temp = printerSettings.GetValue<double>(ActiveBedTemperatureSetting);
+				// check if it might be trying to use the default
+				if (temp == 0)
+                {
+					// it is either the default (actual bed_temperature) or a 0. This will get the true temp requested
+					return printerSettings.GetValue<double>(SettingsKey.bed_temperature);
+				}
 
-		public void DoPrintLeveling(bool doLeveling)
+				// fonud a good temp return it
+				return temp;
+			}
+		}
+
+        public string ActiveBedTemperatureSetting
+		{
+			get
+			{
+				if (!printerSettings.GetValue<bool>(SettingsKey.has_swappable_bed))
+                {
+					return SettingsKey.bed_temperature;
+                }
+
+				switch(printerSettings.GetValue(SettingsKey.bed_surface))
+				{
+					case "Blue Tape":
+						return SettingsKey.bed_temperature_blue_tape;
+
+					case "BuildTak":
+						return SettingsKey.bed_temperature_buildtak;
+
+					case "Garolite":
+						return SettingsKey.bed_temperature_garolite;
+
+					case "Glass":
+						return SettingsKey.bed_temperature_glass;
+
+					case "Kapton":
+						return SettingsKey.bed_temperature_kapton;
+
+					case "PEI":
+						return SettingsKey.bed_temperature_pei;
+
+					case "Polypropylene":
+						return SettingsKey.bed_temperature_pp;
+
+					default:
+						return SettingsKey.bed_temperature;
+				}
+			}
+		}
+
+        public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
 			if (doLeveling == printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled))

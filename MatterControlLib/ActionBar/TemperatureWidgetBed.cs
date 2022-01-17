@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			var widget = new IgnoredPopupWidget()
 			{
-				Width = 300 * GuiWidget.DeviceScale,
+				Width = 340 * GuiWidget.DeviceScale,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(12, 0),
@@ -88,9 +88,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			widget.AddChild(container);
 
-			GuiWidget hotendRow;
+			GuiWidget heatedBedSettingItem;
 
-			container.AddChild(hotendRow = new SettingsItem(
+			container.AddChild(heatedBedSettingItem = new SettingsItem(
 				"Heated Bed".Localize(),
 				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
@@ -98,27 +98,19 @@ namespace MatterHackers.MatterControl.ActionBar
 					Checked = printer.Connection.TargetBedTemperature > 0,
 					ToggleAction = (itemChecked) =>
 					{
-						var goalTemp = itemChecked ? printer.Settings.GetValue<double>(SettingsKey.bed_temperature) : 0;
+						var goalTemp = itemChecked ? printer.Settings.Helpers.ActiveBedTemperature : 0;
 						printer.Connection.TargetBedTemperature = goalTemp;
 					}
 				},
 				enforceGutter: false));
 
-			var toggleWidget = hotendRow.Children.Where(o => o is ICheckbox).FirstOrDefault();
+			var toggleWidget = heatedBedSettingItem.Children.Where(o => o is ICheckbox).FirstOrDefault();
 			toggleWidget.Name = "Toggle Heater";
 
 			heatToggle = toggleWidget as ICheckbox;
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-
-			var settingsData = PrinterSettings.SettingsData[SettingsKey.bed_temperature];
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
-			container.AddChild(temperatureRow);
-
-			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
-			alwaysEnabled.Add(temperatureRow);
-			alwaysEnabled.Add(hotendRow);
 
 			// add in the temp graph
 			var graph = new DataViewGraph()
@@ -127,19 +119,73 @@ namespace MatterHackers.MatterControl.ActionBar
 				MinValue = 0,
 				ShowGoal = true,
 				GoalColor = menuTheme.PrimaryAccentColor,
-				GoalValue = printer.Settings.GetValue<double>(SettingsKey.bed_temperature),
+				GoalValue = printer.Settings.Helpers.ActiveBedTemperature,
 				MaxValue = 150, // could come from some profile value in the future
 				Width = widget.Width - 20 * GuiWidget.DeviceScale,
 				Height = 35 * GuiWidget.DeviceScale, // this works better if it is a common multiple of the Width
 				Margin = new BorderDouble(0, 5, 0, 0),
 			};
 
+			var temperatureRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			var bedSettingBeingEdited = printer.Settings.Helpers.ActiveBedTemperatureSetting;
+
+			void SettingChanged(object s, StringEventArgs stringEvent)
+			{
+				if (stringEvent.Data == SettingsKey.bed_temperature
+					|| stringEvent.Data == bedSettingBeingEdited)
+				{
+					graph.GoalValue = printer.Settings.Helpers.ActiveBedTemperature;
+				}
+				else if (stringEvent.Data == SettingsKey.bed_surface)
+				{
+					AddTemperatureControlForBedSurface();
+					graph.GoalValue = printer.Settings.Helpers.ActiveBedTemperature;
+				}
+			}
+
+			void AddTemperatureControlForBedSurface()
+            {
+				temperatureRow.CloseChildren();
+
+				bedSettingBeingEdited = printer.Settings.Helpers.ActiveBedTemperatureSetting;
+
+				var settingsData = PrinterSettings.SettingsData[bedSettingBeingEdited];
+				var bedTemperature = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
+
+				var settingsRow = bedTemperature.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
+
+				// make sure we are not still connected when changing settings
+				printer.Settings.SettingChanged -= SettingChanged;
+				// connect it
+				printer.Settings.SettingChanged += SettingChanged;
+				// and make sure we dispose when done
+				printer.Disposed += (s, e) => printer.Settings.SettingChanged -= SettingChanged;
+
+				temperatureRow.AddChild(bedTemperature);
+			}
+
+			AddTemperatureControlForBedSurface();
+			container.AddChild(temperatureRow);
+
+			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
+			alwaysEnabled.Add(temperatureRow);
+			alwaysEnabled.Add(heatedBedSettingItem);
+
+			var bedSurfaceChanger = CreateBedSurfaceSelector(printer, menuTheme, ref tabIndex);
+			if (bedSurfaceChanger != null)
+            {
+				container.AddChild(bedSurfaceChanger);
+				alwaysEnabled.Add(bedSurfaceChanger);
+            }
+
 			runningInterval = UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-
-			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
 			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 			{
@@ -156,14 +202,6 @@ namespace MatterHackers.MatterControl.ActionBar
 								userInitiated: false);
 						}
 					}
-
-					if (stringEvent.Data == SettingsKey.bed_temperature)
-					{
-						var temp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
-						graph.GoalValue = temp;
-
-						settingsRow.UpdateStyle();
-					}
 				}
 			}
 
@@ -173,6 +211,21 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(graph);
 
 			return widget;
+		}
+
+		public static GuiWidget CreateBedSurfaceSelector(PrinterConfig printer, ThemeConfig theme, ref int tabIndex)
+		{
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)
+				|| !printer.Settings.GetValue<bool>(SettingsKey.has_swappable_bed))
+			{
+				return null;
+			}
+
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			var settingsData = PrinterSettings.SettingsData[SettingsKey.bed_surface];
+
+			var surfaceSelector = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+			return surfaceSelector;
 		}
 
 		public override void OnClosed(EventArgs e)

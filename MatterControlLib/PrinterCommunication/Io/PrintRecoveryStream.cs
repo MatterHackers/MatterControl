@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("M82; use absolute distance for extrusion");
 
 					bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
-					double bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+					double bedTemp = printer.Settings.Helpers.ActiveBedTemperature;
 					if (hasHeatedBed && bedTemp > 0)
 					{
 						// start heating the bed

@@ -64,6 +64,9 @@ Translated:5x5 Mesh
 English:7 Point Disk
 Translated:7 Point Disk
 
+English:A comma separated list of bed names and temperatures (e.g. "Glass,70,PEI,65,Kapton,55"). When selected the bed temperature will be set to the chosen value.
+Translated:A comma separated list of bed names and temperatures (e.g. "Glass,70,PEI,65,Kapton,55"). When selected the bed temperature will be set to the chosen value.
+
 English:A component must be selected
 Translated:A component must be selected
 
@@ -256,6 +259,9 @@ Translated:At least 1 part must be selected
 English:At least 2 parts must be selected
 Translated:At least 2 parts must be selected
 
+English:Attempting to connect
+Translated:Attempting to connect
+
 English:Attempting to connect again may address the issue.
 Translated:Attempting to connect again may address the issue.
 
@@ -337,6 +343,12 @@ Translated:Bed Shape
 English:Bed Size
 Translated:Bed Size
 
+English:Bed Surface
+Translated:Bed Surface
+
+English:Bed Surface Temperatures
+Translated:Bed Surface Temperatures
+
 English:Bed Temperature
 Translated:Bed Temperature
 
@@ -367,6 +379,12 @@ Translated:Bevel Steps
 English:Bevel Top
 Translated:Bevel Top
 
+English:Blue Tape
+Translated:Blue Tape
+
+English:Blue Tape Bed Temperature
+Translated:Blue Tape Bed Temperature
+
 English:Bottom Inset
 Translated:Bottom Inset
 
@@ -390,6 +408,12 @@ Translated:Brim Extruder
 
 English:Build Height
 Translated:Build Height
+
+English:BuildTak
+Translated:BuildTak
+
+English:BuildTak Bed Temperature
+Translated:BuildTak Bed Temperature
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
 Translated:Calculate and transmit a standard rep-rap checksum for all commands.
@@ -462,6 +486,9 @@ Translated:Check For Update
 
 English:Checking Cloud Services
 Translated:Checking Cloud Services
+
+English:Checking with webservice
+Translated:Checking with webservice
 
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
@@ -574,6 +601,9 @@ Translated:Connect to the currently selected printer
 English:Connect to your printer to continue
 Translated:Connect to your printer to continue
 
+English:Connect your printer to check for firmware updates.
+Translated:Connect your printer to check for firmware updates.
+
 English:Connected
 Translated:Connected
 
@@ -582,6 +612,9 @@ Translated:Connected to Emulator
 
 English:Connection Failed
 Translated:Connection Failed
+
+English:Connection succeeded
+Translated:Connection succeeded
 
 English:Continue
 Translated:Continue
@@ -709,6 +742,9 @@ Translated:Cube
 English:Current Default
 Translated:Current Default
 
+English:Currently available serial ports.
+Translated:Currently available serial ports.
+
 English:Curve
 Translated:Curve
 
@@ -778,6 +814,9 @@ Translated:Detect gaps between perimeters that are too thin to fill with normal 
 English:Detect perimeters that cross over themselves and combine them.
 Translated:Detect perimeters that cross over themselves and combine them.
 
+English:Detecting device firmware...
+Translated:Detecting device firmware...
+
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
 Translated:Detects sections of the model that would be too thin to print and expands them to make them printable.
 
@@ -840,6 +879,9 @@ Translated:Downloading
 
 English:Downloads
 Translated:Downloads
+
+English:Dual Contouring
+Translated:Dual Contouring
 
 English:Dual Extrusion Align
 Translated:Dual Extrusion Align
@@ -1192,6 +1234,12 @@ Translated:Furthest Back
 English:g/cm³
 Translated:g/cm³
 
+English:Garolite
+Translated:Garolite
+
+English:Garolite Bed Temperature
+Translated:Garolite Bed Temperature
+
 English:G-Code
 Translated:G-Code
 
@@ -1255,6 +1303,12 @@ Translated:Generates an outline around the support material to improve strength 
 English:GitHub Personal Access Token
 Translated:GitHub Personal Access Token
 
+English:Glass
+Translated:Glass
+
+English:Glass Bed Temperature
+Translated:Glass Bed Temperature
+
 English:Good
 Translated:Good
 
@@ -1308,6 +1362,9 @@ Translated:Has Power Control
 
 English:Has SD Card Reader
 Translated:Has SD Card Reader
+
+English:Has Swappable Bed
+Translated:Has Swappable Bed
 
 English:Has Z Probe
 Translated:Has Z Probe
@@ -1564,6 +1621,12 @@ Translated:Iterations
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Kapton
+Translated:Kapton
+
+English:Kapton Bed Temperature
+Translated:Kapton Bed Temperature
+
 English:Keys
 Translated:Keys
 
@@ -1759,6 +1822,9 @@ Translated:Make Selection
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:Make the first layer on top of partial infill use the speed and fan for bridging.
 
+English:Manual Z Calibration complete.
+Translated:Manual Z Calibration complete.
+
 English:Manually Configure Connection
 Translated:Manually Configure Connection
 
@@ -1812,6 +1878,9 @@ Translated:Max Velocity
 
 English:Maximum Speed
 Translated:Maximum Speed
+
+English:Measure the nozzle offset
+Translated:Measure the nozzle offset
 
 English:Measure Tool
 Translated:Measure Tool
@@ -2215,6 +2284,12 @@ Translated:Pause G-Code
 English:Pause Print
 Translated:Pause Print
 
+English:PEI
+Translated:PEI
+
+English:PEI Bed Temperature
+Translated:PEI Bed Temperature
+
 English:Percentage of
 Translated:Percentage of
 
@@ -2311,6 +2386,12 @@ Translated:Point Size
 English:Polygons
 Translated:Polygons
 
+English:Polypropylene
+Translated:Polypropylene
+
+English:Polypropylene Bed Temperature
+Translated:Polypropylene Bed Temperature
+
 English:Port In Use
 Translated:Port In Use
 
@@ -2385,6 +2466,9 @@ Translated:Print Leveling is an optional feature for this printer that can help 
 
 English:Print Leveling measures the plane of the bed.
 Translated:Print Leveling measures the plane of the bed.
+
+English:Print Leveling will run automatically at the start of each print.
+Translated:Print Leveling will run automatically at the start of each print.
 
 English:Print Leveling Wizard
 Translated:Print Leveling Wizard
@@ -2475,6 +2559,9 @@ Translated:Pro Tools
 
 English:Probe
 Translated:Probe
+
+English:Probe at bed center
+Translated:Probe at bed center
 
 English:Probe Offset
 Translated:Probe Offset
@@ -2572,6 +2659,9 @@ Translated:Reduced Width
 English:Re-enter Password
 Translated:Re-enter Password
 
+English:Refresh
+Translated:Refresh
+
 English:Refresh Folder
 Translated:Refresh Folder
 
@@ -2598,6 +2688,9 @@ Translated:Remove Mode
 
 English:Remove Subtract Objects
 Translated:Remove Subtract Objects
+
+English:Remove the paper
+Translated:Remove the paper
 
 English:Rename
 Translated:Rename
@@ -2788,6 +2881,9 @@ Translated:s
 English:Sailfish Communication
 Translated:Sailfish Communication
 
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:Sample the bed center position to determine the probe distance to the bed
+
 English:Save
 Translated:Save
 
@@ -2901,6 +2997,9 @@ Translated:Sets MatterControl to attempt to connect to a printer over the networ
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
+
+English:Setting Name
+Translated:Setting Name
 
 English:Settings
 Translated:Settings
@@ -3072,6 +3171,9 @@ Translated:Slice Engine
 
 English:Slice Height
 Translated:Slice Height
+
+English:Slice Presets Editor
+Translated:Slice Presets Editor
 
 English:Slice Settings
 Translated:Slice Settings
@@ -3325,6 +3427,9 @@ Translated:The color of the first material.
 English:The color of the second material (extruder 2).
 Translated:The color of the second material (extruder 2).
 
+English:The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.
+Translated:The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.
+
 English:The date this file was originally created.
 Translated:The date this file was originally created.
 
@@ -3556,6 +3661,9 @@ Translated:The semaphore timeout period has expired.
 English:The serial port communication speed of the printers firmware.
 Translated:The serial port communication speed of the printers firmware.
 
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+
 English:The serial port to use while connecting to this printer.
 Translated:The serial port to use while connecting to this printer.
 
@@ -3619,6 +3727,45 @@ Translated:The target temperature the extruder will attempt to reach during the 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
+Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
+
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
+Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
+Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
+Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
+
+English:The temperature to print when the bed is polypropylene. Set to 0 to disable.
+Translated:The temperature to print when the bed is polypropylene. Set to 0 to disable.
+
+English:The temperature to print when the bed is polypropylene. Set to 0 to use default.
+Translated:The temperature to print when the bed is polypropylene. Set to 0 to use default.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
+Translated:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
+Translated:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
+
+English:The temperature to print when the bed is using garolite. Set to 0 to disable.
+Translated:The temperature to print when the bed is using garolite. Set to 0 to disable.
+
+English:The temperature to print when the bed is using garolite. Set to 0 to use default.
+Translated:The temperature to print when the bed is using garolite. Set to 0 to use default.
+
+English:The temperature to print when the bed is using glass. Set to 0 to use default.
+Translated:The temperature to print when the bed is using glass. Set to 0 to use default.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to disable.
+Translated:The temperature to print when the bed is using PEI. Set to 0 to disable.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to use default.
+Translated:The temperature to print when the bed is using PEI. Set to 0 to use default.
+
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 Translated:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 
@@ -3681,6 +3828,9 @@ Translated:This is the name of your printer that will be displayed in the choose
 
 English:This is used to increase the number of downloads allowed when browsing GitHub repositories
 Translated:This is used to increase the number of downloads allowed when browsing GitHub repositories
+
+English:This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.
+Translated:This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.
 
 English:This will ensure that no filament is stuck to your nozzle.
 Translated:This will ensure that no filament is stuck to your nozzle.
@@ -4024,6 +4174,9 @@ Translated:What to do when there is not a good place to hide the seam.
 English:What went wrong?
 Translated:What went wrong?
 
+English:What's this?
+Translated:What's this?
+
 English:wheel
 Translated:wheel
 
@@ -4053,6 +4206,9 @@ Translated:Wipe Shield Distance
 
 English:Wipe Tower Size
 Translated:Wipe Tower Size
+
+English:Wizard
+Translated:Wizard
 
 English:Write Filter
 Translated:Write Filter

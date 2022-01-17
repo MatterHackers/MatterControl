@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl
 
 					bool heatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
 
-					double bedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+					double bedTemperature = printer.Settings.Helpers.ActiveBedTemperature;
 
 					if (heatedBed
 						&& printer.Connection.IsConnected
