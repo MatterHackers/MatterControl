@@ -220,7 +220,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_surface,
 					PresentationName = "Bed Surface".Localize(),
-					HelpText = "The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.".Localize(),
+					// the below text creates a bad markdown layout when the tool tip appears
+					//HelpText = "The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.".Localize(),                  
+					HelpText = "This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
 					ListValues = "Default,Blue Tape,BuildTak,Garolite,Glass,Kapton,PEI,Polypropylene",

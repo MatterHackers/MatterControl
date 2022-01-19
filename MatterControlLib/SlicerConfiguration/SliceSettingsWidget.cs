@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
@@ -828,7 +827,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 // Disable ToolTipText on UIFields in favor of popovers
                 uiField.Content.ToolTipText = "";
 
-                RegisterSettingChangeEvent(printer, uiField, settingData.SlicerConfigName, settingsContext);
+				uiField.RegisterSettingChangeEvent(printer, settingData.SlicerConfigName, settingsContext, errors);
 
                 // make sure the undo data goes back to the initial value after a change
                 uiField.ClearUndoHistory();
@@ -925,46 +924,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return settingsRow;
 			}
 		}
-
-        private static void RegisterSettingChangeEvent(PrinterConfig printer, UIField uiField, string boundSettingsKey, SettingsContext settingsContext)
-        {
-			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
-			{
-				var localUiField = uiField;
-				var errors2 = printer.ValidateSettings(settingsContext);
-
-				if (stringEvent != null)
-				{
-					string settingsKey = stringEvent.Data;
-					if (settingsKey == boundSettingsKey)
-					{
-						string currentValue = settingsContext.GetValue(settingsKey);
-						if (localUiField.Value != currentValue
-							|| settingsKey == "com_port")
-						{
-							localUiField.SetValue(
-								currentValue,
-								userInitiated: false);
-						}
-
-						// Some fields are hosted outside of SettingsRows (e.g. Section Headers like Brim) and should skip validation updates
-						localUiField.Row?.UpdateValidationState(errors2);
-					}
-				}
-			}
-			
-			// Register listeners
-			printer.Settings.SettingChanged += Printer_SettingChanged;
-
-            uiField.Content.Closed += (s, e) =>
-            {
-                // Unregister listeners
-                printer.Settings.SettingChanged -= Printer_SettingChanged;
-            };
-
-            // remove listener if print disposed
-            printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
-        }
 
         public void FilterToOverrides(IEnumerable<PrinterSettingsLayer> layers)
 		{

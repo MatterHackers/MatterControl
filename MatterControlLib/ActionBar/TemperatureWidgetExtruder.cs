@@ -31,7 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -381,10 +383,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				// material can be changed even when the printer is not connected
 				alwaysEnabled.Add(materialSettingsRow);
 				// add in a shop button
-				var shopButton = theme.CreateDialogButton("Shop".Localize());
-				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
-				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
-				shopButton.Click += (s, e) =>
+				var shopButton = new TextIconButton("Shop".Localize(), StaticData.Instance.LoadIcon("cart.png", 16, 16).SetToColor(menuTheme.TextColor), theme)
+				{
+					BackgroundColor = theme.SlightShade,
+					HoverColor = theme.SlightShade.WithAlpha(75),
+					Margin = new BorderDouble(3, 3, 6, 3),
+                    ToolTipText = "Shop Filament at MatterHackers".Localize()
+                };
+                shopButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{

@@ -25,6 +25,9 @@ Translated:%
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
+English:{0} must be less than or equal to the {1}.
+Translated:{0} must be less than or equal to the {1}.
+
 English:{0} should be greater than 0.
 Translated:{0} should be greater than 0.
 
@@ -994,6 +997,9 @@ Translated:Enter your password
 English:Enter your username or email address
 Translated:Enter your username or email address
 
+English:Error
+Translated:Error
+
 English:Estimated Cost
 Translated:Estimated Cost
 
@@ -1620,6 +1626,9 @@ Translated:IP Finder
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
+
+English:It is currently set to {0}.
+Translated:It is currently set to {0}.
 
 English:Iterations
 Translated:Iterations
@@ -3394,6 +3403,9 @@ Translated:Text Size
 English:Text2
 Translated:Text2
 
+English:The {0} must be greater than 0.
+Translated:The {0} must be greater than 0.
+
 English:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
 Translated:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
 
@@ -3840,6 +3852,9 @@ Translated:This is used to increase the number of downloads allowed when browsin
 
 English:This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.
 Translated:This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.
+
+English:This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.
+Translated:This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.
 
 English:This will ensure that no filament is stuck to your nozzle.
 Translated:This will ensure that no filament is stuck to your nozzle.

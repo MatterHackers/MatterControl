@@ -327,7 +327,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.z_servo_depolyed_angle,
 						SettingsKey.z_servo_retracted_angle,
 						SettingsKey.measure_probe_offset_conductively,
+#if DEBUG
 						SettingsKey.validate_probe_offset,
+#endif
 						SettingsKey.conductive_pad_center,
 						SettingsKey.conductive_probe_min_z,
 					}),
