@@ -37,17 +37,12 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class TemperatureWidgetBed : TemperatureWidgetBase
+    internal class TemperatureWidgetBed : TemperatureWidgetBase
 	{
-		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
-		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
-		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
-		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private RunningInterval runningInterval;
 
 		public TemperatureWidgetBed(PrinterConfig printer, ThemeConfig theme)
@@ -154,7 +149,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				bedSettingBeingEdited = printer.Settings.Helpers.ActiveBedTemperatureSetting;
 
 				var settingsData = PrinterSettings.SettingsData[bedSettingBeingEdited];
-				var bedTemperature = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
+				var bedTemperature = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 
 				var settingsRow = bedTemperature.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
@@ -186,27 +181,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-
-			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
-			{
-				if (stringEvent != null)
-				{
-					string settingsKey = stringEvent.Data;
-					if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
-					{
-						string currentValue = settingsContext.GetValue(settingsKey);
-						if (uifield.Value != currentValue)
-						{
-							uifield.SetValue(
-								currentValue,
-								userInitiated: false);
-						}
-					}
-				}
-			}
-
-			printer.Settings.SettingChanged += Printer_SettingChanged;
-			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			container.AddChild(graph);
 

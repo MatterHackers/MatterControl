@@ -22,6 +22,9 @@ Translated:$/kg
 English:%
 Translated:%
 
+English:{0} (Update Available)
+Translated:{0} (Update Available)
+
 English:{0} should be greater than 0.
 Translated:{0} should be greater than 0.
 
@@ -519,6 +522,9 @@ Translated:Clear Cache
 
 English:Clear Height
 Translated:Clear Height
+
+English:Clear Material Setting
+Translated:Clear Material Setting
 
 English:Clear Override
 Translated:Clear Override
@@ -2365,6 +2371,9 @@ Translated:Please select the material you want to load into extruder {0}.
 English:Please select the material you want to load.
 Translated:Please select the material you want to load.
 
+English:Please select the material you want to unload.
+Translated:Please select the material you want to unload.
+
 English:Please sign in to continue.
 Translated:Please sign in to continue.
 
@@ -3988,8 +3997,14 @@ Translated:Unload
 English:Unload filament
 Translated:Unload filament
 
+English:Unload Filament
+Translated:Unload Filament
+
 English:Unload Filament Length
 Translated:Unload Filament Length
+
+English:Unload Material
+Translated:Unload Material
 
 English:Unpin
 Translated:Unpin

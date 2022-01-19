@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ExportSlaPopupMenu : PopupMenuButton
 	{
 		private PrinterConfig printer;
-		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private SettingsContext settingsContext;
 
 		public ExportSlaPopupMenu(PrinterConfig printer, ThemeConfig theme)
@@ -72,8 +71,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 
 				int tabIndex = 0;
-
-				allUiFields.Clear();
 
 				var exportPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -106,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in settingsToAdd)
 				{
 					var settingsData = PrinterSettings.SettingsData[key];
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 
 					if (row is SliceSettingsRow settingsRow)
 					{

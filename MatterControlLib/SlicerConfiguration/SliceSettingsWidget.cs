@@ -121,7 +121,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly Regex NameSanitizer = new Regex("[^a-zA-Z0-9-]", RegexOptions.Compiled);
 
 		private int tabIndexForItem = 0;
-		private readonly Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private readonly ThemeConfig theme;
 		private readonly PrinterConfig printer;
 		private readonly SettingsContext settingsContext;
@@ -233,8 +232,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				tabIndexForItem = 0;
 
 				this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
-
-				allUiFields = new Dictionary<string, UIField>();
 
 				var errors = printer.ValidateSettings(settingsContext);
 
@@ -367,9 +364,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabKey);
 					}
 				};
-
-				// Register listeners
-				printer.Settings.SettingChanged += Printer_SettingChanged;
 			}
 
 			this.PerformLayout();
@@ -447,8 +441,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			externalExtendMenu?.Invoke(popupMenu);
 		}
-
-		public Dictionary<string, UIField> UIFields => allUiFields;
 
 		public SectionWidget CreateGroupSection(SettingsLayout.Group group, List<ValidationError> errors)
 		{
@@ -613,10 +605,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal GuiWidget CreateItemRow(SliceSettingData settingData, List<ValidationError> errors)
 		{
-			return CreateItemRow(settingData, settingsContext, printer, theme, ref tabIndexForItem, allUiFields, errors);
+			return CreateItemRow(settingData, settingsContext, printer, theme, ref tabIndexForItem, errors);
 		}
 
-		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null, List<ValidationError> errors = null)
+		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme, ref int tabIndexForItem, List<ValidationError> errors = null)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -819,61 +811,58 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (uiField != null)
-			{
-				if (fieldCache != null)
-				{
-					fieldCache[settingData.SlicerConfigName] = uiField;
-				}
+            {
+                uiField.HelpText = settingData.HelpText;
 
-				uiField.HelpText = settingData.HelpText;
+                uiField.Name = $"{settingData.PresentationName} Field";
+                uiField.Initialize(tabIndexForItem++);
 
-				uiField.Name = $"{settingData.PresentationName} Field";
-				uiField.Initialize(tabIndexForItem++);
+                if (settingData.DataEditType == SliceSettingData.DataEditTypes.WIDE_STRING)
+                {
+                    uiField.Content.HAnchor = HAnchor.Stretch;
+                    placeFieldInDedicatedRow = true;
+                }
 
-				if (settingData.DataEditType == SliceSettingData.DataEditTypes.WIDE_STRING)
-				{
-					uiField.Content.HAnchor = HAnchor.Stretch;
-					placeFieldInDedicatedRow = true;
-				}
+                uiField.SetValue(sliceSettingValue, userInitiated: false);
 
-				uiField.SetValue(sliceSettingValue, userInitiated: false);
+                // Disable ToolTipText on UIFields in favor of popovers
+                uiField.Content.ToolTipText = "";
 
-				// Disable ToolTipText on UIFields in favor of popovers
-				uiField.Content.ToolTipText = "";
+                RegisterSettingChangeEvent(printer, uiField, settingData.SlicerConfigName, settingsContext);
 
-				// make sure the undo data goes back to the initial value after a change
-				uiField.ClearUndoHistory();
+                // make sure the undo data goes back to the initial value after a change
+                uiField.ClearUndoHistory();
 
-				uiField.ValueChanged += (s, e) =>
-				{
-					if (useDefaultSavePattern
-						&& e.UserInitiated)
-					{
-						settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-					}
+                uiField.ValueChanged += (s, e) =>
+                {
+                    if (useDefaultSavePattern
+                        && e.UserInitiated)
+                    {
+                        settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+                    }
 
-					settingsRow.UpdateStyle();
-				};
+                    settingsRow.UpdateStyle();
+                };
 
-				// After initializing the field, wrap with dropmenu if applicable
-				if (settingData.QuickMenuSettings.Count > 0)
-				{
-					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.TextColor, theme, printer);
-					dropMenu.Initialize(tabIndexForItem);
+                // After initializing the field, wrap with dropmenu if applicable
+                if (settingData.QuickMenuSettings.Count > 0)
+                {
+                    var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.TextColor, theme, printer);
+                    dropMenu.Initialize(tabIndexForItem);
 
-					settingsRow.AddContent(dropMenu.Content);
-				}
-				else
-				{
-					if (!placeFieldInDedicatedRow)
-					{
-						settingsRow.AddContent(uiField.Content);
-						settingsRow.ActionWidget = uiField.Content;
-					}
-				}
-			}
+                    settingsRow.AddContent(dropMenu.Content);
+                }
+                else
+                {
+                    if (!placeFieldInDedicatedRow)
+                    {
+                        settingsRow.AddContent(uiField.Content);
+                        settingsRow.ActionWidget = uiField.Content;
+                    }
+                }
+            }
 
-			settingsRow.UIField = uiField;
+            settingsRow.UIField = uiField;
 			uiField.Row = settingsRow;
 
 			if (errors?.Any() == true)
@@ -937,7 +926,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void FilterToOverrides(IEnumerable<PrinterSettingsLayer> layers)
+        private static void RegisterSettingChangeEvent(PrinterConfig printer, UIField uiField, string boundSettingsKey, SettingsContext settingsContext)
+        {
+			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
+			{
+				var localUiField = uiField;
+				var errors2 = printer.ValidateSettings(settingsContext);
+
+				if (stringEvent != null)
+				{
+					string settingsKey = stringEvent.Data;
+					if (settingsKey == boundSettingsKey)
+					{
+						string currentValue = settingsContext.GetValue(settingsKey);
+						if (localUiField.Value != currentValue
+							|| settingsKey == "com_port")
+						{
+							localUiField.SetValue(
+								currentValue,
+								userInitiated: false);
+						}
+
+						// Some fields are hosted outside of SettingsRows (e.g. Section Headers like Brim) and should skip validation updates
+						localUiField.Row?.UpdateValidationState(errors2);
+					}
+				}
+			}
+			
+			// Register listeners
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+
+            uiField.Content.Closed += (s, e) =>
+            {
+                // Unregister listeners
+                printer.Settings.SettingChanged -= Printer_SettingChanged;
+            };
+
+            // remove listener if print disposed
+            printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
+        }
+
+        public void FilterToOverrides(IEnumerable<PrinterSettingsLayer> layers)
 		{
 			foreach (var item in this.settingsRows)
 			{
@@ -954,30 +983,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private readonly List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
 		private SystemWindow systemWindow;
-
-		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
-		{
-			var errors = printer.ValidateSettings(settingsContext);
-
-			if (stringEvent != null)
-			{
-				string settingsKey = stringEvent.Data;
-				if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
-				{
-					string currentValue = settingsContext.GetValue(settingsKey);
-					if (uifield.Value != currentValue
-						|| settingsKey == "com_port")
-					{
-						uifield.SetValue(
-							currentValue,
-							userInitiated: false);
-					}
-
-					// Some fields are hosted outside of SettingsRows (e.g. Section Headers like Brim) and should skip validation updates
-					uifield.Row?.UpdateValidationState(errors);
-				}
-			}
-		}
 
 		private void ShowFilteredView()
 		{
@@ -1003,14 +1008,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Pull focus after filter
 			this.Focus();
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			printer.Settings.SettingChanged -= Printer_SettingChanged;
-
-			base.OnClosed(e);
 		}
 
 		public void ClearFilter()
