@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private Action<bool> nextButtonEnabled;
 		private FlowLayoutWidget printerInfo;
 
-		public AddPrinterWidget(ThemeConfig theme, Action<bool> nextButtonEnabled, bool filterToPulse)
+		public AddPrinterWidget(GuiWidget nextButton, ThemeConfig theme, Action<bool> nextButtonEnabled, bool filterToPulse)
 			: base(theme)
 		{
 			this.nextButtonEnabled = nextButtonEnabled;
@@ -60,6 +60,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
 
 			treeView.AfterSelect += this.TreeView_AfterSelect;
+
+			treeView.NodeMouseDoubleClick += (s, e) =>
+			{
+				if (e is MouseEventArgs mouseEvent
+					&& mouseEvent.Button == MouseButtons.Left
+						&& mouseEvent.Clicks == 2
+						&& treeView?.SelectedNode is TreeNode treeNode)
+				{
+					nextButton.InvokeClick();
+				}
+			};			
+
 
 			UiThread.RunOnIdle(() =>
 			{

@@ -53,6 +53,8 @@ namespace MatterControl.Tests.MatterControl
 
 			void ChangeSettings(PrinterSettings printerSettings)
             {
+				var printerModel = printerSettings.GetValue(SettingsKey.model);
+
 				// general
 				printerSettings.SetValue(SettingsKey.fill_density, "30%");
 				printerSettings.SetValue(SettingsKey.avoid_crossing_perimeters, "1");
@@ -75,6 +77,25 @@ namespace MatterControl.Tests.MatterControl
 				printerSettings.SetValue(SettingsKey.retract_lift, ".4");
 				printerSettings.SetValue(SettingsKey.min_extrusion_before_retract, "0");
 				printerSettings.SetValue(SettingsKey.retract_before_travel_avoid, "20");
+
+				if (string.IsNullOrEmpty(printerSettings.GetValue(SettingsKey.read_regex)))
+				{
+					if (printerModel.Contains('E'))
+					{
+						printerSettings.SetValue(SettingsKey.read_regex, "\"^(filament)\", \"ros_\"");
+					}
+				}
+				else
+				{
+					int ja = 0;
+				}
+
+				// If the board is 32 bit we cannot update the firmware.
+				if (printerModel.Contains('M') || printerModel.Contains('S'))
+				{
+					// make sure it does not show a firmware updater
+					printerSettings.SetValue(SettingsKey.include_firmware_updater, "None");
+				}
 			}
 
 			foreach (var printer in allPrinters)

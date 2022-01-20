@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
@@ -217,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.PlusClicked += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				this.CreatePartTab(true).ConfigureAwait(false);
+                CreateNewPartTab(true);
 			});
 
 			// Force the ActionArea to be as high as ButtonHeight
@@ -360,7 +361,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					newTab = await this.CreatePartTab(workspace, false);
+					newTab = this.CreatePartTab(workspace, false);
 				}
 
 				if (newTab.Key == ApplicationController.Instance.MainTabKey)
@@ -441,10 +442,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
-			var workspace = new PartWorkspace(new BedConfig(history))
-			{
-				Name = Path.GetFileName(filePath),
-			};
+			var workspace = new PartWorkspace(new BedConfig(history));
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
@@ -465,7 +463,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
-			var newTab = await CreatePartTab(workspace, true);
+			var newTab = CreatePartTab(workspace, true);
 			tabControl.ActiveTab = newTab;
 		}
 
@@ -564,7 +562,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Create printer or part tab
 				bool isPrinter = activePrinter?.Settings.PrinterSelected == true;
-				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : await CreatePartTab(workspace, false);
+				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : CreatePartTab(workspace, false);
 
 				if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
 				{
@@ -830,14 +828,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
-		public async Task<ChromeTab> CreatePartTab(bool saveLayout)
+		public async Task CreateNewPartTab(bool addPhilToBed)
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
-			var workspace = new PartWorkspace(new BedConfig(history))
-			{
-				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
-			};
+			var workspace = new PartWorkspace(new BedConfig(history));
 
 			await workspace.SceneContext.LoadContent(
 				new EditContext()
@@ -848,13 +843,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
-			var newTab = await CreatePartTab(workspace, saveLayout);
+			var newTab = CreatePartTab(workspace, true);
 			tabControl.ActiveTab = newTab;
 
-			return newTab;
+			if (addPhilToBed)
+			{
+				workspace.SceneContext.AddPhilToBed();
+			}
+
+			UiThread.RunOnIdle(async () =>
+			{
+				// Save any pending changes before starting print operation
+				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, workspace.SceneContext.SaveChanges);
+			});
+
+			ApplicationController.Instance.MainTabKey = workspace.Name;
 		}
 
-		public async Task<ChromeTab> CreatePartTab(PartWorkspace workspace, bool saveLayout)
+		public ChromeTab CreatePartTab(PartWorkspace workspace, bool saveLayout)
 		{
 			var partTab = new ChromeTab(
 				workspace.Name,
@@ -893,11 +899,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			partTab.CloseClicked += Tab_CloseClicked;
 			partTab.Closed += Widget_Closed;
-
-			if (saveLayout)
-			{
-				await ApplicationController.Instance.PersistUserTabs();
-			}
 
 			return partTab;
 		}

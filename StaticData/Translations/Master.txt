@@ -34,6 +34,9 @@ Translated:{0} should be greater than 0.
 English:{0} should be greater than or equal to 1/2 the {1}.
 Translated:{0} should be greater than or equal to 1/2 the {1}.
 
+English:<< Back
+Translated:<< Back
+
 English:°
 Translated:°
 
@@ -99,6 +102,9 @@ Translated:A U.S. or Canadian mobile phone number
 
 English:A valid email address
 Translated:A valid email address
+
+English:Abort Calibration
+Translated:Abort Calibration
 
 English:Abort Print
 Translated:Abort Print
@@ -270,6 +276,9 @@ Translated:Attempting to connect
 
 English:Attempting to connect again may address the issue.
 Translated:Attempting to connect again may address the issue.
+
+English:Attempting to connect to {0}
+Translated:Attempting to connect to {0}
 
 English:Auto Connect
 Translated:Auto Connect
@@ -624,6 +633,9 @@ Translated:Connection Failed
 
 English:Connection succeeded
 Translated:Connection succeeded
+
+English:Connection succeeded (port {0}).
+Translated:Connection succeeded (port {0}).
 
 English:Continue
 Translated:Continue
@@ -1171,6 +1183,9 @@ Translated:Find and create supports where needed
 English:Find Slice
 Translated:Find Slice
 
+English:Finish
+Translated:Finish
+
 English:Finished Print: {0}
 Translated:Finished Print: {0}
 
@@ -1500,6 +1515,9 @@ Translated:Image
 
 English:Image Converter
 Translated:Image Converter
+
+English:Image Missing
+Translated:Image Missing
 
 English:Image to Path
 Translated:Image to Path
@@ -2395,6 +2413,9 @@ Translated:Please wait. Retrieving share code...
 English:Please wait. Signing in...
 Translated:Please wait. Signing in...
 
+English:Plug in printer USB cable and turn printer on
+Translated:Plug in printer USB cable and turn printer on
+
 English:Plugins
 Translated:Plugins
 
@@ -2661,6 +2682,9 @@ Translated:Recover Print
 
 English:recovered once
 Translated:recovered once
+
+English:Recovered printer profile
+Translated:Recovered printer profile
 
 English:rectangular
 Translated:rectangular
@@ -2964,6 +2988,9 @@ Translated:Select cell to edit
 
 English:Select Parts
 Translated:Select Parts
+
+English:Select Printer
+Translated:Select Printer
 
 English:Select Range
 Translated:Select Range
@@ -3672,6 +3699,9 @@ Translated:The printer requires print leveling to run correctly.
 
 English:The printer should now be 'homing'.
 Translated:The printer should now be 'homing'.
+
+English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
+Translated:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
 
 English:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.
 Translated:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.

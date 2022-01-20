@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.Save(userDrivenChange: false);
 
 			// Set as active profile
-			return await ApplicationController.Instance.OpenEmptyPrinter(guid);
+			return await ApplicationController.Instance.OpenEmptyPrinter(guid, true);
 		}
 
 		public static async Task<PrinterSettings> LoadOemSettingsAsync(PublicDevice publicDevice, string make, string model)

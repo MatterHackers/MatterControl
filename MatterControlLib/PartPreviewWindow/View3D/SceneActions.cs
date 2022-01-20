@@ -202,6 +202,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public static void AddPhilToBed(this ISceneContext sceneContext)
+		{
+			var philStl = StaticData.Instance.MapPath(@"OEMSettings\SampleParts\Phil A Ment.stl");
+			sceneContext.AddToPlate(new string[] { philStl });
+		}
+
 		public static void Paste(this ISceneContext sceneContext)
 		{
 			var scene = sceneContext.Scene;

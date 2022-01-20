@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -297,12 +298,15 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task PersistUserTabs()
+		private async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
 		{
-			// Persist all pending changes in all workspaces to disk
-			foreach (var workspace in this.Workspaces.ToArray())
+			if (saveSceneChanges)
 			{
-				await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				// Persist all pending changes in all workspaces to disk
+				foreach (var workspace in this.Workspaces.ToArray())
+				{
+					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				}
 			}
 
 			// Project workspace definitions to serializable structure
@@ -326,16 +330,15 @@ namespace MatterHackers.MatterControl
 
 			lock (workspaces)
 			{
-				// Persist workspace definitions to disk
-				File.WriteAllText(
-					ProfileManager.Instance.OpenTabsPath,
-					JsonConvert.SerializeObject(
+				var content = JsonConvert.SerializeObject(
 						workspaces,
 						Formatting.Indented,
 						new JsonSerializerSettings
 						{
 							NullValueHandling = NullValueHandling.Ignore
-						}));
+						});
+				// Persist workspace definitions to disk
+				File.WriteAllText(ProfileManager.Instance.OpenTabsPath, content);
 			}
 		}
 
@@ -455,7 +458,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					await ApplicationController.Instance.PersistUserTabs();
+					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
 				});
 			}
 		}
@@ -732,13 +735,12 @@ namespace MatterHackers.MatterControl
 			return actions.ToDictionary(a => a.ID);
 		}
 
-		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
+		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			this.MainView.CreatePartTab(true).ContinueWith(task =>
-			{
-				var workspace = this.Workspaces.Last();
-				workspace.SceneContext.AddToPlate(selectedLibraryItems);
-			});
+			await this.MainView.CreateNewPartTab(false);
+			
+			var workspace = this.Workspaces.Last();
+			workspace.SceneContext.AddToPlate(selectedLibraryItems);
 		}
 
 		internal void BlinkTab(ITab tab)
@@ -956,8 +958,18 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public ApplicationController()
+		private ApplicationController()
 		{
+			Workspaces = new ObservableCollection<PartWorkspace>();
+
+			Workspaces.CollectionChanged += (s, e) =>
+			{
+				if (!restoringWorkspaces)
+				{
+					UiThread.RunOnIdle(async () => await PersistUserWorkspaceTabs(false));
+				}
+			};
+
 			this.Thumbnails = new ThumbnailsConfig();
 
 			ProfileManager.UserChanged += (s, e) =>
@@ -1549,7 +1561,7 @@ namespace MatterHackers.MatterControl
 			return printer;
 		}
 
-		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID)
+		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID, bool addPhilToBed = false)
 		{
 			if (!string.IsNullOrEmpty(printerID)
 				&& ProfileManager.Instance[printerID] != null)
@@ -1566,12 +1578,12 @@ namespace MatterHackers.MatterControl
 					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
 				});
 
-				if (workspace.Printer != null)
-				{
-					workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-				}
-
 				this.OpenWorkspace(workspace);
+
+				if (addPhilToBed)
+                {
+					workspace.SceneContext.AddPhilToBed();
+				}
 
 				return printer;
 			}
@@ -1623,6 +1635,8 @@ namespace MatterHackers.MatterControl
 			{
 				return;
 			}
+
+			restoringWorkspaces = true;
 
 			loadedUserTabs = ProfileManager.Instance.UserName;
 
@@ -1683,15 +1697,6 @@ namespace MatterHackers.MatterControl
 									SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
 								});
 
-								if (workspace.Printer != null)
-								{
-									workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-								}
-								else
-								{
-									workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
-								}
-
 								this.RestoreWorkspace(workspace);
 							}
 						}
@@ -1709,13 +1714,16 @@ namespace MatterHackers.MatterControl
 
 			// If the use does not have a workspace open and has not setup any hardware, show the startup screen
 			if (this.Workspaces.Count == 0
-				&& !ProfileManager.Instance.ActiveProfiles.Any())
+				&& !ProfileManager.Instance.ActiveProfiles.Any()
+				&& SystemWindow.AllOpenSystemWindows.Count() < 2)
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					DialogWindow.Show<StartupPage>();
 				});
 			}
+
+			restoringWorkspaces = false;
 		}
 
 		/// <summary>
@@ -1772,7 +1780,7 @@ namespace MatterHackers.MatterControl
 
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
-		public List<PartWorkspace> Workspaces { get; } = new List<PartWorkspace>();
+		public ObservableCollection<PartWorkspace> Workspaces { get; }
 
 		public AppViewState ViewState { get; } = new AppViewState();
 
@@ -2094,8 +2102,9 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static PluginManager pluginManager = null;
+        private bool restoringWorkspaces;
 
-		public static PluginManager Plugins
+        public static PluginManager Plugins
 		{
 			get
 			{

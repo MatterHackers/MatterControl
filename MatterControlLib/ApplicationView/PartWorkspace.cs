@@ -76,10 +76,27 @@ namespace MatterHackers.MatterControl
 			};
 
 			this.SceneContext = sceneContext;
-			Name = sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
 		}
 
-		public string Name { get; set; }
+		public string Name
+		{
+			get
+			{
+				var name = SceneContext.EditContext?.SourceItem?.Name;
+				if (!string.IsNullOrEmpty(name))
+				{
+					return name;
+				}
+
+				name = Printer?.Settings?.GetValue(SettingsKey.printer_name);
+				if (!string.IsNullOrEmpty(name))
+				{
+					return name;
+				}
+
+				return "Unknown";
+			}
+		}
 
 		[JsonIgnore]
 		public ISceneContext SceneContext { get; }

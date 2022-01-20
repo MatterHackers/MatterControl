@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.BackgroundColor = theme.SectionBackgroundColor;
 			nextButton = theme.CreateDialogButton("Next".Localize());
 
-			printerPanel = new AddPrinterWidget(theme, (enabled) =>
+			printerPanel = new AddPrinterWidget(nextButton, theme, (enabled) =>
 			{
 				nextButton.Enabled = enabled;
 			}, filterToPulse)

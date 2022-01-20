@@ -322,8 +322,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex + 1, moving);
 
-				await ApplicationController.Instance.PersistUserTabs();
-
 				TabBar.ActionArea.PerformLayout();
 
 				ActiveTab = tab;
@@ -350,8 +348,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex - 1, moving);
 
-				await ApplicationController.Instance.PersistUserTabs();
-
 				TabBar.ActionArea.PerformLayout();
 
 				ActiveTab = tab;
@@ -373,7 +369,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget TabContent { get; protected set; }
 
-		public string Key { get; }
+		public string Key { get; set; }
 
 		private bool hasClose = false;
 
@@ -585,8 +581,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static int tabInsetDistance = 14 / 2;
 
-
-		internal ChromeTab NextTab
+        internal ChromeTab NextTab
 		{
 			get
 			{
