@@ -41,8 +41,6 @@ namespace MatterHackers.MatterControl.Library
 
 		void Remove(IEnumerable<ILibraryItem> items);
 
-		void Rename(ILibraryItem item, string revisedName);
-
 		/// <summary>
 		/// Move the given items from the source container to this container
 		/// </summary>

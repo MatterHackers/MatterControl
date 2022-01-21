@@ -696,7 +696,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public override void OnClosed(EventArgs e)
+        public void HookupNameChange(PartWorkspace workspace)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnClosed(EventArgs e)
 		{
 			this.parentTabControl = null;
 			this.TabContent = null;

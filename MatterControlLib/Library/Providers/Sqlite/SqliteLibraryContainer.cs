@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -188,26 +189,11 @@ namespace MatterHackers.MatterControl.Library
 			this.ReloadContent();
 		}
 
-		public override void Rename(ILibraryItem selectedItem, string revisedName)
+		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
 		{
-			if (selectedItem is SqliteFileItem sqliteItem)
-			{
-				sqliteItem.PrintItem.Name = revisedName;
-				sqliteItem.PrintItem.Commit();
-			}
-			else if (selectedItem is SqliteLibraryContainerLink containerLink)
-			{
-				string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {containerLink.CollectionID}";
-
-				var container = Datastore.Instance.dbSQLite.Query<PrintItemCollection>(sql).FirstOrDefault();
-				if (container != null)
-				{
-					container.Name = revisedName;
-					container.Commit();
-				}
-			}
-
-			this.ReloadContent();
+#if DEBUG
+			throw new NotImplementedException();
+#endif
 		}
 
 		protected List<PrintItemCollection> GetChildCollections()
@@ -270,8 +256,41 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool IsVisible { get; set; } = true;
 
-			public string Name { get; set; }
+			public event EventHandler NameChanged;
 
+			public string Name
+			{
+				get
+				{
+					string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {this.CollectionID}";
+
+					var container = Datastore.Instance.dbSQLite.Query<PrintItemCollection>(sql).FirstOrDefault();
+					return container.Name;
+				}
+
+				set
+				{
+					if (value != Name)
+					{
+						string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {this.CollectionID}";
+
+						var container = Datastore.Instance.dbSQLite.Query<PrintItemCollection>(sql).FirstOrDefault();
+
+						if (value != container.Name)
+						{
+							if (container != null)
+							{
+								container.Name = value;
+								container.Commit();
+							}
+
+							ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+						}
+
+						NameChanged?.Invoke(this, EventArgs.Empty);
+					}
+				}
+			}
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(

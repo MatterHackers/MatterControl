@@ -545,6 +545,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										ContentStore = writableContainer,
 										SourceItem = firstItem
 									});
+
+								mainViewWidget.HookupNameChangeCallback(partTab, workspace);
 							}
 							else
 							{

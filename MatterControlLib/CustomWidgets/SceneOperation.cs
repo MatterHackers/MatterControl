@@ -55,13 +55,13 @@ namespace MatterHackers.Agg.UI
 
 		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
 
-		public Func<string> HelpTextResolver { get; set; }
+		public Func<string> HelpTextGetter { get; set; }
 
-		public string HelpText => this.HelpTextResolver?.Invoke();
+		public string HelpText => this.HelpTextGetter?.Invoke();
 
-		public Func<string> TitleResolver { get; set; }
+		public Func<string> TitleGetter { get; set; }
 
-		public string Title => this.TitleResolver?.Invoke();
+		public string Title => this.TitleGetter?.Invoke();
 
 		/// <summary>
 		/// Gets or sets the type that this operation can be applied to

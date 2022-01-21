@@ -38,8 +38,6 @@ namespace MatterHackers.MatterControl.Library
 	/// </summary>
 	public class FileSystemItem : ILibraryItem
 	{
-		private string fileName;
-
 		public FileSystemItem(string path)
 		{
 			this.Path = path;
@@ -83,21 +81,78 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual bool LocalContentExists => true;
 
+		public event EventHandler NameChanged;
+
 		public virtual string Name
 		{
 			get
 			{
-				if (fileName == null)
-				{
-					fileName = System.IO.Path.GetFileName(this.Path);
-				}
-
-				return fileName;
+				return System.IO.Path.GetFileName(this.Path);
 			}
 
 			set
 			{
-				fileName = value;
+				if (Name != value)
+				{
+					string sourceFile = this.Path;
+					if (File.Exists(sourceFile))
+					{
+						string extension = System.IO.Path.GetExtension(sourceFile);
+						string destFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(sourceFile), value);
+						destFile = System.IO.Path.ChangeExtension(destFile, extension);
+
+						if (sourceFile != destFile)
+						{
+							File.Move(sourceFile, destFile);
+
+							this.Path = destFile;
+
+							ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+						}
+					}
+
+					NameChanged?.Invoke(this, EventArgs.Empty);
+				}
+
+				/*
+				if (item is DirectoryContainerLink directoryLink)
+				{
+					if (Directory.Exists(directoryLink.Path))
+					{
+						Process.Start(this.FullPath);
+					}
+				}
+				else if (item is FileSystemFileItem fileItem)
+				{
+					string sourceFile = fileItem.Path;
+					if (File.Exists(sourceFile))
+					{
+						string extension = Path.GetExtension(sourceFile);
+						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+						destFile = Path.ChangeExtension(destFile, extension);
+
+						File.Move(sourceFile, destFile);
+
+						fileItem.Path = destFile;
+
+						this.ReloadContent();
+					}
+				}
+				else if (item is LocalZipContainerLink zipFile)
+				{
+					string sourceFile = zipFile.Path;
+					if (File.Exists(sourceFile))
+					{
+						string extension = Path.GetExtension(sourceFile);
+						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+						destFile = Path.ChangeExtension(destFile, extension);
+
+						File.Move(sourceFile, destFile);
+
+						this.ReloadContent();
+					}
+				}
+				*/
 			}
 		}
 

@@ -42,12 +42,35 @@ namespace MatterHackers.MatterControl.Library
 		public InMemoryLibraryItem(IObject3D object3D)
 		{
 			this.object3D = object3D;
-			this.Name = object3D.Name ?? "Unknown".Localize();
+
+			if ((string.IsNullOrEmpty(object3D.Name) || object3D.Name.StartsWith("Workspace 20"))
+				&& object3D.Children.Count == 1
+				&& !string.IsNullOrEmpty(object3D.Children[0].Name))
+			{
+				this.Name = object3D.Children[0].Name;
+			}
+			else
+			{
+				this.Name = string.IsNullOrEmpty(object3D.Name) ? "Default".Localize() : object3D.Name;
+			}
 		}
 
 		public string ID => object3D.ID;
 
-		public string Name { get; set; }
+		private string _name;
+		public string Name
+		{
+			get => _name; set
+			{
+				if (_name != value)
+				{
+					_name = value;
+					NameChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler NameChanged;
 
 		public string FileName => $"{this.Name}.{this.ContentType}";
 

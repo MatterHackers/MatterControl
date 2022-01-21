@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ContentPanel { get; set; }
 
-		private readonly JsonPathContext pathResolver = new JsonPathContext();
+		private readonly JsonPathContext pathGetter = new JsonPathContext();
 		private readonly IconButton flattenButton;
 		private readonly IconButton removeButton;
 		private readonly OverflowBar.OverflowMenuButton overflowButton;
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// Get the named property via reflection
 						// Selector example:            '$.Children<CylinderObject3D>'
-						var match = pathResolver.Select(componentObject, selector).ToList();
+						var match = pathGetter.Select(componentObject, selector).ToList();
 
 						//// - Add editor row for each
 						foreach (var instance in match)

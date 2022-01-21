@@ -68,7 +68,9 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual bool LocalContentExists => File.Exists(CachePath);
 
-		public string Name 
+		public event EventHandler NameChanged;
+
+		public string Name
 		{
 			get
 			{
@@ -78,6 +80,11 @@ namespace MatterHackers.MatterControl.Library
 				}
 
 				return FileName;
+			}
+
+			set
+			{
+				// do nothing (can't rename)
 			}
 		}
 

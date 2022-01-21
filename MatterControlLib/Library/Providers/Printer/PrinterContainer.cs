@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "SD Card".Localize(),
+					"SD Card".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "sd_icon.png")),
 					() => new SDCardContainer(printer),
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Library
 			// subPath = "C Frame";
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => containerName,
+					containerName,
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new GitHubContainer(containerName,
 						"MatterHackers",

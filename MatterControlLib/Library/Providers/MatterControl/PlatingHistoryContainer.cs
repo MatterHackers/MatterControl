@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Items = new SafeList<ILibraryItem>();
-			this.IsProtected = true;
+			this.IsProtected = false;
 
 			DefaultSort = new LibrarySortBehavior()
 			{

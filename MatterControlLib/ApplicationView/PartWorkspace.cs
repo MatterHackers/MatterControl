@@ -27,11 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using System;
 using System.IO;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
@@ -57,7 +55,7 @@ namespace MatterHackers.MatterControl
 			{
 				wrappedLibrary.ExtraContainers.Add(
 					new DynamicContainerLink(
-						() => printer.Settings.GetValue(SettingsKey.printer_name),
+						printer.Settings.GetValue(SettingsKey.printer_name),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 						() => new PrinterContainer(printer))
@@ -78,6 +76,7 @@ namespace MatterHackers.MatterControl
 			this.SceneContext = sceneContext;
 		}
 
+		[JsonIgnore]
 		public string Name
 		{
 			get
@@ -96,12 +95,17 @@ namespace MatterHackers.MatterControl
 
 				return "Unknown";
 			}
+
+			set
+			{
+#if DEBUG
+				throw new NotImplementedException();
+#endif
+			}
 		}
 
 		[JsonIgnore]
 		public ISceneContext SceneContext { get; }
-
-		public EditContext EditContext { get; set; }
 
 		public string PrinterID { get; set; }
 

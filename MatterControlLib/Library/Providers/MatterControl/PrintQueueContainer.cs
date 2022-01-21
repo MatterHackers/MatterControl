@@ -33,14 +33,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Image;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PrintQueueContainer : WritableContainer
+    public class PrintQueueContainer : WritableContainer
 	{
 		public PrintQueueContainer()
 		{
@@ -69,6 +69,13 @@ namespace MatterHackers.MatterControl.Library
 		{
 			await AddAllItems(items);
 			this.ReloadContent();
+		}
+
+		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
+		{
+#if DEBUG
+			throw new NotImplementedException();
+#endif
 		}
 
 		public static async Task AddAllItems(IEnumerable<ILibraryItem> items)

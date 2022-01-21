@@ -58,65 +58,65 @@ namespace MatterHackers.MatterControl.Library
 			var libraryItems = new List<GeneratorItem>()
 			{
 				new GeneratorItem(
-					() => "Cube".Localize(),
+					"Cube".Localize(),
 					async () => await CubeObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Pyramid".Localize(),
+					"Pyramid".Localize(),
 					async () => await PyramidObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Wedge".Localize(),
+					"Wedge".Localize(),
 					async () => await WedgeObject3D_2.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Half Wedge".Localize(),
+					"Half Wedge".Localize(),
 					async () => await HalfWedgeObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Text".Localize(),
+					"Text".Localize(),
 					async () => await TextObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Cylinder".Localize(),
+					"Cylinder".Localize(),
 					async () => await CylinderObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Cone".Localize(),
+					"Cone".Localize(),
 					async () => await ConeObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Half Cylinder".Localize(),
+					"Half Cylinder".Localize(),
 					async () => await HalfCylinderObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Torus".Localize(),
+					"Torus".Localize(),
 					async () => await TorusObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Ring".Localize(),
+					"Ring".Localize(),
 					async () => await RingObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Sphere".Localize(),
+					"Sphere".Localize(),
 					async () => await SphereObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Half Sphere".Localize(),
+					"Half Sphere".Localize(),
 					async () => await HalfSphereObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 #if DEBUG
 				new GeneratorItem(
-					() => "SCAD Script".Localize(),
+					"SCAD Script".Localize(),
 					async () => await OpenScadScriptObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Dual Contouring".Localize(),
+					"Dual Contouring".Localize(),
 					async () => await DualContouringObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 #endif
 				new GeneratorItem(
-					() => "Image Converter".Localize(),
+					"Image Converter".Localize(),
 					() =>
 					{
 						// Construct an image
@@ -142,15 +142,15 @@ namespace MatterHackers.MatterControl.Library
 					})
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Measure Tool".Localize(),
+					"Measure Tool".Localize(),
 					async () => await MeasureToolObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Description".Localize(),
+					"Description".Localize(),
 					async () => await DescriptionObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Variable Sheet".Localize(),
+					"Variable Sheet".Localize(),
 					async () => await SheetObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 			};
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.Library
 #if DEBUG
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Primitives 2D".Localize(),
+					"Primitives 2D".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
 					() => new Primitives2DContainer())
@@ -198,35 +198,35 @@ namespace MatterHackers.MatterControl.Library
 			var libraryItems = new List<GeneratorItem>()
 			{
 				new GeneratorItem(
-					() => "Box".Localize(),
+					"Box".Localize(),
 					async () => await BoxPathObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Triangle".Localize(),
+					"Triangle".Localize(),
 					async () => await PyramidObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Trapezoid".Localize(),
+					"Trapezoid".Localize(),
 					async () => await WedgeObject3D_2.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Text".Localize(),
+					"Text".Localize(),
 					async () => await TextPathObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Oval".Localize(),
+					"Oval".Localize(),
 					async () => await CylinderObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Star".Localize(),
+					"Star".Localize(),
 					async () => await ConeObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Ring".Localize(),
+					"Ring".Localize(),
 					async () => await RingObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
-					() => "Circle".Localize(),
+					"Circle".Localize(),
 					async () => await SphereObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 			};

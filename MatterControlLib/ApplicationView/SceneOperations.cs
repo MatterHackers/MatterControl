@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("AddBase")
 			{
 				OperationType = typeof(IObject3D),
-				TitleResolver = () => "Add Base".Localize(),
+				TitleGetter = () => "Add Base".Localize(),
 				ResultType = typeof(BaseObject3D),
 				Action = (sceneContext) =>
 				{
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 					scene.SelectedItem = baseMesh;
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("add_base.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				// this is for when base is working with generic meshes
 				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
 				// this is for when only IPathObjects are working correctly
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("EditComponent")
 			{
 				OperationType = typeof(IObject3D),
-				TitleResolver = () => "Edit Component".Localize(),
+				TitleGetter = () => "Edit Component".Localize(),
 				ResultType = typeof(ComponentObject3D),
 				Action = (sceneContext) =>
 				{
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl
 						&& !componentObject.ProOnly;
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A component must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A component must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && (sceneContext.Scene.SelectedItem is ComponentObject3D),
 			};
 		}
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("ImageConverter")
 			{
 				OperationType = typeof(ImageObject3D),
-				TitleResolver = () => "Image Converter".Localize(),
+				TitleGetter = () => "Image Converter".Localize(),
 				ResultType = typeof(ComponentObject3D),
 				Action = (sceneContext) =>
 				{
@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl
 					imageObject.Invalidate(InvalidateType.Image);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "An image must be selected".Localize().Stars(),
+				HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
 			};
 		}
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("ImageToPath")
 			{
 				OperationType = typeof(ImageObject3D),
-				TitleResolver = () => "Image to Path".Localize(),
+				TitleGetter = () => "Image to Path".Localize(),
 				ResultType = typeof(ImageToPathObject3D_2),
 				Action = (sceneContext) =>
 				{
@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("image_to_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "An image must be selected".Localize().Stars(),
+				HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
 			};
 		}
@@ -385,7 +385,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("InflatePath")
 			{
 				OperationType = typeof(IPathObject),
-				TitleResolver = () => "Inflate Path".Localize(),
+				TitleGetter = () => "Inflate Path".Localize(),
 				ResultType = typeof(InflatePathObject3D),
 				Action = (sceneContext) =>
 				{
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 					inflatePath.Invalidate(InvalidateType.Properties);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
@@ -415,7 +415,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("LinearExtrude")
 			{
 				OperationType = typeof(IPathObject),
-				TitleResolver = () => "Linear Extrude".Localize(),
+				TitleGetter = () => "Linear Extrude".Localize(),
 				ResultType = typeof(LinearExtrudeObject3D),
 				Action = (sceneContext) =>
 				{
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
@@ -449,7 +449,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Revolve")
 			{
 				OperationType = typeof(IPathObject),
-				TitleResolver = () => "Revolve".Localize(),
+				TitleGetter = () => "Revolve".Localize(),
 				ResultType = typeof(RevolveObject3D),
 				Action = (sceneContext) =>
 				{
@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Make Component")
 			{
-				TitleResolver = () => "Make Component".Localize(),
+				TitleGetter = () => "Make Component".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("component.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) =>
 				{
 					var sceneItem = sceneContext.Scene.SelectedItem;
@@ -534,13 +534,13 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(MirrorObject3D_2),
-				TitleResolver = () => "Mirror".Localize(),
+				TitleGetter = () => "Mirror".Localize(),
 				Action = (sceneContext) =>
 				{
 					new MirrorObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("mirror_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -550,7 +550,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("OutlinePath")
 			{
 				OperationType = typeof(IPathObject),
-				TitleResolver = () => "Outline Path".Localize(),
+				TitleGetter = () => "Outline Path".Localize(),
 				ResultType = typeof(OutlinePathObject3D),
 				Action = (sceneContext) =>
 				{
@@ -570,7 +570,7 @@ namespace MatterHackers.MatterControl
 					outlinePath.Invalidate(InvalidateType.Properties);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
@@ -581,13 +581,13 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(RotateObject3D_2),
-				TitleResolver = () => "Rotate".Localize(),
+				TitleGetter = () => "Rotate".Localize(),
 				Action = (sceneContext) =>
 				{
 					new RotateObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
 		}
@@ -598,13 +598,13 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ScaleObject3D_3),
-				TitleResolver = () => "Scale".Localize(),
+				TitleGetter = () => "Scale".Localize(),
 				Action = (sceneContext) =>
 				{
 					new ScaleObject3D_3().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
 		}
@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("SmoothPath")
 			{
 				OperationType = typeof(IPathObject),
-				TitleResolver = () => "Smooth Path".Localize(),
+				TitleGetter = () => "Smooth Path".Localize(),
 				ResultType = typeof(SmoothPathObject3D),
 				Action = (sceneContext) =>
 				{
@@ -634,7 +634,7 @@ namespace MatterHackers.MatterControl
 					smoothPath.Invalidate(InvalidateType.Properties);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "A path must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
@@ -645,13 +645,13 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(TranslateObject3D),
-				TitleResolver = () => "Translate".Localize(),
+				TitleGetter = () => "Translate".Localize(),
 				Action = (sceneContext) =>
 				{
 					new TranslateObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
 		}
@@ -662,7 +662,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayAdvancedObject3D),
-				TitleResolver = () => "Advanced Array".Localize(),
+				TitleGetter = () => "Advanced Array".Localize(),
 				Action = (sceneContext) =>
 				{
 					var array = new ArrayAdvancedObject3D
@@ -672,7 +672,7 @@ namespace MatterHackers.MatterControl
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("array_advanced.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "A single part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 			};
 		}
@@ -683,7 +683,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(AlignObject3D),
-				TitleResolver = () => "Align".Localize(),
+				TitleGetter = () => "Align".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -692,7 +692,7 @@ namespace MatterHackers.MatterControl
 					align.AddSelectionAsChildren(scene, selectedItem);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 			};
 		}
@@ -701,12 +701,12 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("ArrangeAllParts")
 			{
-				TitleResolver = () => "Arrange All Parts".Localize(),
+				TitleGetter = () => "Arrange All Parts".Localize(),
 				Action = async (sceneContext) =>
 				{
 					await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 				},
-				HelpTextResolver = () => "No part to arrange".Localize().Stars(),
+				HelpTextGetter = () => "No part to arrange".Localize().Stars(),
 				IsEnabled = (sceneContext) =>
 				{
 					return sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any();
@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Transform")
 				{
-					TitleResolver = () => "Transform".Localize(),
+					TitleGetter = () => "Transform".Localize(),
 					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
 					{
@@ -777,7 +777,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Placement")
 				{
-					TitleResolver = () => "Placement".Localize(),
+					TitleGetter = () => "Placement".Localize(),
 					Operations = new List<SceneOperation>()
 					{
 						AlignOperation(),
@@ -786,7 +786,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Reshape")
 				{
-					TitleResolver = () => "Reshape".Localize(),
+					TitleGetter = () => "Reshape".Localize(),
 					Operations = new List<SceneOperation>()
 					{
 						CurveOperation(),
@@ -801,7 +801,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Image")
 				{
-					TitleResolver = () => "Image".Localize(),
+					TitleGetter = () => "Image".Localize(),
 					Operations = new List<SceneOperation>()
 					{
 						ImageConverterOperation(),
@@ -810,7 +810,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Path")
 				{
-					TitleResolver = () => "Path".Localize(),
+					TitleGetter = () => "Path".Localize(),
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
@@ -824,7 +824,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Merge")
 				{
-					TitleResolver = () => "Merge".Localize(),
+					TitleGetter = () => "Merge".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
@@ -836,7 +836,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Duplication")
 				{
-					TitleResolver = () => "Duplication".Localize(),
+					TitleGetter = () => "Duplication".Localize(),
 					Operations = new List<SceneOperation>()
 					{
 						LinearArrayOperation(),
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Mesh")
 				{
-					TitleResolver = () => "Mesh".Localize(),
+					TitleGetter = () => "Mesh".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
@@ -856,7 +856,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Printing")
 				{
-					TitleResolver = () => "Printing".Localize(),
+					TitleGetter = () => "Printing".Localize(),
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
@@ -866,7 +866,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Design Apps")
 				{
-					TitleResolver = () => "Design Apps".Localize(),
+					TitleGetter = () => "Design Apps".Localize(),
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
@@ -940,7 +940,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CombineObject3D_2),
-				TitleResolver = () => "Combine".Localize(),
+				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
 #if DEBUG
@@ -955,7 +955,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("combine.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
@@ -966,14 +966,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CurveObject3D_3),
-				TitleResolver = () => "Curve".Localize(),
+				TitleGetter = () => "Curve".Localize(),
 				Action = (sceneContext) =>
 				{
 					var curve = new CurveObject3D_3();
 					curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("curve.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -983,7 +983,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Dual Extrusion Align")
 			{
 				OperationType = typeof(IObject3D),
-				TitleResolver = () => "Dual Extrusion Align".Localize(),
+				TitleGetter = () => "Dual Extrusion Align".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1009,7 +1009,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("dual_align.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 			};
 		}
@@ -1018,9 +1018,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Duplicate")
 			{
-				TitleResolver = () => "Duplicate".Localize(),
+				TitleGetter = () => "Duplicate".Localize(),
 				Action = (sceneContext) => sceneContext.DuplicateItem(5),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 				Icon = (theme) => StaticData.Instance.LoadIcon("duplicate.png", 16, 16).SetPreMultiply(),
 			};
@@ -1032,7 +1032,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToBoundsObject3D_3),
-				TitleResolver = () => "Fit to Bounds".Localize(),
+				TitleGetter = () => "Fit to Bounds".Localize(),
 				Action = async (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1056,7 +1056,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToCylinderObject3D),
-				TitleResolver = () => "Fit to Cylinder".Localize(),
+				TitleGetter = () => "Fit to Cylinder".Localize(),
 				Action = async (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1080,7 +1080,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(SelectionGroupObject3D),
 				ResultType = typeof(GroupObject3D),
-				TitleResolver = () => "Group".Localize(),
+				TitleGetter = () => "Group".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1111,7 +1111,7 @@ namespace MatterHackers.MatterControl
 
 					scene.SelectedItem = newGroup;
 				},
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene is InteractiveScene scene
 					&& scene.SelectedItem != null
 					&& scene.SelectedItem is SelectionGroupObject3D
@@ -1126,14 +1126,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(HollowOutObject3D),
-				TitleResolver = () => "Hollow Out".Localize(),
+				TitleGetter = () => "Hollow Out".Localize(),
 				Action = (sceneContext) =>
 				{
 					var hollowOut = new HollowOutObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("hollow.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1144,7 +1144,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(IntersectionObject3D_2),
-				TitleResolver = () => "Intersect".Localize(),
+				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
 #if DEBUG
@@ -1159,7 +1159,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("intersect.png", 16, 16),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
@@ -1182,7 +1182,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Lay Flat")
 			{
-				TitleResolver = () => "Lay Flat".Localize(),
+				TitleGetter = () => "Lay Flat".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1198,7 +1198,7 @@ namespace MatterHackers.MatterControl
 						}
 					}
 				},
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 				Icon = (theme) => StaticData.Instance.LoadIcon("lay_flat.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 			};
@@ -1210,7 +1210,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayLinearObject3D),
-				TitleResolver = () => "Linear Array".Localize(),
+				TitleGetter = () => "Linear Array".Localize(),
 				Action = (sceneContext) =>
 				{
 					var array = new ArrayLinearObject3D
@@ -1220,7 +1220,7 @@ namespace MatterHackers.MatterControl
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("array_linear.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "A single part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 			};
 		}
@@ -1231,14 +1231,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(PinchObject3D_3),
-				TitleResolver = () => "Pinch".Localize(),
+				TitleGetter = () => "Pinch".Localize(),
 				Action = (sceneContext) =>
 				{
 					var pinch = new PinchObject3D_3();
 					pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("pinch.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1249,14 +1249,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(PlaneCutObject3D),
-				TitleResolver = () => "Plane Cut".Localize(),
+				TitleGetter = () => "Plane Cut".Localize(),
 				Action = (sceneContext) =>
 				{
 					var cut = new PlaneCutObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1267,14 +1267,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(PlaneCutObject3D),
-				TitleResolver = () => "Find Slice".Localize(),
+				TitleGetter = () => "Find Slice".Localize(),
 				Action = (sceneContext) =>
 				{
 					var cut = new FindSliceObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1285,7 +1285,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayRadialObject3D),
-				TitleResolver = () => "Radial Array".Localize(),
+				TitleGetter = () => "Radial Array".Localize(),
 				Action = (sceneContext) =>
 				{
 					var array = new ArrayRadialObject3D
@@ -1295,7 +1295,7 @@ namespace MatterHackers.MatterControl
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("array_radial.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "A single part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 			};
 		}
@@ -1306,14 +1306,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(DecimateObject3D),
-				TitleResolver = () => "Reduce".Localize(),
+				TitleGetter = () => "Reduce".Localize(),
 				Action = (sceneContext) =>
 				{
 					var hollowOut = new DecimateObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("reduce.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1345,11 +1345,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Remove")
 			{
 				Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				Icon = (theme) => StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 				ShowInModifyMenu = (sceneContext) => false,
-				TitleResolver = () => "Remove".Localize(),
+				TitleGetter = () => "Remove".Localize(),
 			};
 		}
 
@@ -1359,14 +1359,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(RepairObject3D),
-				TitleResolver = () => "Repair".Localize(),
+				TitleGetter = () => "Repair".Localize(),
 				Action = (sceneContext) =>
 				{
 					var hollowOut = new RepairObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("repair.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1377,10 +1377,10 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractAndReplaceObject3D_2),
-				TitleResolver = () => "Subtract & Replace".Localize(),
+				TitleGetter = () => "Subtract & Replace".Localize(),
 				Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (theme) => StaticData.Instance.LoadIcon("subtract_and_replace.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, false),
 			};
 		}
@@ -1391,7 +1391,7 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractObject3D_2),
-				TitleResolver = () => "Subtract".Localize(),
+				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
 #if DEBUG
@@ -1406,7 +1406,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "At least 2 parts must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
 		}
@@ -1415,7 +1415,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Convert to Support")
 			{
-				TitleResolver = () => "Convert to Support".Localize(),
+				TitleGetter = () => "Convert to Support".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1436,7 +1436,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1445,7 +1445,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Convert to Wipe Tower")
 			{
-				TitleResolver = () => "Convert to Wipe Tower".Localize(),
+				TitleGetter = () => "Convert to Wipe Tower".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1467,7 +1467,7 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("wipe_tower.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1478,14 +1478,14 @@ namespace MatterHackers.MatterControl
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(TwistObject3D),
-				TitleResolver = () => "Twist".Localize(),
+				TitleGetter = () => "Twist".Localize(),
 				Action = (sceneContext) =>
 				{
 					var twist = new TwistObject3D();
 					twist.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("twist.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextResolver = () => "At least 1 part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
@@ -1494,9 +1494,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Ungroup")
 			{
-				TitleResolver = () => "Ungroup".Localize(),
+				TitleGetter = () => "Ungroup".Localize(),
 				Action = (sceneContext) => sceneContext.Scene.UngroupSelection(),
-				HelpTextResolver = () => "A single part must be selected".Localize().Stars(),
+				HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) =>
 				{
 					var selectedItem = sceneContext.Scene.SelectedItem;

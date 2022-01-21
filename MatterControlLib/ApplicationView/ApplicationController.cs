@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
+		public async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
 		{
 			if (saveSceneChanges)
 			{
@@ -839,7 +839,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
-						() => "Downloads".Localize(),
+						"Downloads".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "download_icon.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
@@ -858,7 +858,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "Library".Localize(),
+					"Library".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "library_icon.png")),
 					() => this.Library.LibraryCollectionContainer));
@@ -883,7 +883,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "History".Localize(),
+					"History".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new RootHistoryContainer())
@@ -899,7 +899,7 @@ namespace MatterHackers.MatterControl
 					ExtraContainers = new List<ILibraryContainerLink>()
 					{
 						new DynamicContainerLink(
-							() => "Printers".Localize(),
+							"Printers".Localize(),
 							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 							StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 							() => new OpenPrintersContainer())

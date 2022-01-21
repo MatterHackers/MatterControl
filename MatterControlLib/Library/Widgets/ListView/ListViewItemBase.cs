@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					switch (keyEvent.KeyCode)
 					{
 						case Keys.F2:
-							listView.ActiveContainer.Rename(firstItem);
+							firstItem.Rename();
 							listView.SelectedItems.Clear();
 							break;
 					}

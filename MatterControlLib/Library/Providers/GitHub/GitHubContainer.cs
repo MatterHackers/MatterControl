@@ -325,7 +325,13 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool LocalContentExists => true;
 
-			public string Name => this.FileName;
+			public event EventHandler NameChanged;
+
+			public string Name
+			{
+				get => this.FileName;
+				set { } // do nothing (can't rename)
+			}
 
 			public Task<StreamAndLength> GetStream(Action<double, string> progress)
 			{
@@ -362,7 +368,20 @@ namespace MatterHackers.MatterControl.Library
 						.GetLongHashCode(Path
 							.GetLongHashCode()))).ToString();
 
-			public string Name { get; }
+			private string _name;
+			public string Name
+			{
+				get => _name; set
+				{
+					if (_name != value)
+					{
+						_name = value;
+						NameChanged?.Invoke(this, EventArgs.Empty);
+					}
+				}
+			}
+
+			public event EventHandler NameChanged;
 
 			public bool IsProtected => false;
 

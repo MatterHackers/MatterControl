@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 			SceneOperations.AddOperation(
 				new SceneOperation("Lithophane")
 				{
-					TitleResolver = () => "Lithophane".Localize(),
+					TitleGetter = () => "Lithophane".Localize(),
 					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),
 					Action = (sceneContext) =>
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 						}
 					},
 					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
-					HelpTextResolver = () => "An image must be selected".Localize().Stars(),
+					HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
 					Icon = (theme) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16).SetToColor(theme.TextColor)
 				},

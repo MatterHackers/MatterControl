@@ -35,7 +35,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public static class LibraryExtensionMethods
+    public static class LibraryExtensionMethods
 	{
 		public static async Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{
@@ -101,28 +101,23 @@ namespace MatterHackers.MatterControl.Library
 			return contentProvider?.CreateItem(item, reporter);
 		}
 
-		public static void Rename(this ILibraryContainer libraryContainer, ILibraryItem libraryItem)
+		public static void Rename(this ILibraryItem item)
 		{
-			if (libraryItem == null)
+			if (item == null)
 			{
 				return;
 			}
-
-			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem) as ISceneContentProvider;
 
 			DialogWindow.Show(
 				new InputBoxPage(
 					"Rename Item".Localize(),
 					"Name".Localize(),
-					libraryItem.Name,
+					item.Name,
 					"Enter New Name Here".Localize(),
 					"Rename".Localize(),
 					(newName) =>
 					{
-						if (libraryContainer is ILibraryWritableContainer writableContainer)
-						{
-							writableContainer.Rename(libraryItem, newName);
-						}
+						item.Name = newName;
 					}));
 		}
 	}

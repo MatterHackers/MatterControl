@@ -31,8 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
@@ -552,7 +550,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private async void Workspaces_Changed(object sender, WorkspacesChangedEventArgs e)
+		private void Workspaces_Changed(object sender, WorkspacesChangedEventArgs e)
 		{
 			var workspace = e.Workspace;
 			var activePrinter = workspace.Printer;
@@ -584,6 +582,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					tabControl.CloseTab(tab);
 				}
+			}
+		}
+
+        public void HookupNameChangeCallback(ChromeTab partTab, PartWorkspace workspace)
+        {
+			var sourceItem = workspace.SceneContext?.EditContext?.SourceItem;
+
+			if (sourceItem != null)
+			{
+				async void UpdateTabName(object s, EventArgs e)
+				{
+					partTab.Title = sourceItem.Name;
+					await ApplicationController.Instance.PersistUserWorkspaceTabs(false);
+				}
+
+				sourceItem.NameChanged += UpdateTabName;
+
+				partTab.Closed += (s, e) => sourceItem.NameChanged -= UpdateTabName;
+
+				partTab.Title = sourceItem.Name;
 			}
 		}
 
@@ -753,32 +771,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
-
-			if (printer != null)
+			
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
 			{
-				var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-				renameMenuItem.Click += (s, e) =>
+				if (workspace != null)
 				{
-					if (workspace != null)
-					{
-						workspace.LibraryView.ActiveContainer.Rename(workspace.LibraryView.ActiveContainer.Items.FirstOrDefault());
-					}
-					else if (printer != null)
-					{
-						DialogWindow.Show(
-							new InputBoxPage(
-								"Rename Item".Localize(),
-								"Name".Localize(),
-								printer.Settings.GetValue(SettingsKey.printer_name),
-								"Enter New Name Here".Localize(),
-								"Rename".Localize(),
-								(newName) =>
-								{
-									printer.Settings.SetValue(SettingsKey.printer_name, newName);
-								}));
-					}
-				};
-			}
+					workspace.SceneContext?.EditContext?.SourceItem?.Rename();
+				}
+				else if (printer != null)
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							printer.Settings.GetValue(SettingsKey.printer_name),
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
+								printer.Settings.SetValue(SettingsKey.printer_name, newName);
+							}));
+				}
+			};
 
 
 			var moveButtons = new FlowLayoutWidget();
@@ -872,6 +887,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 			};
+
+			HookupNameChangeCallback(partTab, workspace);
 
 			EnableReduceWidth(partTab, theme);
 

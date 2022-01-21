@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
-						() => "Local Library".Localize(),
+						"Local Library".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "local_library_icon.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Calibration Parts".Localize(),
+					"Calibration Parts".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
 					() => new CalibrationPartsContainer())
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Primitives".Localize(),
+					"Primitives".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
 					() => new PrimitivesContainer())
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
-						() => "Print Queue".Localize(),
+						"Print Queue".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
 						() => new PrintQueueContainer()));
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.Library
 #if DEBUG
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Pipe Works".Localize(),
+					"Pipe Works".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					null,
 					() => new PipeWorksContainer())
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Experimental".Localize(),
+					"Experimental".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					null,
 					() => new DynamicContainer()
@@ -120,19 +120,19 @@ namespace MatterHackers.MatterControl.Library
 						Items = new SafeList<ILibraryItem>()
 						{
 							new GeneratorItem(
-								() => "Calibration Tab".Localize(),
+								"Calibration Tab".Localize(),
 								async () => await XyCalibrationTabObject3D.Create())
 							{ DateCreated = new System.DateTime(index++) },
 							new GeneratorItem(
-								() => "Calibration Face".Localize(),
+								"Calibration Face".Localize(),
 								async () => await XyCalibrationFaceObject3D.Create())
 							{ DateCreated = new System.DateTime(index++) },
 							new GeneratorItem(
-								() => "Text2".Localize(),
+								"Text2".Localize(),
 								async () => await TextPathObject3D.Create())
 							{ DateCreated = new System.DateTime(index++) },
 							new GeneratorItem(
-								() => "Path".Localize(),
+								"Path".Localize(),
 								() =>
 								{
 									var storage = new VertexStorage();

@@ -29,17 +29,17 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class FileSystemContainer : WritableContainer, ICustomSearch
+    public class FileSystemContainer : WritableContainer, ICustomSearch
 	{
 		private FileSystemWatcher directoryWatcher;
 
@@ -76,6 +76,13 @@ namespace MatterHackers.MatterControl.Library
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
 			}
+		}
+
+		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
+		{
+#if DEBUG
+			throw new NotImplementedException();
+#endif
 		}
 
 		public override ICustomSearch CustomSearch { get; }
@@ -269,47 +276,6 @@ namespace MatterHackers.MatterControl.Library
 				}
 
 				this.ReloadContent();
-			}
-		}
-
-		public override void Rename(ILibraryItem item, string revisedName)
-		{
-			if (item is DirectoryContainerLink directoryLink)
-			{
-				if (Directory.Exists(directoryLink.Path))
-				{
-					Process.Start(this.FullPath);
-				}
-			}
-			else if (item is FileSystemFileItem fileItem)
-			{
-				string sourceFile = fileItem.Path;
-				if (File.Exists(sourceFile))
-				{
-					string extension = Path.GetExtension(sourceFile);
-					string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
-					destFile = Path.ChangeExtension(destFile, extension);
-
-					File.Move(sourceFile, destFile);
-
-					fileItem.Path = destFile;
-
-					this.ReloadContent();
-				}
-			}
-			else if (item is LocalZipContainerLink zipFile)
-            {
-				string sourceFile = zipFile.Path;
-				if (File.Exists(sourceFile))
-				{
-					string extension = Path.GetExtension(sourceFile);
-					string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
-					destFile = Path.ChangeExtension(destFile, extension);
-
-					File.Move(sourceFile, destFile);
-
-					this.ReloadContent();
-				}
 			}
 		}
 

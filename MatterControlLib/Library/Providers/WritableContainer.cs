@@ -45,17 +45,9 @@ namespace MatterHackers.MatterControl.Library
 			this.ItemContentChanged?.Invoke(this, args);
 		}
 
-		public virtual void Add(IEnumerable<ILibraryItem> items)
-		{
-		}
+		public abstract void Add(IEnumerable<ILibraryItem> items);
 
-		public virtual void Remove(IEnumerable<ILibraryItem> items)
-		{
-		}
-
-		public virtual void Rename(ILibraryItem item, string revisedName)
-		{
-		}
+		public abstract void Remove(IEnumerable<ILibraryItem> items);
 
 		public virtual void Save(ILibraryItem item, IObject3D content)
 		{
@@ -80,9 +72,7 @@ namespace MatterHackers.MatterControl.Library
 
 		}
 
-		public virtual void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
-		{
-		}
+		public abstract void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 
 		public virtual bool AllowAction(ContainerActions containerActions)
 		{

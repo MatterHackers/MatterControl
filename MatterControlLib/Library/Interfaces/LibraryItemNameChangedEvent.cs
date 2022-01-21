@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,60 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class MissingFileItem : MessageItem
+    public class LibraryItemNameChangedEvent : EventArgs
 	{
-		public MissingFileItem(string name)
-			: base("Missing".Localize() + "-" + name)
+		public LibraryItemNameChangedEvent(string id)
 		{
-			this.Thumbnail = StaticData.Instance.LoadIcon("part_icon_transparent_40x40.png");
-		}
-	}
-
-	public class MessageItem : ILibraryItem, IThumbnail
-	{
-		public string ID { get; set; }
-
-		private string _name;
-		public string Name
-		{
-			get => _name; set
-			{
-				if (_name != value)
-				{
-					_name = value;
-					NameChanged?.Invoke(this, EventArgs.Empty);
-				}
-			}
+			this.ID = id;
 		}
 
-		public event EventHandler NameChanged;
-
-		public bool IsProtected  { get; set; }
-
-		public bool IsVisible { get; set; } = true;
-
-		public DateTime DateCreated { get; } = DateTime.Now;
-
-		public DateTime DateModified { get; } = DateTime.Now;
-
-		public ImageBuffer Thumbnail { get; set; }
-
-		public MessageItem(string name)
-		{
-			this.Name = name;
-		}
-
-		public Task<ImageBuffer> GetThumbnail(int width, int height)
-		{
-			return Task.FromResult(this.Thumbnail);
-		}
+		public string ID { get; }
 	}
 }
