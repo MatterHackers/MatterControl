@@ -2671,6 +2671,9 @@ Translated:Read Filter
 English:ReadFromPrinter thread created.
 Translated:ReadFromPrinter thread created.
 
+English:Reboots the firmware on the controller
+Translated:Reboots the firmware on the controller
+
 English:Recover Last Print
 Translated:Recover Last Print
 

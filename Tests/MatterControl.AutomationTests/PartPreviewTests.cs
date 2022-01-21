@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBed();
 
 				// Get View3DWidget
-				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitForName("Calibration - Box.stl");
