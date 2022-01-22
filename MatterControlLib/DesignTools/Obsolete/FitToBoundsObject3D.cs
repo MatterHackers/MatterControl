@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Fit to Bounds".Localize();
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{

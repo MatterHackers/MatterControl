@@ -183,14 +183,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			if (markdownWidget != null)
 			{
 				markdownWidget.Close();
 			}
 
-			base.Remove(undoBuffer);
+			base.Cancel(undoBuffer);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)

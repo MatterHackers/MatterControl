@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public override bool CanFlatten => !Finalized || Persistable;
+		public override bool CanApply => !Finalized || Persistable;
 
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("MatterHackers Internal Use")]
 		public bool ProOnly { get; set; }
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// we want to end up with just a group of all the visible mesh objects
 			using (RebuildLock())
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Invalidate(InvalidateType.Children);
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			// Custom remove for ImageConverter
 			if (this.ComponentID == ImageConverterComponentID)
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				else
 				{
 					// remove the component and leave the inside parts
-					base.Remove(undoBuffer);
+					base.Cancel(undoBuffer);
 				}
 			}
 		}

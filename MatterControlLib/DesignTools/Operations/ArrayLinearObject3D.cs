@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Linear Array".Localize();
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		[Slider(2, 10, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public override IntOrExpression Count { get; set; } = 3;

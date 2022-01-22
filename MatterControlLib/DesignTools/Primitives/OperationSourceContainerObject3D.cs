@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set => base.Mesh = value;
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public override bool Persistable
 		{
@@ -114,12 +114,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
-			Flatten(undoBuffer, null);
+			Apply(undoBuffer, null);
 		}
 
-		protected void Flatten(UndoBuffer undoBuffer, IEnumerable<IObject3D> extraItems)
+		protected void Apply(UndoBuffer undoBuffer, IEnumerable<IObject3D> extraItems)
 		{
 			using (RebuildLock())
 			{
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				// add flatten to the name to show what happened
-				newChildren[0].Name = this.Name + " - " + "Flattened".Localize();
+				newChildren[0].Name = this.Name;
 
 				// and replace us with the children
 				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class OperationSourceObject3D : Object3D
 	{
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public OperationSourceObject3D()
 		{

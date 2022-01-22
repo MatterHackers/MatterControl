@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Transform Wrapper".Localize();
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		[JsonIgnore]
 		public AscendableSafeList<IObject3D> UntransformedChildren
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Invalidate(InvalidateType.Children);
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{

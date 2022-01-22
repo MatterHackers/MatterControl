@@ -214,9 +214,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DrawPath();
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			this.FlattenToPathObject(undoBuffer);
 		}

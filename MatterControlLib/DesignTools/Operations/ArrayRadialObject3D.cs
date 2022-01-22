@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Rotate About")]
 		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public override IntOrExpression Count { get; set; } = 3;
 

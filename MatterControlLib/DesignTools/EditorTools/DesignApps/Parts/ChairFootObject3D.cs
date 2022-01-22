@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		//public override bool Persistable { get => PermissionCheckRequest.UserAuthorized(permissionKey); }
 
-		public override bool CanFlatten => Persistable;
+		public override bool CanApply => Persistable;
 
 		public override bool CanEdit => Persistable;
 

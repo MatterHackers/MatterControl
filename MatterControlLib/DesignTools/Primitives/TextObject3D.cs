@@ -80,9 +80,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = NamedTypeFace.Nunito_Bold;
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
-			newContainer.Name = this.Name + " - " + "Flattened".Localize();
+			newContainer.Name = this.Name;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)

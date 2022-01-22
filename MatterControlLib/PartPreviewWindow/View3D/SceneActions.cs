@@ -56,9 +56,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				if (selectedItem.CanFlatten)
+				if (selectedItem.CanApply)
 				{
-					selectedItem.Flatten(scene.UndoBuffer);
+					selectedItem.Apply(scene.UndoBuffer);
 					scene.SelectedItem = null;
 					return;
 				}

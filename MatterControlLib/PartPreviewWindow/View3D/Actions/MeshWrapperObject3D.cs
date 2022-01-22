@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				.Select((mw) => (mw.Children.First(), mw));
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var meshWrappers = thisClone.Descendants().Where(o => o.OwnerID == thisClone.ID).ToArray();
 					foreach (var meshWrapper in meshWrappers)
 					{
-						meshWrapper.Remove(null);
+						meshWrapper.Cancel(null);
 					}
 					foreach (var child in thisClone.Children)
 					{
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						while (remove is ModifiedMeshObject3D)
 						{
 							var hold = remove;
-							remove.Remove(null);
+							remove.Cancel(null);
 							remove = hold.Parent;
 						}
 					}

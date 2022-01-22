@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public char Letter { get; set; } = 'a';
 

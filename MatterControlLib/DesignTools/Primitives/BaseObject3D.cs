@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Base".Localize();
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public CenteringTypes Centering { get; set; } = CenteringTypes.Weighted;
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			base.Remove(undoBuffer);
+			base.Cancel(undoBuffer);
 		}
 
 		private (IVertexSource vertexSource, double height) meshVertexCache;

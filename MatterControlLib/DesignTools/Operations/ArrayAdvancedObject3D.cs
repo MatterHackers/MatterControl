@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Advanced Array".Localize();
 		}
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public override IntOrExpression Count { get; set; } = 3;
 

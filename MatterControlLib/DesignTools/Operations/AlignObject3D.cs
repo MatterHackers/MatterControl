@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Slider(-20, 20, useSnappingGrid: true)]
 		public DoubleOrExpression ZOffset { get; set; } = 0;
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		private List<Aabb> CurrentChildrenBounds
 		{
@@ -391,14 +391,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Task.CompletedTask;
 		}
 
-		public override void Remove(UndoBuffer undoBuffer)
+		public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
 				// put everything back to where it was before the arrange started
 				ResetPositions();
 
-				base.Remove(undoBuffer);
+				base.Cancel(undoBuffer);
 			}
 
 			Invalidate(InvalidateType.Children);

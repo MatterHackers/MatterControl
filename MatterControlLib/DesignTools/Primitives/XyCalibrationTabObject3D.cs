@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Material")]
 		public int CalibrationMaterialIndex { get; set; } = 1;
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public double ChangeHeight { get; set; } = .4;
 

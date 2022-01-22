@@ -88,20 +88,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a make permanent button
 			var icon = StaticData.Instance.LoadIcon("apply.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply();
-			flattenButton = new IconButton(icon, theme)
+			applyButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Apply".Localize(),
 				Enabled = true
 			};
-			flattenButton.Click += (s, e) =>
+			applyButton.Click += (s, e) =>
 			{
-				if (this.item.CanFlatten)
+				if (this.item.CanApply)
 				{
 					var item = this.item;
 					using (new SelectionMaintainer(view3DWidget.Scene))
 					{
-						item.Flatten(view3DWidget.Scene.UndoBuffer);
+						item.Apply(view3DWidget.Scene.UndoBuffer);
 					}
 				}
 				else
@@ -110,24 +110,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext.Scene.UngroupSelection();
 				}
 			};
-			toolbar.AddChild(flattenButton);
+			toolbar.AddChild(applyButton);
 
 			// put in a remove button
-			removeButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(), theme)
+			cancelButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Cancel".Localize(),
 				Enabled = scene.SelectedItem != null
 			};
-			removeButton.Click += (s, e) =>
+			cancelButton.Click += (s, e) =>
 			{
 				var item = this.item;
 				using (new SelectionMaintainer(view3DWidget.Scene))
 				{
-					item.Remove(view3DWidget.Scene.UndoBuffer);
+					item.Cancel(view3DWidget.Scene.UndoBuffer);
 				}
 			};
-			toolbar.AddChild(removeButton);
+			toolbar.AddChild(cancelButton);
 
 			overflowButton = new OverflowBar.OverflowMenuButton(theme)
 			{
@@ -171,8 +171,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public GuiWidget ContentPanel { get; set; }
 
 		private readonly JsonPathContext pathGetter = new JsonPathContext();
-		private readonly IconButton flattenButton;
-		private readonly IconButton removeButton;
+		private readonly IconButton applyButton;
+		private readonly IconButton cancelButton;
 		private readonly OverflowBar.OverflowMenuButton overflowButton;
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
@@ -472,11 +472,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItem = scene.SelectedItem;
 
-			flattenButton.Enabled = selectedItem != null
+			applyButton.Enabled = selectedItem != null
 				&& (selectedItem is GroupObject3D
 				|| (selectedItem.GetType() == typeof(Object3D) && selectedItem.Children.Any())
-				|| selectedItem.CanFlatten);
-			removeButton.Enabled = selectedItem != null;
+				|| selectedItem.CanApply);
+			cancelButton.Enabled = selectedItem != null;
 			overflowButton.Enabled = selectedItem != null;
 			if (selectedItem == null)
 			{

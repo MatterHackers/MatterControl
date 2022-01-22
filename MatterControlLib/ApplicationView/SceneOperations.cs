@@ -1504,7 +1504,7 @@ namespace MatterHackers.MatterControl
 					{
 						return selectedItem is GroupObject3D
 							|| selectedItem.GetType() == typeof(Object3D)
-							|| selectedItem.CanFlatten;
+							|| selectedItem.CanApply;
 					}
 
 					return false;
