@@ -87,14 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.MainView = this;
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			//var keyTest = new SoftKeyboard(640, 280);
-			//this.AddChild(keyTest);
-
-			base.OnLoad(args);
-		}
-
 		private async void AddStandardUi(ThemeConfig theme)
 		{
 			var extensionArea = new LeftClipFlowLayoutWidget()
