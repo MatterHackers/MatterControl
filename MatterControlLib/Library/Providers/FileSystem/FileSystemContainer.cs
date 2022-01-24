@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -269,9 +269,9 @@ namespace MatterHackers.MatterControl.Library
 				foreach (var item in items)
 				{
 					if (item is FileSystemItem fileItem
-						&& File.Exists(fileItem.Path))
+						&& File.Exists(fileItem.FilePath))
 					{
-						File.Delete(fileItem.Path);
+						File.Delete(fileItem.FilePath);
 					}
 				}
 
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.Library
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
-					new FileSystemContainer(this.Path)
+					new FileSystemContainer(this.FilePath)
 					{
 						UseIncrementedNameDuringTypeChange = this.UseIncrementedNameDuringTypeChange,
 						Name = this.Name

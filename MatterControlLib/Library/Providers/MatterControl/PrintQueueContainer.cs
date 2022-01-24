@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Library
 							if (streamItem is FileSystemFileItem fileItem)
 							{
 								// Get existing file path
-								itemPath = fileItem.Path;
+								itemPath = fileItem.FilePath;
 							}
 							else
 							{
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (fileSystemItem != null)
 				{
-					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.Path).ToList();
+					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.FilePath).ToList();
 
 					foreach(var printItem in matches)
 					{

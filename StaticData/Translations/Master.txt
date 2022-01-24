@@ -1045,6 +1045,9 @@ Translated:Experimental
 English:Export
 Translated:Export
 
+English:Export bed to
+Translated:Export bed to
+
 English:Export File
 Translated:Export File
 

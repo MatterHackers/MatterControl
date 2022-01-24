@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,11 +45,11 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public string AssetPath => this.Path;
+		public string AssetPath => this.FilePath;
 
-		public string ContentType => System.IO.Path.GetExtension(this.Path).ToLower().Trim('.');
+		public string ContentType => Path.GetExtension(this.FilePath).ToLower().Trim('.');
 
-		public string FileName => System.IO.Path.GetFileName(this.Path);
+		public string FileName => Path.GetFileName(this.FilePath);
 
 		/// <summary>
 		/// Gets the size, in bytes, of the current file.
@@ -58,12 +58,12 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
-			if (File.Exists(this.Path)
-				&& (ApplicationController.Instance.IsLoadableFile(this.Path)
-					|| (System.IO.Path.GetExtension(this.Path) is string extension
+			if (File.Exists(this.FilePath)
+				&& (ApplicationController.Instance.IsLoadableFile(this.FilePath)
+					|| (Path.GetExtension(this.FilePath) is string extension
 						&& string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase))))
 			{
-				var stream = File.OpenRead(this.Path);
+				var stream = File.OpenRead(this.FilePath);
 				return Task.FromResult(new StreamAndLength()
 				{
 					Stream = stream,

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.object3D = object3D;
 
-			if ((string.IsNullOrEmpty(object3D.Name) || object3D.Name.StartsWith("Workspace 20"))
+			if ((string.IsNullOrEmpty(object3D.Name) || object3D.Name.StartsWith("Workspace 20") || object3D.Name.StartsWith("New Design"))
 				&& object3D.Children.Count == 1
 				&& !string.IsNullOrEmpty(object3D.Children[0].Name))
 			{
@@ -60,7 +60,9 @@ namespace MatterHackers.MatterControl.Library
 		private string _name;
 		public string Name
 		{
-			get => _name; set
+			get => _name;
+			
+			set
 			{
 				if (_name != value)
 				{

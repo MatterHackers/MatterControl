@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -935,15 +935,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						{
 							if (listView.SelectedItems.FirstOrDefault().Model is FileSystemFileItem fileItem)
 							{
-								Process.Start("explorer.exe", $"/select, \"{fileItem.Path}\"");
+								Process.Start("explorer.exe", $"/select, \"{fileItem.FilePath}\"");
 							}
 							else if (listView.SelectedItems.FirstOrDefault().Model is FileSystemContainer.DirectoryContainerLink container)
 							{
-								Process.Start("explorer.exe", $"/select, \"{container.Path}\"");
+								Process.Start("explorer.exe", $"/select, \"{container.FilePath}\"");
 							}
 							else if (listView.SelectedItems.FirstOrDefault().Model is LocalZipContainerLink zipContainer)
 							{
-								Process.Start("explorer.exe", $"/select, \"{zipContainer.Path}\"");
+								Process.Start("explorer.exe", $"/select, \"{zipContainer.FilePath}\"");
 							}
 						}
 					}

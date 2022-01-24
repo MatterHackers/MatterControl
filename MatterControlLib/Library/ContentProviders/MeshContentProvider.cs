@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2020, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 									&& item is FileSystemFileItem fileItem
 									&& !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
 								{
-									loadedItem.MeshPath = fileItem.Path;
+									loadedItem.MeshPath = fileItem.FilePath;
 								}
 							}
 						}

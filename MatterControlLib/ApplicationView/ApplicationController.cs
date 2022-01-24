@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -310,23 +310,25 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Project workspace definitions to serializable structure
-			var workspaces = this.Workspaces.Select(w =>
-			{
-				if (w.Printer == null)
+			var workspaces = this.Workspaces
+				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
+				.Select(w =>
 				{
-					return new PartWorkspace(w.SceneContext)
+					if (w.Printer == null)
 					{
-						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-					};
-				}
-				else
-				{
-					return new PartWorkspace(w.Printer)
+						return new PartWorkspace(w.SceneContext)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+					else
 					{
-						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-					};
-				}
-			});
+						return new PartWorkspace(w.Printer)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+				});
 
 			lock (workspaces)
 			{
