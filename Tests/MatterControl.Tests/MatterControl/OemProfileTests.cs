@@ -57,7 +57,7 @@ M300 S750 P30    ; Pause Tone";
 		[Test, RunInApplicationDomain]
 		public void ModifyPrinterProfiles()
 		{
-			// This is not really a test. It updaets our profiles with new settings
+			// This is not really a test. It updaets our profiles with new settings.
 			return;
 
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
