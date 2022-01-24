@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -45,6 +47,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BackgroundColor = Color.Transparent,
 					Margin = new BorderDouble(0, 0, 0, 15)
 				});
+
+			if (showLoadFilamentButton)
+			{
+				int tabIndex = 0;
+				var bedSurfaceChanger = TemperatureWidgetBed.CreateBedSurfaceSelector(printer, theme, ref tabIndex);
+				if (bedSurfaceChanger != null)
+				{
+					contentRow.AddChild(bedSurfaceChanger);
+				}
+			}
 
 			NextButton.Text = nextButtonText;
 

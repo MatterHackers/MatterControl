@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public abstract IntOrExpression Count { get; set; }
 
-        public override void Flatten(Agg.UI.UndoBuffer undoBuffer)
+        public override void Apply(Agg.UI.UndoBuffer undoBuffer)
         {
 			// convert [index] expressions to their constant values
 			foreach (var item in this.Descendants((item) => !(item is ArrayObject3D)))
@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			// then call base flatten
-			base.Flatten(undoBuffer);
+			// then call base apply
+			base.Apply(undoBuffer);
         }
 
         internal void ProcessIndexExpressions()

@@ -48,10 +48,10 @@ namespace MatterHackers.MatterControl.Library
 			var libraryItems = new List<GeneratorItem>()
 			{
 				new GeneratorItem(
-					() => "Braille".Localize(),
+					"Braille".Localize(),
 					async () => await BrailleObject3D.Create()),
 				new GeneratorItem(
-					() => "Braille Card".Localize(),
+					"Braille Card".Localize(),
 					async () => await BrailleCardObject3D.Create()),
 			};
 

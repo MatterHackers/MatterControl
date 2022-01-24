@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Plating History".Localize(),
+					"Plating History".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PlatingHistoryContainer())
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Print History".Localize(),
+					"Print History".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PrintHistoryContainer()
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
-						() => "Printed Files".Localize(),
+						"Printed Files".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.PrintHistoryPath)

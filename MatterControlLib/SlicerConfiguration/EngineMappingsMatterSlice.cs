@@ -678,7 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 				AddDefaultIfNotPresent(preStartGCode, "G21", startGCodeLines, "set units to millimeters");
 				AddDefaultIfNotPresent(preStartGCode, "M107", startGCodeLines, "fan off");
-				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
+				double bed_temperature = settings.Helpers.ActiveBedTemperature;
 				if (bed_temperature > 0
 					&& settings.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"; automatic settings after start_gcode"
 			};
 
-				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
+				double bed_temperature = settings.Helpers.ActiveBedTemperature;
 				if (bed_temperature > 0
 					&& settings.GetValue<bool>(SettingsKey.has_heated_bed)
 					&& !startGCode.Contains("M109"))

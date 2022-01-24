@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -297,45 +298,49 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task PersistUserTabs()
+		public async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
 		{
-			// Persist all pending changes in all workspaces to disk
-			foreach (var workspace in this.Workspaces.ToArray())
+			if (saveSceneChanges)
 			{
-				await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				// Persist all pending changes in all workspaces to disk
+				foreach (var workspace in this.Workspaces.ToArray())
+				{
+					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				}
 			}
 
 			// Project workspace definitions to serializable structure
-			var workspaces = this.Workspaces.Select(w =>
-			{
-				if (w.Printer == null)
+			var workspaces = this.Workspaces
+				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
+				.Select(w =>
 				{
-					return new PartWorkspace(w.SceneContext)
+					if (w.Printer == null)
 					{
-						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-					};
-				}
-				else
-				{
-					return new PartWorkspace(w.Printer)
+						return new PartWorkspace(w.SceneContext)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+					else
 					{
-						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-					};
-				}
-			});
+						return new PartWorkspace(w.Printer)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+				});
 
 			lock (workspaces)
 			{
-				// Persist workspace definitions to disk
-				File.WriteAllText(
-					ProfileManager.Instance.OpenTabsPath,
-					JsonConvert.SerializeObject(
+				var content = JsonConvert.SerializeObject(
 						workspaces,
 						Formatting.Indented,
 						new JsonSerializerSettings
 						{
 							NullValueHandling = NullValueHandling.Ignore
-						}));
+						});
+				// Persist workspace definitions to disk
+				File.WriteAllText(ProfileManager.Instance.OpenTabsPath, content);
 			}
 		}
 
@@ -455,7 +460,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					await ApplicationController.Instance.PersistUserTabs();
+					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
 				});
 			}
 		}
@@ -732,13 +737,12 @@ namespace MatterHackers.MatterControl
 			return actions.ToDictionary(a => a.ID);
 		}
 
-		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
+		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			this.MainView.CreatePartTab(true).ContinueWith(task =>
-			{
-				var workspace = this.Workspaces.Last();
-				workspace.SceneContext.AddToPlate(selectedLibraryItems);
-			});
+			await this.MainView.CreateNewPartTab(false);
+			
+			var workspace = this.Workspaces.Last();
+			workspace.SceneContext.AddToPlate(selectedLibraryItems);
 		}
 
 		internal void BlinkTab(ITab tab)
@@ -837,7 +841,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
-						() => "Downloads".Localize(),
+						"Downloads".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "download_icon.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
@@ -856,7 +860,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "Library".Localize(),
+					"Library".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "library_icon.png")),
 					() => this.Library.LibraryCollectionContainer));
@@ -881,7 +885,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "History".Localize(),
+					"History".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new RootHistoryContainer())
@@ -897,7 +901,7 @@ namespace MatterHackers.MatterControl
 					ExtraContainers = new List<ILibraryContainerLink>()
 					{
 						new DynamicContainerLink(
-							() => "Printers".Localize(),
+							"Printers".Localize(),
 							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 							StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 							() => new OpenPrintersContainer())
@@ -956,8 +960,18 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public ApplicationController()
+		private ApplicationController()
 		{
+			Workspaces = new ObservableCollection<PartWorkspace>();
+
+			Workspaces.CollectionChanged += (s, e) =>
+			{
+				if (!restoringWorkspaces)
+				{
+					UiThread.RunOnIdle(async () => await PersistUserWorkspaceTabs(false));
+				}
+			};
+
 			this.Thumbnails = new ThumbnailsConfig();
 
 			ProfileManager.UserChanged += (s, e) =>
@@ -1549,7 +1563,7 @@ namespace MatterHackers.MatterControl
 			return printer;
 		}
 
-		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID)
+		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID, bool addPhilToBed = false)
 		{
 			if (!string.IsNullOrEmpty(printerID)
 				&& ProfileManager.Instance[printerID] != null)
@@ -1566,12 +1580,12 @@ namespace MatterHackers.MatterControl
 					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
 				});
 
-				if (workspace.Printer != null)
-				{
-					workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-				}
-
 				this.OpenWorkspace(workspace);
+
+				if (addPhilToBed)
+                {
+					workspace.SceneContext.AddPhilToBed();
+				}
 
 				return printer;
 			}
@@ -1623,6 +1637,8 @@ namespace MatterHackers.MatterControl
 			{
 				return;
 			}
+
+			restoringWorkspaces = true;
 
 			loadedUserTabs = ProfileManager.Instance.UserName;
 
@@ -1683,15 +1699,6 @@ namespace MatterHackers.MatterControl
 									SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
 								});
 
-								if (workspace.Printer != null)
-								{
-									workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-								}
-								else
-								{
-									workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
-								}
-
 								this.RestoreWorkspace(workspace);
 							}
 						}
@@ -1709,13 +1716,16 @@ namespace MatterHackers.MatterControl
 
 			// If the use does not have a workspace open and has not setup any hardware, show the startup screen
 			if (this.Workspaces.Count == 0
-				&& !ProfileManager.Instance.ActiveProfiles.Any())
+				&& !ProfileManager.Instance.ActiveProfiles.Any()
+				&& SystemWindow.AllOpenSystemWindows.Count() < 2)
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					DialogWindow.Show<StartupPage>();
 				});
 			}
+
+			restoringWorkspaces = false;
 		}
 
 		/// <summary>
@@ -1772,7 +1782,7 @@ namespace MatterHackers.MatterControl
 
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
-		public List<PartWorkspace> Workspaces { get; } = new List<PartWorkspace>();
+		public ObservableCollection<PartWorkspace> Workspaces { get; }
 
 		public AppViewState ViewState { get; } = new AppViewState();
 
@@ -2094,8 +2104,9 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static PluginManager pluginManager = null;
+        private bool restoringWorkspaces;
 
-		public static PluginManager Plugins
+        public static PluginManager Plugins
 		{
 			get
 			{

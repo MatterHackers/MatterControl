@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class GroupObject3D : Object3D
 	{
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public GroupObject3D()
 		{

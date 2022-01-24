@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,22 +43,22 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.ContainingZip = containingZip;
 			this.RelativePath = relativePath;
-			this.Name = System.IO.Path.GetFileName(relativePath);
+			this.Name = Path.GetFileName(relativePath);
 			this.FileSize = fileSize;
 		}
 
 		public string AssetPath { get; } = null;
 
-		public string ContentType => System.IO.Path.GetExtension(this.Name).ToLower().Trim('.');
+		public string ContentType => Path.GetExtension(this.Name).ToLower().Trim('.');
 
-		public string FileName => System.IO.Path.GetFileName(this.Name);
+		public string FileName => Path.GetFileName(this.Name);
 
 		/// <summary>
 		/// Gets the size, in bytes, of the current file.
 		/// </summary>
 		public long FileSize { get; private set; }
 
-		public override string ID => agg_basics.GetLongHashCode($"{this.Path}/{this.RelativePath}").ToString();
+		public override string ID => agg_basics.GetLongHashCode($"{this.FilePath}/{this.RelativePath}").ToString();
 
 		public ZipMemoryContainer ContainingZip { get; }
 		public string RelativePath { get; set; }
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				var memoryStream = new MemoryStream();
 
-				using (var file = File.OpenRead(this.Path))
+				using (var file = File.OpenRead(this.FilePath))
 				using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
 				{
 					var zipStream = zip.Entries.Where(e => e.FullName == this.RelativePath).FirstOrDefault()?.Open();

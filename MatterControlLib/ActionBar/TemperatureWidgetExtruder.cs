@@ -31,7 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -183,7 +185,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
-		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private RunningInterval runningInterval;
 		private ThemeConfig theme;
 
@@ -271,7 +272,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// TODO: Add guards around computed settings key to handle invalid/missing keys
 			var settingsData = PrinterSettings.SettingsData[TemperatureKey];
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 			container.AddChild(temperatureRow);
 
 			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
@@ -285,8 +286,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					settingsContext,
 					printer,
 					menuTheme,
-					ref tabIndex,
-					allUiFields);
+					ref tabIndex);
 				container.AddChild(extruderMultiplier);
 				alwaysEnabled.Add(extruderMultiplier);
 			}
@@ -326,18 +326,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (stringEvent != null)
 				{
-					string settingsKey = stringEvent.Data;
-					if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
-					{
-						string currentValue = settingsContext.GetValue(settingsKey);
-						if (uifield.Value != currentValue)
-						{
-							uifield.SetValue(
-								currentValue,
-								userInitiated: false);
-						}
-					}
-
 					if (stringEvent.Data == this.TemperatureKey)
 					{
 						graph.GoalValue = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
@@ -395,10 +383,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				// material can be changed even when the printer is not connected
 				alwaysEnabled.Add(materialSettingsRow);
 				// add in a shop button
-				var shopButton = theme.CreateDialogButton("Shop".Localize());
-				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
-				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
-				shopButton.Click += (s, e) =>
+				var shopButton = new TextIconButton("Shop".Localize(), StaticData.Instance.LoadIcon("cart.png", 16, 16).SetToColor(menuTheme.TextColor), theme)
+				{
+					BackgroundColor = theme.SlightShade,
+					HoverColor = theme.SlightShade.WithAlpha(75),
+					Margin = new BorderDouble(3, 3, 6, 3),
+                    ToolTipText = "Shop Filament at MatterHackers".Localize()
+                };
+                shopButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{

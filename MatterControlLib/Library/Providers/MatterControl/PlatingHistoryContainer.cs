@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Items = new SafeList<ILibraryItem>();
-			this.IsProtected = true;
+			this.IsProtected = false;
 
 			DefaultSort = new LibrarySortBehavior()
 			{
@@ -81,8 +81,7 @@ namespace MatterHackers.MatterControl.Library
 
 		internal ILibraryItem NewPlatingItem(InteractiveScene scene)
 		{
-			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-			string mcxPath = Path.Combine(this.FullPath, now + ".mcx");
+			string mcxPath = Path.Combine(this.FullPath, "New Design.mcx");
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 

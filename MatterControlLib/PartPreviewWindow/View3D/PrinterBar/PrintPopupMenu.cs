@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrintPopupMenu : PopupMenuButton
 	{
 		private PrinterConfig printer;
-		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private SettingsContext settingsContext;
 
 		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme)
@@ -75,8 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 
 				int tabIndex = 0;
-
-				allUiFields.Clear();
 
 				var printPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -110,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in settingsToAdd)
 				{
 					var settingsData = PrinterSettings.SettingsData[key];
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 
 					if (row is SliceSettingsRow settingsRow)
 					{
@@ -145,8 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						settingsContext,
 						printer,
 						menuTheme,
-						ref tabIndex,
-						allUiFields);
+						ref tabIndex);
 
 					if (advancedRow is SliceSettingsRow settingsRow)
 					{
@@ -310,9 +306,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Selectable = false,
 				Padding = theme.TextButtonPadding.Clone(right: 5)
 			});
-
-			// Register listeners
-			printer.Settings.SettingChanged += Printer_SettingChanged;
 		}
 
 		public static GuiWidget CreateStartPrintButton(string buttonText,
@@ -353,33 +346,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			return startPrintButton;
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			printer.Settings.SettingChanged -= Printer_SettingChanged;
-
-			base.OnClosed(e);
-		}
-
-		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
-		{
-			if (stringEvent != null)
-			{
-				string settingsKey = stringEvent.Data;
-				if (allUiFields.TryGetValue(settingsKey, out UIField uifield))
-				{
-					string currentValue = settingsContext.GetValue(settingsKey);
-					if (uifield.Value != currentValue
-						|| settingsKey == "com_port")
-					{
-						uifield.SetValue(
-							currentValue,
-							userInitiated: false);
-					}
-				}
-			}
 		}
 
 		private class IgnoredFlowLayout : FlowLayoutWidget, IIgnoredPopupChild

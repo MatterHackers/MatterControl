@@ -27,18 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class SqliteFileItem : FileSystemFileItem
+    public class SqliteFileItem : FileSystemFileItem
 	{
 		public PrintItem PrintItem { get; }
 
@@ -48,6 +41,19 @@ namespace MatterHackers.MatterControl.Library
 			this.PrintItem = printItem;
 		}
 
-		public override string Name { get => this.PrintItem.Name; set => this.PrintItem.Name = value; }
-	}
+        public override string Name
+        {
+            get => this.PrintItem.Name;
+            set
+            {
+                if (this.PrintItem.Name != value)
+                {
+                    this.PrintItem.Name = value;
+                    this.PrintItem.Commit();
+
+                    ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+                }
+            }
+        }
+    }
 }

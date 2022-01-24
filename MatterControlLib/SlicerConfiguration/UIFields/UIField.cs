@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -89,6 +91,59 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				widget.ActuallNumberEdit.InternalTextEditWidget.ClearUndoHistory();
 			}
+		}
+
+		private (string, PrinterConfig, SettingsContext, List<ValidationError>) updateSettings;
+
+		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
+		{
+			var (boundSettingsKey, printer, settingsContext, errors) = updateSettings;
+
+			if (stringEvent != null)
+			{
+				string settingsKey = stringEvent.Data;
+				if (settingsKey == boundSettingsKey)
+				{
+					string currentValue = settingsContext.GetValue(settingsKey);
+					if (this.Value != currentValue
+						|| settingsKey == "com_port")
+					{
+						this.SetValue(
+							currentValue,
+							userInitiated: false);
+					}
+
+					var errors2 = printer.ValidateSettings(settingsContext);
+
+					if (errors != null)
+					{
+						errors.Clear();
+						errors.AddRange(errors2);
+
+						// Some fields are hosted outside of SettingsRows (e.g. Section Headers like Brim) and should skip validation updates
+						this.Row?.UpdateValidationState(errors);
+					}
+				}
+			}
+		}
+
+		public void RegisterSettingChangeEvent(PrinterConfig printer, string slicerConfigName, SettingsContext settingsContext, List<ValidationError> errors)
+        {
+			// Register listeners
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			updateSettings = (slicerConfigName, printer, settingsContext, errors);
+
+			this.Content.Closed += (s, e) =>
+			{
+				// Unregister listeners
+				printer.Settings.SettingChanged -= Printer_SettingChanged;
+			};
+
+			// remove listener if print disposed
+			printer.Disposed += (s, e) =>
+			{
+				printer.Settings.SettingChanged -= Printer_SettingChanged;
+			};
 		}
 	}
 }

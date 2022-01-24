@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl
 			// var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
-			var systemWindow = Application.LoadRootWindow(width, height);
+			var rootSystemWindow = Application.LoadRootWindow(width, height);
 
 			var theme = ApplicationController.Instance.Theme;
 			SingleWindowProvider.SetWindowTheme(theme.TextColor,
@@ -312,7 +312,10 @@ namespace MatterHackers.MatterControl
 
 			ApplicationController.Instance.KeepAwake = KeepAwake;
 
-			systemWindow.ShowAsSystemWindow();
+			// Add a the on screen keyboard manager
+			//_ = new SoftKeyboardDisplayStateManager(rootSystemWindow);
+
+			rootSystemWindow.ShowAsSystemWindow();
 		}
 
 		private static string[] shellFileExtensions = new string[] { ".stl", ".amf", ".3mf", ".obj" };

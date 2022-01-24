@@ -515,7 +515,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
 
-						var title = new FileInfo(item.Path).LastWriteTime.ToString("MMMM d h:mm tt");
+						var title = new FileInfo(item.FilePath).LastWriteTime.ToString("MMMM d h:mm tt");
 
 						var bedHistory = subMenu.CreateMenuItem(title, imageBuffer);
 						bedHistory.GutterWidth = gutterWidth;

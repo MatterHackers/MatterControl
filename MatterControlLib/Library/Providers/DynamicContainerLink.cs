@@ -38,21 +38,19 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private readonly Func<ILibraryContainer> containerCreator;
 
-		private readonly Func<string> nameResolver;
-
 		private readonly ImageBuffer thumbnail;
 		private readonly ImageBuffer microIcon;
-		private readonly Func<bool> visibilityResolver;
+		private readonly Func<bool> visibilityGetter;
 
-		public DynamicContainerLink(Func<string> nameResolver,
+		public DynamicContainerLink(string name,
 			ImageBuffer thumbnail,
 			Func<ILibraryContainer> creator = null,
 			Func<bool> visibilityResolver = null)
-			: this(nameResolver, thumbnail, null, creator, visibilityResolver)
+			: this(name, thumbnail, null, creator, visibilityResolver)
 		{
 		}
 
-		public DynamicContainerLink(Func<string> nameResolver,
+		public DynamicContainerLink(string name,
 			ImageBuffer thumbnail,
 			ImageBuffer microIcon,
 			Func<ILibraryContainer> creator = null,
@@ -69,9 +67,9 @@ namespace MatterHackers.MatterControl.Library
 				microIcon.SetPreMultiply();
 			}
 
-			this.nameResolver = nameResolver;
+			this.Name = name;
 			this.containerCreator = creator;
-			this.visibilityResolver = visibilityResolver ?? (() => true);
+			this.visibilityGetter = visibilityResolver ?? (() => true);
 		}
 
 		public string Category { get; set; }
@@ -86,9 +84,22 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsReadOnly { get; set; } = false;
 
-		public bool IsVisible => this.visibilityResolver();
+		public bool IsVisible => this.visibilityGetter();
 
-		public string Name => nameResolver?.Invoke();
+		private string _name;
+		public string Name
+		{
+			get => _name; set
+			{
+				if (_name != value)
+				{
+					_name = value;
+					NameChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler NameChanged;
 
 		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 		{

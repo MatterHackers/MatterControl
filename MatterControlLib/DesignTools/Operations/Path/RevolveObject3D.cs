@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Slider(3, 360, Easing.EaseType.Quadratic, snapDistance: 1)]
 		public IntOrExpression Sides { get; set; } = 30;
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		[JsonIgnore]
 		private IVertexSource VertexSource
@@ -80,11 +80,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			if (Mesh == null)
 			{
-				Remove(undoBuffer);
+				Cancel(undoBuffer);
 			}
 			else
 			{

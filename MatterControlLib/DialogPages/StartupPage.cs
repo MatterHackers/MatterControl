@@ -155,34 +155,11 @@ namespace MatterHackers.MatterControl
 			}, "Start New Design".Localize()));
 			lastButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				LoadEmptyScene();
+				ApplicationController.Instance.MainView.CreateNewPartTab(true);
 				this.DialogWindow.Close();
 			});
 
 			contentRow.AddChild(buttonRow);
-		}
-
-		void LoadEmptyScene()
-		{
-			var history = ApplicationController.Instance.Library.PlatingHistory;
-
-			var workspace = new PartWorkspace(new BedConfig(history))
-			{
-				Name = "New Design".Localize()
-			};
-
-			// Load it up
-			workspace.SceneContext.LoadEmptyContent(
-						new EditContext()
-						{
-							ContentStore = history,
-							SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
-						});
-
-			ApplicationController.Instance.MainTabKey = workspace.Name;
-
-			// Open but no need to save
-			ApplicationController.Instance.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
 		}
 	}
 }

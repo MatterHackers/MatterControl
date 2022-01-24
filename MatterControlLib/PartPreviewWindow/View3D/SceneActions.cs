@@ -56,9 +56,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				if (selectedItem.CanFlatten)
+				if (selectedItem.CanApply)
 				{
-					selectedItem.Flatten(scene.UndoBuffer);
+					selectedItem.Apply(scene.UndoBuffer);
 					scene.SelectedItem = null;
 					return;
 				}
@@ -200,6 +200,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// when we copy an object put it back in with a slight offset
 				pasteObjectXOffset = 5;
 			}
+		}
+
+		public static void AddPhilToBed(this ISceneContext sceneContext)
+		{
+			var philStl = StaticData.Instance.MapPath(@"OEMSettings\SampleParts\Phil A Ment.stl");
+			sceneContext.AddToPlate(new string[] { philStl });
 		}
 
 		public static void Paste(this ISceneContext sceneContext)

@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -100,6 +99,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.bed_shape,
 			SettingsKey.bed_size,
 			SettingsKey.bed_temperature,
+			SettingsKey.bed_temperature_blue_tape,
+			SettingsKey.bed_temperature_buildtak,
+			SettingsKey.bed_temperature_garolite,
+			SettingsKey.bed_temperature_glass,
+			SettingsKey.bed_temperature_kapton,
+			SettingsKey.bed_temperature_pei,
+			SettingsKey.bed_temperature_pp,
+			SettingsKey.has_swappable_bed,
+			SettingsKey.bed_surface,
 			SettingsKey.before_toolchange_gcode,
 			SettingsKey.before_toolchange_gcode_1,
 			SettingsKey.before_toolchange_gcode_2,
@@ -1030,7 +1038,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (setting == SettingsKey.first_layer_bed_temperature
 					&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
 				{
-					value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
+					value = $"{this.Helpers.ActiveBedTemperature}";
 				}
 
 				// braces then brackets replacement
@@ -1348,9 +1356,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string value = this.GetValue(settingsKey);
 
 			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
-				&& settingsData.Converter is ValueConverter resolver)
+				&& settingsData.Converter != null)
 			{
-				return resolver.Convert(value, this);
+				return settingsData.Converter.Convert(value, this);
 			}
 
 			return value;

@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Image".Localize();
 		}
 
-		public override bool CanFlatten => false;
+		public override bool CanApply => false;
 
 		[GoogleSearch]
 		public string ImageSearch { get; set; } = "";

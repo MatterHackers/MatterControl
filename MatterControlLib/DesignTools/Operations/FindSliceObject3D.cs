@@ -80,14 +80,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			return (mesh, slice);
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			var newPathObject = new PathObject3D()
 			{
 				VertexSource = new VertexStorage(this.VertexSource)
 			};
 
-			base.Flatten(undoBuffer, new IObject3D[] { newPathObject });
+			base.Apply(undoBuffer, new IObject3D[] { newPathObject });
 		}
 
 		private void RemoveFacesAboveCut(Mesh mesh)

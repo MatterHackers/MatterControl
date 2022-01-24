@@ -250,6 +250,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Start New Design");
 			}
 
+			testRunner.VerifyAndRemovePhil();
+
 			return testRunner;
 		}
 
@@ -429,6 +431,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.WaitFor(() => testRunner.ChildExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button")
 				.WaitFor(() => !testRunner.ChildExists<SetupStepComPortOne>());
+
+			testRunner.VerifyAndRemovePhil();
+
+			return testRunner;
+		}
+
+		public static AutomationRunner VerifyAndRemovePhil(this AutomationRunner testRunner)
+        {
+			var view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
+			var scene = view3D.Object3DControlLayer.Scene;
+
+			testRunner.WaitFor(() => scene.Children.Count == 1);
+			Assert.AreEqual(1, scene.Children.Count, "Should have a Phil on the bed");
+			testRunner.WaitFor(() => scene.Children.First().Name == "Phil A Ment.stl");
+			Assert.AreEqual("Phil A Ment.stl", scene.Children.First().Name);
+
+			testRunner.Type("^a"); // clear the selection (type a space)
+			testRunner.WaitFor(() => scene.SelectedItem != null);
+			testRunner.Type("{BACKSPACE}");
+			testRunner.WaitFor(() => scene.Children.Count == 0);
 
 			return testRunner;
 		}

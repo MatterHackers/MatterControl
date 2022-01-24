@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,25 +38,23 @@ namespace MatterHackers.MatterControl.Library
 	/// </summary>
 	public class FileSystemItem : ILibraryItem
 	{
-		private string fileName;
-
-		public FileSystemItem(string path)
+		public FileSystemItem(string filePath)
 		{
-			this.Path = path;
+			this.FilePath = filePath;
 			var type = GetType();
 
 			try
 			{
 				if (type == typeof(FileSystemFileItem))
 				{
-					var fileInfo = new FileInfo(path);
+					var fileInfo = new FileInfo(filePath);
 
 					this.DateCreated = fileInfo.CreationTime;
 					this.DateModified = fileInfo.LastWriteTime;
 				}
 				else
 				{
-					var directoryInfo = new DirectoryInfo(path);
+					var directoryInfo = new DirectoryInfo(filePath);
 
 					this.DateCreated = directoryInfo.CreationTime;
 					this.DateModified = directoryInfo.LastWriteTime;
@@ -75,7 +73,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public DateTime DateModified { get; }
 
-		public virtual string ID => agg_basics.GetLongHashCode(this.Path).ToString();
+		public virtual string ID => agg_basics.GetLongHashCode(this.FilePath).ToString();
 
 		public virtual bool IsProtected => false;
 
@@ -83,24 +81,95 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual bool LocalContentExists => true;
 
+		public event EventHandler NameChanged;
+
 		public virtual string Name
 		{
 			get
 			{
-				if (fileName == null)
-				{
-					fileName = System.IO.Path.GetFileName(this.Path);
-				}
-
-				return fileName;
+				return System.IO.Path.GetFileNameWithoutExtension(this.FilePath);
 			}
 
 			set
 			{
-				fileName = value;
+				if (Name != value)
+				{
+					string sourceFile = this.FilePath;
+					if (File.Exists(sourceFile))
+					{
+						string extension = Path.GetExtension(sourceFile);
+						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), value);
+						destFile = Path.ChangeExtension(destFile, extension);
+
+						var uniqueFileIncrement = 0;
+						while(File.Exists(destFile))
+                        {
+							uniqueFileIncrement++;
+							destFile = Path.Combine(Path.GetDirectoryName(sourceFile), value + $" ({uniqueFileIncrement})");
+							destFile = Path.ChangeExtension(destFile, extension);
+
+							if (sourceFile == destFile)
+                            {
+								// we have gotten back to the name we currently have (don't change it)
+								break;
+                            }
+						}
+
+						if (sourceFile != destFile)
+						{
+							File.Move(sourceFile, destFile);
+
+							this.FilePath = destFile;
+
+							ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+
+							NameChanged?.Invoke(this, EventArgs.Empty);
+						}
+					}
+				}
+
+				/*
+				if (item is DirectoryContainerLink directoryLink)
+				{
+					if (Directory.Exists(directoryLink.Path))
+					{
+						Process.Start(this.FullPath);
+					}
+				}
+				else if (item is FileSystemFileItem fileItem)
+				{
+					string sourceFile = fileItem.Path;
+					if (File.Exists(sourceFile))
+					{
+						string extension = Path.GetExtension(sourceFile);
+						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+						destFile = Path.ChangeExtension(destFile, extension);
+
+						File.Move(sourceFile, destFile);
+
+						fileItem.Path = destFile;
+
+						this.ReloadContent();
+					}
+				}
+				else if (item is LocalZipContainerLink zipFile)
+				{
+					string sourceFile = zipFile.Path;
+					if (File.Exists(sourceFile))
+					{
+						string extension = Path.GetExtension(sourceFile);
+						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+						destFile = Path.ChangeExtension(destFile, extension);
+
+						File.Move(sourceFile, destFile);
+
+						this.ReloadContent();
+					}
+				}
+				*/
 			}
 		}
 
-		public string Path { get; set; }
+		public string FilePath { get; set; }
 	}
 }

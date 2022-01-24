@@ -37,12 +37,13 @@ namespace MatterHackers.MatterControl
 {
 	public static class ApplicationSettingsKey
 	{
-		public const string SuppressAuthPanel = nameof(SuppressAuthPanel);
+		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
+		public const string DesktopPosition = nameof(DesktopPosition);
 		public const string HardwareHasCamera = nameof(HardwareHasCamera);
 		public const string HideGCodeWarning = nameof(HideGCodeWarning);
-		public const string DesktopPosition = nameof(DesktopPosition);
-		public const string WindowSize = nameof(WindowSize);
 		public const string MainWindowMaximized = nameof(MainWindowMaximized);
+		public const string SuppressAuthPanel = nameof(SuppressAuthPanel);
+		public const string WindowSize = nameof(WindowSize);
 	}
 
 	public class ApplicationSettings
@@ -72,6 +73,14 @@ namespace MatterHackers.MatterControl
 		}
 
 		private string oemName = null;
+
+		public bool IsTouchScreen
+		{
+			get
+			{
+				return this.get(ApplicationSettingsKey.ApplicationDisplayMode) == "touchscreen";
+			}
+		}
 
 		public string GetOEMName()
 		{

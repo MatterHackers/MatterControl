@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,57 +36,47 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public abstract class WritableContainer : LibraryContainer, ILibraryWritableContainer
-	{
-		public event EventHandler<LibraryItemChangedEventArgs> ItemContentChanged;
+    public abstract class WritableContainer : LibraryContainer, ILibraryWritableContainer
+    {
+        public event EventHandler<LibraryItemChangedEventArgs> ItemContentChanged;
 
-		public virtual void OnItemContentChanged(LibraryItemChangedEventArgs args)
-		{
-			this.ItemContentChanged?.Invoke(this, args);
-		}
+        public virtual void OnItemContentChanged(LibraryItemChangedEventArgs args)
+        {
+            this.ItemContentChanged?.Invoke(this, args);
+        }
 
-		public virtual void Add(IEnumerable<ILibraryItem> items)
-		{
-		}
+        public abstract void Add(IEnumerable<ILibraryItem> items);
 
-		public virtual void Remove(IEnumerable<ILibraryItem> items)
-		{
-		}
+        public abstract void Remove(IEnumerable<ILibraryItem> items);
 
-		public virtual void Rename(ILibraryItem item, string revisedName)
-		{
-		}
+        public virtual void Save(ILibraryItem item, IObject3D content)
+        {
+            if (item is FileSystemFileItem fileItem)
+            {
+                // Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+                File.WriteAllText(fileItem.FilePath, content.ToJson());
 
-		public virtual void Save(ILibraryItem item, IObject3D content)
-		{
-			if (item is FileSystemFileItem fileItem)
-			{
-				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
-				File.WriteAllText(fileItem.Path, content.ToJson());
+                this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
+            }
+        }
 
-				this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
-			}
-		}
+        public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
+        {
+            foreach (var item in items.OfType<ILibraryAssetStream>().ToList())
+            {
+                var enumerable = new[] { item };
 
-		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
-		{
-			foreach( var item in items.OfType<ILibraryAssetStream>().ToList())
-			{
-				var enumerable = new[] { item };
+                this.Add(enumerable);
+                sourceContainer.Remove(enumerable);
+            }
 
-				this.Add(enumerable);
-				sourceContainer.Remove(enumerable);
-			}
+        }
 
-		}
+        public abstract void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 
-		public virtual void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
-		{
-		}
-
-		public virtual bool AllowAction(ContainerActions containerActions)
-		{
-			return true;
-		}
-	}
+        public virtual bool AllowAction(ContainerActions containerActions)
+        {
+            return true;
+        }
+    }
 }

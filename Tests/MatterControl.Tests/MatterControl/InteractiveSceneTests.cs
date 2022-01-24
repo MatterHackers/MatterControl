@@ -91,7 +91,7 @@ namespace MatterControl.Tests.MatterControl
 					-10, -10, -10,
 					20, 10, 10), .001));
 
-				union.Flatten(null);
+				union.Apply(null);
 
 				Assert.AreEqual(1, root.Children.Count());
 				var rootAabb = root.GetAxisAlignedBoundingBox();
@@ -150,7 +150,7 @@ namespace MatterControl.Tests.MatterControl
 					20, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
-				combine.Flatten(undoBuffer);
+				combine.Apply(undoBuffer);
 
 				Assert.AreEqual(1, root.Descendants().Count());
 				Assert.AreEqual(1, root.Children.Count());
@@ -185,7 +185,7 @@ namespace MatterControl.Tests.MatterControl
 					10, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
-				combine.Remove(undoBuffer);
+				combine.Cancel(undoBuffer);
 
 				Assert.AreEqual(2, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB");
 				rootAabb = root.GetAxisAlignedBoundingBox();
@@ -218,7 +218,7 @@ namespace MatterControl.Tests.MatterControl
 					20, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
-				combine.Remove(undoBuffer);
+				combine.Cancel(undoBuffer);
 
 				Assert.AreEqual(4, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB, 3 offset cubeB, 4 offset sourceItem");
 				rootAabb = root.GetAxisAlignedBoundingBox();
@@ -265,7 +265,7 @@ namespace MatterControl.Tests.MatterControl
 				union.Combine();
 				Assert.AreEqual(8, root.Descendants().Count(), "group, union, wa, a, wtb, tb, b");
 
-				union.Flatten(null);
+				union.Apply(null);
 				Assert.AreEqual(1, root.Descendants().Count(), "Should have the union result");
 
 				Assert.AreEqual(1, root.Children.Count());
@@ -294,7 +294,7 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(subtract);
 
 				subtract.Subtract();
-				subtract.Flatten(null);
+				subtract.Apply(null);
 
 				Assert.AreEqual(1, root.Children.Count());
 				var rootAabb = root.GetAxisAlignedBoundingBox();
@@ -614,7 +614,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
 
 			// remove the align and assert stuff moved back to where it started
-			align.Remove(null);
+			align.Cancel(null);
 			Assert.IsTrue(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
 			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
 		}

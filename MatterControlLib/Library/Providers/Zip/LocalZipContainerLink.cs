@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,22 +28,22 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class LocalZipContainerLink : FileSystemItem, ILibraryContainerLink
+    public class LocalZipContainerLink : FileSystemItem, ILibraryContainerLink
 	{
 		private static readonly ImageBuffer Thumbnail;
 		private string currentDirectory = "";
 
 		static LocalZipContainerLink()
 		{
-			Thumbnail = StaticData.Instance.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply();
+			Thumbnail = StaticData.Instance.LoadIcon(Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply();
 		}
 
 		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.Library
 				new ZipMemoryContainer()
 				{
 					RelativeDirectory = this.currentDirectory,
-					Path = this.Path
+					Path = this.FilePath
 				});
 		}
 	}

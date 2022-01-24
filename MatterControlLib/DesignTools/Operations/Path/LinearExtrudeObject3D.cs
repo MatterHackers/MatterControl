@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public IntOrExpression BevelSteps { get; set; } = 1;
 #endif
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		[JsonIgnore]
 		private IVertexSource VertexSource
@@ -90,11 +90,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Flatten(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			if (Mesh == null)
 			{
-				Remove(undoBuffer);
+				Cancel(undoBuffer);
 			}
 			else
 			{

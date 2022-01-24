@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		private static Mesh shape = null;
 
-		public override bool CanFlatten => true;
+		public override bool CanApply => true;
 
 		public TemperatureTowerObject3D()
 		{

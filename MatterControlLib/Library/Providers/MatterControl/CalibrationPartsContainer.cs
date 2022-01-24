@@ -54,33 +54,33 @@ namespace MatterHackers.MatterControl.Library
 			Items = new SafeList<ILibraryItem>(oemParts.Select(s => new StaticDataItem(s)));
 
 			Items.Add(new GeneratorItem(
-				() => "Set Temperature".Localize(),
+				"Set Temperature".Localize(),
 				async () => await SetTemperatureObject3D.Create())
 				{
 					Category = this.Name
 				});
 
 			Items.Add(new GeneratorItem(
-				() => "PLA Temperature Tower".Localize(),
+				"PLA Temperature Tower".Localize(),
 				async () => await TemperatureTowerObject3D.Create(220))
 			{
 				Category = this.Name
 			});
 			Items.Add(new GeneratorItem(
-				() => "ABS Temperature Tower".Localize(),
+				"ABS Temperature Tower".Localize(),
 				async () => await TemperatureTowerObject3D.Create(250))
 			{
 				Category = this.Name
 			});
 			Items.Add(new GeneratorItem(
-				() => "PETG Temperature Tower".Localize(),
+				"PETG Temperature Tower".Localize(),
 				async () => await TemperatureTowerObject3D.Create(260))
 			{
 				Category = this.Name
 			});
 #if DEBUG
 			Items.Add(new GeneratorItem(
-				() => "XY Calibration".Localize(),
+				"XY Calibration".Localize(),
 				async () => await XyCalibrationFaceObject3D.Create())
 			{
 				Category = this.Name
@@ -113,7 +113,16 @@ namespace MatterHackers.MatterControl.Library
 
 			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
 
-			public string Name => this.FileName;
+			public event EventHandler NameChanged;
+
+			public string Name
+			{
+				get => this.FileName;
+				set
+				{
+					// do nothing (can't rename)
+				}
+			}
 
 			public bool IsProtected => true;
 

@@ -531,14 +531,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 									}
 								}
 
-								var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory))
-								{
-									Name = firstItem.Name,
-								};
+								var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory));
 
 								ApplicationController.Instance.Workspaces.Add(workspace);
 
-								var partTab = await mainViewWidget.CreatePartTab(workspace, true);
+								var partTab = mainViewWidget.CreatePartTab(workspace, true);
 								mainViewWidget.TabControl.ActiveTab = partTab;
 
 								// Load content after UI widgets to support progress notification during acquire/load
@@ -548,6 +545,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										ContentStore = writableContainer,
 										SourceItem = firstItem
 									});
+
+								mainViewWidget.HookupNameChangeCallback(partTab, workspace);
 							}
 							else
 							{

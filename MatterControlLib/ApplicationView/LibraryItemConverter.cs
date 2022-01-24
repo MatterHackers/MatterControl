@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl
 
 			public string Name { get; set; }
 
+			public event EventHandler NameChanged;
+
 			public bool IsProtected { get; set; }
 
 			public bool IsVisible { get; set; }
@@ -71,6 +73,6 @@ namespace MatterHackers.MatterControl
 			public string Path { get; set; }
 
 			public string AssetPath { get; set; }
-		}
+        }
 	}
 }

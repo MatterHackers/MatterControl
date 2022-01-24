@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2022, Kevin Pope, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.Library
 							&& item is FileSystemFileItem fileItem
 							&& item.IsMeshFileType())
 						{
-							loadedItem.MeshPath = fileItem.Path;
+							loadedItem.MeshPath = fileItem.FilePath;
 						}
 
 						this.Children.Add(loadedItem);

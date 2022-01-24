@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// check that the bed temperature at probe time was close enough to the current print bed temp
 			double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
-				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				printer.Settings.Helpers.ActiveBedTemperature
 				: 0;
 
 			// check that the number of points sampled is correct for the solution

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,14 +33,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Image;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PrintQueueContainer : WritableContainer
+    public class PrintQueueContainer : WritableContainer
 	{
 		public PrintQueueContainer()
 		{
@@ -71,6 +71,13 @@ namespace MatterHackers.MatterControl.Library
 			this.ReloadContent();
 		}
 
+		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
+		{
+#if DEBUG
+			throw new NotImplementedException();
+#endif
+		}
+
 		public static async Task AddAllItems(IEnumerable<ILibraryItem> items)
 		{
 			await Task.Run(async () =>
@@ -85,7 +92,7 @@ namespace MatterHackers.MatterControl.Library
 							if (streamItem is FileSystemFileItem fileItem)
 							{
 								// Get existing file path
-								itemPath = fileItem.Path;
+								itemPath = fileItem.FilePath;
 							}
 							else
 							{
@@ -120,7 +127,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (fileSystemItem != null)
 				{
-					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.Path).ToList();
+					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.FilePath).ToList();
 
 					foreach(var printItem in matches)
 					{

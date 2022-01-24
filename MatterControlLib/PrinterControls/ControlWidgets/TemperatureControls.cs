@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			preHeatButton.Click += (s, e) =>
 			{
 				// turn on the bed
-				printer.Connection.TargetBedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+				printer.Connection.TargetBedTemperature = printer.Settings.Helpers.ActiveBedTemperature;
 				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 				{
 					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex));

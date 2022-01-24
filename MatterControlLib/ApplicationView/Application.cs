@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 
 		public static bool EnableNetworkTraffic { get; set; } = true;
 
-		public static SystemWindow LoadRootWindow(int width, int height)
+		public static RootSystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
 
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold_Italic);
 			}
 
-			var systemWindow = new RootSystemWindow(width, height);
+			var rootSystemWindow = new RootSystemWindow(width, height);
 
 			var overlay = new GuiWidget()
 			{
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			};
 			overlay.AnchorAll();
 
-			systemWindow.AddChild(overlay);
+			rootSystemWindow.AddChild(overlay);
 
 			var mutedAccentColor = AppContext.Theme.SplashAccentColor;
 
@@ -124,20 +124,20 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Absolute
 			});
 
-			AppContext.RootSystemWindow = systemWindow;
+			AppContext.RootSystemWindow = rootSystemWindow;
 
 			// hook up a keyboard watcher to rout keys when not handled by children
 
-			systemWindow.KeyPressed += SystemWindow_KeyPressed;
+			rootSystemWindow.KeyPressed += SystemWindow_KeyPressed;
 
-			systemWindow.KeyDown += (s, keyEvent) =>
+			rootSystemWindow.KeyDown += (s, keyEvent) =>
 			{
-				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var view3D = rootSystemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var printerTabPage = rootSystemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var offsetDist = 50;
 				var arrowKeyOperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
-				var gcode2D = systemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var gcode2D = rootSystemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 
 				if (keyEvent.KeyCode == Keys.F1)
 				{
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 					GC.Collect();
 					GC.WaitForPendingFinalizers();
 					GC.Collect();
-					systemWindow.Invalidate();
+					rootSystemWindow.Invalidate();
 				}
 
 				if (!keyEvent.Handled
@@ -448,7 +448,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
-			systemWindow.Load += (s, e) =>
+			rootSystemWindow.Load += (s, e) =>
 			{
 				// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
 				if (AggContext.OperatingSystem != OSType.Windows
@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl
 						Margin = new BorderDouble(5)
 					};
 
-					systemWindow.AddChild(eula);
+					rootSystemWindow.AddChild(eula);
 				}
 				else
 				{
@@ -480,16 +480,16 @@ namespace MatterHackers.MatterControl
 
 						ApplicationController.LoadTranslationMap();
 
-						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
+						var mainView = await Initialize(rootSystemWindow, (progress0To1, status) =>
 						{
 							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 						});
 
 						ReportStartupProgress(0.9, "AddChild->MainView");
-						systemWindow.AddChild(mainView, 0);
+						rootSystemWindow.AddChild(mainView, 0);
 
 						ReportStartupProgress(1, "");
-						systemWindow.BackgroundColor = Color.Transparent;
+						rootSystemWindow.BackgroundColor = Color.Transparent;
 						overlay.Close();
 					}
 					catch (Exception ex)
@@ -523,7 +523,7 @@ namespace MatterHackers.MatterControl
 							};
 							closeButton.Click += (s1, e1) =>
 							{
-								systemWindow.Close();
+								rootSystemWindow.Close();
 							};
 
 							spinner.SpinLogo = false;
@@ -541,7 +541,7 @@ namespace MatterHackers.MatterControl
 
 			AddTextWidgetRightClickMenu();
 
-			return systemWindow;
+			return rootSystemWindow;
 		}
 
 		public static void AddTextWidgetRightClickMenu()
