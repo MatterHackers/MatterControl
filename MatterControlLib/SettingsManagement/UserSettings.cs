@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Numerics;
-using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public static class UserSettingsKey
+    public static class UserSettingsKey
 	{
 		public const string ActiveThemeName = nameof(ActiveThemeName);
 		public const string AfterPrintFinishedPlaySound = nameof(AfterPrintFinishedPlaySound);
 		public const string AfterPrintFinishedSendEmail = nameof(AfterPrintFinishedSendEmail);
 		public const string AfterPrintFinishedSendTextMessage = nameof(AfterPrintFinishedSendTextMessage);
-		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
 		public const string ApplicationUseHeigResDisplays = nameof(ApplicationUseHeigResDisplays);
 		public const string ApplicationUseSocketeer = nameof(ApplicationUseSocketeer);
 		public const string ApplicationTextSize = nameof(ApplicationTextSize);
@@ -236,14 +231,6 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				this.set(UserSettingsKey.LibraryViewWidth, value.ToString());
-			}
-		}
-
-		public bool IsTouchScreen
-		{
-			get
-			{
-				return this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
 			}
 		}
 

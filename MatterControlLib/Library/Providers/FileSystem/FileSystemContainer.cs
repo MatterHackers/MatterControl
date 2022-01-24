@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Library
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
 		{
 #if DEBUG
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 #endif
 		}
 

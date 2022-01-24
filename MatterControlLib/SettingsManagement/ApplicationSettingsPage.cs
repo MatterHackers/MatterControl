@@ -326,13 +326,13 @@ namespace MatterHackers.MatterControl
 					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
-						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
+						Checked = ApplicationSettings.Instance.get(ApplicationSettingsKey.ApplicationDisplayMode) == "touchscreen",
 						ToggleAction = (itemChecked) =>
 						{
 							string displayMode = itemChecked ? "touchscreen" : "responsive";
-							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
+							if (displayMode != ApplicationSettings.Instance.get(ApplicationSettingsKey.ApplicationDisplayMode))
 							{
-								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
+								ApplicationSettings.Instance.set(ApplicationSettingsKey.ApplicationDisplayMode, displayMode);
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
 							}
 						}

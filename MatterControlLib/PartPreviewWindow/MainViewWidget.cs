@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.BackgroundColor;
 
 			// Push TouchScreenMode into GuiWidget
-			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
+			GuiWidget.TouchScreenMode = ApplicationSettings.Instance.IsTouchScreen;
 
 			AddStandardUi(theme);
 			ApplicationController.Instance.WorkspacesChanged += Workspaces_Changed;

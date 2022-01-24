@@ -16,6 +16,28 @@ namespace MatterControl.Tests.MatterControl
 		private static List<PrinterTestDetails> allPrinters;
 		private static string printerSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Profiles");
 
+		private string pauseGCode = @"M76 ; pause print timer
+G91
+G1 Z10 E-5.0 F1800
+G90
+G1 X5
+
+M300 S3000 P30   ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S3000 P30   ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S3000 P30   ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S3000 P30   ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S750 P30    ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S750 P30    ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S750 P30    ; Pause Tone
+M300 S1500 P30   ; Pause Tone
+M300 S750 P30    ; Pause Tone";
+
 		static OemProfileTests()
 		{
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
@@ -35,6 +57,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, RunInApplicationDomain]
 		public void ModifyPrinterProfiles()
 		{
+			// This is not really a test. It updaets our profiles with new settings
 			return;
 
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
@@ -50,6 +73,11 @@ namespace MatterControl.Tests.MatterControl
 							   RelativeFilePath = printerFile.FullName.Substring(printerSettingsDirectory.Length + 1),
 							   PrinterSettings = PrinterSettings.LoadFile(printerFile.FullName)
 						   }).ToList();
+
+			string ConvertString(string input)
+            {
+				return input.Replace("\n", "\\n").Replace("\r", "");
+            }
 
 			void ChangeSettings(PrinterSettings printerSettings)
             {
@@ -78,17 +106,12 @@ namespace MatterControl.Tests.MatterControl
 				printerSettings.SetValue(SettingsKey.min_extrusion_before_retract, "0");
 				printerSettings.SetValue(SettingsKey.retract_before_travel_avoid, "20");
 
-				if (string.IsNullOrEmpty(printerSettings.GetValue(SettingsKey.read_regex)))
+				if (printerModel.Contains('E'))
 				{
-					if (printerModel.Contains('E'))
-					{
-						printerSettings.SetValue(SettingsKey.read_regex, "\"^(filament)\", \"ros_\"");
-					}
+					printerSettings.SetValue(SettingsKey.read_regex, "\"^(filament)\", \"ros_\"");
 				}
-				else
-				{
-					int ja = 0;
-				}
+
+				printerSettings.SetValue(SettingsKey.pause_gcode, ConvertString(pauseGCode));
 
 				// If the board is 32 bit we cannot update the firmware.
 				if (printerModel.Contains('M') || printerModel.Contains('S'))
