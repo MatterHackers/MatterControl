@@ -2466,7 +2466,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 					&& doValidateLeveling)
 				{
 					// make sure we don't validate the leveling while recovering a print
-					accumulatedStream = new ValidatePrintLevelingStream(Printer, accumulatedStream);
+					accumulatedStream = validatePrintLevelingStream = new ValidatePrintLevelingStream(Printer, accumulatedStream);
 				}
 
 				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
@@ -3141,6 +3141,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			maxLengthStream?.Cancel();
 			waitForTempStream?.Cancel();
 			queuedCommandStream?.Cancel();
+			validatePrintLevelingStream?.Cancel();
 		}
 
 		public void Dispose()
@@ -3154,8 +3155,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		private int noOkResendCount;
 		private ProcessWriteRegexStream processWriteRegexStream;
 		private bool cancelPrintNextWriteLine;
+        private ValidatePrintLevelingStream validatePrintLevelingStream;
 
-		public class ReadThread
+        public class ReadThread
 		{
 			private readonly int creationIndex;
 
