@@ -201,7 +201,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				printerConnectionMessage.TextColor = theme.TextColor;
 				printerConnectionMessage.Text = "Connection succeeded (port {0}).".Localize().FormatWith(foundPort);
-				printerConnectionMessage.TextColor = Color.Red;
 				nextButton.Visible = true;
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close(), 2);

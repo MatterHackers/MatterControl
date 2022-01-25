@@ -59,12 +59,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool waitingToCompleteNextSample;
 		private bool haveSeenM190;
 		private bool haveSeenG28;
+        private bool validationCanceled;
 
-		public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
+        public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			printer.Connection.CanceleRequested += Connection_PrintCanceled;
-
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)
 				|| printer.Settings.Helpers.ActiveBedTemperature == 0)
 			{
@@ -74,23 +73,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		private void Connection_PrintCanceled(object sender, EventArgs e)
-		{
-			CancelValidation();
-		}
-
 		public override string DebugInfo => "";
 
 		public override void Dispose()
 		{
 			CancelValidation();
-			printer.Connection.CanceleRequested -= Connection_PrintCanceled;
 
 			base.Dispose();
 		}
 
 		private void CancelValidation()
 		{
+			validationCanceled = true;
+
 			if (validationRunning)
 			{
 				validationRunning = false;
@@ -126,11 +121,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public void Cancel()
+		{
+			CancelValidation();
+		}
+
 		public override string ReadLine()
 		{
 			if (queuedCommands.Count > 0)
 			{
 				return queuedCommands.Dequeue();
+			}
+
+			if (validationRunning
+				&& printer.Connection.PrintWasCanceled)
+            {
+				CancelValidation();
 			}
 
 			if (validationRunning
@@ -169,7 +175,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					&& haveSeenM190
 					&& !validationRunning
 					&& !validationHasBeenRun
-					&& printer.Connection.Printing)
+					&& printer.Connection.Printing
+					&& !validationCanceled)
 				{
 					SetupForValidation();
 				}

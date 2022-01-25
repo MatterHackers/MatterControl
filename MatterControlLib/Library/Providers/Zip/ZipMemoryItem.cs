@@ -47,11 +47,13 @@ namespace MatterHackers.MatterControl.Library
 			this.FileSize = fileSize;
 		}
 
-		public string AssetPath { get; } = null;
+        public override string Name { get; set; }
 
-		public string ContentType => Path.GetExtension(this.Name).ToLower().Trim('.');
+        public string AssetPath { get; } = null;
 
-		public string FileName => Path.GetFileName(this.Name);
+		public string ContentType => Path.GetExtension(this.RelativePath).ToLower().Trim('.');
+
+		public string FileName => Path.GetFileName(this.RelativePath);
 
 		/// <summary>
 		/// Gets the size, in bytes, of the current file.
