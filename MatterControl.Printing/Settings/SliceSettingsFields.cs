@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_blue_tape,
 					PresentationName = "Blue Tape Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_buildtak,
 					PresentationName = "BuildTak Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is using BuildTak. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is using BuildTak. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_garolite,
 					PresentationName = "Garolite Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is using garolite. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is using garolite. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_glass,
 					PresentationName = "Glass Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is using glass. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is using glass. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_kapton,
 					PresentationName = "Kapton Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_pei,
 					PresentationName = "PEI Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is using PEI. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is using PEI. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.bed_temperature_pp,
 					PresentationName = "Polypropylene Bed Temperature".Localize(),
-					HelpText = "The temperature to print when the bed is polypropylene. Set to 0 to use default.".Localize(),
+					HelpText = "The temperature to print when the bed is polypropylene. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed&has_swappable_bed",

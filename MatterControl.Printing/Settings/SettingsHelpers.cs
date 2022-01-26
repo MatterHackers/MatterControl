@@ -208,16 +208,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
             {
-				var temp = printerSettings.GetValue<double>(ActiveBedTemperatureSetting);
-				// check if it might be trying to use the default
-				if (temp == 0)
-                {
-					// it is either the default (actual bed_temperature) or a 0. This will get the true temp requested
-					return printerSettings.GetValue<double>(SettingsKey.bed_temperature);
-				}
-
-				// fonud a good temp return it
-				return temp;
+				return printerSettings.GetValue<double>(ActiveBedTemperatureSetting);
 			}
 		}
 

@@ -126,12 +126,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				HAnchor = HAnchor.Stretch
 			};
 
-			var bedSettingBeingEdited = printer.Settings.Helpers.ActiveBedTemperatureSetting;
-
 			void SettingChanged(object s, StringEventArgs stringEvent)
 			{
-				if (stringEvent.Data == SettingsKey.bed_temperature
-					|| stringEvent.Data == bedSettingBeingEdited)
+				if (stringEvent.Data == printer.Settings.Helpers.ActiveBedTemperatureSetting
+					|| stringEvent.Data == SettingsKey.bed_temperature)
 				{
 					graph.GoalValue = printer.Settings.Helpers.ActiveBedTemperature;
 				}
@@ -146,9 +144,7 @@ namespace MatterHackers.MatterControl.ActionBar
             {
 				temperatureRow.CloseChildren();
 
-				bedSettingBeingEdited = printer.Settings.Helpers.ActiveBedTemperatureSetting;
-
-				var settingsData = PrinterSettings.SettingsData[bedSettingBeingEdited];
+				var settingsData = PrinterSettings.SettingsData[printer.Settings.Helpers.ActiveBedTemperatureSetting];
 				var bedTemperature = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 
 				var settingsRow = bedTemperature.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();

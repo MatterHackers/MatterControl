@@ -20,7 +20,7 @@ namespace MatterControl.Tests.MatterControl
 G91
 G1 Z10 E-5.0 F1800
 G90
-G1 X5
+G1 X5 F[travel_speed]
 
 M300 S3000 P30   ; Pause Tone
 M300 S1500 P30   ; Pause Tone
@@ -37,6 +37,27 @@ M300 S1500 P30   ; Pause Tone
 M300 S750 P30    ; Pause Tone
 M300 S1500 P30   ; Pause Tone
 M300 S750 P30    ; Pause Tone";
+
+		private string resumeGCode = @"M75 ; Start the print job timer
+G91
+G1 Z-10 F1800
+G90
+
+M300 S750 P30    ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S750 P30    ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S750 P30    ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S750 P30    ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S3000 P30   ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S3000 P30   ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S3000 P30   ; Resume Tone
+M300 S1500 P30   ; Resume Tone
+M300 S3000 P30   ; Resume Tone";
 
 		static OemProfileTests()
 		{
@@ -102,20 +123,23 @@ M300 S750 P30    ; Pause Tone";
 				// adheasion
 				printerSettings.SetValue(SettingsKey.create_skirt, "1");
 				// support
-				printerSettings.SetValue(SettingsKey.retract_lift, ".4");
+				printerSettings.SetValue(SettingsKey.retract_lift, ".6");
 				printerSettings.SetValue(SettingsKey.min_extrusion_before_retract, "0");
 				printerSettings.SetValue(SettingsKey.retract_before_travel_avoid, "20");
+				
+				// printer gcode settings
+				printerSettings.SetValue(SettingsKey.pause_gcode, ConvertString(pauseGCode));
+				printerSettings.SetValue(SettingsKey.resume_gcode, ConvertString(resumeGCode));
 
+				// e series settings
 				if (printerModel.Contains('E'))
 				{
-					printerSettings.SetValue(SettingsKey.read_regex, "\"^(filament)\", \"ros_\"");
 				}
 
-				printerSettings.SetValue(SettingsKey.pause_gcode, ConvertString(pauseGCode));
-
-				// If the board is 32 bit we cannot update the firmware.
+				// 32 bit settings
 				if (printerModel.Contains('M') || printerModel.Contains('S'))
 				{
+					// If the board is 32 bit we cannot update the firmware.
 					// make sure it does not show a firmware updater
 					printerSettings.SetValue(SettingsKey.include_firmware_updater, "None");
 				}

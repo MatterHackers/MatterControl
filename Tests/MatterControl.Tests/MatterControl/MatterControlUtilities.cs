@@ -444,8 +444,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitFor(() => scene.Children.Count == 1);
 			Assert.AreEqual(1, scene.Children.Count, "Should have a Phil on the bed");
-			testRunner.WaitFor(() => scene.Children.First().Name == "Phil A Ment.stl");
-			Assert.AreEqual("Phil A Ment.stl", scene.Children.First().Name);
+			testRunner.WaitFor(() => scene.Children.First().Name == "Phil A Ment");
+			Assert.AreEqual("Phil A Ment", scene.Children.First().Name);
 
 			testRunner.Type("^a"); // clear the selection (type a space)
 			testRunner.WaitFor(() => scene.SelectedItem != null);

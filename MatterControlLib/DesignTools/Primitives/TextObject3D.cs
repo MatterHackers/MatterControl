@@ -51,6 +51,14 @@ namespace MatterHackers.MatterControl.DesignTools
 	[HideChildrenFromTreeView]
 	public class TextObject3D : Object3D
 	{
+		[JsonConverter(typeof(StringEnumConverter))]
+		public enum TextAlign
+		{
+			Left,
+			Center,
+			Right,
+		}
+
 		public TextObject3D()
 		{
 			Name = "Text".Localize();
@@ -65,6 +73,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return item;
 		}
+
+		[EnumDisplay(IconPaths = new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
+		public TextAlign Alignment { get; set; } = TextAlign.Left;
 
 		[DisplayName("Text")]
 		public StringOrExpression NameToWrite { get; set; } = "Text";
@@ -87,8 +98,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();
 			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
-			int index = 0;
-			var nameToWrite = NameToWrite.Value(this);
 			foreach (var child in this.Children)
 			{
 				var clone = child.Clone();
@@ -185,7 +194,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								{
 									Object3D letterObject = null;
 									switch (letter)
-                                    {
+									{
 										case ' ':
 											offset.X += letterPrinter.GetSize(" ").X * pointsToMm;
 											break;
@@ -213,11 +222,40 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 							}
 
-							for (int i=list.Count - 1; i >= 0; i--)
+							for (var i = list.Count - 1; i >= 0; i--)
 							{
 								if (list[i].Children.Count == 0)
 								{
 									list.RemoveAt(i);
+								}
+							}
+
+							if (list.Count > 1 && Alignment != TextAlign.Left)
+							{
+								var widest = 0.0;
+								for (var i = 0; i < list.Count; i++)
+								{
+									widest = Math.Max(widest, list[i].GetAxisAlignedBoundingBox().XSize);
+									if (list[i].Children.Count == 0)
+									{
+										list.RemoveAt(i);
+									}
+								}
+
+								for (var i = 0; i < list.Count; i++)
+								{
+									var delta = widest - list[i].GetAxisAlignedBoundingBox().XSize;
+									// apply any alignment to the lines
+									switch (Alignment)
+									{
+										case TextAlign.Center:
+											list[i].Matrix *= Matrix4X4.CreateTranslation(delta / 2, 0, 0);
+											break;
+
+										case TextAlign.Right:
+											list[i].Matrix *= Matrix4X4.CreateTranslation(delta, 0, 0);
+											break;
+									}
 								}
 							}
 						});

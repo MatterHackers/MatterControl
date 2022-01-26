@@ -663,6 +663,22 @@ namespace MatterHackers.MatterControl
 
 			if (this.Scene.Persistable)
 			{
+				var startingMs = UiThread.CurrentTimerMs;
+
+				// wait up to 1 second for the scene to have content
+				while (!Scene.Children.Any()
+					&& UiThread.CurrentTimerMs < startingMs + 1000)
+				{
+					Thread.Sleep(10);
+				}
+
+				// wait up to 5 seconds to finish loading before the save
+				while (Scene.Children.Where(c => c is InsertionGroupObject3D).Any()
+					&& UiThread.CurrentTimerMs < startingMs + 5000)
+				{
+					Thread.Sleep(10);
+				}
+
 				await this.Scene.PersistAssets((progress0to1, status) =>
 				{
 					if (progress != null)
