@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			get
 			{
-				return System.IO.Path.GetFileNameWithoutExtension(this.FilePath);
+				return Path.GetFileName(this.FilePath);
 			}
 
 			set
