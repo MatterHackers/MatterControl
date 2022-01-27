@@ -94,6 +94,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
+					if (!NameOverriden)
+					{
+						Name = NameFromChildren();
+						NameOverriden = false;
+					}
+
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
@@ -108,6 +114,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public void Combine()
 		{
 			Combine(CancellationToken.None, null);
+		}
+
+        public override string NameFromChildren()
+        {
+			return CalculateName(SourceContainer.Children, " + ");
 		}
 
 		private void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)

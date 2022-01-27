@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new EditContext()
 				{
 					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
+					SourceItem = history.NewDesign()
 				});
 
 			ApplicationController.Instance.Workspaces.Add(workspace);

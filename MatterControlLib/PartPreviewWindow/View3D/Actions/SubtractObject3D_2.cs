@@ -102,13 +102,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-        public override void WrapSelectedItemAndSelect(InteractiveScene scene)
+        public override async void WrapSelectedItemAndSelect(InteractiveScene scene)
         {
             base.WrapSelectedItemAndSelect(scene);
 		
 			if (SelectedChildren.Count == 0)
 			{
 				SelectedChildren.Add(SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Last().ID);
+                await this.Rebuild();
 			}
 		}
 
@@ -376,54 +377,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
 		}
 
-        private string NameFromChildren()
+        public override string NameFromChildren()
         {
 			var (keepItems, removeItems) = GetSubtractItems();
-
-			var name = "";
-			if (keepItems != null)
-			{
-				foreach (var item in keepItems)
-				{
-					if (name == "")
-					{
-						name = item.Name;
-					}
-					else
-					{
-						name += ", " + item.Name;
-					}
-				}
-			}
-
-			if (removeItems != null)
-			{
-				var firstRemove = true;
-				foreach (var item in removeItems)
-				{
-					if (name == "")
-					{
-						name = item.Name;
-					}
-					else
-					{
-						if (firstRemove)
-						{
-							name += " - ";
-						}
-						else
-						{
-							name += ", ";
-						}
-
-						name += item.Name;
-					}
-
-					firstRemove = false;
-				}
-			}
-
-			return name;
+			return CalculateName(keepItems, ", ", " - ", removeItems, ", ");
 		}
 	}
 }

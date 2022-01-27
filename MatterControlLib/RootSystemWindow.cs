@@ -300,6 +300,8 @@ namespace MatterHackers.MatterControl
 				{
 					var application = ApplicationController.Instance;
 
+					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
+
 					application.ApplicationExiting = true;
 
 					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.

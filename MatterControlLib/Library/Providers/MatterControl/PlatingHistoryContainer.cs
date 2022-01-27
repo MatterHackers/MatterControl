@@ -36,6 +36,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -79,9 +80,26 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		internal ILibraryItem NewPlatingItem(InteractiveScene scene)
+		internal ILibraryItem NewBedPlate(BedConfig bedConfig)
+		{
+			var name = bedConfig.Printer.Settings.GetValue(SettingsKey.printer_name);
+			string now =  DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
+			var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
+			string mcxPath = Path.Combine(this.FullPath, filename); 
+			
+			File.WriteAllText(mcxPath, new Object3D().ToJson());
+
+			return new FileSystemFileItem(mcxPath);
+		}
+
+		internal ILibraryItem NewDesign()
 		{
 			string mcxPath = Path.Combine(this.FullPath, "New Design.mcx");
+			var count = 0;
+			while(File.Exists(mcxPath))
+            {
+				mcxPath = Path.Combine(this.FullPath, $"New Design ({++count}).mcx");
+            }
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 

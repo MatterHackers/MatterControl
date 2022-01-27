@@ -189,15 +189,23 @@ namespace MatterHackers.MatterControl
 			if (this.Printer != null)
 			{
 				this.Printer.ViewState.ViewMode = PartViewMode.Model;
-			}
 
-			// Load
-			this.LoadEmptyContent(
-				new EditContext()
-				{
-					ContentStore = historyContainer,
-					SourceItem = historyContainer.NewPlatingItem(this.Scene)
-				});
+				this.LoadEmptyContent(
+					new EditContext()
+					{
+						ContentStore = historyContainer,
+						SourceItem = historyContainer.NewBedPlate(this)
+					});
+			}
+			else
+			{
+				this.LoadEmptyContent(
+					new EditContext()
+					{
+						ContentStore = historyContainer,
+						SourceItem = historyContainer.NewDesign()
+					});
+			}
 		}
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)

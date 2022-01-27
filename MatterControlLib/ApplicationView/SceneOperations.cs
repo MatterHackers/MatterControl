@@ -690,6 +690,8 @@ namespace MatterHackers.MatterControl
 					var selectedItem = scene.SelectedItem;
 					var align = new AlignObject3D();
 					align.AddSelectionAsChildren(scene, selectedItem);
+					align.Name = align.NameFromChildren();
+					align.NameOverriden = false;
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),

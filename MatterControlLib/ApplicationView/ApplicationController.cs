@@ -938,7 +938,7 @@ namespace MatterHackers.MatterControl
 								new EditContext()
 								{
 									ContentStore = historyContainer,
-									SourceItem = historyContainer.NewPlatingItem(onlyPrinter.Bed.Scene)
+									SourceItem = historyContainer.NewBedPlate(onlyPrinter.Bed)
 								});
 
 							UiThread.RunOnIdle(() =>
@@ -1568,7 +1568,7 @@ namespace MatterHackers.MatterControl
 				await workspace.SceneContext.LoadContent(new EditContext()
 				{
 					ContentStore = history,
-					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
+					SourceItem = history.NewBedPlate(workspace.Printer.Bed)
 				});
 
 				this.OpenWorkspace(workspace);

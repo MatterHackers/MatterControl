@@ -217,23 +217,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanApply => true;
 
-		private List<Aabb> CurrentChildrenBounds
-		{
-			get
-			{
-				var currentChildrenBounds = new List<Aabb>();
-				this.Children.Modify(list =>
-				{
-					foreach (var child in list)
-					{
-						currentChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
-					}
-				});
-
-				return currentChildrenBounds;
-			}
-		}
-
 		[JsonIgnore]
 		private Aabb AnchorBounds
 		{
@@ -330,6 +313,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Name)
+				&& !NameOverriden)
+			{
+				Name = NameFromChildren();
+				NameOverriden = false;
+			}
 			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
@@ -384,6 +373,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						AlignAxis(2, ZAlign, GetAlignToOffset(anchorBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset.Value(this), child);
 					}
 				});
+
+				if (!NameOverriden)
+				{
+					Name = NameFromChildren();
+					NameOverriden = false;
+				}
 			}
 
 			this.CancelAllParentBuilding();
@@ -481,6 +476,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				default:
 					throw new NotImplementedException();
 			}
+		}
+
+		public string NameFromChildren()
+		{
+			return CalculateName(this.Children, ", ");
 		}
 	}
 }

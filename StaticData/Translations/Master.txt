@@ -955,6 +955,9 @@ Translated:Edit Selected Setting
 English:Email
 Translated:Email
 
+English:Empty
+Translated:Empty
+
 English:Empty Bed
 Translated:Empty Bed
 

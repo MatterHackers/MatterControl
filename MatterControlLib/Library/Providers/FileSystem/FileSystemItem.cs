@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -97,29 +98,35 @@ namespace MatterHackers.MatterControl.Library
 					string sourceFile = this.FilePath;
 					if (File.Exists(sourceFile))
 					{
-						string extension = Path.GetExtension(sourceFile);
-						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), value);
-						destFile = Path.ChangeExtension(destFile, extension);
+						var extension = Path.GetExtension(sourceFile);
+						var fileNameNumberMatch = new Regex("\\s*\\(\\d+\\)" + extension, RegexOptions.Compiled);
+
+						var directory = Path.GetDirectoryName(sourceFile);
+						var destName = value;
+						var destPathAndName = Path.Combine(directory, Path.ChangeExtension(destName, extension));
 
 						var uniqueFileIncrement = 0;
-						while(File.Exists(destFile))
+						while(File.Exists(destPathAndName))
                         {
-							uniqueFileIncrement++;
-							destFile = Path.Combine(Path.GetDirectoryName(sourceFile), value + $" ({uniqueFileIncrement})");
-							destFile = Path.ChangeExtension(destFile, extension);
+							// remove any number
+							destName = fileNameNumberMatch.Replace(sourceFile, "");
+							// add the new number
+							destName += $" ({++uniqueFileIncrement})";
+							destName = Path.ChangeExtension(destName, extension);
+							destPathAndName = Path.Combine(directory, Path.ChangeExtension(destName, extension));
 
-							if (sourceFile == destFile)
+							if (sourceFile == destPathAndName)
                             {
 								// we have gotten back to the name we currently have (don't change it)
 								break;
                             }
 						}
 
-						if (sourceFile != destFile)
+						if (sourceFile != destPathAndName)
 						{
-							File.Move(sourceFile, destFile);
+							File.Move(sourceFile, destPathAndName);
 
-							this.FilePath = destFile;
+							this.FilePath = destPathAndName;
 
 							NameChanged?.Invoke(this, EventArgs.Empty);
 						}
