@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <summary>
 		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners
 		/// </summary>
-		protected void ReloadContent()
+		public void ReloadContent()
 		{
 			// Call the container specific reload implementation
 			this.Load();

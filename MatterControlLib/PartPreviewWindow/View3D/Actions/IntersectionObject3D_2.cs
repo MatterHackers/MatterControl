@@ -104,6 +104,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
+					if (!NameOverriden)
+					{
+						Name = NameFromChildren();
+						NameOverriden = false;
+					}
+
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
@@ -114,6 +120,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public override string NameFromChildren()
+		{
+			return CalculateName(SourceContainer.Children, " & ");
 		}
 
 		public void Intersect()

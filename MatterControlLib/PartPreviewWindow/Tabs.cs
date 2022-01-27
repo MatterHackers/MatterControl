@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public async void MoveTabRight(ITab tab)
+		public void MoveTabRight(ITab tab)
 		{
 			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public async void MoveTabLeft(ITab tab)
+		public void MoveTabLeft(ITab tab)
 		{
 			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;

@@ -33,12 +33,16 @@ namespace MatterHackers.MatterControl.Library
 {
     public class SqliteFileItem : FileSystemFileItem
 	{
-		public PrintItem PrintItem { get; }
+        private SqliteLibraryContainer sqliteLibraryContainer;
 
-		public SqliteFileItem(PrintItem printItem)
+        public PrintItem PrintItem { get; }
+
+		public SqliteFileItem(PrintItem printItem, SqliteLibraryContainer sqliteLibraryContainer)
 			: base(printItem.FileLocation)
 		{
-			this.PrintItem = printItem;
+            this.sqliteLibraryContainer = sqliteLibraryContainer;
+
+            this.PrintItem = printItem;
 		}
 
         public override string Name
@@ -51,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
                     this.PrintItem.Name = value;
                     this.PrintItem.Commit();
 
-                    ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+                    sqliteLibraryContainer.ReloadContent();
                 }
             }
         }

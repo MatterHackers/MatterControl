@@ -148,6 +148,9 @@ Translated:Add Base
 English:Add Hook
 Translated:Add Hook
 
+English:Add Image
+Translated:Add Image
+
 English:Add New Setting
 Translated:Add New Setting
 
@@ -192,6 +195,9 @@ Translated:Alert
 
 English:Align
 Translated:Align
+
+English:Alignment
+Translated:Alignment
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
@@ -522,6 +528,9 @@ Translated:Clean Filament Page
 
 English:Clear
 Translated:Clear
+
+English:Clear any assigned color. This may allow component colors to be visible.
+Translated:Clear any assigned color. This may allow component colors to be visible.
 
 English:Clear Bed
 Translated:Clear Bed
@@ -946,6 +955,9 @@ Translated:Edit Selected Setting
 English:Email
 Translated:Email
 
+English:Empty
+Translated:Empty
+
 English:Empty Bed
 Translated:Empty Bed
 
@@ -1329,6 +1341,9 @@ Translated:Generate Supports
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Generates an outline around the support material to improve strength and hold up interface layers.
+
+English:Generating Lithophane
+Translated:Generating Lithophane
 
 English:GitHub Personal Access Token
 Translated:GitHub Personal Access Token
@@ -1971,6 +1986,9 @@ Translated:Mirror
 
 English:Mirror On
 Translated:Mirror On
+
+English:Missing
+Translated:Missing
 
 English:mm
 Translated:mm
@@ -3813,6 +3831,9 @@ Translated:The temperature to print when the bed is using garolite. Set to 0 to 
 
 English:The temperature to print when the bed is using garolite. Set to 0 to use default.
 Translated:The temperature to print when the bed is using garolite. Set to 0 to use default.
+
+English:The temperature to print when the bed is using glass. Set to 0 to disable.
+Translated:The temperature to print when the bed is using glass. Set to 0 to disable.
 
 English:The temperature to print when the bed is using glass. Set to 0 to use default.
 Translated:The temperature to print when the bed is using glass. Set to 0 to use default.

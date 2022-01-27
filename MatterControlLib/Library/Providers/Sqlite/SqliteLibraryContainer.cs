@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Library
 
 			var nonZipFiles = allFiles.Except(zipFiles);
 
-			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
+			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink(this)
 			{
 				CollectionID = c.Id,
 				Name = c.Name
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (File.Exists(printItem.FileLocation))
 				{
-					return new SqliteFileItem(printItem);
+					return new SqliteFileItem(printItem, this);
 				}
 				else
 				{
@@ -242,6 +242,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public class SqliteLibraryContainerLink : ILibraryContainerLink
 		{
+            private SqliteLibraryContainer sqliteLibraryContainer;
+
+            public SqliteLibraryContainerLink(SqliteLibraryContainer sqliteLibraryContainer)
+            {
+				this.sqliteLibraryContainer = sqliteLibraryContainer;
+			}
+
 			public int CollectionID { get; set; }
 
 			public DateTime DateCreated { get; } = DateTime.Now;
@@ -284,10 +291,9 @@ namespace MatterHackers.MatterControl.Library
 								container.Commit();
 							}
 
-							ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
+							NameChanged?.Invoke(this, EventArgs.Empty);
+							sqliteLibraryContainer.ReloadContent();
 						}
-
-						NameChanged?.Invoke(this, EventArgs.Empty);
 					}
 				}
 			}

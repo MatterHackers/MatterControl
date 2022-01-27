@@ -40,6 +40,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -84,6 +85,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				return _primitiveColors;
 			}
+		}
+
+		public static void ShowRenameDialog(this IObject3D item, UndoBuffer undoBuffer)
+		{
+			DialogWindow.Show(
+				new InputBoxPage(
+					"Rename Item".Localize(),
+					"Name".Localize(),
+					item.Name,
+					"Enter New Name Here".Localize(),
+					"Rename".Localize(),
+					(inputName) =>
+					{
+						var newName = inputName;
+						var oldName = item.Name;
+						if (newName != oldName)
+						{
+							undoBuffer.AddAndDo(new UndoRedoActions(() =>
+							{
+								item.Name = oldName;
+							},
+							() =>
+							{
+								item.Name = newName;
+							}));
+						}
+					}));
 		}
 
 		public static PrinterConfig ContainingPrinter(this IObject3D object3D)

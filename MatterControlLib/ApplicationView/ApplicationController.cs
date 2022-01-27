@@ -56,6 +56,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -264,21 +265,11 @@ namespace MatterHackers.MatterControl
 			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
 			renameMenuItem.Click += (s, e) =>
 			{
-				var selectedItem = sceneContext.Scene.SelectedItem;
+				var scene = sceneContext.Scene;
+				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
-					DialogWindow.Show(
-						new InputBoxPage(
-							"Rename Item".Localize(),
-							"Name".Localize(),
-							selectedItem.Name,
-							"Enter New Name Here".Localize(),
-							"Rename".Localize(),
-							(newName) =>
-							{
-							// TODO: add undo data to this operation
-							selectedItem.Name = newName;
-							}));
+					selectedItem.ShowRenameDialog(scene.UndoBuffer);
 				}
 			};
 
@@ -947,7 +938,7 @@ namespace MatterHackers.MatterControl
 								new EditContext()
 								{
 									ContentStore = historyContainer,
-									SourceItem = historyContainer.NewPlatingItem(onlyPrinter.Bed.Scene)
+									SourceItem = historyContainer.NewBedPlate(onlyPrinter.Bed)
 								});
 
 							UiThread.RunOnIdle(() =>
@@ -1577,7 +1568,7 @@ namespace MatterHackers.MatterControl
 				await workspace.SceneContext.LoadContent(new EditContext()
 				{
 					ContentStore = history,
-					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
+					SourceItem = history.NewBedPlate(workspace.Printer.Bed)
 				});
 
 				this.OpenWorkspace(workspace);

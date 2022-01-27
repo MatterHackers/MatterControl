@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
@@ -44,7 +43,6 @@ namespace MatterHackers.MatterControl.Library
 	{
 		internal static Mesh placeHolderMesh;
 
-		private InteractiveScene scene;
 		private View3DWidget view3DWidget;
 
 		private Action<IObject3D, IEnumerable<IObject3D>> layoutParts;
@@ -74,7 +72,6 @@ namespace MatterHackers.MatterControl.Library
 			this.layoutParts = layoutParts;
 
 			// Add a temporary placeholder to give us some bounds
-			this.scene = scene;
 			this.view3DWidget = view3DWidget;
 
 			this.LoadingItemsTask = Task.Run(async () =>

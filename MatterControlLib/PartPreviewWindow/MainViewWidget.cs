@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
@@ -845,7 +846,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new EditContext()
 				{
 					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
+					SourceItem = history.NewDesign()
 				});
 
 			ApplicationController.Instance.Workspaces.Add(workspace);

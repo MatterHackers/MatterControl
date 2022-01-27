@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
-			SubtractObject3D_2.CleanUpSelectedChildrenNames(this);
+			SubtractObject3D_2.CleanUpSelectedChildrenIDs(this);
 
 			var paintObjects = parentOfPaintTargets.Children
 				.Where((i) => SelectedChildren

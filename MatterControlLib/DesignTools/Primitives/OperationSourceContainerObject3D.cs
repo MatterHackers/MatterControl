@@ -205,11 +205,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Name)
+				&& !NameOverriden)
+			{
+				Name = NameFromChildren();
+				NameOverriden = false;
+			}
 			else
 			{
 				base.OnInvalidate(invalidateArgs);
 			}
 		}
+
+		public virtual string NameFromChildren()
+        {
+			return Name;
+        }
 
 		public override void Cancel(UndoBuffer undoBuffer)
 		{
@@ -254,7 +265,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public async void WrapSelectedItemAndSelect(InteractiveScene scene)
+		public virtual async void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
 			using (RebuildLock())
 			{
@@ -286,6 +297,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							new List<IObject3D> { this }));
 
 					await this.Rebuild();
+
+					Name = NameFromChildren();
+					NameOverriden = false;
 				}
 			}
 

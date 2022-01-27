@@ -423,20 +423,10 @@ namespace MatterHackers.MatterControl
 							if (view3D.Printer == null
 								|| (view3D.Printer != null && view3D.Printer.ViewState.ViewMode == PartViewMode.Model))
 							{
-								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
+								var scene = view3D.sceneContext.Scene;
+								if (scene.SelectedItem is IObject3D object3D)
 								{
-									DialogWindow.Show(
-										new InputBoxPage(
-											"Rename Item".Localize(),
-											"Name".Localize(),
-											object3D.Name,
-											"Enter New Name Here".Localize(),
-											"Rename".Localize(),
-											(newName) =>
-											{
-												// TODO: add undo data to this operation
-												object3D.Name = newName;
-											}));
+									object3D.ShowRenameDialog(scene.UndoBuffer);
 								}
 							}
 
