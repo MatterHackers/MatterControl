@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public SubtractObject3D_2()
 		{
 			Name = "Subtract";
+			NameOverriden = false;
 		}
 
 		[DisplayName("Part(s) to Subtract")]
@@ -101,6 +102,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+        public override void WrapSelectedItemAndSelect(InteractiveScene scene)
+        {
+            base.WrapSelectedItemAndSelect(scene);
+		
+			if (SelectedChildren.Count == 0)
+			{
+				SelectedChildren.Add(SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Last().ID);
+			}
+		}
+
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			return;
@@ -123,6 +134,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
+			}
+			else if(invalidateArgs.InvalidateType.HasFlag(InvalidateType.Name)
+				&& !NameOverriden)
+			{
+				Name = NameFromChildren();
+				NameOverriden = false;
 			}
 			else
 			{
@@ -154,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				null,
 				(reporter, cancellationTokenSource) =>
 				{
-					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
+					this.cancellationToken = cancellationTokenSource;
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
@@ -164,6 +181,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 					catch
 					{
+					}
+
+					if (!NameOverriden)
+                    {
+						Name = NameFromChildren();
+						NameOverriden = false;
 					}
 
 					this.cancellationToken = null;
@@ -183,11 +206,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Subtract(CancellationToken.None, null);
 		}
 
-		private void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
-
+		private (IEnumerable<IObject3D>, IEnumerable<IObject3D>) GetSubtractItems()
+        {
 			var parentOfSubtractTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
 			if (parentOfSubtractTargets.Children.Count() < 2)
@@ -198,27 +218,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					SourceContainer.Visible = false;
 				}
 
-				return;
+				return (null, null);
 			}
 
-			CleanUpSelectedChildrenNames(this);
-
-			var removeVisibleItems = parentOfSubtractTargets.Children
+			var removeItems = parentOfSubtractTargets.Children
 				.Where((i) => SelectedChildren
 				.Contains(i.ID))
-				.SelectMany(c => c.VisibleMeshes())
-				.ToList();
+				.SelectMany(c => c.VisibleMeshes());
 
 			var keepItems = parentOfSubtractTargets.Children
 				.Where((i) => !SelectedChildren
-				.Contains(i.ID));
+				.Contains(i.ID))
+				.SelectMany(c => c.VisibleMeshes());
 
-			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
+			return (keepItems, removeItems);
+		}
 
-			if (removeVisibleItems.Any()
-				&& keepVisibleItems.Any())
+		private void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		{
+			SourceContainer.Visible = true;
+			RemoveAllButSource();
+
+			CleanUpSelectedChildrenIDs(this);
+
+			var (keepItems, removeItems) = GetSubtractItems();
+			var removeItemsCount = removeItems == null ? 0 : removeItems.Count();
+			var keepItemsCount = keepItems == null ? 0 : keepItems.Count();
+
+			if (removeItems?.Any() == true
+				&& keepItems?.Any() == true)
 			{
-				foreach (var keep in keepVisibleItems)
+				foreach (var keep in keepItems)
 				{
 #if false
 					var items = removeVisibleItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
@@ -231,7 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						reporter,
 						cancellationToken);
 #else
-					var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
+					var totalOperations = removeItemsCount * keepItemsCount;
 					double amountPerOperation = 1.0 / totalOperations;
 					double ratioCompleted = 0;
 
@@ -243,7 +273,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var resultsMesh = keep.Mesh;
 					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
 
-					foreach (var remove in removeVisibleItems)
+					foreach (var remove in removeItems)
 					{
 						resultsMesh = BooleanProcessing.Do(resultsMesh,
 							keepWorldMatrix,
@@ -289,7 +319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						this.Children.Modify((list) =>
 						{
-							foreach (var item in removeVisibleItems)
+							foreach (var item in removeItems)
 							{
 								var newObject = new Object3D()
 								{
@@ -320,19 +350,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		public static void CleanUpSelectedChildrenNames(OperationSourceContainerObject3D item)
+		public static void CleanUpSelectedChildrenIDs(OperationSourceContainerObject3D item)
 		{
 			if (item is ISelectableChildContainer selectableChildContainer)
 			{
-				var parentOfSubtractTargets = item.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = item.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
-				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.ID);
+				var allVisibleIDs = parentOfSubtractTargets.Children.Select(i => i.ID);
 				// remove any names from SelectedChildren that are not a child we can select
-				foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
+				foreach (var id in selectableChildContainer.SelectedChildren.ToArray())
 				{
-					if (!allVisibleNames.Contains(name))
+					if (!allVisibleIDs.Contains(id))
 					{
-						selectableChildContainer.SelectedChildren.Remove(name);
+						selectableChildContainer.SelectedChildren.Remove(id);
 					}
 				}
 			}
@@ -344,6 +374,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
 			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
 			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
+		}
+
+        private string NameFromChildren()
+        {
+			var (keepItems, removeItems) = GetSubtractItems();
+
+			var name = "";
+			if (keepItems != null)
+			{
+				foreach (var item in keepItems)
+				{
+					if (name == "")
+					{
+						name = item.Name;
+					}
+					else
+					{
+						name += ", " + item.Name;
+					}
+				}
+			}
+
+			if (removeItems != null)
+			{
+				var firstRemove = true;
+				foreach (var item in removeItems)
+				{
+					if (name == "")
+					{
+						name = item.Name;
+					}
+					else
+					{
+						if (firstRemove)
+						{
+							name += " - ";
+						}
+						else
+						{
+							name += ", ";
+						}
+
+						name += item.Name;
+					}
+
+					firstRemove = false;
+				}
+			}
+
+			return name;
 		}
 	}
 }

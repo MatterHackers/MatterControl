@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public async void WrapSelectedItemAndSelect(InteractiveScene scene)
+		public virtual async void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
 			using (RebuildLock())
 			{

@@ -148,6 +148,9 @@ Translated:Add Base
 English:Add Hook
 Translated:Add Hook
 
+English:Add Image
+Translated:Add Image
+
 English:Add New Setting
 Translated:Add New Setting
 
@@ -1335,6 +1338,9 @@ Translated:Generate Supports
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Generates an outline around the support material to improve strength and hold up interface layers.
+
+English:Generating Lithophane
+Translated:Generating Lithophane
 
 English:GitHub Personal Access Token
 Translated:GitHub Personal Access Token

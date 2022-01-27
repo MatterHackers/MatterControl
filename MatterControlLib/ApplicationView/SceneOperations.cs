@@ -1402,7 +1402,8 @@ namespace MatterHackers.MatterControl
 					else
 #endif
 					{
-						new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+						var subtractItem = new SubtractObject3D_2();
+						subtractItem.WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),

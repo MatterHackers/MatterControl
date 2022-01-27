@@ -121,8 +121,6 @@ namespace MatterHackers.MatterControl.Library
 
 							this.FilePath = destFile;
 
-							ApplicationController.Instance.MainView.Broadcast("ILibraryItem Name Changed", new LibraryItemNameChangedEvent(this.ID));
-
 							NameChanged?.Invoke(this, EventArgs.Empty);
 						}
 					}

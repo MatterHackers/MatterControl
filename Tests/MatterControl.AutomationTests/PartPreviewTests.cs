@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(5, scene.Children.Count, "There should be 5 parts on the bed after remove");
 
 				return Task.CompletedTask;
-			}, overrideWidth:1300);
+			});
 		}
 
 		[Test]
@@ -134,24 +134,42 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				for (int i = 0; i <= 2; i++)
-				{
-					testRunner.ClickByName("Duplicate Button")
-						.Delay(.5);
-				}
-
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
 				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection")
-					// Click Home -> Local Library
 					.NavigateToLibraryHome()
 					.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA", 5), "The part we added should be in the library");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA"), "The part we added should be in the library");
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
 				return Task.CompletedTask;
-			}, overrideWidth: 1300);
+			});
+		}
+
+		[Test]
+		public async Task SaveAsToLocalLibrary()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.AddAndSelectPrinter();
+
+				testRunner.AddItemToBed();
+
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+
+				testRunner.Select3DPart("Calibration - Box.stl");
+
+				int expectedCount = QueueData.Instance.ItemCount + 1;
+
+				testRunner.SaveBedplateToFolder("Test PartB", "Local Library Row Item Collection")
+					.NavigateToLibraryHome()
+					.NavigateToFolder("Local Library Row Item Collection");
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartB"), "The part we added should be in the library");
+
+				return Task.CompletedTask;
+			});
 		}
 	}
 }
