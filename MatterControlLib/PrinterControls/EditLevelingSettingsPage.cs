@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl
 				new SaveFileDialogParams("Bed Leveling Data|*.csv")
 				{
 					Title = "Export Bed Leveling Data".Localize(),
-					FileName = $"{printer.Settings.GetValue(SettingsKey.printer_name)} Leveling Data"
+					FileName = $"{printer.PrinterName} Leveling Data"
 				},
 				(saveParams) =>
 				{

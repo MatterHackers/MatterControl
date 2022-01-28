@@ -182,11 +182,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", false, layerNumber));
+					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.PrinterName, printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", false, layerNumber));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", true, layerNumber));
+					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.PrinterName, printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", true, layerNumber));
 					break;
 			}
 

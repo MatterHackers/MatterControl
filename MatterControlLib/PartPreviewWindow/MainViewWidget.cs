@@ -707,8 +707,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				var printerTab = new ChromeTab(
-					printer.Settings.GetValue(SettingsKey.printer_name),
-					printer.Settings.GetValue(SettingsKey.printer_name),
+					printer.PrinterName,
+					printer.PrinterName,
 					tabControl,
 					new PrinterTabPage(workspace, theme, "unused_tab_title"),
 					theme,
@@ -778,7 +778,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new InputBoxPage(
 							"Rename Item".Localize(),
 							"Name".Localize(),
-							printer.Settings.GetValue(SettingsKey.printer_name),
+							printer.PrinterName,
 							"Enter New Name Here".Localize(),
 							"Rename".Localize(),
 							(newName) =>

@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FilamentRunout?.Invoke(this, printPauseEventArgs);
 		}
 
-		public event EventHandler<string> PrintFinished;
+		public event EventHandler<(string printerName, string itemName)> PrintFinished;
 
 		public event EventHandler PrintStarted;
 
@@ -611,7 +611,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Stop();
 									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
 									{
-										PrintFinished?.Invoke(this, Printer.Bed.EditContext.SourceItem.Name);
+										PrintFinished?.Invoke(this, (Printer.PrinterName, Printer.Bed.EditContext.SourceItem.Name));
 									}
 								}
 								else
@@ -2190,7 +2190,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									PrintStart = DateTime.Now,
 									PrinterId = this.Printer.Settings.ID.GetHashCode(),
 									PrintName = activePrintItem.PrintItem.Name,
-									PrinterName = this.Printer.Settings.GetValue(SettingsKey.printer_name),
+									PrinterName = this.Printer.PrinterName,
 									Guid = Guid.NewGuid().ToString(),
 									PrintingGCodeFileName = gcodeFileNameForTask,
 									PrintComplete = false,

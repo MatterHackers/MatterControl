@@ -628,7 +628,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				case "SD Card Row Item Collection":
 					if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
 					{
-						testRunner.DoubleClickByName($"{printer.Settings.GetValue(SettingsKey.printer_name)} Row Item Collection");
+						testRunner.DoubleClickByName($"{printer.PrinterName} Row Item Collection");
 
 						testRunner.Delay();
 

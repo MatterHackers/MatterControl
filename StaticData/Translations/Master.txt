@@ -3403,6 +3403,9 @@ Translated:Surfaced Editors
 English:Switch
 Translated:Switch
 
+English:Switch to new G-Code on next layer?
+Translated:Switch to new G-Code on next layer?
+
 English:Switch to new G-Code?\n\nBefore you switch, check that you are seeing the changes you expect.
 Translated:Switch to new G-Code?\n\nBefore you switch, check that you are seeing the changes you expect.
 

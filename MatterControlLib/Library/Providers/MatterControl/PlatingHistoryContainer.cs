@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 
 		internal ILibraryItem NewBedPlate(BedConfig bedConfig)
 		{
-			var name = bedConfig.Printer.Settings.GetValue(SettingsKey.printer_name);
+			var name = bedConfig.Printer.PrinterName;
 			string now =  DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 			var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
 			string mcxPath = Path.Combine(this.FullPath, filename); 

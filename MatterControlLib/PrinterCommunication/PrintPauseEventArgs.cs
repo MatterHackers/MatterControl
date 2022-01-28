@@ -56,13 +56,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 	public class PrintPauseEventArgs : EventArgs
 	{
-		public PrintPauseEventArgs(string name, bool filamentRunout, int layerNumber)
+		public PrintPauseEventArgs(string printerName, string itemName, bool filamentRunout, int layerNumber)
 		{
-			this.ItemName = name;
+			this.PrinterName = printerName;
+			this.ItemName = itemName;
 			this.FilamentRunout = filamentRunout;
 			this.LayerNumber = layerNumber;
 		}
 
+        public string PrinterName { get; }
+        
 		public string ItemName { get; }
 
 		public bool FilamentRunout { get; }

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.EeProm
 		protected string GetSanitizedPrinterName()
 		{
 			// TODO: Determine best file name sanitization implementation: this, MakeValidFileName, something else?
-			string printerName = printer.Settings.GetValue(SettingsKey.printer_name).Replace(" ", "_");
+			string printerName = printer.PrinterName.Replace(" ", "_");
 			return nameSanitizer.Replace(printerName, "");
 		}
 

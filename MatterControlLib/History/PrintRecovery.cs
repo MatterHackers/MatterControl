@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 						},
 						"It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize()
 						+ (safeHomingDirection ? "" : "\n\n" + printRecoveryWarningMessage),
-						"Recover Last Print".Localize() + " - " + printer.Settings.GetValue(SettingsKey.printer_name),
+						"Recover Last Print".Localize() + " - " + printer.PrinterName,
 						StyledMessageBox.MessageType.YES_NO,
 						"Recover Print".Localize(),
 						"Cancel".Localize(),

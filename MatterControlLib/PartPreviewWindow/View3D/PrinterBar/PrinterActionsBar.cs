@@ -437,7 +437,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								ProfileManager.Instance.DeletePrinter(printer.Settings.ID);
 							}
 						},
-						"Are you sure you want to delete printer '{0}'?".Localize().FormatWith(printer.Settings.GetValue(SettingsKey.printer_name)),
+						"Are you sure you want to delete printer '{0}'?".Localize().FormatWith(printer.PrinterName),
 						"Delete Printer?".Localize(),
 						StyledMessageBox.MessageType.YES_NO,
 						"Delete Printer".Localize());

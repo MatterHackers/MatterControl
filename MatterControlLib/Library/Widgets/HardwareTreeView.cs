@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Add the menu items to the menu itself
 			foreach (var printer in ApplicationController.Instance.ActivePrinters)
 			{
-				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
+				string printerName = printer.PrinterName;
 
 				var printerNode = new TreeNode(theme)
 				{
