@@ -42,11 +42,10 @@ namespace MatterHackers.MatterControl
 		protected MHTextEditWidget itemNameWidget;
 		protected ILibraryContext libraryNavContext;
 		protected LibraryListView librarySelectorWidget;
+		private FolderBreadCrumbWidget breadCrumbWidget = null;
 
 		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
 		{
-			FolderBreadCrumbWidget breadCrumbWidget = null;
-
 			this.WindowSize = new Vector2(480, 500);
 
 			contentRow.Padding = 0;
@@ -94,6 +93,22 @@ namespace MatterHackers.MatterControl
 			};
 
 			this.AddPageAction(acceptButton);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button == MouseButtons.XButton1)
+			{
+				// user pressed the back button
+				NavigateBack();
+			}
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public void NavigateBack()
+		{
+			breadCrumbWidget.NavigateBack();
 		}
 
 		public override void OnLoad(EventArgs args)
