@@ -457,7 +457,7 @@ Support and tutorials:" + articles;
 				: base("Close".Localize())
 			{
 				this.WindowTitle = windowTitle;
-				this.HeaderText = printer.Settings.GetValue(SettingsKey.printer_name) + ": " + windowTitle;
+				this.HeaderText = printer.PrinterName + ": " + windowTitle;
 				this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 440 * GuiWidget.DeviceScale);
 
 				var scrollable = new ScrollableWidget(autoScroll: true)

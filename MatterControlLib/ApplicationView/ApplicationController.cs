@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
 				{
-					FileName = printer.Settings.GetValue(SettingsKey.printer_name)
+					FileName = printer.PrinterName
 				},
 				(saveParams) =>
 				{
@@ -1060,7 +1060,7 @@ namespace MatterHackers.MatterControl
 
 					UiThread.RunOnIdle(() =>
 					{
-						var prinerName = printerConnection.Printer.Settings.GetValue(SettingsKey.printer_name);
+						var prinerName = printerConnection.Printer.PrinterName;
 						var messageBox = new StyledMessageBox.MessageBoxPage((clickedOk) =>
 						{
 							if (clickedOk && printerConnection.Paused)
@@ -2143,7 +2143,7 @@ namespace MatterHackers.MatterControl
 							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 							{
 								zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-								zip.CreateEntryFromFile(settingsFilePath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
+								zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
 								zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
 							}
 						}
@@ -2295,7 +2295,7 @@ namespace MatterHackers.MatterControl
 			AnyPrintStarted?.Invoke(sender, e);
 		}
 
-		public void Connection_PrintFinished(object sender, string e)
+		public void Connection_PrintFinished(object sender, (string printerName, string itemName) e)
 		{
 			if (sender is PrinterConnection printerConnection)
 			{

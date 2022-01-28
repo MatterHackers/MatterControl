@@ -1057,7 +1057,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// Switch to printer
-				ApplicationController.Instance.MainView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+				ApplicationController.Instance.MainView.TabControl.SelectedTabKey = printer.PrinterName;
 
 				// Save any pending changes before starting print operation
 				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);

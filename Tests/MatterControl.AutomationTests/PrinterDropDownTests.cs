@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(newName, printerTab.Title);
 
 				// Validate that the settings layer reflects the new name
-				Assert.AreEqual(newName, printer.Settings.GetValue(SettingsKey.printer_name));
+				Assert.AreEqual(newName, printer.PrinterName);
 
 				return Task.CompletedTask;
 			});

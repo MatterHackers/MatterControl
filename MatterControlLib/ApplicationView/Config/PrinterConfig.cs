@@ -96,6 +96,8 @@ namespace MatterHackers.MatterControl
 
 		public PrinterSettings Settings { get; } = PrinterSettings.Empty;
 
+		public string PrinterName => Settings?.GetValue(SettingsKey.printer_name) ?? "unknown";
+
 		[JsonIgnore]
 		public PrinterConnection Connection { get; }
 
@@ -180,7 +182,7 @@ namespace MatterHackers.MatterControl
 			this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
 		}
 
-		private void Connection_PrintFinished(object s, string printName)
+		private void Connection_PrintFinished(object s, (string printerName, string itemName) e)
 		{
 			// clear single use setting on print completion
 			foreach (var keyValue in this.Settings.BaseLayer)

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 		public ConfigurePrinterWidget(SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var inlineNameEdit = new InlineStringEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, "Printer Name", boldFont: true);
+			var inlineNameEdit = new InlineStringEdit(printer.PrinterName, theme, "Printer Name", boldFont: true);
 			inlineNameEdit.ValueChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.printer_name, inlineNameEdit.Text);
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 					&& stringEvent?.Data == SettingsKey.printer_name)
 				{
 					// Try to find a printer tab for the given printer
-					inlineNameEdit.Text = printerSettings.GetValue(SettingsKey.printer_name);
+					inlineNameEdit.Text = printer.PrinterName;
 				}
 			}
 
