@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 			var logoWidth = bounds.Width * .5;
 			graphics = pulseImage.NewGraphics2D();
 			graphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
-			graphics.RenderMaxSize(pulseLogo, pulseImage.Width / 2 - logoWidth / 2, pulseImage.Height * .42, logoWidth, bounds.Height, out _);
+			graphics.RenderMaxSize(pulseLogo, pulseImage.Width / 2 - logoWidth / 2, pulseImage.Height * .42, logoWidth, bounds.Height, out _, preScale: false);
 			IconButton lastButton = null;
 			buttonRow.AddChild(AddButtonText(lastButton = new IconButton(pulseImage, theme)
             {

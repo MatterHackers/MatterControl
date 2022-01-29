@@ -871,6 +871,12 @@ Translated:Disable Fan For The First
 English:Disabled: {0}
 Translated:Disabled: {0}
 
+English:Discard Changes
+Translated:Discard Changes
+
+English:Discard Changes Editing
+Translated:Discard Changes Editing
+
 English:Disconnect
 Translated:Disconnect
 
@@ -951,6 +957,9 @@ Translated:Edit Radius
 
 English:Edit Selected Setting
 Translated:Edit Selected Setting
+
+English:Elbow
+Translated:Elbow
 
 English:Email
 Translated:Email
@@ -2956,6 +2965,15 @@ Translated:Save
 English:Save As
 Translated:Save As
 
+English:Save Changes
+Translated:Save Changes
+
+English:Save changes ?
+Translated:Save changes ?
+
+English:Save Changes?
+Translated:Save Changes?
+
 English:Save New Design
 Translated:Save New Design
 
@@ -3429,6 +3447,9 @@ Translated:Target Count
 
 English:Target Percent
 Translated:Target Percent
+
+English:Tee
+Translated:Tee
 
 English:Temperature
 Translated:Temperature
@@ -4299,6 +4320,9 @@ Translated:Wipe Tower Size
 
 English:Wizard
 Translated:Wizard
+
+English:Wolud you like to save changes before closing?
+Translated:Wolud you like to save changes before closing?
 
 English:Write Filter
 Translated:Write Filter

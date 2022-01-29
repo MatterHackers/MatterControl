@@ -42,7 +42,7 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class LibraryCollectionContainer : LibraryContainer
+    public class LibraryCollectionContainer : LibraryContainer
 	{
 		public LibraryCollectionContainer()
 		{
@@ -98,16 +98,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 #if DEBUG
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					"Pipe Works".Localize(),
-					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-					null,
-					() => new PipeWorksContainer())
-				{
-					IsReadOnly = true
-				});
-
 			int index = 0;
 
 			this.ChildContainers.Add(

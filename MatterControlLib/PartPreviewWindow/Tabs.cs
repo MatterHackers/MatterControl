@@ -35,6 +35,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -460,6 +461,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						StyledMessageBox.MessageType.YES_NO,
 						"Cancel Print".Localize(),
 						"Continue Printing".Localize());
+				}
+				else if (this.TabContent is PartTabPage partTab
+					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
+					&& sceneContext.HasUnsavedChanges)
+				{
+					StyledMessageBox.ShowMessageBox(
+						(bool response) =>
+						{
+							if (response)
+							{
+								UiThread.RunOnIdle(async () =>
+								{
+									await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+									//var path = partTab?.Workspace?.SceneContext.EditContext.SourceFilePath;
+									//sceneContext.Save(path);
+									this.parentTabControl.CloseTab(this);
+									this.CloseClicked?.Invoke(this, null);
+								});
+							}
+						},
+						"Wolud you like to save changes before closing?".Localize(),
+						"Save Changes?".Localize(),
+						StyledMessageBox.MessageType.YES_NO,
+						"Save Changes".Localize(),
+						"Discard Changes".Localize());
 				}
 				else
 				{

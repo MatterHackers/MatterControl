@@ -828,25 +828,16 @@ namespace MatterHackers.MatterControl
 
 		private void InitializeLibrary()
 		{
-			if (Directory.Exists(ApplicationDataStorage.Instance.DownloadsDirectory))
-			{
-				this.Library.RegisterContainer(
-					new DynamicContainerLink(
-						"Downloads".Localize(),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "download_icon.png")),
-						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
-						{
-							UseIncrementedNameDuringTypeChange = true,
-							DefaultSort = new LibrarySortBehavior()
-							{
-								SortKey = SortKey.ModifiedDate,
-							}
-						}));
-			}
+			this.Library.ComputerCollectionContainer = new ComputerCollectionContainer();
+
+			this.Library.RegisterContainer(
+				new DynamicContainerLink(
+					"Computer".Localize(),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "computer_icon.png")),
+					() => this.Library.ComputerCollectionContainer));
 
 			this.Library.LibraryCollectionContainer = new LibraryCollectionContainer();
-
 			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
 
 			this.Library.RegisterContainer(

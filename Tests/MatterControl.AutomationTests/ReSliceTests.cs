@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Add a cube to the bed
 					testRunner.NavigateToFolder("Print Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cube_20x20x20");
+					testRunner.ClickByName("Row Item cube_20x20x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
 					testRunner.ClickByName("Print Library Overflow Menu");
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Add a cylinder
 					testRunner.NavigateToFolder("Print Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cylinder_5x20");
+					testRunner.ClickByName("Row Item cylinder_5x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
 					testRunner.ClickByName("Add Content Menu");
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// add the cube
 					testRunner.NavigateToFolder("Print Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cube_20x20x20");
+					testRunner.ClickByName("Row Item cube_20x20x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
 					testRunner.ClickByName("Add Content Menu");
