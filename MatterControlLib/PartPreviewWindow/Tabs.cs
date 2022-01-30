@@ -466,26 +466,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
 					&& sceneContext.HasUnsavedChanges)
 				{
-					StyledMessageBox.ShowMessageBox(
-						(bool response) =>
+					StyledMessageBox.ShowYNCMessageBox(
+						(response) =>
 						{
-							if (response)
+							switch (response)
 							{
-								UiThread.RunOnIdle(async () =>
-								{
-									await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
-									//var path = partTab?.Workspace?.SceneContext.EditContext.SourceFilePath;
-									//sceneContext.Save(path);
-									this.parentTabControl.CloseTab(this);
-									this.CloseClicked?.Invoke(this, null);
-								});
+								case StyledMessageBox.ResponseType.YES:
+									UiThread.RunOnIdle(async () =>
+									{
+										await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+										this.parentTabControl.CloseTab(this);
+										this.CloseClicked?.Invoke(this, null);
+									});
+									break;
+
+								case StyledMessageBox.ResponseType.NO:
+									UiThread.RunOnIdle(async () =>
+									{
+										this.parentTabControl.CloseTab(this);
+										this.CloseClicked?.Invoke(this, null);
+									});
+									break;
 							}
 						},
 						"Wolud you like to save changes before closing?".Localize(),
 						"Save Changes?".Localize(),
-						StyledMessageBox.MessageType.YES_NO,
 						"Save Changes".Localize(),
-						"Discard Changes".Localize());
+						"Discard Changes".Localize(),
+						"Cancel".Localize());
 				}
 				else
 				{

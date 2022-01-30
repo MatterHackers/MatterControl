@@ -32,7 +32,6 @@ using Markdig.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -208,6 +207,166 @@ namespace MatterHackers.MatterControl
 			protected override void OnCancel(out bool abortCancel)
 			{
 				responseCallback?.Invoke(false);
+				haveResponded = true;
+				base.OnCancel(out abortCancel);
+			}
+		}
+
+
+		public enum ResponseType
+		{
+			YES,
+			NO,
+			CANCEL
+		}
+
+		public static void ShowYNCMessageBox(Action<ResponseType> callback,
+			string message,
+			string caption,
+			string yesText = "",
+			string noText = "",
+			string cancelText = "",
+			bool useMarkdown = false,
+			int instanceIndex = 0,
+			int width = 450,
+			int height = 300)
+		{
+			ShowYNCMessageBox(callback, message, caption, null, yesText, noText, cancelText, useMarkdown, instanceIndex, width, height);
+		}
+
+		public static void ShowYNCMessageBox(Action<ResponseType> callback,
+			string message,
+			string caption,
+			GuiWidget[] extraWidgetsToAdd,
+			string yesText = "",
+			string noText = "",
+			string cancelText = "",
+			bool useMarkdown = false,
+			int instanceIndex = 0,
+			int width = 450,
+			int height = 300)
+		{
+			DialogWindow.Show(
+				new YesNoCancelMessageBox(callback, message, caption, extraWidgetsToAdd, width, height, yesText, noText, cancelText, ApplicationController.Instance.Theme, useMarkdown),
+				instanceIndex);
+		}
+
+		public class YesNoCancelMessageBox : DialogPage
+		{
+			private string unwrappedMessage;
+			private GuiWidget messageContainer;
+			private Action<ResponseType> responseCallback;
+			private bool haveResponded = false;
+
+			public YesNoCancelMessageBox(Action<ResponseType> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesText, string noText, string cancelText, ThemeConfig theme, bool useMarkdown = false)
+				: base((cancelText == "") ? "Cancel".Localize() : cancelText)
+			{
+				this.WindowSize = new Vector2(width * GuiWidget.DeviceScale, height * GuiWidget.DeviceScale);
+
+				if (yesText == "")
+				{
+					yesText = "Yes".Localize();
+				}
+
+				this.HeaderText = caption;
+				// this.IsModal = true;
+
+				responseCallback = callback;
+				unwrappedMessage = message;
+
+				if (useMarkdown)
+				{
+					contentRow.AddChild(messageContainer = new MarkdownWidget(theme)
+					{
+						Markdown = message,
+					});
+				}
+				else
+				{
+					var scrollable = new ScrollableWidget(true);
+					scrollable.AnchorAll();
+					scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+					contentRow.AddChild(scrollable);
+
+					scrollable.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12)
+					{
+						AutoExpandBoundsToText = true,
+						HAnchor = HAnchor.Left
+					});
+				}
+
+				if (extraWidgetsToAdd != null)
+				{
+					foreach (GuiWidget widget in extraWidgetsToAdd)
+					{
+						contentRow.AddChild(widget);
+					}
+				}
+
+				var yesButton = theme.CreateDialogButton(yesText);
+				yesButton.Click += (s, e) =>
+				{
+					// If applicable, invoke the callback
+					responseCallback?.Invoke(ResponseType.YES);
+					haveResponded = true;
+
+					this.DialogWindow.Close();
+				};
+
+				this.AddPageAction(yesButton, true);
+
+				var noButton = theme.CreateDialogButton(noText);
+				noButton.Click += (s, e) =>
+				{
+					// If applicable, invoke the callback
+					responseCallback?.Invoke(ResponseType.NO);
+					haveResponded = true;
+
+					this.DialogWindow.Close();
+				};
+
+				this.AddPageAction(noButton);
+
+				this.WindowTitle = "MatterControl - " + "Please Confirm".Localize();
+				yesButton.Name = "Yes Button";
+				this.SetCancelButtonName("No Button");
+
+				this.AdjustTextWrap();
+			}
+
+			public override void OnBoundsChanged(EventArgs e)
+			{
+				AdjustTextWrap();
+				base.OnBoundsChanged(e);
+			}
+
+			private void AdjustTextWrap()
+			{
+				if (messageContainer != null
+					&& messageContainer is TextWidget textWidget)
+				{
+					double wrappingSize = contentRow.Width - (contentRow.Padding.Width + messageContainer.Margin.Width);
+					if (wrappingSize > 0)
+					{
+						var wrapper = new EnglishTextWrapping(textWidget.PointSize * GuiWidget.DeviceScale);
+						messageContainer.Text = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
+					}
+				}
+			}
+
+			public override void OnClosed(EventArgs e)
+			{
+				if (!haveResponded)
+				{
+					responseCallback?.Invoke(ResponseType.CANCEL);
+				}
+
+				base.OnClosed(e);
+			}
+
+			protected override void OnCancel(out bool abortCancel)
+			{
+				responseCallback?.Invoke(ResponseType.CANCEL);
 				haveResponded = true;
 				base.OnCancel(out abortCancel);
 			}

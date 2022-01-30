@@ -59,14 +59,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;
 
-		// make this public when within angle works
-		private DoubleOrExpression Angle { get; set; } = 360;
-
-		// make this public when it works
-		[DisplayName("Keep Within Angle")]
-		[Description("Keep the entire extents of the part within the angle described.")]
-		private bool KeepInAngle { get; set; } = false;
-
 		public override async Task Rebuild()
 		{
 			// check if we have initialized the Axis
@@ -87,18 +79,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					this.DebugDepth("Rebuild");
 					var aabb = this.GetAxisAlignedBoundingBox();
 
-					// make sure our length is in the right axis
-					for (int i = 0; i < 3; i++)
-					{
-						if (Axis.Normal[i] != 0 && Axis.Origin[i] == 0)
-						{
-							var newOrigin = Vector3.Zero;
-							newOrigin[i] = Math.Max(aabb.Center[0] - Axis.Origin[0],
-								Math.Max(aabb.Center[1] - Axis.Origin[1],
-								aabb.Center[2] - Axis.Origin[2]));
-						}
-					}
-
 					var sourceContainer = SourceContainer;
 					this.Children.Modify(list =>
 					{
@@ -110,13 +90,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var offset = Vector3.Zero;
 						var count = Count.Value(this);
-						var angle = Angle.Value(this);
 						for (int i = 0; i < Math.Max(count, 1); i++)
 						{
 							var next = sourceItem.Clone();
 
 							var normal = Axis.Normal.GetNormal();
-							var angleRadians = MathHelper.DegreesToRadians(angle) / count * i;
+							var angleRadians = MathHelper.Tau / count * i;
 							next.Rotate(Axis.Origin, normal, angleRadians);
 
 							if (!RotatePart)

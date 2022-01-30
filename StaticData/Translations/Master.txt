@@ -4324,6 +4324,9 @@ Translated:Wizard
 English:Wolud you like to save changes before closing?
 Translated:Wolud you like to save changes before closing?
 
+English:Would you like to save changes before closing?
+Translated:Would you like to save changes before closing?
+
 English:Write Filter
 Translated:Write Filter
 
