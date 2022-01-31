@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 				else if (printingCount > 0)
 				{
 					caption = "Abort Print".Localize();
-					message = "Are you sure you want to abort the current print and close MatterControl?".Localize();
+					message = "Are you sure you want to abort the current print(s) and close MatterControl?".Localize();
 				}
 			}
 
@@ -293,22 +293,81 @@ namespace MatterHackers.MatterControl
 			}
 			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
-				// cancel the close so that we can save all our active work spaces
-				eventArgs.Cancel = true;
-
-				UiThread.RunOnIdle(async () =>
+				// Check if there are unsaved design spaces
+				bool unsavedChanges = false;
+				foreach (var workspace in ApplicationController.Instance.Workspaces)
 				{
-					var application = ApplicationController.Instance;
+					if (workspace.SceneContext?.Scene?.HasUnsavedChanges == true)
+                    {
+						unsavedChanges = true;
+						break;
+                    }
+				}
 
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
+				void SavePrinterWorkspaces()
+                {
+					// cancel the close so that we can save all our active work spaces
+					eventArgs.Cancel = true;
 
-					application.ApplicationExiting = true;
+					UiThread.RunOnIdle(async () =>
+					{
+						var application = ApplicationController.Instance;
 
-					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
-					application.Shutdown();
+						await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
 
-					this.CloseOnIdle();
-				});
+						application.ApplicationExiting = true;
+
+						// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
+						application.Shutdown();
+
+						this.CloseOnIdle();
+					});
+				}
+
+				if (unsavedChanges)
+				{
+					// Ask if the user wants to save all workspaces, close without save, or cancel.
+					UiThread.RunOnIdle(() =>
+					{
+						if (this.TabContent is PartTabPage partTab
+							&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
+							&& sceneContext.HasUnsavedChanges)
+						{
+							StyledMessageBox.ShowYNCMessageBox(
+								(response) =>
+								{
+									switch (response)
+									{
+										case StyledMessageBox.ResponseType.YES:
+											UiThread.RunOnIdle(async () =>
+											{
+												await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+												this.parentTabControl.CloseTab(this);
+												this.CloseClicked?.Invoke(this, null);
+											});
+											break;
+
+										case StyledMessageBox.ResponseType.NO:
+											UiThread.RunOnIdle(async () =>
+											{
+												this.parentTabControl.CloseTab(this);
+												this.CloseClicked?.Invoke(this, null);
+											});
+											break;
+									}
+								},
+								"Wolud you like to save changes before closing?".Localize(),
+								"Save Changes?".Localize(),
+								"Save Changes".Localize(),
+								"Discard Changes".Localize(),
+								"Cancel".Localize());
+						}
+					});
+				}
+				else
+				{
+					SavePrinterWorkspaces();
+				}
 			}
 		}
 
