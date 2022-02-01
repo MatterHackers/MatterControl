@@ -2084,7 +2084,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				Scene.SelectedItem = null;
-				Scene.SelectedItem = lastSelectedItem;
+				// Adding a group of parts to a bed when there are multiple existing parts already selected
+				// will create duplicates if any of the new parts need to be renamed. Since the old selection
+				// group will be replaced with a new selection group containing the newly-added parts, just
+				// clear the selection.
+				if (!(lastSelectedItem is SelectionGroupObject3D) || !Scene.Children.Any(c => c is InsertionGroupObject3D))
+				{
+					Scene.SelectedItem = lastSelectedItem;
+				}
 			}
 
 			lastSceneDescendantsCount = Scene.Descendants().Count();
