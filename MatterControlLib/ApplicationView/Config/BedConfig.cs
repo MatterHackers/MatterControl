@@ -701,6 +701,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool HadSaveError
+        {
+			get
+            {
+				return false;
+            }
+        }
+
 		public List<BoolOption> GetBaseViewOptions()
 		{
 			return new List<BoolOption>();

@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -294,17 +296,16 @@ namespace MatterHackers.MatterControl
 			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
 				// Check if there are unsaved design spaces
-				bool unsavedChanges = false;
+				var unsavedWorkspaces = new List<PartWorkspace>();
 				foreach (var workspace in ApplicationController.Instance.Workspaces)
 				{
 					if (workspace.SceneContext?.Scene?.HasUnsavedChanges == true)
                     {
-						unsavedChanges = true;
-						break;
-                    }
+						unsavedWorkspaces.Add(workspace);
+					}
 				}
 
-				void SavePrinterWorkspaces()
+				void SavePrinterWorkspacesAndClose()
                 {
 					// cancel the close so that we can save all our active work spaces
 					eventArgs.Cancel = true;
@@ -324,49 +325,73 @@ namespace MatterHackers.MatterControl
 					});
 				}
 
-				if (unsavedChanges)
+				if (unsavedWorkspaces.Count > 0)
 				{
+					exitDialogOpen = true;
+
+					// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
+					eventArgs.Cancel = true;
+
 					// Ask if the user wants to save all workspaces, close without save, or cancel.
 					UiThread.RunOnIdle(() =>
 					{
-						if (this.TabContent is PartTabPage partTab
-							&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
-							&& sceneContext.HasUnsavedChanges)
-						{
-							StyledMessageBox.ShowYNCMessageBox(
-								(response) =>
-								{
-									switch (response)
-									{
-										case StyledMessageBox.ResponseType.YES:
-											UiThread.RunOnIdle(async () =>
-											{
-												await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
-												this.parentTabControl.CloseTab(this);
-												this.CloseClicked?.Invoke(this, null);
-											});
-											break;
+						StyledMessageBox.ShowYNCMessageBox(
+							(response) =>
+							{
+								exitDialogOpen = false;
 
-										case StyledMessageBox.ResponseType.NO:
-											UiThread.RunOnIdle(async () =>
+								switch (response)
+								{
+									case StyledMessageBox.ResponseType.YES:
+										UiThread.RunOnIdle(async () =>
+										{
+											var hadSaveError = false;
+											// Persist each design workspaces to disk (this may require getting a filename
+											foreach (var workspace in ApplicationController.Instance.Workspaces.ToArray())
 											{
-												this.parentTabControl.CloseTab(this);
-												this.CloseClicked?.Invoke(this, null);
-											});
-											break;
-									}
-								},
-								"Wolud you like to save changes before closing?".Localize(),
-								"Save Changes?".Localize(),
-								"Save Changes".Localize(),
-								"Discard Changes".Localize(),
-								"Cancel".Localize());
-						}
+												if (workspace.Printer == null)
+												{
+													// if we have a filename
+													// save
+													// else
+													// switch to the tab we are about to save
+													// ask the user to give us a filname
+													// if no filename
+													// abort the exit procedure
+													await ApplicationController.Instance.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+													// check for error or abort
+													hadSaveError |= workspace.SceneContext.HadSaveError;
+												}
+											}
+
+											if (!hadSaveError)
+											{
+												// make sure we also save the printer workspaces as we close
+												SavePrinterWorkspacesAndClose();
+											}
+										});
+										break;
+
+									case StyledMessageBox.ResponseType.NO:
+										UiThread.RunOnIdle(() =>
+										{
+											// make sure we still save the printer workspaces
+											SavePrinterWorkspacesAndClose();
+										});
+										break;
+								}
+							},
+							unsavedWorkspaces.Count == 1 ? "You have one unsave design ({0}). Wolud you like to save changes before closing?".Localize().FormatWith(unsavedWorkspaces[0].Name)
+							: "You have {0} unsave designs. Wolud you like to save changes before closing?".Localize().FormatWith(unsavedWorkspaces.Count),
+							"Save Changes?".Localize(),
+							"Save Changes".Localize(),
+							"Discard Changes".Localize(),
+							"Cancel".Localize());
 					});
 				}
 				else
 				{
-					SavePrinterWorkspaces();
+					SavePrinterWorkspacesAndClose();
 				}
 			}
 		}

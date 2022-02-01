@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,6 +78,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					this.DebugDepth("Rebuild");
 					var aabb = this.GetAxisAlignedBoundingBox();
 
+					var firstBuild = this.Children.Count == 1;
+
 					var sourceContainer = SourceContainer;
 					this.Children.Modify(list =>
 					{
@@ -104,9 +105,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 								next.Rotate(nextAabb.Center, normal, -angleRadians);
 							}
 
+							next.Matrix *= Matrix4X4.CreateTranslation(-Axis.Origin);
+
 							list.Add(next);
 						}
 					});
+
+					if (firstBuild)
+                    {
+						this.Matrix *= Matrix4X4.CreateTranslation(Axis.Origin);
+					}
 
 					ProcessIndexExpressions();
 
@@ -123,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
-			layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
+			layer.World.RenderDirectionAxis(new DirectionAxis() { Normal = Axis.Normal, Origin = Vector3.Zero }, this.WorldMatrix(), 30);
 		}
 	}
 }

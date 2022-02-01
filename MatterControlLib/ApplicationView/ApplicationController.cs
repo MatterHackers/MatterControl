@@ -289,14 +289,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
+		public async Task PersistUserWorkspaceTabs(bool savePrinterScenes)
 		{
-			if (saveSceneChanges)
+			if (savePrinterScenes)
 			{
 				// Persist all pending changes in all workspaces to disk
 				foreach (var workspace in this.Workspaces.ToArray())
 				{
-					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+					if (workspace.Printer != null)
+					{
+						await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+					}
 				}
 			}
 
@@ -443,15 +446,17 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		public void OnWorkspacesChanged(WorkspacesChangedEventArgs e)
+		public void OnWorkspacesChanged(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.WorkspacesChanged?.Invoke(this, e);
+			this.WorkspacesChanged?.Invoke(this, new WorkspacesChangedEventArgs(
+				workspace,
+				operationType));
 
-			if (e.Operation != WorkspacesChangedEventArgs.OperationType.Restore)
+			if (operationType != WorkspacesChangedEventArgs.OperationType.Restore)
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
+					await Instance.PersistUserWorkspaceTabs(true);
 				});
 			}
 		}
@@ -481,10 +486,7 @@ namespace MatterHackers.MatterControl
 				{
 					this.Workspaces.Remove(workspace);
 
-					this.OnWorkspacesChanged(
-						new WorkspacesChangedEventArgs(
-							workspace,
-							WorkspacesChangedEventArgs.OperationType.Remove));
+					this.OnWorkspacesChanged(workspace, WorkspacesChangedEventArgs.OperationType.Remove);
 				}
 			}
 
@@ -1597,11 +1599,7 @@ namespace MatterHackers.MatterControl
 
 		public void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.OnWorkspacesChanged(
-					new WorkspacesChangedEventArgs(
-						workspace,
-						operationType));
-
+			this.OnWorkspacesChanged(workspace, operationType);
 			this.Workspaces.Add(workspace);
 		}
 

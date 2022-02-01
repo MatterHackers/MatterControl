@@ -84,6 +84,8 @@ namespace MatterHackers.MatterControl
 
 		Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationToken);
 
+		bool HadSaveError { get; }
+
 		// TODO: Isolate printer specifics from ISceneContext
 
 		// *******************************************************
