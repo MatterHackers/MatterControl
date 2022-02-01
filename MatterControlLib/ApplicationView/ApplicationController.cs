@@ -289,20 +289,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task PersistUserWorkspaceTabs(bool savePrinterScenes)
+		public void PersistOpenTabsLayout()
 		{
-			if (savePrinterScenes)
-			{
-				// Persist all pending changes in all workspaces to disk
-				foreach (var workspace in this.Workspaces.ToArray())
-				{
-					if (workspace.Printer != null)
-					{
-						await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
-					}
-				}
-			}
-
 			// Project workspace definitions to serializable structure
 			var workspaces = this.Workspaces
 				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
@@ -333,8 +321,21 @@ namespace MatterHackers.MatterControl
 						{
 							NullValueHandling = NullValueHandling.Ignore
 						});
-				// Persist workspace definitions to disk
+				
+				// Persist workspace definition to disk
 				File.WriteAllText(ProfileManager.Instance.OpenTabsPath, content);
+			}
+		}
+
+		public async Task PersistPrintTabsContent()
+		{
+			// Persist all pending changes in all workspaces to disk
+			foreach (var workspace in this.Workspaces.ToArray())
+			{
+				if (workspace.Printer != null)
+				{
+					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				}
 			}
 		}
 
@@ -454,10 +455,7 @@ namespace MatterHackers.MatterControl
 
 			if (operationType != WorkspacesChangedEventArgs.OperationType.Restore)
 			{
-				UiThread.RunOnIdle(async () =>
-				{
-					await Instance.PersistUserWorkspaceTabs(true);
-				});
+				Instance.PersistOpenTabsLayout();
 			}
 		}
 
@@ -952,7 +950,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (!restoringWorkspaces)
 				{
-					UiThread.RunOnIdle(async () => await PersistUserWorkspaceTabs(false));
+					PersistOpenTabsLayout();
 				}
 			};
 

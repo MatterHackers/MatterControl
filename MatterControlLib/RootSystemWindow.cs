@@ -299,7 +299,8 @@ namespace MatterHackers.MatterControl
 				var unsavedWorkspaces = new List<PartWorkspace>();
 				foreach (var workspace in ApplicationController.Instance.Workspaces)
 				{
-					if (workspace.SceneContext?.Scene?.HasUnsavedChanges == true)
+					if (workspace.SceneContext?.Scene?.HasUnsavedChanges == true
+						&& workspace.Printer == null)
                     {
 						unsavedWorkspaces.Add(workspace);
 					}
@@ -314,7 +315,8 @@ namespace MatterHackers.MatterControl
 					{
 						var application = ApplicationController.Instance;
 
-						await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
+						ApplicationController.Instance.PersistOpenTabsLayout();
+						await ApplicationController.Instance.PersistPrintTabsContent();
 
 						application.ApplicationExiting = true;
 

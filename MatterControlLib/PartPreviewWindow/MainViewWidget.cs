@@ -584,10 +584,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sourceItem != null)
 			{
-				async void UpdateTabName(object s, EventArgs e)
+				void UpdateTabName(object s, EventArgs e)
 				{
 					partTab.Title = sourceItem.Name;
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(false);
+					ApplicationController.Instance.PersistOpenTabsLayout();
 				}
 
 				sourceItem.NameChanged += UpdateTabName;

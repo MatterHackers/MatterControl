@@ -475,16 +475,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									UiThread.RunOnIdle(async () =>
 									{
 										await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
-										this.parentTabControl.CloseTab(this);
 										this.CloseClicked?.Invoke(this, null);
+										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+										this.parentTabControl.CloseTab(this);
 									});
 									break;
 
 								case StyledMessageBox.ResponseType.NO:
-									UiThread.RunOnIdle(async () =>
+									UiThread.RunOnIdle(() =>
 									{
-										this.parentTabControl.CloseTab(this);
 										this.CloseClicked?.Invoke(this, null);
+										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+										this.parentTabControl.CloseTab(this);
 									});
 									break;
 							}
@@ -498,7 +500,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					this.CloseClicked?.Invoke(this, null);
-
 					// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
 					this.parentTabControl?.CloseTab(this);
 				}
