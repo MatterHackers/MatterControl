@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.avoid_crossing_perimeters,
-					PresentationName = "Avoid Crossing Perimeters".Localize().Localize(),
+					PresentationName = "Avoid Crossing Perimeters".Localize(),
 					HelpText = "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.monotonic_solid_infill,
-					PresentationName = "Monotonic Solid Infill".Localize().Localize(),
+					PresentationName = "Monotonic Solid Infill".Localize(),
 					HelpText = "When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
@@ -927,7 +927,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "XY Homing Position".Localize(),
 					HelpText = "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
-					Units = "mm".Localize().Localize(),
+					Units = "mm".Localize(),
 					ShowIfSet = "!has_hardware_leveling&recover_is_enabled",
 					DefaultValue = "0,0",
 					RebuildGCodeOnChange = false
@@ -938,7 +938,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extrude First Layer".Localize(),
 					HelpText = "The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					Units = "°C".Localize().Localize(),
+					Units = "°C".Localize(),
 					DefaultValue = "205"
 				},
 				new SliceSettingData()
