@@ -640,18 +640,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				case "Calibration Parts Row Item Collection":
 				case "Primitives Row Item Collection":
 				case "Cloud Library Row Item Collection":
-				case "Print Queue Row Item Collection":
-				case "Local Library Row Item Collection":
-					if (!testRunner.NameExists("Library Row Item Collection"))
+					if (!testRunner.NameExists("Design Apps Row Item Collection", secondsToWait: 0.5))
 					{
-						testRunner.ClickByName("Bread Crumb Button Home")
-							.Delay();
+						testRunner.ClickByName("Bread Crumb Button Home");
 					}
 
 					// If visible, navigate into Libraries container before opening target
-					if (testRunner.NameExists("Library Row Item Collection"))
+					if (testRunner.NameExists("Design Apps Row Item Collection"))
 					{
-						testRunner.DoubleClickByName("Library Row Item Collection")
+						testRunner.DoubleClickByName("Design Apps Row Item Collection")
+							.Delay();
+					}
+
+					break;
+
+				case "Print Queue Row Item Collection":
+				case "Local Library Row Item Collection":
+					if (!testRunner.NameExists(libraryRowItemName, secondsToWait: 0.5))
+					{
+						testRunner.ClickByName("Bread Crumb Button Home")
 							.Delay();
 					}
 
@@ -660,6 +667,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.DoubleClickByName(libraryRowItemName);
 			return testRunner;
+		}
+
+		public static List<GuiWidget> GetAllWidgets()
+		{
+			Func<GuiWidget, IEnumerable<GuiWidget>> recursiveWalk = null;
+			Func<GuiWidget, IEnumerable<GuiWidget>> walkWidgets = (widget) => widget.Children.SelectMany(recursiveWalk).Prepend(widget);
+			recursiveWalk = walkWidgets;
+			return SystemWindow.AllOpenSystemWindows.SelectMany(walkWidgets).ToList();
 		}
 
 		public static AutomationRunner EnsureContentMenuOpen(this AutomationRunner testRunner)
@@ -767,6 +782,68 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// wait for the object to be added
 				.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading
+			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
+			if (insertionGroup != null)
+			{
+				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroupObject3D != null, 10);
+			}
+
+			return testRunner;
+		}
+
+		public static AutomationRunner AddPrimitivePartsToBed(this AutomationRunner testRunner, IEnumerable<string> partNames, bool multiSelect = false)
+		{
+			// Passing in true for multiselect will simulate holding down control when clicking on each part. This will create a
+			// selection group that is added to the plate as one scene part.
+
+			// Open the library pane to force display of the overflow menu and add a widget for it to the widget hierarchy.
+			// We need this menu widget to trigger the Add to Bed menu item.
+			const string containerName = "Primitives Row Item Collection";
+			testRunner.NavigateToFolder(containerName);
+
+			var partCount = 0;
+			foreach (var partName in partNames)
+			{
+				Keyboard.SetKeyDownState(Keys.ControlKey, multiSelect);
+				foreach (var result in testRunner.GetWidgetsByName(partName))
+				{
+					// Opening the primitive parts library folder causes a second set of primitive part widgets to be created.
+					// The first set is hidden behind the expanded library pane and targeting them for a click will cause the
+					// automation runner to click in the wrong spots. Finding the correct widgets to target is a little complicated
+					// because of the layers of wrapping widgets but the widgets in the first set (which we don't want to target)
+					// are direct descendents of a ListContentView so we can eliminate those and assume whatever is left over are
+					// the widgets we want.
+
+					var partWidget = result.Widget as ListViewItemBase;
+					if (partWidget.Parent.Name == "Library ListContentView")
+					{
+						continue;
+					}
+					if (!partWidget.IsSelected)
+					{
+						testRunner.ClickWidget(partWidget);
+					}
+					partCount += 1;
+				}
+			}
+
+			if (multiSelect)
+			{
+				// Release control key so additional operations work normally.
+				Keyboard.SetKeyDownState(Keys.ControlKey, false);
+			}
+
+			testRunner.ClickByName("Print Library Overflow Menu");
+
+			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+			var scene = view3D.Object3DControlLayer.Scene;
+			var preAddCount = scene.Children.Count;
+			var postAddCount = preAddCount + (multiSelect ? 1 : partCount);
+
+			testRunner.ClickByName("Add to Bed Menu Item")
+				// wait for the objects to be added
+				.WaitFor(() => scene.Children.Count == postAddCount);
+			// wait for the objects to be done loading
 			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
 			if (insertionGroup != null)
 			{
@@ -914,7 +991,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
-				closeWindow: () =>
+				closeWindow: (testRunner) =>
 				{
 					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
@@ -925,7 +1002,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					rootSystemWindow.Close();
+					testRunner.DismissSaveChanges();
 				});
+		}
+
+		public static void DismissSaveChanges(this AutomationRunner testRunner)
+		{
+			// Occasionally a dialog will pop up asking to save changes and the app won't exit
+			// until that dialog is dismissed. The dialog box doesn't have a name so we have to
+			// dig it out of the widget hierarchy directly.
+			const int millisecondsToWait = 1250;
+			var timeWaited = Stopwatch.StartNew();
+			Func<GuiWidget> findSaveChanges = () =>
+				SystemWindow.AllOpenSystemWindows
+					.SelectMany(w => w.Children)
+					.Where(w => w is StyledMessageBox.YesNoCancelMessageBox)
+					.SingleOrDefault();
+			var messageBox = findSaveChanges();
+			while (messageBox == null && timeWaited.ElapsedMilliseconds < millisecondsToWait)
+			{
+				testRunner.Delay(.05);
+				messageBox = findSaveChanges();
+			}
+
+			if (messageBox != null)
+			{
+				// The discard button doesn't have a name so we have to dig it
+				// out of the widget hierarchy directly.
+				var discard = messageBox.Children[2].Children[1];
+				testRunner.ClickWidget(discard);
+			}
 		}
 
 		public static void LibraryEditSelectedItem(AutomationRunner testRunner)

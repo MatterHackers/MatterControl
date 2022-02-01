@@ -1,4 +1,6 @@
-﻿using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
@@ -170,6 +172,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			});
+		}
+
+		[Test]
+		public async Task AddMultiplePartsMultipleTimes()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.OpenEmptyPartTab();
+
+				var parts = new[]
+				{
+					"Row Item Cone",
+					"Row Item Sphere",
+					"Row Item Torus"
+				};
+				testRunner.AddPrimitivePartsToBed(parts, multiSelect: true);
+
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
+				var scene = view3D.Object3DControlLayer.Scene;
+
+				testRunner.WaitForName("Selection");
+				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 scene item after first AddToBed");
+
+				testRunner.ClickByName("Print Library Overflow Menu");
+				testRunner.ClickByName("Add to Bed Menu Item");
+				testRunner.WaitForName("Selection");
+				Assert.AreEqual(parts.Length + 1, scene.Children.Count, $"Should have {parts.Length + 1} scene items after second AddToBed");
+
+				return Task.CompletedTask;
+			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 	}
 }
