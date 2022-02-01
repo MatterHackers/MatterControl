@@ -837,15 +837,52 @@ namespace MatterHackers.MatterControl
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "computer_icon.png")),
 					() => this.Library.ComputerCollectionContainer));
 
-			this.Library.LibraryCollectionContainer = new LibraryCollectionContainer();
+			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+			if (rootLibraryCollection != null)
+			{
+				var forceAddLocalLibrary = false;
+#if DEBUG
+				forceAddLocalLibrary = true;
+#endif
+				// only add the local library if there are items in it
+				var localLibrary = new SqliteLibraryContainer(rootLibraryCollection.Id);
+				localLibrary.Load();
+				if (forceAddLocalLibrary || localLibrary.ChildContainers.Any() || localLibrary.Items.Any())
+				{
+					this.Library.RegisterContainer(
+						new DynamicContainerLink(
+							"Local Library".Localize(),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "local_library_icon.png")),
+							() => localLibrary));
+				}
+			}
+
+			var forceAddQueue = false;
+#if DEBUG
+			forceAddQueue = true;
+#endif
+			// only add the queue if there are items in it
+			var queueItems = QueueData.Instance.PrintItems.ToList();
+			if (forceAddQueue || queueItems.Any())
+			{
+				this.Library.RegisterContainer(
+					new DynamicContainerLink(
+						"Print Queue".Localize(),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
+						() => new PrintQueueContainer()));
+			}
+
+			this.Library.DesignAppsCollectionContainer = new DesignAppsCollectionContainer();
 			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					"Library".Localize(),
+					"Design Apps".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-					StaticData.Instance.LoadIcon(Path.Combine("Library", "library_icon.png")),
-					() => this.Library.LibraryCollectionContainer));
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "design_apps_icon.png")),
+					() => this.Library.DesignAppsCollectionContainer));
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{

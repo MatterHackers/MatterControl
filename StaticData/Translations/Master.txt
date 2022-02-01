@@ -481,6 +481,9 @@ Translated:Cancel Print?
 English:Cancel the current print?
 Translated:Cancel the current print?
 
+English:Categories
+Translated:Categories
+
 English:Center Hole Diameter
 Translated:Center Hole Diameter
 

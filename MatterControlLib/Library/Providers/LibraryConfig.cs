@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
+		public DesignAppsCollectionContainer DesignAppsCollectionContainer { get; internal set; }
 
 		public SafeList<LibraryAction> MenuExtensions { get; } = new SafeList<LibraryAction>();
 
