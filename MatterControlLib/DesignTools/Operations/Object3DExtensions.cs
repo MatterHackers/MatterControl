@@ -419,10 +419,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					using (selectedItem.Parent.RebuildLock())
 					{
+						var name = "";
 						foreach (var item in selectedItems)
 						{
 							newParent.Children.Add(item.Clone());
+							if (name != "")
+                            {
+								name += ", ";
+                            }
+							name += item.Name;
 						}
+
+						if (string.IsNullOrEmpty(newParent.Name))
+                        {
+							newParent.Name = name;
+                        }
 
 						newParent.MakeNameNonColliding();
 

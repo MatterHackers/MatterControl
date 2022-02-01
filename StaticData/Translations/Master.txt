@@ -4357,6 +4357,9 @@ Translated:You can also
 English:You have {0} unsave design(s). Wolud you like to save changes before closing?
 Translated:You have {0} unsave design(s). Wolud you like to save changes before closing?
 
+English:You have {0} unsave designs. Wolud you like to save changes before closing?
+Translated:You have {0} unsave designs. Wolud you like to save changes before closing?
+
 English:You have one unsave design ({0}). Wolud you like to save changes before closing?
 Translated:You have one unsave design ({0}). Wolud you like to save changes before closing?
 
