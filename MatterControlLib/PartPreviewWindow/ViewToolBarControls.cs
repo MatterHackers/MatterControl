@@ -871,7 +871,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								(newName, destinationContainer) =>
 								{
 									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									if (destinationContainer is FileSystemContainer fileSystemContainer)
+									{
+										sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
+										fileSystemContainer.Save(sceneContext.EditContext.SourceItem, sceneContext.Scene);
+									}
+									else if (destinationContainer is ILibraryWritableContainer writableContainer)
 									{
 										// Wrap stream with ReadOnlyStream library item and add to container
 										writableContainer.Add(new[]
