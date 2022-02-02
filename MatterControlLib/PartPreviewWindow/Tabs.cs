@@ -486,7 +486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									{
 										this.CloseClicked?.Invoke(this, null);
 										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
-										this.parentTabControl.CloseTab(this);
+										this.parentTabControl?.CloseTab(this);
 									});
 									break;
 							}

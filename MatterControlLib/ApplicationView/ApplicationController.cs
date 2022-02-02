@@ -2167,11 +2167,13 @@ namespace MatterHackers.MatterControl
 						if (settingsFilePath != null)
 						{
 							using (var file = File.OpenWrite(archivePath))
-							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 							{
-								zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-								zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
-								zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+								{
+									zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
+									zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
+									zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+								}
 							}
 						}
 					}

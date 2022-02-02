@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl
 				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer)
 				{
 					acceptButton.InvokeClick();
+					// And disable it so there are not multiple fires. No need to re-enable, the dialog is going to close.
+					this.AcceptButton.Enabled = false;
 				}
 			};
 			contentRow.AddChild(itemNameWidget);

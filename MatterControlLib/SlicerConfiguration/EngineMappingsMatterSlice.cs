@@ -603,8 +603,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						mergeString += ",";
 					}
 
-					// TODO: Use existing AssetsPath property
-					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 					var itemWorldMatrix = item.WorldMatrix();
 					if (item is GeneratedSupportObject3D generatedSupportObject3D
 						&& item.Mesh != null)
@@ -616,7 +614,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemWorldMatrix = itemWorldMatrix.ApplyAtPosition(aabbForCenter.Center.Transform(itemWorldMatrix), Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
 
-					outputItems.Add((itemWorldMatrix, Path.Combine(assetsDirectory, item.MeshPath)));
+					outputItems.Add((itemWorldMatrix, Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, item.MeshPath)));
 					mergeString += $"({savedStlCount++}";
 					first = false;
 				}

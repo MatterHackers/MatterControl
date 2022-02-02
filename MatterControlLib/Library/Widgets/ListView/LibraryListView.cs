@@ -550,7 +550,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							}
 							else
 							{
-								ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+								void OpenNewTab()
+								{
+                                    _ = ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+								}
+
+								OpenNewTab();
 							}
 						}
 						else

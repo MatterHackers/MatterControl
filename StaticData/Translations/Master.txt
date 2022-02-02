@@ -28,12 +28,6 @@ Translated:%
 English:(Press 'Skip' to setup connection later)
 Translated:(Press 'Skip' to setup connection later)
 
-English:\nBelow you can find a list of each setting that has changed.
-Translated:\nBelow you can find a list of each setting that has changed.
-
-English:\nUpdating a default setting will not change any override that you have applied.
-Translated:\nUpdating a default setting will not change any override that you have applied.
-
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -322,8 +316,8 @@ Translated:Anchor
 English:and ensure that no filament is stuck to your nozzle.
 Translated:and ensure that no filament is stuck to your nozzle.
 
-English:and the hotend to heat to 
-Translated:and the hotend to heat to 
+English:and the hotend to heat to
+Translated:and the hotend to heat to
 
 English:Angle
 Translated:Angle
@@ -363,9 +357,6 @@ Translated:Are you sure you want to clear your print history?
 
 English:Are you sure you want to delete printer '{0}'?
 Translated:Are you sure you want to delete printer '{0}'?
-
-English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
@@ -1495,8 +1486,8 @@ Translated:Error: Below Conductive Probe Min Z
 English:Error: Could not create file for saving. Original error
 Translated:Error: Could not create file for saving. Original error
 
-English:Error: Could not read file from disk. Original error: 
-Translated:Error: Could not read file from disk. Original error: 
+English:Error: Could not read file from disk. Original error:
+Translated:Error: Could not read file from disk. Original error:
 
 English:Estimated Cost
 Translated:Estimated Cost
@@ -2332,9 +2323,6 @@ Translated:IP Finder
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 
-English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-
 English:It is currently set to {0}.
 Translated:It is currently set to {0}.
 
@@ -2583,6 +2571,9 @@ Translated:Macro Presets
 
 English:Macros
 Translated:Macros
+
+English:Maintain Proportions
+Translated:Maintain Proportions
 
 English:Maintain Surface
 Translated:Maintain Surface
@@ -3171,6 +3162,9 @@ Translated:Open Settings View Options
 
 English:OpenSCAD not installed
 Translated:OpenSCAD not installed
+
+English:Operation
+Translated:Operation
 
 English:Optional
 Translated:Optional
@@ -3886,9 +3880,6 @@ Translated:Reset View
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 
-English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-
 English:Reshape
 Translated:Reshape
 
@@ -4119,6 +4110,9 @@ Translated:SCAD Script
 
 English:Scale
 Translated:Scale
+
+English:Scale About
+Translated:Scale About
 
 English:Scale Offset
 Translated:Scale Offset
@@ -4885,9 +4879,6 @@ Translated:The extra distance the raft will extend around the edge of the part.
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 
-English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-
 English:The extruder to use for support material. Default will use whichever extruder active at the time.
 Translated:The extruder to use for support material. Default will use whichever extruder active at the time.
 
@@ -4911,9 +4902,6 @@ Translated:The geometric shape of the support structure for the inside of parts.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-
-English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
-Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
@@ -5124,9 +5112,6 @@ Translated:The serial driver to use
 
 English:The serial port communication speed of the printers firmware.
 Translated:The serial port communication speed of the printers firmware.
-
-English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
 Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
@@ -5680,6 +5665,9 @@ Translated:Use G0 for moves rather than G1.
 English:Use Grade 2
 Translated:Use Grade 2
 
+English:Use Percentage
+Translated:Use Percentage
+
 English:Use Relative E Distances
 Translated:Use Relative E Distances
 
@@ -5841,12 +5829,6 @@ Translated:Warning, very short print
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-
-English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-
-English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
@@ -6021,9 +6003,6 @@ Translated:You may need to wait a minute for your printer to finish initializing
 
 English:You should have at least 3 top layers for this calibration to measure off of.
 Translated:You should have at least 3 top layers for this calibration to measure off of.
-
-English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
