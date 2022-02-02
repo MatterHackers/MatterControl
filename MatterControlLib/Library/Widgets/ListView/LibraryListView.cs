@@ -538,8 +538,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								var partTab = mainViewWidget.CreatePartTab(workspace, true);
 								mainViewWidget.TabControl.ActiveTab = partTab;
 
-								mainViewWidget.HookupNameChangeCallback(partTab, workspace);
-
 								// Load content after UI widgets to support progress notification during acquire/load
 								await workspace.SceneContext.LoadContent(
 									new EditContext()
@@ -547,6 +545,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										ContentStore = writableContainer,
 										SourceItem = firstItem
 									});
+
+								mainViewWidget.HookupNameChangeCallback(partTab, workspace);
 							}
 							else
 							{
