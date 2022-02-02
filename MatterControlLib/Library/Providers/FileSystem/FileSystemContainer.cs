@@ -36,6 +36,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -75,6 +77,26 @@ namespace MatterHackers.MatterControl.Library
 
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
+			}
+		}
+
+		public override void Save(ILibraryItem item, IObject3D content)
+		{
+			if (item is FileSystemFileItem fileItem)
+			{
+				if (fileItem.FilePath.Contains(ApplicationDataStorage.Instance.LibraryAssetsPath))
+                {
+					// save using the normal uncompressed mcx file
+					base.Save(item, content);
+                }
+				else
+                {
+					// save to a binary mcx file (a zip with a scene.mcx and an assets folder)
+
+					// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+					File.WriteAllText(fileItem.FilePath, content.ToJson());
+					this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
+				}
 			}
 		}
 

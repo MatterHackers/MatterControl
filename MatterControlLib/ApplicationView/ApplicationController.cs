@@ -882,7 +882,10 @@ namespace MatterHackers.MatterControl
 					"Design Apps".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "design_apps_icon.png")),
-					() => this.Library.DesignAppsCollectionContainer));
+					() => this.Library.DesignAppsCollectionContainer)
+                {
+					IsReadOnly = true
+                });
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{

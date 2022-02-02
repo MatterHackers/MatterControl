@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void Save(IObject3D scene)
+		public void Save(IObject3D scene)
 		{
 			if (!this.FreezeGCode)
 			{
