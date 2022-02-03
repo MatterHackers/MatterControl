@@ -2692,6 +2692,9 @@ Translated:Maximum X-Y jerk [mm/s]
 English:Maximum Z jerk [mm/s]
 Translated:Maximum Z jerk [mm/s]
 
+English:MCX File
+Translated:MCX File
+
 English:Measure Probe Offset Conductively
 Translated:Measure Probe Offset Conductively
 

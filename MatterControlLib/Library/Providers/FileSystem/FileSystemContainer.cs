@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.Library
 							{
 								status.Progress0To1 = percentComplete * .9;
 								reporter.Report(status);
-							}, forceIntoCache: true);
+							}, true);
 
 							var backupName = "";
 							// rename any existing file
@@ -129,11 +129,6 @@ namespace MatterHackers.MatterControl.Library
 							{
 								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 								{
-									using (var writer = new StreamWriter(zip.CreateEntry("scene.mcx").Open()))
-									{
-										writer.Write(content.ToJson());
-									}
-
 									foreach (var persistMeshItem in persistableItems)
 									{
 										var sourcePath = persistMeshItem.MeshPath;
@@ -150,6 +145,11 @@ namespace MatterHackers.MatterControl.Library
 										savedCount++;
 										status.Progress0To1 = .9 + .1 * (savedCount / persistCount);
 										reporter.Report(status);
+									}
+
+									using (var writer = new StreamWriter(zip.CreateEntry("scene.mcx").Open()))
+									{
+										writer.Write(content.ToJson());
 									}
 								}
 							}

@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						using (var streamAndLength = await streamInterface.GetStream(null))
 						{
-							assetPath = AssetObject3D.AssetManager.StoreStream(streamAndLength.Stream, Path.GetExtension(streamInterface.FileName));
+							assetPath = AssetObject3D.AssetManager.StoreStream(streamAndLength.Stream, Path.GetExtension(streamInterface.FileName), false, CancellationToken.None, null).Result;
 						}
 					}
 
