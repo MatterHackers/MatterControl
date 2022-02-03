@@ -199,12 +199,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.LoadEmptyContent(
-					new EditContext()
-					{
-						ContentStore = historyContainer,
-						SourceItem = historyContainer.NewDesign()
-					});
+				this.LoadEmptyContent(new EditContext());
 			}
 		}
 
@@ -662,6 +657,22 @@ namespace MatterHackers.MatterControl
 		/// <returns>A task representing success</returns>
 		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
 		{
+			if (this.EditContext.ContentStore == null)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// we need to ask for a destination			
+					DialogWindow.Show(
+						new SaveAsPage(
+							(container, newName) =>
+							{
+								this.SaveAs(container, newName);
+							}));
+				});
+
+				return;
+			}
+
 			var progressStatus = new ProgressStatus()
 			{
 				Status = "Saving Changes"

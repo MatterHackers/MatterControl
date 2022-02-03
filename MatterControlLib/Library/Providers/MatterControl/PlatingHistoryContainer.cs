@@ -92,20 +92,6 @@ namespace MatterHackers.MatterControl.Library
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		internal ILibraryItem NewDesign()
-		{
-			string mcxPath = Path.Combine(this.FullPath, "New Design.mcx");
-			var count = 0;
-			while(File.Exists(mcxPath))
-            {
-				mcxPath = Path.Combine(this.FullPath, $"New Design ({++count}).mcx");
-            }
-
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
-
-			return new FileSystemFileItem(mcxPath);
-		}
-
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
 		{
 		}

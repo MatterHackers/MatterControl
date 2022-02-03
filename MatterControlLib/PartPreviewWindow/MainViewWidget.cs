@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.PlusClicked += (s, e) => UiThread.RunOnIdle(() =>
 			{
-                CreateNewPartTab(true);
+                CreateNewDesignTab(true);
 			});
 
 			// Force the ActionArea to be as high as ButtonHeight
@@ -817,18 +817,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
-		public async Task CreateNewPartTab(bool addPhilToBed)
+		public async Task CreateNewDesignTab(bool addPhilToBed)
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
 			var workspace = new PartWorkspace(new BedConfig(history));
 
-			await workspace.SceneContext.LoadContent(
-				new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = history.NewDesign()
-				});
+			await workspace.SceneContext.LoadContent(new EditContext());
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
@@ -839,12 +834,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				workspace.SceneContext.AddPhilToBed();
 			}
-
-			UiThread.RunOnIdle(async () =>
-			{
-				// Save any pending changes before starting print operation
-				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, workspace.SceneContext.SaveChanges);
-			});
 
 			ApplicationController.Instance.MainTabKey = workspace.Name;
 		}

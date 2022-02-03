@@ -849,13 +849,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						menuButton.Enabled = false;
 
-						try
+						if (sceneContext.EditContext.ContentStore == null)
 						{
-							await sceneContext.SaveChanges(progress, cancellationToken);
+							UiThread.RunOnIdle(() =>
+							{
+								// we need to ask for a destination
+								DialogWindow.Show(
+									new SaveAsPage(
+										(container, newName) =>
+										{
+											sceneContext.SaveAs(container, newName);
+										}));
+							});
 						}
-						catch (Exception ex)
+						else
 						{
-							ApplicationController.Instance.LogError("Error saving file".Localize() + ": " + ex.Message);
+							try
+							{
+								await sceneContext.SaveChanges(progress, cancellationToken);
+							}
+							catch (Exception ex)
+							{
+								ApplicationController.Instance.LogError("Error saving file".Localize() + ": " + ex.Message);
+							}
 						}
 
 						menuButton.Enabled = true;

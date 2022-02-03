@@ -80,15 +80,16 @@ namespace MatterHackers.MatterControl.Library
 
 		public static void SaveAs(this ISceneContext sceneContext, ILibraryContainer libraryContainer, string newName)
 		{
-			var contentStore = sceneContext.EditContext.ContentStore;
+			var oldContentStore = sceneContext.EditContext.ContentStore;
+			var newContentStore = sceneContext.EditContext.ContentStore = libraryContainer as IContentStore;
+
 			// Save to the destination provider
-			if (contentStore is FileSystemContainer fileSystemContainer
-				&& libraryContainer is FileSystemContainer destContainer)
+			if (newContentStore is FileSystemContainer fileSystemContainer)
 			{
-				sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(destContainer.FullPath, newName), ".mcx"));
+				sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
 				fileSystemContainer.Save(sceneContext.EditContext.SourceItem, sceneContext.Scene);
 			}
-			else if (contentStore is ILibraryWritableContainer writableContainer)
+			else if (newContentStore is ILibraryWritableContainer writableContainer)
 			{
 				// Wrap stream with ReadOnlyStream library item and add to container
 				writableContainer.Add(new[]
@@ -98,9 +99,9 @@ namespace MatterHackers.MatterControl.Library
 						Name = newName
 					}
 				});
-
-				contentStore.Dispose();
 			}
+
+			oldContentStore?.Dispose();
 		}
 
 		public static IEnumerable<ILibraryContainer> AncestorsAndSelf(this ILibraryContainer item)

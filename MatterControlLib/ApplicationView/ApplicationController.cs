@@ -704,7 +704,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			await this.MainView.CreateNewPartTab(false);
+			await this.MainView.CreateNewDesignTab(false);
 			
 			var workspace = this.Workspaces.Last();
 			workspace.SceneContext.AddToPlate(selectedLibraryItems);
