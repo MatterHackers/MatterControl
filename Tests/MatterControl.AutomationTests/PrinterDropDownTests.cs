@@ -36,16 +36,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.SwitchToPrinterSettings()
 					.InlineTitleEdit("Printer Name", newName0);
 
-				Assert.AreEqual(newName0, printerTab0.Title);
-				Assert.AreEqual("BCN3D Sigma", printerTab1.Title);
+				Assert.AreEqual(newName0, printerTab0.Text);
+				Assert.AreEqual("BCN3D Sigma", printerTab1.Text);
 
 				// switch back to BCN tab
 				testRunner.ClickByName("3D View Tab 1")
 					.SwitchToPrinterSettings()
 					.InlineTitleEdit("Printer Name", newName1);
 
-				Assert.AreEqual(newName1, printerTab1.Title);
-				Assert.AreEqual(newName0, printerTab0.Title, "Name did not change");
+				Assert.AreEqual(newName1, printerTab1.Text);
+				Assert.AreEqual(newName0, printerTab0.Text, "Name did not change");
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Validate that the tab reflects the new name
 				var printerTab = testRunner.GetWidgetByName("3D View Tab 0", out _) as ChromeTab;
-				Assert.AreEqual(newName, printerTab.Title);
+				Assert.AreEqual(newName, printerTab.Text);
 
 				// Validate that the settings layer reflects the new name
 				Assert.AreEqual(newName, printer.PrinterName);

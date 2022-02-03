@@ -180,22 +180,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, destinationContainer) =>
+								(newName, container) =>
 								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(selectedItem)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
+									sceneContext.Rename(newName);
 								}));
 					}),
 			 		IsEnabled = () => sceneContext.EditableScene
@@ -679,22 +666,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, destinationContainer) =>
+								async (newName, container) =>
 								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(sceneContext.Scene)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
+									sceneContext.Rename(newName);
 								}));
 					}),
 					IsEnabled = () => sceneContext.EditableScene

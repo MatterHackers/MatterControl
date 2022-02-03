@@ -519,7 +519,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 									{
 										foreach (var tab in mainViewWidget.TabControl.AllTabs)
 										{
-											if (tab.TabContent is PartTabPage tabContent
+											if (tab.TabContent is DesignTabPage tabContent
 												&& (tabContent.sceneContext.EditContext.SourceFilePath == asset.AssetPath
 													|| (tabContent.sceneContext.EditContext.SourceItem is IAssetPath cloudItem2
 														&& cloudItem2.AssetPath == asset.AssetPath)))
@@ -535,7 +535,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 								ApplicationController.Instance.Workspaces.Add(workspace);
 
-								var partTab = mainViewWidget.CreatePartTab(workspace, true);
+								var partTab = mainViewWidget.CreateDesignTab(workspace, true);
 								mainViewWidget.TabControl.ActiveTab = partTab;
 
 								// Load content after UI widgets to support progress notification during acquire/load
@@ -545,8 +545,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										ContentStore = writableContainer,
 										SourceItem = firstItem
 									});
-
-								mainViewWidget.HookupNameChangeCallback(partTab, workspace);
 							}
 							else
 							{

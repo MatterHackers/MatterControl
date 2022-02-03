@@ -38,6 +38,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -63,10 +64,25 @@ namespace MatterHackers.MatterControl
 
 		public bool FreezeGCode { get; set; }
 
+		public event EventHandler SourceItemChanged;
+
+		private ILibraryItem _sourceItem;
 		/// <summary>
 		/// The library item to load and persist
 		/// </summary>
-		public ILibraryItem SourceItem { get; set; }
+		public ILibraryItem SourceItem
+		{
+			get => _sourceItem;
+			
+			set
+			{
+				if (value != _sourceItem)
+                {
+					_sourceItem = value;
+					SourceItemChanged?.Invoke(this, EventArgs.Empty);
+                }
+			}
+		}
 
 		public bool IsGGCodeSource => (this.SourceItem as ILibraryAsset)?.ContentType == "gcode";
 

@@ -44,7 +44,7 @@ using static MatterHackers.MatterControl.StyledMessageBox;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabPage : PartTabPage
+	public class PrinterTabPage : DesignTabPage
 	{
 		private GCode2DWidget gcode2DWidget;
 

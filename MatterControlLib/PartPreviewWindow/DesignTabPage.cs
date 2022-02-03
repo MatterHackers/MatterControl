@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PartTabPage : TabPage
+	public class DesignTabPage : TabPage
 	{
 		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PrinterConfig Printer => Workspace.Printer;
 
-		public PartTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
+		public DesignTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
 			: base(tabTitle)
 		{
 			this.sceneContext = workspace.SceneContext;

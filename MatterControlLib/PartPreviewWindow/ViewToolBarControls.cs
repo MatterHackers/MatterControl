@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					button.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
 						namedAction.Action.Invoke(sceneContext);
-						var partTab = button.Parents<PartTabPage>().FirstOrDefault();
+						var partTab = button.Parents<DesignTabPage>().FirstOrDefault();
 						var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
 						view3D.Object3DControlLayer.Focus();
 					});
@@ -868,27 +868,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, destinationContainer) =>
+								(newName, container) =>
 								{
-									// Save to the destination provider
-									if (destinationContainer is FileSystemContainer fileSystemContainer)
-									{
-										sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
-										fileSystemContainer.Save(sceneContext.EditContext.SourceItem, sceneContext.Scene);
-									}
-									else if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(sceneContext.Scene)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
+									sceneContext.Rename(newName);
 								}));
 					});
 					var export = popupMenu.CreateMenuItem("Export".Localize(), StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor));

@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"Cancel Print".Localize(),
 						"Continue Printing".Localize());
 				}
-				else if (this.TabContent is PartTabPage partTab
+				else if (this.TabContent is DesignTabPage partTab
 					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
 					&& sceneContext.HasUnsavedChanges)
 				{
@@ -744,7 +744,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public string Title
+        public override string Text
 		{
 			get => tabPill?.Text;
 			set
@@ -752,6 +752,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (tabPill != null)
 				{
 					tabPill.Text = value;
+				}
+			}
+		}
+
+        public override string ToolTipText
+		{
+			get => tabPill?.ToolTipText;
+			set
+			{
+				if (tabPill != null)
+				{
+					tabPill.ToolTipText = value;
 				}
 			}
 		}

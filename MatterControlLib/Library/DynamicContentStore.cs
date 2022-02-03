@@ -41,7 +41,11 @@ namespace MatterHackers.MatterControl.Library
 			this.saveAction = saveAction;
 		}
 
-		public void Save(ILibraryItem item, IObject3D content)
+        public void Dispose()
+        {
+        }
+
+        public void Save(ILibraryItem item, IObject3D content)
 		{
 			saveAction.Invoke(item, content);
 		}
