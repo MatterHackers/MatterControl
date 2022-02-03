@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 
 			// close the welcome message
-			if (testRunner.NameExists("Start New Design", 1))
+			if (testRunner.WaitForName("Start New Design"))
 			{
 				testRunner.ClickByName("Start New Design");
 			}
@@ -639,22 +639,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				case "Calibration Parts Row Item Collection":
 				case "Primitives Row Item Collection":
-				case "Cloud Library Row Item Collection":
-				case "Print Queue Row Item Collection":
-				case "Local Library Row Item Collection":
-					if (!testRunner.NameExists("Library Row Item Collection"))
+					if (!testRunner.NameExists("Design Apps Row Item Collection"))
 					{
 						testRunner.ClickByName("Bread Crumb Button Home")
 							.Delay();
 					}
 
 					// If visible, navigate into Libraries container before opening target
-					if (testRunner.NameExists("Library Row Item Collection"))
+					if (testRunner.NameExists("Design Apps Row Item Collection"))
 					{
-						testRunner.DoubleClickByName("Library Row Item Collection")
+						testRunner.DoubleClickByName("Design Apps Row Item Collection")
 							.Delay();
 					}
+					break;
 
+				case "Cloud Library Row Item Collection":
+				case "Print Queue Row Item Collection":
+				case "Local Library Row Item Collection":
+					if (!testRunner.NameExists(libraryRowItemName))
+					{
+						testRunner.ClickByName("Bread Crumb Button Home")
+							.Delay();
+					}
 					break;
 			}
 
