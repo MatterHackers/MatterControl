@@ -866,12 +866,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ApplicationController.Instance.PersistOpenTabsLayout();
 				}
 
-				var lastSourceItem = sourceItem;
 				void SourceItemChanged(object s, EventArgs e)
                 {
-					lastSourceItem.NameChanged -= UpdateTabName;
-					lastSourceItem = workspace.SceneContext.EditContext.SourceItem;
-					lastSourceItem.NameChanged += UpdateTabName;
+					sourceItem.NameChanged -= UpdateTabName;
+					sourceItem = workspace.SceneContext.EditContext.SourceItem;
+					sourceItem.NameChanged += UpdateTabName;
 					UpdateTabName(s, e);
 				}
 

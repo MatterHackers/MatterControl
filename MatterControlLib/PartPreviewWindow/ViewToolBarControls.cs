@@ -868,9 +868,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, container) =>
+								(container, newName) =>
 								{
-									sceneContext.Rename(newName);
+									sceneContext.SaveAs(container, newName);
 								}));
 					});
 					var export = popupMenu.CreateMenuItem("Export".Localize(), StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor));

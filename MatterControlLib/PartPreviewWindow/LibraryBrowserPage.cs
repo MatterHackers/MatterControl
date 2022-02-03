@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		protected LibraryListView librarySelectorWidget;
 		private FolderBreadCrumbWidget breadCrumbWidget = null;
 
-		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
+		public LibraryBrowserPage(Action<ILibraryWritableContainer, string> acceptCallback, string acceptButtonText)
 		{
 			this.WindowSize = new Vector2(480, 500);
 
@@ -85,8 +85,8 @@ namespace MatterHackers.MatterControl
 				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
 				{
 					acceptCallback(
-						itemNameWidget?.ActualTextEditWidget.Text ?? "none",
-						writableContainer);
+						writableContainer,
+						itemNameWidget?.ActualTextEditWidget.Text ?? "none");
 				}
 
 				this.DialogWindow.CloseOnIdle();

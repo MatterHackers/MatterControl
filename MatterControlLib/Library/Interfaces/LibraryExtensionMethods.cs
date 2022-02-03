@@ -78,13 +78,14 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public static void Rename(this ISceneContext sceneContext, string newName)
+		public static void SaveAs(this ISceneContext sceneContext, ILibraryContainer libraryContainer, string newName)
 		{
 			var contentStore = sceneContext.EditContext.ContentStore;
 			// Save to the destination provider
-			if (contentStore is FileSystemContainer fileSystemContainer)
+			if (contentStore is FileSystemContainer fileSystemContainer
+				&& libraryContainer is FileSystemContainer destContainer)
 			{
-				sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
+				sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(destContainer.FullPath, newName), ".mcx"));
 				fileSystemContainer.Save(sceneContext.EditContext.SourceItem, sceneContext.Scene);
 			}
 			else if (contentStore is ILibraryWritableContainer writableContainer)

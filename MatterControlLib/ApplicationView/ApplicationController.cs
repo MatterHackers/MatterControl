@@ -180,9 +180,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, container) =>
+								(container, newName) =>
 								{
-									sceneContext.Rename(newName);
+									sceneContext.SaveAs(container, newName);
 								}));
 					}),
 			 		IsEnabled = () => sceneContext.EditableScene
@@ -666,9 +666,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, container) =>
+								async (container, newName) =>
 								{
-									sceneContext.Rename(newName);
+									sceneContext.SaveAs(container, newName);
 								}));
 					}),
 					IsEnabled = () => sceneContext.EditableScene
