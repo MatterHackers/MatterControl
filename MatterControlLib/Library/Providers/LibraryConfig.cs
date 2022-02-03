@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
+		public DesignAppsCollectionContainer DesignAppsCollectionContainer { get; internal set; }
 
 		public SafeList<LibraryAction> MenuExtensions { get; } = new SafeList<LibraryAction>();
 
@@ -141,7 +141,9 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer RootLibaryContainer { get; }
 
-		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer originalThumbnail, int thumbWidth, int thumbHeight, Action<ImageBuffer> resizedImage)
+        public ComputerCollectionContainer ComputerCollectionContainer { get; internal set; }
+
+        public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer originalThumbnail, int thumbWidth, int thumbHeight, Action<ImageBuffer> resizedImage)
 		{
 			var processingImage = originalThumbnail;
 			// Resize canvas to target as fallback

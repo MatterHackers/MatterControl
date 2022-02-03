@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using System;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface IContentStore
+	public interface IContentStore : IDisposable
 	{
 		void Save(ILibraryItem item, IObject3D content);
 	}

@@ -483,5 +483,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				primaryActionsPanel.RemoveChildren();
 			}
 		}
-	}
+
+        public void Dispose()
+        {
+        }
+    }
 }

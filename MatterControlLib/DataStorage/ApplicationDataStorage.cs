@@ -111,6 +111,10 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string PrintHistoryPath => EnsurePath(_printHistoryPath);
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+		
+		public string MyDocumentsDirectory { get; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+		
+		public string DesktopDirectory { get; } = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
 		public string CustomLibraryFoldersPath => Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
 

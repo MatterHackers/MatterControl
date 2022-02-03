@@ -799,7 +799,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 
 					ApplicationController.Instance.BlinkTab(
-						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PartTabPage));
+						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is DesignTabPage));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -810,7 +810,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						&& listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink))
 						&& !isFolder
-						&& ApplicationController.Instance.MainView.TabControl.AllTabs.Any(t => t.TabContent is PartTabPage);
+						&& ApplicationController.Instance.MainView.TabControl.AllTabs.Any(t => t.TabContent is DesignTabPage);
 				}
 			});
 

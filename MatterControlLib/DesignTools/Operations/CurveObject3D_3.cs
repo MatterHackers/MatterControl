@@ -112,6 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var distance = diameter / 2 + sourceAabb.YSize / 2;
 			var center = sourceAabb.Center + new Vector3(0, BendDirection == BendDirections.Bend_Up ? distance : -distance, 0);
 			center.X -= sourceAabb.XSize / 2 - (startPercent / 100.0) * sourceAabb.XSize;
+			center = Vector3.Zero;//.Transform(Matrix.Inverted);
 
 			// render the top and bottom rings
 			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
@@ -212,8 +213,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationTokenSource) =>
 				{
-					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
+					this.cancellationToken = cancellationTokenSource;
 					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+
+					// If this is the first build (the only child is the source container), fix the aabb.
+					var firstBuild = this.Children.Count == 1;
+					var initialAabb = this.GetAxisAlignedBoundingBox();
 
 					var radius = diameter / 2;
 					var circumference = MathHelper.Tau * radius;
@@ -290,9 +295,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = transformedMesh
 						};
+
 						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
-						curvedChild.Visible = true;
-						curvedChild.Translate(new Vector3(rotationCenter));
+
 						if (BendDirection == BendDirections.Bend_Down)
 						{
 							curvedChild.Translate(0, -sourceAabb.YSize - diameter, 0);
@@ -308,6 +313,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						list.AddRange(curvedChildren);
 					});
+
+					if (firstBuild)
+					{
+						var postAabb = this.GetAxisAlignedBoundingBox();
+						this.Matrix *= Matrix4X4.CreateTranslation(initialAabb.Center.X - postAabb.Center.X,
+							initialAabb.MinXYZ.Y - postAabb.MinXYZ.Y,
+							initialAabb.MinXYZ.Z - postAabb.MinXYZ.Z);
+					}
 
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>

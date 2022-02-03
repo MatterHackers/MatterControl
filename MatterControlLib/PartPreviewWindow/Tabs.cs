@@ -35,6 +35,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -461,10 +462,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"Cancel Print".Localize(),
 						"Continue Printing".Localize());
 				}
+				else if (this.TabContent is DesignTabPage partTab
+					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
+					&& sceneContext.HasUnsavedChanges)
+				{
+					StyledMessageBox.ShowYNCMessageBox(
+						(response) =>
+						{
+							switch (response)
+							{
+								case StyledMessageBox.ResponseType.YES:
+									UiThread.RunOnIdle(async () =>
+									{
+										await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+										this.CloseClicked?.Invoke(this, null);
+										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+										this.parentTabControl.CloseTab(this);
+									});
+									break;
+
+								case StyledMessageBox.ResponseType.NO:
+									UiThread.RunOnIdle(() =>
+									{
+										this.CloseClicked?.Invoke(this, null);
+										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+										this.parentTabControl?.CloseTab(this);
+									});
+									break;
+							}
+						},
+						"Wolud you like to save changes before closing?".Localize(),
+						"Save Changes?".Localize(),
+						"Save Changes".Localize(),
+						"Discard Changes".Localize(),
+						"Cancel".Localize());
+				}
 				else
 				{
 					this.CloseClicked?.Invoke(this, null);
-
 					// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
 					this.parentTabControl?.CloseTab(this);
 				}
@@ -709,7 +744,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public string Title
+        public override string Text
 		{
 			get => tabPill?.Text;
 			set
@@ -717,6 +752,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (tabPill != null)
 				{
 					tabPill.Text = value;
+				}
+			}
+		}
+
+        public override string ToolTipText
+		{
+			get => tabPill?.ToolTipText;
+			set
+			{
+				if (tabPill != null)
+				{
+					tabPill.ToolTipText = value;
 				}
 			}
 		}

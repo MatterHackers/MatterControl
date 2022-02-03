@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					newTab = this.CreatePartTab(workspace, false);
+					newTab = this.CreateDesignTab(workspace, false);
 				}
 
 				if (newTab.Key == ApplicationController.Instance.MainTabKey)
@@ -404,6 +404,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BorderColor = theme.SlightShade,
 				Width = 200 * GuiWidget.DeviceScale
 			};
+
 			statusBar.AddChild(stretchStatusPanel);
 
 			var panelBackgroundColor = theme.MinimalShade.WithAlpha(10);
@@ -454,13 +455,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
-			var newTab = CreatePartTab(workspace, true);
+			var newTab = CreateDesignTab(workspace, true);
 			tabControl.ActiveTab = newTab;
 		}
 
 		private void TabControl_ActiveTabChanged(object sender, EventArgs e)
 		{
-			if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
+			if (this.tabControl.ActiveTab?.TabContent is DesignTabPage tabPage)
 			{
 				var dragDropData = ApplicationController.Instance.DragDropData;
 
@@ -553,7 +554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Create printer or part tab
 				bool isPrinter = activePrinter?.Settings.PrinterSelected == true;
-				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : CreatePartTab(workspace, false);
+				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : CreateDesignTab(workspace, false);
 
 				if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
 				{
@@ -575,26 +576,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					tabControl.CloseTab(tab);
 				}
-			}
-		}
-
-        public void HookupNameChangeCallback(ChromeTab partTab, PartWorkspace workspace)
-        {
-			var sourceItem = workspace.SceneContext?.EditContext?.SourceItem;
-
-			if (sourceItem != null)
-			{
-				async void UpdateTabName(object s, EventArgs e)
-				{
-					partTab.Title = sourceItem.Name;
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(false);
-				}
-
-				sourceItem.NameChanged += UpdateTabName;
-
-				partTab.Closed += (s, e) => sourceItem.NameChanged -= UpdateTabName;
-
-				partTab.Title = sourceItem.Name;
 			}
 		}
 
@@ -851,7 +832,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
-			var newTab = CreatePartTab(workspace, true);
+			var newTab = CreateDesignTab(workspace, true);
 			tabControl.ActiveTab = newTab;
 
 			if (addPhilToBed)
@@ -868,13 +849,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.MainTabKey = workspace.Name;
 		}
 
-		public ChromeTab CreatePartTab(PartWorkspace workspace, bool saveLayout)
+		private static void HookupNameChangeCallback(ChromeTab partTab, PartWorkspace workspace)
+		{
+			var sourceItem = workspace.SceneContext?.EditContext?.SourceItem;
+
+			if (sourceItem != null)
+			{
+				void UpdateTabName(object s, EventArgs e)
+				{
+					partTab.Text = sourceItem.Name;
+					if (workspace.SceneContext.EditContext.SourceItem is FileSystemFileItem fileSystemFileItem)
+                    {
+						partTab.ToolTipText = fileSystemFileItem.FilePath;
+					}
+
+					ApplicationController.Instance.PersistOpenTabsLayout();
+				}
+
+				var lastSourceItem = sourceItem;
+				void SourceItemChanged(object s, EventArgs e)
+                {
+					lastSourceItem.NameChanged -= UpdateTabName;
+					lastSourceItem = workspace.SceneContext.EditContext.SourceItem;
+					lastSourceItem.NameChanged += UpdateTabName;
+					UpdateTabName(s, e);
+				}
+
+				workspace.SceneContext.EditContext.SourceItemChanged += SourceItemChanged;
+				sourceItem.NameChanged += UpdateTabName;
+				workspace.SceneContext.SceneLoaded += UpdateTabName;
+
+				partTab.Closed += (s, e) =>
+				{
+					workspace.SceneContext.EditContext.SourceItemChanged -= SourceItemChanged;
+					sourceItem.NameChanged -= UpdateTabName;
+					workspace.SceneContext.SceneLoaded -= UpdateTabName;
+				};
+
+				UpdateTabName(null, null);
+			}
+		}
+
+		public ChromeTab CreateDesignTab(PartWorkspace workspace, bool saveLayout)
 		{
 			var partTab = new ChromeTab(
 				workspace.Name,
 				workspace.Name,
 				tabControl,
-				new PartTabPage(workspace, theme, ""),
+				new DesignTabPage(workspace, theme, ""),
 				theme,
 				StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor))
 			{
@@ -951,19 +973,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
 				partTab.Width -= 1;
-
-				// wait for this size change to take effect and update the tool tip
-				partTab.BoundsChanged += (s, e) =>
-				{
-					if (partTab.Width < partTab.MaximumSize.X)
-					{
-						partTab.ToolTipText = textWidget.Text;
-					}
-					else
-					{
-						partTab.ToolTipText = "";
-					}
-				};
 			}
 
 			partTab.HAnchor = HAnchor.Stretch;
@@ -1003,8 +1012,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.Printer.Settings.ID == printerSettings.ID) as ChromeTab;
 				if (printerTab != null)
 				{
-					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);
-					printerTab.ToolTipText = printerTab.Title;
+					printerTab.Text = printerSettings.GetValue(SettingsKey.printer_name);
+					// printerTab.ToolTipText = printerTab.Text;
 				}
 			}
 		}

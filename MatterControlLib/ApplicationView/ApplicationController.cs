@@ -180,22 +180,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, destinationContainer) =>
+								(newName, container) =>
 								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(selectedItem)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
+									sceneContext.Rename(newName);
 								}));
 					}),
 			 		IsEnabled = () => sceneContext.EditableScene
@@ -289,17 +276,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task PersistUserWorkspaceTabs(bool saveSceneChanges)
+		public void PersistOpenTabsLayout()
 		{
-			if (saveSceneChanges)
-			{
-				// Persist all pending changes in all workspaces to disk
-				foreach (var workspace in this.Workspaces.ToArray())
-				{
-					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
-				}
-			}
-
 			// Project workspace definitions to serializable structure
 			var workspaces = this.Workspaces
 				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
@@ -330,8 +308,21 @@ namespace MatterHackers.MatterControl
 						{
 							NullValueHandling = NullValueHandling.Ignore
 						});
-				// Persist workspace definitions to disk
+				
+				// Persist workspace definition to disk
 				File.WriteAllText(ProfileManager.Instance.OpenTabsPath, content);
+			}
+		}
+
+		public async Task PersistPrintTabsContent()
+		{
+			// Persist all pending changes in all workspaces to disk
+			foreach (var workspace in this.Workspaces.ToArray())
+			{
+				if (workspace.Printer != null)
+				{
+					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+				}
 			}
 		}
 
@@ -443,16 +434,15 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		public void OnWorkspacesChanged(WorkspacesChangedEventArgs e)
+		public void OnWorkspacesChanged(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.WorkspacesChanged?.Invoke(this, e);
+			this.WorkspacesChanged?.Invoke(this, new WorkspacesChangedEventArgs(
+				workspace,
+				operationType));
 
-			if (e.Operation != WorkspacesChangedEventArgs.OperationType.Restore)
+			if (operationType != WorkspacesChangedEventArgs.OperationType.Restore)
 			{
-				UiThread.RunOnIdle(async () =>
-				{
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
-				});
+				Instance.PersistOpenTabsLayout();
 			}
 		}
 
@@ -481,10 +471,7 @@ namespace MatterHackers.MatterControl
 				{
 					this.Workspaces.Remove(workspace);
 
-					this.OnWorkspacesChanged(
-						new WorkspacesChangedEventArgs(
-							workspace,
-							WorkspacesChangedEventArgs.OperationType.Remove));
+					this.OnWorkspacesChanged(workspace, WorkspacesChangedEventArgs.OperationType.Remove);
 				}
 			}
 
@@ -679,22 +666,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, destinationContainer) =>
+								async (newName, container) =>
 								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(sceneContext.Scene)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
+									sceneContext.Rename(newName);
 								}));
 					}),
 					IsEnabled = () => sceneContext.EditableScene
@@ -828,33 +802,64 @@ namespace MatterHackers.MatterControl
 
 		private void InitializeLibrary()
 		{
-			if (Directory.Exists(ApplicationDataStorage.Instance.DownloadsDirectory))
+			this.Library.ComputerCollectionContainer = new ComputerCollectionContainer();
+
+			this.Library.RegisterContainer(
+				new DynamicContainerLink(
+					"Computer".Localize(),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "computer_icon.png")),
+					() => this.Library.ComputerCollectionContainer));
+
+			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+			if (rootLibraryCollection != null)
+			{
+				var forceAddLocalLibrary = false;
+#if DEBUG
+				forceAddLocalLibrary = true;
+#endif
+				// only add the local library if there are items in it
+				var localLibrary = new SqliteLibraryContainer(rootLibraryCollection.Id);
+				localLibrary.Load();
+				if (forceAddLocalLibrary || localLibrary.ChildContainers.Any() || localLibrary.Items.Any())
+				{
+					this.Library.RegisterContainer(
+						new DynamicContainerLink(
+							"Local Library".Localize(),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "local_library_icon.png")),
+							() => localLibrary));
+				}
+			}
+
+			var forceAddQueue = false;
+#if DEBUG
+			forceAddQueue = true;
+#endif
+			// only add the queue if there are items in it
+			var queueItems = QueueData.Instance.PrintItems.ToList();
+			if (forceAddQueue || queueItems.Any())
 			{
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
-						"Downloads".Localize(),
+						"Print Queue".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "download_icon.png")),
-						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
-						{
-							UseIncrementedNameDuringTypeChange = true,
-							DefaultSort = new LibrarySortBehavior()
-							{
-								SortKey = SortKey.ModifiedDate,
-							}
-						}));
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
+						() => new PrintQueueContainer()));
 			}
 
-			this.Library.LibraryCollectionContainer = new LibraryCollectionContainer();
-
+			this.Library.DesignAppsCollectionContainer = new DesignAppsCollectionContainer();
 			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					"Library".Localize(),
+					"Design Apps".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-					StaticData.Instance.LoadIcon(Path.Combine("Library", "library_icon.png")),
-					() => this.Library.LibraryCollectionContainer));
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "design_apps_icon.png")),
+					() => this.Library.DesignAppsCollectionContainer)
+                {
+					IsReadOnly = true
+                });
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{
@@ -959,7 +964,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (!restoringWorkspaces)
 				{
-					UiThread.RunOnIdle(async () => await PersistUserWorkspaceTabs(false));
+					PersistOpenTabsLayout();
 				}
 			};
 
@@ -1606,11 +1611,7 @@ namespace MatterHackers.MatterControl
 
 		public void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.OnWorkspacesChanged(
-					new WorkspacesChangedEventArgs(
-						workspace,
-						operationType));
-
+			this.OnWorkspacesChanged(workspace, operationType);
 			this.Workspaces.Add(workspace);
 		}
 
@@ -2140,11 +2141,13 @@ namespace MatterHackers.MatterControl
 						if (settingsFilePath != null)
 						{
 							using (var file = File.OpenWrite(archivePath))
-							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 							{
-								zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-								zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
-								zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+								{
+									zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
+									zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
+									zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+								}
 							}
 						}
 					}

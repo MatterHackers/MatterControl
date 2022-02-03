@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				case Align.Origin:
 					// find the origin in world space of the item
-					var itemOrigin = Vector3Ex.Transform(Vector3.Zero, item.WorldMatrix());
+					var itemOrigin = Vector3Ex.Transform(Vector3.Zero, item.WorldMatrix(this));
 					translate[axis] = alignTo - itemOrigin[axis] + offset;
 					break;
 			}
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return anchorBounds.MaxXYZ[axis];
 
 				case Align.Origin:
-					return Vector3Ex.Transform(Vector3.Zero, SelectedObject.WorldMatrix())[axis];
+					return Vector3Ex.Transform(Vector3.Zero, SelectedObject.WorldMatrix(this))[axis];
 
 				default:
 					throw new NotImplementedException();

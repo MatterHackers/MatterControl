@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -251,7 +253,7 @@ namespace MatterHackers.MatterControl
 				else if (printingCount > 0)
 				{
 					caption = "Abort Print".Localize();
-					message = "Are you sure you want to abort the current print and close MatterControl?".Localize();
+					message = "Are you sure you want to abort the current print(s) and close MatterControl?".Localize();
 				}
 			}
 
@@ -293,22 +295,106 @@ namespace MatterHackers.MatterControl
 			}
 			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
-				// cancel the close so that we can save all our active work spaces
-				eventArgs.Cancel = true;
-
-				UiThread.RunOnIdle(async () =>
+				// Check if there are unsaved design spaces
+				var unsavedWorkspaces = new List<PartWorkspace>();
+				foreach (var workspace in ApplicationController.Instance.Workspaces)
 				{
-					var application = ApplicationController.Instance;
+					if (workspace.SceneContext?.Scene?.HasUnsavedChanges == true
+						&& workspace.Printer == null)
+                    {
+						unsavedWorkspaces.Add(workspace);
+					}
+				}
 
-					await ApplicationController.Instance.PersistUserWorkspaceTabs(true);
+				void SavePrinterWorkspacesAndClose()
+                {
+					// cancel the close so that we can save all our active work spaces
+					eventArgs.Cancel = true;
 
-					application.ApplicationExiting = true;
+					UiThread.RunOnIdle(async () =>
+					{
+						var application = ApplicationController.Instance;
 
-					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
-					application.Shutdown();
+						ApplicationController.Instance.PersistOpenTabsLayout();
+						await ApplicationController.Instance.PersistPrintTabsContent();
 
-					this.CloseOnIdle();
-				});
+						application.ApplicationExiting = true;
+
+						// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
+						application.Shutdown();
+
+						this.CloseOnIdle();
+					});
+				}
+
+				if (unsavedWorkspaces.Count > 0)
+				{
+					exitDialogOpen = true;
+
+					// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
+					eventArgs.Cancel = true;
+
+					// Ask if the user wants to save all workspaces, close without save, or cancel.
+					UiThread.RunOnIdle(() =>
+					{
+						StyledMessageBox.ShowYNCMessageBox(
+							(response) =>
+							{
+								exitDialogOpen = false;
+
+								switch (response)
+								{
+									case StyledMessageBox.ResponseType.YES:
+										UiThread.RunOnIdle(async () =>
+										{
+											var hadSaveError = false;
+											// Persist each design workspaces to disk (this may require getting a filename
+											foreach (var workspace in ApplicationController.Instance.Workspaces.ToArray())
+											{
+												if (workspace.Printer == null)
+												{
+													// if we have a filename
+													// save
+													// else
+													// switch to the tab we are about to save
+													// ask the user to give us a filname
+													// if no filename
+													// abort the exit procedure
+													await ApplicationController.Instance.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+													// check for error or abort
+													hadSaveError |= workspace.SceneContext.HadSaveError;
+												}
+											}
+
+											if (!hadSaveError)
+											{
+												// make sure we also save the printer workspaces as we close
+												SavePrinterWorkspacesAndClose();
+											}
+										});
+										break;
+
+									case StyledMessageBox.ResponseType.NO:
+										UiThread.RunOnIdle(() =>
+										{
+											// make sure we still save the printer workspaces
+											SavePrinterWorkspacesAndClose();
+										});
+										break;
+								}
+							},
+							unsavedWorkspaces.Count == 1 ? "You have one unsave design ({0}). Wolud you like to save changes before closing?".Localize().FormatWith(unsavedWorkspaces[0].Name)
+							: "You have {0} unsave designs. Wolud you like to save changes before closing?".Localize().FormatWith(unsavedWorkspaces.Count),
+							"Save Changes?".Localize(),
+							"Save Changes".Localize(),
+							"Discard Changes".Localize(),
+							"Cancel".Localize());
+					});
+				}
+				else
+				{
+					SavePrinterWorkspacesAndClose();
+				}
 			}
 		}
 

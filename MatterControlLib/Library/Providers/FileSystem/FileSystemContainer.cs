@@ -30,12 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -75,6 +79,91 @@ namespace MatterHackers.MatterControl.Library
 
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
+			}
+		}
+
+		public override void Save(ILibraryItem item, IObject3D content)
+		{
+			if (item is FileSystemFileItem fileItem)
+			{
+				if (fileItem.FilePath.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+				{
+					// save using the normal uncompressed mcx file
+					base.Save(item, content);
+				}
+				else
+				{
+					ApplicationController.Instance.Tasks.Execute(
+						"Saving Changes".Localize(),
+						null,
+						async (reporter, cancellationTokenSource) =>
+						{
+							var status = new ProgressStatus()
+							{
+								Status = "Saving Asset".Localize()
+							};
+
+							// make sure we have all the mesh items in the cache for saving to the archive
+							await content.PersistAssets((percentComplete, text) =>
+							{
+								status.Progress0To1 = percentComplete * .9;
+								reporter.Report(status);
+							}, forceIntoCache: true);
+
+							var backupName = "";
+							// rename any existing file
+							if (File.Exists(fileItem.FilePath))
+							{
+								var directory = Path.GetDirectoryName(fileItem.FilePath);
+								var filename = Path.GetFileNameWithoutExtension(fileItem.FilePath);
+								backupName = Path.Combine(directory, Path.ChangeExtension(filename + "_bak", ".mcx"));
+								File.Move(fileItem.FilePath, backupName);
+							}
+
+							var persistableItems = content.GetPersistable(true);
+							var persistCount = persistableItems.Count();
+							var savedCount = 0;
+
+							// save to a binary mcx file (a zip with a scene.mcx and an assets folder)
+							using (var file = File.OpenWrite(fileItem.FilePath))
+							{
+								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+								{
+									using (var writer = new StreamWriter(zip.CreateEntry("scene.mcx").Open()))
+									{
+										writer.Write(content.ToJson());
+									}
+
+									foreach (var persistMeshItem in persistableItems)
+									{
+										var sourcePath = persistMeshItem.MeshPath;
+										if (!File.Exists(sourcePath))
+										{
+											sourcePath = Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, Path.GetFileName(persistMeshItem.MeshPath));
+										}
+										if (File.Exists(sourcePath))
+										{
+											var assetName = Path.Combine("Assets", Path.GetFileName(sourcePath));
+											zip.CreateEntryFromFile(sourcePath, assetName);
+										}
+
+										savedCount++;
+										status.Progress0To1 = .9 + .1 * (savedCount / persistCount);
+										reporter.Report(status);
+									}
+								}
+							}
+
+							// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+							this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
+
+							// remove the existing file after a successfull save
+							if (!string.IsNullOrEmpty(backupName))
+							{
+								File.Delete(backupName);
+							}
+						});
+				}
 			}
 		}
 

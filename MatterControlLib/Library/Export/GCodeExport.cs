@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					{
 						status.Progress0To1 = percentComplete;
 						progress.Report(status);
-					}, publishAssets: false);
+					}, forceIntoCache: false);
 				}
 				else if (assetStream != null)
 				{
