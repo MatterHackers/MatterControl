@@ -136,7 +136,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBed()
 					.ClickByName("Save Menu SplitButton", offset: new Agg.Point2D(30, 0))
 					.ClickByName("Save As Menu Item")
-					.DoubleClickByName("Library Row Item Collection")
 					.DoubleClickByName("Local Library Row Item Collection")
 					.ClickByName("Design Name Edit Field")
 					.Type("Cube Design")
@@ -148,7 +147,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// open the design for editing
 				testRunner.ClickByName("Library Tab")
-					.DoubleClickByName("Library Row Item Collection")
 					.DoubleClickByName("Local Library Row Item Collection")
 					.DoubleClickByName("Row Item Cube Design")
 					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 6);
