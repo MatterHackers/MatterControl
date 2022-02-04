@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -67,13 +67,22 @@ namespace MatterHackers.MatterControl
 			};
 			itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer)
+				if (this.acceptButton.Enabled)
 				{
-					acceptButton.InvokeClick();
-					// And disable it so there are not multiple fires. No need to re-enable, the dialog is going to close.
-					this.AcceptButton.Enabled = false;
+					if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer)
+					{
+						acceptButton.InvokeClick();
+						// And disable it so there are not multiple fires. No need to re-enable, the dialog is going to close.
+						this.AcceptButton.Enabled = false;
+					}
 				}
 			};
+			itemNameWidget.ActualTextEditWidget.TextChanged += (s, e) =>
+			{
+				acceptButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer
+					&& !string.IsNullOrWhiteSpace(itemNameWidget.ActualTextEditWidget.Text);
+			};
+
 			contentRow.AddChild(itemNameWidget);
 
 			var icon = StaticData.Instance.LoadIcon("fa-folder-new_16.png", 16, 16).SetToColor(ApplicationController.Instance.MenuTheme.TextColor);

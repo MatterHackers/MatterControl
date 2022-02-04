@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,15 @@ namespace MatterHackers.PolygonMesh.UnitTests
 	[TestFixture, Category("Agg.PolygonMesh"), RunInApplicationDomain]
 	public class SceneTests
 	{
+		[SetUp]
+		public void SetupUserSettings()
+		{
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "MatterControl", "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			UserSettings.Instance.set(UserSettingsKey.PublicProfilesSha, "0"); //Clears DB so we will download the latest list
+		}
+
 		[Test]
 		public void SaveSimpleScene()
 		{
@@ -242,11 +251,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public async Task ResavedSceneRemainsConsistent()
 		{
-#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-#endif
 			AssetObject3D.AssetManager = new AssetManager();
 
 			var sceneContext = new BedConfig(null);
@@ -262,13 +266,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Set directory for asset resolution
 			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+			Directory.Delete(Object3D.AssetsPath, true);
 			Directory.CreateDirectory(Object3D.AssetsPath);
-
-			// Empty temp folder
-			foreach (string tempFile in Directory.GetFiles(tempPath).ToList())
-			{
-				File.Delete(tempFile);
-			}
 
 			scene.Save(filePath);
 			Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
@@ -290,8 +289,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			});
 
 			// Serialize and compare the two trees
-			string onDiskData = loadedItem.ToJson();
-			string inMemoryData = scene.ToJson();
+			string onDiskData = loadedItem.ToJson().Result;
+			string inMemoryData = scene.ToJson().Result;
 
 			//File.WriteAllText(@"c:\temp\file-a.txt", onDiskData);
 			//File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
@@ -301,7 +300,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Save the scene a second time, validate that things remain the same
 			scene.Save(filePath);
-			onDiskData = loadedItem.ToJson();
+			onDiskData = loadedItem.ToJson().Result;
 
 			Assert.IsTrue(inMemoryData == onDiskData);
 

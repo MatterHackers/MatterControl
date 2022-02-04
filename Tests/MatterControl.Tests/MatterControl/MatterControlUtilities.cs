@@ -230,6 +230,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner.ClickByName(partNameToSelect);
 		}
 
+		public static AutomationRunner ClickDiscardChanges(this AutomationRunner testRunner)
+		{
+			return testRunner.ClickByName("No Button");
+		}
+
 		public static AutomationRunner WaitForFirstDraw(this AutomationRunner testRunner)
 		{
 			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
@@ -626,45 +631,40 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.EnsureContentMenuOpen();
 
-			switch (libraryRowItemName)
+			if (!testRunner.NameExists(libraryRowItemName, .2))
 			{
-				case "SD Card Row Item Collection":
-					if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
-					{
-						testRunner.DoubleClickByName($"{printer.PrinterName} Row Item Collection");
+				// go back to the home section
+				testRunner.ClickByName("Bread Crumb Button Home")
+					.Delay();
 
-						testRunner.Delay();
+				switch (libraryRowItemName)
+				{
+					case "SD Card Row Item Collection":
+						if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
+						{
+							testRunner.DoubleClickByName($"{printer.PrinterName} Row Item Collection")
+								.Delay();
+						}
 
-						testRunner.ClickByName(libraryRowItemName);
-					}
+						break;
 
-					break;
-
-				case "Calibration Parts Row Item Collection":
-				case "Primitives Row Item Collection":
-					if (!testRunner.NameExists("Design Apps Row Item Collection"))
-					{
-						testRunner.ClickByName("Bread Crumb Button Home")
-							.Delay();
-					}
-
-					// If visible, navigate into Libraries container before opening target
-					if (testRunner.NameExists("Design Apps Row Item Collection"))
-					{
+					case "Calibration Parts Row Item Collection":
+					case "Primitives Row Item Collection":
+						// If visible, navigate into Libraries container before opening target
 						testRunner.DoubleClickByName("Design Apps Row Item Collection")
 							.Delay();
-					}
-					break;
+						break;
 
-				case "Cloud Library Row Item Collection":
-				case "Print Queue Row Item Collection":
-				case "Local Library Row Item Collection":
-					if (!testRunner.NameExists(libraryRowItemName))
-					{
-						testRunner.ClickByName("Bread Crumb Button Home")
+					case "Downloads Row Item Collection":
+						testRunner.DoubleClickByName("Computer Row Item Collection")
 							.Delay();
-					}
-					break;
+						break;
+
+					case "Cloud Library Row Item Collection":
+					case "Print Queue Row Item Collection":
+					case "Local Library Row Item Collection":
+						break;
+				}
 			}
 
 			testRunner.DoubleClickByName(libraryRowItemName);
@@ -675,7 +675,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			if (!testRunner.WaitForName("FolderBreadCrumbWidget", secondsToWait: 0.2))
 			{
-				testRunner.ClickByName("Add Content Menu");
+				testRunner.ClickByName("Add Content Menu")
+					.Delay();
 			}
 
 			return testRunner;
@@ -923,7 +924,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
-				closeWindow: () =>
+				closeWindow: (testRunner) =>
 				{
 					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
@@ -934,6 +935,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					rootSystemWindow.Close();
+
+					testRunner.Delay();
+					if (testRunner.NameExists("No Button"))
+					{
+						testRunner.ClickDiscardChanges();
+					}
 				});
 		}
 

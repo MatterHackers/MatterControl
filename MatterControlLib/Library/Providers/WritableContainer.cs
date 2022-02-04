@@ -49,16 +49,7 @@ namespace MatterHackers.MatterControl.Library
 
         public abstract void Remove(IEnumerable<ILibraryItem> items);
 
-        public virtual void Save(ILibraryItem item, IObject3D content)
-        {
-            if (item is FileSystemFileItem fileItem)
-            {
-                // Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
-                File.WriteAllText(fileItem.FilePath, content.ToJson());
-
-                this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
-            }
-        }
+        public abstract void Save(ILibraryItem item, IObject3D content);
 
         public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
         {

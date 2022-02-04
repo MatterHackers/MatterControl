@@ -89,7 +89,10 @@ namespace MatterHackers.MatterControl.Library
 				if (fileItem.FilePath.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
 				{
 					// save using the normal uncompressed mcx file
-					base.Save(item, content);
+					// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+					File.WriteAllText(fileItem.FilePath, content.ToJson().Result);
+
+					this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
 				}
 				else
 				{
@@ -103,22 +106,33 @@ namespace MatterHackers.MatterControl.Library
 								Status = "Saving Asset".Localize()
 							};
 
+							var directory = Path.GetDirectoryName(fileItem.FilePath);
+							var filename = Path.GetFileNameWithoutExtension(fileItem.FilePath);
+							var backupName = Path.Combine(directory, Path.ChangeExtension(filename + "_bak", ".mcx"));
+
+							try
+							{
+								if (File.Exists(backupName))
+								{
+									File.Delete(backupName);
+								}
+
+								// rename any existing file
+								if (File.Exists(fileItem.FilePath))
+								{
+									File.Move(fileItem.FilePath, backupName);
+								}
+							}
+							catch
+							{
+							}
+
 							// make sure we have all the mesh items in the cache for saving to the archive
 							await content.PersistAssets((percentComplete, text) =>
 							{
 								status.Progress0To1 = percentComplete * .9;
 								reporter.Report(status);
 							}, true);
-
-							var backupName = "";
-							// rename any existing file
-							if (File.Exists(fileItem.FilePath))
-							{
-								var directory = Path.GetDirectoryName(fileItem.FilePath);
-								var filename = Path.GetFileNameWithoutExtension(fileItem.FilePath);
-								backupName = Path.Combine(directory, Path.ChangeExtension(filename + "_bak", ".mcx"));
-								File.Move(fileItem.FilePath, backupName);
-							}
 
 							var persistableItems = content.GetPersistable(true);
 							var persistCount = persistableItems.Count();
@@ -147,9 +161,13 @@ namespace MatterHackers.MatterControl.Library
 										reporter.Report(status);
 									}
 
-									using (var writer = new StreamWriter(zip.CreateEntry("scene.mcx").Open()))
+									var sceneEntry = zip.CreateEntry("scene.mcx");
+									using (var sceneStream = sceneEntry.Open())
 									{
-										writer.Write(content.ToJson());
+										using (var writer = new StreamWriter(sceneStream))
+										{
+											writer.Write(await content.ToJson());
+										}
 									}
 								}
 							}
@@ -158,10 +176,14 @@ namespace MatterHackers.MatterControl.Library
 							this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
 
 							// remove the existing file after a successfull save
-							if (!string.IsNullOrEmpty(backupName))
+							try
 							{
-								File.Delete(backupName);
+								if (File.Exists(backupName))
+								{
+									File.Delete(backupName);
+								}
 							}
+							catch { }
 						});
 				}
 			}

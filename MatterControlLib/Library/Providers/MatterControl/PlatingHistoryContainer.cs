@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Library
 			var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
 			string mcxPath = Path.Combine(this.FullPath, filename); 
 			
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
+			File.WriteAllText(mcxPath, new Object3D().ToJson().Result);
 
 			return new FileSystemFileItem(mcxPath);
 		}

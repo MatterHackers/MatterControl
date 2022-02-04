@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook"), "Named widget should exist after add(Rook)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Named widget should exist after add(Rook)");
 
 				return Task.CompletedTask;
 			});

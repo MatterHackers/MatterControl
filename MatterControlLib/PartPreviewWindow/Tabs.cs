@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -463,8 +464,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"Continue Printing".Localize());
 				}
 				else if (this.TabContent is DesignTabPage partTab
-					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene sceneContext
-					&& sceneContext.HasUnsavedChanges)
+					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene scene
+					&& scene.HasUnsavedChanges)
 				{
 					StyledMessageBox.ShowYNCMessageBox(
 						(response) =>
@@ -474,12 +475,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								case StyledMessageBox.ResponseType.YES:
 									UiThread.RunOnIdle(async () =>
 									{
-										await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+										var sceneContext = partTab.Workspace.SceneContext;
+										if (sceneContext.EditContext.ContentStore == null)
+										{
+											// If we are about to close a tab that has never been saved it will need a name before it can actually save
+											// Open up the save as dialog rather than continue with saving and closing
+											DialogWindow.Show(
+												new SaveAsPage(
+													(container, newName) =>
+													{
+														sceneContext.SaveAs(container, newName);
+														// If we succeed at saveing the file go ahead and finish closing this tab
+														this.CloseClicked?.Invoke(this, null);
+														// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+														this.parentTabControl.CloseTab(this);
+													}));
+										}
+										else
+										{
+											await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
 
-
-										this.CloseClicked?.Invoke(this, null);
-										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
-										this.parentTabControl.CloseTab(this);
+											this.CloseClicked?.Invoke(this, null);
+											// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+											this.parentTabControl.CloseTab(this);
+										}
 									});
 									break;
 

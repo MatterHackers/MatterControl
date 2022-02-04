@@ -1,4 +1,33 @@
-﻿using System.IO;
+﻿/*
+Copyright (c) 2022, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -56,7 +85,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Require(() => scene.Children.Count == 1, "Should have 1 part (the phil)");
 
 				var tempFilaname = "Temp Test Save.mcx";
-				var tempFullPath = Path.Combine(ApplicationDataStorage.Instance.MyDocumentsDirectory, tempFilaname);
+				var tempFullPath = Path.Combine(ApplicationDataStorage.Instance.DownloadsDirectory, tempFilaname);
 
 				// delete the temp file if it exists in the Downloads folder
 				void DeleteTempFile()
@@ -70,10 +99,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				DeleteTempFile();
 
 				// Make sure the tab is named 'New Design'
-				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
+				testRunner.Require(() => systemWindow.GetVisibleWigetWithText("New Design") != null, "Must have New Design");
+
+				// add a new part to the bed
+				testRunner.AddItemToBed();
 
 				// Click the save button
-				testRunner.ClickByName("Save Button")
+				testRunner.ClickByName("Save")
 					// Cancle the save as
 					.ClickByName("Cancel Wizard Button");
 
@@ -99,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
 
 				// Click the save button
-				testRunner.ClickByName("Save Button")
+				testRunner.ClickByName("Save")
 					// Save a temp file to the downloads folder
 					.DoubleClickByName("Computer Row Item Collection")
 					.DoubleClickByName("Downloads Row Item Collection")
@@ -119,7 +151,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Click the 'Cancel'
 					.ClickByName("Cancel Button")
 					// Click the 'Save' button
-					.ClickByName("Save Button")
+					.ClickByName("Save")
 					// Click the close button (now we have no edit it should cancel without request)
 					.ClickByName("Close Tab Button");
 
