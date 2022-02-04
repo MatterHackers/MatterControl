@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
-		public static AutomationRunner OpenEmptyPartTab(this AutomationRunner testRunner)
+		public static AutomationRunner OpenPartTab(this AutomationRunner testRunner, bool removeDefaultPhil = true)
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
@@ -250,7 +250,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Start New Design");
 			}
 
-			testRunner.VerifyAndRemovePhil();
+			if (removeDefaultPhil)
+			{
+				testRunner.VerifyAndRemovePhil();
+			}
 
 			return testRunner;
 		}

@@ -475,6 +475,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									UiThread.RunOnIdle(async () =>
 									{
 										await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, partTab.Workspace.SceneContext.SaveChanges);
+
+
 										this.CloseClicked?.Invoke(this, null);
 										// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
 										this.parentTabControl.CloseTab(this);

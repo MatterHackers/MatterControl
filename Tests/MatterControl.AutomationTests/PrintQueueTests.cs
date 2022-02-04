@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				testRunner.AddTestAssetsToLibrary(new[] { "Batman.stl" });
 

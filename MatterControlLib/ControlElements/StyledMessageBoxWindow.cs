@@ -304,6 +304,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				var yesButton = theme.CreateDialogButton(yesText);
+				yesButton.Name = "Yes Button";
 				yesButton.Click += (s, e) =>
 				{
 					// If applicable, invoke the callback
@@ -316,6 +317,7 @@ namespace MatterHackers.MatterControl
 				this.AddPageAction(yesButton, true);
 
 				var noButton = theme.CreateDialogButton(noText);
+				noButton.Name = "No Button";
 				noButton.Click += (s, e) =>
 				{
 					// If applicable, invoke the callback
@@ -328,8 +330,7 @@ namespace MatterHackers.MatterControl
 				this.AddPageAction(noButton);
 
 				this.WindowTitle = "MatterControl - " + "Please Confirm".Localize();
-				yesButton.Name = "Yes Button";
-				this.SetCancelButtonName("No Button");
+				this.SetCancelButtonName("Cancel Button");
 
 				this.AdjustTextWrap();
 			}

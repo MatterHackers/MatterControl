@@ -841,7 +841,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return theme.CreateSplitButton(new SplitButtonParams()
 			{
 				ButtonText = "Save".Localize(),
-				ButtonName = "Save",
+				ButtonName = "Save Button",
 				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16).SetToColor(theme.TextColor),
 				ButtonAction = (menuButton) =>
 				{

@@ -1,5 +1,8 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
@@ -14,7 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				testRunner.AddItemToBed();
 
@@ -29,16 +32,105 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Select3DPart("Calibration - Box.stl")
 					// Click Copy button and count Scene.Children
 					.ClickByName("Duplicate Button")
-					.WaitFor(() => scene.Children.Count == 2);
-				Assert.AreEqual(2, scene.Children.Count, "Should have 2 parts after copy");
+					.Require(() => scene.Children.Count == 2, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count Scene.Children
 				testRunner.ClickByName("Duplicate Button");
-				testRunner.WaitFor(() => scene.Children.Count > 2);
-				Assert.AreEqual(3, scene.Children.Count, "Should have 3 parts after 2nd copy");
+				testRunner.Require(() => scene.Children.Count == 3, "Should have 3 parts after 2nd copy");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 60);
+		}
+
+		[Test]
+		public async Task DesignTabFileOpperations()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.OpenPartTab(false);
+
+				// Get View3DWidget
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out SystemWindow systemWindow, 3) as View3DWidget;
+				var scene = view3D.Object3DControlLayer.Scene;
+
+				testRunner.Require(() => scene.Children.Count == 1, "Should have 1 part (the phil)");
+
+				var tempFilaname = "Temp Test Save.mcx";
+				var tempFullPath = Path.Combine(ApplicationDataStorage.Instance.MyDocumentsDirectory, tempFilaname);
+
+				// delete the temp file if it exists in the Downloads folder
+				void DeleteTempFile()
+				{
+					if (File.Exists(tempFullPath))
+					{
+						File.Delete(tempFullPath);
+					}
+				}
+
+				DeleteTempFile();
+
+				// Make sure the tab is named 'New Design'
+				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
+
+				// Click the save button
+				testRunner.ClickByName("Save Button")
+					// Cancle the save as
+					.ClickByName("Cancel Wizard Button");
+
+				// Make sure the tab is named 'New Design'
+				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
+
+				// Click the close tab button
+				testRunner.ClickByName("Close Tab Button")
+					// Select Cancel
+					.ClickByName("Cancel Button");
+
+				// Make sure the tab is named 'New Design'
+				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
+
+				// Click the close tab button
+				testRunner.ClickByName("Close Tab Button")
+					// Select 'Save'
+					.ClickByName("Yes Button")
+					// Cancel the 'Save As'
+					.ClickByName("Cancel Wizard Button");
+
+				// Make sure the window is still open and the tab is named 'New Design'
+				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText("New Design"));
+
+				// Click the save button
+				testRunner.ClickByName("Save Button")
+					// Save a temp file to the downloads folder
+					.DoubleClickByName("Computer Row Item Collection")
+					.DoubleClickByName("Downloads Row Item Collection")
+					.ClickByName("Design Name Edit Field")
+					.Type(tempFilaname)
+					.ClickByName("Accept Button");
+				// Verify it is there
+				Assert.IsTrue(File.Exists(tempFullPath));
+				// And that the tab got the name
+				Assert.IsNotNull(systemWindow.GetVisibleWigetWithText(tempFilaname));
+				// and the tooltip is right
+				Assert.IsTrue(systemWindow.GetVisibleWigetWithText(tempFilaname).ToolTipText == tempFullPath);
+				// Add a part to the bed
+				testRunner.AddItemToBed();
+				// Click the close tab button (we have an edit so it should show the save request)
+				testRunner.ClickByName("Close Tab Button")
+					// Click the 'Cancel'
+					.ClickByName("Cancel Button")
+					// Click the 'Save' button
+					.ClickByName("Save Button")
+					// Click the close button (now we have no edit it should cancel without request)
+					.ClickByName("Close Tab Button");
+
+				// Verify the tab closes without requesting save
+				testRunner.Require(() => systemWindow.GetVisibleWigetWithText(tempFilaname) == null, "The tab should have closed");
+
+				// delete the temp file if it exists in the Downloads folder
+				DeleteTempFile();
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 60);
 		}
 
 		[Test]
@@ -46,7 +138,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				testRunner.AddItemToBed();
 
@@ -63,8 +155,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 2; i <= 6; i++)
 				{
 					testRunner.ClickByName("Duplicate Button")
-						.WaitFor(() => scene.Children.Count == i);
-					Assert.AreEqual(i, scene.Children.Count, $"Should have {i} parts after copy");
+						.Require(() => scene.Children.Count == i, $"Should have {i} parts after copy");
 				}
 
 				// Get MeshGroupCount before Group is clicked
@@ -75,12 +166,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// select all
 					.Type("^a")
 					.ClickByName("Group Button")
-					.WaitFor(() => scene.Children.Count == 1);
-				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 parts after group");
+					.Require(() => scene.Children.Count == 1, $"Should have 1 parts after group");
 
 				testRunner.ClickByName("Ungroup Button")
-					.WaitFor(() => scene.Children.Count == 6);
-				Assert.AreEqual(6, scene.Children.Count, $"Should have 6 parts after ungroup");
+					.Require(() => scene.Children.Count == 6, $"Should have 6 parts after ungroup");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
@@ -91,7 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				testRunner.AddItemToBed();
 
@@ -172,4 +261,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 	}
+
+	public static class WidgetExtensions
+    {
+		/// <summary>
+		/// Search the widget stack for a widget that is both visible on screen and has it's text set to the visibleText string
+		/// </summary>
+		/// <param name="widget">The root widget to search</param>
+		/// <param name="">the name to search for</param>
+		/// <returns></returns>
+		public static GuiWidget GetVisibleWigetWithText(this GuiWidget widget, string visibleText)
+        {
+			if (widget.ActuallyVisibleOnScreen())
+			{
+				if (widget.Text == visibleText)
+				{
+					return widget;
+				}
+
+				foreach(var child in widget.Children)
+                {
+					var childWithText = GetVisibleWigetWithText(child, visibleText);
+					if (childWithText != null)
+                    {
+						return childWithText;
+                    }
+                }
+			}
+
+			return null;
+        }
+    }
 }

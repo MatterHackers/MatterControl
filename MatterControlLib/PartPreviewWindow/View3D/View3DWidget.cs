@@ -1202,7 +1202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DragOperationActive = true;
 
 			// ContentStore is null for plated gcode, call ClearPlate to exit mode and return to bed mcx
-			if (sceneContext.EditContext.ContentStore == null)
+			if (sceneContext.Printer?.Bed?.LoadedGCode != null)
 			{
 				this.ClearPlate();
 			}
