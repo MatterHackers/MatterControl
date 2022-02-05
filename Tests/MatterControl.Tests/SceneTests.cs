@@ -266,7 +266,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// Set directory for asset resolution
 			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
-			Directory.Delete(Object3D.AssetsPath, true);
+			if (Directory.Exists(Object3D.AssetsPath))
+			{
+				Directory.Delete(Object3D.AssetsPath, true);
+			}
 			Directory.CreateDirectory(Object3D.AssetsPath);
 
 			scene.Save(filePath);
