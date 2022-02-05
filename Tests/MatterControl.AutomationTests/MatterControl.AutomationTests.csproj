@@ -18,8 +18,8 @@
     <RootNamespace>MatterControl.AutomationTests</RootNamespace>
     <AssemblyName>MatterControl.AutomationTests</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-	  <RuntimeIdentifier>win</RuntimeIdentifier>
-	  <FileAlignment>512</FileAlignment>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
+    <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -70,6 +70,7 @@
     <Compile Include="PrintingTests.cs" />
     <Compile Include="LibraryContainerTests.cs" />
     <Compile Include="ReSliceTests.cs" />
+    <Compile Include="SceneUndoRedoCopyTests.cs" />
     <Compile Include="SliceSettingsTests.cs" />
     <Compile Include="SqLiteLibraryProvider.cs" />
   </ItemGroup>
