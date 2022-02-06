@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Select both items
-				testRunner.SelectListItems("Row Item Batman", "Row Item 2013-01-25_Mouthpiece_v2");
+				testRunner.SelectListItems("Row Item Batman.stl", "Row Item 2013-01-25_Mouthpiece_v2.stl");
 
 				// Remove items
 				testRunner.LibraryRemoveSelectedItem();
@@ -153,8 +153,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", .5), "Batman part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", .5), "Mouthpiece part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman.stl", .5), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);

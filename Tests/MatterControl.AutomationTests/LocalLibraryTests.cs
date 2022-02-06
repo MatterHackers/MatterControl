@@ -115,9 +115,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitForName("Batman Row Item Collection");
+				testRunner.WaitForName("Batman.zip Row Item Collection");
 
-				testRunner.DoubleClickByName("Batman Row Item Collection");
+				testRunner.DoubleClickByName("Batman.zip Row Item Collection");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Batman part should exist after adding");
 				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl"), "Mouthpiece part should exist after adding");

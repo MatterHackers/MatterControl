@@ -114,6 +114,68 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.Delay(.5);
 		}
 
+		public static AutomationRunner AddPrimitivePartsToBed(this AutomationRunner testRunner, IEnumerable<string> partNames, bool multiSelect = false)
+		{
+			// Passing in true for multiselect will simulate holding down control when clicking on each part. This will create a
+			// selection group that is added to the plate as one scene part.
+
+			// Open the library pane to force display of the overflow menu and add a widget for it to the widget hierarchy.
+			// We need this menu widget to trigger the Add to Bed menu item.
+			const string containerName = "Primitives Row Item Collection";
+			testRunner.NavigateToFolder(containerName);
+
+			var partCount = 0;
+			foreach (var partName in partNames)
+			{
+				Keyboard.SetKeyDownState(Keys.ControlKey, multiSelect);
+				foreach (var result in testRunner.GetWidgetsByName(partName))
+				{
+					// Opening the primitive parts library folder causes a second set of primitive part widgets to be created.
+					// The first set is hidden behind the expanded library pane and targeting them for a click will cause the
+					// automation runner to click in the wrong spots. Finding the correct widgets to target is a little complicated
+					// because of the layers of wrapping widgets but the widgets in the first set (which we don't want to target)
+					// are direct descendents of a ListContentView so we can eliminate those and assume whatever is left over are
+					// the widgets we want.
+
+					var partWidget = result.Widget as ListViewItemBase;
+					if (partWidget.Parent.Name == "Library ListContentView")
+					{
+						continue;
+					}
+					if (!partWidget.IsSelected)
+					{
+						testRunner.ClickWidget(partWidget);
+					}
+					partCount += 1;
+				}
+			}
+
+			if (multiSelect)
+			{
+				// Release control key so additional operations work normally.
+				Keyboard.SetKeyDownState(Keys.ControlKey, false);
+			}
+
+			testRunner.ClickByName("Print Library Overflow Menu");
+
+			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+			var scene = view3D.Object3DControlLayer.Scene;
+			var preAddCount = scene.Children.Count;
+			var postAddCount = preAddCount + (multiSelect ? 1 : partCount);
+
+			testRunner.ClickByName("Add to Bed Menu Item")
+				// wait for the objects to be added
+				.WaitFor(() => scene.Children.Count == postAddCount);
+			// wait for the objects to be done loading
+			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
+			if (insertionGroup != null)
+			{
+				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroupObject3D != null, 10);
+			}
+
+			return testRunner;
+		}
+
 		public static void ChangeSettings(this AutomationRunner testRunner,
 			IEnumerable<(string key, string value)> settings,
 			PrinterConfig printer)
@@ -496,10 +558,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
-			if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+			//if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
 				//&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
 				//&& testRunner.NameExists("Cancel Wizard Button", 1))
-				testRunner.NameExists("Cancel Wizard Button", 1))
+				//testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
@@ -829,6 +891,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual("Close Tab Button", closeWidget.Name, "Expected widget ('Close Tab Button') not found");
 
 				testRunner.ClickWidget(closeWidget);
+
+				// close the save dialog
+				testRunner.ClickByName("No Button");
 			}
 
 			return testRunner;

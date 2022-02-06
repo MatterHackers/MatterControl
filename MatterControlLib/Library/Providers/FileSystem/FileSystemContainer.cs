@@ -223,6 +223,7 @@ namespace MatterHackers.MatterControl.Library
 
 			if (directoryWatcher != null)
 			{
+				// turn them off whil ewe add the content
 				directoryWatcher.EnableRaisingEvents = false;
 			}
 
@@ -230,8 +231,8 @@ namespace MatterHackers.MatterControl.Library
 
 			await Task.Run(async () =>
 			{
-				foreach (var item in items)
-				{
+			foreach (var item in items)
+			{
 					switch (item)
 					{
 						case CreateFolderItem newFolder:
@@ -277,7 +278,8 @@ namespace MatterHackers.MatterControl.Library
 
 			if (directoryWatcher != null)
 			{
-				directoryWatcher.EnableRaisingEvents = false;
+				// turn them back on
+				directoryWatcher.EnableRaisingEvents = true;
 			}
 
 			if (this.isDirty)

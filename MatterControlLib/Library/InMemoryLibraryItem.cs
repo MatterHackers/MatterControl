@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public event EventHandler NameChanged;
 
-		public string FileName => $"{this.Name}.{this.ContentType}";
+		public string FileName => Path.ChangeExtension(this.Name, this.ContentType);
 
 		public bool IsProtected => !Object3D.Persistable;
 

@@ -33,6 +33,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
@@ -47,6 +48,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
+
+		[SetUp]
+		public void TestSetup()
+		{
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
 
 		[Test]
 		public async Task CopyRemoveUndoRedo()

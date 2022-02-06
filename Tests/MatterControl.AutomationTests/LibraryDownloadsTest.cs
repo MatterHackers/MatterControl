@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.DoubleClickByName("Test.zip Row Item Collection");
 
-				testRunner.DoubleClickByName("TestCompress Row Item Collection");
+				testRunner.DoubleClickByName("TestCompress.zip Row Item Collection");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon.stl", 2), "Chinese Dragon item exists");
 				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.stl", 2), "chichen-itza item exists");
