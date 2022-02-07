@@ -219,8 +219,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public virtual string NameFromChildren()
         {
-			return Name;
-        }
+			return CalculateName(SourceContainer.Children, ", ");
+		}
 
 		public override void Cancel(UndoBuffer undoBuffer)
 		{
