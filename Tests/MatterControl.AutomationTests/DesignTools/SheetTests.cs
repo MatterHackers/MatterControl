@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				var primitive = "Cube";
 				var primitiveName = "Row Item " + primitive;
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab();
+				testRunner.OpenPartTab();
 
 				var primitive = "Cube";
 				var primitiveName = "Row Item " + primitive;

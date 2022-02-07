@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 					return name;
 				}
 
-				return "Unknown";
+				return "New Design";
 			}
 
 			set

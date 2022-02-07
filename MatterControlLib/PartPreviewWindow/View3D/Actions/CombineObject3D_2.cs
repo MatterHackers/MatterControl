@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 
@@ -122,26 +124,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 		private void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
+        {
+            SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-			var participants = SourceContainer.VisibleMeshes();
-			if (participants.Count() < 2)
-			{
-				if (participants.Count() == 1)
-				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
-					this.Children.Add(newMesh);
-					SourceContainer.Visible = false;
-				}
+            var participants = SourceContainer.VisibleMeshes();
+            if (participants.Count() < 2)
+            {
+                if (participants.Count() == 1)
+                {
+                    var newMesh = new Object3D();
+                    newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+                    newMesh.Mesh = participants.First().Mesh;
+                    this.Children.Add(newMesh);
+                    SourceContainer.Visible = false;
+                }
 
-				return;
-			}
+                return;
+            }
 
-			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
+            List<List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>> touchingSets = GetTouchingMeshes(participants);
+
+            var totalOperations = touchingSets.Sum(t => t.Count);
+
 #if false
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				CsgModes.Union,
@@ -151,64 +156,143 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				reporter,
 				cancellationToken);
 #else
-			var totalOperations = items.Count() - 1;
-			double amountPerOperation = 1.0 / totalOperations;
-			double ratioCompleted = 0;
+            double amountPerOperation = 1.0 / totalOperations;
+            double ratioCompleted = 0;
 
-			var progressStatus = new ProgressStatus();
+            var progressStatus = new ProgressStatus();
 
-			var resultsMesh = items.First().Item1;
-			var keepWorldMatrix = items.First().Item2;
+            var setMeshes = new List<Mesh>();
+            foreach (var set in touchingSets)
+            {
+                var setMesh = set.First().Item1;
+                var keepWorldMatrix = set.First().matrix;
 
-			bool first = true;
-			foreach (var next in items)
-			{
-				if (first)
+                if (set.Count > 1)
                 {
-					first = false;
-					continue;
+                    bool first = true;
+                    foreach (var next in set)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                            continue;
+                        }
+
+                        setMesh = BooleanProcessing.Do(setMesh,
+                            keepWorldMatrix,
+                            // other mesh
+                            next.mesh,
+                            next.matrix,
+                            // operation type
+                            CsgModes.Union,
+                            Processing,
+                            InputResolution,
+                            OutputResolution,
+                            // reporting
+                            reporter,
+                            amountPerOperation,
+                            ratioCompleted,
+                            progressStatus,
+                            cancellationToken);
+
+                        // after the first time we get a result the results mesh is in the right coordinate space
+                        keepWorldMatrix = Matrix4X4.Identity;
+
+                        // report our progress
+                        ratioCompleted += amountPerOperation;
+                        progressStatus.Progress0To1 = ratioCompleted;
+                        reporter?.Report(progressStatus);
+                    }
+
+                    setMeshes.Add(setMesh);
                 }
+                else
+                {
+                    setMesh.Transform(keepWorldMatrix);
+                    // report our progress
+                    ratioCompleted += amountPerOperation;
+                    progressStatus.Progress0To1 = ratioCompleted;
+                    reporter?.Report(progressStatus);
+                    setMeshes.Add(setMesh);
+                }
+            }
 
-				resultsMesh = BooleanProcessing.Do(resultsMesh,
-					keepWorldMatrix,
-					// other mesh
-					next.Item1,
-					next.Item2,
-					// operation type
-					CsgModes.Union,
-					Processing,
-					InputResolution,
-					OutputResolution,
-					// reporting
-					reporter,
-					amountPerOperation,
-					ratioCompleted,
-					progressStatus,
-					cancellationToken);
-
-				// after the first time we get a result the results mesh is in the right coordinate space
-				keepWorldMatrix = Matrix4X4.Identity;
-
-				// report our progress
-				ratioCompleted += amountPerOperation;
-				progressStatus.Progress0To1 = ratioCompleted;
-				reporter?.Report(progressStatus);
-			}
+            Mesh resultsMesh = null;
+            foreach (var setMesh in setMeshes)
+            {
+                if (resultsMesh == null)
+                {
+                    resultsMesh = setMesh;
+                }
+                else
+                {
+                    resultsMesh.CopyAllFaces(setMesh, Matrix4X4.Identity);
+                }
+            }
 #endif
 
-			if (resultsMesh != null)
-			{
-				var resultsItem = new Object3D()
-				{
-					Mesh = resultsMesh
-				};
-				resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-				this.Children.Add(resultsItem);
-				SourceContainer.Visible = false;
-			}
-		}
+            if (resultsMesh != null)
+            {
+                var resultsItem = new Object3D()
+                {
+                    Mesh = resultsMesh
+                };
+                resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+                this.Children.Add(resultsItem);
+                SourceContainer.Visible = false;
+            }
+        }
 
-		public void UpdateControls(PublicPropertyChange change)
+        private List<List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>> GetTouchingMeshes(IEnumerable<IObject3D> participants)
+        {
+            void AddAllTouching(List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)> touching,
+                List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)> available)
+            {
+                // add the frirst item
+                touching.Add(available[available.Count - 1]);
+                available.RemoveAt(available.Count - 1);
+
+                var indexBeingChecked = 0;
+
+                // keep adding items until we have checked evry item in the the touching list
+                while (indexBeingChecked < touching.Count
+                    && available.Count > 0)
+                {
+                    // look for a aabb that intersects any aabb in the set
+                    for (int i = available.Count - 1; i >= 0; i--)
+                    {
+                        if (touching[indexBeingChecked].aabb.Intersects(available[i].aabb))
+                        {
+                            touching.Add(available[i]);
+                            available.RemoveAt(i);
+                        }
+                    }
+
+                    indexBeingChecked++;
+                }
+            }
+
+            var allItems = participants.Select(i =>
+            {
+                var mesh = i.Mesh.Copy(CancellationToken.None);
+                var matrix = i.WorldMatrix(SourceContainer);
+                var aabb = mesh.GetAxisAlignedBoundingBox(matrix);
+                return (mesh, matrix, aabb);
+            }).ToList();
+
+            var touchingSets = new List<List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>>();
+
+            while (allItems.Count > 0)
+            {
+                var touchingSet = new List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>();
+                touchingSets.Add(touchingSet);
+                AddAllTouching(touchingSet, allItems);
+            }
+
+            return touchingSets;
+        }
+
+        public void UpdateControls(PublicPropertyChange change)
 		{
 			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
 			change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);

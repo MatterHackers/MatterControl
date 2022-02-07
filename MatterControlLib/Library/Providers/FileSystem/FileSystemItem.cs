@@ -132,32 +132,6 @@ namespace MatterHackers.MatterControl.Library
 						}
 					}
 				}
-
-				/*
-				if (item is DirectoryContainerLink directoryLink)
-				{
-					if (Directory.Exists(directoryLink.Path))
-					{
-						Process.Start(this.FullPath);
-					}
-				}
-				else if (item is FileSystemFileItem fileItem)
-				{
-					string sourceFile = fileItem.Path;
-					if (File.Exists(sourceFile))
-					{
-						string extension = Path.GetExtension(sourceFile);
-						string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
-						destFile = Path.ChangeExtension(destFile, extension);
-
-						File.Move(sourceFile, destFile);
-
-						fileItem.Path = destFile;
-
-						this.ReloadContent();
-					}
-				}
-				*/
 			}
 		}
 

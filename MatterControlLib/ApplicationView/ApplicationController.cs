@@ -180,9 +180,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								(newName, container) =>
+								(container, newName) =>
 								{
-									sceneContext.Rename(newName);
+									sceneContext.SaveAs(container, newName);
 								}));
 					}),
 			 		IsEnabled = () => sceneContext.EditableScene
@@ -666,9 +666,9 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, container) =>
+								async (container, newName) =>
 								{
-									sceneContext.Rename(newName);
+									sceneContext.SaveAs(container, newName);
 								}));
 					}),
 					IsEnabled = () => sceneContext.EditableScene
@@ -704,7 +704,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			await this.MainView.CreateNewPartTab(false);
+			await this.MainView.CreateNewDesignTab(false);
 			
 			var workspace = this.Workspaces.Last();
 			workspace.SceneContext.AddToPlate(selectedLibraryItems);

@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 			}, "Start New Design".Localize()));
 			lastButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.MainView.CreateNewPartTab(true);
+				ApplicationController.Instance.MainView.CreateNewDesignTab(true);
 				this.DialogWindow.Close();
 			});
 

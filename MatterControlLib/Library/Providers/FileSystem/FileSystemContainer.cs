@@ -89,7 +89,10 @@ namespace MatterHackers.MatterControl.Library
 				if (fileItem.FilePath.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
 				{
 					// save using the normal uncompressed mcx file
-					base.Save(item, content);
+					// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+					File.WriteAllText(fileItem.FilePath, content.ToJson().Result);
+
+					this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
 				}
 				else
 				{
@@ -103,22 +106,33 @@ namespace MatterHackers.MatterControl.Library
 								Status = "Saving Asset".Localize()
 							};
 
+							var directory = Path.GetDirectoryName(fileItem.FilePath);
+							var filename = Path.GetFileNameWithoutExtension(fileItem.FilePath);
+							var backupName = Path.Combine(directory, Path.ChangeExtension(filename + "_bak", ".mcx"));
+
+							try
+							{
+								if (File.Exists(backupName))
+								{
+									File.Delete(backupName);
+								}
+
+								// rename any existing file
+								if (File.Exists(fileItem.FilePath))
+								{
+									File.Move(fileItem.FilePath, backupName);
+								}
+							}
+							catch
+							{
+							}
+
 							// make sure we have all the mesh items in the cache for saving to the archive
 							await content.PersistAssets((percentComplete, text) =>
 							{
 								status.Progress0To1 = percentComplete * .9;
 								reporter.Report(status);
-							}, forceIntoCache: true);
-
-							var backupName = "";
-							// rename any existing file
-							if (File.Exists(fileItem.FilePath))
-							{
-								var directory = Path.GetDirectoryName(fileItem.FilePath);
-								var filename = Path.GetFileNameWithoutExtension(fileItem.FilePath);
-								backupName = Path.Combine(directory, Path.ChangeExtension(filename + "_bak", ".mcx"));
-								File.Move(fileItem.FilePath, backupName);
-							}
+							}, true);
 
 							var persistableItems = content.GetPersistable(true);
 							var persistCount = persistableItems.Count();
@@ -129,11 +143,6 @@ namespace MatterHackers.MatterControl.Library
 							{
 								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 								{
-									using (var writer = new StreamWriter(zip.CreateEntry("scene.mcx").Open()))
-									{
-										writer.Write(content.ToJson());
-									}
-
 									foreach (var persistMeshItem in persistableItems)
 									{
 										var sourcePath = persistMeshItem.MeshPath;
@@ -151,6 +160,15 @@ namespace MatterHackers.MatterControl.Library
 										status.Progress0To1 = .9 + .1 * (savedCount / persistCount);
 										reporter.Report(status);
 									}
+
+									var sceneEntry = zip.CreateEntry("scene.mcx");
+									using (var sceneStream = sceneEntry.Open())
+									{
+										using (var writer = new StreamWriter(sceneStream))
+										{
+											writer.Write(await content.ToJson());
+										}
+									}
 								}
 							}
 
@@ -158,12 +176,21 @@ namespace MatterHackers.MatterControl.Library
 							this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
 
 							// remove the existing file after a successfull save
-							if (!string.IsNullOrEmpty(backupName))
+							try
 							{
-								File.Delete(backupName);
+								if (File.Exists(backupName))
+								{
+									File.Delete(backupName);
+								}
 							}
+							catch { }
 						});
 				}
+			}
+
+			if (content is InteractiveScene interactiveScene)
+            {
+				interactiveScene.MarkSavePoint();
 			}
 		}
 
@@ -196,6 +223,7 @@ namespace MatterHackers.MatterControl.Library
 
 			if (directoryWatcher != null)
 			{
+				// turn them off whil ewe add the content
 				directoryWatcher.EnableRaisingEvents = false;
 			}
 
@@ -203,8 +231,8 @@ namespace MatterHackers.MatterControl.Library
 
 			await Task.Run(async () =>
 			{
-				foreach (var item in items)
-				{
+			foreach (var item in items)
+			{
 					switch (item)
 					{
 						case CreateFolderItem newFolder:
@@ -250,7 +278,8 @@ namespace MatterHackers.MatterControl.Library
 
 			if (directoryWatcher != null)
 			{
-				directoryWatcher.EnableRaisingEvents = false;
+				// turn them back on
+				directoryWatcher.EnableRaisingEvents = true;
 			}
 
 			if (this.isDirty)

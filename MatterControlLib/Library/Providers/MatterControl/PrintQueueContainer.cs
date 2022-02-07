@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -69,6 +70,18 @@ namespace MatterHackers.MatterControl.Library
 		{
 			await AddAllItems(items);
 			this.ReloadContent();
+		}
+
+		public override void Save(ILibraryItem item, IObject3D content)
+		{
+			if (item is FileSystemFileItem fileItem)
+			{
+				// save using the normal uncompressed mcx file
+				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+				File.WriteAllText(fileItem.FilePath, content.ToJson().Result);
+
+				this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
+			}
 		}
 
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)

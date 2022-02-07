@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					{
 						status.Progress0To1 = percentComplete;
 						progress.Report(status);
-					}, forceIntoCache: false);
+					});
 				}
 				else if (assetStream != null)
 				{
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				if (loadedItem != null)
 				{
 					// Ensure content is on disk before slicing
-					await loadedItem.PersistAssets(null);
+					await loadedItem.PersistAssets();
 
 					string gcodePath = null;
 

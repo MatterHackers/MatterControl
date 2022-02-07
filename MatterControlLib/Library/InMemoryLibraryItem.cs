@@ -37,11 +37,11 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class InMemoryLibraryItem : ILibraryObject3D, ILibraryAssetStream
 	{
-		private IObject3D object3D;
+		public IObject3D Object3D { get; set; }
 
 		public InMemoryLibraryItem(IObject3D object3D)
 		{
-			this.object3D = object3D;
+			this.Object3D = object3D;
 
 			if ((string.IsNullOrEmpty(object3D.Name) || object3D.Name.StartsWith("Workspace 20") || object3D.Name.StartsWith("New Design"))
 				&& object3D.Children.Count == 1
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public string ID => object3D.ID;
+		public string ID => Object3D.ID;
 
 		private string _name;
 		public string Name
@@ -74,11 +74,11 @@ namespace MatterHackers.MatterControl.Library
 
 		public event EventHandler NameChanged;
 
-		public string FileName => $"{this.Name}.{this.ContentType}";
+		public string FileName => Path.ChangeExtension(this.Name, this.ContentType);
 
-		public bool IsProtected => !object3D.Persistable;
+		public bool IsProtected => !Object3D.Persistable;
 
-		public bool IsVisible => object3D.Visible;
+		public bool IsVisible => Object3D.Visible;
 
 		public DateTime DateCreated { get; } = DateTime.Now;
 
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 		{
-			return Task.FromResult(object3D);
+			return Task.FromResult(Object3D);
 		}
 
 		public Task<StreamAndLength> GetStream(Action<double, string> progress)
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Library
 			// Serialize to in memory stream
 			var memoryStream = new MemoryStream();
 
-			object3D.SaveTo(memoryStream);
+			Object3D.SaveTo(memoryStream);
 
 			// Reset to start of content
 			memoryStream.Position = 0;

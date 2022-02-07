@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// *******************************************************************************************************************************
 
 			// SHA1 value is based on UTF8 encoded file contents
-			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(object3D.ToJson())))
+			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(object3D.ToJson().Result)))
 			{
 				return HashGenerator.ComputeSHA1(memoryStream);
 			}

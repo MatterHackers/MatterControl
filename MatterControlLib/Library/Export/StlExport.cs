@@ -41,9 +41,9 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-	public class StlExport : IExportPlugin
+    public class StlExport : IExportPlugin
 	{
-		public int Priority => 1;
+		public int Priority => 2;
 
 		public string ButtonText => "STL File".Localize();
 

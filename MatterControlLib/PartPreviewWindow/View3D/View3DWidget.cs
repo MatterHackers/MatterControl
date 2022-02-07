@@ -1202,7 +1202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DragOperationActive = true;
 
 			// ContentStore is null for plated gcode, call ClearPlate to exit mode and return to bed mcx
-			if (sceneContext.EditContext.ContentStore == null)
+			if (sceneContext.Printer?.Bed?.LoadedGCode != null)
 			{
 				this.ClearPlate();
 			}
@@ -2084,7 +2084,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				Scene.SelectedItem = null;
-				Scene.SelectedItem = lastSelectedItem;
+				// Adding a group of parts to a bed when there are multiple existing parts already selected
+				// will create duplicates if any of the new parts need to be renamed. Since the old selection
+				// group will be replaced with a new selection group containing the newly-added parts, just
+				// clear the selection. (Don't select if the selection was a selection group or has insertion groups
+				// still processing).
+				if (!(lastSelectedItem is SelectionGroupObject3D) || !Scene.Children.Any(c => c is InsertionGroupObject3D))
+				{
+					Scene.SelectedItem = lastSelectedItem;
+				}
 			}
 
 			lastSceneDescendantsCount = Scene.Descendants().Count();

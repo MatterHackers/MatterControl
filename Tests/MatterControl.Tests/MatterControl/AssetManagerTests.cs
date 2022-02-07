@@ -85,7 +85,6 @@ namespace MatterControl.Tests.MatterControl
 			var assetManager = new MockAssetManager();
 			AssetObject3D.AssetManager = assetManager;
 
-
 			// Store
 			await AssetObject3D.AssetManager.StoreAsset(object3D, false, CancellationToken.None, null);
 

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -62,13 +62,13 @@ namespace MatterHackers.MatterControl
 
 		event EventHandler SceneLoaded;
 
-		InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd);
+		InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, bool addUndoCheckPoint = true);
 
-		InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, Vector2 initialPosition, bool moveToOpenPosition);
+		InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, Vector2 initialPosition, bool moveToOpenPosition, bool addUndoCheckPoint = true);
 
 		List<BoolOption> GetBaseViewOptions();
 
-		void AddToPlate(string[] filesToLoadIncludingZips);
+		void AddToPlate(string[] filesToLoadIncludingZips, bool addUndoCheckPoint = true);
 
 		void ClearPlate();
 

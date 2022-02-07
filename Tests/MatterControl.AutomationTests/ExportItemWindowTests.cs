@@ -14,23 +14,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.WaitForFirstDraw();
-
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
-				//Navigate to Downloads Library Provider
-				testRunner.NavigateToFolder("Print Queue Row Item Collection");
-				testRunner.InvokeLibraryAddDialog();
+				testRunner.WaitForFirstDraw()
+					.AddAndSelectPrinter("Airwolf 3D", "HD")
+					//Navigate to Downloads Library Provider
+					.NavigateToFolder("Print Queue Row Item Collection")
+					.InvokeLibraryAddDialog();
 
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
 				testRunner.Delay()
 					.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"))
 					.Delay()
-					.Type("{Enter}");
-
-				//Get test results 
-				testRunner.ClickByName("Row Item Batman.stl")
+					.Type("{Enter}")
+					//Get test results 
+					.ClickByName("Row Item Batman.stl")
 					.ClickByName("Print Library Overflow Menu")
 					.ClickByName("Export Menu Item")
 					.WaitForName("Export Item Window");
@@ -44,20 +41,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.Delay()
 					.Type(fullPathToGcodeFile)
 					.Type("{Enter}")
-					.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+					.Assert(() => File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 
-				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
-
-				// add an item to the bed
+				// add an item to the bed, and export it to gcode
 				fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Cube");
 				testRunner.AddItemToBed()
 					.ClickByName("PrintPopupMenu")
 					.ClickByName("Export GCode Button")
 					.Type(fullPathToGcodeFile)
 					.Type("{Enter}")
-					.Delay();
-
-				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
+					.Assert(() => File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 
 				return Task.FromResult(0);
 			});

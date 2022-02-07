@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.OpenEmptyPartTab()
+				testRunner.OpenPartTab()
 					.AddItemToBed();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;

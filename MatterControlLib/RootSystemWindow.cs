@@ -37,6 +37,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -353,16 +354,25 @@ namespace MatterHackers.MatterControl
 											{
 												if (workspace.Printer == null)
 												{
-													// if we have a filename
-													// save
-													// else
-													// switch to the tab we are about to save
-													// ask the user to give us a filname
-													// if no filename
-													// abort the exit procedure
-													await ApplicationController.Instance.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
-													// check for error or abort
-													hadSaveError |= workspace.SceneContext.HadSaveError;
+													var sceneContext = workspace.SceneContext;
+													if (sceneContext.EditContext.ContentStore == null)
+													{
+														hadSaveError = true;
+														// If we are about to close a tab that has never been saved it will need a name before it can actually save
+														// Open up the save as dialog rather than continue with saving and closing
+														DialogWindow.Show(
+															new SaveAsPage(
+																(container, newName) =>
+																{
+																	sceneContext.SaveAs(container, newName);
+																}));
+													}
+													else
+													{
+														await ApplicationController.Instance.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
+														// check for error or abort
+														hadSaveError |= workspace.SceneContext.HadSaveError;
+													}
 												}
 											}
 

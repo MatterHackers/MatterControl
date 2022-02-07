@@ -896,7 +896,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (partItems.Any()
 						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
 					{
-						DialogWindow.Show(new MoveItemPage((newName, destinationContainer) =>
+						DialogWindow.Show(new MoveItemPage((destinationContainer, newName) =>
 						{
 							destinationContainer.Move(partItems, sourceContainer);
 

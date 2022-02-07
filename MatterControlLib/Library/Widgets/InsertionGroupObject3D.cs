@@ -62,7 +62,8 @@ namespace MatterHackers.MatterControl.Library
 			InteractiveScene scene,
 			Vector2 newItemOffset,
 			Action<IObject3D, IEnumerable<IObject3D>> layoutParts,
-			bool trackSourceFiles = false)
+			bool trackSourceFiles = false,
+			bool addUndoCheckPoint = true)
 		{
 			if (items == null)
 			{
@@ -143,7 +144,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 
 				this.Children.Remove(placeholderItem);
-				this.Collapse();
+				this.Collapse(addUndoCheckPoint);
 
 				this.Invalidate(InvalidateType.Children);
 			});
@@ -152,7 +153,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <summary>
 		/// Collapse the InsertionGroup into the scene
 		/// </summary>
-		public void Collapse()
+		private void Collapse(bool addUndoCheckPoint)
 		{
 			// Drag operation has finished, we need to perform the collapse
 			var loadedItems = this.Children;
@@ -193,7 +194,14 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			view3DWidget.Scene.UndoBuffer.AddAndDo(new InsertCommand(view3DWidget.Scene, loadedItems));
+			if (addUndoCheckPoint)
+			{
+				view3DWidget.Scene.UndoBuffer.AddAndDo(new InsertCommand(view3DWidget.Scene, loadedItems));
+			}
+			else
+            {
+				new InsertCommand(view3DWidget.Scene, loadedItems).Do();
+			}
 		}
 	}
 }

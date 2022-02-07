@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 {
 	public class MoveItemPage : LibraryBrowserPage
 	{
-		public MoveItemPage(Action<string, ILibraryWritableContainer> itemMover)
+		public MoveItemPage(Action<ILibraryWritableContainer, string> itemMover)
 			: base(itemMover, "Move".Localize())
 		{
 			this.WindowTitle = "MatterControl - " + "Move Item".Localize();

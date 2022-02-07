@@ -87,21 +87,7 @@ namespace MatterHackers.MatterControl.Library
 			var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
 			string mcxPath = Path.Combine(this.FullPath, filename); 
 			
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
-
-			return new FileSystemFileItem(mcxPath);
-		}
-
-		internal ILibraryItem NewDesign()
-		{
-			string mcxPath = Path.Combine(this.FullPath, "New Design.mcx");
-			var count = 0;
-			while(File.Exists(mcxPath))
-            {
-				mcxPath = Path.Combine(this.FullPath, $"New Design ({++count}).mcx");
-            }
-
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
+			File.WriteAllText(mcxPath, new Object3D().ToJson().Result);
 
 			return new FileSystemFileItem(mcxPath);
 		}

@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.PlusClicked += (s, e) => UiThread.RunOnIdle(() =>
 			{
-                CreateNewPartTab(true);
+                CreateNewDesignTab(true);
 			});
 
 			// Force the ActionArea to be as high as ButtonHeight
@@ -817,18 +817,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
-		public async Task CreateNewPartTab(bool addPhilToBed)
+		public async Task CreateNewDesignTab(bool addPhilToBed)
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
 			var workspace = new PartWorkspace(new BedConfig(history));
 
-			await workspace.SceneContext.LoadContent(
-				new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = history.NewDesign()
-				});
+			await workspace.SceneContext.LoadContent(new EditContext());
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
@@ -840,54 +835,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				workspace.SceneContext.AddPhilToBed();
 			}
 
-			UiThread.RunOnIdle(async () =>
-			{
-				// Save any pending changes before starting print operation
-				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), this, workspace.SceneContext.SaveChanges);
-			});
-
 			ApplicationController.Instance.MainTabKey = workspace.Name;
 		}
 
 		private static void HookupNameChangeCallback(ChromeTab partTab, PartWorkspace workspace)
 		{
-			var sourceItem = workspace.SceneContext?.EditContext?.SourceItem;
+			var editContext = workspace.SceneContext.EditContext;
+			ILibraryItem sourceItem = editContext?.SourceItem;
+
+			void UpdateLinks(object s, EventArgs e)
+            {
+				editContext = workspace.SceneContext.EditContext;
+				// remove any exisitng delegate
+				if (sourceItem != null)
+				{
+					sourceItem.NameChanged -= UpdateTabName;
+				}
+
+				// hook up a new delegate
+				if (editContext != null)
+				{
+					sourceItem = editContext.SourceItem;
+					if (sourceItem != null)
+					{
+						sourceItem.NameChanged += UpdateTabName;
+					}
+				}
+			}
+
+			void UpdateTabName(object s, EventArgs e)
+			{
+				UpdateLinks(s, e);
+				if (sourceItem != null)
+				{
+					partTab.Text = sourceItem.Name;
+					if (sourceItem is FileSystemFileItem fileSystemFileItem)
+					{
+						partTab.ToolTipText = fileSystemFileItem.FilePath;
+					}
+				}
+
+				ApplicationController.Instance.PersistOpenTabsLayout();
+			}
 
 			if (sourceItem != null)
 			{
-				void UpdateTabName(object s, EventArgs e)
-				{
-					partTab.Text = sourceItem.Name;
-					if (workspace.SceneContext.EditContext.SourceItem is FileSystemFileItem fileSystemFileItem)
-                    {
-						partTab.ToolTipText = fileSystemFileItem.FilePath;
-					}
-
-					ApplicationController.Instance.PersistOpenTabsLayout();
-				}
-
-				var lastSourceItem = sourceItem;
-				void SourceItemChanged(object s, EventArgs e)
-                {
-					lastSourceItem.NameChanged -= UpdateTabName;
-					lastSourceItem = workspace.SceneContext.EditContext.SourceItem;
-					lastSourceItem.NameChanged += UpdateTabName;
-					UpdateTabName(s, e);
-				}
-
-				workspace.SceneContext.EditContext.SourceItemChanged += SourceItemChanged;
 				sourceItem.NameChanged += UpdateTabName;
-				workspace.SceneContext.SceneLoaded += UpdateTabName;
-
-				partTab.Closed += (s, e) =>
-				{
-					workspace.SceneContext.EditContext.SourceItemChanged -= SourceItemChanged;
-					sourceItem.NameChanged -= UpdateTabName;
-					workspace.SceneContext.SceneLoaded -= UpdateTabName;
-				};
-
-				UpdateTabName(null, null);
 			}
+
+			if (editContext != null)
+			{
+				editContext.SourceItemChanged += UpdateTabName;
+			}
+
+			workspace.SceneContext.SceneLoaded += UpdateTabName;
+
+			partTab.Closed += (s, e) =>
+			{
+				if (sourceItem != null)
+				{
+					sourceItem.NameChanged -= UpdateTabName;
+				}
+				editContext.SourceItemChanged -= UpdateTabName;
+				workspace.SceneContext.SceneLoaded -= UpdateTabName;
+			};
+
+			UpdateTabName(null, null);
 		}
 
 		public ChromeTab CreateDesignTab(PartWorkspace workspace, bool saveLayout)

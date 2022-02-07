@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -199,21 +199,16 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.LoadEmptyContent(
-					new EditContext()
-					{
-						ContentStore = historyContainer,
-						SourceItem = historyContainer.NewDesign()
-					});
+				this.LoadEmptyContent(new EditContext());
 			}
 		}
 
-		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
+		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, bool addUndoCheckPoint = true)
 		{
-			return this.AddToPlate(itemsToAdd, (this.Printer != null) ? this.Printer.Bed.BedCenter : Vector2.Zero, true);
+			return this.AddToPlate(itemsToAdd, (this.Printer != null) ? this.Printer.Bed.BedCenter : Vector2.Zero, true, addUndoCheckPoint);
 		}
 
-		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, Vector2 initialPosition, bool moveToOpenPosition)
+		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, Vector2 initialPosition, bool moveToOpenPosition, bool addUndoCheckPoint = true)
 		{
 			if (this.Printer != null
 				&& this.Printer.ViewState.ViewMode != PartViewMode.Model)
@@ -239,13 +234,14 @@ namespace MatterHackers.MatterControl
 							{
 								PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
 							}
-						}));
+						},
+						addUndoCheckPoint: addUndoCheckPoint));
 			});
 
 			return insertionGroup;
 		}
 
-		public async void AddToPlate(string[] filesToLoadIncludingZips)
+		public async void AddToPlate(string[] filesToLoadIncludingZips, bool addUndoCheckPoint = true)
 		{
 			if (filesToLoadIncludingZips?.Any() == true)
 			{
@@ -301,7 +297,7 @@ namespace MatterHackers.MatterControl
 				});
 
 				var itemCache = new Dictionary<string, IObject3D>();
-				this.AddToPlate(filePaths.Select(f => new FileSystemFileItem(f)));
+				this.AddToPlate(filePaths.Select(f => new FileSystemFileItem(f)), addUndoCheckPoint);
 			}
 		}
 
@@ -662,6 +658,22 @@ namespace MatterHackers.MatterControl
 		/// <returns>A task representing success</returns>
 		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
 		{
+			if (this.EditContext.ContentStore == null)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// we need to ask for a destination			
+					DialogWindow.Show(
+						new SaveAsPage(
+							(container, newName) =>
+							{
+								this.SaveAs(container, newName);
+							}));
+				});
+
+				return;
+			}
+
 			var progressStatus = new ProgressStatus()
 			{
 				Status = "Saving Changes"

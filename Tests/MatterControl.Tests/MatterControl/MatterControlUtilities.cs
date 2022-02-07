@@ -114,6 +114,68 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.Delay(.5);
 		}
 
+		public static AutomationRunner AddPrimitivePartsToBed(this AutomationRunner testRunner, IEnumerable<string> partNames, bool multiSelect = false)
+		{
+			// Passing in true for multiselect will simulate holding down control when clicking on each part. This will create a
+			// selection group that is added to the plate as one scene part.
+
+			// Open the library pane to force display of the overflow menu and add a widget for it to the widget hierarchy.
+			// We need this menu widget to trigger the Add to Bed menu item.
+			const string containerName = "Primitives Row Item Collection";
+			testRunner.NavigateToFolder(containerName);
+
+			var partCount = 0;
+			foreach (var partName in partNames)
+			{
+				Keyboard.SetKeyDownState(Keys.ControlKey, multiSelect);
+				foreach (var result in testRunner.GetWidgetsByName(partName))
+				{
+					// Opening the primitive parts library folder causes a second set of primitive part widgets to be created.
+					// The first set is hidden behind the expanded library pane and targeting them for a click will cause the
+					// automation runner to click in the wrong spots. Finding the correct widgets to target is a little complicated
+					// because of the layers of wrapping widgets but the widgets in the first set (which we don't want to target)
+					// are direct descendents of a ListContentView so we can eliminate those and assume whatever is left over are
+					// the widgets we want.
+
+					var partWidget = result.Widget as ListViewItemBase;
+					if (partWidget.Parent.Name == "Library ListContentView")
+					{
+						continue;
+					}
+					if (!partWidget.IsSelected)
+					{
+						testRunner.ClickWidget(partWidget);
+					}
+					partCount += 1;
+				}
+			}
+
+			if (multiSelect)
+			{
+				// Release control key so additional operations work normally.
+				Keyboard.SetKeyDownState(Keys.ControlKey, false);
+			}
+
+			testRunner.ClickByName("Print Library Overflow Menu");
+
+			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+			var scene = view3D.Object3DControlLayer.Scene;
+			var preAddCount = scene.Children.Count;
+			var postAddCount = preAddCount + (multiSelect ? 1 : partCount);
+
+			testRunner.ClickByName("Add to Bed Menu Item")
+				// wait for the objects to be added
+				.WaitFor(() => scene.Children.Count == postAddCount);
+			// wait for the objects to be done loading
+			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
+			if (insertionGroup != null)
+			{
+				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroupObject3D != null, 10);
+			}
+
+			return testRunner;
+		}
+
 		public static void ChangeSettings(this AutomationRunner testRunner,
 			IEnumerable<(string key, string value)> settings,
 			PrinterConfig printer)
@@ -230,6 +292,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner.ClickByName(partNameToSelect);
 		}
 
+		public static AutomationRunner ClickDiscardChanges(this AutomationRunner testRunner)
+		{
+			return testRunner.ClickByName("No Button");
+		}
+
 		public static AutomationRunner WaitForFirstDraw(this AutomationRunner testRunner)
 		{
 			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
@@ -238,19 +305,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
-		public static AutomationRunner OpenEmptyPartTab(this AutomationRunner testRunner)
+		public static AutomationRunner OpenPartTab(this AutomationRunner testRunner, bool removeDefaultPhil = true)
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
 			testRunner.WaitforDraw(systemWindow);
 
 			// close the welcome message
-			if (testRunner.NameExists("Start New Design", 1))
+			if (testRunner.WaitForName("Start New Design"))
 			{
 				testRunner.ClickByName("Start New Design");
 			}
 
-			testRunner.VerifyAndRemovePhil();
+			if (removeDefaultPhil)
+			{
+				testRunner.VerifyAndRemovePhil();
+			}
 
 			return testRunner;
 		}
@@ -488,10 +558,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
-			if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+			//if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
 				//&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
 				//&& testRunner.NameExists("Cancel Wizard Button", 1))
-				testRunner.NameExists("Cancel Wizard Button", 1))
+				//testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
@@ -623,39 +693,40 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.EnsureContentMenuOpen();
 
-			switch (libraryRowItemName)
+			if (!testRunner.NameExists(libraryRowItemName, .2))
 			{
-				case "SD Card Row Item Collection":
-					if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
-					{
-						testRunner.DoubleClickByName($"{printer.PrinterName} Row Item Collection");
+				// go back to the home section
+				testRunner.ClickByName("Bread Crumb Button Home")
+					.Delay();
 
-						testRunner.Delay();
+				switch (libraryRowItemName)
+				{
+					case "SD Card Row Item Collection":
+						if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
+						{
+							testRunner.DoubleClickByName($"{printer.PrinterName} Row Item Collection")
+								.Delay();
+						}
 
-						testRunner.ClickByName(libraryRowItemName);
-					}
+						break;
 
-					break;
-
-				case "Calibration Parts Row Item Collection":
-				case "Primitives Row Item Collection":
-				case "Cloud Library Row Item Collection":
-				case "Print Queue Row Item Collection":
-				case "Local Library Row Item Collection":
-					if (!testRunner.NameExists("Library Row Item Collection"))
-					{
-						testRunner.ClickByName("Bread Crumb Button Home")
+					case "Calibration Parts Row Item Collection":
+					case "Primitives Row Item Collection":
+						// If visible, navigate into Libraries container before opening target
+						testRunner.DoubleClickByName("Design Apps Row Item Collection")
 							.Delay();
-					}
+						break;
 
-					// If visible, navigate into Libraries container before opening target
-					if (testRunner.NameExists("Library Row Item Collection"))
-					{
-						testRunner.DoubleClickByName("Library Row Item Collection")
+					case "Downloads Row Item Collection":
+						testRunner.DoubleClickByName("Computer Row Item Collection")
 							.Delay();
-					}
+						break;
 
-					break;
+					case "Cloud Library Row Item Collection":
+					case "Print Queue Row Item Collection":
+					case "Local Library Row Item Collection":
+						break;
+				}
 			}
 
 			testRunner.DoubleClickByName(libraryRowItemName);
@@ -666,7 +737,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			if (!testRunner.WaitForName("FolderBreadCrumbWidget", secondsToWait: 0.2))
 			{
-				testRunner.ClickByName("Add Content Menu");
+				testRunner.ClickByName("Add Content Menu")
+					.Delay();
 			}
 
 			return testRunner;
@@ -819,6 +891,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual("Close Tab Button", closeWidget.Name, "Expected widget ('Close Tab Button') not found");
 
 				testRunner.ClickWidget(closeWidget);
+
+				// close the save dialog
+				testRunner.ClickByName("No Button");
 			}
 
 			return testRunner;
@@ -914,7 +989,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
-				closeWindow: () =>
+				closeWindow: (testRunner) =>
 				{
 					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
@@ -925,6 +1000,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					rootSystemWindow.Close();
+
+					testRunner.Delay();
+					if (testRunner.NameExists("No Button"))
+					{
+						testRunner.ClickDiscardChanges();
+					}
 				});
 		}
 
