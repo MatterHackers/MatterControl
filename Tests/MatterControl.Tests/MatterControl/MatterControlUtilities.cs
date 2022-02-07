@@ -557,11 +557,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static AutomationRunner EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
+			testRunner.WaitFor(() => testRunner.NameExists("Cancel Wizard Button"));
 			// Close the WelcomePage window if active
-			//if (//testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
-				//&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
-				//&& testRunner.NameExists("Cancel Wizard Button", 1))
-				//testRunner.NameExists("Cancel Wizard Button", 1))
+			if (testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}

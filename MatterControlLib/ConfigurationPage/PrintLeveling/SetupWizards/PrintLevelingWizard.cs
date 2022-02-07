@@ -164,12 +164,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new WizardPage(
 				this,
-				string.Format("{0} {1}", this.Title, "Overview".Localize()),
-				string.Format(
-					"{0}\n\n{1}\n\n{2}\n\n",
-					"Print Leveling measures the plane of the bed.".Localize(),
-					"This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.".Localize(),
-					"Click 'Next' to continue.".Localize()))
+				"{0} Overview".Localize().FormatWith(this.Title),
+				@"Print Leveling measures the plane of the bed.
+
+This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+
+Click 'Next' to continue.
+
+
+".Replace("\r", "").FormatWith())
 				{
 					WindowTitle = Title,
 				};
@@ -228,13 +231,13 @@ This will improve the accuracy of print leveling
 and ensure that no filament is stuck to your nozzle.
 
 Warning! The tip of the nozzle will be HOT!
-Avoid contact with your skin.".Localize().FormatWith(targetBedTemp, targetHotendTemp);
+Avoid contact with your skin.".Replace("\r", "").Localize().FormatWith(targetBedTemp, targetHotendTemp);
 				}
 				else if (targetBedTemp > 0)
 				{
 					// only heating the bed
 					heatingInstructions = @"Waiting for the bed to heat to {0} °C.
-This will improve the accuracy of print leveling.".Localize().FormatWith(targetBedTemp);
+This will improve the accuracy of print leveling.".Replace("\r", "").Localize().FormatWith(targetBedTemp);
 				}
 				else // targetHotendTemp > 0
 				{
@@ -243,7 +246,7 @@ This will improve the accuracy of print leveling.".Localize().FormatWith(targetB
 This will ensure that no filament is stuck to your nozzle.
 
 Warning! The tip of the nozzle will be HOT!
-Avoid contact with your skin.".Localize().FormatWith(targetHotendTemp);
+Avoid contact with your skin.".Replace("\r", "").Localize().FormatWith(targetHotendTemp);
 				}
 
 				yield return new WaitForTempPage(

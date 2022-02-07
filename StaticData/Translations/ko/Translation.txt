@@ -4,11 +4,20 @@ Translated:
 English:    • Remove the paper
 Translated:    • 용지 제거
 
+English: is reporting a Hardware Error
+Translated: 하드웨어 오류를 보고하고 있습니다.
+
 English:- none -
 Translated:- 없음 -
 
 English: Once it is finished homing we will heat the bed.
 Translated: 귀환이 끝나면 침대를 데울 것입니다.
+
+English:\nBelow you can find a list of each setting that has changed.
+Translated: \n 아래에서 변경된 각 설정의 목록을 찾을 수 있습니다.
+
+English:\nUpdating a default setting will not change any override that you have applied.
+Translated: \n 기본 설정을 업데이트해도 적용한 재정의는 변경되지 않습니다.
 
 English:$/kg
 Translated:$/kg
@@ -16,8 +25,14 @@ Translated:$/kg
 English:%
 Translated:%
 
+English:(Press 'Skip' to setup connection later)
+Translated:(나중에 연결을 설정하려면 '건너뛰기'를 누르세요)
+
 English:{0} (Update Available)
 Translated:{0}(업데이트 가능)
+
+English:{0} must be greater than 0 and less than your nozzle diameter. You may be missing a '%'.
+Translated:{0}은(는) 0보다 크고 노즐 직경보다 작아야 합니다. '%'가 누락되었을 수 있습니다.
 
 English:{0} must be greater than 0.
 Translated:{0}은(는) 0보다 커야 합니다.
@@ -28,6 +43,18 @@ Translated:{0}은 {1} * 4보다 작거나 같아야 합니다.
 English:{0} must be less than or equal to the {1}.
 Translated:{0}은(는) {1}보다 작거나 같아야 합니다.
 
+English:{0} Overview
+Translated:{0} 개요
+
+English:{0} should be greater than 0.
+Translated:{0}은(는) 0보다 커야 합니다.
+
+English:{0} should be greater than 2.
+Translated:{0}은 2보다 커야 합니다.
+
+English:{0} should be greater than or equal to 1/2 the {1}.
+Translated:{0}은 {1}의 1/2보다 크거나 같아야 합니다.
+
 English:<< Back
 Translated:<< 뒤로
 
@@ -37,11 +64,32 @@ Translated:°
 English:°C
 Translated:°C
 
-English:0 for no hole
-Translated:구멍이 없는 경우 0
+English:1. Power on your 3D Printer.
+Translated:1. 3D 프린터의 전원을 켭니다.
+
+English:100 Point Disk
+Translated:100포인트 디스크
+
+English:10x10 Mesh
+Translated:10x10 메쉬
+
+English:13 Point Disk
+Translated:13포인트 디스크
+
+English:2. Attach your 3D Printer via USB.
+Translated:2. USB를 통해 3D 프린터를 연결합니다.
 
 English:2D Layer View
 Translated:2D 레이어 보기
+
+English:2D Shapes
+Translated:2D 모양
+
+English:3 Point Plane
+Translated:3점 평면
+
+English:3. Press 'Connect'.
+Translated:3. '연결'을 누릅니다.
 
 English:3D
 Translated:3D
@@ -49,8 +97,26 @@ Translated:3D
 English:3D Layer View
 Translated:3D 레이어 보기
 
+English:3x3 Mesh
+Translated:3x3 메쉬
+
+English:5x5 Mesh
+Translated:5x5 메쉬
+
+English:7 Point Disk
+Translated:7포인트 디스크
+
+English:A comma separated list of bed names and temperatures (e.g. "Glass,70,PEI,65,Kapton,55"). When selected the bed temperature will be set to the chosen value.
+Translated:쉼표로 구분된 침대 이름 및 온도 목록(예: "Glass,70,PEI,65,Kapton,55"). 선택하면 침대 온도가 선택한 값으로 설정됩니다.
+
 English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
 Translated:침대를 조사할 샘플 지점의 쉼표로 구분된 목록입니다. 각 점에 대해 x 및 y 위치를 지정해야 합니다. 예: '20,20,100,180,180,20'은 3점에서 불량을 샘플링합니다.
+
+English:A component must be selected
+Translated:구성 요소를 선택해야 합니다.
+
+English:A device attached to the system is not functioning.
+Translated:시스템에 연결된 장치가 작동하지 않습니다.
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 Translated:인쇄물의 첫 번째 레이어에 대한 돌출 너비의 수정자입니다. 100%보다 큰 값은 인쇄 베드에 접착하는 데 도움이 될 수 있습니다.
@@ -61,8 +127,17 @@ Translated:외부 둘레를 인쇄할 때 돌출 너비의 수정자입니다. �
 English:A password reset code will be sent to your email.
 Translated:비밀번호 재설정 코드가 이메일로 전송됩니다.
 
+English:A path must be selected
+Translated:경로를 선택해야 합니다.
+
+English:A raft is not needed for the calibration object. It is recommended that you turn it off.
+Translated:보정 대상에는 뗏목이 필요하지 않습니다. 끄는 것이 좋습니다.
+
 English:A sheet of paper
 Translated:종이 한 장
+
+English:A single part must be selected
+Translated:단일 부품을 선택해야 합니다.
 
 English:A six-digit code - sent to your email account
 Translated:6자리 코드 - 귀하의 이메일 계정으로 전송
@@ -82,6 +157,12 @@ Translated:인쇄 중단
 English:About
 Translated:에 대한
 
+English:About Braille
+Translated:점자 정보
+
+English:ABS Temperature Tower
+Translated:ABS 온도 타워
+
 English:Acceleration Printing
 Translated:가속 인쇄
 
@@ -90,6 +171,9 @@ Translated:가속 여행
 
 English:Accept
 Translated:수용하다
+
+English:Accept command
+Translated:명령 수락
 
 English:Account created
 Translated:계정 생성됨
@@ -109,14 +193,20 @@ Translated:추가하다
 English:Add a new Macro
 Translated:새 매크로 추가
 
+English:Add all the items on the bed to the print queue.
+Translated:침대에 있는 모든 항목을 인쇄 대기열에 추가합니다.
+
+English:Add an.stl, .obj, .3mf, .amf, .gcode or.zip file to the Library
+Translated:라이브러리에 .stl, .obj, .3mf, .amf, .gcode 또는.zip 파일 추가
+
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 Translated:라이브러리에 .stl, .obj, .amf, .gcode 또는 .zip 파일 추가
 
 English:Add Base
 Translated:베이스 추가
 
-English:Add Content
-Translated:콘텐츠 추가
+English:Add Hook
+Translated:후크 추가
 
 English:Add Image
 Translated:이미지 추가
@@ -124,11 +214,23 @@ Translated:이미지 추가
 English:Add New Setting
 Translated:새 설정 추가
 
+English:Add Note
+Translated:메모를 추가
+
+English:Add Note...
+Translated:메모를 추가...
+
 English:Add to Bed
 Translated:침대에 추가
 
+English:Add to Queue
+Translated:목록에 추가해
+
 English:Add to Selection
 Translated:선택에 추가
+
+English:Additional Printing Errors
+Translated:추가 인쇄 오류
 
 English:Adhesion
 Translated:부착
@@ -141,9 +243,6 @@ Translated:고급의
 
 English:Advanced Array
 Translated:고급 어레이
-
-English:After Move
-Translated:이동 후
 
 English:After Tool Change G-Code
 Translated:공구 교환 후 G-Code
@@ -169,8 +268,8 @@ Translated:알리다
 English:Align
 Translated:맞추다
 
-English:Align and merge any vertices that are nearly coincident.
-Translated:거의 일치하는 정점을 정렬하고 병합합니다.
+English:Alignment
+Translated:조정
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:모든 돌출에 이 값이 곱해집니다. 1 이상으로 늘리면 압출되는 필라멘트의 양이 증가합니다(1.1이 좋은 최대값임). 줄이면 압출되는 양이 줄어듭니다(0.9가 좋은 최소값임).
@@ -181,20 +280,11 @@ Translated:모든 G 코드 행은 100자 미만이어야 합니다(주석 제외
 English:All Heaters
 Translated:모든 히터
 
+English:Allow M300 commands (play sound) to be sent to the firmware. Disable to turn off sounds.
+Translated:M300 명령(사운드 재생)이 펌웨어로 전송되도록 허용합니다. 소리를 끄려면 비활성화합니다.
+
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:MatterControl이 긴 줄을 분할하여 평준화 및 인쇄 취소를 개선할 수 있습니다. 수준을 크게 벗어난 프린터에 중요합니다.
-
-English:Allows for the repositioning of the rotation origin
-Translated:회전 원점의 재배치 허용
-
-English:Allows you turn on and off applying the fit to the x axis.
-Translated:x축에 맞춤을 적용하여 켜고 끌 수 있습니다.
-
-English:Allows you turn on and off applying the fit to the y axis.
-Translated:y축에 맞춤을 적용하여 켜고 끌 수 있습니다.
-
-English:Allows you turn on and off applying the fit to the z axis.
-Translated:z축에 맞춤을 적용하여 켜고 끌 수 있습니다.
 
 English:Alpha
 Translated:알파
@@ -208,11 +298,20 @@ Translated:이미 보정됨
 English:Already Loaded
 Translated:이미 로드됨
 
+English:Alternate Centering
+Translated:대체 센터링
+
+English:Always Centered In Back
+Translated:항상 뒤에 중심
+
+English:AMF File
+Translated:AMF 파일
+
+English:An image must be selected
+Translated:이미지를 선택해야 합니다.
+
 English:An unexpected error occurred during reload
 Translated:다시 로드하는 동안 예기치 않은 오류가 발생했습니다.
-
-English:Analyze Every Layer
-Translated:모든 레이어 분석
 
 English:Anchor
 Translated:닻
@@ -220,7 +319,7 @@ Translated:닻
 English:and ensure that no filament is stuck to your nozzle.
 Translated:필라멘트가 노즐에 달라붙지 않았는지 확인하십시오.
 
-English:and the hotend to heat to 
+English:and the hotend to heat to
 Translated:그리고 가열할 핫엔드
 
 English:Angle
@@ -238,6 +337,9 @@ Translated:애플리케이션 스토리지
 English:Apply
 Translated:적용하다
 
+English:Apply changes to this print
+Translated:이 인쇄물에 변경 사항 적용
+
 English:Apply leveling to G-Code during export
 Translated:내보내기 중 G-Code에 레벨링 적용
 
@@ -247,8 +349,14 @@ Translated:보정을 중단하시겠습니까?
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:현재 인쇄를 중단하고 MatterControl을 닫으시겠습니까?
 
+English:Are you sure you want to abort the current print(s) and close MatterControl?
+Translated:현재 인쇄를 중단하고 MatterControl을 닫으시겠습니까?
+
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:이 부분({0})을 대기열에 추가하시겠습니까? \n 로드하려는 3D 부품이 너무 복잡하여 성능이나 안정성 문제를 일으킬 수 있습니다. \NN\ 계속하기 전에 지오메트리를 줄이는 것을 고려하십시오.
+Translated:이 부분({0})을 대기열에 추가하시겠습니까? \n 로드하려는 3D 부품이 너무 복잡하여 성능이나 안정성 문제를 일으킬 수 있습니다. \NN\ 계속하기 전에 지오메트리 축소를 고려하십시오.
+
+English:Are you sure you want to clear your print history?
+Translated:인쇄 기록을 지우시겠습니까?
 
 English:Are you sure you want to delete printer '{0}'?
 Translated:'{0}' 프린터를 삭제하시겠습니까?
@@ -265,17 +373,26 @@ Translated:로그아웃하시겠습니까? 프린터 프로필이나 클라우�
 English:Arrange All Parts
 Translated:모든 부품 정렬
 
-English:Array
-Translated:정렬
-
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:레이어 인쇄 시간이 이 정도로 줄어들수록 팬 속도가 최대 속도까지 증가합니다.
+Translated:레이어를 인쇄하는 시간이 이 정도로 줄어들수록 팬 속도가 최대 속도까지 증가합니다.
 
 English:Ascending
 Translated:오름차순
 
+English:At least 1 part must be selected
+Translated:부품을 1개 이상 선택해야 합니다.
+
+English:At least 2 parts must be selected
+Translated:2개 이상의 부품을 선택해야 합니다.
+
 English:Attempting to connect
 Translated:연결 시도 중
+
+English:Attempting to connect again may address the issue.
+Translated:다시 연결을 시도하면 문제가 해결될 수 있습니다.
+
+English:Attempting to connect to {0}
+Translated:{0}에 연결 시도 중
 
 English:ATX Power Control
 Translated:ATX 전원 제어
@@ -286,11 +403,26 @@ Translated:자동 연결
 English:Auto Release Motors
 Translated:자동 릴리스 모터
 
+English:Auto Support
+Translated:자동 지원
+
 English:Auto Uppercase
 Translated:자동 대문자
 
+English:Automatic
+Translated:자동적 인
+
 English:Automatic Heater Shutdown in
 Translated:자동 히터 종료
+
+English:Autopilot
+Translated:자동 조종 장치
+
+English:Autopilot is part of MatterControl Pro.
+Translated:자동 조종 장치는 MatterControl Pro의 일부입니다.
+
+English:Autopilot Multi
+Translated:오토파일럿 멀티
 
 English:Avoid contact with your skin.
 Translated:피부와의 접촉을 피하십시오.
@@ -304,6 +436,9 @@ Translated:중심선
 English:Axis movement speeds
 Translated:축 이동 속도
 
+English:Axis Position
+Translated:축 위치
+
 English:Baby Step Offset
 Translated:베이비 스텝 오프셋
 
@@ -316,14 +451,38 @@ Translated:백 비율
 English:Backing Depth
 Translated:지지 깊이
 
-English:Backlash (minimal distance between meshing gears; in mm)
-Translated:백래시(맞물림 기어 사이의 최소 거리, mm 단위)
+English:Backlash
+Translated:백래시
 
 English:Backup Firmware Before Update
 Translated:업데이트 전 백업 펌웨어
 
+English:Bad
+Translated:나쁜
+
+English:Bad Thermistor
+Translated:불량 서미스터
+
 English:Base
 Translated:베이스
+
+English:Base Exposure Time
+Translated:기본 노출 시간
+
+English:Base Height
+Translated:기본 높이
+
+English:Base Layers
+Translated:기본 레이어
+
+English:Base Lift Distance
+Translated:베이스 리프트 거리
+
+English:Base Lift Speed
+Translated:베이스 리프트 속도
+
+English:Base Min Off Time
+Translated:기본 최소 오프 시간
 
 English:Baud Rate
 Translated:전송 속도
@@ -331,8 +490,11 @@ Translated:전송 속도
 English:Bed
 Translated:침대
 
+English:Bed Dislodged
+Translated:침대가 빠졌다
+
 English:Bed Leveling data created at {0}°C versus current {1}°C
-Translated:현재 {1}°C 대비 {0}°C에서 생성된 베드 레벨링 데이터
+Translated:{0}°C 대 현재 {1}°C에서 생성된 베드 레벨링 데이터
 
 English:Bed Leveling Temperature
 Translated:베드 레벨링 온도
@@ -343,11 +505,20 @@ Translated:침대 PID 설정
 English:Bed Remove Part Temperature
 Translated:베드 제거 부품 온도
 
+English:Bed Settings
+Translated:침대 설정
+
 English:Bed Shape
 Translated:침대 모양
 
 English:Bed Size
 Translated:침대 크기
+
+English:Bed Surface
+Translated:침대 표면
+
+English:Bed Surface Temperatures
+Translated:침대 표면 온도
 
 English:Bed Temperature
 Translated:침대 온도
@@ -355,8 +526,11 @@ Translated:침대 온도
 English:Bed Temperature:
 Translated:침대 온도:
 
-English:Before Tool Change
-Translated:공구 교환 전
+English:Bed Wipe Temperature
+Translated:침대 닦음 온도
+
+English:Before exporting evaluate and add automatic support material. NOTE: If there is already support, no additional support will be added.
+Translated:내보내기 전에 자동 지원 자료를 평가하고 추가하십시오. 참고: 이미 지원이 있는 경우 추가 지원이 추가되지 않습니다.
 
 English:Before Tool Change G-Code
 Translated:공구 교환 전 G-Code
@@ -373,8 +547,8 @@ Translated:공구 교환 전 G-Code 4
 English:Behavior
 Translated:행동
 
-English:Bend Up
-Translated:위로 굽히다
+English:Bend Direction
+Translated:굽힘 방향
 
 English:Beta
 Translated:베타
@@ -382,14 +556,38 @@ Translated:베타
 English:Beta: The release candidate version of MatterControl
 Translated:베타: MatterControl의 출시 후보 버전
 
-English:Booleans
-Translated:부울
+English:Bevel Inset
+Translated:베벨 삽입
+
+English:Bevel Start
+Translated:베벨 시작
+
+English:Bevel Steps
+Translated:베벨 단계
+
+English:Bevel Top
+Translated:베벨 탑
+
+English:Blue Tape
+Translated:블루 테이프
+
+English:Blue Tape Bed Temperature
+Translated:파란색 테이프 베드 온도
+
+English:Bottom Inset
+Translated:하단 삽입
 
 English:Bottom Solid Infill
 Translated:하단 솔리드 채우기
 
 English:Bottom Solid Layers
 Translated:하단 솔리드 레이어
+
+English:Bowden Tube Popped Out
+Translated:튀어나온 보우덴 튜브
+
+English:Box
+Translated:상자
 
 English:Braille
 Translated:점자
@@ -409,17 +607,26 @@ Translated:브리징 팬 속도
 English:Brim
 Translated:가장자리
 
-English:brims
-Translated:챙
+English:Brim Extruder
+Translated:브림 압출기
 
 English:Build Height
 Translated:빌드 높이
+
+English:BuildTak
+Translated:빌드탁
+
+English:BuildTak Bed Temperature
+Translated:BuildTak 베드 온도
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
 Translated:모든 명령에 대한 표준 rep-rap 체크섬을 계산하고 전송합니다.
 
 English:Calculate Path
 Translated:경로 계산
+
+English:Calculation Height
+Translated:계산 높이
 
 English:Calibrate Printer
 Translated:프린터 보정
@@ -475,17 +682,32 @@ Translated:인쇄하는 동안 로그아웃할 수 없음
 English:Can't sign in while printing
 Translated:인쇄하는 동안 로그인할 수 없음
 
+English:Categories
+Translated:카테고리
+
+English:Center Hole Diameter
+Translated:센터 홀 직경
+
+English:Center Parts Before Printing
+Translated:인쇄 전 센터 부품
+
+English:Centered In Back
+Translated:뒤에 중앙에
+
+English:Centering
+Translated:센터링
+
 English:Change
 Translated:변화
+
+English:Change Amount
+Translated:금액 변경
 
 English:Change Password
 Translated:비밀번호 변경
 
-English:Change the scale of the image within the coin.
-Translated:동전 내 이미지의 크기를 변경합니다.
-
-English:Change the width of the image lines.
-Translated:이미지 라인의 너비를 변경합니다.
+English:Changing Height
+Translated:높이 변경
 
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:업데이트 채널을 변경하면 업데이트할 때 받는 MatterControl 버전이 변경됩니다.
@@ -511,8 +733,14 @@ Translated:각 인쇄 전에 레이어 높이가 노즐 직경보다 작은지 �
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:프린터의 LCD 화면(있는 경우)에 인쇄 진행률을 표시하는 명령을 선택합니다.
 
-English:Choose to render as Braille or standard text. This can help show how grade 2 works.
-Translated:점자 또는 표준 텍스트로 렌더링하도록 선택합니다. 이것은 2 학년이 어떻게 작동하는지 보여주는 데 도움이 될 수 있습니다.
+English:Circle
+Translated:원
+
+English:circular
+Translated:회보
+
+English:Circular Pitch
+Translated:원형 피치
 
 English:Clean Filament Page
 Translated:필라멘트 청소 페이지
@@ -520,11 +748,35 @@ Translated:필라멘트 청소 페이지
 English:Clear
 Translated:분명한
 
+English:Clear any assigned color. This may allow component colors to be visible.
+Translated:할당된 색상을 모두 지웁니다. 이렇게 하면 구성 요소 색상이 표시될 수 있습니다.
+
 English:Clear Bed
 Translated:클리어 베드
 
+English:Clear Bed G-Code
+Translated:클리어 베드 G-코드
+
 English:Clear Cache
 Translated:캐시 지우기
+
+English:Clear Height
+Translated:클리어 높이
+
+English:Clear History
+Translated:기록 지우기
+
+English:Clear History?
+Translated:기록을 지우시겠습니까?
+
+English:Clear Material Setting
+Translated:재료 설정 지우기
+
+English:Clear Override
+Translated:재정의 지우기
+
+English:Clear Quality Setting
+Translated:선명한 화질 설정
 
 English:Clear selection
 Translated:명확한 선택
@@ -532,11 +784,20 @@ Translated:명확한 선택
 English:Clear ZOffset
 Translated:Z오프셋 지우기
 
-English:Clearance (minimal distance between the apex of a tooth and the trough of the other gear; in mm)
-Translated:클리어런스(톱니와 다른 기어의 골 사이의 최소 거리, mm 단위)
+English:Clearance
+Translated:정리
 
 English:Click 'Next' to continue.
 Translated:계속하려면 '다음'을 클릭하세요.
+
+English:Click the 'Connect' button to retry the original connection attempt
+Translated:원래 연결 시도를 다시 시도하려면 '연결' 버튼을 클릭하세요.
+
+English:Click to edit values
+Translated:값을 수정하려면 클릭하세요.
+
+English:Click to go back
+Translated:클릭하여 돌아가기
 
 English:Close
 Translated:닫다
@@ -551,16 +812,25 @@ English:Coarse
 Translated:조잡한
 
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
-Translated:거친 보정이 완료되었습니다. 이제 정확도를 개선하기 위해 일반 보정을 수행합니다.
+Translated:거친 보정이 완료되었습니다. 이제 정확도를 향상시키기 위해 일반 보정을 수행합니다.
 
 English:Coast At End
 Translated:끝의 해안
 
-English:Collapse All
-Translated:모든 축소
+English:Collapse
+Translated:무너지다
 
 English:Color
 Translated:색상
+
+English:Color 2
+Translated:색상 2
+
+English:Color 3
+Translated:색상 3
+
+English:Color 4
+Translated:색상 4
 
 English:Color View
 Translated:컬러 뷰
@@ -580,6 +850,30 @@ Translated:개별 개체 완성
 English:Completed
 Translated:완전한
 
+English:Computer
+Translated:컴퓨터
+
+English:Computer / MatterControl
+Translated:컴퓨터 / MatterControl
+
+English:Computer Crashed
+Translated:컴퓨터 충돌
+
+English:Computer Slow / Lagging
+Translated:컴퓨터 느림/지연
+
+English:CONCENTRIC
+Translated:집중
+
+English:Conductive Pad Center
+Translated:전도성 패드 센터
+
+English:Conductive Probe Min Z
+Translated:전도성 프로브 최소 Z
+
+English:Conductive Probing
+Translated:전도성 프로빙
+
 English:Cone
 Translated:원뿔
 
@@ -595,8 +889,8 @@ Translated:알림 구성
 English:Configure Plugins
 Translated:플러그인 구성
 
-English:Configure Printer
-Translated:프린터 구성
+English:Configure Wifi
+Translated:와이파이 구성
 
 English:Confirm your new password
 Translated:새 비밀번호 확인
@@ -604,11 +898,8 @@ Translated:새 비밀번호 확인
 English:Confirm your Password
 Translated:암호를 확인
 
-English:Congratulations Print Complete
-Translated:축하합니다 인쇄 완료
-
 English:Congratulations! Print Leveling is now configured and enabled.
-Translated:축하합니다! 이제 인쇄 레벨링이 구성 및 활성화되었습니다.
+Translated:축하합니다! 이제 인쇄 레벨링이 구성되고 활성화되었습니다.
 
 English:Connect
 Translated:연결하다
@@ -616,8 +907,8 @@ Translated:연결하다
 English:Connect Bad Edges
 Translated:잘못된 가장자리 연결
 
-English:Connect printer (make sure it is on)
-Translated:프린터 연결(켜져 있는지 확인)
+English:Connect to Printer
+Translated:프린터에 연결
 
 English:Connect to the currently selected printer
 Translated:현재 선택한 프린터에 연결
@@ -625,11 +916,17 @@ Translated:현재 선택한 프린터에 연결
 English:Connect to your printer to continue
 Translated:계속하려면 프린터에 연결하세요.
 
+English:Connect Your Device
+Translated:장치 연결
+
 English:Connect your printer to check for firmware updates.
 Translated:프린터를 연결하여 펌웨어 업데이트를 확인하십시오.
 
 English:Connected
 Translated:연결됨
+
+English:Connected to Emulator
+Translated:에뮬레이터에 연결됨
 
 English:Connecting
 Translated:연결 중
@@ -643,11 +940,17 @@ Translated:연결 끊김
 English:Connection succeeded
 Translated:연결 성공
 
+English:Connection succeeded (port {0}).
+Translated:연결에 성공했습니다(포트 {0}).
+
 English:Connection timed out
 Translated:연결 시간이 초과되었습니다
 
 English:Connection Timeout
 Translated:접속 시간 초과
+
+English:Connection Troubleshooting
+Translated:연결 문제 해결
 
 English:Continue
 Translated:계속하다
@@ -659,16 +962,22 @@ English:Controls
 Translated:통제 수단
 
 English:Controls the amount of extrusion
-Translated:돌출량 제어
+Translated:돌출량을 제어합니다.
 
 English:Controls the speed of printer moves
 Translated:프린터 이동 속도를 제어합니다.
 
+English:Convert to Support
+Translated:지원으로 변환
+
+English:Convert to Wipe Tower
+Translated:와이프 타워로 변환
+
 English:Cooling
 Translated:냉각
 
-English:Cooling Thresholds
-Translated:냉각 임계값
+English:copy
+Translated:복사
 
 English:Copy
 Translated:복사
@@ -681,6 +990,9 @@ Translated:복사 및 재보정
 
 English:Copy everything but hardware specific calibration settings
 Translated:하드웨어별 보정 설정을 제외한 모든 항목 복사
+
+English:Copy extrusions data
+Translated:돌출 데이터 복사
 
 English:Copy Mesh
 Translated:메쉬 복사
@@ -700,20 +1012,20 @@ Translated:선택한 버튼을 찾을 수 없습니다.
 English:Couldn't load file
 Translated:파일을 로드할 수 없습니다
 
+English:Couldn't Resume
+Translated:재개할 수 없음
+
 English:Couldn't save file
 Translated:파일을 저장할 수 없습니다
+
+English:Count
+Translated:세다
 
 English:count or mm
 Translated:카운트 또는 mm
 
 English:Create
 Translated:만들다
-
-English:Create a hook so that the coin can be hung from a chain.
-Translated:동전을 체인에 걸 수 있도록 고리를 만드십시오.
-
-English:Create a hook so the Braille can be hung from a necklace or keychain.
-Translated:목걸이나 열쇠고리에 점자를 걸 수 있도록 고리를 만드세요.
 
 English:Create a printer to export G-Code
 Translated:G-Code 내보내기를 위한 프린터 생성
@@ -730,6 +1042,9 @@ Translated:테두리 만들기
 English:Create Folder
 Translated:폴더 생성
 
+English:Create New Design
+Translated:새로운 디자인 만들기
+
 English:Create Part Sheet
 Translated:부품 시트 작성
 
@@ -738,6 +1053,9 @@ Translated:경계 생성
 
 English:Create Printer
 Translated:프린터 생성
+
+English:Create Pulse
+Translated:펄스 생성
 
 English:Create Raft
 Translated:뗏목 만들기
@@ -748,11 +1066,17 @@ Translated:스커트 만들기
 English:Create Support
 Translated:지원 만들기
 
+English:Create Supports
+Translated:지지대 만들기
+
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:인쇄물 바닥에 부착된 테두리를 만듭니다. 부품이 베드에 부착되는 데 도움이 되므로 ABS(및 기타 휘어지기 쉬운 플라스틱)를 인쇄할 때 뒤틀림을 방지하는 데 유용합니다.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
 Translated:이중 압출을 사용하여 인쇄할 때 다른 노즐을 닦을 부분 주위에 둘레를 만듭니다. 비활성화하려면 0으로 설정합니다.
+
+English:Creates a raft under the printed part. Useful to help parts stick to the build plate.
+Translated:인쇄된 부품 아래에 뗏목을 만듭니다. 부품이 빌드 플레이트에 달라붙는 데 유용합니다.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:인쇄된 부품 아래에 뗏목을 만듭니다. 부품이 베드에 부착되는 데 도움이 되므로 ABS(및 기타 휘어지기 쉬운 플라스틱)를 인쇄할 때 뒤틀림을 방지하는 데 유용합니다.
@@ -766,6 +1090,9 @@ Translated:펌웨어 백업 생성 중...
 English:Creating Gear
 Translated:기어 만들기
 
+English:Creating Threads
+Translated:스레드 생성
+
 English:Creation Data
 Translated:생성 데이터
 
@@ -775,17 +1102,26 @@ Translated:입방체
 English:Current Build
 Translated:현재 빌드
 
+English:Current Default
+Translated:현재 기본값
+
 English:Currently available serial ports.
 Translated:현재 사용 가능한 직렬 포트.
 
 English:Curve
 Translated:곡선
 
+English:Custom Points
+Translated:커스텀 포인트
+
 English:Custom Profile
 Translated:사용자 정의 프로필
 
 English:Cut
 Translated:자르다
+
+English:Cut Height
+Translated:절단 높이
 
 English:Cylinder
 Translated:실린더
@@ -796,8 +1132,20 @@ Translated:생성 일자
 English:Date Modified
 Translated:수정 날짜
 
+English:Debug Render Options
+Translated:디버그 렌더링 옵션
+
+English:Decend Speed
+Translated:속도 감소
+
 English:Default
 Translated:기본
+
+English:Default Acceleration
+Translated:기본 가속
+
+English:Define New
+Translated:새로 정의
 
 English:Delete
 Translated:삭제
@@ -818,10 +1166,13 @@ English:Density
 Translated:밀도
 
 English:DEPRECATED: replaced with extruder_offset
-Translated:지원 중단됨: extruder_offset으로 대체됨
+Translated:사용 중단됨: extruder_offset으로 대체됨
 
 English:Depth
 Translated:깊이
+
+English:Depth Percent
+Translated:깊이 백분율
 
 English:Descending
 Translated:내림차순
@@ -829,11 +1180,17 @@ Translated:내림차순
 English:Description
 Translated:설명
 
+English:Description - Markdown Text
+Translated:설명 - 마크다운 텍스트
+
 English:Design Apps
 Translated:디자인 앱
 
 English:Design Name
 Translated:디자인 이름
+
+English:Desktop
+Translated:데스크탑
 
 English:Details
 Translated:세부
@@ -856,14 +1213,29 @@ Translated:너무 얇아서 인쇄할 수 없는 모델 섹션을 감지하고 �
 English:Developed By
 Translated:개발자
 
+English:Diagnostics
+Translated:진단
+
 English:Diameter
 Translated:지름
+
+English:Diameter Top
+Translated:직경 정상
+
+English:Direction
+Translated:방향
 
 English:Disable Fan For The First
 Translated:처음으로 팬 비활성화
 
 English:Disabled: {0}
 Translated:비활성화됨: {0}
+
+English:Discard Changes
+Translated:변경 사항을 취소
+
+English:Discard Changes Editing
+Translated:변경 사항 삭제 편집
 
 English:Disconnect
 Translated:연결 해제
@@ -874,9 +1246,6 @@ Translated:현재 인쇄를 연결 해제하고 중지하시겠습니까?
 English:Disconnect from current printer
 Translated:현재 프린터에서 연결 해제
 
-English:Disconnect printer
-Translated:프린터 연결 끊기
-
 English:Disconnected
 Translated:연결 끊김
 
@@ -885,6 +1254,9 @@ Translated:연결 끊기
 
 English:Disconnecting from printer...
 Translated:프린터에서 연결 해제 중...
+
+English:Dislodged From Bed
+Translated:침대에서 쫓겨난
 
 English:Dismiss
 Translated:해고하다
@@ -904,9 +1276,6 @@ Translated:완료
 English:Don't remind me again
 Translated:다시 생각나게 하지마
 
-English:Don't show this again
-Translated:다시 표시하지 않음
-
 English:Down Arrow
 Translated:아래쪽 화살표
 
@@ -916,23 +1285,29 @@ Translated:지금 다운로드
 English:Download Update
 Translated:업데이트 다운로드
 
+English:Downloading
+Translated:다운로드 중
+
 English:Downloading firmware update...
 Translated:펌웨어 업데이트 다운로드 중...
 
 English:Downloading updates...
 Translated:업데이트 다운로드 중...
 
-English:Downloading...
-Translated:다운로드 중...
-
 English:Downloads
 Translated:다운로드
+
+English:Dual Contouring
+Translated:듀얼 컨투어링
 
 English:Dual Extrusion Align
 Translated:이중 압출 정렬
 
 English:Duplicate
 Translated:복제하다
+
+English:Duplication
+Translated:복사
 
 English:Each extruder has a separate part cooling fan that is controlled independently.
 Translated:각 압출기에는 독립적으로 제어되는 별도의 부품 냉각 팬이 있습니다.
@@ -942,6 +1317,12 @@ Translated:각 압출기에는 팬이 있습니다
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
 Translated:각 개별 부품이 인쇄 완료되면 노즐을 다시 베드로 내리고 다음 부품을 인쇄합니다.
+
+English:Easing Option
+Translated:완화 옵션
+
+English:Easing Type
+Translated:이징 유형
 
 English:edit
 Translated:편집하다
@@ -958,11 +1339,17 @@ Translated:레벨링 데이터 편집
 English:Edit Macro
 Translated:매크로 편집
 
+English:Edit Note...
+Translated:메모 수정...
+
 English:Edit OpenSCAD script
 Translated:OpenSCAD 스크립트 편집
 
 English:Edit Page
 Translated:페이지 편집
+
+English:Edit Radius
+Translated:반경 편집
 
 English:Edit Selected Setting
 Translated:선택한 설정 편집
@@ -982,14 +1369,14 @@ Translated:이메일
 English:Email Address
 Translated:이메일 주소
 
+English:Empty
+Translated:비어있는
+
 English:Empty Bed
 Translated:빈 침대
 
 English:Emulate Endstops
 Translated:엔드스톱 에뮬레이션
-
-English:Enable advanced features like specifying when the twist starts and stops on the part.
-Translated:부품에서 비틀기 시작 및 중지 시간 지정과 같은 고급 기능을 활성화합니다.
 
 English:Enable Auto Cooling
 Translated:자동 냉각 활성화
@@ -1000,6 +1387,9 @@ Translated:압출기 리프트 활성화
 English:Enable Fan
 Translated:팬 활성화
 
+English:Enable Firmware Sounds
+Translated:펌웨어 사운드 활성화
+
 English:Enable Line Splitting
 Translated:줄 분할 활성화
 
@@ -1009,8 +1399,14 @@ Translated:복구 활성화
 English:Enable Retractions
 Translated:철회 활성화
 
+English:Enable Socketeer Client
+Translated:소켓티어 클라이언트 활성화
+
 English:Enable Software Leveling
 Translated:소프트웨어 레벨링 활성화
+
+English:Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print. This will run immediately after M190 (print bed reaches temp).
+Translated:프린터에 자동 Z 프로브가 있고 인쇄할 때마다 레벨링을 확인하려는 경우 이 옵션을 활성화합니다. 이것은 M190(인쇄 베드가 온도에 도달) 직후에 실행됩니다.
 
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:프린터에 G30(자동 베드 프로빙)에 대한 하드웨어 지원이 있고 프로브 위치를 수동으로 측정하는 대신 사용하려는 경우 이 옵션을 활성화합니다.
@@ -1021,14 +1417,11 @@ Translated:끝
 English:End G-Code
 Translated:G 코드 종료
 
-English:Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.
-Translated:각 감소된 점이 원래 메쉬의 표면에 있는지 확인합니다. 이것은 일반적으로 필요하지 않으며 계산 속도를 크게 저하시킵니다.
+English:End Height Percent
+Translated:끝 높이 백분율
 
-English:Ensure that the part maintains its proportions.
-Translated:부품이 비율을 유지하는지 확인하십시오.
-
-English:Ensures the rotated part has a minimum number of sides per complete rotation
-Translated:회전된 부품이 완전한 회전당 최소 측면 수를 갖도록 합니다.
+English:Ending Angle
+Translated:종료 각도
 
 English:Enter a Design Name Here
 Translated:여기에 디자인 이름을 입력하세요
@@ -1038,6 +1431,12 @@ Translated:사용자 이름 입력
 
 English:Enter New Name Here
 Translated:여기에 새 이름 입력
+
+English:Enter Note Here
+Translated:여기에 메모 입력
+
+English:Enter Person Access Token
+Translated:개인 액세스 토큰 입력
 
 English:Enter reset code
 Translated:재설정 코드 입력
@@ -1063,6 +1462,9 @@ Translated:오류
 English:Error compiling OpenSCAD script
 Translated:OpenSCAD 스크립트 컴파일 오류
 
+English:Error Creating File
+Translated:파일 생성 중 오류 발생
+
 English:Error creating profile
 Translated:프로필을 만드는 동안 오류가 발생했습니다.
 
@@ -1072,11 +1474,23 @@ Translated:콘텐츠 로드 중 오류 발생
 English:Error Loading Image
 Translated:이미지를 로드하는 동안 오류가 발생했습니다.
 
+English:Error Reading File
+Translated:파일 읽기 오류
+
 English:Error Reported
 Translated:보고된 오류
 
 English:Error saving file
 Translated:파일을 저장하는 동안 오류가 발생했습니다.
+
+English:Error: Below Conductive Probe Min Z
+Translated:오류: 전도성 프로브 최소 Z 미만
+
+English:Error: Could not create file for saving. Original error
+Translated:오류: 저장할 파일을 만들 수 없습니다. 원래 오류
+
+English:Error: Could not read file from disk. Original error:
+Translated:오류: 디스크에서 파일을 읽을 수 없습니다. 원래 오류:
 
 English:Estimated Cost
 Translated:예상 비용
@@ -1084,8 +1498,8 @@ Translated:예상 비용
 English:Estimated Mass
 Translated:예상 질량
 
-English:Evaluate every layer for support requirements. Support will be algorithmically generated and not user editable. NOTE: If there is any user generated support no algorithmic support will be generated.
-Translated:지원 요구 사항에 대해 모든 계층을 평가합니다. 지원은 알고리즘 방식으로 생성되며 사용자가 편집할 수 없습니다. 참고: 사용자 생성 지원이 있는 경우 알고리즘 지원이 생성되지 않습니다.
+English:Evaluate every layer for support requirements. NOTE: If there are any support columns, this setting is ignored.
+Translated:지원 요구 사항에 대해 모든 계층을 평가합니다. 참고: 지원 열이 있는 경우 이 설정은 무시됩니다.
 
 English:Exact clone
 Translated:정확한 클론
@@ -1096,14 +1510,14 @@ Translated:인쇄 중 종료
 English:Expand
 Translated:확장하다
 
-English:Expand All
-Translated:모두 확장
-
 English:Expand Distance
 Translated:거리 확장
 
 English:Expand Thin Walls
 Translated:얇은 벽 확장
+
+English:Expand Width
+Translated:너비 확장
 
 English:Experimental
 Translated:실험적
@@ -1111,8 +1525,14 @@ Translated:실험적
 English:Export
 Translated:내 보내다
 
+English:Export as .csv, .json or .stl
+Translated:.csv, .json 또는 .stl로 내보내기
+
 English:Export Bed Leveling Data
 Translated:베드 레벨링 데이터 내보내기
+
+English:Export bed to
+Translated:침대 내보내기
 
 English:Export EEPROM
 Translated:EEPROM 내보내기
@@ -1129,8 +1549,17 @@ Translated:파일 내보내기
 English:Export G-Code
 Translated:G 코드 내보내기
 
+English:Export History
+Translated:수출 내역
+
 English:Export Part Sheet
 Translated:부품 시트 내보내기
+
+English:Export Photon File
+Translated:Photon 파일 내보내기
+
+English:Export Print Log...
+Translated:인쇄 로그 내보내기...
 
 English:Export Printer
 Translated:프린터 내보내기
@@ -1143,6 +1572,12 @@ Translated:X3G 내보내기
 
 English:Exporting
 Translated:수출
+
+English:Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.
+Translated:인쇄 기록 내보내기는 MatterControl Pro의 기능입니다. MatterControl Pro의 잠금을 해제하려면 Pro로 업그레이드하세요.
+
+English:Exposure Time
+Translated:노광 시간
 
 English:External Perimeters First
 Translated:외부 경계 먼저
@@ -1186,6 +1621,9 @@ Translated:압출기 변경
 English:Extruder Count
 Translated:압출기 수
 
+English:Extruder Slipping
+Translated:압출기 미끄러짐
+
 English:Extruder Temperature
 Translated:압출기 온도
 
@@ -1204,17 +1642,29 @@ Translated:돌출 승수
 English:Extrusion Ratio
 Translated:압출 비율
 
-English:Extrusion Width
-Translated:돌출 폭
+English:Face Orientation
+Translated:얼굴 방향
+
+English:Failed
+Translated:실패한
 
 English:Failed to connect server
 Translated:서버 연결 실패
+
+English:Failure Response A
+Translated:실패 응답 A
+
+English:Failure Response B
+Translated:실패 응답 B
 
 English:Fan
 Translated:팬
 
 English:Fan Speed
 Translated:팬 속도
+
+English:Fastest
+Translated:가장 빠른
 
 English:Features
 Translated:특징
@@ -1226,16 +1676,28 @@ English:Filament
 Translated:필라멘트
 
 English:Filament 2 Has Been Loaded
-Translated:필라멘트 2가 장착되었습니다.
+Translated:필라멘트 2가 로드되었습니다.
 
 English:Filament Has Been Loaded
 Translated:필라멘트가 장착되었습니다
+
+English:Filament Jam
+Translated:필라멘트 잼
 
 English:Filament Length
 Translated:필라멘트 길이
 
 English:Filament Loaded
 Translated:필라멘트 로드
+
+English:Filament Runout
+Translated:필라멘트 런아웃
+
+English:Filament Settings
+Translated:필라멘트 설정
+
+English:Filament Snapped
+Translated:필라멘트 스냅
 
 English:Filament Speed
 Translated:필라멘트 속도
@@ -1255,8 +1717,8 @@ Translated:파일 경로
 English:Fill Density
 Translated:채우기 밀도
 
-English:Fill Pattern
-Translated:채우기 패턴
+English:Fill Holes
+Translated:구멍 채우기
 
 English:Fill Thin Gaps
 Translated:얇은 간격 채우기
@@ -1267,11 +1729,23 @@ Translated:필터
 English:Final Count
 Translated:최종 카운트
 
+English:Final Faces
+Translated:마지막 얼굴
+
+English:Final Vertices
+Translated:최종 정점
+
+English:Finalized
+Translated:확정
+
 English:Finally click 'Next' to continue.
 Translated:마지막으로 '다음'을 클릭하여 계속하십시오.
 
 English:Find and create supports where needed
 Translated:필요한 곳에서 지지대 찾기 및 만들기
+
+English:Find Slice
+Translated:슬라이스 찾기
 
 English:Fine
 Translated:괜찮은
@@ -1312,8 +1786,14 @@ Translated:펌웨어 버전: {0}
 English:First Layer
 Translated:첫 번째 레이어
 
+English:First Layer Bad Quality
+Translated:첫 번째 레이어 품질 불량
+
 English:First Layer Bed Temperature
 Translated:1층 베드 온도
+
+English:First layer only
+Translated:첫 번째 레이어만
 
 English:First Layer Only
 Translated:첫 번째 레이어만
@@ -1337,28 +1817,31 @@ English:Flag keeping track if probe calibration wizard has been run.
 Translated:프로브 교정 마법사가 실행된 경우 추적을 유지하는 플래그입니다.
 
 English:Flag keeping track if xy calibration wizard has been run.
-Translated:xy 보정 마법사가 실행된 경우 추적을 추적하는 플래그입니다.
+Translated:xy 보정 마법사가 실행된 경우 추적을 유지하는 플래그입니다.
 
 English:Flat
 Translated:평평한
 
-English:Flatten
-Translated:단조롭게 하다
-
 English:Flattened
 Translated:단조롭게 하는
+
+English:Flooded Hot End
+Translated:범람된 핫 엔드
 
 English:Folder Name
 Translated:폴더 이름
 
-English:Folders
-Translated:폴더
+English:Font
+Translated:폰트
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
 Translated:고립영역(레이어의 뚜렷한 부분) 사이를 이동할 때 강제로 후퇴합니다.
 
 English:Forces external perimeters to be printed first. By default, they will print last.
 Translated:외부 둘레를 먼저 인쇄하도록 합니다. 기본적으로 마지막에 인쇄됩니다.
+
+English:Forces external perimeters to be printed first. By default, they will print last. Using 3 or more perimeters will result in better quality.
+Translated:외부 둘레를 먼저 인쇄하도록 합니다. 기본적으로 마지막에 인쇄됩니다. 3개 이상의 둘레를 사용하면 더 나은 품질을 얻을 수 있습니다.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
 Translated:인쇄가 하나의 돌출만 갖도록 하고 인쇄하는 동안 Z 높이를 점차 증가시킵니다. 이 기능을 사용하면 한 번에 한 부분만 인쇄됩니다.
@@ -1378,23 +1861,23 @@ Translated:포럼
 English:Found a line that is {0} characters long.\n{1}...
 Translated:길이가 {0}자인 줄을 찾았습니다. \n {1}...
 
+English:Furthest Back
+Translated:가장 뒤로
+
 English:g/cm³
 Translated:g/cm³
 
-English:g0
-Translated:g0
+English:Garolite
+Translated:가롤라이트
+
+English:Garolite Bed Temperature
+Translated:가롤라이트 베드 온도
 
 English:G-Code
 Translated:G 코드
 
-English:G-Code Flavor
-Translated:G 코드 풍미
-
 English:G-Code Line
 Translated:G 코드 라인
-
-English:G-Code Output
-Translated:G 코드 출력
 
 English:G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 Translated:모든 도구 변경 후에 실행될 G-Code. 당신이 사용할 수있는 '; 체크섬을 건너뛰려면 WRITE_RAW' 또는 '; NO_PROCESSING' 위치 오프셋을 건너뜁니다.
@@ -1435,11 +1918,17 @@ Translated:인쇄가 취소될 때 실행할 G-Code입니다.
 English:G-Code to run when the printer is paused.
 Translated:프린터가 일시 중지될 때 실행할 G 코드입니다.
 
+English:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
+Translated:인쇄가 완료된 후 침대를 청소하기 위해 Autopilot에서 사용하는 G 코드. 이것은 침대를 청소하도록 설계된 프린터에서만 유용합니다.
+
 English:Gear
 Translated:기어
 
 English:General
 Translated:일반적인
+
+English:General Quality
+Translated:일반 품질
 
 English:Generate
 Translated:생성하다
@@ -1459,17 +1948,35 @@ Translated:강도를 높이고 인터페이스 레이어를 유지하기 위해 
 English:Generating Lithophane
 Translated:리소판 생성
 
-English:Generating Text Meshes
-Translated:텍스트 메쉬 생성
+English:GitHub Personal Access Token
+Translated:GitHub 개인 액세스 토큰
 
 English:Give the macro a name
 Translated:매크로 이름 지정
+
+English:Glass
+Translated:유리
+
+English:Glass Bed Temperature
+Translated:유리층 온도
+
+English:Good
+Translated:좋은
+
+English:Great
+Translated:엄청난
+
+English:GRID
+Translated:그리드
 
 English:Group
 Translated:그룹
 
 English:Guides and Articles
 Translated:가이드 및 기사
+
+English:GYROID
+Translated:자이로이드
 
 English:Half Cylinder
 Translated:하프 실린더
@@ -1489,6 +1996,9 @@ Translated:하드웨어 오류
 English:Has C Axis
 Translated:C 축 있음
 
+English:Has Conductive Nozzle
+Translated:전도성 노즐 있음
+
 English:Has Fan
 Translated:팬 있음
 
@@ -1506,6 +2016,9 @@ Translated:전원 제어 기능 있음
 
 English:Has SD Card Reader
 Translated:SD 카드 리더 있음
+
+English:Has Swappable Bed
+Translated:교체 가능한 침대 있음
 
 English:Has Z Probe
 Translated:Z 프로브 있음
@@ -1525,6 +2038,9 @@ Translated:원점 복귀 전 가열
 English:Heated Bed
 Translated:온열침대
 
+English:Heating
+Translated:난방
+
 English:Heating Bed
 Translated:히팅베드
 
@@ -1537,14 +2053,29 @@ Translated:프린터 가열
 English:Height
 Translated:키
 
+English:Height Percent
+Translated:높이 백분율
+
 English:Help
 Translated:돕다
+
+English:Here you can find the collection of libraries you can use
+Translated:여기에서 사용할 수 있는 라이브러리 모음을 찾을 수 있습니다.
+
+English:HEXAGON
+Translated:육각형
+
+English:Hide
+Translated:숨다
 
 English:High Precision
 Translated:높은 정밀도
 
 English:History
 Translated:역사
+
+English:Hold 'Shift' to scale proportionally, Type 'Esc' to cancel
+Translated:비례적으로 크기를 조정하려면 'Shift'를 누르고 취소하려면 'Esc'를 입력하세요.
 
 English:Holding Temperature
 Translated:유지 온도
@@ -1603,23 +2134,23 @@ Translated:핫엔드 온도
 English:Hotend Temperature:
 Translated:핫엔드 온도:
 
-English:How can we improve?
-Translated:어떻게 개선할 수 있습니까?
-
-English:Hz
-Translated:Hz
-
 English:Ideal for cloning settings across different physical printers
 Translated:서로 다른 물리적 프린터에서 설정을 복제하는 데 이상적입니다.
 
-English:if currently connected
-Translated:현재 연결된 경우
+English:if connected
+Translated:연결된 경우
 
 English:If set, the printer will automatically attempt to connect when selected.
-Translated:설정하면 선택 시 프린터가 자동으로 연결을 시도합니다.
+Translated:설정하면 프린터가 선택되면 자동으로 연결을 시도합니다.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
 Translated:압출기가 오랫동안 작동된 경우 너무 큰 값을 보고할 수 있으며 이는 주기적으로 재설정됩니다.
+
+English:If the printer has a physically touching z probe (like a BLTouch) this will enable automatic validation of the distance between the nozzle and the z probe.
+Translated:프린터에 물리적으로 접촉하는 z 프로브(예: BLTouch)가 있는 경우 노즐과 z 프로브 사이의 거리를 자동으로 확인할 수 있습니다.
+
+English:If the printer has both a conductive nozzle and a z probe this will enable automatic validation of the distance between their readings. Expected output is 'conductive: TRIGGERED' on M119.
+Translated:프린터에 전도성 노즐과 z 프로브가 모두 있는 경우 판독값 사이의 거리를 자동으로 확인할 수 있습니다. 예상 출력은 M119에서 '전도성: TRIGGERED'입니다.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:레이어를 인쇄하는 시간이 이보다 짧으면 팬이 최소 속도로 켜집니다. 그런 다음 레이어 시간이 감소함에 따라 최대 속도로 증가합니다.
@@ -1629,6 +2160,9 @@ Translated:영상
 
 English:Image Converter
 Translated:이미지 변환기
+
+English:Image Missing
+Translated:이미지 누락
 
 English:Image to Path
 Translated:이미지를 경로로
@@ -1660,6 +2194,9 @@ Translated:가져오기 마법사
 English:In / Out Indicators
 Translated:인/아웃 표시기
 
+English:In addition to the normal firmware errors, these comma separated strings will cause MatterControl to stop and show an error message.
+Translated:일반적인 펌웨어 오류 외에도 이러한 쉼표로 구분된 문자열로 인해 MatterControl이 중지되고 오류 메시지가 표시됩니다.
+
 English:Inactive Cool Down
 Translated:비활성 쿨다운
 
@@ -1672,14 +2209,23 @@ Translated:Z 축이 베드에서 핫 엔드를 홈으로 이동함을 나타냅�
 English:Infill
 Translated:채우기
 
+English:Infill Amount
+Translated:충전량
+
 English:Infill Angle
 Translated:채우기 각도
 
 English:Infill Overlap
 Translated:채우기 겹침
 
+English:Infill Speeds
+Translated:채우기 속도
+
 English:Infill Type
 Translated:채우기 유형
+
+English:Inflate
+Translated:부풀게 하다
 
 English:Inflate Path
 Translated:팽창 경로
@@ -1687,11 +2233,20 @@ Translated:팽창 경로
 English:Initial (Recommended)
 Translated:초기(권장)
 
+English:Initial Faces
+Translated:초기면
+
 English:Initial Layer Speed
 Translated:초기 레이어 속도
 
 English:Initial Layers
 Translated:초기 레이어
+
+English:Initial Vertices
+Translated:초기 정점
+
+English:Initial Z Height Incorrect
+Translated:초기 Z 높이가 잘못됨
 
 English:Initializing hardware...
 Translated:하드웨어 초기화 중...
@@ -1699,11 +2254,17 @@ Translated:하드웨어 초기화 중...
 English:Initializing Library
 Translated:라이브러리 초기화
 
-English:Inner Radius
-Translated:내부 반경
+English:Inner Diameter
+Translated:내경
 
-English:Inner Size
-Translated:내부 크기
+English:Inner Gear Tooth Count
+Translated:내부 기어 톱니 수
+
+English:Inner Style
+Translated:이너 스타일
+
+English:Input Resolution
+Translated:입력 해상도
 
 English:Insert Filament
 Translated:필라멘트 삽입
@@ -1720,8 +2281,8 @@ Translated:내부 경계
 English:Install Update
 Translated:업데이트를 설치하다
 
-English:Interface
-Translated:상호 작용
+English:Instructions
+Translated:지침
 
 English:Interface Layer
 Translated:인터페이스 레이어
@@ -1731,6 +2292,9 @@ Translated:인터페이스 레이어
 
 English:Interface Tour
 Translated:인터페이스 투어
+
+English:Intermediate
+Translated:중급
 
 English:Intersect
 Translated:교차하다
@@ -1768,26 +2332,38 @@ Translated:현재 {0}(으)로 설정되어 있습니다.
 English:Item cannot be exported
 Translated:항목을 내보낼 수 없습니다
 
-English:Item cannot be exported as STL
-Translated:항목을 STL로 내보낼 수 없습니다.
+English:Item cannot be exported as AMF
+Translated:항목을 AMF로 내보낼 수 없습니다.
 
 English:Item not Found
 Translated:항목을 찾을 수 없음
 
+English:Iterations
+Translated:반복
+
 English:Jerk Velocity
 Translated:저크 속도
 
-English:Keep the entire extents of the part within the angle described.
-Translated:설명된 각도 내에서 부품의 전체 범위를 유지하십시오.
+English:Junction Deviation [mm/s]
+Translated:접합 편차 [mm/s]
 
-English:Keep Within Angle
-Translated:각도 내에서 유지
+English:Kapton
+Translated:캡톤
+
+English:Kapton Bed Temperature
+Translated:캡톤 베드 온도
 
 English:Keys
 Translated:열쇠
 
 English:Language
 Translated:언어
+
+English:Laser Speed
+Translated:레이저 속도
+
+English:Latitude Sides
+Translated:위도 측면
 
 English:Lay Flat
 Translated:눕다
@@ -1797,6 +2373,9 @@ Translated:층
 
 English:Layer Change G-Code
 Translated:레이어 변경 G 코드
+
+English:Layer Shift
+Translated:레이어 이동
 
 English:Layer Thickness
 Translated:레이어 두께
@@ -1808,6 +2387,9 @@ English:Layer(s) To Pause
 Translated:일시 중지할 레이어
 
 English:layers
+Translated:레이어
+
+English:Layers
 Translated:레이어
 
 English:Layers / Surface
@@ -1824,6 +2406,9 @@ Translated:좌 클릭
 
 English:left drag
 Translated:왼쪽 드래그
+
+English:Left Inset
+Translated:왼쪽 삽입
 
 English:Length
 Translated:길이
@@ -1849,8 +2434,11 @@ Translated:수준 측량
 English:Leveling Data Visualizer
 Translated:레벨링 데이터 시각화 도우미
 
-English:Leveling Probe
-Translated:레벨링 프로브
+English:Leveling Data Warning
+Translated:레벨링 데이터 경고
+
+English:Leveling Insets
+Translated:레벨링 인셋
 
 English:Leveling Settings
 Translated:레벨링 설정
@@ -1864,8 +2452,17 @@ Translated:도서관
 English:Library - Enter Share Code
 Translated:라이브러리 - 공유 코드 입력
 
+English:Lift Distance
+Translated:리프트 거리
+
+English:Lift Speed
+Translated:리프트 속도
+
 English:Limited Connectivity
 Translated:제한된 연결
+
+English:Line {0}
+Translated:{0}행
 
 English:Line Checksums
 Translated:라인 체크섬
@@ -1881,6 +2478,9 @@ Translated:선형 배열
 
 English:Linear Extrude
 Translated:선형 돌출
+
+English:LINES
+Translated:윤곽
 
 English:List of IP's discovered on the network
 Translated:네트워크에서 발견된 IP 목록
@@ -1927,20 +2527,35 @@ Translated:G 코드 로드
 English:Loading Help
 Translated:도움말 로드 중
 
-English:Loading...
-Translated:로드 중...
-
 English:Local Library
 Translated:지역 도서관
 
 English:Location
 Translated:위치
 
+English:Location of the '{0}' setting
+Translated:'{0}' 설정의 위치
+
+English:Lock Proportion
+Translated:잠금 비율
+
+English:Longitude Sides
+Translated:경도 측면
+
 English:Low Precision
 Translated:낮은 정밀도
 
 English:Lower / Deploy
 Translated:낮추기/배치
+
+English:Lower extruder
+Translated:하부 압출기
+
+English:M117
+Translated:M117
+
+English:M73
+Translated:M73
 
 English:Machine File (G-Code)
 Translated:머신 파일(G 코드)
@@ -1963,14 +2578,11 @@ Translated:매크로
 English:Maintain Proportions
 Translated:비율 유지
 
-English:make
-Translated:만들다
+English:Maintain Surface
+Translated:표면 유지
 
 English:Make
 Translated:만들다
-
-English:Make all the faces have a consistent orientation.
-Translated:모든 면이 일관된 방향을 갖도록 합니다.
 
 English:Make Component
 Translated:구성 요소 만들기
@@ -1993,11 +2605,23 @@ Translated:부분 채우기 위의 첫 번째 레이어가 브리징을 위해 �
 English:Manual Movement Speeds
 Translated:수동 이동 속도
 
+English:Manual Z Calibration complete.
+Translated:수동 Z 보정이 완료되었습니다.
+
 English:Manually Configure Connection
 Translated:수동으로 연결 구성
 
+English:MarchingSquares
+Translated:마칭스퀘어
+
 English:Markdown Edit
 Translated:마크다운 편집
+
+English:Markdown Help
+Translated:마크다운 도움말
+
+English:Marlin
+Translated:말린
 
 English:Marlin Firmware EEPROM Settings
 Translated:말린 펌웨어 EEPROM 설정
@@ -2008,11 +2632,17 @@ Translated:재료
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:재료 밀도. 레이어 보기에서 질량 추정에만 사용됩니다.
 
+English:Material Setting
+Translated:재료 설정
+
 English:Materials
 Translated:재료
 
 English:MatterControl
 Translated:매터컨트롤
+
+English:MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.
+Translated:컴퓨터의 다른 프로그램이 이미 연결되어 있기 때문에 MatterControl이 프린터에 연결할 수 없습니다. 직렬 포트에 액세스하는 다른 3D 인쇄 프로그램 또는 기타 프로그램을 닫거나 연결을 끊고 다시 시도하십시오.
 
 English:MatterControl Help
 Translated:MatterControl 도움말
@@ -2023,20 +2653,26 @@ Translated:MatterControl은 MatterHackers 및 기타 오픈 소스 소프트웨�
 English:MatterControl Plugins
 Translated:MatterControl 플러그인
 
-English:MatterControl will now attempt to auto-detect printer.
+English:MatterControl Pro Only
+Translated:MatterControl Pro 전용
+
+English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
+Translated:MatterControl이 인터넷에 연결할 수 없습니다. Wi-Fi 연결을 확인하고 다시 시도하세요.
+
+English:MatterControl will now attempt to auto-detect your printer.
 Translated:MatterControl은 이제 프린터 자동 감지를 시도합니다.
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: 펌웨어 파일 선택
-
-English:MatterHackers Internal Use
-Translated:MatterHackers 내부 사용
 
 English:Max Acceleration
 Translated:최대 가속
 
 English:Max Ratio
 Translated:최대 비율
+
+English:Max Temperature
+Translated:최대 온도
 
 English:Max Velocity
 Translated:최대 속도
@@ -2059,11 +2695,29 @@ Translated:최대 X-Y 저크 [mm/s]
 English:Maximum Z jerk [mm/s]
 Translated:최대 Z 저크 [mm/s]
 
+English:MCX File
+Translated:MCX 파일
+
+English:Measure Probe Offset Conductively
+Translated:전도적으로 프로브 오프셋 측정
+
 English:Measure the nozzle offset
 Translated:노즐 오프셋 측정
 
+English:Measure the nozzle to probe offset using the conductive pad.
+Translated:전도성 패드를 사용하여 프로브 오프셋에 대한 노즐을 측정합니다.
+
+English:Measure Tool
+Translated:측정 도구
+
+English:Mechanical
+Translated:기계
+
 English:Medium Precision
 Translated:중간 정밀도
+
+English:Merge
+Translated:병합
 
 English:Merge Overlapping Lines
 Translated:겹치는 선 병합
@@ -2074,11 +2728,8 @@ Translated:정점 병합
 English:Mesh
 Translated:망사
 
-English:Mesh Modifiers
-Translated:메쉬 수정자
-
-English:Message
-Translated:메세지
+English:Mesh Analysis
+Translated:메쉬 분석
 
 English:middle drag
 Translated:중간 드래그
@@ -2086,8 +2737,17 @@ Translated:중간 드래그
 English:Min feedrate [mm/s]
 Translated:최소 이송 속도 [mm/s]
 
+English:Min Sides Per Rotation
+Translated:회전당 최소 측면
+
+English:Min Surface Area
+Translated:최소 표면적
+
 English:Min travel feedrate [mm/s]
 Translated:최소 이동 속도 [mm/s]
+
+English:Minimum Avoid Travel Requiring Retraction
+Translated:최소 후퇴가 필요한 여행을 피하십시오
 
 English:Minimum Extrusion Length
 Translated:최소 돌출 길이
@@ -2104,11 +2764,20 @@ Translated:최소 세그먼트 시간 [ms]
 English:Minimum Speed
 Translated:최소 속도
 
+English:Minimum Speed Always
+Translated:항상 최소 속도
+
 English:Minimum Travel Requiring Retraction
 Translated:철회가 필요한 최소 이동 거리
 
 English:Mirror
 Translated:거울
+
+English:Mirror Mode
+Translated:미러 모드
+
+English:Mirror On
+Translated:미러 켜기
 
 English:Missing
 Translated:없어진
@@ -2122,17 +2791,23 @@ Translated:mm 또는 %
 English:mm zero to disable
 Translated:비활성화하려면 mm 0
 
+English:mm/min
+Translated:mm/분
+
 English:mm/s
 Translated:mm/s
 
 English:mm/s or %
 Translated:mm/s 또는 %
 
+English:mm/s^2
+Translated:mm/s^2
+
 English:mm/s²
 Translated:mm/s²
 
-English:model
-Translated:모델
+English:Mode
+Translated:방법
 
 English:Model
 Translated:모델
@@ -2140,17 +2815,20 @@ Translated:모델
 English:Model View
 Translated:모델 보기
 
-English:Model View Style
-Translated:모델 뷰 스타일
-
 English:Modify
 Translated:수정하다
 
 English:Modify T1 speeds during extrusion moves by the ratio or percent.
 Translated:비율 또는 백분율로 압출 이동 중 T1 속도를 수정합니다.
 
+English:Monotonic Solid Infill
+Translated:모노토닉 솔리드 인필
+
 English:More
 Translated:더
+
+English:More Export Options
+Translated:더 많은 내보내기 옵션
 
 English:Mouse
 Translated:쥐
@@ -2158,8 +2836,8 @@ Translated:쥐
 English:Move
 Translated:이동하다
 
-English:Move (Shift + Left Mouse)
-Translated:이동(Shift + 왼쪽 마우스)
+English:Move Direction
+Translated:이동 방향
 
 English:Move Item
 Translated:항목 이동
@@ -2169,6 +2847,9 @@ Translated:부품 이동
 
 English:Move Part Constrained
 Translated:구속된 부품 이동
+
+English:Move View
+Translated:보기 이동
 
 English:Move X negative
 Translated:X 음수로 이동
@@ -2188,11 +2869,17 @@ Translated:Z 네거티브 이동
 English:Move Z positive
 Translated:Z 양수 이동
 
+English:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
+Translated:이동: 마우스 가운데 버튼 | Ctrl + Shift + 마우스 왼쪽 버튼
+
 English:Movement
 Translated:움직임
 
 English:Movement Requests
 Translated:이동 요청
+
+English:Movement Speed
+Translated:이동 속도
 
 English:Movement Speeds
 Translated:이동 속도
@@ -2206,14 +2893,26 @@ Translated:움직임
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:노즐을 위아래로 움직여 냉각을 허용합니다.
 
+English:Multi-Extruder
+Translated:멀티 압출기
+
 English:My Modified Settings
 Translated:내 수정된 설정
 
 English:My Modified Settings (Printer)
 Translated:내 수정된 설정(프린터)
 
+English:MyDocuments
+Translated:내 문서
+
+English:name
+Translated:이름
+
 English:Name
 Translated:이름
+
+English:Name To Write
+Translated:쓸 이름
 
 English:Networked Printing
 Translated:네트워크 인쇄
@@ -2233,7 +2932,7 @@ Translated:새 업데이트를 설치할 준비가 되었습니다.
 English:New updates may be available
 Translated:새로운 업데이트가 있을 수 있습니다
 
-English:New User? 
+English:New User?
 Translated:새로운 사용자?
 
 English:Next
@@ -2245,17 +2944,17 @@ Translated:아니
 English:No Color
 Translated:색상 없음
 
-English:No COM ports available
-Translated:사용 가능한 COM 포트 없음
-
 English:No items to Export
 Translated:내보낼 항목이 없습니다
 
 English:No Items to Export
-Translated:내보낼 항목이 없습니다.
+Translated:내보낼 항목이 없습니다
 
 English:No macros are currently set up for this printer.
 Translated:현재 이 프린터에 대해 설정된 매크로가 없습니다.
+
+English:No part to arrange
+Translated:정리할 부분이 없다
 
 English:No printable parts exists within the bounds of the printer bed. Add content to continue
 Translated:프린터 베드의 경계 내에 인쇄 가능한 부품이 없습니다. 계속하려면 콘텐츠를 추가하세요.
@@ -2265,6 +2964,9 @@ Translated:선택한 프린터 없음
 
 English:No results found
 Translated:검색 결과가 없습니다
+
+English:No setting currently need to be updated.
+Translated:현재 업데이트할 필요가 없는 설정이 없습니다.
 
 English:None
 Translated:없음
@@ -2278,14 +2980,11 @@ Translated:정상
 English:Normal (Recommended)
 Translated:일반(권장)
 
-English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
-Translated:일반적으로 이미지는 가장자리로 확장됩니다. 이것은 시각적으로 이미지의 무게 중심을 맞추려고 할 것입니다.
-
-English:Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.
-Translated:일반적으로 부품은 실린더로 확장됩니다. 이렇게 하면 실린더의 부품 무게 중심을 맞추려고 합니다.
+English:Normal Layers
+Translated:일반 레이어
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:일반적으로 절대 e 거리를 사용하려고 합니다. 프린터에 상대적인 거리가 필요하다는 것을 알고 있는 경우에만 이 항목을 선택하십시오.
+Translated:일반적으로 절대 e 거리를 사용하려고 합니다. 프린터에 상대 거리가 필요하다는 것을 알고 있는 경우에만 이 항목을 선택하십시오.
 
 English:Not Connected
 Translated:연결되지 않음
@@ -2305,14 +3004,17 @@ Translated:대통 주둥이
 English:Nozzle 1 Inset
 Translated:노즐 1 삽입
 
+English:Nozzle 1 should have offsets set to 0.
+Translated:노즐 1의 오프셋은 0으로 설정되어야 합니다.
+
 English:Nozzle 2 Inset
 Translated:노즐 2 삽입
 
-English:Nozzle Calibration
-Translated:노즐 교정
+English:Nozzle Alignment
+Translated:노즐 정렬
 
-English:Nozzle Calibration measures the distance between hotends.
-Translated:노즐 교정은 핫엔드 사이의 거리를 측정합니다.
+English:Nozzle Alignment measures the distance between hotends.
+Translated:노즐 정렬은 핫엔드 사이의 거리를 측정합니다.
 
 English:Nozzle Diameter
 Translated:노즐 직경
@@ -2326,6 +3028,12 @@ Translated:노즐 오프셋 보정 마법사
 English:Nozzle Offsets
 Translated:노즐 오프셋
 
+English:Nozzle Width
+Translated:노즐 폭
+
+English:Num Cells
+Translated:숫자 셀
+
 English:Number
 Translated:숫자
 
@@ -2335,8 +3043,8 @@ Translated:부품을 인쇄하기 전에 인쇄할 레이어 수입니다.
 English:Number of Samples
 Translated:샘플 수
 
-English:Oem
-Translated:옴
+English:Number Printed
+Translated:인쇄된 번호
 
 English:of
 Translated:의
@@ -2350,6 +3058,9 @@ Translated:오프셋
 English:Offset Calibration complete.
 Translated:오프셋 보정이 완료되었습니다.
 
+English:Offset For Next Push
+Translated:다음 푸시를 위한 오프셋
+
 English:Ok
 Translated:확인
 
@@ -2361,6 +3072,9 @@ Translated:'확인' 응답
 
 English:On Connect G-Code
 Translated:연결 G 코드에
+
+English:One or more items cannot be exported as STL
+Translated:하나 이상의 항목을 STL로 내보낼 수 없습니다.
 
 English:Oops! Baud Rate must be an integer.
 Translated:앗! 전송 속도는 정수여야 합니다.
@@ -2395,7 +3109,7 @@ Translated:앗! 직렬 포트를 선택하십시오.
 English:Oops! Please sign in to enable this feature.
 Translated:앗! 이 기능을 사용하려면 로그인하세요.
 
-English:Oops! Printer could not be detected 
+English:Oops! Printer could not be detected
 Translated:앗! 프린터를 감지할 수 없습니다
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
@@ -2434,6 +3148,9 @@ Translated:앗! 기간이 만료되었습니다. 계속하려면 다시 로그�
 English:Open
 Translated:열려있는
 
+English:Open a copy
+Translated:사본 열기
+
 English:Open File
 Translated:파일 열기
 
@@ -2446,8 +3163,14 @@ Translated:패키지 열기
 English:Open Recent
 Translated:최근 열기
 
+English:Open Settings View Options
+Translated:설정 보기 옵션 열기
+
 English:OpenSCAD not installed
 Translated:OpenSCAD가 설치되지 않았습니다.
+
+English:Operation
+Translated:작업
 
 English:Optional
 Translated:선택 과목
@@ -2461,23 +3184,32 @@ Translated:또는
 English:Other
 Translated:다른
 
-English:Outer Radius
-Translated:외부 반경
+English:Other Speeds
+Translated:기타 속도
 
-English:Outer Size
-Translated:외부 크기
+English:Outer Diameter
+Translated:외경
 
-English:Outer Surface - Perimeters
-Translated:외부 표면 - 둘레
+English:Outer Edge Width
+Translated:외부 가장자리 너비
+
+English:Outer Style
+Translated:외부 스타일
 
 English:Outline Path
 Translated:개요 경로
 
-English:Outlines
-Translated:요점
+English:Outline Width
+Translated:윤곽 너비
+
+English:Outlines (default)
+Translated:윤곽선(기본값)
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:인쇄물의 첫 번째 레이어만 출력합니다. 조각 또는 절단과 같은 응용 프로그램을 위한 gcode 데이터 출력에 특히 유용합니다.
+
+English:Output Resolution
+Translated:출력 해상도
 
 English:Outside Perimeter
 Translated:외부 경계
@@ -2485,11 +3217,17 @@ Translated:외부 경계
 English:Outside Perimeters
 Translated:외부 경계
 
+English:Oval
+Translated:타원형
+
 English:Overhang
 Translated:위에 걸리다
 
 English:Overhang Angle
 Translated:오버행 각도
+
+English:Override Radius
+Translated:반경 무시
 
 English:Overview
 Translated:개요
@@ -2502,6 +3240,18 @@ Translated:팬 뷰
 
 English:Part Cooling Fan
 Translated:부품 냉각 팬
+
+English:Part Cooling Fan {i}
+Translated:부품 냉각 팬 {i}
+
+English:Part(s) to Subtract
+Translated:뺄 부품
+
+English:Part(s) to Subtract and Replace
+Translated:빼서 교체할 부품
+
+English:Parts
+Translated:부속
 
 English:Password
 Translated:비밀번호
@@ -2536,17 +3286,38 @@ Translated:인쇄 일시 중지
 English:Paused
 Translated:일시중지됨
 
+English:PEI
+Translated:PEI
+
+English:PEI Bed Temperature
+Translated:PEI 베드 온도
+
 English:Percentage of
 Translated:백분율
 
-English:perimeters
-Translated:둘레
+English:Perimeter Acceleration
+Translated:주변 가속도
+
+English:Perimeter Speeds
+Translated:주변 속도
 
 English:Perimeters
 Translated:둘레
 
+English:Perimeters Per Extruder
+Translated:압출기당 둘레
+
+English:Permission denied
+Translated:권한이 거부되었습니다.
+
 English:Permission Denied
 Translated:권한 거부됨
+
+English:Perspective Mode
+Translated:원근 모드
+
+English:PETG Temperature Tower
+Translated:PETG 온도 타워
 
 English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
 Translated:베이스와 가장 잘 정렬된 패드, 가장 균형이 맞고 중앙에 있는 패드를 선택합니다.
@@ -2557,20 +3328,38 @@ Translated:PID 설정
 English:Pillar Size
 Translated:기둥 크기
 
+English:Pin
+Translated:핀
+
 English:Pinch
 Translated:꼬집다
 
 English:Pipe Works
 Translated:파이프 작업
 
+English:Pitch
+Translated:정점
+
+English:Pitch Radius
+Translated:피치 반경
+
 English:Pixels Per mm
 Translated:mm당 픽셀
+
+English:PLA Temperature Tower
+Translated:PLA 온도 타워
 
 English:Place the paper under the extruder
 Translated:압출기 아래에 종이를 놓고
 
+English:Placement
+Translated:놓기
+
 English:Plane Cut
 Translated:플레인 컷
+
+English:Plating and settings changes can be applied
+Translated:도금 및 설정 변경 적용 가능
 
 English:Plating History
 Translated:도금 이력
@@ -2584,6 +3373,9 @@ Translated:알림 소리 재생
 English:Please Confirm
 Translated:확인 해주세요
 
+English:Please select a writable folder
+Translated:쓰기 가능한 폴더를 선택하십시오
+
 English:Please select the material you want to load into extruder {0}.
 Translated:압출기 {0}에 로드할 재료를 선택하십시오.
 
@@ -2594,7 +3386,7 @@ English:Please select the material you want to unload from extruder {0}.
 Translated:압출기 {0}에서 언로드할 재료를 선택하십시오.
 
 English:Please select the material you want to unload.
-Translated:언로드하려는 재료를 선택하십시오.
+Translated:언로드할 재료를 선택하세요.
 
 English:Please sign in to continue.
 Translated:계속하려면 로그인하세요.
@@ -2623,11 +3415,23 @@ Translated:기다리세요. 초대장을 보내는 중...
 English:Please wait. Signing in...
 Translated:기다리세요. 로그인...
 
+English:Plug in printer USB cable and turn printer on
+Translated:프린터 USB 케이블을 연결하고 프린터를 켭니다.
+
 English:Plugins
 Translated:플러그인
 
+English:Point Size
+Translated:포인트 크기
+
 English:Polygons
 Translated:다각형
+
+English:Polypropylene
+Translated:폴리프로필렌
+
+English:Polypropylene Bed Temperature
+Translated:폴리프로필렌 베드 온도
 
 English:Port
 Translated:포트
@@ -2656,6 +3460,15 @@ Translated:지원되지 않는 부품이 감지됨
 English:Power Control
 Translated:전력 제어
 
+English:Power Outage
+Translated:정전
+
+English:Precise probe calibration complete.
+Translated:정밀 프로브 교정이 완료되었습니다.
+
+English:Prefered Radius
+Translated:선호 반경
+
 English:Preheat
 Translated:예열
 
@@ -2677,8 +3490,8 @@ Translated:용지 이동에 저항이 있을 때까지 [Z-]를 누릅니다.
 English:Press [Z+] once to release the paper
 Translated:[Z+]를 한 번 눌러 용지를 해제합니다.
 
-English:Pressure Angle (common values are 14.5, 20 and 25 degrees)
-Translated:압력 각도(일반적인 값은 14.5, 20 및 25도)
+English:Pressure Angle
+Translated:압력 각도
 
 English:Prev
 Translated:이전
@@ -2692,6 +3505,9 @@ Translated:기본 모양
 English:Primitives
 Translated:기초 요소
 
+English:Primitives 2D
+Translated:프리미티브 2D
+
 English:Print
 Translated:인쇄
 
@@ -2701,23 +3517,41 @@ Translated:인쇄 취소됨
 English:Print Center
 Translated:인쇄 센터
 
+English:Print Complete
+Translated:인쇄 완료
+
+English:Print Delay
+Translated:인쇄 지연
+
 English:Print History
 Translated:인쇄 기록
+
+English:Print History Note
+Translated:인쇄 이력 메모
 
 English:Print Leveling
 Translated:프린트 레벨링
 
-English:Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled, you can click the button to the left to setup Print Leveling.
-Translated:인쇄 레벨링은 인쇄 품질을 향상시키는 데 도움이 되는 이 프린터의 선택적 기능입니다. 베드가 고르지 않거나 기계적으로 수평을 맞출 수 없는 경우 왼쪽 버튼을 클릭하여 Print Leveling을 설정할 수 있습니다.
+English:Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled.
+Translated:인쇄 레벨링은 인쇄 품질을 향상시키는 데 도움이 되는 이 프린터의 선택적 기능입니다. 침대가 고르지 않거나 기계적으로 수평을 맞출 수 없는 경우.
 
 English:Print Leveling measures the plane of the bed.
 Translated:Print Leveling은 침대의 평면을 측정합니다.
+
+English:Print Leveling will run automatically at the start of each print.
+Translated:인쇄 레벨링은 각 인쇄가 시작될 때 자동으로 실행됩니다.
 
 English:Print Leveling Wizard
 Translated:인쇄 레벨링 마법사
 
 English:Print Notification Settings
 Translated:인쇄 알림 설정
+
+English:Print Priming Object
+Translated:인쇄 프라이밍 개체
+
+English:Print Quality
+Translated:인쇄 품질
 
 English:Print Queue
 Translated:인쇄 대기열
@@ -2731,20 +3565,32 @@ Translated:인쇄 시간
 English:Print Ultra Fine Calibration
 Translated:초미세 보정 인쇄
 
+English:Printable Area Inset
+Translated:인쇄 가능 영역 삽입
+
+English:Printed Files
+Translated:인쇄된 파일
+
 English:Printer
 Translated:인쇄기
+
+English:Printer Advanced
+Translated:프린터 고급
 
 English:Printer Calibration
 Translated:프린터 보정
 
+English:Printer Control
+Translated:프린터 제어
+
+English:Printer Default
+Translated:프린터 기본값
+
 English:Printer Disconnected
 Translated:프린터 연결 끊김
 
-English:Printer Hardware Error
-Translated:프린터 하드웨어 오류
-
-English:Printer is SLA
-Translated:프린터는 SLA입니다.
+English:Printer Help
+Translated:프린터 도움말
 
 English:Printer Name
 Translated:프린터 이름
@@ -2754,6 +3600,9 @@ Translated:프린터 이름이 이미 있습니다.
 
 English:Printer name cannot be blank
 Translated:프린터 이름은 비워둘 수 없습니다.
+
+English:Printer Options
+Translated:프린터 옵션
 
 English:Printer Paused
 Translated:프린터 일시 중지
@@ -2782,14 +3631,20 @@ Translated:인쇄
 English:Printing From SD Card
 Translated:SD 카드에서 인쇄
 
-English:Printing Speed
-Translated:인쇄 속도
-
 English:Printing: {0}
 Translated:인쇄 중: {0}
 
+English:Prints To Run
+Translated:실행할 인쇄
+
+English:Pro Only
+Translated:프로 전용
+
 English:Pro Tools
 Translated:프로 도구
+
+English:Probe
+Translated:조사
 
 English:Probe at bed center
 Translated:침대 중앙의 프로브
@@ -2800,8 +3655,8 @@ Translated:프로브가 보정되었습니다
 English:Probe Offset
 Translated:프로브 오프셋
 
-English:Probe Offset Sample Point
-Translated:프로브 오프셋 샘플 포인트
+English:Processing
+Translated:처리
 
 English:Progress Reporting
 Translated:진행 보고
@@ -2815,14 +3670,32 @@ Translated:누군가에게 읽기 전용 액세스 권한을 부여하려면 이
 English:Purchased
 Translated:구입 한
 
+English:Push Direction
+Translated:푸시 방향
+
+English:Push Speed
+Translated:푸시 속도
+
+English:Push With Hotend
+Translated:핫엔드로 푸시
+
+English:px
+Translated:픽셀
+
 English:Pyramid
 Translated:피라미드
 
 English:Quality
 Translated:품질
 
+English:Quality Setting
+Translated:품질 설정
+
 English:Radial Array
 Translated:방사형 배열
+
+English:Radius
+Translated:반지름
 
 English:Raft
 Translated:뗏목
@@ -2836,17 +3709,23 @@ Translated:뗏목 레이어
 English:Raise / Stow
 Translated:올리기/보관
 
-English:Randomize Starting Points
-Translated:시작점 무작위화
+English:Raise extruder
+Translated:압출기 올리기
+
+English:Randomized
+Translated:무작위
+
+English:Ratio
+Translated:비율
 
 English:Ratio or %
 Translated:비율 또는 %
 
-English:Reach
-Translated:도달하다
-
 English:Read Filter
 Translated:필터 읽기
+
+English:ReadFromPrinter thread created.
+Translated:ReadFromPrinter 스레드가 생성되었습니다.
 
 English:Reboots the firmware on the controller
 Translated:컨트롤러의 펌웨어를 재부팅합니다.
@@ -2856,6 +3735,9 @@ Translated:재건
 
 English:Rebuild Thumbnails Now
 Translated:지금 썸네일 재생성
+
+English:Recommended Settings Changes
+Translated:권장 설정 변경
 
 English:Recommended Update Available
 Translated:권장 업데이트 사용 가능
@@ -2875,6 +3757,9 @@ Translated:한 번 회복
 English:Recovered printer profile
 Translated:복구된 프린터 프로필
 
+English:rectangular
+Translated:직사각형
+
 English:Redeem Code
 Translated:코드를 사용
 
@@ -2884,6 +3769,9 @@ Translated:다시 하다
 English:Reduce
 Translated:줄이다
 
+English:Reduced Width
+Translated:축소된 너비
+
 English:Re-enter New Password
 Translated:새 비밀번호 재입력
 
@@ -2892,6 +3780,9 @@ Translated:비밀번호를 다시 입력하세요
 
 English:Refresh
 Translated:새로 고치다
+
+English:Refresh Folder
+Translated:폴더 새로 고침
 
 English:Release
 Translated:풀어 주다
@@ -2917,11 +3808,14 @@ Translated:제거하다
 English:Remove all auto generated supports
 Translated:모든 자동 생성 지원 제거
 
-English:Remove interior faces and bodies. This should only be used if the interior bodies are separate from the external faces, otherwise it may remove requried faces.
-Translated:내부 면과 본체를 제거합니다. 이것은 내부 본체가 외부 면과 분리되어 있는 경우에만 사용해야 합니다. 그렇지 않으면 필요한 면이 제거될 수 있습니다.
-
 English:Remove Items?
 Translated:항목을 제거하시겠습니까?
+
+English:Remove Mode
+Translated:제거 모드
+
+English:Remove Subtract Objects
+Translated:빼기 객체 제거
 
 English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
 Translated:베드에서 캘리브레이션 부품을 제거하고 패드의 측면을 각 축에서 비교합니다.
@@ -2935,20 +3829,26 @@ Translated:이름 바꾸기
 English:Rename Item
 Translated:항목 이름 바꾸기
 
+English:Render As Braille
+Translated:점자로 렌더링
+
 English:Render Leveling Data on the bed
 Translated:침대에서 레벨링 데이터 렌더링
 
 English:Repair
 Translated:수리하다
 
-English:Repair any small cracks or bad seams in the model.
-Translated:모델의 작은 균열이나 잘못된 이음새를 수리합니다.
-
 English:Replacing
 Translated:교체
 
 English:Report a Bug
 Translated:버그 신고
+
+English:Report Filament Runout Sensor Data
+Translated:필라멘트 런아웃 센서 데이터 보고
+
+English:Report the data analysis of the run out sensor data each time it is read.
+Translated:런아웃 센서 데이터를 읽을 때마다 데이터 분석을 보고합니다.
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
 Translated:압출기의 움직임을 직접 지정하기 보다는 펌웨어가 수축을 수행하도록 요청하십시오.
@@ -2968,8 +3868,14 @@ Translated:긴 돌출 재설정
 English:Reset Password
 Translated:암호를 재설정
 
-English:Reset to Defaults
-Translated:기본값으로 재설정
+English:Reset the line ends back to their starting positions
+Translated:라인 끝을 다시 시작 위치로 재설정
+
+English:Reset the position
+Translated:위치 재설정
+
+English:Reset to Defaults...
+Translated:기본값으로 재설정...
 
 English:Reset to Factory Defaults
 Translated:공장 기본값으로 재설정
@@ -2980,8 +3886,17 @@ Translated:관점을 다시 설정
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 Translated:기본값으로 재설정하면 현재 재정의가 제거되고 원래 프린터 설정이 복원됩니다. \n 계속하시겠습니까?
 
+English:Reshape
+Translated:모양 변경
+
+English:Resin density. Only used for estimating mass in the Layer View.
+Translated:수지 밀도. 레이어 보기에서 질량 추정에만 사용됩니다.
+
 English:Resolution
 Translated:해결
+
+English:Resources
+Translated:자원
 
 English:Restart Required
 Translated:재시작 필요
@@ -2994,6 +3909,9 @@ Translated:기본값 복원
 
 English:Restore Settings
 Translated:설정 복원
+
+English:Restore Settings...
+Translated:설정 복원...
 
 English:Resume
 Translated:재개하다
@@ -3037,6 +3955,9 @@ Translated:다운로드 정보를 검색하는 중...
 English:Retrieving sync information...
 Translated:동기화 정보를 검색하는 중...
 
+English:Retry
+Translated:다시 해 보다
+
 English:Retry Login
 Translated:로그인 재시도
 
@@ -3049,6 +3970,9 @@ Translated:설정 되돌리기
 English:Reverting firmware to previous version...
 Translated:펌웨어를 이전 버전으로 되돌리는 중...
 
+English:Revolve
+Translated:회전
+
 English:Right
 Translated:오른쪽
 
@@ -3058,32 +3982,53 @@ Translated:오른쪽 화살표
 English:right drag
 Translated:오른쪽 드래그
 
+English:Right Inset
+Translated:오른쪽 삽입
+
 English:Ring
 Translated:반지
+
+English:Ring Phase Angle
+Translated:링 위상각
+
+English:Ring Sides
+Translated:링 사이드
 
 English:Rotate
 Translated:회전
 
-English:Rotate (Alt + Left Mouse)
-Translated:회전(Alt + 왼쪽 마우스)
-
 English:Rotate About
 Translated:회전
 
-English:Rotate about the X axis
-Translated:X축을 중심으로 회전
-
-English:Rotate about the Y axis
-Translated:Y축을 중심으로 회전
-
-English:Rotate about the Z axis
-Translated:Z축을 중심으로 회전
-
-English:Rotate the part to the same angle as the array.
-Translated:배열과 동일한 각도로 부품을 회전합니다.
+English:Rotate Part
+Translated:부품 회전
 
 English:Rotate View
 Translated:보기 회전
+
+English:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
+Translated:회전: 마우스 오른쪽 버튼 | Ctrl + 마우스 왼쪽 버튼
+
+English:Rotation Distance
+Translated:회전 거리
+
+English:Rotation Offset
+Translated:회전 오프셋
+
+English:Rotation Slices
+Translated:회전 슬라이스
+
+English:Rotations
+Translated:회전
+
+English:Rough Overhangs
+Translated:거친 오버행
+
+English:Round
+Translated:둥근
+
+English:Round Segments
+Translated:라운드 세그먼트
 
 English:Rubber Band Selection
 Translated:고무줄 선택
@@ -3093,6 +4038,21 @@ Translated:보정 실행
 
 English:Run Max if Below
 Translated:아래의 경우 최대 실행
+
+English:Run Nozzle Alignment
+Translated:노즐 정렬 실행
+
+English:Run Print Leveling
+Translated:프린트 레벨링 실행
+
+English:Run Z Calibration
+Translated:Z 보정 실행
+
+English:Runout Check Distance
+Translated:런아웃 체크 거리
+
+English:Runout Trigger Ratio
+Translated:런아웃 트리거 비율
 
 English:s
 Translated:에스
@@ -3115,6 +4075,18 @@ Translated:구하다
 English:Save As
 Translated:다른 이름으로 저장
 
+English:Save Changes
+Translated:변경 사항을 저장하다
+
+English:Save changes ?
+Translated:변경 사항을 저장하다 ?
+
+English:Save Changes?
+Translated:변경 사항을 저장하다?
+
+English:Save file:
+Translated:파일을 저장:
+
 English:Save New Design
 Translated:새 디자인 저장
 
@@ -3130,9 +4102,6 @@ Translated:EEPROM에 저장
 English:Saving
 Translated:절약
 
-English:Saving 
-Translated:절약
-
 English:Saving Asset
 Translated:자산 저장
 
@@ -3142,17 +4111,29 @@ Translated:변경 사항 저장
 English:Saving Changes
 Translated:변경 사항 저장
 
+English:SCAD Script
+Translated:SCAD 스크립트
+
 English:Scale
 Translated:규모
+
+English:Scale About
+Translated:규모
+
+English:Scale Offset
+Translated:스케일 오프셋
+
+English:Scale Type
+Translated:스케일 유형
 
 English:SD Card
 Translated:SD 카드
 
+English:Seam Placement
+Translated:솔기 배치
+
 English:Search
 Translated:찾다
-
-English:Search Google
-Translated:구글 검색
 
 English:Search Results
 Translated:검색 결과
@@ -3163,8 +4144,14 @@ Translated:수색
 English:seconds
 Translated:초
 
+English:Sections
+Translated:섹션
+
 English:Select
 Translated:선택하다
+
+English:Select a File:
+Translated:파일 선택:
 
 English:Select A Folder
 Translated:폴더 선택
@@ -3175,17 +4162,32 @@ Translated:새 목적지 선택
 English:Select a printer to continue
 Translated:계속하려면 프린터를 선택하세요
 
-English:Select Part
+English:Select All
+Translated:모두 선택
+
+English:Select cell to edit
+Translated:편집할 셀 선택
+
+English:Select Parts
 Translated:부품 선택
 
 English:Select Printer
 Translated:프린터 선택
 
+English:Select Range
+Translated:범위 선택
+
 English:Select the baud rate.
 Translated:전송 속도를 선택합니다.
 
+English:Select this option only if your printer does not appear in the list
+Translated:프린터가 목록에 나타나지 않는 경우에만 이 옵션을 선택하십시오.
+
 English:Select What to Import
 Translated:가져올 항목 선택
+
+English:Selected Object Options
+Translated:선택한 개체 옵션
 
 English:Selection
 Translated:선택
@@ -3217,14 +4219,14 @@ Translated:세션이 지워짐
 English:Session Expired
 Translated:세션 만료됨
 
-English:Set as Default
-Translated:기본값으로 설정
+English:Set how the printed output should be altered to compensate for the printers mirror.
+Translated:프린터 미러를 보정하기 위해 인쇄된 출력을 변경하는 방법을 설정합니다.
 
-English:Set the rules for how to maintain the part while scaling.
-Translated:스케일링하는 동안 부품을 유지 관리하는 방법에 대한 규칙을 설정합니다.
+English:Set Temperature
+Translated:온도 설정
 
-English:Set the shape the part will be fit into.
-Translated:부품이 들어갈 모양을 설정합니다.
+English:Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.
+Translated:아래 정보를 설정하여 프린터를 구성하십시오. 이 단계를 완료한 후 이 프린터의 '설정' 및 '프린터' 옵션에서 추가 설정을 사용자 지정할 수 있습니다.
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControl이 네트워크를 통해 프린터에 연결을 시도하도록 설정합니다. (이 기능을 사용하려면 연결을 끊었다가 다시 연결해야 합니다.)
@@ -3232,17 +4234,23 @@ Translated:MatterControl이 네트워크를 통해 프린터에 연결을 시도
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControl이 s3g 통신 방식을 사용하도록 설정합니다. (이 기능을 사용하려면 연결을 끊었다가 다시 연결해야 합니다.)
 
-English:Sets the depth of the tile the Braille is printed on
-Translated:점자가 인쇄되는 타일의 깊이를 설정합니다.
-
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:새 프린터가 생성될 때 대기열에 추가될 모델을 설정합니다.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
 Translated:전체 인쇄에 대한 외부 단색 표면(둘레)의 크기를 설정합니다.
 
+English:Setting Name
+Translated:설정 이름
+
 English:Settings
 Translated:설정
+
+English:Settings Update Available
+Translated:설정 업데이트 가능
+
+English:Settings View Options
+Translated:설정 보기 옵션
 
 English:Setup
 Translated:설정
@@ -3250,14 +4258,26 @@ Translated:설정
 English:Setup Needs to be Run
 Translated:설정을 실행해야 합니다.
 
-English:Setup Required
-Translated:설정 필요
+English:Setup New Printer
+Translated:새 프린터 설정
+
+English:Setup New Pulse
+Translated:새 펄스 설정
+
+English:Setup Printer
+Translated:프린터 설정
+
+English:Setup Pulse
+Translated:펄스 설정
 
 English:Setup Wizard
 Translated:설정 마법사
 
 English:Shaded
 Translated:음영 처리
+
+English:Shape
+Translated:모양
 
 English:Share
 Translated:공유하다
@@ -3286,6 +4306,9 @@ Translated:가게
 English:Shop Filament at MatterHackers
 Translated:MatterHackers에서 필라멘트 쇼핑하기
 
+English:Show all settings that are not the printer default
+Translated:프린터 기본값이 아닌 모든 설정 표시
+
 English:Show Controls
 Translated:컨트롤 표시
 
@@ -3295,8 +4318,14 @@ Translated:저장 후 폴더에 파일 표시
 English:Show Firmware Updater
 Translated:펌웨어 업데이터 표시
 
+English:Show Folders
+Translated:폴더 표시
+
 English:Show Help
 Translated:도움말 표시
+
+English:Show in Explorer
+Translated:탐색기에서보기
 
 English:Show Materials
 Translated:재료 표시
@@ -3310,6 +4339,12 @@ Translated:인쇄 영역 표시
 English:Show Print Bed
 Translated:인쇄 침대 표시
 
+English:Show Printer
+Translated:프린터 표시
+
+English:Show Ratings Dialog After Print
+Translated:인쇄 후 등급 대화 상자 표시
+
 English:Show Reset Connection
 Translated:재설정 연결 표시
 
@@ -3319,17 +4354,14 @@ Translated:속도 표시
 English:Show Terminal
 Translated:터미널 표시
 
-English:Shown Print Canceled Message
-Translated:인쇄 취소된 메시지 표시됨
-
-English:Shown Print Complete Message
-Translated:인쇄 완료 메시지 표시
-
-English:Shown Welcome Message
-Translated:표시된 환영 메시지
+English:Show Welcome Message
+Translated:환영 메시지 표시
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:프린터에 대한 USB 연결을 재설정하는 데 사용되는 프린터 연결 표시줄의 오른쪽에 버튼이 표시됩니다. 비상 정지로 지원하는 프린터에서 사용할 수 있습니다.
+Translated:프린터에 대한 USB 연결을 재설정하는 데 사용되는 프린터 연결 표시줄의 오른쪽에 버튼을 표시합니다. 비상 정지로 지원하는 프린터에서 사용할 수 있습니다.
+
+English:Sides
+Translated:측면
 
 English:sign in
 Translated:로그인
@@ -3358,8 +4390,14 @@ Translated:로그아웃하시겠습니까?
 English:Sign Up for an Account
 Translated:계정 가입
 
-English:Size and Coordinates
-Translated:크기 및 좌표
+English:Simple
+Translated:단순한
+
+English:Simple Arduino
+Translated:간단한 아두이노
+
+English:Size
+Translated:크기
 
 English:Skip
 Translated:건너 뛰다
@@ -3367,20 +4405,26 @@ Translated:건너 뛰다
 English:Skip Connection Setup
 Translated:연결 설정 건너뛰기
 
+English:Skipped Layers
+Translated:건너뛴 레이어
+
 English:Skirt
 Translated:치마
 
 English:Skirt Height
 Translated:스커트 높이
 
-English:skirts
-Translated:스커트
-
 English:Slice
 Translated:일부분
 
+English:Slice Advanced
+Translated:슬라이스 고급
+
 English:Slice Engine
 Translated:슬라이스 엔진
+
+English:Slice Height
+Translated:슬라이스 높이
 
 English:Slice Presets Editor
 Translated:슬라이스 사전 설정 편집기
@@ -3397,8 +4441,8 @@ Translated:슬라이싱 오류
 English:Slicing Item
 Translated:슬라이싱 아이템
 
-English:Slicing Options
-Translated:슬라이싱 옵션
+English:Slope
+Translated:경사
 
 English:Slow Down If Layer Print Time Is Below
 Translated:레이어 인쇄 시간이 다음보다 낮으면 속도를 늦추십시오.
@@ -3406,11 +4450,20 @@ Translated:레이어 인쇄 시간이 다음보다 낮으면 속도를 늦추십
 English:Small Perimeters
 Translated:작은 둘레
 
+English:Smooth Distance
+Translated:부드러운 거리
+
 English:Smooth Path
 Translated:부드러운 경로
 
+English:Smoothie
+Translated:점잖은 사람
+
 English:Snap Grid
 Translated:스냅 그리드
+
+English:Snapping Turned Off
+Translated:스냅 해제됨
 
 English:Software License Agreement
 Translated:소프트웨어 라이선스 계약
@@ -3420,6 +4473,9 @@ Translated:솔리드 채우기
 
 English:Some features may require an internet connection.
 Translated:일부 기능은 인터넷 연결이 필요할 수 있습니다.
+
+English:Some Parts Lifted
+Translated:일부 부품이 들어 올려짐
 
 English:Some parts may require support structures to print correctly
 Translated:일부 부품은 올바르게 인쇄하기 위해 지지 구조가 필요할 수 있습니다.
@@ -3432,9 +4488,6 @@ Translated:죄송합니다! 유효한 이메일 주소이어야합니다.
 
 English:Sorry!  Must be a valid U.S. or Canadian phone number.
 Translated:죄송합니다! 유효한 미국 또는 캐나다 전화번호여야 합니다.
-
-English:Sorry!  We weren't able to submit your request.
-Translated:죄송합니다! 귀하의 요청을 제출할 수 없습니다.
 
 English:Sorry! Looks like an account already exists for that email address.
 Translated:죄송합니다! 해당 이메일 주소에 대한 계정이 이미 존재하는 것 같습니다.
@@ -3457,32 +4510,20 @@ Translated:죄송합니다! 서버에 연결할 수 없습니다. 나중에 다�
 English:Sorry! We couldn't find that account.
 Translated:죄송합니다! 해당 계정을 찾을 수 없습니다.
 
+English:Sorting
+Translated:정렬
+
 English:Source
 Translated:원천
+
+English:Source Polygon Count
+Translated:소스 다각형 수
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
 Translated:펌웨어가 M119에서 ros_0 endstop 보고를 지원하도록 지정합니다. TRIGGERED 상태는 필라멘트에 런아웃이 있음을 정의합니다. 런아웃이 감지되면 프린터가 일시 중지 G-Code를 실행합니다.
 
-English:Specifies the number of vertical cuts required to ensure the part can be twist well.
-Translated:부품이 잘 비틀릴 수 있도록 하는 데 필요한 수직 절단 수를 지정합니다.
-
-English:Specify the radius to use when calculating the circumference.
-Translated:원주를 계산할 때 사용할 반지름을 지정합니다.
-
 English:Speed
 Translated:속도
-
-English:Speed at 0.025 Height
-Translated:0.025 높이에서의 속도
-
-English:Speed at 0.1 Height
-Translated:0.1 높이에서의 속도
-
-English:Speed for Infill
-Translated:채우기 속도
-
-English:Speed for Perimeters
-Translated:주변 속도
 
 English:Speed Multiplier
 Translated:속도 승수
@@ -3508,6 +4549,9 @@ Translated:안정적인
 English:Stable: The current release version of MatterControl (recommended)
 Translated:안정: MatterControl의 현재 릴리스 버전(권장)
 
+English:Star
+Translated:별
+
 English:Start
 Translated:시작
 
@@ -3516,9 +4560,6 @@ Translated:오목점에서 시작
 
 English:Start At Non Overhang
 Translated:비 돌출부에서 시작
-
-English:Start each new layer from a different vertex to reduce seams.
-Translated:이음새를 줄이기 위해 다른 정점에서 각각의 새 레이어를 시작합니다.
 
 English:Start End Overlap
 Translated:시작 끝 겹침
@@ -3538,8 +4579,26 @@ Translated:인쇄 레벨링이 활성화된 경우 시작 G-코드는 G30을 포
 English:Start Height
 Translated:시작 높이
 
+English:Start Height Percent
+Translated:시작 높이 백분율
+
+English:Start New Design
+Translated:새로운 디자인 시작
+
+English:Start Percent
+Translated:시작 비율
+
 English:Start Print
 Translated:인쇄 시작
+
+English:Start Printing
+Translated:인쇄 시작
+
+English:Start printing the current bed.
+Translated:현재 침대 인쇄를 시작합니다.
+
+English:Start the printer(s) that are ready to print.
+Translated:인쇄할 준비가 된 프린터를 시작합니다.
 
 English:Starting Angle
 Translated:시작 각도
@@ -3565,32 +4624,32 @@ Translated:mm당 단계
 English:STL File
 Translated:STL 파일
 
+English:Stop
+Translated:중지
+
 English:Stop trying to connect to the printer.
 Translated:프린터 연결 시도를 중지하십시오.
 
-English:Store
-Translated:가게
+English:Stretch X
+Translated:스트레치 X
 
-English:Subject
-Translated:주제
+English:Stretch Y
+Translated:스트레치 Y
 
-English:Submit
-Translated:제출하다
+English:Stretch Z
+Translated:스트레치 Z
 
-English:Submit Feedback
-Translated:피드백 제출
+English:Stringing / Poor retractions
+Translated:스트링/불량한 수축
 
-English:Submitting your information...
-Translated:정보를 제출하는 중...
+English:Style
+Translated:스타일
 
 English:Subtract
 Translated:덜다
 
 English:Subtract & Replace
 Translated:빼기 및 바꾸기
-
-English:Subtract the image from a disk so that the negative space will be printed.
-Translated:음수 공간이 인쇄되도록 디스크에서 이미지를 뺍니다.
 
 English:Success! Please check your email for the reset code.
 Translated:성공! 재설정 코드는 이메일을 확인하십시오.
@@ -3622,19 +4681,22 @@ Translated:지원 자료
 English:Support Material Extruder
 Translated:지원 재료 압출기
 
-English:Support Options
-Translated:지원 옵션
-
 English:Support Type
 Translated:지원 유형
 
 English:Surfaced Editor
 Translated:표면 편집기
 
-English:Switch the settings interface to one intended for SLA printers.
-Translated:설정 인터페이스를 SLA 프린터용 인터페이스로 전환합니다.
+English:Surfaced Editors
+Translated:표면 편집기
 
-English:Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.
+English:Switch
+Translated:스위치
+
+English:Switch to new G-Code on next layer?
+Translated:다음 레이어에서 새 G-Code로 전환하시겠습니까?
+
+English:Switch to new G-Code?\n\nBefore you switch, check that you are seeing the changes you expect.
 Translated:새 G 코드로 전환하시겠습니까? \NN\ 전환하기 전에 예상한 변경 사항이 표시되는지 확인하십시오.
 
 English:Sync Complete
@@ -3652,14 +4714,17 @@ Translated:인쇄에 동기화
 English:Syncing Printer Profiles...
 Translated:프린터 프로필 동기화 중...
 
+English:Target Count
+Translated:대상 수
+
+English:Target Percent
+Translated:목표 비율
+
 English:Tee
 Translated:티
 
 English:Temp Lower Amount
 Translated:온도 하한 금액
-
-English:temperature
-Translated:온도
 
 English:Temperature
 Translated:온도
@@ -3670,20 +4735,17 @@ Translated:온도 요청
 English:Temperature Responses
 Translated:온도 반응
 
-English:temperature1
-Translated:온도1
-
-English:temperature2
-Translated:온도2
-
-English:temperature3
-Translated:온도3
-
-English:Temperatures
-Translated:온도
+English:Temperature Tower
+Translated:온도 타워
 
 English:Terminal
 Translated:단말기
+
+English:Terrible
+Translated:끔찍한
+
+English:Test Print
+Translated:테스트 인쇄
 
 English:Text
 Translated:텍스트
@@ -3693,9 +4755,6 @@ Translated:텍스트 크기
 
 English:Text2
 Translated:텍스트2
-
-English:Thank you!  Your information has been submitted.
-Translated:감사합니다! 귀하의 정보가 제출되었습니다.
 
 English:The {0} can only go as high as 100%.
 Translated:{0}은 100%까지만 올라갈 수 있습니다.
@@ -3708,6 +4767,12 @@ Translated:{0}은 0과 1 사이여야 합니다.
 
 English:The {0} must be greater than 0.
 Translated:{0}은(는) 0보다 커야 합니다.
+
+English:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
+Translated:프린터가 기본적으로 설정되는 가속은 0으로 설정하면 변경되지 않습니다. 일반적인 기본 가속은 1500입니다.
+
+English:The acceleration that the printer will be set to for perimeters, will not be changed if set to 0. A typical perimeter acceleration is 800.
+Translated:주변에 대해 프린터가 설정되는 가속은 0으로 설정하면 변경되지 않습니다. 일반적인 주변 가속은 800입니다.
 
 English:The actual diameter of the filament used for printing.
 Translated:인쇄에 사용되는 필라멘트의 실제 직경입니다.
@@ -3724,9 +4789,6 @@ Translated:생성할 채우기 재료의 양으로, 비율 또는 백분율로 �
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
 Translated:채우기 가장자리가 둘레로 밀어 넣을 양입니다. 채우기가 가장자리에 연결되었는지 확인하는 데 도움이 됩니다. 이것은 노즐 직경의 백분율로 나타낼 수 있습니다.
 
-English:The amount to expand the path lines.
-Translated:경로 라인을 확장할 양입니다.
-
 English:The amount to expand the support so it is easy to grab.
 Translated:잡기 쉽도록 지지대를 확장하는 양입니다.
 
@@ -3742,29 +4804,44 @@ Translated:X축에서 측정한 채우기 각도입니다. 브리징 시에는 �
 English:The angle to generate support for
 Translated:에 대한 지원을 생성하는 각도
 
-English:The angle to rotate the top of the part
-Translated:부품의 상단을 회전하는 각도
-
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:침대는 현재 가열 중이며 목표 온도는 {0}°C에 도달할 때까지 변경할 수 없습니다. \NN\ SETTINGS -> Filament -> Temperatures에서 시작 베드 온도를 설정할 수 있습니다. \NN\ {1}
 
-English:The circumference of the pitch circle divided by the number of teeth
-Translated:피치 원의 둘레를 톱니 수로 나눈 값
+English:The calibration object will printer better if the layer hight is set to a larger value. It is recommended that your increase it.
+Translated:레이어 높이가 더 큰 값으로 설정되면 보정 개체가 더 잘 인쇄됩니다. 늘리는 것이 좋습니다.
 
-English:The count of teeth of the gear that will run inside. This is required to cut the internal teeth correctly.
-Translated:내부에서 작동할 기어의 톱니 수입니다. 이것은 내부 치아를 올바르게 절단하는 데 필요합니다.
+English:The center of the conductive pad used for nozzle probing.
+Translated:노즐 프로빙에 사용되는 전도성 패드의 중심입니다.
+
+English:The chosen baud rate is not supported by your operating system. Use a different baud rate, if possible.
+Translated:선택한 전송 속도는 운영 체제에서 지원하지 않습니다. 가능하면 다른 전송 속도를 사용하십시오.
+
+English:The color of the first material.
+Translated:첫 번째 재료의 색상입니다.
+
+English:The color of the forth material (extruder 4).
+Translated:네 번째 재료의 색상(압출기 4).
+
+English:The color of the second material (extruder 2).
+Translated:두 번째 재료(압출기 2)의 색상입니다.
+
+English:The color of the third material (extruder 3).
+Translated:세 번째 재료(압출기 3)의 색상입니다.
+
+English:The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.
+Translated:프린터가 사용 중인 현재 침대 표면입니다. 이것은 주어진 재료에 대한 올바른 베드 온도를 설정하는 데 사용됩니다.
 
 English:The date this file was originally created.
 Translated:이 파일이 원래 생성된 날짜입니다.
 
+English:The default settings for this printer have changed and can be updated
+Translated:이 프린터의 기본 설정이 변경되었으며 업데이트할 수 있습니다.
+
+English:The deviation from the last measured value allowed without re-calculating the leveling solution.
+Translated:레벨링 솔루션을 다시 계산하지 않고 허용되는 마지막 측정 값과의 편차.
+
 English:The diameter of the extruder's nozzle.
 Translated:압출기 노즐의 직경입니다.
-
-English:The Diameter to the outside of the gear.
-Translated:기어 외부의 지름입니다.
-
-English:The distance along the circumference to rotate the top in mm
-Translated:원주를 따라 상단을 회전하는 거리(mm)
 
 English:The distance between support material lines.
 Translated:지지 재료 라인 사이의 거리.
@@ -3784,11 +4861,20 @@ Translated:첫 번째 스커트 루프가 그려지는 모델로부터의 거리
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:둘레가 루프를 완료할 때 자체적으로 겹치는 거리로, 노즐 지름의 백분율로 표시됩니다.
 
+English:The distance that the filament has to extrude before we check the measured distance.
+Translated:측정된 거리를 확인하기 전에 필라멘트가 돌출되어야 하는 거리입니다.
+
 English:The distance the nozzle will lift after each retraction.
 Translated:후퇴할 때마다 노즐이 들어올리는 거리입니다.
 
 English:The distance the support material will be from the object in the X and Y directions.
-Translated:지지 재료가 X 및 Y 방향으로 물체로부터의 거리입니다.
+Translated:지지 재료가 X 및 Y 방향으로 물체로부터 거리는 거리입니다.
+
+English:The distance to move the build plate after each base layer prints.
+Translated:각 기본 레이어가 인쇄된 후 빌드 플레이트를 이동하는 거리입니다.
+
+English:The distance to move the build plate after each layer prints.
+Translated:각 레이어가 인쇄된 후 빌드 플레이트를 이동하는 거리입니다.
 
 English:The distance to travel after completing a perimeter to improve seams.
 Translated:이음새를 개선하기 위해 둘레를 완료한 후 이동하는 거리입니다.
@@ -3798,6 +4884,18 @@ Translated:뗏목이 부품의 가장자리 주위로 확장되는 추가 거리
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:압출기는 현재 가열 중이며 목표 온도는 {0}°C에 도달할 때까지 변경할 수 없습니다. \NN\ '슬라이스 설정' -> '필라멘트'에서 압출기 시작 온도를 설정할 수 있습니다. \NN\ {1}
+
+English:The extruder to use for support material. Default will use whichever extruder active at the time.
+Translated:서포트 재료로 사용하는 압출기. 기본값은 당시 활성화된 압출기를 사용합니다.
+
+English:The extruder to use for the brim.  Default will use the first extruder of the print.
+Translated:테두리에 사용하는 압출기. 기본값은 인쇄물의 첫 번째 압출기를 사용합니다.
+
+English:The extruder to use to for support material interface layers. Default will use whichever extruder active at the time.
+Translated:재료 인터페이스 레이어를 지원하기 위해 사용하는 압출기. 기본값은 당시 활성화된 압출기를 사용합니다.
+
+English:The extruder to use to print the raft. Default will use extruder 1.
+Translated:뗏목을 인쇄하는 데 사용할 압출기입니다. 기본값은 압출기 1을 사용합니다.
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:인쇄하려는 파일은 GCode 파일입니다. \NN\ 프린터 구성과 일치하는 것으로 알려진 Gcode 파일만 인쇄하는 것이 좋습니다. \NN\ 이 GCode 파일을 인쇄하시겠습니까?
@@ -3811,26 +4909,29 @@ Translated:부품 내부에 대한 지지 구조의 기하학적 모양.
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:프린터의 인쇄 가능한 볼륨 높이(밀리미터)입니다. 3D 보기에 표시되는 시각적 인쇄 영역의 높이를 제어합니다.
 
-English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:지원 재료를 인쇄하는 데 사용할 압출기의 인덱스입니다. Extruder Count가 1보다 큰 값으로 설정된 경우에만 적용됩니다.
+English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
+Translated:침대의 각 면에 대한 삽입량입니다. \n - 너비 또는 깊이의 %로 \n - 순서: 왼쪽, 앞, 오른쪽, 뒤로 \n - 참고: 프로브 오프셋이 이 위에 추가됩니다.
 
-English:The index of the extruder to use for support material interface layer(s).
-Translated:지지 재료 인터페이스 레이어에 사용할 압출기의 인덱스입니다.
+English:The inset amount for nozzle 1 from the bed (Left, Front, Right, Back).
+Translated:침대에서 노즐 1에 대한 삽입량(왼쪽, 앞, 오른쪽, 뒤).
 
-English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:뗏목을 인쇄하는 데 사용할 압출기의 색인입니다. 지지 압출기 인덱스를 사용하려면 0으로 설정하십시오.
+English:The inset amount for nozzle 2 from the bed (Left, Front, Right, Back).
+Translated:베드에서 노즐 2의 삽입량(왼쪽, 앞, 오른쪽, 뒤).
 
-English:The inset amount for nozzle 1 from the bed
-Translated:침대에서 노즐 1에 대한 삽입량
-
-English:The inset amount for nozzle 2 from the bed
-Translated:침대에서 노즐 2에 대한 삽입량
+English:The inset amount from the edges of the bed. Defines the printable area of the bed. Leave as 0s if the entire bed can be printed to (Left, Front, Right, Back).
+Translated:침대 가장자리에서 삽입된 양입니다. 침대의 인쇄 가능한 영역을 정의합니다. 침대 전체를 (왼쪽, 앞, 오른쪽, 뒤)로 인쇄할 수 있는 경우 0으로 둡니다.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:필라멘트를 변경할 수 있도록 인쇄가 일시 중지되는 레이어입니다. 주어진 레이어를 시작하기 전에 프린터가 일시 중지됩니다. 비활성화하려면 비워 둡니다. 여러 레이어에서 일시 중지하려면 레이어 번호를 세미콜론으로 구분합니다. 예: "16, 37".
 
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".
+Translated:필라멘트를 변경할 수 있도록 인쇄가 일시 중지되는 레이어입니다. 주어진 레이어를 시작하기 전에 프린터가 일시 중지됩니다. 비활성화하려면 비워 둡니다. 여러 레이어에서 일시 중지하려면 레이어 번호를 세미콜론으로 구분합니다. 예: \"16; 37\".
+
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:여러 압출기 간에 교체할 때 다음 노즐을 닦는 데 사용되는 인쇄물의 후면 왼쪽에 생성된 타워의 길이와 너비입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The leveling data might be invalid. It changes by as much as {0:0.##}mm. Leveling calibration should be re-run
+Translated:평준화 데이터가 유효하지 않을 수 있습니다. {0:0.##}mm만큼 변경됩니다. 레벨링 보정을 다시 실행해야 합니다.
 
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Clean Filament 페이지에 표시될 마크다운입니다.
@@ -3850,50 +4951,62 @@ Translated:Trim Filament 페이지에 표시될 마크다운입니다.
 English:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 Translated:횡단 여행을 피할 수 있는 최대 금액은 직접 거리를 초과할 수 있습니다. 회피 이동이 너무 길면 직접 이동이 실행됩니다.
 
-English:The maximum amount the printer can accelerate on a G-Code move.
-Translated:프린터가 G-Code 이동에서 가속할 수 있는 최대량입니다.
+English:The maximum amount the printer can accelerate on a G-Code move. Used for print time estimation.
+Translated:프린터가 G-Code 이동에서 가속할 수 있는 최대량입니다. 인쇄 시간 추정에 사용됩니다.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:레이어 냉각 팬이 실행되는 최대 속도(전체 전력의 백분율로 표시됨).
 
-English:The maximum speed that the printer treats as 0 and changes direction instantly.
-Translated:프린터가 0으로 처리하고 방향을 즉시 변경하는 최대 속도입니다.
+English:The maximum speed that the printer treats as 0 and changes direction instantly. Used for print time estimation.
+Translated:프린터가 0으로 처리하고 방향을 즉시 변경하는 최대 속도입니다. 인쇄 시간 추정에 사용됩니다.
 
-English:The maximum speed the printer can move.
-Translated:프린터가 이동할 수 있는 최대 속도입니다.
+English:The maximum speed the printer can move. Uused for print time estimation.
+Translated:프린터가 이동할 수 있는 최대 속도입니다. 인쇄 시간 추정에 사용됩니다.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
 Translated:레이어가 인쇄하는 데 걸리는 최소 시간입니다. 레이어가 이 시간보다 적게 걸리는 경우 레이어 인쇄 시간이 이 값과 일치하여 가장 느린 최소 인쇄 속도까지 이동 속도가 감소합니다.
 
+English:The minimum amount of time the light must be off between exposures.
+Translated:노출 사이에 조명이 꺼져야 하는 최소 시간입니다.
+
 English:The minimum distance of a non-print move which will trigger a retraction.
 Translated:후퇴를 유발하는 비인쇄 이동의 최소 거리입니다.
 
-English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:모델에서 고려할 최소 기능 크기입니다. 모든 모델 세부 정보를 사용하려면 0으로 둡니다.
+English:The minimum distance with, avoid crossing perimeters turned on, of a non-print move which will trigger a retraction.
+Translated:후퇴를 유발하는 인쇄되지 않은 이동의 최소 거리(경계 교차 방지가 켜져 있음).
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
 Translated:수축이 일어나기 전에 압출되어야 하는 필라멘트의 최소 길이.
 
-English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:스커트 루프 인쇄에 사용할 필라멘트의 최소 길이입니다. 이 양의 필라멘트를 사용하기에 충분한 스커트 루프가 그려지며 루프의 값이 이 값보다 짧은 스커트를 생성하는 경우 루프에 설정된 값을 무시합니다.
+English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value. NOTE: This is measure as input into the extruder not mm on the bed.
+Translated:스커트 루프 인쇄에 사용할 필라멘트의 최소 길이입니다. 이 양의 필라멘트를 사용하기에 충분한 스커트 루프가 그려지고 루프의 값이 이 값보다 짧은 스커트를 생성하는 경우 루프에 설정된 값을 무시합니다. 참고: 이것은 침대에서 mm가 아닌 압출기에 대한 입력으로 측정됩니다.
+
+English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power, regardless of layer time.
+Translated:레이어 냉각 팬이 실행되는 최소 속도(레이어 시간에 관계없이 전체 전력의 백분율로 표시됨).
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:레이어 냉각 팬이 실행되는 최소 속도(전체 전력의 백분율로 표시됨).
+Translated:레이어 냉각 팬이 실행되는 최소 속도(전체 전력의 백분율로 표시).
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:최소 레이어 시간을 충족할 수 있을 만큼 충분히 긴 레이어 인쇄 시간을 만들기 위해 프린터가 감소할 최소 속도입니다.
+
+English:The minimum z to allow the probe to go to before the test is stopped and marked as failing. This is used to ensure the printer is not damaged.
+Translated:테스트가 중지되고 실패로 표시되기 전에 프로브가 이동할 수 있는 최소 z입니다. 이것은 프린터가 손상되지 않았는지 확인하는 데 사용됩니다.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:슬라이싱을 수행하는 동안 사용할 CPU 코어 수입니다. 이 값을 높이면 시스템이 느려질 수 있습니다.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
-Translated:활성 상태가 아닌 동안 노즐의 온도를 낮추기 위한 섭씨 온도 수입니다.
+Translated:활성 상태가 아닌 동안 노즐의 온도를 낮추기 위한 섭씨 온도의 수입니다.
 
 English:The number of extruders the printer has.
 Translated:프린터에 있는 압출기의 수입니다.
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
 Translated:인쇄 시작 시 레이어 냉각 팬이 강제로 꺼질 레이어 수입니다.
+
+English:The number of layers or the distance in millimeters to print bottom layers. Bottom layers help adhere parts to the build plate. Add mm to the end of the number to specify distance in millimeters.
+Translated:맨 아래 레이어를 인쇄할 레이어 수 또는 거리(밀리미터)입니다. 하단 레이어는 부품을 빌드 플레이트에 부착하는 데 도움이 됩니다. 밀리미터 단위로 거리를 지정하려면 숫자 끝에 mm를 추가합니다.
 
 English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
 Translated:객체의 바닥 표면에서 솔리드 채우기까지의 레이어 수 또는 거리(밀리미터)입니다. 밀리미터 단위로 거리를 지정하려면 숫자 끝에 mm를 추가합니다.
@@ -3903,6 +5016,9 @@ Translated:지지대와 부품 사이의 솔리드 재료를 인쇄하기 위한
 
 English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
 Translated:인쇄의 시작으로 고려할 레이어 수입니다. 초기 레이어 속도로 인쇄됩니다.
+
+English:The number of layers to create the brims. This can make the brim stronger when needed.
+Translated:테두리를 만들 레이어 수입니다. 이것은 필요할 때 챙을 더 강하게 만들 수 있습니다.
 
 English:The number of layers to draw the skirt.
 Translated:스커트를 그릴 레이어 수입니다.
@@ -3916,8 +5032,11 @@ Translated:부품에서 시작하기 전에 침대의 모든 부품 주위에 �
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
 Translated:부품 주위에 그릴 루프 수입니다. 추가적인 베드 접착력을 제공하기 위해 사용
 
-English:The number of polygons determined by the percentage reduction.
-Translated:백분율 감소에 의해 결정되는 폴리곤 수입니다.
+English:The number of perimeters will be this number times the number of active extruders. Make this a smaller number to make the wipe more hollow or bigger to fill it.
+Translated:둘레의 수는 활성 압출기의 수를 곱한 것입니다. 이 값을 더 작게 설정하여 와이프를 더 속이 비게 만들거나 더 크게 만들어 채우십시오.
+
+English:The number of seconds to expose the base layers. This can increase the bonding to the build plate.
+Translated:기본 레이어를 노출하는 시간(초)입니다. 이렇게 하면 빌드 플레이트에 대한 결합이 증가할 수 있습니다.
 
 English:The number of times to sample each probe position (results will be averaged).
 Translated:각 프로브 위치를 샘플링하는 횟수입니다(결과는 평균이 됩니다).
@@ -3931,41 +5050,26 @@ Translated:T0에서 프로브까지의 오프셋입니다.
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 Translated:첫 번째 노즐에 대한 각 노즐의 오프셋입니다. 여러 압출기 기계에만 유용합니다.
 
-English:The original number of polygons.
-Translated:폴리곤의 원래 수입니다.
-
 English:The pattern to draw for the generation of support material.
 Translated:지지 재료 생성을 위해 그릴 패턴입니다.
-
-English:The pattern used on the bottom and top layers of the print.
-Translated:인쇄물의 맨 아래 및 맨 위 레이어에 사용되는 패턴입니다.
-
-English:The percentage of polygons to keep.
-Translated:유지할 폴리곤의 백분율입니다.
 
 English:The percentage overlap a given printed line must have over the layer below to be supported.
 Translated:지정된 인쇄 라인이 지원하려면 아래 레이어 위에 있어야 하는 겹치는 비율입니다.
 
-English:The percentage up from the bottom to end the twist
-Translated:트위스트가 끝날 때까지 아래에서 위로 백분율
-
-English:The percentage up from the bottom to start the twist
-Translated:트위스트를 시작하기 위해 아래에서 위로 백분율
-
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:인쇄 베드 중심의 위치(X 및 Y 좌표)(밀리미터)입니다. 일반적으로 이것은 데카르트 프린터의 경우 침대 크기의 1/2이고 델타 프린터의 경우 0, 0입니다.
-
-English:The position to measure the probe offset.
-Translated:프로브 오프셋을 측정할 위치입니다.
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
 Translated:필라멘트 1kg의 가격. 레이어 보기에서 인쇄 비용을 추정하는 데 사용됩니다.
 
+English:The price of one kilogram of resin. Used for estimating the cost of a print in the Layer View.
+Translated:수지 1kg의 가격. 레이어 보기에서 인쇄 비용을 추정하는 데 사용됩니다.
+
 English:The print leveling algorithm to use.
 Translated:사용할 인쇄 평준화 알고리즘입니다.
 
-English:The printer has a c axis used by too changer (e3d quad extruder).
-Translated:프린터에 너무 체인저(e3d 쿼드 압출기)에서 사용하는 c축이 있습니다.
+English:The printer has a c axis used by a tool changer (e3d quad extruder).
+Translated:프린터에는 공구 교환기(e3d 쿼드 압출기)에서 사용하는 c축이 있습니다.
 
 English:The printer has a heated bed.
 Translated:프린터에는 온열 침대가 있습니다.
@@ -3980,13 +5084,19 @@ English:The printer has a servo for lowering and raising the z probe.
 Translated:프린터에는 z 프로브를 낮추고 올리기 위한 서보가 있습니다.
 
 English:The printer has a z probe for measuring bed level.
-Translated:프린터에는 베드 높이를 측정하기 위한 z 프로브가 있습니다.
+Translated:프린터에는 베드 레벨을 측정하기 위한 z 프로브가 있습니다.
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
 Translated:프린터에는 G-Code 시작 중에 G29 명령을 사용하여 호출할 수 있는 자체 자동 베드 레벨링 프로브 및 절차가 있습니다.
 
+English:The printer has the ability to check for continuity on the nozzle.
+Translated:프린터에는 노즐의 연속성을 확인할 수 있는 기능이 있습니다.
+
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:프린터에는 전원 공급 장치를 제어하는 기능이 있습니다. 이 기능을 활성화하면 컨트롤 창에 ATX 전원 컨트롤 섹션이 표시됩니다.
+
+English:The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.
+Translated:프린터가 전도성 프로빙에 대해 설정된 최소 높이 아래로 이동했습니다. 노즐이 깨끗하고 패드와 연속성이 있는지 확인하십시오.
 
 English:The printer requires print leveling to run correctly.
 Translated:프린터가 올바르게 실행되려면 인쇄 레벨링이 필요합니다.
@@ -3997,11 +5107,11 @@ Translated:이제 프린터가 '호밍' 상태여야 합니다.
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
 Translated:로드하려는 프로필이 손상되었습니다. 대신 최근 프로필 기록에서 마지막으로 사용 가능한 {0} {1} 프로필을 로드했습니다.
 
-English:The radius described by the source part or implied by the geometry.
-Translated:소스 부품에 의해 설명되거나 형상에 의해 암시된 반지름입니다.
+English:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.
+Translated:요청된 돌출과 오류를 유발할 센서 측정 돌출 간의 비율입니다.
 
-English:The radius of the imaginary circle where this gears mates. To find the correct distance between two gears add their 'Pitch Radii' together.
-Translated:이 기어가 짝을 이루는 가상 원의 반지름입니다. 두 기어 사이의 정확한 거리를 찾으려면 '피치 반경'을 함께 추가하십시오.
+English:The semaphore timeout period has expired.
+Translated:세마포어 시간 초과 기간이 만료되었습니다.
 
 English:The serial driver to use
 Translated:사용할 직렬 드라이버
@@ -4010,7 +5120,7 @@ English:The serial port communication speed of the printers firmware.
 Translated:프린터 펌웨어의 직렬 포트 통신 속도입니다.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:'직렬 포트' 섹션에는 장치에서 사용 가능한 \n 모든 직렬 포트가 나열됩니다. 프린터가 연결된 \n USB 포트를 변경하면 연결된 직렬 포트가 변경될 수 있습니다. \NN\ 팁: 확실하지 않은 경우 프린터를 \n 분리/연결하고 새로 고침을 누르십시오. 나타나는 새 포트는 \n 프린터여야 합니다.
+Translated:'직렬 포트' 섹션에는 장치에서 사용 가능한 \n 모든 직렬 포트가 나열됩니다. 프린터가 연결된 \n USB 포트를 변경하면 연결된 직렬 포트가 변경될 수 있습니다. \NN\ 팁: 확실하지 않으면 프린터를 \n 뽑았다가 다시 꽂고 새로 고침을 누르십시오. 나타나는 새 포트는 \n 프린터여야 합니다.
 
 English:The serial port to use while connecting to this printer.
 Translated:이 프린터에 연결하는 동안 사용할 직렬 포트입니다.
@@ -4020,9 +5130,6 @@ Translated:실제 인쇄 베드의 모양입니다.
 
 English:The slicer to use.
 Translated:사용할 슬라이서입니다.
-
-English:The source part is specifying a preferred radius. You can turn this off to set a specific radius.
-Translated:소스 부품이 기본 반경을 지정하고 있습니다. 특정 반경을 설정하기 위해 이것을 끌 수 있습니다.
 
 English:The speed at which bridging between walls will print.
 Translated:벽 사이의 브리징이 인쇄되는 속도입니다.
@@ -4046,7 +5153,7 @@ English:The speed at which support material structures will print.
 Translated:지지 재료 구조가 인쇄되는 속도입니다.
 
 English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
-Translated:맨 아래 단색 레이어가 인쇄되는 속도입니다. 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다. 채우기 속도를 일치시키려면 0을 사용하십시오.
+Translated:하단 단색 레이어가 인쇄되는 속도입니다. 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다. 채우기 속도를 일치시키려면 0을 사용하십시오.
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
 Translated:브리징 시 레이어 냉각 팬이 실행되는 속도이며 전체 전력의 백분율로 표시됩니다.
@@ -4067,25 +5174,25 @@ English:The speed at which the nozzle will move when recovering a failed print, 
 Translated:1 레이어에 대해 실패한 인쇄를 복구할 때 노즐이 이동하는 속도입니다.
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
-Translated:상단 단색 레이어가 인쇄되는 속도입니다. 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다.
+Translated:맨 위의 단색 레이어가 인쇄되는 속도입니다. 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다.
 
-English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:레이어 높이가 0.025mm일 때 레이저를 이동하는 속도입니다. 속도는 다른 높이에서 선형으로 조정됩니다.
+English:The speed to move the build plate after each base layer prints.
+Translated:각 기본 레이어가 인쇄된 후 빌드 플레이트를 이동하는 속도입니다.
 
-English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
-Translated:레이어 높이가 0.1mm일 때 레이저를 이동하는 속도입니다. 속도는 다른 높이에서 선형으로 조정됩니다.
+English:The speed to move the build plate after each layer prints.
+Translated:각 레이어가 인쇄된 후 빌드 플레이트를 이동하는 속도입니다.
+
+English:The speed to move the build plate back down after lifting.
+Translated:들어 올린 후 빌드 플레이트를 다시 아래로 이동하는 속도입니다.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:완전히 고체 상태일 때 채우기를 인쇄하는 속도입니다. 이것은 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다.
+Translated:완전히 고형일 때 채우기를 인쇄하는 속도입니다. 이것은 명시적으로 또는 채우기 속도의 백분율로 설정할 수 있습니다.
 
 English:The speed to run filament into and out of the printer.
 Translated:필라멘트가 프린터에 들어오고 나가는 속도입니다.
 
 English:The starting height (z) of the print head before probing each print level position.
 Translated:각 프린트 레벨 위치를 프로빙하기 전 프린트 헤드의 시작 높이(z).
-
-English:The target number of polygons.
-Translated:다각형의 대상 수입니다.
 
 English:The target temperature the bed will attempt to reach during the first layer of the print.
 Translated:베드는 인쇄물의 첫 번째 레이어에서 도달하려고 시도하는 목표 온도입니다.
@@ -4095,6 +5202,48 @@ Translated:압출기가 인쇄 중에 도달하려고 시도하는 목표 온도
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:Custom G-Code에 지정된 대로 압출기가 노즐을 닦는 온도입니다.
+
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
+Translated:캡톤 테이프로 베드를 가렸을 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
+Translated:캡톤 테이프로 베드를 가렸을 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
+Translated:침대를 파란색 테이프로 덮었을 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
+Translated:침대를 파란색 테이프로 덮었을 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is polypropylene. Set to 0 to disable.
+Translated:베드가 폴리프로필렌일 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is polypropylene. Set to 0 to use default.
+Translated:베드가 폴리프로필렌일 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
+Translated:침대가 BuildTak을 사용할 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
+Translated:침대가 BuildTak을 사용할 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is using garolite. Set to 0 to disable.
+Translated:침대에서 garolite를 사용할 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is using garolite. Set to 0 to use default.
+Translated:침대에서 garolite를 사용할 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is using glass. Set to 0 to disable.
+Translated:침대에서 유리를 사용할 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is using glass. Set to 0 to use default.
+Translated:침대에서 유리를 사용할 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to disable.
+Translated:침대가 PEI를 사용할 때 인쇄할 온도입니다. 비활성화하려면 0으로 설정합니다.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to use default.
+Translated:침대가 PEI를 사용할 때 인쇄할 온도입니다. 기본값을 사용하려면 0으로 설정하십시오.
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 Translated:인쇄 기간 동안 침대가 설정되는 온도입니다. 비활성화하려면 0으로 설정합니다.
@@ -4108,38 +5257,35 @@ Translated:부품의 첫 번째 레이어를 인쇄하기 전에 노즐이 가�
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:'전송 속도'라는 용어는 대략 \n 데이터가 전송되는 속도를 의미합니다. 전송 속도는 프린터마다 \n 다를 수 있습니다. 자세한 내용은 프린터 설명서를 참조하십시오. \NN\ 팁: 확실하지 않은 경우 250000을 시도하십시오.
 
+English:The thickness of each layer of the print, except the base layers. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:기본 레이어를 제외한 인쇄물의 각 레이어 두께입니다. 숫자가 작을수록 더 많은 레이어와 수직 정확도가 생성되지만 인쇄 속도도 느려집니다.
+
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
 Translated:첫 번째 레이어를 제외한 인쇄물의 각 레이어 두께입니다. 숫자가 작을수록 더 많은 레이어와 수직 정확도가 생성되지만 인쇄 속도도 느려집니다.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:첫 번째 레이어의 두께입니다. 기본 레이어 두께보다 큰 첫 번째 레이어는 빌드 플레이트에 대한 우수한 접착력을 보장할 수 있습니다.
+Translated:첫 번째 레이어의 두께입니다. 기본 레이어 두께보다 높은 첫 번째 레이어는 빌드 플레이트에 대한 우수한 접착력을 보장할 수 있습니다.
+
+English:The time in seconds to expose the normal layers of the print.
+Translated:인쇄물의 일반 레이어를 노출하는 시간(초)입니다.
 
 English:The time it takes to heat back up from a cool down.
 Translated:냉각에서 다시 가열되는 데 걸리는 시간입니다.
 
-English:The time it will take to unload the filament
-Translated:필라멘트를 언로드하는 데 걸리는 시간
-
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:재시작 시 추가 길이를 최대값으로 늘리는 데 걸리는 시간입니다. 이 시간 이하에서는 추가 길이의 일부만 적용됩니다. 전체 금액을 항상 적용하려면 0을 그대로 두십시오.
 
-English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
-Translated:이 G 코드를 인쇄하는 데 걸리는 시간은 {0}초로 예상됩니다. \NN\ 예상치 못한 경우 오류가 있는지 부품을 확인하십시오.
-
-English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:프린터의 펌웨어가 통신하는 G-Code의 버전입니다. 일부 펌웨어는 다른 G 및 M 코드를 사용합니다. 이를 설정하면 출력 G-Code가 올바른 명령을 사용할 수 있습니다.
+English:The Validation Threshold mush be greater than 0 and less than .5mm.
+Translated:검증 임계값은 0보다 크고 0.5mm보다 작아야 합니다.
 
 English:The width and depth of the support pillars
 Translated:지지 기둥의 너비와 깊이
 
-English:The width of the edge outside the inner teeth
-Translated:안쪽 치아 바깥쪽 가장자리의 너비
-
-English:The with of the outline.
-Translated:개요의 첨부.
-
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
 Translated:베드의 부품과 충돌할 가능성을 최소화하는 핫 엔드의 X 및 Y 위치.
+
+English:The X and Y resolution of the print bed in pixels.
+Translated:인쇄 베드의 X 및 Y 해상도(픽셀)입니다.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
 Translated:인쇄 베드 크기의 X 및 Y 값(밀리미터)입니다. 원형 베드가 있는 프린터의 경우 이 값은 X 및 Y축의 지름입니다.
@@ -4165,6 +5311,12 @@ Translated:MatterControl에 사용할 수 있는 권장 업데이트가 있습�
 English:There is a required update available
 Translated:사용 가능한 필수 업데이트가 있습니다.
 
+English:Thermal Runaway - Bed
+Translated:열폭주 - 침대
+
+English:Thermal Runaway - Hot End
+Translated:열 폭주 - 핫 엔드
+
 English:Thin Walls
 Translated:얇은 벽
 
@@ -4175,7 +5327,7 @@ English:This data compensates for machine misalignment and bed distortion, and e
 Translated:이 데이터는 기계 정렬 불량 및 베드 왜곡을 보정하고 우수한 첫 번째 레이어 접착력을 보장합니다.
 
 English:This data improves the alignment of dual extrusion prints.
-Translated:이 데이터는 이중 압출 인쇄물의 정렬을 개선합니다.
+Translated:이 데이터는 이중 압출 인쇄의 정렬을 개선합니다.
 
 English:This data is required for software print leveling and ensures good first layer adhesion.
 Translated:이 데이터는 소프트웨어 인쇄 레벨링에 필요하며 우수한 첫 번째 레이어 접착력을 보장합니다.
@@ -4201,14 +5353,17 @@ Translated:이 프로필이 대상으로 하는 프린터 모델입니다.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:이것은 프린터 선택 메뉴에 표시될 프린터의 이름입니다.
 
-English:This is the position to perform the scale about.
-Translated:스케일을 수행하는 위치입니다.
+English:This is used to increase the number of downloads allowed when browsing GitHub repositories
+Translated:GitHub 리포지토리를 탐색할 때 허용되는 다운로드 수를 늘리는 데 사용됩니다.
 
-English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:이는 인쇄 중 진동을 줄이는 데 도움이 됩니다. 프린터에 문제를 일으키는 공진 주파수가 있는 경우 이 주파수에서 인쇄를 시도하고 줄이도록 설정할 수 있습니다.
+English:This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.
+Translated:프린터가 여러 베드 표면을 지원하고 다른 표면에 대한 베드 온도가 달라야 하는지 여부를 확인해야 합니다.
 
 English:This should be in 'G-Code'
 Translated:이것은 'G-Code'에 있어야 합니다.
+
+English:This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.
+Translated:이것은 프린터의 현재 베드 표면으로 설정되어야 합니다. 주어진 재료와 베드 표면 조합에 대한 올바른 베드 온도를 선택하는 데 사용됩니다.
 
 English:This will ensure that filament is able to flow through the nozzle.
 Translated:이렇게 하면 필라멘트가 노즐을 통해 흐를 수 있습니다.
@@ -4216,7 +5371,7 @@ Translated:이렇게 하면 필라멘트가 노즐을 통해 흐를 수 있습�
 English:This will ensure that no filament is stuck to your nozzle.
 Translated:이렇게 하면 필라멘트가 노즐에 달라붙지 않습니다.
 
-English:This will improve the accuracy of print leveling 
+English:This will improve the accuracy of print leveling
 Translated:이렇게 하면 인쇄 레벨링의 정확도가 향상됩니다.
 
 English:This will improve the accuracy of print leveling.
@@ -4228,8 +5383,14 @@ Translated:이것은 특정 하드웨어에서만 작동합니다. 프린터 컨
 English:This wizard will close to print a calibration part and resume after the print completes.
 Translated:이 마법사는 보정 부품을 인쇄하기 위해 닫히고 인쇄가 완료된 후 다시 시작됩니다.
 
+English:Thread Scale
+Translated:스레드 스케일
+
 English:Threads
 Translated:스레드
+
+English:Threshold
+Translated:한계점
 
 English:Thumbnails
 Translated:썸네일
@@ -4252,8 +5413,17 @@ Translated:종료 시간
 English:Time to Tool Change
 Translated:공구 교환 시간
 
+English:Tip Scale
+Translated:팁 스케일
+
+English:Tip Segments
+Translated:팁 세그먼트
+
 English:TM
 Translated:TM
+
+English:To apply settings changes you need to restart MatterControl.
+Translated:설정 변경 사항을 적용하려면 MatterControl을 다시 시작해야 합니다.
 
 English:To complete the next few steps you will need
 Translated:다음 몇 단계를 완료하려면 다음이 필요합니다.
@@ -4264,26 +5434,26 @@ Translated:모니터 설정 변경을 완료하려면 MatterControl을 다시 �
 English:To Folder
 Translated:폴더로
 
-English:Toggle between specifying the size or the percentage to scale.
-Translated:크기 또는 비율 지정 사이를 전환합니다.
-
 English:Toggle Selection
 Translated:선택 토글
 
-English:Toggle Support
-Translated:토글 지원
-
-English:Toggle Wipe Tower
-Translated:토글 와이프 타워
+English:Took Too Long To Heat
+Translated:가열하는 데 너무 오래 걸림
 
 English:Tool
 Translated:도구
 
-English:Tool 
+English:Tool Bar Options
+Translated:툴바 옵션
+
+English:Tools
 Translated:도구
 
-English:Tools 
-Translated:도구
+English:Tooth Count
+Translated:치아 수
+
+English:Top Inset
+Translated:상단 삽입
 
 English:Top Solid Infill
 Translated:상단 솔리드 채우기
@@ -4291,14 +5461,17 @@ Translated:상단 솔리드 채우기
 English:Top Solid Layers
 Translated:상위 솔리드 레이어
 
-English:Top/Bottom Fill Pattern
-Translated:상단/하단 채우기 패턴
-
 English:Torus
 Translated:큰 쇠시리
 
+English:Total Time Printed
+Translated:총 인쇄 시간
+
 English:Touch Screen Mode
 Translated:터치 스크린 모드
+
+English:Transform
+Translated:변환
 
 English:Transform Wrapper
 Translated:변환 래퍼
@@ -4306,11 +5479,23 @@ Translated:변환 래퍼
 English:Translate
 Translated:번역하다
 
+English:Translation
+Translated:번역
+
 English:Transparent
 Translated:투명한
 
+English:Trapezoid
+Translated:사다리꼴
+
 English:Travel
 Translated:여행하다
+
+English:Triangle
+Translated:삼각형
+
+English:TRIANGLES
+Translated:삼각형
 
 English:Trim Filament
 Translated:트림 필라멘트
@@ -4318,11 +5503,14 @@ Translated:트림 필라멘트
 English:Trim Filament Page
 Translated:트리밍 필라멘트 페이지
 
+English:Troubleshoot
+Translated:문제 해결
+
+English:Troubleshooting
+Translated:문제 해결
+
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
 Translated:실제 메쉬 데이터가 완전히 연결되지 않은 경우 메쉬 가장자리를 연결해 보십시오.
-
-English:Try to fill in any holes that are in the model.
-Translated:모델에 있는 구멍을 채우십시오.
 
 English:Tuning Adjustment
 Translated:튜닝 조정
@@ -4342,11 +5530,17 @@ Translated:설정에 관계없이 팬을 켜고 끕니다.
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:모든 냉각 설정(이 설정 아래의 모든 설정)을 켜고 끕니다.
 
+English:Turntable Mode
+Translated:턴테이블 모드
+
 English:Twist
 Translated:트위스트
 
 English:Twist Right
 Translated:오른쪽으로 비틀기
+
+English:Type 'Esc' to cancel
+Translated:취소하려면 'Esc'를 입력하세요.
 
 English:Uh oh! Passwords do not match.
 Translated:어 오! 비밀번호가 일치하지 않습니다.
@@ -4394,10 +5588,7 @@ English:Unload Filament
 Translated:필라멘트 언로드
 
 English:Unload Filament Length
-Translated:필라멘트 길이를 내리십시오
-
-English:Unload Filament Time
-Translated:필라멘트 시간을 내리십시오
+Translated:언로드 필라멘트 길이
 
 English:Unload Material
 Translated:자재 내리기
@@ -4408,6 +5599,12 @@ Translated:필라멘트 언로드
 English:Unlock
 Translated:터놓다
 
+English:Unpin
+Translated:고정 해제
+
+English:Unplug printer USB cable from computer
+Translated:컴퓨터에서 프린터 USB 케이블 분리
+
 English:Unsupported Baud Rate
 Translated:지원되지 않는 전송 속도
 
@@ -4416,9 +5613,6 @@ Translated:위로
 
 English:Up Arrow
 Translated:위쪽 화살표
-
-English:Up one folder
-Translated:한 폴더 위로
 
 English:Update
 Translated:업데이트
@@ -4435,11 +5629,23 @@ Translated:업데이트 진행 중: {0}
 English:Update my password
 Translated:내 비밀번호 업데이트
 
+English:Update Setting
+Translated:업데이트 설정
+
+English:Update Settings
+Translated:설정 업데이트
+
+English:Update Settings...
+Translated:설정 업데이트...
+
 English:Updating firmware...
 Translated:펌웨어 업데이트 중...
 
 English:Upgrade
 Translated:업그레이드
+
+English:Upgrade to Pro
+Translated:프로로 업그레이드
 
 English:Upload
 Translated:업로드
@@ -4449,9 +5655,6 @@ Translated:업로드 중...
 
 English:Use Automatic Z Probe
 Translated:자동 Z 프로브 사용
-
-English:Use Braille grade 2 (contractions)
-Translated:점자 등급 2 사용(축소)
 
 English:Use cursor keys for axis movements
 Translated:축 이동에 커서 키 사용
@@ -4465,6 +5668,12 @@ Translated:G0 사용
 English:Use G0 for moves rather than G1.
 Translated:이동에는 G1 대신 G0을 사용하십시오.
 
+English:Use Grade 2
+Translated:2등급 사용
+
+English:Use Percentage
+Translated:백분율 사용
+
 English:Use Relative E Distances
 Translated:상대 E 거리 사용
 
@@ -4473,6 +5682,12 @@ Translated:작은 둘레(보통 구멍)에 사용됩니다. 이것은 명시적�
 
 English:Used to specify if more than one extruder share a common heater cartridge.
 Translated:둘 이상의 압출기가 공통 히터 카트리지를 공유하는지 여부를 지정하는 데 사용됩니다.
+
+English:User Control
+Translated:사용자 제어
+
+English:User Error
+Translated:사용자 오류
 
 English:Username
 Translated:사용자 이름
@@ -4489,23 +5704,41 @@ Translated:위의 컨트롤 사용
 English:Utilize High Res Monitors
 Translated:고해상도 모니터 활용
 
+English:Validate After Clear
+Translated:클리어 후 검증
+
+English:Validate Calibration Before Printing
+Translated:인쇄하기 전에 보정 확인
+
+English:Validate G Code
+Translated:G 코드 확인
+
 English:Validate Layer Height
 Translated:레이어 높이 확인
+
+English:Validate Probe Offset Automatically
+Translated:자동으로 프로브 오프셋 검증
+
+English:Validating Z Offset
+Translated:Z 오프셋 검증
 
 English:Validation Error
 Translated:검증 오류
 
+English:Validation Threshold
+Translated:검증 임계값
+
 English:Value
 Translated:값
+
+English:Variable Sheet
+Translated:가변 시트
 
 English:Velocity Paint
 Translated:벨로시티 페인트
 
 English:Version
 Translated:버전
-
-English:Vibration Limit
-Translated:진동 한계
 
 English:View Icons
 Translated:아이콘 보기
@@ -4518,6 +5751,27 @@ Translated:큰 아이콘 보기
 
 English:View List
 Translated:목록 보기
+
+English:View Mode = Materials
+Translated:보기 모드 = 재료
+
+English:View Mode = Non-Manifold
+Translated:보기 모드 = 비다양체
+
+English:View Mode = Outlines
+Translated:보기 모드 = 윤곽선
+
+English:View Mode = Overhangs
+Translated:보기 모드 = 돌출부
+
+English:View Mode = Polygons
+Translated:보기 모드 = 다각형
+
+English:View Mode = Shaded
+Translated:보기 모드 = 음영 처리
+
+English:View Settings
+Translated:설정 보기
 
 English:View Small Icons
 Translated:작은 아이콘 보기
@@ -4546,17 +5800,23 @@ Translated:압출기 1이 가열되기를 기다리는 중
 English:Waiting for Extruder 2 to Heat to
 Translated:압출기 2가 가열될 때까지 기다리기
 
-English:Waiting for hotend {0} to heat to 
+English:Waiting for hotend {0} to heat to
 Translated:hotend {0}이(가) 가열되기를 기다리는 중
 
 English:Waiting For Printer To Heat
 Translated:프린터가 가열될 때까지 기다리기
 
-English:Waiting for the bed to heat to 
+English:Waiting for the bed to heat to
 Translated:침대가 데워지기를 기다리며
 
-English:Waiting for the hotend to heat to 
+English:Waiting for the bed to heat to {0} °C\nand the hotend to heat to {1} °C.\n\nThis will improve the accuracy of print leveling\nand ensure that no filament is stuck to your nozzle.\n\nWarning! The tip of the nozzle will be HOT!\nAvoid contact with your skin.
+Translated:베드가 {0}°C로 가열되고 핫엔드가 {1}°C로 가열될 때까지 기다립니다. \NN\ 이렇게 하면 인쇄 레벨링의 정확도가 향상되고 \n 필라멘트가 노즐에 달라붙지 않습니다. \NN\ 경고! 노즐 끝이 HOT! \n 피부에 닿지 않도록 하십시오.
+
+English:Waiting for the hotend to heat to
 Translated:핫엔드가 가열되기를 기다리는 중
+
+English:Waiting for the hotend to heat to {0} °C.\nThis will ensure that no filament is stuck to your nozzle.\n\nWarning! The tip of the nozzle will be HOT!\nAvoid contact with your skin.
+Translated:핫엔드가 {0}°C로 가열되기를 기다립니다. \n 이렇게 하면 노즐에 필라멘트가 달라붙지 않습니다. \NN\ 경고! 노즐 끝이 HOT! \n 피부에 닿지 않도록 하십시오.
 
 English:Waiting for the hotends to heat up.
 Translated:핫엔드가 가열되기를 기다립니다.
@@ -4588,17 +5848,23 @@ Translated:경고: 인쇄 복구를 수행하려면 프린터가 홈 위치에 �
 English:WARNING: Write Failed!
 Translated:경고: 쓰기 실패!
 
+English:Warping
+Translated:뒤틀림
+
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:이제 이 위치에서 압출기 높이 측정을 완료합니다.
+
+English:We will now measure the probe offset from the top of a printed calibration object.
+Translated:이제 인쇄된 보정 개체의 상단에서 프로브 오프셋을 측정합니다.
 
 English:We will now refine our measurement of the extruder height at this position.
 Translated:이제 이 위치에서 압출기 높이 측정을 미세 조정합니다.
 
+English:We will now sample the top of the part.
+Translated:이제 부품의 상단을 샘플링합니다.
+
 English:We will use this paper to measure the distance between the nozzle and the bed.
 Translated:우리는 이 종이를 사용하여 노즐과 베드 사이의 거리를 측정할 것입니다.
-
-English:Website
-Translated:웹사이트
 
 English:Wedge
 Translated:쐐기
@@ -4606,8 +5872,26 @@ Translated:쐐기
 English:Welcome to MatterControl
 Translated:MatterControl에 오신 것을 환영합니다.
 
+English:Welcome to MatterControl! What would you like to do today?
+Translated:MatterControl에 오신 것을 환영합니다! 오늘 뭐 할래?
+
+English:Weld Edges
+Translated:용접 모서리
+
+English:Weld Tolerance
+Translated:용접 공차
+
+English:Weld Vertices
+Translated:용접 정점
+
+English:What to do when there is not a good place to hide the seam.
+Translated:솔기를 숨길 좋은 곳이 없을 때해야 할 일.
+
 English:What was my password again?
 Translated:내 비밀번호는 또 뭐였지?
+
+English:What went wrong?
+Translated:무엇이 잘못되었나요?
 
 English:What's this?
 Translated:이게 뭐야?
@@ -4615,8 +5899,11 @@ Translated:이게 뭐야?
 English:wheel
 Translated:바퀴
 
+English:When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.
+Translated:맨 아래 및 맨 위의 단색 레이어를 채울 때 각 새 인쇄 세그먼트 면이 같은 면의 이전 세그먼트에 닿도록 항상 레이어를 만듭니다.
+
 English:When generating per layer support, evaluate all surfaces rather than only those above the bed.
-Translated:레이어별 지지대를 생성할 때 침대 위의 표면만 평가하지 않고 모든 표면을 평가합니다.
+Translated:층별 지지를 생성할 때 침대 위의 표면뿐만 아니라 모든 표면을 평가하십시오.
 
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
 Translated:이 옵션을 선택하면 MatterControl은 연결 끊김이나 전원 손실과 같은 오류가 발생한 경우 인쇄 복구를 시도합니다.
@@ -4625,19 +5912,19 @@ English:When upgrading to new firmware, first save a backup of the current firmw
 Translated:새 펌웨어로 업그레이드할 때는 먼저 현재 펌웨어의 백업을 저장하십시오.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:여러 개의 Extruder를 사용하는 경우 다른 Extruder로 변경하기 전에 필라멘트 거리가 반전됩니다.
-
-English:Where to start the bend as a percent of the width of the part
-Translated:부품 너비의 백분율로 굽힘을 시작할 위치
+Translated:여러 개의 압출기를 사용할 때 필라멘트의 거리가 반전되어 다른 압출기로 변경됩니다.
 
 English:Width
 Translated:너비
 
+English:Width Percent
+Translated:너비 백분율
+
 English:Wifi Setup
 Translated:와이파이 설정
 
-English:wipe
-Translated:닦음
+English:Will be updated to:
+Translated:다음으로 업데이트됩니다.
 
 English:Wipe Shield Distance
 Translated:쉴드 거리 닦기
@@ -4648,17 +5935,26 @@ Translated:닦아 타워 크기
 English:Wizard
 Translated:마법사
 
+English:Wolud you like to save changes before closing?
+Translated:닫기 전에 변경 사항을 저장하시겠습니까?
+
+English:Would you like to save changes before closing?
+Translated:닫기 전에 변경 사항을 저장하시겠습니까?
+
 English:Would you like to setup Wifi?
 Translated:Wi-Fi를 설정하시겠습니까?
+
+English:Wouldn’t Slice Correctly
+Translated:제대로 슬라이스되지 않음
 
 English:Write Filter
 Translated:쓰기 필터
 
-English:X
-Translated:엑스
-
 English:X and Y Distance
 Translated:X 및 Y 거리
+
+English:X Intercept
+Translated:X 가로채기
 
 English:X Offset
 Translated:X 오프셋
@@ -4672,8 +5968,8 @@ Translated:XY 교정
 English:XY Homing Position
 Translated:XY 원점 복귀 위치
 
-English:Y
-Translated:와이
+English:Y Intercept
+Translated:Y 절편
 
 English:Y Offset
 Translated:Y 오프셋
@@ -4681,17 +5977,32 @@ Translated:Y 오프셋
 English:Yes
 Translated:네
 
+English:You are connected to the Emulator not an actual printer.
+Translated:실제 프린터가 아닌 에뮬레이터에 연결되어 있습니다.
+
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:다른 썸네일 렌더링 모드로 전환하고 있습니다. 원하는 경우 현재 축소판을 제거하고 새 스타일로 다시 만들 수 있습니다. 언제든지 앞뒤로 전환할 수 있습니다. 새 썸네일이 생성되는 동안 약간의 처리 오버헤드가 발생합니다. \NN\ 지금 기존 축소판을 다시 작성하시겠습니까?
 
 English:You can also
 Translated:당신은 또한 수
 
+English:You can also share items with friends, navigate to your Cloud Library Folder and select 'Share' on items you have added.
+Translated:친구와 항목을 공유하고 클라우드 라이브러리 폴더로 이동하여 추가한 항목에 대해 '공유'를 선택할 수도 있습니다.
+
 English:You can continue to ultra fine calibration, but for most uses this is not necessary.
 Translated:초미세 보정을 계속할 수 있지만 대부분의 경우에는 이것이 필요하지 않습니다.
 
 English:You can only connect when not currently connected
 Translated:현재 연결되어 있지 않을 때만 연결할 수 있습니다.
+
+English:You have {0} unsave design(s). Wolud you like to save changes before closing?
+Translated:저장하지 않은 디자인이 {0}개 있습니다. 닫기 전에 변경 사항을 저장하시겠습니까?
+
+English:You have {0} unsave designs. Wolud you like to save changes before closing?
+Translated:저장하지 않은 디자인이 {0}개 있습니다. 닫기 전에 변경 사항을 저장하시겠습니까?
+
+English:You have one unsave design ({0}). Wolud you like to save changes before closing?
+Translated:저장하지 않은 디자인({0})이 하나 있습니다. 닫기 전에 변경 사항을 저장하시겠습니까?
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
 Translated:새 {0} 설정을 성공적으로 가져왔습니다. {0} 설정 목록에서 '{1}'을(를) 찾을 수 있습니다.
@@ -4702,6 +6013,9 @@ Translated:새 프린터 프로필을 성공적으로 가져왔습니다. 사용
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:프린터 초기화가 완료될 때까지 1분 정도 기다려야 할 수 있습니다.
 
+English:You should have at least 3 top layers for this calibration to measure off of.
+Translated:이 보정을 측정하려면 최소 3개의 최상위 레이어가 있어야 합니다.
+
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:3D 프린트가 자동으로 일시 중지되었습니다. \NN\ 레이어 {0}에 도달했습니다.
 
@@ -4711,8 +6025,8 @@ Translated:3D 인쇄가 일시 중지되었습니다. \NN\ 필라멘트 부족 �
 English:Your application is up-to-date
 Translated:애플리케이션이 최신 상태입니다.
 
-English:Your code has been redeemed.  Please check the Library.
-Translated:코드가 사용되었습니다. 도서관을 확인해주세요.
+English:Your code has been redeemed.  Please check your 'Shared With Me' folder in your Library.
+Translated:코드가 사용되었습니다. 라이브러리에서 '나와 공유함' 폴더를 확인하세요.
 
 English:Your Email Address
 Translated:귀하의 이메일 주소
@@ -4732,6 +6046,9 @@ Translated:프린터가 조정되었지만 정확도를 높이려면 보정을 �
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:프린터가 하드웨어 오류를 보고하고 일시 중지되었습니다. 오류를 확인하고 필요한 경우 인쇄를 취소하십시오.
 
+English:Your probe is now finely calibrated and should produce excellent first layer results
+Translated:이제 프로브가 미세하게 보정되었으며 우수한 첫 번째 레이어 결과를 생성해야 합니다.
+
 English:Your Share Code
 Translated:공유 코드
 
@@ -4745,16 +6062,10 @@ English:Your Start G-Code should not contain a G30 if you are planning on using 
 Translated:인쇄 레벨링을 사용하려는 경우 시작 G 코드에 G30이 포함되어서는 안 됩니다. 시작 G 코드를 변경하거나 인쇄 레벨링을 끕니다.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:인쇄 복구를 사용할 계획이라면 시작 G 코드에 G30이 포함되어서는 안 됩니다. 시작 G 코드를 변경하거나 인쇄 복구를 끄십시오.
-
-English:Z
-Translated:지
+Translated:인쇄 복구를 사용하려는 경우 시작 G 코드에 G30이 포함되어서는 안 됩니다. 시작 G 코드를 변경하거나 인쇄 복구를 끄십시오.
 
 English:Z Calibration
 Translated:Z 교정
-
-English:Z Calibration complete.
-Translated:Z 보정이 완료되었습니다.
 
 English:Z Calibration measures the z position of the nozzles.
 Translated:Z 보정은 노즐의 z 위치를 측정합니다.
@@ -4774,555 +6085,27 @@ Translated:압축 파일
 English:Zoom
 Translated:줌
 
-English:Zoom (Ctrl + Left Mouse)
-Translated:확대/축소(Ctrl + 마우스 왼쪽)
-
 English:Zoom in
 Translated:확대
 
 English:Zoom out
 Translated:축소
 
-English:Zoom to window
-Translated:창으로 확대
+English:Zoom to fit
+Translated:크기에 맞게 확대/축소
 
-English:At least 1 part must be selected
-Translated:부품을 1개 이상 선택해야 합니다.
-
-English:At least 2 parts must be selected
-Translated:2개 이상의 부품을 선택해야 합니다.
-
-English:An image must be selected
-Translated:이미지를 선택해야 합니다.
-
-English:A path must be selected
-Translated:경로를 선택해야 합니다.
-
-English:A single part must be selected
-Translated:단일 부품을 선택해야 합니다.
-
-English:A component must be selected
-Translated:구성 요소를 선택해야 합니다.
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Show Printer
-Translated:프린터 표시
-
-English:Update Settings...
-Translated:설정 업데이트...
-
-English:Restore Settings...
-Translated:설정 복원...
-
-English:Reset to Defaults...
-Translated:기본값으로 재설정...
-
-English:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
-Translated:이동: 마우스 가운데 버튼 | Ctrl + Shift + 마우스 왼쪽 버튼
-
-English:Create New Design
-Translated:새로운 디자인 만들기
-
-English:Resources
-Translated:자원
-
-English:View Settings
-Translated:설정 보기
-
-English:Sorting
-Translated:정렬
-
-English:Collapse
-Translated:무너지다
-
-English:Convert to Wipe Tower
-Translated:와이프 타워로 변환
-
-English:Tool Bar Options
-Translated:툴바 옵션
-
-English:Transform
-Translated:변환
-
-English:Placement
-Translated:놓기
-
-English:Reshape
-Translated:모양 변경
-
-English:Find Slice
-Translated:슬라이스 찾기
-
-English:Revolve
-Translated:회전
-
-English:Merge
-Translated:병합
-
-English:Duplication
-Translated:복사
-
-English:Convert to Support
-Translated:지원으로 변환
-
-English:Selected Object Options
-Translated:선택한 개체 옵션
-
-English:Select Parts
-Translated:부품 선택
-
-English:Move View
-Translated:보기 이동
-
-English:Zoom View
-Translated:확대보기
+English:Zoom to selection
+Translated:선택 영역으로 확대
 
 English:Zoom to Selection
 Translated:선택으로 확대
 
-English:Turntable Mode
-Translated:턴테이블 모드
-
-English:View Mode = Shaded
-Translated:보기 모드 = 음영 처리
-
-English:View Mode = Outlines
-Translated:보기 모드 = 윤곽선
-
-English:View Mode = Polygons
-Translated:보기 모드 = 다각형
-
-English:View Mode = Non-Manifold
-Translated:보기 모드 = 비다양체
-
-English:View Mode = Materials
-Translated:보기 모드 = 재료
-
-English:View Mode = Overhangs
-Translated:보기 모드 = 돌출부
-
-English:Snapping Turned Off
-Translated:스냅 해제됨
-
-English:Debug Render Options
-Translated:디버그 렌더링 옵션
-
-English:SCAD Script
-Translated:SCAD 스크립트
-
-English:MarchingSquares
-Translated:마칭스퀘어
-
-English:Measure Tool
-Translated:측정 도구
-
-English:Variable Sheet
-Translated:가변 시트
-
-English:Reduced Width
-Translated:축소된 너비
-
-English:No part to arrange
-Translated:정리할 부분이 없음
-
-English:Settings View Options
-Translated:설정 보기 옵션
-
-English:name
-Translated:이름
-
-English:GRID
-Translated:그리드
-
-English:TRIANGLES
-Translated:삼각형
-
-English:HEXAGON
-Translated:육각형
-
-English:GYROID
-Translated:자이로이드
-
-English:LINES
-Translated:윤곽
-
-English:CONCENTRIC
-Translated:집중
-
-English:Normal Layers
-Translated:일반 레이어
-
-English:Base Layers
-Translated:기본 레이어
-
-English:Seam Placement
-Translated:솔기 배치
-
-English:What to do when there is not a good place to hide the seam.
-Translated:솔기를 숨길 좋은 곳이 없을 때해야 할 일.
-
-English:Furthest Back
-Translated:가장 먼 뒤로
-
-English:Centered In Back
-Translated:뒤에 중앙에
-
-English:Always Centered In Back
-Translated:항상 뒤에 중심
-
-English:Randomized
-Translated:무작위
-
-English:Fastest
-Translated:가장 빠른
-
-English:Monotonic Solid Infill
-Translated:모노토닉 솔리드 인필
-
-English:When filling bottom and top solid layers always create them so that each new print segment side is touching a previous segment on the same side.
-Translated:맨 아래 및 맨 위의 단색 레이어를 채울 때 각 새 인쇄 세그먼트 면이 같은 면의 이전 세그먼트에 닿도록 항상 레이어를 만듭니다.
-
-English:Perimeters Per Extruder
-Translated:압출기당 둘레
-
-English:The number of perimeters will be this number times the number of active extruders. Make this a smaller number to make the wipe more hollow or bigger to fill it.
-Translated:둘레의 수는 활성 압출기의 수를 곱한 것입니다. 이 값을 더 작게 설정하여 와이프를 더 속이 비게 만들거나 더 크게 만들어 채우십시오.
-
-English:Laser Speed
-Translated:레이저 속도
-
-English:Infill Speeds
-Translated:채우기 속도
-
-English:Perimeter Speeds
-Translated:주변 속도
-
-English:Perimeter Acceleration
-Translated:주변 가속도
-
-English:The acceleration that the printer will be set to for perimeters, will not be changed if set to 0. A typical perimeter acceleration is 800.
-Translated:주변에 대해 프린터가 설정되는 가속은 0으로 설정하면 변경되지 않습니다. 일반적인 주변 가속은 800입니다.
-
-English:mm/s^2
-Translated:mm/s^2
-
-English:Default Acceleration
-Translated:기본 가속
-
-English:The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.
-Translated:프린터가 기본적으로 설정되는 가속은 0으로 설정하면 변경되지 않습니다. 일반적인 기본 가속은 1500입니다.
-
-English:Other Speeds
-Translated:기타 속도
-
-English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value. NOTE: This is measure as input into the extruder not mm on the bed.
-Translated:스커트 루프 인쇄에 사용할 필라멘트의 최소 길이입니다. 이 양의 필라멘트를 사용하기에 충분한 스커트 루프가 그려지며 루프의 값이 이 값보다 짧은 스커트를 생성하는 경우 루프에 설정된 값을 무시합니다. 참고: 이것은 침대에서 mm가 아닌 압출기에 대한 입력으로 측정됩니다.
-
-English:The extruder to use to print the raft. Default will use extruder 1.
-Translated:뗏목을 인쇄하는 데 사용할 압출기입니다. 기본값은 압출기 1을 사용합니다.
-
-English:Layers
-Translated:레이어
-
-English:The number of layers to create the brims. This can make the brim stronger when needed.
-Translated:테두리를 만들 레이어 수입니다. 이것은 필요할 때 챙을 더 강하게 만들 수 있습니다.
-
-English:Brim Extruder
-Translated:브림 압출기
-
-English:The extruder to use for the brim.  Default will use the first extruder of the print.
-Translated:테두리에 사용하는 압출기. 기본값은 인쇄물의 첫 번째 압출기를 사용합니다.
-
-English:The extruder to use for support material. Default will use whichever extruder active at the time.
-Translated:서포트 재료로 사용하는 압출기. 기본값은 당시 활성화된 압출기를 사용합니다.
-
-English:The extruder to use to for support material interface layers. Default will use whichever extruder active at the time.
-Translated:재료 인터페이스 레이어를 지원하기 위해 사용하는 압출기. 기본값은 당시 활성화된 압출기를 사용합니다.
-
-English:Automatic
-Translated:자동적 인
-
-English:Create Supports
-Translated:지지대 만들기
-
-English:Evaluate every layer for support requirements. NOTE: If there are any support columns, this setting is ignored.
-Translated:지원 요구 사항에 대해 모든 계층을 평가합니다. 참고: 지원 열이 있는 경우 이 설정은 무시됩니다.
-
-English:The color of the first material.
-Translated:첫 번째 재료의 색상입니다.
-
-English:Color 2
-Translated:색상 2
-
-English:The color of the second material (extruder 2).
-Translated:두 번째 재료(압출기 2)의 색상입니다.
-
-English:Minimum Speed Always
-Translated:항상 최소 속도
-
-English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power, regardless of layer time.
-Translated:레이어 냉각 팬이 실행되는 최소 속도(레이어 시간에 관계없이 전체 전력의 백분율로 표시됨).
-
-English:Minimum Avoid Travel Requiring Retraction
-Translated:최소 후퇴가 필요한 여행을 피하십시오.
-
-English:The minimum distance with, avoid crossing perimeters turned on, of a non-print move which will trigger a retraction.
-Translated:후퇴를 유발하는 인쇄되지 않은 이동의 최소 거리(경계 교차 방지가 켜져 있음).
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:rectangular
-Translated:직사각형
-
-English:circular
-Translated:회보
-
-English:The inset amount for nozzle 1 from the bed (Left, Front, Right, Back).
-Translated:침대에서 노즐 1에 대한 삽입량(왼쪽, 앞, 오른쪽, 뒤).
-
-English:The inset amount for nozzle 2 from the bed (Left, Front, Right, Back).
-Translated:베드에서 노즐 2의 삽입량(왼쪽, 앞, 오른쪽, 뒤).
-
-English:3 Point Plane
-Translated:3점 평면
-
-English:3x3 Mesh
-Translated:3x3 메쉬
-
-English:5x5 Mesh
-Translated:5x5 메쉬
-
-English:10x10 Mesh
-Translated:10x10 메쉬
-
-English:7 Point Disk
-Translated:7포인트 디스크
-
-English:13 Point Disk
-Translated:13포인트 디스크
-
-English:100 Point Disk
-Translated:100포인트 디스크
-
-English:Custom Points
-Translated:커스텀 포인트
-
-English:Leveling Insets
-Translated:레벨링 인셋
-
-English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
-Translated:침대의 각 면에 대한 삽입량입니다. \n - 너비 또는 깊이의 %로 \n - 순서: 왼쪽, 앞, 오른쪽, 뒤로 \n - 참고: 프로브 오프셋이 이 위에 추가됩니다.
-
-English:Probe
-Translated:조사
-
-English:Validate Calibration Before Printing
-Translated:인쇄하기 전에 보정 확인
-
-English:Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print. This will run immediately after M190 (print bed reaches temp).
-Translated:프린터에 자동 Z 프로브가 있고 인쇄할 때마다 레벨링을 확인하려는 경우 이 옵션을 활성화합니다. 이것은 M190(인쇄 베드가 온도에 도달) 직후에 실행됩니다.
-
-English:Validation Threshold
-Translated:검증 임계값
-
-English:The deviation from the last measured value allowed without re-calculating the leveling solution.
-Translated:레벨링 솔루션을 다시 계산하지 않고 허용되는 마지막 측정 값과의 편차.
-
-English:Validate Probe Offset Automatically
-Translated:자동으로 프로브 오프셋 검증
-
-English:If the printer has a physically touching z probe (like a BLTouch) this will enable automatic validation of the distance between the nozzle and the z probe.
-Translated:프린터에 물리적으로 접촉하는 z 프로브(예: BLTouch)가 있는 경우 노즐과 z 프로브 사이의 거리를 자동으로 확인할 수 있습니다.
-
-English:Additional Printing Errors
-Translated:추가 인쇄 오류
-
-English:In addition to the normal firmware errors, these comma separated strings will cause MatterControl to stop and show an error message.
-Translated:일반적인 펌웨어 오류 외에도 이러한 쉼표로 구분된 문자열로 인해 MatterControl이 중지되고 오류 메시지가 표시됩니다.
-
-English:M73
-Translated:M73
-
-English:M117
-Translated:M117
-
-English:Simple Arduino
-Translated:간단한 아두이노
-
-English:Enable Firmware Sounds
-Translated:펌웨어 사운드 활성화
-
-English:Allow M300 commands (play sound) to be sent to the firmware. Disable to turn off sounds.
-Translated:M300 명령(사운드 재생)이 펌웨어로 전송되도록 허용합니다. 소리를 끄려면 비활성화합니다.
-
-English:Diagnostics
-Translated:진단
-
-English:Marlin
-Translated:말린
-
-English:Smoothie
-Translated:점잖은 사람
-
-English:Has Conductive Nozzle
-Translated:전도성 노즐 있음
-
-English:The printer has the ability to check for continuity on the nozzle.
-Translated:프린터에는 노즐의 연속성을 확인할 수 있는 기능이 있습니다.
-
-English:The printer has a c axis used by a tool changer (e3d quad extruder).
-Translated:프린터에는 공구 교환기(e3d 쿼드 압출기)에서 사용하는 c축이 있습니다.
-
-English:The maximum amount the printer can accelerate on a G-Code move. Used for print time estimation.
-Translated:프린터가 G-Code 이동에서 가속할 수 있는 최대량입니다. 인쇄 시간 추정에 사용됩니다.
-
-English:The maximum speed the printer can move. Uused for print time estimation.
-Translated:프린터가 이동할 수 있는 최대 속도입니다. 인쇄 시간 추정에 사용됩니다.
-
-English:The maximum speed that the printer treats as 0 and changes direction instantly. Used for print time estimation.
-Translated:프린터가 0으로 처리하고 방향을 즉시 변경하는 최대 속도입니다. 인쇄 시간 추정에 사용됩니다.
-
-English:Printer Help
-Translated:프린터 도움말
-
-English:Printer Control
-Translated:프린터 제어
-
-English:Clear Bed G-Code
-Translated:클리어 베드 G-코드
-
-English:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
-Translated:인쇄가 완료된 후 침대를 비우기 위해 Autopilot에서 사용하는 G 코드입니다. 이것은 침대를 청소하도록 설계된 프린터에서만 유용합니다.
-
-English:User Control
-Translated:사용자 제어
-
-English:Multi-Extruder
-Translated:멀티 압출기
-
-English:Unpin
-Translated:고정 해제
-
-English:Printer Options
-Translated:프린터 옵션
-
-English:copy
-Translated:복사
-
-English:Copy extrusions data
-Translated:돌출 데이터 복사
-
-English:Show Ratings Dialog After Print
-Translated:인쇄 후 등급 대화 상자 표시
-
-English:Show Welcome Message
-Translated:환영 메시지 표시
-
-English:Enable Socketeer Client
-Translated:소켓티어 클라이언트 활성화
-
-English:Enter Person Access Token
-Translated:개인 액세스 토큰 입력
-
-English:GitHub Personal Access Token
-Translated:GitHub 개인 액세스 토큰
-
-English:This is used to increase the number of downloads allowed when browsing GitHub repositories
-Translated:GitHub 리포지토리를 탐색할 때 허용되는 다운로드 수를 늘리는 데 사용됩니다.
-
-English:Processing
-Translated:처리
-
-English:Output Resolution
-Translated:출력 해상도
-
-English:Mesh Analysis
-Translated:메쉬 분석
-
-English:Input Resolution
-Translated:입력 해상도
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Show all settings that are not the printer default
-Translated:프린터 기본값이 아닌 모든 설정 표시
-
-English:Simple
-Translated:단순한
-
-English:Intermediate
-Translated:중급
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Setting Name
-Translated:설정 이름
-
-English:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
-Translated:회전: 마우스 오른쪽 버튼 | Ctrl + 마우스 왼쪽 버튼
-
-English:Round
-Translated:둥근
-
-English:Radius
-Translated:반지름
-
-English:Round Segments
-Translated:라운드 세그먼트
+English:Zoom to window
+Translated:창으로 확대
+
+English:Zoom View
+Translated:확대보기
 
 English:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button
 Translated:확대/축소: 마우스 휠 | Ctrl + Alt + 마우스 왼쪽 버튼
-
-English:More Export Options
-Translated:더 많은 내보내기 옵션
-
-English:Saving 
-Translated:절약
-
-English:Round
-Translated:둥근
-
-English:Radius
-Translated:반지름
-
-English:Round Segments
-Translated:라운드 세그먼트
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Tool 
-Translated:도구
-
-English:Tools 
-Translated:도구
-
-English:Saving 
-Translated:절약
 
