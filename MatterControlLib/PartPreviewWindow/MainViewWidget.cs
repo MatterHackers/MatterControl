@@ -430,33 +430,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.SelectedTabKey = tabKey;
 		}
 
+		// you can use this code to test the ShellOpenFile code
+#if false
+		public override void OnKeyPress(KeyPressEventArgs keyPressEvent)
+        {
+			switch(keyPressEvent.KeyChar)
+            {
+				case 's':
+					ApplicationController.Instance.ShellOpenFile(@"C:\Users\LarsBrubaker\Downloads\LIGHTSABER-HILT.stl");
+					break;
+
+				case 'm':
+					ApplicationController.Instance.ShellOpenFile(@"C:\Users\LarsBrubaker\Downloads\CokeCan.mcx");
+					break;
+			}
+
+			base.OnKeyPress(keyPressEvent);
+        }
+#endif
+
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
-			var history = ApplicationController.Instance.Library.PlatingHistory;
+			if (File.Exists(filePath))
+			{
+                if (Path.GetExtension(filePath).ToLower() == ".mcx")
+                {
+                    var history = ApplicationController.Instance.Library.PlatingHistory;
+                    var workspace = new PartWorkspace(new BedConfig(history));
+                    // Load the previous content
+                    await workspace.SceneContext.LoadContent(new EditContext()
+                    {
+                        ContentStore = history,
+                        SourceItem = new FileSystemFileItem(filePath)
+                    });
 
-			var workspace = new PartWorkspace(new BedConfig(history));
-
-			ApplicationController.Instance.Workspaces.Add(workspace);
-
-			var scene = new Object3D();
-			scene.Children.Add(
-				new Object3D
-				{
-					MeshPath = filePath,
-					Name = Path.GetFileName(filePath)
-				});
-
-			await workspace.SceneContext.LoadContent(
-				new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = new InMemoryLibraryItem(scene)
-				});
-
-			ApplicationController.Instance.Workspaces.Add(workspace);
-
-			var newTab = CreateDesignTab(workspace, true);
-			tabControl.ActiveTab = newTab;
+                    ApplicationController.Instance.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
+                }
+                else
+                {
+                    var workspace = await CreateNewDesignTab(false);
+					workspace.SceneContext.AddToPlate(new string[] { filePath }, false);
+                }
+            }
 		}
 
 		private void TabControl_ActiveTabChanged(object sender, EventArgs e)
@@ -478,7 +493,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+        public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
 
@@ -817,7 +832,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
-		public async Task CreateNewDesignTab(bool addPhilToBed)
+		public async Task<PartWorkspace> CreateNewDesignTab(bool addPhilToBed)
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
@@ -836,6 +851,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			ApplicationController.Instance.MainTabKey = workspace.Name;
+
+			return workspace;
 		}
 
 		private static void HookupNameChangeCallback(ChromeTab partTab, PartWorkspace workspace)
