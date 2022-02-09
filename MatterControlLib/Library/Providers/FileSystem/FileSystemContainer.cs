@@ -143,13 +143,14 @@ namespace MatterHackers.MatterControl.Library
 							{
 								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 								{
-									foreach (var persistMeshItem in persistableItems)
+									foreach (var persistableItem in persistableItems)
 									{
-										var sourcePath = persistMeshItem.MeshPath;
-										if (!File.Exists(sourcePath))
+										var sourcePath = persistableItem.MeshPath;
+										if (persistableItem is AssetObject3D assetObject3D)
 										{
-											sourcePath = Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, Path.GetFileName(persistMeshItem.MeshPath));
+											sourcePath = assetObject3D.AssetPath;
 										}
+
 										if (File.Exists(sourcePath))
 										{
 											var assetName = Path.Combine("Assets", Path.GetFileName(sourcePath));

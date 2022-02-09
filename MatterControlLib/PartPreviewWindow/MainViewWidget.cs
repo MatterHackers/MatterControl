@@ -434,14 +434,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if false
 		public override void OnKeyPress(KeyPressEventArgs keyPressEvent)
         {
+			var files = new string[]
+			{
+				@"C:\Users\LarsBrubaker\Downloads\LIGHTSABER-HILT.stl",
+				@"C:\Users\larsb\Desktop\test 33.mcx",
+				@"C:\Users\LarsBrubaker\Downloads\CokeCan.mcx",
+				@"C:\Users\larsb\Downloads\Print Stuff\heart.png",
+				@"C:\Users\larsb\Downloads\Print Stuff\vat_comb_ver2.stl",
+				@"C:\Users\larsb\Desktop\PICT0137.JPG"
+			};
 			switch(keyPressEvent.KeyChar)
             {
 				case 's':
-					ApplicationController.Instance.ShellOpenFile(@"C:\Users\LarsBrubaker\Downloads\LIGHTSABER-HILT.stl");
+					ApplicationController.Instance.ShellOpenFile(files.Where(i => File.Exists(i) && Path.GetExtension(i).ToLower() == ".stl").First());
 					break;
 
 				case 'm':
-					ApplicationController.Instance.ShellOpenFile(@"C:\Users\LarsBrubaker\Downloads\CokeCan.mcx");
+					ApplicationController.Instance.ShellOpenFile(files.Where(i => File.Exists(i) && Path.GetExtension(i).ToLower() == ".mcx").First());
+					break;
+
+				case 'p':
+					ApplicationController.Instance.ShellOpenFile(files.Where(i => File.Exists(i) && Path.GetExtension(i).ToLower() == ".png").First());
+					break;
+
+				case 'j':
+					ApplicationController.Instance.ShellOpenFile(files.Where(i => File.Exists(i) && Path.GetExtension(i).ToLower() == ".jpg").First());
 					break;
 			}
 
