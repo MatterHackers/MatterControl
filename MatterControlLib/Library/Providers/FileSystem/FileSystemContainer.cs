@@ -145,7 +145,12 @@ namespace MatterHackers.MatterControl.Library
 								{
 									foreach (var persistableItem in persistableItems)
 									{
-										var sourcePath = persistableItem.MeshPath;
+										string sourcePath = null;
+										if (persistableItem.MeshPath != null)
+										{
+											sourcePath = Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, Path.GetFileName(persistableItem.MeshPath));
+										}
+
 										if (persistableItem is AssetObject3D assetObject3D)
 										{
 											sourcePath = assetObject3D.AssetPath;
