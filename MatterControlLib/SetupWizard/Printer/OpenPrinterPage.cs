@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
 		{
-			if (treeNode.Tag is PrinterInfo printerInfo)
+			if (treeNode.Tag is PrinterInfo)
 			{
 				this.OnContinue(treeNode);
 			}

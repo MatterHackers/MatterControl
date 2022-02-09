@@ -1611,8 +1611,8 @@ namespace MatterHackers.MatterControl
 
 		public void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.OnWorkspacesChanged(workspace, operationType);
 			this.Workspaces.Add(workspace);
+			this.OnWorkspacesChanged(workspace, operationType);
 		}
 
 		public void RestoreWorkspace(PartWorkspace workspace)

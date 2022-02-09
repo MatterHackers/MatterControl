@@ -41,6 +41,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public static void AddPhilToBed(this ISceneContext sceneContext)
         {
-            var philStl = StaticData.Instance.MapPath(@"OEMSettings\SampleParts\Phil A Ment.stl");
+            var philStl = StaticData.Instance.MapPath(Path.Combine("OEMSettings", "SampleParts", "Phil A Ment.stl"));
             sceneContext.AddToPlate(new string[] { philStl }, false);
         }
 
