@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl
 			rootSystemWindow.ShowAsSystemWindow();
 		}
 
-		private static string[] shellFileExtensions = new string[] { ".stl", ".amf", ".3mf", ".obj", ".stl" };
+		private static string[] shellFileExtensions = new string[] { ".stl", ".amf", ".3mf", ".obj", ".mcx", ".png", ".jpg", ".jpeg" };
 
 		private static readonly object locker = new object();
 
