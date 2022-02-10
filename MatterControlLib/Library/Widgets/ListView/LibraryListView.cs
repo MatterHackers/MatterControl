@@ -511,25 +511,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								var mainViewWidget = ApplicationController.Instance.MainView;
 
 								// check if it is already open
-								foreach (var openWorkspace in ApplicationController.Instance.Workspaces)
-								{
-									if (openWorkspace.SceneContext.EditContext.SourceFilePath == asset.AssetPath
-										|| (openWorkspace.SceneContext.EditContext.SourceItem is IAssetPath cloudItem
-											&& cloudItem.AssetPath == asset.AssetPath))
-									{
-										foreach (var tab in mainViewWidget.TabControl.AllTabs)
-										{
-											if (tab.TabContent is DesignTabPage tabContent
-												&& (tabContent.sceneContext.EditContext.SourceFilePath == asset.AssetPath
-													|| (tabContent.sceneContext.EditContext.SourceItem is IAssetPath cloudItem2
-														&& cloudItem2.AssetPath == asset.AssetPath)))
-											{
-												mainViewWidget.TabControl.ActiveTab = tab;
-												return;
-											}
-										}
-									}
-								}
+								if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(asset.AssetPath))
+                                {
+									return;
+                                }
 
 								var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory));
 

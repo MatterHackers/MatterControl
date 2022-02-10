@@ -1417,6 +1417,32 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool SwitchToWorkspaceIfAlreadyOpen(string assetPath)
+        {
+			var mainViewWidget = Instance.MainView;
+			foreach (var openWorkspace in Instance.Workspaces)
+			{
+				if (openWorkspace.SceneContext.EditContext.SourceFilePath == assetPath
+					|| (openWorkspace.SceneContext.EditContext.SourceItem is IAssetPath cloudItem
+						&& cloudItem.AssetPath == assetPath))
+				{
+					foreach (var tab in mainViewWidget.TabControl.AllTabs)
+					{
+						if (tab.TabContent is DesignTabPage tabContent
+							&& (tabContent.sceneContext.EditContext.SourceFilePath == assetPath
+								|| (tabContent.sceneContext.EditContext.SourceItem is IAssetPath cloudItem2
+									&& cloudItem2.AssetPath == assetPath)))
+						{
+							mainViewWidget.TabControl.ActiveTab = tab;
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
 		private string _uiHint = "";

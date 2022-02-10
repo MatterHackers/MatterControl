@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		// you can use this code to test the ShellOpenFile code
-#if false
+#if true
 		public override void OnKeyPress(KeyPressEventArgs keyPressEvent)
         {
 			var files = new string[]
@@ -472,7 +472,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
                 if (Path.GetExtension(filePath).ToLower() == ".mcx")
                 {
-                    var history = ApplicationController.Instance.Library.PlatingHistory;
+					if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(filePath))
+					{
+						return;
+					}
+
+					var history = ApplicationController.Instance.Library.PlatingHistory;
                     var workspace = new PartWorkspace(new BedConfig(history));
                     // Load the previous content
                     await workspace.SceneContext.LoadContent(new EditContext()
