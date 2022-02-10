@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -65,8 +66,18 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(5),
 				Name = "Design Name Edit Field"
 			};
-			itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
+
+			this.librarySelectorWidget.ClickItemEvent += (s, e) =>
 			{
+				if (s is ListViewItem listViewItem
+					&& this.AcceptButton.Enabled)
+				{
+					itemNameWidget.ActualTextEditWidget.Text = Path.ChangeExtension(listViewItem.Model.Name, ".mcx");
+				}
+			};
+
+			void ClickAccept()
+            {
 				if (this.acceptButton.Enabled)
 				{
 					if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer)
@@ -76,7 +87,18 @@ namespace MatterHackers.MatterControl
 						this.AcceptButton.Enabled = false;
 					}
 				}
+			}
+
+			this.librarySelectorWidget.DoubleClickItemEvent += (s, e) =>
+			{
+				ClickAccept();
 			};
+
+			itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				ClickAccept();
+			};
+
 			itemNameWidget.ActualTextEditWidget.TextChanged += (s, e) =>
 			{
 				acceptButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer

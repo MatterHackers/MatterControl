@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		// you can use this code to test the ShellOpenFile code
-#if true
+#if false
 		public override void OnKeyPress(KeyPressEventArgs keyPressEvent)
         {
 			var files = new string[]

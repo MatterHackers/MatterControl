@@ -47,10 +47,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class LibraryListView : ScrollableWidget
 	{
-		public enum DoubleClickActions
+		public enum DoubleClickBehaviors
 		{
 			PreviewItem,
-			AddToBed
+			AddToBed,
 		}
 
 		public event EventHandler ContentReloaded;
@@ -286,6 +286,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					var listViewItem = new ListViewItem(childContainer, this.ActiveContainer, this);
 					listViewItem.DoubleClick += ListViewItem_DoubleClick;
+
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
@@ -304,7 +305,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				foreach (var item in this.SortItems(filteredResults))
 				{
 					var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
-					listViewItem.DoubleClick += ListViewItem_DoubleClick;
+
+					if (DoubleClickItemEvent != null)
+					{
+						listViewItem.DoubleClick += DoubleClickItemEvent;
+					}
+					else
+					{
+						listViewItem.DoubleClick += ListViewItem_DoubleClick;
+					}
+
+					if (ClickItemEvent != null)
+					{
+						listViewItem.Click += ClickItemEvent;
+					}
+
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
@@ -333,7 +348,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return Task.CompletedTask;
 		}
 
-		private void AddHeaderMarkdown(IconListView listView)
+		public EventHandler<MouseEventArgs> ClickItemEvent;
+		public EventHandler<MouseEventArgs> DoubleClickItemEvent;
+
+        private void AddHeaderMarkdown(IconListView listView)
 		{
 			if (sourceContainer != null
 				&& !string.IsNullOrEmpty(sourceContainer.HeaderMarkdown))
@@ -451,7 +469,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return destImage;
 		}
 
-		private async void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
+		private void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
 			UiThread.RunOnIdle(async () =>
 			{
@@ -502,56 +520,58 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// List items
 					if (itemModel != null)
 					{
-						if (this.DoubleClickAction == DoubleClickActions.PreviewItem)
+						switch (this.DoubleClickBehavior)
 						{
-							if (itemModel is ILibraryAsset asset && asset.ContentType == "mcx"
-								&& itemModel is ILibraryItem firstItem
-								&& this.ActiveContainer is ILibraryWritableContainer writableContainer)
-							{
-								var mainViewWidget = ApplicationController.Instance.MainView;
-
-								// check if it is already open
-								if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(asset.AssetPath))
-                                {
-									return;
-                                }
-
-								var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory));
-
-								ApplicationController.Instance.Workspaces.Add(workspace);
-
-								var partTab = mainViewWidget.CreateDesignTab(workspace, true);
-								mainViewWidget.TabControl.ActiveTab = partTab;
-
-								// Load content after UI widgets to support progress notification during acquire/load
-								await workspace.SceneContext.LoadContent(
-									new EditContext()
-									{
-										ContentStore = writableContainer,
-										SourceItem = firstItem
-									});
-							}
-							else
-							{
-								void OpenNewTab()
+							case DoubleClickBehaviors.PreviewItem:
+								if (itemModel is ILibraryAsset asset && asset.ContentType == "mcx"
+									&& itemModel is ILibraryItem firstItem
+									&& this.ActiveContainer is ILibraryWritableContainer writableContainer)
 								{
-                                    _ = ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
-								}
+									var mainViewWidget = ApplicationController.Instance.MainView;
 
-								OpenNewTab();
-							}
-						}
-						else
-						{
-							var activeContext = ApplicationController.Instance.DragDropData;
-							activeContext.SceneContext?.AddToPlate(new[] { itemModel });
+									// check if it is already open
+									if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(asset.AssetPath))
+									{
+										return;
+									}
+
+									var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory));
+
+									ApplicationController.Instance.Workspaces.Add(workspace);
+
+									var partTab = mainViewWidget.CreateDesignTab(workspace, true);
+									mainViewWidget.TabControl.ActiveTab = partTab;
+
+									// Load content after UI widgets to support progress notification during acquire/load
+									await workspace.SceneContext.LoadContent(
+										new EditContext()
+										{
+											ContentStore = writableContainer,
+											SourceItem = firstItem
+										});
+								}
+								else
+								{
+									void OpenNewTab()
+									{
+										_ = ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+									}
+
+									OpenNewTab();
+								}
+								break;
+
+							case DoubleClickBehaviors.AddToBed:
+								var activeContext = ApplicationController.Instance.DragDropData;
+								activeContext.SceneContext?.AddToPlate(new[] { itemModel });
+								break;
 						}
 					}
 				}
 			});
 		}
 
-		public DoubleClickActions DoubleClickAction { get; set; } = DoubleClickActions.AddToBed;
+		public DoubleClickBehaviors DoubleClickBehavior { get; set; } = DoubleClickBehaviors.AddToBed;
 
 		public void SetActiveContainer(ILibraryContainer container)
 		{

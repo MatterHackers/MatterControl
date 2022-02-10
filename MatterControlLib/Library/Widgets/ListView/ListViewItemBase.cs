@@ -248,8 +248,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (IsDoubleClick(mouseEvent))
 			{
-				listViewItem.OnDoubleClick();
+				listViewItem.OnDoubleClick(mouseEvent);
 			}
+			else
+            {
+				listViewItem.OnClick(mouseEvent);
+            }
 
 			// On mouse down update the view3DWidget reference that will be used in MouseMove and MouseUp
 			view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
@@ -297,7 +301,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var delta = mouseDownAt - mouseEvent.Position;
 
 			// If mouseDown on us and we've moved past are drag determination threshold, notify view3DWidget
-			if (mouseDownInBounds && delta.Length > 40
+			if (LibraryBrowserPage.AllowDragToBed
+				&& mouseDownInBounds 
+				&& delta.Length > 40
 				&& view3DWidget != null
 				&& !(listViewItem.Model is MissingFileItem))
 			{
@@ -458,5 +464,5 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 		}
-	}
+    }
 }

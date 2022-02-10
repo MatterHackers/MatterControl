@@ -19,6 +19,9 @@ Translated:\nBelow you can find a list of each setting that has changed.
 English:\nUpdating a default setting will not change any override that you have applied.
 Translated:\nUpdating a default setting will not change any override that you have applied.
 
+English:"{0}" already exists.\nDo you want to replace it?
+Translated:"{0}" already exists.\nDo you want to replace it?
+
 English:$/kg
 Translated:$/kg
 
@@ -891,6 +894,9 @@ Translated:Configure Plugins
 
 English:Configure Wifi
 Translated:Configure Wifi
+
+English:Confirm Save As
+Translated:Confirm Save As
 
 English:Confirm your new password
 Translated:Confirm your new password
@@ -3837,6 +3843,9 @@ Translated:Render Leveling Data on the bed
 
 English:Repair
 Translated:Repair
+
+English:Replace
+Translated:Replace
 
 English:Replacing
 Translated:Replacing

@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -44,8 +46,17 @@ namespace MatterHackers.MatterControl
 		protected LibraryListView librarySelectorWidget;
 		private FolderBreadCrumbWidget breadCrumbWidget = null;
 
+		public static bool AllowDragToBed { get; internal set; } = true;
+
 		public LibraryBrowserPage(Action<ILibraryWritableContainer, string> acceptCallback, string acceptButtonText)
 		{
+			AllowDragToBed = false;
+
+			Closed += (s, e) =>
+			{
+				AllowDragToBed = true;
+			};
+
 			this.WindowSize = new Vector2(480, 500);
 
 			contentRow.Padding = 0;
@@ -82,14 +93,53 @@ namespace MatterHackers.MatterControl
 			acceptButton.Cursor = Cursors.Hand;
 			acceptButton.Click += (s, e) =>
 			{
+				var closeAfterSave = true;
 				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
 				{
-					acceptCallback(
-						writableContainer,
-						itemNameWidget?.ActualTextEditWidget.Text ?? "none");
+					var outputName = Path.ChangeExtension(itemNameWidget?.ActualTextEditWidget.Text ?? "none", ".mcx");
+
+					if (writableContainer is FileSystemContainer fileSystemContainer)
+					{
+						if (File.Exists(Path.Combine(fileSystemContainer.FullPath, outputName)))
+                        {
+							closeAfterSave = false;
+							// ask about overwriting the exisitng file
+							StyledMessageBox.ShowMessageBox(
+							(overwriteFile) =>
+							{
+								if (overwriteFile)
+								{
+									acceptCallback(writableContainer, outputName);
+									this.DialogWindow.CloseOnIdle();
+								}
+								else
+                                {
+									// turn the accept button back on
+									acceptButton.Enabled = true;
+								}
+							},
+							"\"{0}\" already exists.\nDo you want to replace it?".Localize().FormatWith(outputName),
+							"Confirm Save As".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Replace".Localize(),
+							"Cancel".Localize());
+						}
+						else
+                        {
+							// save and exit normaly
+							acceptCallback(writableContainer, outputName);
+						}
+					}
+					else
+					{
+						acceptCallback(writableContainer, outputName);
+					}
 				}
 
-				this.DialogWindow.CloseOnIdle();
+				if (closeAfterSave)
+				{
+					this.DialogWindow.CloseOnIdle();
+				}
 			};
 
 			this.AddPageAction(acceptButton);
