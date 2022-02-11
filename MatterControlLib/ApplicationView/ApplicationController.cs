@@ -129,6 +129,8 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler AnyPrintComplete;
 
+		public static string[] ShellFileExtensions => new string[] { ".stl", ".amf", ".3mf", ".obj", ".mcx", ".png", ".jpg", ".jpeg" };
+
 		public bool IsMatterControlPro()
 		{
 			var result = ApplicationController.Instance.UserHasPro?.Invoke();

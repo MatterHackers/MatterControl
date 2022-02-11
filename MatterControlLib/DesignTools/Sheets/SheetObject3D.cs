@@ -84,40 +84,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		private static object loadLock = new object();
+		private static IObject3D sheetObject;
+
 		public override Mesh Mesh
 		{
 			get
 			{
-				if (this.Children.Count == 0 
-					|| this.Children.Where(i => i.Mesh == null).Any())
+				if (this.Children.Count == 0)
 				{
-					this.Children.Modify((list) =>
+					lock (loadLock)
 					{
-						list.Clear();
-						Mesh border;
-						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_border.stl")))
+						if (sheetObject == null)
 						{
-							border = StlProcessing.Load(stlStream, CancellationToken.None);
+							sheetObject = MeshContentProvider.LoadMCX(StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_icon.mcx")));
 						}
-						list.Add(new Object3D()
-						{
-							Mesh = border,
-							Color = new Color("#9D9D9D")
-						});
-						Mesh boxes;
-						using (Stream stlStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "sheet_boxes.stl")))
-						{
-							boxes = StlProcessing.Load(stlStream, CancellationToken.None);
-						}
-						list.Add(new Object3D()
-						{
-							Mesh = boxes,
-							Color = new Color("#117c43")
-						});
 
-						var aabb = border.GetAxisAlignedBoundingBox();
-						this.Matrix *= Matrix4X4.CreateScale(20 / aabb.XSize);
-					});
+						this.Children.Modify((list) =>
+						{
+							list.Clear();
+
+							list.Add(sheetObject.Clone());
+						});
+					}
 				}
 
 				return null;

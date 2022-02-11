@@ -466,6 +466,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 #endif
 
+		public void OpenDropFile(string filePath)
+        {
+			Instance_OpenNewFile(this, filePath);
+		}
+
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
 			if (File.Exists(filePath))

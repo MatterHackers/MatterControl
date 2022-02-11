@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -261,6 +262,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.BackgroundColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
+
+			this.TabBar.MouseMove += (s, e) =>
+			{
+				if (e?.DragFiles?.Count > 0
+					&& e.DragFiles.Where(f => ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).Any())
+				{
+					e.AcceptDrop = true;
+				}
+			};
+
+			TabBar.MouseEnterBounds += (s, e) =>
+			{
+				ApplicationController.Instance.UiHint = "You can drag and drop .mcx files here to open them";
+			};
+
+			TabBar.MouseLeaveBounds += (s, e) =>
+			{
+				ApplicationController.Instance.UiHint = "";
+			};
+
+			this.TabBar.MouseUp += (s, e) =>
+			{
+				if (e?.DragFiles?.Count > 0
+					&& e.DragFiles.Where(f => ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).Any())
+				{
+					foreach (var file in e.DragFiles)
+					{
+						ApplicationController.Instance.MainView.OpenDropFile(file);
+					}
+				}
+			};
 
 			tabTrailer = new TabTrailer(this, theme)
 			{
