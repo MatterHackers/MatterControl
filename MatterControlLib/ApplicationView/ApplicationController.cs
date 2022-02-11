@@ -804,14 +804,12 @@ namespace MatterHackers.MatterControl
 
 		private void InitializeLibrary()
 		{
-			this.Library.ComputerCollectionContainer = new ComputerCollectionContainer();
-
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					"Computer".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "computer_icon.png")),
-					() => this.Library.ComputerCollectionContainer));
+					() => new ComputerCollectionContainer()));
 
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection != null)

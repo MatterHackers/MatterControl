@@ -141,8 +141,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer RootLibaryContainer { get; }
 
-        public ComputerCollectionContainer ComputerCollectionContainer { get; internal set; }
-
         public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer originalThumbnail, int thumbWidth, int thumbHeight, Action<ImageBuffer> resizedImage)
 		{
 			var processingImage = originalThumbnail;
