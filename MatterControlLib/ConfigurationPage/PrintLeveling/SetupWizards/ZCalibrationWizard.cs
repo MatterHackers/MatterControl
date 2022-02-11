@@ -209,9 +209,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				babySteppingValue[i] = 0;
 			}
 
+			var allowValidation = false;
+#if DEBUG
+			allowValidation = true;
+#endif
+
 			if (hotendCount == 1 // this could be improved for dual extrusion calibration in the future. But for now it is single extrusion.
 					&& printer.Settings.Helpers.ProbeBeingUsed
-					&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset))
+					&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset)
+					&& allowValidation)
 			{
 				// tell them about the automatic part and any settings that should be changed
 				yield return new ZProbePrintCalibrationPartPage(

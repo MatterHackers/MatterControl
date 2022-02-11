@@ -1068,23 +1068,42 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is StringOrExpression stringOrExpression)
 			{
-				// create a a multi-line string editor
-				var field = new MultilineStringField(theme);
-				field.Initialize(0);
-				field.SetValue(stringOrExpression.Expression, false);
-				field.ClearUndoHistory();
-				field.Content.HAnchor = HAnchor.Stretch;
-				field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
-				field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
-				field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
-				field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-				RegisterValueChanged(field,
-					(valueString) => new StringOrExpression(valueString),
-					(value) =>
-					{
-						return ((StringOrExpression)value).Expression;
-					});
-				rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
+				{
+					// create a a multi-line string editor
+					var field = new MultilineStringField(theme);
+					field.Initialize(0);
+					field.SetValue(stringOrExpression.Expression, false);
+					field.ClearUndoHistory();
+					field.Content.HAnchor = HAnchor.Stretch;
+					field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+					field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+					field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+					field.Content.Margin = new BorderDouble(0, 0, 0, 5);
+					RegisterValueChanged(field,
+						(valueString) => new StringOrExpression(valueString),
+						(value) =>
+						{
+							return ((StringOrExpression)value).Expression;
+						});
+					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+				}
+				else
+                {
+					// create a string editor
+					var field = new TextField(theme);
+					field.Initialize(0);
+					field.SetValue(stringOrExpression.Expression, false);
+					field.ClearUndoHistory();
+					field.Content.HAnchor = HAnchor.Stretch;
+					RegisterValueChanged(field,
+						(valueString) => new StringOrExpression(valueString),
+						(value) =>
+						{
+							return ((StringOrExpression)value).Expression;
+						});
+					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+				}
 			}
 			else if (propertyValue is char charValue)
 			{

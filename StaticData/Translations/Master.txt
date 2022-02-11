@@ -2899,6 +2899,9 @@ Translated:Moves
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Moves the nozzle up and off the part to allow cooling.
 
+English:Multi Line
+Translated:Multi Line
+
 English:Multi-Extruder
 Translated:Multi-Extruder
 
