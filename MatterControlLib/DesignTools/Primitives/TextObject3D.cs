@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[MaxDecimalPlaces(2)]
 		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
-		public DoubleOrExpression Height { get; set; } = 5;
+		public DoubleOrExpression Height { get; set; } = 3;
 
 		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]

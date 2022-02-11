@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 					var proxy = new ServiceProxy();
 
 					// and at least one argument is an acceptable shell file extension
-					var itemsToAdd = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+					var itemsToAdd = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 					if (itemsToAdd.Any())
 					{
 						// notify the running instance of the event
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
 #endif
 
 			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
-			var shellFiles = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+			var shellFiles = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 			if (shellFiles.Any())
 			{
 				ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
@@ -318,8 +318,6 @@ namespace MatterHackers.MatterControl
 			rootSystemWindow.ShowAsSystemWindow();
 		}
 
-		private static string[] shellFileExtensions = new string[] { ".stl", ".amf", ".3mf", ".obj", ".mcx", ".png", ".jpg", ".jpeg" };
-
 		private static readonly object locker = new object();
 
 		static void KeepAwake(bool keepAwake)
@@ -341,7 +339,7 @@ namespace MatterHackers.MatterControl
 			{
 				// If at least one argument is an acceptable shell file extension
 				var itemsToAdd = files.Where(f => File.Exists(f)
-					&& shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+					&& ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 
 				if (itemsToAdd.Any())
 				{

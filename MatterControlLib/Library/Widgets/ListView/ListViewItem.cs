@@ -36,6 +36,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class ListViewItem
 	{
 		public event EventHandler<MouseEventArgs> DoubleClick;
+		
+		public event EventHandler<MouseEventArgs> Click;
 
 		public ILibraryItem Model { get; }
 
@@ -52,9 +54,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryContainer Container { get; }
 
-		internal void OnDoubleClick()
+		public void OnDoubleClick(MouseEventArgs mouseEventArgs)
 		{
-			DoubleClick?.Invoke(this, null);
+			DoubleClick?.Invoke(this, mouseEventArgs);
+		}
+
+		public void OnClick(MouseEventArgs mouseEventArgs)
+		{
+			Click?.Invoke(this, mouseEventArgs);
 		}
 	}
 }

@@ -58,6 +58,23 @@ namespace MatterHackers.MatterControl
 
 		private ImageBuffer defaultIcon = new ImageBuffer();
 
+		public static IObject3D LoadMCX(string filename, Action<double, string> progressReporter = null)
+		{
+			if (File.Exists(filename)
+				&& Path.GetExtension(filename).ToLower() == ".mcx")
+			{
+				var stream = File.OpenRead(filename);
+				return LoadMCX(stream, progressReporter);
+			}
+
+			return null;
+		}
+
+		public static IObject3D LoadMCX(Stream stream, Action<double, string> progressReporter = null)
+		{
+			return Object3D.Load(stream, ".mcx", CancellationToken.None, null /*itemCache*/, progressReporter);
+		}
+
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
 			return Task.Run(async () =>

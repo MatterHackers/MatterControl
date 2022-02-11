@@ -469,6 +469,10 @@ namespace MatterHackers.Plugins.EditorTools
 					newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
 					scaleAmount.Z = newSize.Z / originalSelectedBounds.ZSize;
 				}
+
+				var maxXY = Math.Max(scaleAmount.X, scaleAmount.Y);
+				scaleAmount.X = maxXY;
+				scaleAmount.Y = maxXY;
 			}
 
 			return scaleAmount;

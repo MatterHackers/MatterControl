@@ -36,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -2129,9 +2130,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ClearPlate()
 		{
-			selectedObjectPanel.SetActiveItem(null);
-			sceneContext.ClearPlate();
-			sceneContext.Scene.UndoBuffer.ClearHistory();
+			if (Printer != null)
+			{
+				selectedObjectPanel.SetActiveItem(null);
+				sceneContext.ClearPlate();
+				sceneContext.Scene.UndoBuffer.ClearHistory();
+			}
+			else
+            {
+				this.SelectAll();
+				SceneActions.DeleteSelection(Scene);
+			}
 
 			this.Invalidate();
 		}

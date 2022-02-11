@@ -466,13 +466,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 #endif
 
+		public void OpenDropFile(string filePath)
+        {
+			Instance_OpenNewFile(this, filePath);
+		}
+
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
 			if (File.Exists(filePath))
 			{
                 if (Path.GetExtension(filePath).ToLower() == ".mcx")
                 {
-                    var history = ApplicationController.Instance.Library.PlatingHistory;
+					if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(filePath))
+					{
+						return;
+					}
+
+					var history = ApplicationController.Instance.Library.PlatingHistory;
                     var workspace = new PartWorkspace(new BedConfig(history));
                     // Load the previous content
                     await workspace.SceneContext.LoadContent(new EditContext()

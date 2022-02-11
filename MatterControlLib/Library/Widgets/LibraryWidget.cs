@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				ContainerFilter = (container) => this.ShowContainers,
 				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1),
-				DoubleClickAction = LibraryListView.DoubleClickActions.PreviewItem
+				DoubleClickBehavior = LibraryListView.DoubleClickBehaviors.PreviewItem
 			};
 
 			navBar = new OverflowBar(theme)
@@ -728,7 +728,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					listView.SelectedItems.FirstOrDefault()?.OnDoubleClick();
+					listView.SelectedItems.FirstOrDefault()?.OnDoubleClick(null);
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
