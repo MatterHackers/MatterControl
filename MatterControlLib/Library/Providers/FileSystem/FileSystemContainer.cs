@@ -193,11 +193,6 @@ namespace MatterHackers.MatterControl.Library
 						});
 				}
 			}
-
-			if (content is InteractiveScene interactiveScene)
-			{
-				interactiveScene.MarkSavePoint();
-			}
 		}
 
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
