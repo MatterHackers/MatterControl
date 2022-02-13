@@ -704,6 +704,33 @@ namespace MatterHackers.MatterControl
 			return actions.ToDictionary(a => a.ID);
 		}
 
+		public static void OpenFileWithSystemDialog(Action<string[]> openFiles)
+		{
+			var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
+
+			foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
+			{
+				extensionsWithoutPeriod.Add(extension.ToUpper());
+			}
+
+			var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
+
+			string filter = string.Format(
+				"{0}|{1}",
+				string.Join(",", extensionsArray),
+				string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
+
+			UiThread.RunOnIdle(() =>
+			{
+				AggContext.FileDialogs.OpenFileDialog(
+					new OpenFileDialogParams(filter, multiSelect: true),
+					(openParams) =>
+					{
+						openFiles?.Invoke(openParams.FileNames);
+					});
+			}, .1);
+		}
+
 		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			await this.MainView.CreateNewDesignTab(false);

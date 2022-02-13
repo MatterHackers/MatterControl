@@ -650,38 +650,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openFileButton = openMenuItems.CreateMenuItem("Add File to Bed".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
 
 			openFileButton.Click += (s, e) =>
-			{
-				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
-
-				foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-				{
-					extensionsWithoutPeriod.Add(extension.ToUpper());
-				}
-
-				var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-				string filter = string.Format(
-					"{0}|{1}",
-					string.Join(",", extensionsArray),
-					string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
-
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(filter, multiSelect: true),
-						(openParams) =>
-						{
-							sceneContext.AddToPlate(openParams.FileNames);
-						});
-				}, .1);
-			};
-
-			// popupMenu.AddChild(openLibraryButton, 0);
+            {
+                ApplicationController.OpenFileWithSystemDialog((fileNames) =>
+                {
+					sceneContext.AddToPlate(fileNames);
+				});
+            };
 
 			return popupMenu;
 		}
 
-		private void UpdateToolbarButtons(object sender, EventArgs e)
+        private void UpdateToolbarButtons(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
