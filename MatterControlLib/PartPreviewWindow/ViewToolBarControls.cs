@@ -647,7 +647,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openMenuItems = new PopupMenu(ApplicationController.Instance.MenuTheme);
 			popupMenu.PopupContent = openMenuItems;
 
-			var openFileButton = openMenuItems.CreateMenuItem("Open File".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
+			var openFileButton = openMenuItems.CreateMenuItem("Add File to Bed".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
 
 			openFileButton.Click += (s, e) =>
 			{
@@ -716,7 +716,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openColor = theme.ResolveColor(theme.BackgroundColor, theme.SlightShade);
 
 			PopupMenuButton libraryPopup = null;
-			libraryPopup = new PopupMenuButton("Open".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			libraryPopup = new PopupMenuButton("Add to Bed".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				MakeScrollable = false,
 				Name = "Add Content Menu",
