@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					foreach (var file in e.DragFiles)
 					{
-						ApplicationController.Instance.MainView.OpenDropFile(file);
+						ApplicationController.Instance.MainView.OpenFile(file);
 					}
 				}
 			};

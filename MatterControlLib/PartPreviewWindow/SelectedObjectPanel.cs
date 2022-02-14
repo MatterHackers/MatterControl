@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
 						if (firtSheet != null)
 						{
-							var cellId = selector.Substring(1);
+							var cellId = selector.Substring(1).ToLower();
 							var cell = firtSheet.SheetData[cellId];
 							if (cell != null)
 							{

@@ -127,6 +127,11 @@ namespace MatterHackers.MatterControl
 
 				// Call save on the provider
 				this.ContentStore?.Save(this.SourceItem, scene);
+
+				if (scene is InteractiveScene interactiveScene)
+				{
+					interactiveScene.MarkSavePoint();
+				}
 			}
 		}
 

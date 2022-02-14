@@ -466,14 +466,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 #endif
 
-		public void OpenDropFile(string filePath)
+		public void OpenFile(string filePath)
         {
 			Instance_OpenNewFile(this, filePath);
 		}
 
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
-			if (File.Exists(filePath))
+			if (!string.IsNullOrEmpty(filePath)
+				&& File.Exists(filePath))
 			{
                 if (Path.GetExtension(filePath).ToLower() == ".mcx")
                 {

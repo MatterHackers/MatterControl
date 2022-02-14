@@ -732,6 +732,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					if (!OnApplicationLibraryTab())
+                    {
+						return false;
+                    }
+
 					// Single select
 					var only1 = listView.SelectedItems.Count == 1;
 					// mcx only - disallow containers and protected items
@@ -761,6 +766,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					if (!OnApplicationLibraryTab())
+					{
+						return false;
+					}
+
 					var isFolder = listView.SelectedItems.FirstOrDefault()?.Model is DynamicContainerLink;
 
 					return listView.SelectedItems.Count == 1
@@ -798,8 +808,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						activeContext.SceneContext.AddToPlate(selectedLibraryItems);
 					}
 
-					ApplicationController.Instance.BlinkTab(
-						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is DesignTabPage));
+					if (OnApplicationLibraryTab())
+					{
+						ApplicationController.Instance.BlinkTab(
+							ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is DesignTabPage));
+					}
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -1039,6 +1052,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			libraryView.MenuActions = menuActions;
+		}
+
+        private static bool OnApplicationLibraryTab()
+        {
+			if (ApplicationController.Instance.MainTabKey == "Library")
+            {
+				return true;
+            }
+		
+			return false;
 		}
 
 		public override void OnClosed(EventArgs e)

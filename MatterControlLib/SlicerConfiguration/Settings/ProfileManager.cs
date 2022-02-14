@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// Gets the user specific path to the Profiles directory
 		/// </summary>
 		[JsonIgnore]
-		private string UserProfilesDirectory => GetProfilesDirectoryForUser(this.UserName);
+		public string UserProfilesDirectory => GetProfilesDirectoryForUser(this.UserName);
 
 		[JsonIgnore]
 		public string ProfileThemeSetPath => Path.Combine(UserProfilesDirectory, "themeset.json");

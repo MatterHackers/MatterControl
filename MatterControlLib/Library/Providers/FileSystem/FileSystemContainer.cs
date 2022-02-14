@@ -43,7 +43,7 @@ using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
-    public class FileSystemContainer : WritableContainer, ICustomSearch
+	public class FileSystemContainer : WritableContainer, ICustomSearch
 	{
 		private FileSystemWatcher directoryWatcher;
 
@@ -193,11 +193,6 @@ namespace MatterHackers.MatterControl.Library
 						});
 				}
 			}
-
-			if (content is InteractiveScene interactiveScene)
-            {
-				interactiveScene.MarkSavePoint();
-			}
 		}
 
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
@@ -237,8 +232,8 @@ namespace MatterHackers.MatterControl.Library
 
 			await Task.Run(async () =>
 			{
-			foreach (var item in items)
-			{
+				foreach (var item in items)
+				{
 					switch (item)
 					{
 						case CreateFolderItem newFolder:
@@ -373,6 +368,16 @@ namespace MatterHackers.MatterControl.Library
 
 				// Matched files projected onto FileSystemFileItem
 				this.Items = new SafeList<ILibraryItem>(matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)));
+
+				var indexMd = nonZipFiles.Where(f => f.EndsWith("index.md")).FirstOrDefault();
+				if (indexMd != null)
+                {
+					try
+					{
+						HeaderMarkdown = File.ReadAllText(indexMd);
+					}
+					catch { }
+				}
 
 				this.isDirty = false;
 			}

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -92,6 +93,11 @@ namespace MatterHackers.MatterControl
 
 			PopupMenu.MenuItem menuItem;
 
+			menuItem = popupMenu.CreateMenuItem("Open File", StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem.Click += (s, e) => ApplicationController.OpenFileWithSystemDialog((fileNames) => ApplicationController.Instance.MainView.OpenFile(fileNames.FirstOrDefault()));
+
+			popupMenu.CreateSeparator();
+	
 			menuItem = popupMenu.CreateMenuItem("Help".Localize(), StaticData.Instance.LoadIcon("help_page.png", 16, 16).SetToColor(menuTheme.TextColor));
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowApplicationHelp("Docs");
 

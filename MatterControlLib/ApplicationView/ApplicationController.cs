@@ -704,6 +704,33 @@ namespace MatterHackers.MatterControl
 			return actions.ToDictionary(a => a.ID);
 		}
 
+		public static void OpenFileWithSystemDialog(Action<string[]> openFiles)
+		{
+			var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
+
+			foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
+			{
+				extensionsWithoutPeriod.Add(extension.ToUpper());
+			}
+
+			var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
+
+			string filter = string.Format(
+				"{0}|{1}",
+				string.Join(",", extensionsArray),
+				string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
+
+			UiThread.RunOnIdle(() =>
+			{
+				AggContext.FileDialogs.OpenFileDialog(
+					new OpenFileDialogParams(filter, multiSelect: true),
+					(openParams) =>
+					{
+						openFiles?.Invoke(openParams.FileNames);
+					});
+			}, .1);
+		}
+
 		public async Task OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			await this.MainView.CreateNewDesignTab(false);
@@ -804,14 +831,12 @@ namespace MatterHackers.MatterControl
 
 		private void InitializeLibrary()
 		{
-			this.Library.ComputerCollectionContainer = new ComputerCollectionContainer();
-
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					"Computer".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "computer_icon.png")),
-					() => this.Library.ComputerCollectionContainer));
+					() => new ComputerCollectionContainer()));
 
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection != null)

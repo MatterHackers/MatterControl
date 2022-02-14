@@ -86,8 +86,14 @@ namespace MatterHackers.MatterControl.Library
 			// Save to the destination provider
 			if (newContentStore is FileSystemContainer fileSystemContainer)
 			{
-				sceneContext.EditContext.SourceItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
-				fileSystemContainer.Save(sceneContext.EditContext.SourceItem, sceneContext.Scene);
+				var fileSystemItem = new FileSystemFileItem(Path.ChangeExtension(Path.Combine(fileSystemContainer.FullPath, newName), ".mcx"));
+				fileSystemContainer.Save(fileSystemItem, sceneContext.Scene);
+
+				// if it is not a printer switch to the new fileSystemItem
+				if (sceneContext.Printer == null)
+				{
+					sceneContext.EditContext.SourceItem = fileSystemItem;
+				}
 			}
 			else if (newContentStore is ILibraryWritableContainer writableContainer)
 			{

@@ -208,6 +208,9 @@ Translated:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
 English:Add Base
 Translated:Add Base
 
+English:Add File to Bed
+Translated:Add File to Bed
+
 English:Add Hook
 Translated:Add Hook
 
@@ -2898,6 +2901,9 @@ Translated:Moves
 
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Moves the nozzle up and off the part to allow cooling.
+
+English:Multi Line
+Translated:Multi Line
 
 English:Multi-Extruder
 Translated:Multi-Extruder

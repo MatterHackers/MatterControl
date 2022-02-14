@@ -49,7 +49,7 @@ using Newtonsoft.Json.Converters;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	public class TextObject3D : Object3D
+	public class TextObject3D : Object3D, IPropertyGridModifier
 	{
 		[JsonConverter(typeof(StringEnumConverter))]
 		public enum TextAlign
@@ -79,6 +79,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("Text")]
 		public StringOrExpression NameToWrite { get; set; } = "Text";
+
+		[MultiLineEdit]
+		[DisplayName("Text")]
+		public StringOrExpression MultiLineText { get; set; } = "MultiLine\nText";
+
+		public bool MultiLine { get; set; }
 
 		[Slider(1, 48, snapDistance: 1)]
 		public DoubleOrExpression PointSize { get; set; } = 24;
@@ -145,7 +151,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					bool valuesChanged = false;
 					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
-					var nameToWrite = NameToWrite.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n");
+					var nameToWrite = MultiLine ? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n") : NameToWrite.Value(this);
 					if (string.IsNullOrWhiteSpace(nameToWrite))
 					{
 						Mesh = PlatonicSolids.CreateCube(20, 10, height);
@@ -270,6 +276,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
 			});
+		}
+
+        public void UpdateControls(PublicPropertyChange change)
+        {
+			change.SetRowVisible(nameof(MultiLineText), () => MultiLine);
+			change.SetRowVisible(nameof(Alignment), () => MultiLine);
+			change.SetRowVisible(nameof(NameToWrite), () => !MultiLine);
 		}
 	}
 }
