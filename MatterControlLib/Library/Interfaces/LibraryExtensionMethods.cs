@@ -94,6 +94,9 @@ namespace MatterHackers.MatterControl.Library
 				{
 					sceneContext.EditContext.SourceItem = fileSystemItem;
 				}
+
+				// make sure we don't ask to save again if no changes
+				sceneContext.Scene.MarkSavePoint();
 			}
 			else if (newContentStore is ILibraryWritableContainer writableContainer)
 			{
@@ -105,6 +108,9 @@ namespace MatterHackers.MatterControl.Library
 						Name = newName
 					}
 				});
+
+				// make sure we don't ask to save again if no changes
+				sceneContext.Scene.MarkSavePoint();
 			}
 
 			oldContentStore?.Dispose();
