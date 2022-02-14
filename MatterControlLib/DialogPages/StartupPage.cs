@@ -40,6 +40,7 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.Tour;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -157,6 +158,16 @@ namespace MatterHackers.MatterControl
 			{
 				ApplicationController.Instance.MainView.CreateNewDesignTab(true);
 				this.DialogWindow.Close();
+
+				// If we have not cancled the show welcome message and there is a window open
+				if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false"
+					&& ApplicationController.Instance.Workspaces.Count > 0)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show<WelcomePage>();
+					});
+				}
 			});
 
 			contentRow.AddChild(buttonRow);
