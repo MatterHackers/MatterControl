@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 										&& meshItem.Value != null
 										&& meshItem.Value.Faces.Count > 0)
 									{
-										var assetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets", meshPath.ToLower());
+										var assetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets", meshPath);
 										if (!File.Exists(assetsPath))
 										{
 											StlProcessing.Save(meshItem.Value, assetsPath, CancellationToken.None);
