@@ -38,9 +38,11 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
     using MatterHackers.ImageProcessing;
+    using MatterHackers.MatterControl.DataStorage;
     using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
-	using MatterHackers.RayTracer;
+    using MatterHackers.PolygonMesh.Processors;
+    using MatterHackers.RayTracer;
 
 	/// <summary>
 	/// Loads IObject3D objects for mesh based ILibraryItems
@@ -90,7 +92,23 @@ namespace MatterHackers.MatterControl
 							if (contentStream != null)
 							{
 								// TODO: Wire up caching
-								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
+								var cacheContext = new CacheContext();
+								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, cacheContext, progressReporter);
+
+								foreach(var meshItem in cacheContext.Meshes)
+                                {
+									var meshPath = meshItem.Key;
+									if (!string.IsNullOrEmpty(meshPath)
+										&& meshItem.Value != null
+										&& meshItem.Value.Faces.Count > 0)
+									{
+										var assetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets", meshPath.ToLower());
+										if (!File.Exists(assetsPath))
+										{
+											StlProcessing.Save(meshItem.Value, assetsPath, CancellationToken.None);
+										}
+									}
+								}
 
 								// Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
 								if (loadedItem != null
