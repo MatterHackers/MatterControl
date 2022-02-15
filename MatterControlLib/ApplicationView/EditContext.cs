@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl
 					var fileNames = GetFileNamesFromMcx(fileLocation);
 					foreach (var file in fileNames)
 					{
-						var fullPath = await Object3DExtensions.ResolveFilePath(file, null, CancellationToken.None);
+						var fullPath = Object3DExtensions.ResolveFilePath(file, null, CancellationToken.None);
 						if (File.Exists(fullPath))
 						{
 							hashCode = File.GetLastWriteTime(fullPath).ToString().GetLongHashCode(hashCode);
