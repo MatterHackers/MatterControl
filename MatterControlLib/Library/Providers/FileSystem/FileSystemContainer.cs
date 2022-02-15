@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl.Library
 							{
 								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 								{
+									var savedItems = new HashSet<string>();
 									foreach (var persistableItem in persistableItems)
 									{
 										string sourcePath = null;
@@ -156,10 +157,19 @@ namespace MatterHackers.MatterControl.Library
 											sourcePath = assetObject3D.AssetPath;
 										}
 
+										var destFilename = Path.GetFileName(sourcePath);
 										if (File.Exists(sourcePath))
 										{
-											var assetName = Path.Combine("Assets", Path.GetFileName(sourcePath));
-											zip.CreateEntryFromFile(sourcePath, assetName);
+											if (!savedItems.Contains(destFilename))
+											{
+												savedItems.Add(destFilename);
+												var assetName = Path.Combine("Assets", destFilename);
+												zip.CreateEntryFromFile(sourcePath, assetName);
+											}
+										}
+										else
+										{
+											int a = 0;
 										}
 
 										savedCount++;
