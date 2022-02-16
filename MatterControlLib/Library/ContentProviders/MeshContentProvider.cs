@@ -33,7 +33,9 @@ namespace MatterHackers.MatterControl
 {
 	using System;
 	using System.IO;
-	using System.Threading;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Threading;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
@@ -87,38 +89,25 @@ namespace MatterHackers.MatterControl
 				{
 					if (item is ILibraryAssetStream streamInterface)
 					{
+						// If we are loding a binary MCX file, coy its assets
+						await CopyAssetsFromBinaryMcx(streamInterface);
+
 						using (var contentStream = await streamInterface.GetStream(progressReporter))
 						{
 							if (contentStream != null)
-							{
-								// TODO: Wire up caching
-								var cacheContext = new CacheContext();
-								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, cacheContext, progressReporter);
+                            {
+                                // TODO: Wire up caching
+                                loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null, progressReporter);
 
-								foreach(var meshItem in cacheContext.Meshes)
+                                // Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
+                                if (loadedItem != null
+                                    && item is FileSystemFileItem fileItem
+                                    && !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
                                 {
-									var meshPath = meshItem.Key;
-									if (!string.IsNullOrEmpty(meshPath)
-										&& meshItem.Value != null
-										&& meshItem.Value.Faces.Count > 0)
-									{
-										var assetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets", meshPath);
-										if (!File.Exists(assetsPath))
-										{
-											StlProcessing.Save(meshItem.Value, assetsPath, CancellationToken.None);
-										}
-									}
-								}
-
-								// Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
-								if (loadedItem != null
-									&& item is FileSystemFileItem fileItem
-									&& !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
-								{
-									loadedItem.MeshPath = fileItem.FilePath;
-								}
-							}
-						}
+                                    loadedItem.MeshPath = fileItem.FilePath;
+                                }
+                            }
+                        }
 					}
 					else
 					{
@@ -141,7 +130,36 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private static object locker = new object();
+        private static async Task CopyAssetsFromBinaryMcx(ILibraryAssetStream streamInterface)
+        {
+            using (var testForZipStreamAndLength = await streamInterface.GetStream(null))
+            {
+                if (Path.GetExtension(streamInterface.FileName).ToLower() == ".mcx"
+                    && Object3D.IsBinaryMCX(testForZipStreamAndLength.Stream))
+                {
+                    using (var zipArchive = new ZipArchive(testForZipStreamAndLength.Stream, ZipArchiveMode.Read))
+                    {
+                        // save everything from the zip asset folder to the application asset folder
+                        foreach (var assetItem in zipArchive.Entries.Where(i => i.FullName.Contains("Assets")))
+                        {
+                            using (var zipAssetStream = assetItem.Open())
+                            {
+                                var assetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets", assetItem.Name);
+                                if (!File.Exists(assetsPath))
+                                {
+                                    using (var fileStream = File.Create(assetsPath))
+                                    {
+                                        zipAssetStream.CopyTo(fileStream);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static object locker = new object();
 
 		public async Task<ImageBuffer> GetThumbnail(ILibraryItem libraryItem, int width, int height)
 		{
