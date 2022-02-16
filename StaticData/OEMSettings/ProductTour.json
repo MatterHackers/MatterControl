@@ -1,18 +1,18 @@
 [
   {
-    "Title": "Open Files",
-    "WidgetName": "Open File Button",
-    "Description": "Add local parts from your hard drive to the bed."
+    "Title": "Application Menu",
+    "WidgetName": "MatterControl BrandMenuButton",
+    "Description": "Here you can open a file, view help, customize settings, check for updates and more."
+  },
+  {
+    "Title": "Add to Bed",
+    "WidgetName": "Add Content Menu",
+    "Description": "Add designs from your library or computer to the bed."
   },
   {
     "Title": "Primitive Shapes",
     "WidgetName": "LibraryView",
     "Description": "Drag primitives to the bed to create your own designs."
-  },
-  {
-    "Title": "Library",
-    "WidgetName": "Add Content Menu",
-    "Description": "Add content from MatterHackers and more"
   },
   {
     "Title": "Print",
@@ -35,11 +35,6 @@
     "Description": "Have complete control of your printer with the ability to adjust individual print settings."
   },
   {
-    "Title": "View Options",
-    "WidgetName": "View Options Bar",
-    "Description": "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."
-  },
-  {
     "Title": "Tumble Cube",
     "WidgetName": "Tumble Cube Control",
     "Description": "Adjust the position of your view. You can also snap to specific views by clicking the cube."
@@ -50,14 +45,14 @@
     "Description": "Create custom supports. Turn any object on the bed into support material."
   },
   {
-    "Title": "Application Menu",
-    "WidgetName": "MatterControl BrandMenuButton",
-    "Description": "Here you can find application settings, help docs, updates and more."
-  },
-  {
     "Title": "Sign In",
     "WidgetName": "Authentication Sign In",
     "Description": "Click here to sign into your MatterHackers account."
+  },
+  {
+    "Title": "Search MatterControl",
+    "WidgetName": "App Search Button",
+    "Description": "Enter a query to search MatterControl."
   },
   {
     "Title": "Printer Setup",
