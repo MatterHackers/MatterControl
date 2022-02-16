@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.Library
 
 										if (persistableItem is AssetObject3D assetObject3D)
 										{
-											sourcePath = assetObject3D.AssetPath;
+											sourcePath = Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, Path.GetFileName(assetObject3D.AssetPath));
 										}
 
 										var destFilename = Path.GetFileName(sourcePath);
