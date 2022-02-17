@@ -502,40 +502,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 			primaryFlow.AddChild(timestampColumn);
 		}
 
-		public void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
-		{
-			itemToRemove = printItemWrapper;
-			UiThread.RunOnIdle(() =>
-			{
-				string maxLengthName = printItemWrapper.FileLocation;
-				int maxLength = 43;
-				if (maxLengthName.Length > maxLength)
-				{
-					string start = maxLengthName.Substring(0, 15) + "...";
-					int amountRemaining = maxLength - start.Length;
-					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
-					maxLengthName = start + end;
-				}
-
-				string notFoundMessage = "Oops! Could not find this file".Localize() + ":";
-				string message = "{0}:\n'{1}'".FormatWith(notFoundMessage, maxLengthName);
-				string titleLabel = "Item not Found".Localize();
-				StyledMessageBox.ShowMessageBox(OnConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.OK);
-			});
-		}
-
-		private PrintItemWrapper itemToRemove;
 		private PrintTask printTask;
 		private GuiWidget indicator;
 		private TextWidget printInfoWidget;
-
-		private void OnConfirmRemove(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				int index = QueueData.Instance.GetIndex(itemToRemove);
-				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
-			}
-		}
 	}
 }

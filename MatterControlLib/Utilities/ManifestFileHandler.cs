@@ -35,113 +35,79 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	internal class ManifestFile
+	public class QueueData
+    {
+		private static QueueData instance;
+		public static QueueData Instance
+		{
+			get
+			{
+				if (instance == null)
+                {
+					instance = new QueueData();
+                }
+
+				return instance;
+			}
+		}
+
+		public int ItemCount
+        {
+			get
+            {
+				throw new NotImplementedException();
+            }
+        }
+
+        public void AddItem(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetFirstItem()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetItemNames()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+	public class LegacyQueueFiles
 	{
-		private List<PrintItem> projectFiles;
-		private string projectName = "Test Project";
-		private string projectDateCreated;
+		public List<PrintItem> ProjectFiles { get; set; }
 
-		public ManifestFile()
+		public static void ImportFromLegacy(string destPath)
 		{
-			DateTime now = DateTime.Now;
-			projectDateCreated = now.ToString("s");
-		}
+			var filePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
 
-		public List<PrintItem> ProjectFiles
-		{
-			get
+			if (!File.Exists(filePath))
 			{
-				return projectFiles;
-			}
-
-			set
-			{
-				projectFiles = value;
-			}
-		}
-
-		public string ProjectName
-		{
-			get
-			{
-				return projectName;
-			}
-
-			set
-			{
-				projectName = value;
-			}
-		}
-
-		public string ProjectDateCreated
-		{
-			get
-			{
-				return projectDateCreated;
-			}
-
-			set
-			{
-				projectDateCreated = value;
-			}
-		}
-	}
-
-	internal class ManifestFileHandler
-	{
-		private ManifestFile project;
-
-		public ManifestFileHandler(List<PrintItem> projectFiles)
-		{
-			if (projectFiles != null)
-			{
-				project = new ManifestFile();
-				project.ProjectFiles = projectFiles;
-			}
-		}
-
-		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static string defaultPathAndFileName = Path.Combine(applicationDataPath , "data", "default.mcp");
-
-		public void ExportToJson(string savedFileName = null)
-		{
-			if (savedFileName == null)
-			{
-				savedFileName = defaultPathAndFileName;
-			}
-
-
-			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-			string pathToDataFolder = Path.Combine(applicationDataPath, "data");
-			if (!Directory.Exists(pathToDataFolder))
-			{
-                Directory.CreateDirectory(pathToDataFolder);
-			}
-
-			File.WriteAllText(savedFileName, jsonString);
-		}
-
-		public List<PrintItem> ImportFromJson(string filePath = null)
-		{
-			if (filePath == null)
-			{
-				filePath = defaultPathAndFileName;
-			}
-
-			if (!System.IO.File.Exists(filePath))
-			{
-				return null;
+				// nothing to do
+				return;
 			}
 
 			string json = File.ReadAllText(filePath);
 
-			ManifestFile newProject = JsonConvert.DeserializeObject<ManifestFile>(json);
-			if (newProject == null)
-			{
-				return new List<PrintItem>();
-			}
+			LegacyQueueFiles newProject = JsonConvert.DeserializeObject<LegacyQueueFiles>(json);
+			if (newProject.ProjectFiles.Count == 0)
+            {
+				return;
+            }
 
-			return newProject.ProjectFiles;
+			Directory.CreateDirectory(destPath);
+			foreach (var printItem in newProject.ProjectFiles)
+            {
+				var destFile = Path.Combine(destPath, Path.ChangeExtension(printItem.Name, Path.GetExtension(printItem.FileLocation)));
+				if (!File.Exists(destFile)
+					&& File.Exists(printItem.FileLocation))
+				{
+					// copy the print item to the destination directory
+					File.Copy(printItem.FileLocation, destFile, true);
+				}
+            }
 		}
 	}
 }

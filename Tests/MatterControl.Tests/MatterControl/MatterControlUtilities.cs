@@ -626,13 +626,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (!File.Exists(mcpPath))
 			{
-				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new ManifestFile()
+				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new LegacyQueueFiles()
 				{
 					ProjectFiles = new List<PrintItem>()
 				}, Formatting.Indented));
 			}
 
-			var queueItemData = JsonConvert.DeserializeObject<ManifestFile>(File.ReadAllText(mcpPath));
+			var queueItemData = JsonConvert.DeserializeObject<LegacyQueueFiles>(File.ReadAllText(mcpPath));
 
 			string queueData = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "testitems");
 
