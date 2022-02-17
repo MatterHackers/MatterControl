@@ -317,6 +317,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Start New Design");
 			}
 
+			// and close the product tour offer
+			testRunner.ClickByName("Cancel Wizard Button");
+
 			if (removeDefaultPhil)
 			{
 				testRunner.VerifyAndRemovePhil();
@@ -327,7 +330,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
 		{
-			testRunner.NavigateToFolder("Print Queue Row Item Collection");
+			testRunner.NavigateToFolder("Queue Row Item Collection");
 		}
 
 		public class PrintEmulatorProcess : Process
@@ -721,7 +724,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						break;
 
 					case "Cloud Library Row Item Collection":
-					case "Print Queue Row Item Collection":
+					case "Queue Row Item Collection":
 					case "Local Library Row Item Collection":
 						break;
 				}

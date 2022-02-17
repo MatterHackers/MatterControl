@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForFirstDraw()
 					.AddAndSelectPrinter("Airwolf 3D", "HD")
 					//Navigate to Downloads Library Provider
-					.NavigateToFolder("Print Queue Row Item Collection")
+					.NavigateToFolder("Queue Row Item Collection")
 					.InvokeLibraryAddDialog();
 
 				//Get parts to add
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var printer = testRunner.FirstPrinter();
 
 				//Navigate to Downloads Library Provider
-				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.NavigateToFolder("Queue Row Item Collection");
 				testRunner.InvokeLibraryAddDialog();
 
 				//Get parts to add

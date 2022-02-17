@@ -864,8 +864,8 @@ namespace MatterHackers.MatterControl
 			forceAddQueue = true;
 #endif
 			// only add the queue if there are items in it
-			var queueDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Queue");
-			LegacyQueueFiles.ImportFromLegacy(queueDirectory);
+			var queueDirectory = LegacyQueueFiles.QueueDirectory;
+			LegacyQueueFiles.ImportFromLegacy();
 			if (forceAddQueue || Directory.Exists(queueDirectory))
 			{
 				// make sure the queue directory exists

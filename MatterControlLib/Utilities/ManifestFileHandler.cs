@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
 
@@ -55,41 +56,47 @@ namespace MatterHackers.MatterControl
         {
 			get
             {
-				throw new NotImplementedException();
-            }
-        }
+				var queueDirectory = LegacyQueueFiles.QueueDirectory;
+				return Directory.EnumerateFiles(queueDirectory).Count();
+			}
+		}
 
         public void AddItem(string filePath)
         {
-            throw new NotImplementedException();
-        }
+			var queueDirectory = LegacyQueueFiles.QueueDirectory;
+			Directory.CreateDirectory(queueDirectory);
+			var destFile = Path.Combine(queueDirectory, Path.GetFileName(filePath));
+			File.Copy(filePath, destFile, true);
+		}
 
-        public string GetFirstItem()
+		public string GetFirstItem()
         {
-            throw new NotImplementedException();
+			return new DirectoryInfo(LegacyQueueFiles.QueueDirectory).GetFiles().OrderBy(f => f.LastWriteTime).Select(f => f.FullName).FirstOrDefault();
         }
 
         public IEnumerable<string> GetItemNames()
         {
-            throw new NotImplementedException();
-        }
-    }
+			return new DirectoryInfo(LegacyQueueFiles.QueueDirectory).GetFiles().Select(f => f.FullName);
+		}
+	}
 
 	public class LegacyQueueFiles
 	{
+		public static string QueueDirectory => Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Queue");
+
 		public List<PrintItem> ProjectFiles { get; set; }
 
-		public static void ImportFromLegacy(string destPath)
+		public static void ImportFromLegacy()
 		{
-			var filePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
+			var legacyQueuePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
 
-			if (!File.Exists(filePath))
+			if (!File.Exists(legacyQueuePath))
 			{
 				// nothing to do
 				return;
 			}
 
-			string json = File.ReadAllText(filePath);
+			string json = File.ReadAllText(legacyQueuePath);
 
 			LegacyQueueFiles newProject = JsonConvert.DeserializeObject<LegacyQueueFiles>(json);
 			if (newProject.ProjectFiles.Count == 0)
@@ -97,10 +104,11 @@ namespace MatterHackers.MatterControl
 				return;
             }
 
-			Directory.CreateDirectory(destPath);
+			var queueDirectory = QueueDirectory;
+			Directory.CreateDirectory(queueDirectory);
 			foreach (var printItem in newProject.ProjectFiles)
             {
-				var destFile = Path.Combine(destPath, Path.ChangeExtension(printItem.Name, Path.GetExtension(printItem.FileLocation)));
+				var destFile = Path.Combine(queueDirectory, Path.ChangeExtension(printItem.Name, Path.GetExtension(printItem.FileLocation)));
 				if (!File.Exists(destFile)
 					&& File.Exists(printItem.FileLocation))
 				{
@@ -108,6 +116,9 @@ namespace MatterHackers.MatterControl
 					File.Copy(printItem.FileLocation, destFile, true);
 				}
             }
+
+			// and rename the .mcp file no that we have migrated it
+			File.Move(legacyQueuePath, Path.ChangeExtension(legacyQueuePath, ".bak"));
 		}
 	}
 }
