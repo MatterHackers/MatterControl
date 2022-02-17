@@ -28,9 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Tour
 {
@@ -51,11 +54,11 @@ namespace MatterHackers.MatterControl.Tour
 
 		public IReadOnlyList<TourLocation> Locations => tourLocations;
 
-		public static async void StartTour()
+		public static void StartTour()
 		{
 			var topWindow = ApplicationController.Instance.MainView.TopmostParent() as SystemWindow;
 
-			var tourLocations = await ApplicationController.Instance.LoadProductTour();
+			var tourLocations = JsonConvert.DeserializeObject<List<TourLocation>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "ProductTour.json")));
 
 			// Finding matching widgets by name
 			var visibleTourWidgets = topWindow.FindDescendants(tourLocations.Select(t => t.WidgetName));
