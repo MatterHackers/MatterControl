@@ -50,16 +50,6 @@ namespace MatterHackers.MatterControl
 
 			HashSet<string> filesToKeep = new HashSet<string>();
 
-			// Get a list of all the stl and amf files referenced in the queue.
-			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
-			{
-				string fileLocation = printItem.FileLocation;
-				if (!filesToKeep.Contains(fileLocation))
-				{
-					filesToKeep.Add(fileLocation);
-				}
-			}
-
 			var allPrintItems = Datastore.Instance.dbSQLite.Query<PrintItem>("SELECT * FROM PrintItem;");
 
 			// Add in all the stl and amf files referenced in the library.

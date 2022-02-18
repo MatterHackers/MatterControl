@@ -30,118 +30,95 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	internal class ManifestFile
-	{
-		private List<PrintItem> projectFiles;
-		private string projectName = "Test Project";
-		private string projectDateCreated;
-
-		public ManifestFile()
-		{
-			DateTime now = DateTime.Now;
-			projectDateCreated = now.ToString("s");
-		}
-
-		public List<PrintItem> ProjectFiles
+	public class QueueData
+    {
+		private static QueueData instance;
+		public static QueueData Instance
 		{
 			get
 			{
-				return projectFiles;
-			}
+				if (instance == null)
+                {
+					instance = new QueueData();
+                }
 
-			set
-			{
-				projectFiles = value;
+				return instance;
 			}
 		}
 
-		public string ProjectName
-		{
+		public int ItemCount
+        {
 			get
-			{
-				return projectName;
-			}
-
-			set
-			{
-				projectName = value;
+            {
+				var queueDirectory = LegacyQueueFiles.QueueDirectory;
+				return Directory.EnumerateFiles(queueDirectory).Count();
 			}
 		}
 
-		public string ProjectDateCreated
-		{
-			get
-			{
-				return projectDateCreated;
-			}
+        public void AddItem(string filePath)
+        {
+			var queueDirectory = LegacyQueueFiles.QueueDirectory;
+			Directory.CreateDirectory(queueDirectory);
+			var destFile = Path.Combine(queueDirectory, Path.GetFileName(filePath));
+			File.Copy(filePath, destFile, true);
+		}
 
-			set
-			{
-				projectDateCreated = value;
-			}
+		public string GetFirstItem()
+        {
+			return new DirectoryInfo(LegacyQueueFiles.QueueDirectory).GetFiles().OrderBy(f => f.LastWriteTime).Select(f => f.FullName).FirstOrDefault();
+        }
+
+        public IEnumerable<string> GetItemNames()
+        {
+			return new DirectoryInfo(LegacyQueueFiles.QueueDirectory).GetFiles().Select(f => f.FullName);
 		}
 	}
 
-	internal class ManifestFileHandler
+	public class LegacyQueueFiles
 	{
-		private ManifestFile project;
+		public static string QueueDirectory => Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Queue");
 
-		public ManifestFileHandler(List<PrintItem> projectFiles)
+		public List<PrintItem> ProjectFiles { get; set; }
+
+		public static void ImportFromLegacy()
 		{
-			if (projectFiles != null)
-			{
-				project = new ManifestFile();
-				project.ProjectFiles = projectFiles;
-			}
-		}
+			var legacyQueuePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.mcp");
 
-		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static string defaultPathAndFileName = Path.Combine(applicationDataPath , "data", "default.mcp");
-
-		public void ExportToJson(string savedFileName = null)
-		{
-			if (savedFileName == null)
+			if (!File.Exists(legacyQueuePath))
 			{
-				savedFileName = defaultPathAndFileName;
+				// nothing to do
+				return;
 			}
 
+			string json = File.ReadAllText(legacyQueuePath);
 
-			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-			string pathToDataFolder = Path.Combine(applicationDataPath, "data");
-			if (!Directory.Exists(pathToDataFolder))
-			{
-                Directory.CreateDirectory(pathToDataFolder);
-			}
+			LegacyQueueFiles newProject = JsonConvert.DeserializeObject<LegacyQueueFiles>(json);
+			if (newProject.ProjectFiles.Count == 0)
+            {
+				return;
+            }
 
-			File.WriteAllText(savedFileName, jsonString);
-		}
+			var queueDirectory = QueueDirectory;
+			Directory.CreateDirectory(queueDirectory);
+			foreach (var printItem in newProject.ProjectFiles)
+            {
+				var destFile = Path.Combine(queueDirectory, Path.ChangeExtension(printItem.Name, Path.GetExtension(printItem.FileLocation)));
+				if (!File.Exists(destFile)
+					&& File.Exists(printItem.FileLocation))
+				{
+					// copy the print item to the destination directory
+					File.Copy(printItem.FileLocation, destFile, true);
+				}
+            }
 
-		public List<PrintItem> ImportFromJson(string filePath = null)
-		{
-			if (filePath == null)
-			{
-				filePath = defaultPathAndFileName;
-			}
-
-			if (!System.IO.File.Exists(filePath))
-			{
-				return null;
-			}
-
-			string json = File.ReadAllText(filePath);
-
-			ManifestFile newProject = JsonConvert.DeserializeObject<ManifestFile>(json);
-			if (newProject == null)
-			{
-				return new List<PrintItem>();
-			}
-
-			return newProject.ProjectFiles;
+			// and rename the .mcp file no that we have migrated it
+			File.Move(legacyQueuePath, Path.ChangeExtension(legacyQueuePath, ".bak"));
 		}
 	}
 }

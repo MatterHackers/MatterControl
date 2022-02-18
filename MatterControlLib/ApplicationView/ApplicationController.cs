@@ -864,15 +864,25 @@ namespace MatterHackers.MatterControl
 			forceAddQueue = true;
 #endif
 			// only add the queue if there are items in it
-			var queueItems = QueueData.Instance.PrintItems.ToList();
-			if (forceAddQueue || queueItems.Any())
+			var queueDirectory = LegacyQueueFiles.QueueDirectory;
+			LegacyQueueFiles.ImportFromLegacy();
+			if (forceAddQueue || Directory.Exists(queueDirectory))
 			{
-				this.Library.RegisterContainer(
-					new DynamicContainerLink(
-						"Print Queue".Localize(),
+				// make sure the queue directory exists
+				Directory.CreateDirectory(queueDirectory);
+
+				this.Library.RegisterContainer(new DynamicContainerLink(
+						"Queue".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
-						() => new PrintQueueContainer()));
+						() => new FileSystemContainer(queueDirectory)
+						{
+							UseIncrementedNameDuringTypeChange = true,
+							DefaultSort = new LibrarySortBehavior()
+							{
+								SortKey = SortKey.ModifiedDate,
+							}
+						}));
 			}
 
 			this.Library.DesignAppsCollectionContainer = new DesignAppsCollectionContainer();
@@ -1851,29 +1861,6 @@ namespace MatterHackers.MatterControl
 		/// Gets a value indicating whether any ActivePrinter is running a print task, either in paused or printing states
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.Printing || p.Connection.Paused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
-
-		private List<TourLocation> _productTour;
-
-		public async Task<List<TourLocation>> LoadProductTour()
-		{
-			if (_productTour == null)
-			{
-				_productTour = await ApplicationController.LoadCacheableAsync<List<TourLocation>>(
-					"ProductTour.json",
-					"MatterHackers",
-					async () =>
-					{
-						var httpClient = new HttpClient();
-						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/docs/product-tour.json");
-						// string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Docs/Help/product-tour.json");
-
-						return JsonConvert.DeserializeObject<List<TourLocation>>(json);
-					},
-					Path.Combine("OemSettings", "ProductTour.json"));
-			}
-
-			return _productTour;
-		}
 
 		public event EventHandler<ApplicationTopBarCreatedEventArgs> ApplicationTopBarCreated;
 

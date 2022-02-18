@@ -131,12 +131,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				MatterControlUtilities.CreateDownloadsSubFolder();
 				testRunner.AddAndSelectPrinter();
 
 				testRunner.AddItemToBed()
 					.ClickByName("Save Menu SplitButton", offset: new Agg.Point2D(30, 0))
 					.ClickByName("Save As Menu Item")
-					.DoubleClickByName("Local Library Row Item Collection")
+					.NavigateToFolder("Downloads Row Item Collection")
+					.NavigateToFolder("-Temporary Row Item Collection")
 					.ClickByName("Design Name Edit Field")
 					.Type("Cube Design")
 					.ClickByName("Accept Button");
@@ -147,19 +149,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// open the design for editing
 				testRunner.ClickByName("Library Tab")
-					.DoubleClickByName("Local Library Row Item Collection")
-					.DoubleClickByName("Row Item Cube Design")
+					.NavigateToFolder("Downloads Row Item Collection")
+					.NavigateToFolder("-Temporary Row Item Collection")
+					.DoubleClickByName("Row Item Cube Design.mcx")
 					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 6);
 
 				// we have opened a new tab
 				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
 				// we are on the design tab
 				Assert.AreEqual(5, tabControl.SelectedTabIndex);
-				Assert.AreEqual("Cube Design", tabControl.SelectedTabKey);
+				Assert.AreEqual("New Design", tabControl.SelectedTabKey);
 
 				// double click it again and prove that it goes to the currently open tab
 				testRunner.ClickByName("Library Tab")
-					.DoubleClickByName("Row Item Cube Design");
+					.DoubleClickByName("Row Item Cube Design.mcx");
 
 				// we have not opened a new tab
 				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
@@ -171,6 +174,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// rename from the tab
 				// assert name in library tab has changed
+				MatterControlUtilities.DeleteDownloadsSubFolder();
 
 				return Task.CompletedTask;
 			});

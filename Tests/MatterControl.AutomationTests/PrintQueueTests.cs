@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.NavigateToFolder("Queue Row Item Collection");
 
 				// Select both items
 				testRunner.SelectListItems("Row Item 2013-01-25_Mouthpiece_v2.stl");
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.NavigateToFolder("Queue Row Item Collection");
 
 				// Select both items
 				testRunner.SelectListItems("Row Item Batman.stl", "Row Item 2013-01-25_Mouthpiece_v2.stl");

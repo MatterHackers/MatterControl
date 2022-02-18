@@ -216,9 +216,6 @@ namespace MatterHackers.MatterControl
 				ApplicationSettings.Instance.set(ApplicationSettingsKey.DesktopPosition, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
 			}
 
-			// Save a snapshot of the prints in queue
-			QueueData.Instance.SaveDefaultQueue();
-
 			// If we are waiting for a response and get another request, just cancel the close until we get a response.
 			if (exitDialogOpen)
 			{

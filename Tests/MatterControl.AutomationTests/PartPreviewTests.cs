@@ -278,12 +278,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection")
+				testRunner.SaveBedplateToFolder("Test PartA.mcx", "Queue Row Item Collection")
 					.NavigateToLibraryHome()
-					.NavigateToFolder("Print Queue Row Item Collection");
+					.NavigateToFolder("Queue Row Item Collection");
 
-				testRunner.Delay(200);
-				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA"), "The part we added should be in the library");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA.mcx"), "The part we added should be in the library");
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
 				return Task.CompletedTask;

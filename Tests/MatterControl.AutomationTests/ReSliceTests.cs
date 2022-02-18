@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					};
 
 					// Add a cube to the bed
-					testRunner.NavigateToFolder("Print Queue Row Item Collection");
+					testRunner.NavigateToFolder("Queue Row Item Collection");
 					testRunner.ClickByName("Row Item cube_20x20x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, scene.Children.Count);
 
 					// Add a cylinder
-					testRunner.NavigateToFolder("Print Queue Row Item Collection");
+					testRunner.NavigateToFolder("Queue Row Item Collection");
 					testRunner.ClickByName("Row Item cylinder_5x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, scene.Children.Count);
 
 					// add the cube
-					testRunner.NavigateToFolder("Print Queue Row Item Collection");
+					testRunner.NavigateToFolder("Queue Row Item Collection");
 					testRunner.ClickByName("Row Item cube_20x20x20.stl");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
