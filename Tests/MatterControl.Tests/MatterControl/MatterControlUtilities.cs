@@ -314,7 +314,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// close the welcome message
 			if (testRunner.WaitForName("Start New Design"))
 			{
-				testRunner.ClickByName("Start New Design");
+				testRunner.ClickByName("Start New Design")
+					.Delay();
 			}
 
 			// and close the product tour offer

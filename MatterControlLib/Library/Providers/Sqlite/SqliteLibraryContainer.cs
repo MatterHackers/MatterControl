@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.Library
 								string name = streamItem.Name;
 								if (name == fileName)
 								{
-									name = PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(fileName));
+									name = Path.GetFileNameWithoutExtension(fileName);
 								}
 
 								AddItem(streamInfo.Stream, streamItem.ContentType, name);
