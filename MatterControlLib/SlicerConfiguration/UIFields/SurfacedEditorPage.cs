@@ -51,15 +51,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.WindowTitle = "MatterControl - " + "Editor Selector".Localize();
 			this.HeaderText = "Surfaced Editor".Localize();
 
-			var tabControl = new SimpleTabs(theme, new GuiWidget())
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
-			tabControl.TabBar.Padding = 0;
-
-			contentRow.AddChild(tabControl);
 			contentRow.Padding = 0;
 
 			var editContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -70,14 +61,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BackgroundColor = theme.BackgroundColor
 			};
 
-			editWidget = new MHTextEditWidget("", theme, multiLine: true)
+			editWidget = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				Name = this.Name
+				Name = this.Name,
+				SelectAllOnFocus = true
 			};
 			editWidget.DrawFromHintedCache();
+			UiThread.RunOnIdle(() =>
+			{
+				editWidget.ActualTextEditWidget.Focus();
+				editWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+			});
 
 			editContainer.AddChild(editWidget);
+
+			contentRow.AddChild(editContainer);
 
 			// add the tree view
 			var treeView = new TreeView(theme)
@@ -122,20 +121,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BackgroundColor = Color.Red
 			};
 
-			var editTab = new ToolTab("Edit", "Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
-			{
-				Name = "Edit Tab"
-			};
-			tabControl.AddTab(editTab);
-
-			var previewTab = new ToolTab("Preview", "Preview".Localize(), tabControl, dummyWidget, theme, hasClose: false)
-			{
-				Name = "Preview Tab"
-			};
-			tabControl.AddTab(previewTab);
-
-			tabControl.SelectedTabIndex = 0;
-
 			var saveButton = theme.CreateDialogButton("Save".Localize());
 			saveButton.Click += (s, e) =>
 			{
@@ -144,6 +129,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.DialogWindow.CloseOnIdle();
 			};
 			this.AddPageAction(saveButton);
+
+			editWidget.ActualTextEditWidget.EnterPressed += (s, e) => saveButton.InvokeClick();
 		}
 
 		public string EditorString

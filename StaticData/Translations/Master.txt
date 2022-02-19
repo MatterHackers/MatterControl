@@ -5665,6 +5665,9 @@ Translated:Upgrade to Pro
 English:Upload
 Translated:Upload
 
+English:Uploading
+Translated:Uploading
+
 English:Uploading...
 Translated:Uploading...
 
