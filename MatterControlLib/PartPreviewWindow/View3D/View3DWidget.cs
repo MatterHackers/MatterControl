@@ -1203,9 +1203,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DragOperationActive = true;
 
 			// ContentStore is null for plated gcode, call ClearPlate to exit mode and return to bed mcx
-			if (sceneContext.Printer?.Bed?.LoadedGCode != null)
+			// Unsaved New Design also have a null ContentStore but they don't have gcode, so test both.
+			if (sceneContext.Printer?.Bed?.LoadedGCode != null
+				&& sceneContext.EditContext.ContentStore == null)
 			{
-				this.ClearPlate();
+				this.ClearPlate(); 
 			}
 
 			var firstItem = items.FirstOrDefault();
