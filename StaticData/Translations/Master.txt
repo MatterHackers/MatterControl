@@ -1675,6 +1675,9 @@ Translated:Fan Speed
 English:Fastest
 Translated:Fastest
 
+English:Feature Detector
+Translated:Feature Detector
+
 English:Features
 Translated:Features
 
@@ -2079,6 +2082,9 @@ Translated:Hide
 
 English:High Precision
 Translated:High Precision
+
+English:Histogram
+Translated:Histogram
 
 English:History
 Translated:History
@@ -2586,6 +2592,9 @@ Translated:Macros
 
 English:Maintain Proportions
 Translated:Maintain Proportions
+
+English:Maintain Ratio
+Translated:Maintain Ratio
 
 English:Maintain Surface
 Translated:Maintain Surface
@@ -3727,6 +3736,12 @@ Translated:Raise extruder
 English:Randomized
 Translated:Randomized
 
+English:Range End
+Translated:Range End
+
+English:Range Start
+Translated:Range Start
+
 English:Ratio
 Translated:Ratio
 
@@ -3927,6 +3942,9 @@ Translated:Restore Settings
 
 English:Restore Settings...
 Translated:Restore Settings...
+
+English:Restoring
+Translated:Restoring
 
 English:Resume
 Translated:Resume

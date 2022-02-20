@@ -785,7 +785,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Title = "Add to Bed".Localize(),
 				Icon = StaticData.Instance.LoadIcon("bed_add.png", 16, 16).SetToColor(theme.TextColor),
-				Action = (selectedLibraryItems, listView) =>
+				Action = async (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
 					var printer = activeContext.View3DWidget.Printer;
@@ -794,14 +794,28 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						selectedLibraryItems.FirstOrDefault() is ILibraryAssetStream assetStream
 						&& assetStream.ContentType == "gcode")
 					{
-						// Change loaded scene to new context
-						printer.Bed.LoadContent(
-							new EditContext()
+						await ApplicationController.Instance.Tasks.Execute(
+							"Loading".Localize() + "...",
+							null,
+							async (reporter, cancellationTokenSource) =>
 							{
-								SourceItem = assetStream,
-								// No content store for GCode
-								ContentStore = null
-							}).ConfigureAwait(false);
+								var progressStatus = new ProgressStatus();
+
+								// Change loaded scene to new context
+								await printer.Bed.LoadContent(
+									new EditContext()
+									{
+										SourceItem = assetStream,
+										// No content store for GCode
+										ContentStore = null
+									},
+									(progress, message) =>
+									{
+										progressStatus.Progress0To1 = progress;
+										progressStatus.Status = message;
+										reporter.Report(progressStatus);
+									}).ConfigureAwait(false);
+							});
 					}
 					else
 					{

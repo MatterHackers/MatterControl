@@ -1024,7 +1024,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.Bed.ClearPlate();
 
 				// Load current scene into new printer scene
-				await printer.Bed.LoadIntoCurrent(sceneContext.EditContext);
+				await printer.Bed.LoadIntoCurrent(sceneContext.EditContext, null);
 
 				bool allInBounds = true;
 				foreach (var item in printer.Bed.Scene.VisibleMeshes())
@@ -1281,7 +1281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								SourceItem = this.SceneReplacement,
 								// No content store for GCode
 								ContentStore = null
-							}).ConfigureAwait(false);
+							}, null).ConfigureAwait(false);
 
 						this.SceneReplacement = null;
 					}

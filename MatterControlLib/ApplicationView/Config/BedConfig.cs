@@ -97,17 +97,18 @@ namespace MatterHackers.MatterControl
 			this.SceneLoaded?.Invoke(this, null);
 		}
 
-		public Task LoadLibraryContent(ILibraryItem libraryItem)
+		public Task LoadLibraryContent(ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{
 			return this.LoadContent(
 				new EditContext()
 				{
 					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 					SourceItem = libraryItem
-				});
+				},
+				progressReporter);
 		}
 
-		public async Task LoadContent(EditContext editContext)
+		public async Task LoadContent(EditContext editContext, Action<double, string> progressReporter)
 		{
 			// Make sure we don't have a selection
 			this.Scene.SelectedItem = null;
@@ -120,7 +121,7 @@ namespace MatterHackers.MatterControl
 				this.ContentType = contentInfo.ContentType;
 			}
 
-			await this.LoadIntoCurrent(editContext);
+			await this.LoadIntoCurrent(editContext, progressReporter);
 		}
 
 		/// <summary>
@@ -128,7 +129,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="editContext">The context to load into.</param>
 		/// <returns></returns>
-		public async Task LoadIntoCurrent(EditContext editContext)
+		public async Task LoadIntoCurrent(EditContext editContext, Action<double, string> progressReporter)
 		{
 			// Load
 			if (editContext.SourceItem is ILibraryAssetStream contentStream
@@ -145,7 +146,7 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				// Load last item or fall back to empty if unsuccessful
-				var content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
+				var content = await editContext.SourceItem.CreateContent(progressReporter) ?? new Object3D();
 
 				loadedGCode = null;
 				this.GCodeRenderer = null;
@@ -258,7 +259,8 @@ namespace MatterHackers.MatterControl
 						{
 							SourceItem = new FileSystemFileItem(firstFilePath),
 							ContentStore = null // No content store for GCode
-						});
+						},
+						null);
 
 					return;
 				}
@@ -313,7 +315,8 @@ namespace MatterHackers.MatterControl
 					SourceItem = libraryItem,
 					// No content store for GCode
 					ContentStore = null
-				});
+				},
+				null);
 
 			// Slice and print
 			await ApplicationController.Instance.PrintPart(

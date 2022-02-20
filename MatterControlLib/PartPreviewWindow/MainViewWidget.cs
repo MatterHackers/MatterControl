@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         ContentStore = history,
                         SourceItem = new FileSystemFileItem(filePath)
-                    });
+                    }, null);
 
                     ApplicationController.Instance.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
                 }
@@ -866,7 +866,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var workspace = new PartWorkspace(new BedConfig(history));
 
-			await workspace.SceneContext.LoadContent(new EditContext());
+			await workspace.SceneContext.LoadContent(new EditContext(), null);
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 

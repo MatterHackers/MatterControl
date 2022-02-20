@@ -529,7 +529,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.Printer, sceneContext.SaveChanges);
 
-								await sceneContext.LoadLibraryContent(item);
+								await sceneContext.LoadLibraryContent(item, null);
 
 								if (sceneContext.Printer != null)
 								{

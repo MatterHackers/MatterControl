@@ -72,15 +72,15 @@ namespace MatterHackers.MatterControl
 
 		void ClearPlate();
 
-		Task LoadContent(EditContext editContext);
+		Task LoadContent(EditContext editContext, Action<double, string> progressReporter);
 
 		void LoadEmptyContent(EditContext editContext);
 
 		Task LoadGCodeContent(Stream stream);
 
-		Task LoadIntoCurrent(EditContext editContext);
+		Task LoadIntoCurrent(EditContext editContext, Action<double, string> progressReporter);
 
-		Task LoadLibraryContent(ILibraryItem libraryItem);
+		Task LoadLibraryContent(ILibraryItem libraryItem, Action<double, string> progressReporter);
 
 		Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationToken);
 
