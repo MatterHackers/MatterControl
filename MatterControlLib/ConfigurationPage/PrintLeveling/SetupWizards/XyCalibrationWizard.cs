@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (originalEditContext != null
 				&& printer.Bed.EditContext != originalEditContext)
 			{
-				await printer.Bed.LoadContent(originalEditContext);
+				await printer.Bed.LoadContent(originalEditContext, null);
 			}
 
 			base.Dispose();

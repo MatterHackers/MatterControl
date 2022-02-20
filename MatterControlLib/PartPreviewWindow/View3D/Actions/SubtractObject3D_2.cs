@@ -104,12 +104,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
         public override async void WrapSelectedItemAndSelect(InteractiveScene scene)
         {
+			// this will ask the subtract to do a rebuild
             base.WrapSelectedItemAndSelect(scene);
 		
 			if (SelectedChildren.Count == 0)
 			{
 				SelectedChildren.Add(SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Last().ID);
-                await this.Rebuild();
 			}
 		}
 

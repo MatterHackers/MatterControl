@@ -93,8 +93,14 @@ namespace MatterHackers.MatterControl
 
 			PopupMenu.MenuItem menuItem;
 
-			menuItem = popupMenu.CreateMenuItem("Open File", StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(menuTheme.TextColor));
-			menuItem.Click += (s, e) => ApplicationController.OpenFileWithSystemDialog((fileNames) => ApplicationController.Instance.MainView.OpenFile(fileNames.FirstOrDefault()));
+			menuItem = popupMenu.CreateMenuItem("Open System File", StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem.Click += (s, e) => ApplicationController.OpenFileWithSystemDialog((fileNames) =>
+			{
+				if (fileNames != null && fileNames.Any())
+				{
+					ApplicationController.Instance.MainView.OpenFile(fileNames.FirstOrDefault());
+				}
+			});
 
 			popupMenu.CreateSeparator();
 	

@@ -726,7 +726,10 @@ namespace MatterHackers.MatterControl
 					new OpenFileDialogParams(filter, multiSelect: true),
 					(openParams) =>
 					{
-						openFiles?.Invoke(openParams.FileNames);
+						if (openParams != null && openParams.FileNames != null)
+						{
+							openFiles?.Invoke(openParams.FileNames);
+						}
 					});
 			}, .1);
 		}
@@ -1637,7 +1640,8 @@ namespace MatterHackers.MatterControl
 				{
 					ContentStore = history,
 					SourceItem = history.NewBedPlate(workspace.Printer.Bed)
-				});
+				},
+				null);
 
 				this.OpenWorkspace(workspace);
 
@@ -1699,7 +1703,7 @@ namespace MatterHackers.MatterControl
 
 			var history = this.Library.PlatingHistory;
 
-			this.Workspaces.Clear();
+			Workspaces.Clear();
 
 			if (File.Exists(ProfileManager.Instance.OpenTabsPath))
 			{
@@ -1713,55 +1717,71 @@ namespace MatterHackers.MatterControl
 
 					var loadedPrinters = new HashSet<string>();
 
-					foreach (var persistedWorkspace in persistedWorkspaces)
-					{
-						try
+					await Tasks.Execute(
+						"Restoring".Localize() + "...",
+						null,
+						async (reporter, cancellationTokenSource) =>
 						{
-							// Load the actual workspace if content file exists
-							if (File.Exists(persistedWorkspace.ContentPath))
+							var progressStatus = new ProgressStatus();
+							for (int i=0; i<persistedWorkspaces.Count; i++)
 							{
-								string printerID = persistedWorkspace.PrinterID;
-
-								PartWorkspace workspace = null;
-
-								if (!string.IsNullOrEmpty(printerID)
-									&& ProfileManager.Instance[printerID] != null)
+								var persistedWorkspace = persistedWorkspaces[i];
+								try
 								{
-									// Only create one workspace per printer
-									if (!loadedPrinters.Contains(printerID))
+									// Load the actual workspace if content file exists
+									if (File.Exists(persistedWorkspace.ContentPath))
 									{
-										// Add workspace for printer
-										workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+										string printerID = persistedWorkspace.PrinterID;
 
-										loadedPrinters.Add(printerID);
-									}
-									else
-									{
-										// Ignore additional workspaces for the same printer once one is loaded
-										continue;
+										PartWorkspace workspace = null;
+
+										if (!string.IsNullOrEmpty(printerID)
+											&& ProfileManager.Instance[printerID] != null)
+										{
+											// Only create one workspace per printer
+											if (!loadedPrinters.Contains(printerID))
+											{
+												// Add workspace for printer
+												workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+
+												loadedPrinters.Add(printerID);
+											}
+											else
+											{
+												// Ignore additional workspaces for the same printer once one is loaded
+												continue;
+											}
+										}
+										else
+										{
+											// Add workspace for part
+											workspace = new PartWorkspace(new BedConfig(history));
+										}
+
+										// Load the previous content
+										await workspace.SceneContext.LoadContent(new EditContext()
+										{
+											ContentStore = history,
+											SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
+										},
+										(progress, message) =>
+										{
+											var ratioPerWorkspace = 1.0 / persistedWorkspaces.Count;
+											var completed = ratioPerWorkspace * i;
+											progressStatus.Progress0To1 = completed + progress * ratioPerWorkspace;
+											progressStatus.Status = message;
+											reporter.Report(progressStatus);
+										});
+
+										this.RestoreWorkspace(workspace);
 									}
 								}
-								else
+								catch
 								{
-									// Add workspace for part
-									workspace = new PartWorkspace(new BedConfig(history));
+									// Suppress workspace load exceptions and continue to the next workspace
 								}
-
-								// Load the previous content
-								await workspace.SceneContext.LoadContent(new EditContext()
-								{
-									ContentStore = history,
-									SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
-								});
-
-								this.RestoreWorkspace(workspace);
 							}
-						}
-						catch
-						{
-							// Suppress workspace load exceptions and continue to the next workspace
-						}
-					}
+						});
 				}
 				catch
 				{

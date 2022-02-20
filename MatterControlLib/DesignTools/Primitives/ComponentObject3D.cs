@@ -134,6 +134,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Cancel(UndoBuffer undoBuffer)
 		{
+			// Make any hiden children visible
+			// on any invalidate ensure that the visibility setting are correct for embedded sheet objects
+			foreach (var child in this.Descendants())
+			{
+				if (child is SheetObject3D)
+				{
+					child.Visible = true;
+				}
+			}
+
 			// Custom remove for ImageConverter
 			if (this.ComponentID == ImageConverterComponentID)
 			{

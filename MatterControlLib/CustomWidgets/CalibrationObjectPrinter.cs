@@ -82,7 +82,8 @@ namespace MatterHackers.MatterControl
 				{
 					SourceItem = new FileSystemFileItem(gcodePath),
 					ContentStore = null // No content store for GCode
-				});
+				},
+				null);
 
 				await printer.Connection.StartPrint(finalGCodePath, printingMode: PrinterConnection.PrintingModes.Calibration);
 				ApplicationController.Instance.MonitorPrintTask(printer);

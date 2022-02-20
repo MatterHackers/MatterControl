@@ -543,11 +543,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 									mainViewWidget.TabControl.ActiveTab = partTab;
 
 									// Load content after UI widgets to support progress notification during acquire/load
-									await workspace.SceneContext.LoadContent(
-										new EditContext()
+									await ApplicationController.Instance.Tasks.Execute(
+										"Loading".Localize() + "...",
+										null,
+										async (reporter, cancellationTokenSource) =>
 										{
-											ContentStore = writableContainer,
-											SourceItem = firstItem
+											var progressStatus = new ProgressStatus();
+											var editContext = new EditContext()
+											{
+												ContentStore = writableContainer,
+												SourceItem = firstItem
+											};
+											await workspace.SceneContext.LoadContent(editContext, (progress, message) =>
+											{
+												progressStatus.Progress0To1 = progress;
+												progressStatus.Status = message;
+												reporter.Report(progressStatus);
+											});
 										});
 								}
 								else
