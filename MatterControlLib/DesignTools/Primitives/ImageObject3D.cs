@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2022 Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -143,6 +143,83 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public static string GetFileOrAsset(string file)
+        {
+			if (!File.Exists(file))
+			{
+				var path = Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, file);
+				if (File.Exists(path))
+                {
+					return path;
+                }
+
+				// can't find a real file
+				return null;
+			}
+
+			return file;
+		}
+
+
+		public static bool FilesAreEqual(string first, string second)
+        {
+			if (string.IsNullOrEmpty(first)
+				|| string.IsNullOrEmpty(second))
+            {
+				return false;
+            }
+
+			var diskFirst = GetFileOrAsset(first);
+			var diskSecond = GetFileOrAsset(second);
+			if (File.Exists(diskFirst) && File.Exists(diskSecond))
+			{
+				return FilesAreEqual(new FileInfo(diskFirst), new FileInfo(diskSecond));
+			}
+
+			return false;
+        }
+
+		public static bool FilesAreEqual(FileInfo first, FileInfo second)
+		{
+			if (first.Length != second.Length)
+			{
+				return false;
+			}
+
+			if (string.Equals(first.FullName, second.FullName, StringComparison.OrdinalIgnoreCase))
+			{
+				return true;
+			}
+
+			int readSize = 1 << 16;
+			int numReads = (int)Math.Ceiling((double)first.Length / readSize);
+
+			using (var firstFs = first.OpenRead())
+			{
+				using (var secondFs = second.OpenRead())
+				{
+					byte[] one = new byte[readSize];
+					byte[] two = new byte[readSize];
+
+					for (int i = 0; i < numReads; i++)
+					{
+						firstFs.Read(one, 0, readSize);
+						secondFs.Read(two, 0, readSize);
+
+						for (int j = 0; j < readSize; j++)
+						{
+							if (one[j] != two[j])
+                            {
+								return false;
+                            }
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 
 		[DisplayName("Open new image")]
 		[Description("Open")]
@@ -153,12 +230,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (_assetPath != value)
 				{
+					var oldAsset = _assetPath;
 					_assetPath = value;
 					_image = null;
 
-					InitMesh(this.Image);
-
-					this.Invalidate(InvalidateType.DisplayValues);
+					if (!FilesAreEqual(oldAsset, value))
+					{
+						InitMesh(this.Image);
+						this.Invalidate(InvalidateType.DisplayValues);
+					}
 				}
 			}
 		}
