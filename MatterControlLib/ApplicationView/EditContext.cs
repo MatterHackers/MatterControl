@@ -123,7 +123,10 @@ namespace MatterHackers.MatterControl
 		{
 			if (!this.FreezeGCode)
 			{
-				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
+				if (this.SourceItem != null)
+				{
+					ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
+				}
 
 				// Call save on the provider
 				this.ContentStore?.Save(this.SourceItem, scene);
