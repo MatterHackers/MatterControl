@@ -369,21 +369,22 @@ namespace MatterHackers.MatterControl
 
 			nodesByPath[container.Path] = treeNode;
 
-			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
+			foreach (var helpArticle in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
 			{
-				if (item.Children.Count > 0)
+				if (helpArticle.Children.Count > 0
+					&& helpArticle.Path != null)
 				{
-					treeNode.Nodes.Add(ProcessTree(item));
+					treeNode.Nodes.Add(ProcessTree(helpArticle));
 				}
 				else
 				{
-					var newNode = new HelpArticleTreeNode(item, theme);
+					var newNode = new HelpArticleTreeNode(helpArticle, theme);
 
-					nodesByPath[item.Path] = newNode;
+					nodesByPath[helpArticle.Path] = newNode;
 
-					if (item.Name == guideKey
+					if (helpArticle.Name == guideKey
 						|| (guideKey != null
-							&& item.ArticleKey == guideKey
+							&& helpArticle.ArticleKey == guideKey
 							&& ApplicationController.Instance.HelpArticlesByID.ContainsKey(guideKey)))
 					{
 						initialSelection = newNode;
