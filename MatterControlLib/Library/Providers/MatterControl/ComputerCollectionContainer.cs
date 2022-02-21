@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
-						"MyDocuments".Localize(),
+						"Documents".Localize(),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 						StaticData.Instance.LoadIcon(Path.Combine("Library", "mydocuments.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.MyDocumentsDirectory)
