@@ -1018,13 +1018,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Task.Run(async () =>
 			{
-				await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
+				var scene = sceneContext.Scene;
 
 				// Clear bed to get new MCX on disk for this item
 				printer.Bed.ClearPlate();
 
-				// Load current scene into new printer scene
-				await printer.Bed.LoadIntoCurrent(sceneContext.EditContext, null);
+				if (sceneContext.EditContext.ContentStore == null)
+                {
+					// The scene is on a bed plate that has never been saved.
+					// Create a temp version of the scene so that we can plate it
+					var mcxPath = ApplicationController.Instance.SanitizeFileName($"{DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss")}.mcx");
+					File.WriteAllText(mcxPath, new Object3D().ToJson().Result);
+					var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+					sceneContext = new BedConfig(historyContainer);
+					sceneContext.EditContext = new EditContext()
+					{
+						ContentStore = historyContainer,
+						SourceItem = new FileSystemFileItem(mcxPath)
+					};
+
+					printer.Bed.Scene.Load(scene.Clone());
+				}
+				else
+                {
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
+
+					// Load current scene into new printer scene
+					await printer.Bed.LoadIntoCurrent(sceneContext.EditContext, null);
+				}
 
 				bool allInBounds = true;
 				foreach (var item in printer.Bed.Scene.VisibleMeshes())
