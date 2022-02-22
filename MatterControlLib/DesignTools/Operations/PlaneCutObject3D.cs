@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var mesh = new Mesh(item.Mesh.Vertices, item.Mesh.Faces);
 
-			var itemMatrix = item.WorldMatrix(this);
+			var itemMatrix = item.WorldMatrix(SourceContainer);
 			mesh.Transform(itemMatrix);
 
 			var cutHeight = CutHeight.Value(this);
