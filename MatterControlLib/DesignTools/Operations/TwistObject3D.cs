@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression RotationDistance { get; set; } = 10;
 
 		[Description("Specifies the number of vertical cuts required to ensure the part can be twist well.")]
-		[Slider(3, 50, snapDistance: 1)]
+		[Slider(0, 50, snapDistance: 1)]
 		public IntOrExpression RotationSlices { get; set; } = 5;
 
 		[Description("The source part is specifying a preferred radius. You can turn this off to set a specific radius.")]
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var angle = Angle.ClampIfNotCalculated(this, 0, 10000, ref valuesChanged);
 			var rotationDistance = RotationDistance.ClampIfNotCalculated(this, 0, 10000, ref valuesChanged);
-			var rotationSlices = RotationSlices.ClampIfNotCalculated(this, 3, 300, ref valuesChanged);
+			var rotationSlices = RotationSlices.ClampIfNotCalculated(this, 0, 300, ref valuesChanged);
 			var endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
 			endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 1, 100, ref valuesChanged);
 			var startHeightPercent = StartHeightPercent.ClampIfNotCalculated(this, 0, endHeightPercent - 1, ref valuesChanged);
