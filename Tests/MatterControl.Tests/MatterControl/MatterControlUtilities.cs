@@ -39,9 +39,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -124,10 +126,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			const string containerName = "Primitives Row Item Collection";
 			testRunner.NavigateToFolder(containerName);
 
+			if (multiSelect)
+			{
+				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control);
+			}
+
 			var partCount = 0;
 			foreach (var partName in partNames)
 			{
-				Keyboard.SetKeyDownState(Keys.ControlKey, multiSelect);
 				foreach (var result in testRunner.GetWidgetsByName(partName))
 				{
 					// Opening the primitive parts library folder causes a second set of primitive part widgets to be created.
@@ -144,34 +150,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 					if (!partWidget.IsSelected)
 					{
-						testRunner.ClickWidget(partWidget);
+						if (multiSelect)
+						{
+							testRunner.ClickWidget(partWidget);
+						}
+						else
+						{
+							testRunner.RightClickWidget(partWidget)
+								.ClickByName("Add to Bed Menu Item");
+						}
 					}
 					partCount += 1;
+					break;
 				}
 			}
 
 			if (multiSelect)
 			{
-				// Release control key so additional operations work normally.
-				Keyboard.SetKeyDownState(Keys.ControlKey, false);
+				testRunner.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control)
+					.ClickByName("Print Library Overflow Menu")
+					.ClickByName("Add to Bed Menu Item");
 			}
-
-			testRunner.ClickByName("Print Library Overflow Menu");
 
 			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 			var scene = view3D.Object3DControlLayer.Scene;
 			var preAddCount = scene.Children.Count;
 			var postAddCount = preAddCount + (multiSelect ? 1 : partCount);
 
-			testRunner.ClickByName("Add to Bed Menu Item")
-				// wait for the objects to be added
-				.WaitFor(() => scene.Children.Count == postAddCount);
-			// wait for the objects to be done loading
-			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
-			if (insertionGroup != null)
-			{
-				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroupObject3D != null, 10);
-			}
+			// wait for the objects to be added
+			testRunner.WaitFor(() => scene.Children.Count == postAddCount, 1);
 
 			return testRunner;
 		}
@@ -950,6 +957,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
+			// The EULA popup throws off the tests on Linux.
+			UserSettings.Instance.set(UserSettingsKey.SoftwareLicenseAccepted, "true");
 			// GL.HardwareAvailable = false;
 
 			var config = TestAutomationConfig.Load();
@@ -1483,13 +1492,116 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SelectListItems(this AutomationRunner testRunner, params string[] widgetNames)
 		{
 			// Control click all items
-			Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+			testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control);
 			foreach (var widgetName in widgetNames)
 			{
 				testRunner.ClickByName(widgetName);
 			}
 
-			Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
+			testRunner.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
+		}
+
+		/// <summary>
+		/// Uses the drag rectangle on the bed to select parts. Assumes the bed has been rotated to a
+		/// bird's eye view (top down). That makes it easier to select the correct parts because the
+		/// drag rectangle will be parallel to the XY plane.
+		/// </summary>
+		/// <param name="testRunner">The AutomationRunner in use</param>
+		/// <param name="controlLayer">Object control layer from a View3DWidget</param>
+		/// <param name="partNames">Names of the parts to select</param>
+		/// <returns>The AutomationRunner</returns>
+		public static AutomationRunner RectangleSelectParts(this AutomationRunner testRunner, Object3DControlsLayer controlLayer, IEnumerable<string> partNames)
+		{
+			var topWindow = controlLayer.Parents<SystemWindow>().First();
+			var widgets = partNames
+				.Select(name => ResolveName(controlLayer.Scene.Children, name))
+				.Where(x => x.Ok)
+				.Select(x =>
+				{
+					var widget = testRunner.GetWidgetByName(x.Name, out var containingWindow, 1);
+					return new
+					{
+						Widget = widget ?? controlLayer,
+						ContainingWindow = widget != null ? containingWindow : topWindow,
+						x.Bounds
+					};
+				})
+				.ToList();
+			if (!widgets.Any())
+			{
+				return testRunner;
+			}
+
+			var minPosition = widgets.Aggregate((double.MaxValue, double.MaxValue), (acc, wi) =>
+			{
+				var bounds = wi.Widget.TransformToParentSpace(wi.ContainingWindow, wi.Bounds);
+				var x = bounds.Left - 1;
+				var y = bounds.Bottom - 1;
+				return (x < acc.Item1 ? x : acc.Item1, y < acc.Item2 ? y : acc.Item2);
+			});
+			var maxPosition = widgets.Aggregate((0d, 0d), (acc, wi) =>
+			{
+				var bounds = wi.Widget.TransformToParentSpace(wi.ContainingWindow, wi.Bounds);
+				var x = bounds.Right + 1;
+				var y = bounds.Top + 1;
+				return (x > acc.Item1 ? x : acc.Item1, y > acc.Item2 ? y : acc.Item2);
+			});
+
+			var systemWindow = widgets.First().ContainingWindow;
+			testRunner.SetMouseCursorPosition(systemWindow, (int)minPosition.Item1, (int)minPosition.Item2);
+			testRunner.DragToPosition(systemWindow, (int)maxPosition.Item1, (int)maxPosition.Item2).Drop();
+
+			return testRunner;
+
+			RectangleDouble GetBoundingBox(IObject3D part)
+			{
+				var screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
+				var bounds = part.GetBVHData().GetAxisAlignedBoundingBox();
+
+				for (var i = 0; i < 4; i += 1)
+				{
+					screenBoundsOfObject3D.ExpandToInclude(controlLayer.World.GetScreenPosition(bounds.GetTopCorner(i)));
+					screenBoundsOfObject3D.ExpandToInclude(controlLayer.World.GetScreenPosition(bounds.GetBottomCorner(i)));
+				}
+
+				return screenBoundsOfObject3D;
+			}
+
+			(bool Ok, string Name, RectangleDouble Bounds)
+				ResolveName(IEnumerable<IObject3D> parts, string name)
+			{
+				foreach (var part in parts)
+				{
+					if (part.Name == name)
+					{
+						return (true, name, GetBoundingBox(part));
+					}
+
+					if (part is GroupObject3D group)
+					{
+						var (ok, _, bounds) = ResolveName(group.Children, name);
+						if (ok)
+						{
+							// WARNING the position of a part changes when it's added to a group.
+							// Not sure if there's some sort of offset that needs to be applied or
+							// if this is a bug. It is restored to its correct position when the
+							// part is ungrouped.
+							return (true, name, bounds);
+						}
+					}
+
+					if (part is SelectionGroupObject3D selection)
+					{
+						var (ok, _, bounds) = ResolveName(selection.Children, name);
+						if (ok)
+						{
+							return (true, name, bounds);
+						}
+					}
+				}
+
+				return (false, null, RectangleDouble.ZeroIntersection);
+			}
 		}
 	}
 
