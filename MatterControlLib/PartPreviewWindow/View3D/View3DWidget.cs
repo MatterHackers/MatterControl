@@ -1028,7 +1028,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// The scene is on a bed plate that has never been saved.
 					// Create a temp version of the scene so that we can plate it
 					var mcxPath = ApplicationController.Instance.SanitizeFileName($"{DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss")}.mcx");
-					File.WriteAllText(mcxPath, new Object3D().ToJson().Result);
+					File.WriteAllText(mcxPath, await new Object3D().ToJson());
 					var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
 					sceneContext = new BedConfig(historyContainer);
 					sceneContext.EditContext = new EditContext()

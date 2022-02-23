@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
 		private bool _finalizade = true;
+		
+		[Description("Switch from editing to distribution")]
 		public bool Finalized
 		{
 			get => _finalizade;
