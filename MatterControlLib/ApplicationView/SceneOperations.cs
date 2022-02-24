@@ -1021,7 +1021,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Duplicate")
 			{
 				TitleGetter = () => "Duplicate".Localize(),
-				Action = (sceneContext) => sceneContext.DuplicateItem(5),
+				Action = (sceneContext) => sceneContext.DuplicateItemAddToScene(5),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 				Icon = (theme) => StaticData.Instance.LoadIcon("duplicate.png", 16, 16).SetPreMultiply(),

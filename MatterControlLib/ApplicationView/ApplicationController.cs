@@ -174,6 +174,7 @@ namespace MatterHackers.MatterControl
 			{
 				new ActionSeparator(),
 				workspaceActions["Edit"],
+				workspaceActions["PasteInto"],
 				new ActionSeparator(),
 				new NamedAction()
 				{
@@ -196,7 +197,7 @@ namespace MatterHackers.MatterControl
 					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(MenuTheme.TextColor),
 					Action = () =>
 					{
-						ApplicationController.Instance.ExportLibraryItems(
+						Instance.ExportLibraryItems(
 							new[] { new InMemoryLibraryItem(selectedItem) },
 							centerOnBed: false,
 							printer: printer);
@@ -586,9 +587,9 @@ namespace MatterHackers.MatterControl
 					IsEnabled = () =>
 					{
 						if (sceneContext.Printer != null)
-                        {
+						{
 							return sceneContext.Printer.PrintButtonEnabled();
-                        }
+						}
 
 						return sceneContext.EditableScene
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
@@ -624,6 +625,30 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					IsEnabled = () => true,
+				},
+				new NamedAction()
+				{
+					ID = "PasteInto",
+					Title = "Paste Into".Localize(),
+					Action = () => sceneContext.PasteIntoSelection(),
+					IsEnabled = () =>
+					{
+						var selectedItem = sceneContext.Scene.SelectedItem;
+						var clipboardItem = ApplicationController.ClipboardItem;
+						// there is an object in the clipboard
+						if (Clipboard.Instance.ContainsText
+							&& Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+							// there is a selected item to paste into
+							&& selectedItem != null 
+							// the selected item is not a primitve
+							&& !(selectedItem is PrimitiveObject3D)
+							&& clipboardItem != null)
+						{
+							return true;
+						}
+
+						return false;
+					}
 				},
 				new NamedAction()
 				{
