@@ -309,17 +309,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
-			testRunner.WaitforDraw(systemWindow);
-
-			// close the welcome message
-			if (testRunner.WaitForName("Start New Design"))
-			{
-				testRunner.ClickByName("Start New Design")
-					.Delay();
-			}
-
-			// and close the product tour offer
-			testRunner.ClickByName("Cancel Wizard Button");
+			testRunner.WaitforDraw(systemWindow)
+				// close the welcome message
+				.ClickByName("Start New Design")
+				.Delay(.5)
+				// and close the product tour offer
+				.ClickByName("Cancel Wizard Button");
 
 			if (removeDefaultPhil)
 			{

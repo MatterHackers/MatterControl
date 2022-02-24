@@ -3520,6 +3520,12 @@ Translated:Prev
 English:Preview
 Translated:Preview
 
+English:Priming Height
+Translated:Priming Height
+
+English:Priming Width
+Translated:Priming Width
+
 English:Primitive Shapes
 Translated:Primitive Shapes
 

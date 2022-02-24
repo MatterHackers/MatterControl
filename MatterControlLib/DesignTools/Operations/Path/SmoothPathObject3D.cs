@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
@@ -53,10 +54,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Smooth Path".Localize();
 		}
 
+		[Description("Max distance to move bumps to make lines")]
 		[MaxDecimalPlaces(2)]
 		[Slider(.01, 1, VectorMath.Easing.EaseType.Quadratic, snapDistance: .01)]
 		public DoubleOrExpression SmoothDistance { get; set; } = .3;
 
+		[Description("The number of smoothing passes")]
 		public IntOrExpression Iterations { get; set; } = 3;
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)

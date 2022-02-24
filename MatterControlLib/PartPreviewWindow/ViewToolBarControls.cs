@@ -647,7 +647,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openMenuItems = new PopupMenu(ApplicationController.Instance.MenuTheme);
 			popupMenu.PopupContent = openMenuItems;
 
-			var openFileButton = openMenuItems.CreateMenuItem("Add File to Bed".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
+			var openFileButton = openMenuItems.CreateMenuItem("Add System File to Bed".Localize(), StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor));
 
 			openFileButton.Click += (s, e) =>
             {
