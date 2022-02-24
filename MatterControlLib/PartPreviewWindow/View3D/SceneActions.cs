@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        public static async void DuplicateItem(this ISceneContext sceneContext, double xOffset, IObject3D sourceItem = null)
+        public static async void DuplicateItemAddToScene(this ISceneContext sceneContext, double xOffset, IObject3D sourceItem = null)
         {
             var scene = sceneContext.Scene;
             if (sourceItem == null)
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             var clonedItem = sourceItem.Clone();
 
                             clonedItem.Translate(xOffset);
-                            // an empty string is used do denote special name processing for some container types
+                            // an empty string is used to denote special name processing for some container types
                             if (!string.IsNullOrWhiteSpace(sourceItem.Name))
                             {
                                 // make the name unique
@@ -437,10 +437,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
                 {
-                    sceneContext.DuplicateItem(0, ApplicationController.ClipboardItem);
+                    sceneContext.DuplicateItemAddToScene(0, ApplicationController.ClipboardItem);
                     // each time we put in the object offset it a bit more
                     pasteObjectXOffset += 5;
                 }
+            }
+        }
+
+        public static void PasteIntoSelection(this ISceneContext sceneContext)
+        {
+            var scene = sceneContext.Scene;
+            var selectedItem = scene.SelectedItem;
+            var clipboardItem = ApplicationController.ClipboardItem;
+
+            if (Clipboard.Instance.ContainsText
+                && Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+                // there is a selected item to paste into
+                && selectedItem != null
+                // the selected item is not a primitve
+                && !(selectedItem is PrimitiveObject3D)
+                && clipboardItem != null)
+            {
+                selectedItem.Children.Add(clipboardItem.Clone());
             }
         }
 

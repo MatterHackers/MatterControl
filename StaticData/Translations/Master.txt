@@ -226,6 +226,9 @@ Translated:Add Note
 English:Add Note...
 Translated:Add Note...
 
+English:Add System File to Bed
+Translated:Add System File to Bed
+
 English:Add to Bed
 Translated:Add to Bed
 
@@ -1278,6 +1281,9 @@ Translated:Distance From Object
 
 English:Distance or Loops
 Translated:Distance or Loops
+
+English:Documents
+Translated:Documents
 
 English:Done
 Translated:Done
@@ -3285,6 +3291,9 @@ Translated:Password update complete
 
 English:Paste
 Translated:Paste
+
+English:Paste Into
+Translated:Paste Into
 
 English:Path
 Translated:Path
