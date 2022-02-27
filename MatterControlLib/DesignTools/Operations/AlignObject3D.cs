@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DoubleOrExpression XOffset { get; set; } = 0;
 
 		[SectionStart("Y Axis"), DisplayName("Align")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DoubleOrExpression YOffset { get; set; } = 0;
 
 		[SectionStart("Z Axis"), DisplayName("Align")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
