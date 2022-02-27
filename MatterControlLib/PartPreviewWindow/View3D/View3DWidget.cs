@@ -883,7 +883,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			treeNodesByObject.Clear();
 
-			foreach (var child in sceneContext.Scene.Children.OrderBy(i => i.Name))
+			IEnumerable<IObject3D> children = sceneContext.Scene.Children;
+			if (children.Any(c => c is SelectionGroupObject3D))
+			{
+				var selectionChildern = children.Where(c => c is SelectionGroupObject3D).First().Children;
+				var notSelectionChildern = children.Where(c => !(c is SelectionGroupObject3D));
+				children = selectionChildern.Union(notSelectionChildern);
+			}
+
+			foreach (var child in children.OrderBy(i => i.Name))
 			{
 				if (child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())
 				{
@@ -895,6 +903,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rootNode.TreeView = treeView;
 			}
 
+			void HighLightSelection()
+			{
+				var scene = sceneContext.Scene;
+				var nodes = treeNodeContainer.DescendantsAndSelf().Where(t => t is TreeNode);
+				foreach (var uncastNode in nodes)
+				{
+					var node = (TreeNode)uncastNode;
+					if (node.Tag is IObject3D item)
+					{
+						if (scene.SelectedItem == item
+							|| (scene.SelectedItem is SelectionGroupObject3D selectionGroup
+								&& selectionGroup.Children.Contains(item)))
+						{
+							node.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
+						}
+						else
+						{
+							node.HighlightRegion.BackgroundColor = Color.Transparent;
+						}
+					}
+				}
+			}
+
 			// Ensure selectedItem is selected
 			var selectedItem = sceneContext.Scene.SelectedItem;
 			if (selectedItem != null
@@ -904,6 +935,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			treeView.TopLeftOffset = beforeReubildScrollPosition;
+
+			HighLightSelection();
 
 			Invalidate();
 		}

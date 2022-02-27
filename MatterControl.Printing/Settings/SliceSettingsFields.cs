@@ -1527,7 +1527,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Minimum Speed Always".Localize(),
 					HelpText = "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power, regardless of layer time.".Localize(),
 					DataEditType = DataEditTypes.INT,
-					Units = "seconds".Localize(),
+					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "0",
