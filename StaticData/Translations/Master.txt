@@ -4693,6 +4693,9 @@ Translated:Stringing / Poor retractions
 English:Style
 Translated:Style
 
+English:SubAlign
+Translated:SubAlign
+
 English:Subtract
 Translated:Subtract
 
@@ -6010,6 +6013,9 @@ Translated:X Intercept
 English:X Offset
 Translated:X Offset
 
+English:X Options
+Translated:X Options
+
 English:X Y Nozzle Offsets Have Been Calibrated
 Translated:X Y Nozzle Offsets Have Been Calibrated
 
@@ -6024,6 +6030,9 @@ Translated:Y Intercept
 
 English:Y Offset
 Translated:Y Offset
+
+English:Y Options
+Translated:Y Options
 
 English:Yes
 Translated:Yes
@@ -6129,6 +6138,9 @@ Translated:Z Offset
 
 English:Z Offset is too large.
 Translated:Z Offset is too large.
+
+English:Z Options
+Translated:Z Options
 
 English:ZIP File
 Translated:ZIP File

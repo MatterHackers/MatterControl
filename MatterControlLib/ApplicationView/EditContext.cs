@@ -39,6 +39,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -128,12 +129,20 @@ namespace MatterHackers.MatterControl
 					ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 				}
 
-				// Call save on the provider
-				this.ContentStore?.Save(this.SourceItem, scene);
-
 				if (scene is InteractiveScene interactiveScene)
 				{
+					using (new ClearThenRestorSelection(interactiveScene))
+					{
+						// Call save on the provider
+						this.ContentStore?.Save(this.SourceItem, scene);
+					}
+
 					interactiveScene.MarkSavePoint();
+				}
+				else
+                {
+					// Call save on the provider
+					this.ContentStore?.Save(this.SourceItem, scene);
 				}
 			}
 		}
@@ -217,6 +226,43 @@ namespace MatterHackers.MatterControl
 		private async Task<string> GCodeOverridePath(PrinterConfig printer)
 		{
 			return Path.ChangeExtension(await GCodePath(printer), GCodeFile.PostProcessedExtension);
+		}
+	}
+
+	public class ClearThenRestorSelection : IDisposable
+	{
+        private InteractiveScene interactiveScene;
+		private List<IObject3D> selectedObjects = new List<IObject3D>();
+
+        public ClearThenRestorSelection(InteractiveScene interactiveScene)
+		{
+			this.interactiveScene = interactiveScene;
+
+			// remember any selected objects we have
+			var selection = interactiveScene.SelectedItem;
+			if (selection != null)
+            {
+				if (selection is SelectionGroupObject3D selectionGroup)
+                {
+					selectedObjects.AddRange(selectionGroup.Children);
+                }
+				else
+                {
+					selectedObjects.Add(selection);
+                }
+            }
+		}
+
+		public void Dispose()
+		{
+			// restore the selcetion
+			foreach(var item in selectedObjects)
+            {
+				if (!(item is SelectionGroupObject3D))
+				{
+					interactiveScene.AddToSelection(item);
+				}
+            }
 		}
 	}
 }

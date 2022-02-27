@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						letterObject = new ScaleObject3D_3(letterObject, 1.0 / scaleRatio, 1, 1.0 / scaleRatio);
 					}
-					letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
+					letterObject = new AlignObject3D_2(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 					letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
 					this.Children.Add(letterObject);
 
@@ -122,13 +122,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
 					};
 
-					basePlate = new AlignObject3D(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
+					basePlate = new AlignObject3D_2(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
 					basePlate = new SetCenterObject3D(basePlate, brailleLetter.GetCenter(), true, false, false);
 					this.Children.Add(basePlate);
 
 					IObject3D underline = await CubeObject3D.Create(basePlate.XSize(), .2, 1);
-					underline = new AlignObject3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
-					underline = new AlignObject3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
+					underline = new AlignObject3D_2(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
+					underline = new AlignObject3D_2(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
 					this.Children.Add(underline);
 				}
 			}

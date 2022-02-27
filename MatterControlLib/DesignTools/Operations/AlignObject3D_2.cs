@@ -41,84 +41,21 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Aabb = MatterHackers.VectorMath.AxisAlignedBoundingBox;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-	public enum Align
-	{
-		None,
-		Min,
-		Center,
-		Max,
-		Origin
-	}
-
-	[JsonConverter(typeof(StringEnumConverter))]
-	public enum Alignment
-	{
-		X,
-		Y,
-		Z,
-		negX,
-		negY,
-		negZ
-	}
-
-	[JsonConverter(typeof(StringEnumConverter))]
-	[Flags]
-	public enum Edge
-	{
-		LeftFront = FaceAlign.Left | FaceAlign.Front,
-		LeftBack = FaceAlign.Left | FaceAlign.Back,
-		LeftBottom = FaceAlign.Left | FaceAlign.Bottom,
-		LeftTop = FaceAlign.Left | FaceAlign.Top,
-		RightFront = FaceAlign.Right | FaceAlign.Front,
-		RightBack = FaceAlign.Right | FaceAlign.Back,
-		RightBottom = FaceAlign.Right | FaceAlign.Bottom,
-		RightTop = FaceAlign.Right | FaceAlign.Top,
-		FrontBottom = FaceAlign.Front | FaceAlign.Bottom,
-		FrontTop = FaceAlign.Front | FaceAlign.Top,
-		BackBottom = FaceAlign.Back | FaceAlign.Bottom,
-		BackTop = FaceAlign.Back | FaceAlign.Top
-	}
-
-	[JsonConverter(typeof(StringEnumConverter))]
-	[Flags]
-	public enum FaceAlign
-	{
-		Left = 0x01,
-		Right = 0x02,
-		Front = 0x04,
-		Back = 0x08,
-		Bottom = 0x10,
-		Top = 0x20,
-	}
-
-	[JsonConverter(typeof(StringEnumConverter))]
-	[Flags]
-	public enum Side2D
-	{
-		Left = 0x01,
-		Right = 0x02,
-		Bottom = 0x10,
-		Top = 0x20,
-	}
-
-	[Obsolete("Use AlignObject3D_2 instead", false)]
-	public class AlignObject3D : Object3D, IPropertyGridModifier
+    public class AlignObject3D_2 : Object3D, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public Dictionary<string, Vector3> StartingMin = new Dictionary<string, Vector3>();
 
-		public AlignObject3D()
+		public AlignObject3D_2()
 		{
 			Name = "Align";
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0)
+		public AlignObject3D_2(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0)
 			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)))
 		{
 			if (objectToAlign == objectToAlignTo)
@@ -127,17 +64,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0)
+		public AlignObject3D_2(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0)
 			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ))
 		{
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ)
+		public AlignObject3D_2(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ)
 			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ))
 		{
 		}
 
-		public AlignObject3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo)
+		public AlignObject3D_2(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo)
 		{
 			AxisAlignedBoundingBox bounds = item.GetAxisAlignedBoundingBox();
 
@@ -179,19 +116,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Anchor")]
 		public SelectedChildren SelectedChild { get; set; } = new SelectedChildren();
 
-		public bool Advanced { get; set; } = false;
-
-		[ReadOnly(true)]
-		[DisplayName("")] // clear the display name so this text will be the full width of the editor
-		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more align options.";
-
 		[SectionStart("X Axis"), DisplayName("Align")]
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XAlign { get; set; } = Align.None;
 
-		[DisplayName("Anchor")]
+		public bool XOptions { get; set; } = false;
+
+		[DisplayName("SubAlign")]
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "align_origin.png" }, InvertIcons = true)]
-		public Align XAlignTo { get; set; } = Align.None;
+		public Align XSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
 		[Slider(-20, 20, useSnappingGrid: true)]
@@ -201,9 +134,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlign { get; set; } = Align.None;
 
-		[DisplayName("Anchor")]
+		public bool YOptions { get; set; } = false;
+
+		[DisplayName("SubAlign")]
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
-		public Align YAlignTo { get; set; } = Align.None;
+		public Align YSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
 		[Slider(-20, 20, useSnappingGrid: true)]
@@ -213,9 +148,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlign { get; set; } = Align.None;
 
-		[DisplayName("Anchor")]
+		public bool ZOptions { get; set; } = false;
+
+		[DisplayName("SubAlign")]
 		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
-		public Align ZAlignTo { get; set; } = Align.None;
+		public Align ZSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
 		[Slider(-20, 20, useSnappingGrid: true)]
@@ -374,9 +311,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// align all the objects to the anchor
 					foreach (var child in children)
 					{
-						AlignAxis(0, XAlign, GetAlignToOffset(anchorBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset.Value(this), child);
-						AlignAxis(1, YAlign, GetAlignToOffset(anchorBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset.Value(this), child);
-						AlignAxis(2, ZAlign, GetAlignToOffset(anchorBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset.Value(this), child);
+						AlignAxis(0,
+							(XOptions && XSubAlign != Align.None) ? XSubAlign : XAlign,
+							GetSubAlignOffset(anchorBounds, 0, XAlign),
+							XOffset.Value(this),
+							child);
+						AlignAxis(1,
+							(YOptions && YSubAlign != Align.None) ? YSubAlign : YAlign,
+							GetSubAlignOffset(anchorBounds, 1, YAlign),
+							YOffset.Value(this),
+							child);
+						AlignAxis(2,
+							(ZOptions && ZSubAlign != Align.None) ? ZSubAlign : ZAlign,
+							GetSubAlignOffset(anchorBounds, 2, ZAlign),
+							ZOffset.Value(this),
+							child);
 					}
 				});
 
@@ -407,13 +356,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(XAlignTo), () => Advanced);
-			change.SetRowVisible(nameof(XOffset), () => Advanced);
-			change.SetRowVisible(nameof(YAlignTo), () => Advanced);
-			change.SetRowVisible(nameof(YOffset), () => Advanced);
-			change.SetRowVisible(nameof(ZAlignTo), () => Advanced);
-			change.SetRowVisible(nameof(ZOffset), () => Advanced);
-			change.SetRowVisible(nameof(EasyModeMessage), () => !Advanced);
+			change.SetRowVisible(nameof(XSubAlign), () => XOptions);
+			change.SetRowVisible(nameof(XOffset), () => XOptions);
+			change.SetRowVisible(nameof(YSubAlign), () => YOptions);
+			change.SetRowVisible(nameof(YOffset), () => YOptions);
+			change.SetRowVisible(nameof(ZSubAlign), () => ZOptions);
+			change.SetRowVisible(nameof(ZOffset), () => ZOptions);
 		}
 
 		private static bool IsSet(FaceAlign variableToCheck, FaceAlign faceToCheckFor, FaceAlign faceToAssertNot)
@@ -460,7 +408,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			item.Translate(translate);
 		}
 
-		private double GetAlignToOffset(Aabb anchorBounds, int axis, Align alignTo)
+		private double GetSubAlignOffset(Aabb anchorBounds, int axis, Align alignTo)
 		{
 			switch (alignTo)
 			{

@@ -682,13 +682,13 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Align")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(AlignObject3D),
+				ResultType = typeof(AlignObject3D_2),
 				TitleGetter = () => "Align".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
-					var align = new AlignObject3D();
+					var align = new AlignObject3D_2();
 					align.AddSelectionAsChildren(scene, selectedItem);
 					align.Name = align.NameFromChildren();
 					align.NameOverriden = false;
