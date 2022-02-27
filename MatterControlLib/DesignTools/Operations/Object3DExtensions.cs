@@ -415,36 +415,36 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var selectedItems = scene.GetSelectedItems();
 
-				using (new DataConverters3D.SelectionMaintainer(scene))
+				scene.SelectedItem = null;
+				using (selectedItem.Parent.RebuildLock())
 				{
-					using (selectedItem.Parent.RebuildLock())
+					var name = "";
+					foreach (var item in selectedItems)
 					{
-						var name = "";
-						foreach (var item in selectedItems)
+						newParent.Children.Add(item.Clone());
+						if (name != "")
 						{
-							newParent.Children.Add(item.Clone());
-							if (name != "")
-                            {
-								name += ", ";
-                            }
-							name += item.Name;
+							name += ", ";
 						}
-
-						if (string.IsNullOrEmpty(newParent.Name))
-                        {
-							newParent.Name = name;
-                        }
-
-						newParent.MakeNameNonColliding();
-
-						scene.UndoBuffer.AddAndDo(
-							new ReplaceCommand(
-								selectedItems,
-								new[] { newParent }));
+						name += item.Name;
 					}
 
-					await newParent.Rebuild();
+					if (string.IsNullOrEmpty(newParent.Name))
+					{
+						newParent.Name = name;
+					}
+
+					newParent.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							selectedItems,
+							new[] { newParent }));
 				}
+
+				scene.SelectedItem = newParent;
+
+				await newParent.Rebuild();
 			}
 		}
 

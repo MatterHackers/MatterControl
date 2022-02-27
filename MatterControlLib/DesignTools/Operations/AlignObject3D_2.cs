@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -123,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public bool XOptions { get; set; } = false;
 
 		[DisplayName("SubAlign")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_right.png", "align_to_center_x.png", "align_to_left.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -131,13 +126,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DoubleOrExpression XOffset { get; set; } = 0;
 
 		[SectionStart("Y Axis"), DisplayName("Align")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlign { get; set; } = Align.None;
 
 		public bool YOptions { get; set; } = false;
 
 		[DisplayName("SubAlign")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_top.png", "align_to_center_y.png", "align_to_bottom.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -145,13 +140,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DoubleOrExpression YOffset { get; set; } = 0;
 
 		[SectionStart("Z Axis"), DisplayName("Align")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlign { get; set; } = Align.None;
 
 		public bool ZOptions { get; set; } = false;
 
 		[DisplayName("SubAlign")]
-		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_top.png", "align_to_center_y.png", "align_to_bottom.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZSubAlign { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -308,40 +303,53 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var children = list.Where(c => c.GetType() != typeof(OperationSourceObject3D)
 						&& c.ID != SelectedChild.FirstOrDefault());
 
-					// align all the objects to the anchor
-					foreach (var child in children)
+					Align MapSubAlign(Align align)
+                    {
+                        switch (align)
+                        {
+                            case Align.Min:
+								return Align.Max;
+                            case Align.Max:
+								return Align.Min;
+							default:
+								return align;
+                        }
+                    }
+
+                    // align all the objects to the anchor
+                    foreach (var child in children)
 					{
 						AlignAxis(0,
-							(XOptions && XSubAlign != Align.None) ? XSubAlign : XAlign,
+							(XOptions && XSubAlign != Align.None) ? MapSubAlign(XSubAlign) : XAlign,
 							GetSubAlignOffset(anchorBounds, 0, XAlign),
 							XOffset.Value(this),
 							child);
 						AlignAxis(1,
-							(YOptions && YSubAlign != Align.None) ? YSubAlign : YAlign,
+							(YOptions && YSubAlign != Align.None) ? MapSubAlign(YSubAlign) : YAlign,
 							GetSubAlignOffset(anchorBounds, 1, YAlign),
 							YOffset.Value(this),
 							child);
 						AlignAxis(2,
-							(ZOptions && ZSubAlign != Align.None) ? ZSubAlign : ZAlign,
+							(ZOptions && ZSubAlign != Align.None) ? MapSubAlign(ZSubAlign) : ZAlign,
 							GetSubAlignOffset(anchorBounds, 2, ZAlign),
 							ZOffset.Value(this),
 							child);
 					}
-				});
+                });
 
 				if (!NameOverriden)
 				{
 					Name = NameFromChildren();
 					NameOverriden = false;
 				}
-			}
+            }
 
-			this.CancelAllParentBuilding();
+            this.CancelAllParentBuilding();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
-		}
+        }
 
-		public override void Cancel(UndoBuffer undoBuffer)
+        public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{
@@ -436,5 +444,5 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			return CalculateName(this.Children, ", ");
 		}
-	}
+    }
 }
