@@ -71,33 +71,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             await Task.Run(() =>
             {
                 // Clear selection to ensure all root level children are arranged on the bed
-                scene.SelectedItem = null;
-
-                var children = scene.Children.ToList().Where(item =>
+                using (new SelectionMaintainer(scene))
                 {
-                    var aabb = item.WorldAxisAlignedBoundingBox();
-                    if (aabb.Center.Length > 1000)
+                    var children = scene.Children.ToList().Where(item =>
                     {
-                        return true;
+                        var aabb = item.WorldAxisAlignedBoundingBox();
+                        if (aabb.Center.Length > 1000)
+                        {
+                            return true;
+                        }
+
+                        return item.Persistable == true && item.Printable == true;
+                    }).ToList();
+                    var transformData = new List<TransformData>();
+                    foreach (var child in children)
+                    {
+                        transformData.Add(new TransformData() { TransformedObject = child, UndoTransform = child.Matrix });
                     }
 
-                    return item.Persistable == true && item.Printable == true;
-                }).ToList();
-                var transformData = new List<TransformData>();
-                foreach (var child in children)
-                {
-                    transformData.Add(new TransformData() { TransformedObject = child, UndoTransform = child.Matrix });
-                }
+                    PlatingHelper.ArrangeOnBed(children, bedCenter);
+                    int i = 0;
+                    foreach (var child in children)
+                    {
+                        transformData[i].RedoTransform = child.Matrix;
+                        i++;
+                    }
 
-                PlatingHelper.ArrangeOnBed(children, bedCenter);
-                int i = 0;
-                foreach (var child in children)
-                {
-                    transformData[i].RedoTransform = child.Matrix;
-                    i++;
+                    scene.UndoBuffer.Add(new TransformCommand(transformData));
                 }
-
-                scene.UndoBuffer.Add(new TransformCommand(transformData));
             });
         }
 

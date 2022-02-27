@@ -296,9 +296,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					// make sure the selected item is still selected after reload
-					var currentItem = sceneContext.Scene.SelectedItem;
-					sceneContext.Scene.SelectedItem = null;
-					sceneContext.Scene.SelectedItem = currentItem;
+					using(new SelectionMaintainer(Scene))
+                    {
+                    }
 				});
 			}
 		}
@@ -2135,7 +2135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (e.InvalidateType.HasFlag(InvalidateType.Name))
 			{
 				// clear and restore the selection so we have the name change
-				using (new ClearThenRestorSelection(Scene))
+				using (new SelectionMaintainer(Scene))
 				{
 					if (!rebuildTreePending)
 					{
