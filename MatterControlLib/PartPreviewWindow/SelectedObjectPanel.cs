@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (this.item.CanApply)
 				{
 					var item = this.item;
-					using (new SelectionMaintainer(view3DWidget.Scene))
+					using (new DataConverters3D.SelectionMaintainer(view3DWidget.Scene))
 					{
 						item.Apply(view3DWidget.Scene.UndoBuffer);
 					}
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			cancelButton.Click += (s, e) =>
 			{
 				var item = this.item;
-				using (new SelectionMaintainer(view3DWidget.Scene))
+				using (new DataConverters3D.SelectionMaintainer(view3DWidget.Scene))
 				{
 					item.Cancel(view3DWidget.Scene.UndoBuffer);
 				}

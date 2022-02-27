@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Do()
 		{
-			using (new SelectionMaintainer(scene))
+			using (new DataConverters3D.SelectionMaintainer(scene))
 			{
 				foreach(var item in items)
 				{
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Undo()
 		{
-			using (new SelectionMaintainer(scene))
+			using (new DataConverters3D.SelectionMaintainer(scene))
 			{
 				foreach (var item in items)
 				{

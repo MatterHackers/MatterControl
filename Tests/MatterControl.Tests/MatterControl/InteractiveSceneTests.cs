@@ -540,7 +540,7 @@ namespace MatterControl.Tests.MatterControl
 
 			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .01));
 
-			var align = new AlignObject3D();
+			var align = new AlignObject3D_2();
 			align.Children.Add(bigCube);
 			align.Children.Add(fit);
 
@@ -548,7 +548,9 @@ namespace MatterControl.Tests.MatterControl
 			align.XAlign = Align.Center;
 			align.YAlign = Align.Center;
 			align.ZAlign = Align.Max;
-			align.Advanced = true;
+			align.XOptions = true;
+			align.YOptions = true;
+			align.ZOptions = true;
 			align.ZOffset = 1;
 
 			await align.Rebuild();
@@ -584,7 +586,7 @@ namespace MatterControl.Tests.MatterControl
 			scene.AddToSelection(bigCube);
 
 			// create an align of them
-			var align = new AlignObject3D();
+			var align = new AlignObject3D_2();
 			align.AddSelectionAsChildren(scene, scene.SelectedItem);
 
 			var unalignedBounds = align.GetAxisAlignedBoundingBox();

@@ -148,9 +148,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& (object3D.Parents().Contains(scene.SelectedItem)
 				|| object3D == scene.SelectedItem))
 			{
-				var selection = scene.SelectedItem;
-				scene.SelectedItem = null;
-				scene.SelectedItem = selection;
+				using(new SelectionMaintainer(scene))
+                {
+                }
 			}
 		}
 
@@ -415,7 +415,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var selectedItems = scene.GetSelectedItems();
 
-				using (new SelectionMaintainer(scene))
+				using (new DataConverters3D.SelectionMaintainer(scene))
 				{
 					using (selectedItem.Parent.RebuildLock())
 					{

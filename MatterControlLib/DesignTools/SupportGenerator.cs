@@ -152,10 +152,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var selectedItem = scene.SelectedItem;
 
-			using (new SelectionMaintainer(scene))
+			using (new DataConverters3D.SelectionMaintainer(scene))
 			{
 				var status = new ProgressStatus
-				{
+                {
 					Status = "Enter"
 				};
 				progress?.Report(status);
@@ -181,9 +181,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				// create the gird of possible support
 				var gridBounds = new RectangleDouble(Math.Floor((double)(suppoortBounds.MinXYZ.X / PillarSize)),
-					Math.Floor((double)(suppoortBounds.MinXYZ.Y / PillarSize)),
-					Math.Ceiling(suppoortBounds.MaxXYZ.X / PillarSize),
-					Math.Ceiling(suppoortBounds.MaxXYZ.Y / PillarSize));
+                    Math.Floor((double)(suppoortBounds.MinXYZ.Y / PillarSize)),
+                    Math.Ceiling(suppoortBounds.MaxXYZ.X / PillarSize),
+                    Math.Ceiling(suppoortBounds.MaxXYZ.Y / PillarSize));
 
 				var partBounds = new RectangleDouble(gridBounds.Left * PillarSize,
 					gridBounds.Bottom * PillarSize,
@@ -211,8 +211,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				status.Status = "Columns";
 				progress?.Report(status);
 
-				// minimum height requiring support is 1/2 the layer height
-				AddSupportColumns(gridBounds, detectedPlanes);
+                // minimum height requiring support is 1/2 the layer height
+                AddSupportColumns(gridBounds, detectedPlanes);
 
 				// this is the theory for regions rather than pillars
 				// separate the faces into face patch groups (these are the new support tops)
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				bedBounds = new RectangleDouble(new Vector2(aabb.MinXYZ), new Vector2(aabb.MaxXYZ));
 			}
 
-			using (new SelectionMaintainer(scene))
+			using (new DataConverters3D.SelectionMaintainer(scene))
 			{
 				var existingSupports = scene.Descendants().Where(i =>
 				{
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					return false;
 				});
 
-				scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
+                scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
 			}
 		}
 

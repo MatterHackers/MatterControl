@@ -296,9 +296,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					// make sure the selected item is still selected after reload
-					var currentItem = sceneContext.Scene.SelectedItem;
-					sceneContext.Scene.SelectedItem = null;
-					sceneContext.Scene.SelectedItem = currentItem;
+					using(new SelectionMaintainer(Scene))
+                    {
+                    }
 				});
 			}
 		}
@@ -2135,22 +2135,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (e.InvalidateType.HasFlag(InvalidateType.Name))
 			{
 				// clear and restore the selection so we have the name change
-				var lastSelectedItem = Scene.SelectedItem;
-				if (!rebuildTreePending)
+				using (new SelectionMaintainer(Scene))
 				{
-					rebuildTreePending = true;
-					UiThread.RunOnIdle(this.RebuildTree);
-				}
-
-				Scene.SelectedItem = null;
-				// Adding a group of parts to a bed when there are multiple existing parts already selected
-				// will create duplicates if any of the new parts need to be renamed. Since the old selection
-				// group will be replaced with a new selection group containing the newly-added parts, just
-				// clear the selection. (Don't select if the selection was a selection group or has insertion groups
-				// still processing).
-				if (!(lastSelectedItem is SelectionGroupObject3D) || !Scene.Children.Any(c => c is InsertionGroupObject3D))
-				{
-					Scene.SelectedItem = lastSelectedItem;
+					if (!rebuildTreePending)
+					{
+						rebuildTreePending = true;
+						UiThread.RunOnIdle(this.RebuildTree);
+					}
 				}
 			}
 

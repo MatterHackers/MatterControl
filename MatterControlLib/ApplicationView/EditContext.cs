@@ -39,6 +39,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -128,12 +129,20 @@ namespace MatterHackers.MatterControl
 					ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 				}
 
-				// Call save on the provider
-				this.ContentStore?.Save(this.SourceItem, scene);
-
 				if (scene is InteractiveScene interactiveScene)
 				{
+					using (new SelectionMaintainer(interactiveScene))
+					{
+						// Call save on the provider
+						this.ContentStore?.Save(this.SourceItem, scene);
+					}
+
 					interactiveScene.MarkSavePoint();
+				}
+				else
+                {
+					// Call save on the provider
+					this.ContentStore?.Save(this.SourceItem, scene);
 				}
 			}
 		}

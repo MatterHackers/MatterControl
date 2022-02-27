@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl
 					component.Matrix = imageObject.Matrix;
 					imageObject.Matrix = Matrix4X4.Identity;
 
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
 					}
@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl
 					inflatePath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
 
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
 					}
@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl
 						extrude.Matrix = itemClone.Matrix;
 						itemClone.Matrix = Matrix4X4.Identity;
 
-						using (new SelectionMaintainer(scene))
+						using (new DataConverters3D.SelectionMaintainer(scene))
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
 						}
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl
 						revolve.Matrix = itemClone.Matrix;
 						itemClone.Matrix = Matrix4X4.Identity;
 
-						using (new SelectionMaintainer(scene))
+						using (new DataConverters3D.SelectionMaintainer(scene))
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { revolve }));
 						}
@@ -497,10 +497,10 @@ namespace MatterHackers.MatterControl
 					}
 
 					// Dump selection forcing collapse of selection group
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						var component = new ComponentObject3D
-						{
+                        {
 							Name = "New Component",
 							Finalized = false
 						};
@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl
 					outlinePath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
 
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { outlinePath }));
 					}
@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl
 					smoothPath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
 
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
 					}
@@ -682,13 +682,13 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Align")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(AlignObject3D),
+				ResultType = typeof(AlignObject3D_2),
 				TitleGetter = () => "Align".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
-					var align = new AlignObject3D();
+					var align = new AlignObject3D_2();
 					align.AddSelectionAsChildren(scene, selectedItem);
 					align.Name = align.NameFromChildren();
 					align.NameOverriden = false;
@@ -1039,7 +1039,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						var fit = await FitToBoundsObject3D_3.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
@@ -1063,7 +1063,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
-					using (new SelectionMaintainer(scene))
+					using (new DataConverters3D.SelectionMaintainer(scene))
 					{
 						var fit = await FitToCylinderObject3D.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
