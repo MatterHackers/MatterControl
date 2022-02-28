@@ -459,7 +459,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && !(selectedItem is PrimitiveObject3D)
                 && clipboardItem != null)
             {
-                selectedItem.Children.Add(clipboardItem.Clone());
+                if (selectedItem is OperationSourceContainerObject3D sourceContainer)
+                {
+                    sourceContainer.SourceContainer.Children.Add(clipboardItem.Clone());
+                }
+                else
+                {
+                    selectedItem.Children.Add(clipboardItem.Clone());
+                }
             }
         }
 
