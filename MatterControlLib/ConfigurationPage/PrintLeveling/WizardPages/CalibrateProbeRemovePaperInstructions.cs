@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
 			{
 				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
-				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 30, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
 			base.OnLoad(args);
