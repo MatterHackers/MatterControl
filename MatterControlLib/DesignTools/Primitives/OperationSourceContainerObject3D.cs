@@ -210,6 +210,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Name = NameFromChildren();
 				NameOverriden = false;
+				base.OnInvalidate(invalidateArgs);
 			}
 			else
 			{

@@ -256,6 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Name = NameFromChildren();
 				NameOverriden = false;
+				base.OnInvalidate(invalidateArgs);
 			}
 			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
