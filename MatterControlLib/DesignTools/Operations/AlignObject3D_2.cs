@@ -256,6 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Name = NameFromChildren();
 				NameOverriden = false;
+				base.OnInvalidate(invalidateArgs);
 			}
 			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
@@ -316,24 +317,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         }
                     }
 
-                    // align all the objects to the anchor
-                    foreach (var child in children)
+					// align all the objects to the anchor
+					foreach (var child in children)
 					{
-						AlignAxis(0,
-							(XOptions && XSubAlign != Align.None) ? MapSubAlign(XSubAlign) : XAlign,
-							GetSubAlignOffset(anchorBounds, 0, XAlign),
-							XOffset.Value(this),
-							child);
-						AlignAxis(1,
-							(YOptions && YSubAlign != Align.None) ? MapSubAlign(YSubAlign) : YAlign,
-							GetSubAlignOffset(anchorBounds, 1, YAlign),
-							YOffset.Value(this),
-							child);
-						AlignAxis(2,
-							(ZOptions && ZSubAlign != Align.None) ? MapSubAlign(ZSubAlign) : ZAlign,
-							GetSubAlignOffset(anchorBounds, 2, ZAlign),
-							ZOffset.Value(this),
-							child);
+						if (XAlign != Align.None)
+						{
+							AlignAxis(0,
+								(XOptions && XSubAlign != Align.None) ? MapSubAlign(XSubAlign) : XAlign,
+								GetSubAlignOffset(anchorBounds, 0, XAlign),
+								XOffset.Value(this),
+								child);
+						}
+						if (YAlign != Align.None)
+						{
+							AlignAxis(1,
+								(YOptions && YSubAlign != Align.None) ? MapSubAlign(YSubAlign) : YAlign,
+								GetSubAlignOffset(anchorBounds, 1, YAlign),
+								YOffset.Value(this),
+								child);
+						}
+						if (ZAlign != Align.None)
+						{
+							AlignAxis(2,
+								(ZOptions && ZSubAlign != Align.None) ? MapSubAlign(ZSubAlign) : ZAlign,
+								GetSubAlignOffset(anchorBounds, 2, ZAlign),
+								ZOffset.Value(this),
+								child);
+						}
 					}
                 });
 
