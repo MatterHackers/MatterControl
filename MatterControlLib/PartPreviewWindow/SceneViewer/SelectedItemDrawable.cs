@@ -108,6 +108,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public AxisAlignedBoundingBox GetWorldspaceAABB(IObject3D item, bool isSelected, WorldView world)
+		{
+			if (isSelected && scene.DrawSelection)
+			{
+				var scaleMatrix = CalcScaleMatrix(world, item);
+				return item.Mesh.GetAxisAlignedBoundingBox(scaleMatrix);
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
+
+		private Matrix4X4 CalcScaleMatrix(WorldView world, IObject3D item)
+		{
+			// Expand the object
+			var worldMatrix = item.WorldMatrix();
+			var worldBounds = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
+			var worldCenter = worldBounds.Center;
+			double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
+			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
+			var pixelsWant = pixelsAccross + Vector3.One * 4 * Math.Sqrt(2);
+
+			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
+
+			return worldMatrix.ApplyAtPosition(worldCenter, Matrix4X4.CreateScale(
+				wantMm.X / worldBounds.XSize,
+				wantMm.Y / worldBounds.YSize,
+				wantMm.Z / worldBounds.ZSize));
+		}
+
 		private void RenderSelection(IObject3D item, Color selectionColor, WorldView world)
 		{
 			if (item.Mesh == null)
@@ -121,19 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.CullFace(CullFaceMode.Front);
 
 			// Expand the object
-			var worldMatrix = item.WorldMatrix();
-			var worldBounds = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
-			var worldCenter = worldBounds.Center;
-			double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
-			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
-			var pixelsWant = pixelsAccross + Vector3.One * 4 * Math.Sqrt(2);
-
-			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
-
-			var scaleMatrix = worldMatrix.ApplyAtPosition(worldCenter, Matrix4X4.CreateScale(
-				wantMm.X / worldBounds.XSize,
-				wantMm.Y / worldBounds.YSize,
-				wantMm.Z / worldBounds.ZSize));
+			var scaleMatrix = CalcScaleMatrix(world, item);
 
 			GLHelper.Render(item.Mesh,
 				selectionColor,

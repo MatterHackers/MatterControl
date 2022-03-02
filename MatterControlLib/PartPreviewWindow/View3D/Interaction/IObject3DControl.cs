@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RayTracer;
+using MatterHackers.VectorMath;
 using System;
 
 namespace MatterHackers.MeshVisualizer
@@ -65,6 +66,9 @@ namespace MatterHackers.MeshVisualizer
 		bool DrawOnTop { get; }
 
 		void Draw(DrawGlContentEventArgs e);
+		
+		/// <returns>The worldspace AABB of the 3D geometry drawn by Draw.</returns>
+		AxisAlignedBoundingBox GetWorldspaceAABB();
 
 		ITraceable GetTraceable();
 	}

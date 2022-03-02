@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		bool ShouldDrawMoveControls()
 		{
 			bool shouldDrawMoveControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
@@ -164,6 +164,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				shouldDrawMoveControls = false;
 			}
+			return shouldDrawMoveControls;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawMoveControls = ShouldDrawMoveControls();
 
 			var selectedItem = RootSelection;
 			if (selectedItem != null)
@@ -234,7 +240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				IntersectInfo info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null
@@ -342,5 +348,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawMoveControls();
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, upArrowMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+			}
+
+			return box;
+		}
+
 	}
 }

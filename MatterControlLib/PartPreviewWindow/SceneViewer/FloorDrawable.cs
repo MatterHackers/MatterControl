@@ -61,6 +61,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool loadingTextures = false;
 
+		private const int GridSize = 600;
+
 		public FloorDrawable(Object3DControlsLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
 			this.buildVolumeColor = buildVolumeColor;
@@ -119,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				int width = 600;
+				int width = GridSize;
 
 				GL.Disable(EnableCap.Lighting);
 				GL.Disable(EnableCap.CullFace);
@@ -176,6 +178,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					GL.Vertex3(0, 0, -10);
 				}
 				GL.End();
+			}
+		}
+
+		public AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			if (!sceneContext.RendererOptions.RenderBed)
+			{
+				return AxisAlignedBoundingBox.Empty();
+			}
+			else if (editorType == Object3DControlsLayer.EditorType.Printer)
+			{
+				AxisAlignedBoundingBox box = sceneContext.Mesh != null ? sceneContext.Mesh.GetAxisAlignedBoundingBox() : AxisAlignedBoundingBox.Empty();
+
+				if (sceneContext.PrinterShape != null)
+				{
+					box = AxisAlignedBoundingBox.Union(box, sceneContext.PrinterShape.GetAxisAlignedBoundingBox());
+				}
+
+				if (sceneContext.BuildVolumeMesh != null && sceneContext.RendererOptions.RenderBuildVolume)
+				{
+					box = AxisAlignedBoundingBox.Union(box, sceneContext.BuildVolumeMesh.GetAxisAlignedBoundingBox());
+				}
+
+				return box;
+			}
+			else
+			{
+				return new AxisAlignedBoundingBox(-GridSize, -GridSize, 0, GridSize, GridSize, 0);
 			}
 		}
 

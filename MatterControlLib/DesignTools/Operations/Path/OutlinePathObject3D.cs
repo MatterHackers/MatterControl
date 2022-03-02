@@ -41,6 +41,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -157,6 +158,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }

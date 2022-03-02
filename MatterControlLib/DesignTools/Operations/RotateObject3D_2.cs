@@ -120,6 +120,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				return WorldViewExtensions.GetWorldspaceAabbOfRenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
+
+
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)

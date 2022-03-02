@@ -122,12 +122,16 @@ namespace MatterHackers.MatterControl
 				printerBed.Vertices[i] = printerBed.Vertices[i] - new Vector3Float(-printer.Bed.BedCenter, zTop + .02);
 			}
 
+			printerBed.MarkAsChanged();
+
 			if (buildVolume != null)
 			{
 				for (int i = 0; i < buildVolume.Vertices.Count; i++)
 				{
 					buildVolume.Vertices[i] = buildVolume.Vertices[i] - new Vector3Float(-printer.Bed.BedCenter, zTop + .02);
 				}
+
+				buildVolume.MarkAsChanged();
 			}
 
 			return (printerBed, buildVolume);

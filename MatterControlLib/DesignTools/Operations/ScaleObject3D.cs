@@ -43,6 +43,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.RenderOpenGl;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -206,6 +207,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				layer.World.RenderAxis(ScaleAbout, this.WorldMatrix(), 30, 1);
 			}
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				return RenderOpenGl.WorldViewExtensions.GetWorldspaceAabbOfRenderAxis(ScaleAbout, this.WorldMatrix(), 30, 1);
+			}
+
+			return AxisAlignedBoundingBox.Empty();
 		}
 
 		public async override void OnInvalidate(InvalidateArgs invalidateArgs)

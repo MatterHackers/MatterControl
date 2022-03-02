@@ -163,6 +163,15 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
+		AxisAlignedBoundingBox IObject3DControl.GetWorldspaceAABB()
+		{
+			// TODO: Untested.
+			if (flattened != null)
+				return new AxisAlignedBoundingBox(targets.Select(t => t.Point).ToArray());
+			else
+				return AxisAlignedBoundingBox.Empty();
+		}
+
 		private void Reset()
 		{
 			// Clear and close selection targets

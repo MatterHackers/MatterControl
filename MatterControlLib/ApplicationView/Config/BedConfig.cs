@@ -542,6 +542,23 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		internal AxisAlignedBoundingBox GetAabbOfRenderGCode3D()
+		{
+			if (this.RenderInfo != null)
+			{
+				// If needed, update the RenderType flags to match to current user selection
+				if (RendererOptions.IsDirty)
+				{
+					this.RenderInfo.RefreshRenderType();
+					RendererOptions.IsDirty = false;
+				}
+
+				return this.GCodeRenderer.GetAabbOfRender3D(this.RenderInfo);
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
+
 		public void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			if (File.Exists(filePath))

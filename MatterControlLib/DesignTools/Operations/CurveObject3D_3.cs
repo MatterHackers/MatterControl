@@ -102,11 +102,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
 		public DoubleOrExpression MinSidesPerRotation { get; set; } = 30;
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		struct DrawInfo
+		{
+			public double diameter;
+			public double startPercent;
+			public AxisAlignedBoundingBox sourceAabb;
+			public double distance;
+			public Vector3 center;
+		}
+
+		DrawInfo GetDrawInfo()
 		{
 			var diameter = Diameter.Value(this);
 			var startPercent = StartPercent.Value(this);
-			var minSidesPerRotation = MinSidesPerRotation.Value(this);
 
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var distance = diameter / 2 + sourceAabb.YSize / 2;
@@ -114,18 +122,39 @@ namespace MatterHackers.MatterControl.DesignTools
 			center.X -= sourceAabb.XSize / 2 - (startPercent / 100.0) * sourceAabb.XSize;
 			center = Vector3.Zero;//.Transform(Matrix.Inverted);
 
+			return new DrawInfo
+			{
+				diameter = diameter,
+				startPercent = startPercent,
+				sourceAabb = sourceAabb,
+				distance = distance,
+				center = center,
+			};
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			var drawInfo = GetDrawInfo();
+			var minSidesPerRotation = MinSidesPerRotation.Value(this);
+
 			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, drawInfo.diameter, drawInfo.sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
 
 			// render the split lines
-			var radius = diameter / 2;
+			var radius = drawInfo.diameter / 2;
 			var circumference = MathHelper.Tau * radius;
-			var xxx = sourceAabb.XSize * (startPercent / 100.0);
+			var xxx = drawInfo.sourceAabb.XSize * (drawInfo.startPercent / 100.0);
 			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, minSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, drawInfo.diameter, drawInfo.sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, minSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			var drawInfo = GetDrawInfo();
+			return AxisAlignedBoundingBox.CenteredBox(new Vector3(drawInfo.diameter, drawInfo.diameter, drawInfo.sourceAabb.ZSize), drawInfo.center).NewTransformed(this.WorldMatrix());
 		}
 
 		private double DiameterFromAngle()

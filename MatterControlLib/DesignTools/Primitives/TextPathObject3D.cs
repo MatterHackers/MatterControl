@@ -199,5 +199,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DrawPath();
 		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
+		}
 	}
 }

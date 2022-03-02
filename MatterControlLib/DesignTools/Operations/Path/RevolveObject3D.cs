@@ -131,23 +131,40 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		(Vector3, Vector3) GetStartEnd(IPathObject pathObject)
+		{
+			// draw the line that is the rotation point
+			var aabb = this.GetAxisAlignedBoundingBox();
+			var vertexSource = this.VertexSource.Transform(Matrix);
+			var bounds = vertexSource.GetBounds();
+			var lineX = bounds.Left + AxisPosition.Value(this);
+
+			var start = new Vector3(lineX, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
+			var end = new Vector3(lineX, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
+			return (start, end);
+		}
+
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var child = this.Children.FirstOrDefault();
 			if (child is IPathObject pathObject)
 			{
-				// draw the line that is the rotation point
-				var aabb = this.GetAxisAlignedBoundingBox();
-				var vertexSource = this.VertexSource.Transform(Matrix);
-				var bounds = vertexSource.GetBounds();
-				var lineX = bounds.Left + AxisPosition.Value(this);
-
-				var start = new Vector3(lineX, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
-				var end = new Vector3(lineX, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
-
+				var (start, end) = GetStartEnd(pathObject);
 				layer.World.Render3DLine(start, end, Color.Red, true);
 				layer.World.Render3DLine(start, end, Color.Red.WithAlpha(20), false);
 			}
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			var child = this.Children.FirstOrDefault();
+			if (child is IPathObject pathObject)
+			{
+				var (start, end) = GetStartEnd(pathObject);
+				return new AxisAlignedBoundingBox(new Vector3[] { start, end });
+			}
+
+			return AxisAlignedBoundingBox.Empty();
 		}
 
 		private CancellationTokenSource cancellationToken;

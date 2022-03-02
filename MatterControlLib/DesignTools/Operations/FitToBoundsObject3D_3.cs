@@ -111,11 +111,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		AxisAlignedBoundingBox CalcBounds()
 		{
 			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 			var center = aabb.Center;
-			var worldMatrix = this.WorldMatrix();
 
 			var width = Width.Value(this);
 			var depth = Depth.Value(this);
@@ -123,8 +122,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			var minXyz = center - new Vector3(width / 2, depth / 2, height / 2);
 			var maxXyz = center + new Vector3(width / 2, depth / 2, height / 2);
-			var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-			layer.World.RenderAabb(bounds, worldMatrix, Color.Red, 1, 1);
+			return new AxisAlignedBoundingBox(minXyz, maxXyz);
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			layer.World.RenderAabb(this.CalcBounds(), this.WorldMatrix(), Color.Red, 1, 1);
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return WorldViewExtensions.GetWorldspaceAabbOfRenderAabb(this.CalcBounds(), this.WorldMatrix(), 1, 1);
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

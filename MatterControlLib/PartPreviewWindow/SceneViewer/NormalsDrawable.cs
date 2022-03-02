@@ -88,5 +88,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				world.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
 			}
 		}
+
+		public AxisAlignedBoundingBox GetWorldspaceAABB(IObject3D item, bool isSelected, WorldView world)
+		{
+			if (!isSelected || item.Mesh?.Faces.Count <= 0)
+			{
+				return AxisAlignedBoundingBox.Empty();
+			}
+
+			AxisAlignedBoundingBox box = item.Mesh.GetAxisAlignedBoundingBox().NewTransformed(item.WorldMatrix());
+			box.Expand(1); // Normal length.
+			return box;
+		}
 	}
 }

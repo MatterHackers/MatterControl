@@ -173,5 +173,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				theme.TextColor);
 			Mesh.PlaceTextureOnFaces(0, texture);
 		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 }

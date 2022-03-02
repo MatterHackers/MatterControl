@@ -120,6 +120,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		AxisAlignedBoundingBox IObject3DControl.GetWorldspaceAABB()
+		{
+			return shape.GetAxisAlignedBoundingBox().NewTransformed(ShapeMatrix());
+		}
+
 		private Matrix4X4 ShapeMatrix()
 		{
 			var worldPosition = getPosition();
