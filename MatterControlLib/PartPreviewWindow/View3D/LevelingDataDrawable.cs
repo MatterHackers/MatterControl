@@ -80,5 +80,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					darkWireframe);
 			}
 		}
+
+		AxisAlignedBoundingBox IDrawable.GetWorldspaceAABB()
+		{
+			if (levelingDataMesh != null)
+			{
+				return levelingDataMesh.GetAxisAlignedBoundingBox();
+			}
+			
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 }

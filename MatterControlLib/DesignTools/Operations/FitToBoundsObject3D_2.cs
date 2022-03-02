@@ -150,16 +150,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		AxisAlignedBoundingBox CalcBounds()
 		{
 			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 			var center = aabb.Center;
-			var worldMatrix = this.WorldMatrix();
-
 			var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
 			var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-			var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-			layer.World.RenderAabb(bounds, worldMatrix, Color.Red, 1, 1);
+			return new AxisAlignedBoundingBox(minXyz, maxXyz);
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			layer.World.RenderAabb(this.CalcBounds(), this.WorldMatrix(), Color.Red, 1, 1);
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.CalcBounds().NewTransformed(this.WorldMatrix());
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

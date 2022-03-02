@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -47,6 +48,10 @@ namespace MatterHackers.GCodeVisualizer
 		private int vertexLength;
 
 		private ColorVertexData[] colorVertexData;
+
+		private AxisAlignedBoundingBox boundingBox = AxisAlignedBoundingBox.Empty();
+
+		public AxisAlignedBoundingBox BoundingBox { get { return new AxisAlignedBoundingBox(boundingBox.MinXYZ, boundingBox.MaxXYZ); } }
 
 		/// <summary>
 		/// Create a new VertexBuffer
@@ -135,6 +140,13 @@ namespace MatterHackers.GCodeVisualizer
 						GL.BufferData(BufferTarget.ElementArrayBuffer, indexData.Length * sizeof(int), (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
 					}
 				}
+			}
+
+			boundingBox = AxisAlignedBoundingBox.Empty();
+			foreach (int i in indexData)
+			{
+				var v = colorData[i];
+				boundingBox.ExpandToInclude(new Vector3Float(v.positionX, v.positionY, v.positionZ));
 			}
 		}
 

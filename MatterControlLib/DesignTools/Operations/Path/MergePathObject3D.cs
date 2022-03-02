@@ -62,6 +62,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DrawPath();
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
+		}
+
 		public override bool CanApply => true;
 
 		public override void Apply(UndoBuffer undoBuffer)

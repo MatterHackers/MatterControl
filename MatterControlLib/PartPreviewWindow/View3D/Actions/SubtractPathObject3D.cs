@@ -64,6 +64,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			this.DrawPath();
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
+		}
+
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);

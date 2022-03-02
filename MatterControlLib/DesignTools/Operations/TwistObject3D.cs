@@ -143,6 +143,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;
+			var center = new Vector3(rotationCenter.X, rotationCenter.Y, sourceAabb.Center.Z);
+			return AxisAlignedBoundingBox.CenteredBox(new Vector3(1, 1, sourceAabb.ZSize), center).NewTransformed(this.WorldMatrix());
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");

@@ -80,5 +80,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GLHelper.Render(mesh.mesh, mesh.color);
 			}
 		}
+
+		AxisAlignedBoundingBox IDrawable.GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			foreach (var mesh in meshes)
+			{
+				box = AxisAlignedBoundingBox.Union(box, mesh.mesh.GetAxisAlignedBoundingBox());
+			}
+
+			return box;
+		}
 	}
 }

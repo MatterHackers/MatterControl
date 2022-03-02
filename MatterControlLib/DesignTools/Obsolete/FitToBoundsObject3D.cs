@@ -253,22 +253,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			switch (MaintainRatio)
 			{
-				case MaintainRatio.None:
-					break;
-				case MaintainRatio.X_Y:
-					var minXy = Math.Min(scale.X, scale.Y);
-					scale.X = minXy;
-					scale.Y = minXy;
-					break;
-				case MaintainRatio.X_Y_Z:
-					var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
-					scale.X = minXyz;
-					scale.Y = minXyz;
-					scale.Z = minXyz;
-					break;
+			case MaintainRatio.None:
+				break;
+			case MaintainRatio.X_Y:
+				var minXy = Math.Min(scale.X, scale.Y);
+				scale.X = minXy;
+				scale.Y = minXy;
+				break;
+			case MaintainRatio.X_Y_Z:
+				var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
+				scale.X = minXyz;
+				scale.Y = minXyz;
+				scale.Z = minXyz;
+				break;
 			}
 
 			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+		}
+
+		AxisAlignedBoundingBox CalcBoxBounds(AxisAlignedBoundingBox itemAABB)
+		{
+			var center = itemAABB.Center;
+			var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
+			var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
+			return new AxisAlignedBoundingBox(minXyz, maxXyz);
 		}
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
@@ -280,16 +288,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				if (FitType == FitType.Box)
 				{
-					var center = aabb.Center;
 					var worldMatrix = this.WorldMatrix();
-
-					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
-					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
-					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
 					// var leftW = Vector3Ex.Transform(, worldMatrix);
-					var right = Vector3Ex.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
+					//var right = Vector3Ex.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
 					// layer.World.Render3DLine(left, right, Agg.Color.Red);
-					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
+					layer.World.RenderAabb(CalcBoxBounds(aabb), worldMatrix, Agg.Color.Red, 1, 1);
 				}
 				else
 				{
@@ -299,6 +302,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
 			}
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				var aabb = ItemToScale.GetAxisAlignedBoundingBox();
+
+				if (FitType == FitType.Box)
+				{
+					return CalcBoxBounds(aabb).NewTransformed(this.WorldMatrix());
+				}
+				else
+				{
+					return AxisAlignedBoundingBox.CenteredBox(new Vector3(Diameter, Diameter, Height), aabb.Center).NewTransformed(this.WorldMatrix());
+				}
+			}
+
+			return AxisAlignedBoundingBox.Empty();
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

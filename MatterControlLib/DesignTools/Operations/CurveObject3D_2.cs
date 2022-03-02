@@ -75,25 +75,52 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		struct DrawInfo
+		{
+			public AxisAlignedBoundingBox sourceAabb;
+			public double distance;
+			public Vector3 center;
+		}
+
+		DrawInfo GetDrawInfo()
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var distance = Diameter / 2 + sourceAabb.YSize / 2;
 			var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
 			center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
 
+			return new DrawInfo
+			{
+				sourceAabb = sourceAabb,
+				distance = distance,
+				center = center,
+			};
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+		{
+			var drawInfo = GetDrawInfo();
+
 			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
 
 			// render the split lines
 			var radius = Diameter / 2;
 			var circumference = MathHelper.Tau * radius;
-			var xxx = sourceAabb.XSize * (StartPercent / 100.0);
+			var xxx = drawInfo.sourceAabb.XSize * (StartPercent / 100.0);
 			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			var drawInfo = GetDrawInfo();
+			var radius = Diameter / 2;
+			var halfHeight = drawInfo.sourceAabb.ZSize / 2;
+			return AxisAlignedBoundingBox.CenteredBox(new Vector3(radius, radius, halfHeight), drawInfo.center).NewTransformed(this.WorldMatrix());
 		}
 
 		public override Task Rebuild()

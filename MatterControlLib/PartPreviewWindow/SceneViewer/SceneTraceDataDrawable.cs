@@ -71,5 +71,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Object3DControlsLayer.RenderBounds(e, world, bvhIterator);
 		}
+
+		AxisAlignedBoundingBox IDrawable.GetWorldspaceAABB()
+		{
+			// No 3D drawing.
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 }

@@ -108,6 +108,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return;
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return AxisAlignedBoundingBox.Empty();
+		}
+
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)

@@ -133,5 +133,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			layer.World.RenderDirectionAxis(new DirectionAxis() { Normal = Axis.Normal, Origin = Vector3.Zero }, this.WorldMatrix(), 30);
 		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return WorldViewExtensions.GetWorldspaceAabbOfRenderDirectionAxis(new DirectionAxis() { Normal = Axis.Normal, Origin = Vector3.Zero }, this.WorldMatrix(), 30);
+		}
 	}
 }

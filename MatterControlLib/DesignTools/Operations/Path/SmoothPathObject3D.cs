@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
@@ -185,6 +186,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }

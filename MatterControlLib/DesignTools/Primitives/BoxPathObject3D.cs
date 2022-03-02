@@ -72,6 +72,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DrawPath();
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return this.GetWorldspaceAabbOfDrawPath();
+		}
+
 		/// <summary>
 		/// This is the actual serialized with that can use expressions
 		/// </summary>

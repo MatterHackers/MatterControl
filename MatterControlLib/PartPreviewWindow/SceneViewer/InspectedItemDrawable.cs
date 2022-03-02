@@ -72,5 +72,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
+		public AxisAlignedBoundingBox GetWorldspaceAABB(IObject3D item, bool isSelected, WorldView world)
+		{
+			if (item == scene.DebugItem)
+			{
+				AxisAlignedBoundingBox box = WorldViewExtensions.GetWorldspaceAabbOfRenderAabb(item.GetAxisAlignedBoundingBox(), Matrix4X4.Identity, 1);
+
+				if (item.Mesh != null)
+				{
+					box = AxisAlignedBoundingBox.Union(box, item.Mesh.GetAxisAlignedBoundingBox(item.WorldMatrix()));
+				}
+
+				return box;
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 }

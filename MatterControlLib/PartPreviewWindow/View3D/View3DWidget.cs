@@ -26,7 +26,8 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-// #define INCLUDE_ORTHOGRAPHIC
+#define INCLUDE_ORTHOGRAPHIC
+#define ENABLE_PERSPECTIVE_PROJECTION_DYNAMIC_NEAR_FAR
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
@@ -46,6 +47,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
@@ -66,6 +68,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class View3DWidget : GuiWidget, IDrawable
 	{
+		// Padded by this amount on each side, in case of unaccounted for scene geometry.
+		// For orthogrpahic, this is an offset on either side scaled by far - near.
+		// For perspective, this + 1 is used to scale the near and far planes.
+		private const double DynamicNearFarBoundsPaddingFactor = 0.1;
+
 		private bool deferEditorTillMouseUp = false;
 		private bool expandSelection;
 
@@ -470,6 +477,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
+				Name = "Zoom to selection button",
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
@@ -519,27 +527,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 #if INCLUDE_ORTHOGRAPHIC
-			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != "False";
-			TrackballTumbleWidget.PerspectiveMode = perspectiveEnabled;
+			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != false.ToString();
+			TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
+				Name = "Projection mode button",
 				ToolTipText = "Perspective Mode".Localize(),
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = turntableEnabled,
+				Checked = TrackballTumbleWidget.PerspectiveMode,
 			};
 			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
 			projectionButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
-				TrackballTumbleWidget.PerspectiveMode = projectionButton.Checked;
+				TrackballTumbleWidget.ChangeProjectionMode(projectionButton.Checked, true);
 				if (true)
 				{
 						// Make sure the view has up going the right direction
 						// WIP, this should fix the current rotation rather than reset the view
-						ResetView();
+						//ResetView();
 				}
+				
 				Invalidate();
 			};
 #endif
@@ -672,81 +682,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ZoomToSelection()
 		{
-			bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
-			{
-				if (partScreenBounds.Bottom < goalBounds.Bottom
-					|| partScreenBounds.Top > goalBounds.Top
-					|| partScreenBounds.Left < goalBounds.Left
-					|| partScreenBounds.Right > goalBounds.Right)
-				{
-					return true;
-				}
-
-				return false;
-			}
-
 			var selectedItem = this.Scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				var aabb = selectedItem.GetAxisAlignedBoundingBox();
-				var center = aabb.Center;
-				// pan to the center
-				var world = sceneContext.World;
-				var screenCenter = new Vector2(world.Width / 2 - selectedObjectPanel.Width / 2, world.Height / 2);
-				var centerRay = world.GetRayForLocalBounds(screenCenter);
-
-				// make the target size a portion of the total size
-				var goalBounds = new RectangleDouble(0, 0, world.Width, world.Height);
-				goalBounds.Inflate(-world.Width * .1);
-
-				int rescaleAttempts = 0;
-				var testWorld = new WorldView(world.Width, world.Height);
-				testWorld.RotationMatrix = world.RotationMatrix;
-				var distance = 80.0;
-
-				void AjustDistance()
-				{
-					testWorld.TranslationMatrix = world.TranslationMatrix;
-					var delta = centerRay.origin + centerRay.directionNormal * distance - center;
-					testWorld.Translate(delta);
-				}
-
-				AjustDistance();
-
-				while (rescaleAttempts++ < 500)
-				{
-
-					var partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-					if (NeedsToBeSmaller(partScreenBounds, goalBounds))
-					{
-						distance++;
-						AjustDistance();
-						partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-						// If it crossed over the goal reduct the amount we are adjusting by.
-						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
-						{
-							break;
-						}
-					}
-					else
-					{
-						distance--;
-						AjustDistance();
-						partScreenBounds = testWorld.GetScreenBounds(aabb);
-
-						// If it crossed over the goal reduct the amount we are adjusting by.
-						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
-						{
-							break;
-						}
-					}
-				}
-
-				TrackballTumbleWidget.AnimateTranslation(center, centerRay.origin + centerRay.directionNormal * distance);
-				// zoom to fill the view
-				// viewControls3D.NotifyResetView();
+				TrackballTumbleWidget.ZoomToAABB(selectedItem.GetAxisAlignedBoundingBox());
 			}
 		}
 
@@ -808,46 +747,71 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		private void GetNearFar(out double zNear, out double zFar)
+		private void GetNearFar(WorldView world, out double zNear, out double zFar)
 		{
-			zNear = .1;
-			zFar = 100;
+			// All but the near and far planes.
+			Plane[] worldspacePlanes = Frustum.FrustumFromProjectionMatrix(world.ProjectionMatrix).Planes.Take(4)
+				.Select(p => p.Transform(world.InverseModelviewMatrix)).ToArray();
 
-			// this function did not fix the image z fighting, so for now I'm just going to return rather than have it run.
-			return;
-
-			var bounds = Scene.GetAxisAlignedBoundingBox();
-
-			if (bounds.XSize > 0)
+			// TODO: (Possibly) Compute a dynamic near plane based on visible triangles rather than clipped AABBs.
+			//       Currently, the near and far planes are fit to clipped AABBs in the scene.
+			//       A rudimentary implementation to start off with. The significant limitation is that zNear is ~zero when inside an AABB.
+			//       The resulting frustum can be visualized using the debug menu.
+			//       The far plane is less important.
+			//       Other ideas are an infinite far plane, depth clamping, multi-pass rendering, AABB feedback from the previous frame, dedicated scene manager for all 3D rendering.
+			Tuple<double, double> nearFar = null;
+			foreach (var aabb in Object3DControlLayer.MakeListOfObjectControlBoundingBoxes())
 			{
-				zNear = double.PositiveInfinity;
-				zFar = double.NegativeInfinity;
-				ExpandNearAndFarToBounds(ref zNear, ref zFar, bounds);
-
-				// TODO: add in the bed bounds
-
-				// TODO: add in the print volume bounds
+				nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, aabb);
 			}
+			nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, Object3DControlLayer.GetPrinterNozzleAABB());
+			nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, Scene.GetAxisAlignedBoundingBox());
+
+			zNear = nearFar != null ? nearFar.Item1 : WorldView.DefaultNearZ;
+			zFar = nearFar != null ? nearFar.Item2 : WorldView.DefaultFarZ;
+
+			if (world.IsOrthographic)
+			{
+				WorldView.SanitiseOrthographicNearFar(ref zNear, ref zFar);
+
+				// Add some padding in case of unaccounted geometry.
+				double padding = (zFar - zNear) * DynamicNearFarBoundsPaddingFactor;
+				zNear -= padding;
+				zFar += padding;
+
+				WorldView.SanitiseOrthographicNearFar(ref zNear, ref zFar);
+			}
+			else
+			{
+#if ENABLE_PERSPECTIVE_PROJECTION_DYNAMIC_NEAR_FAR
+				WorldView.SanitisePerspectiveNearFar(ref zNear, ref zFar);
+
+				zNear /= 1 + DynamicNearFarBoundsPaddingFactor;
+				zFar *= 1 + DynamicNearFarBoundsPaddingFactor;
+#else
+				zNear = WorldView.DefaultNearZ;
+				zFar = WorldView.DefaultFarZ;
+#endif
+				WorldView.SanitisePerspectiveNearFar(ref zNear, ref zFar);
+			}
+
+			System.Diagnostics.Debug.Assert(zNear < zFar && zFar < double.PositiveInfinity);
 		}
 
-		private void ExpandNearAndFarToBounds(ref double zNear, ref double zFar, AxisAlignedBoundingBox bounds)
+		private static Tuple<double, double> ExpandNearAndFarToClippedBounds(Tuple<double, double> nearFar, bool isOrthographic, Plane[] worldspacePlanes, Matrix4X4 worldToViewspace, AxisAlignedBoundingBox bounds)
 		{
-			for (int x = 0; x < 2; x++)
+			Tuple<double, double> thisNearFar = CameraFittingUtil.ComputeNearFarOfClippedWorldspaceAABB(isOrthographic, worldspacePlanes, worldToViewspace, bounds);
+			if (nearFar == null)
 			{
-				for (int y = 0; y < 2; y++)
-				{
-					for (int z = 0; z < 2; z++)
-					{
-						var cornerPoint = new Vector3((x == 0) ? bounds.MinXYZ.X : bounds.MaxXYZ.X,
-							(y == 0) ? bounds.MinXYZ.Y : bounds.MaxXYZ.Y,
-							(z == 0) ? bounds.MinXYZ.Z : bounds.MaxXYZ.Z);
-
-						Vector3 viewPosition = cornerPoint.Transform(sceneContext.World.ModelviewMatrix);
-
-						zNear = Math.Max(.1, Math.Min(zNear, -viewPosition.Z));
-						zFar = Math.Max(Math.Max(zFar, -viewPosition.Z), zNear + .1);
-					}
-				}
+				return thisNearFar;
+			}
+			else if (thisNearFar == null)
+			{
+				return nearFar;
+			}
+			else
+			{
+				return Tuple.Create(Math.Min(nearFar.Item1, thisNearFar.Item1), Math.Max(nearFar.Item2, thisNearFar.Item2));
 			}
 		}
 
@@ -1385,6 +1349,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			TrackballTumbleWidget.OnBeforeDraw3D();
+
 			base.OnDraw(graphics2D);
 		}
 
@@ -1784,7 +1750,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Ray ray = sceneContext.World.GetRayForLocalBounds(localPosition);
 
-			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
+			return CurrentSelectInfo.HitPlane.GetClosestIntersectionWithinRayDistanceRange(ray);
 		}
 
 		public void DragSelectedObject(IObject3D selectedItem, Vector2 localMousePosition)
@@ -1801,7 +1767,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector2 meshViewerWidgetScreenPosition = this.Object3DControlLayer.TransformFromParentSpace(this, localMousePosition);
 			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
-			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
+			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersectionWithinRayDistanceRange(ray);
 			if (info != null)
 			{
 				if (CurrentSelectInfo.LastMoveDelta == Vector3.PositiveInfinity)
@@ -2312,6 +2278,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				printerTabPage.Printer.Bed.RenderGCode3D(e);
 			}
+		}
+
+		AxisAlignedBoundingBox IDrawable.GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			if (CurrentSelectInfo.DownOnPart
+				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+				&& Keyboard.IsKeyDown(Keys.ShiftKey))
+			{
+				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
+
+				for (int i = 0; i < 2; i++)
+				{
+					box.ExpandToInclude(drawCenter - new Vector3(-50, 0, 0));
+					box.ExpandToInclude(drawCenter - new Vector3(50, 0, 0));
+					box.ExpandToInclude(drawCenter - new Vector3(0, -50, 0));
+					box.ExpandToInclude(drawCenter - new Vector3(0, 50, 0));
+					drawCenter.Z = 0;
+				}
+			}
+
+			// Render 3D GCode if applicable
+			if (sceneContext.LoadedGCode != null
+				&& sceneContext.GCodeRenderer != null
+				&& printerTabPage?.Printer.ViewState.ViewMode == PartViewMode.Layers3D)
+			{
+				box = AxisAlignedBoundingBox.Union(box, printerTabPage.Printer.Bed.GetAabbOfRenderGCode3D());
+			}
+
+			return box;
 		}
 
 		string IDrawable.Title { get; } = "View3DWidget Extensions";

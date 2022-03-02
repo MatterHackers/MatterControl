@@ -139,6 +139,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			// No 3D drawing.
+			return AxisAlignedBoundingBox.Empty();
+		}
+
 		public override void CancelOperation()
 		{
 		}

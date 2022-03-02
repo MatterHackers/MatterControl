@@ -89,5 +89,11 @@ namespace MatterHackers.MeshVisualizer
 
 			GL.Enable(EnableCap.Lighting);
 		}
+
+		public static AxisAlignedBoundingBox GetWorldspaceAabbOfRenderDirectionAxis(DirectionAxis axis, Matrix4X4 matrix, double size)
+		{
+			double radius = axis.Normal.Length * size;
+			return AxisAlignedBoundingBox.CenteredHalfExtents(new Vector3(radius, radius, radius), axis.Origin).NewTransformed(matrix);
+		}
 	}
 }

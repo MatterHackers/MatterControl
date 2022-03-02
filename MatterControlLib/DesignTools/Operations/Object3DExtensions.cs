@@ -244,6 +244,40 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public static AxisAlignedBoundingBox GetWorldspaceAabbOfDrawPath(this IObject3D item)
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			if (item is IPathObject pathObject)
+			{
+				if (pathObject.VertexSource == null)
+				{
+					return box;
+				}
+
+				var lastPosition = Vector2.Zero;
+				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
+				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
+
+				foreach (var vertex in pathObject.VertexSource.Vertices())
+				{
+					var position = vertex.position;
+
+					if (vertex.IsLineTo)
+					{
+						box.ExpandToInclude(new Vector3(lastPosition, maxXYZ.Z + 0.002));
+						box.ExpandToInclude(new Vector3(position, maxXYZ.Z + 0.002));
+					}
+
+					lastPosition = position;
+				}
+
+				return box.NewTransformed(item.WorldMatrix());
+			}
+
+			return box;
+		}
+
 		public static bool IsRoot(this IObject3D object3D)
 		{
 			return object3D.Parent == null;

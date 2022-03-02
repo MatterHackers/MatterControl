@@ -166,5 +166,8 @@ namespace MatterHackers.MeshVisualizer
 
 			return null;
 		}
+
+		/// <returns>The worldspace AABB of the 3D geometry drawn by Draw.</returns>
+		public abstract AxisAlignedBoundingBox GetWorldspaceAABB();
 	}
 }

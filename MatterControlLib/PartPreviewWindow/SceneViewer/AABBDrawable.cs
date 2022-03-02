@@ -59,5 +59,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				world.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox());
 			}
 		}
+
+		AxisAlignedBoundingBox IDrawable.GetWorldspaceAABB()
+		{
+			// No 3D drawing.
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 }

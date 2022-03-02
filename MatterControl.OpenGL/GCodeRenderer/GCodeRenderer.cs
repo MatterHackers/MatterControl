@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -330,12 +331,11 @@ namespace MatterHackers.GCodeVisualizer
 				}
 			}
 		}
-
-		public void Render3D(GCodeRenderInfo renderInfo, DrawEventArgs e)
+		bool PrepareForGeometryGeneration(GCodeRenderInfo renderInfo)
 		{
 			if (renderInfo == null)
 			{
-				return;
+				return false;
 			}
 
 			if (layerVertexBuffer == null)
@@ -359,7 +359,12 @@ namespace MatterHackers.GCodeVisualizer
 				lastRenderType = renderInfo.CurrentRenderType;
 			}
 
-			if (all.layers.Count > 0)
+			return all.layers.Count > 0;
+		}
+
+		public void Render3D(GCodeRenderInfo renderInfo, DrawEventArgs e)
+		{
+			if (PrepareForGeometryGeneration(renderInfo))
 			{
 				for (int i = renderInfo.EndLayerIndex - 1; i >= renderInfo.StartLayerIndex; i--)
 				{
@@ -424,6 +429,29 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				GL.PopAttrib();
 			}
+		}
+
+		public AxisAlignedBoundingBox GetAabbOfRender3D(GCodeRenderInfo renderInfo)
+		{
+			var box = AxisAlignedBoundingBox.Empty();
+
+			if (PrepareForGeometryGeneration(renderInfo))
+			{
+				for (int i = renderInfo.EndLayerIndex - 1; i >= renderInfo.StartLayerIndex; i--)
+				{
+					if (i < layerVertexBuffer.Count)
+					{
+						if (layerVertexBuffer[i] == null)
+						{
+							layerVertexBuffer[i] = Create3DDataForLayer(i, renderInfo);
+						}
+
+						box = AxisAlignedBoundingBox.Union(box, layerVertexBuffer[i].BoundingBox);
+					}
+				}
+			}
+
+			return box;
 		}
 	}
 }

@@ -201,6 +201,27 @@ namespace MatterHackers.Plugins.EditorTools
 			base.Draw(e);
 		}
 
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			IObject3D selectedItem = RootSelection;
+			if (selectedItem != null)
+			{
+				if (Object3DControlContext.SelectedObject3DControl == null)
+				{
+					box = AxisAlignedBoundingBox.Union(box, rotationHandle.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+
+				if (mouseMoveInfo != null || mouseDownInfo != null || MouseIsOver)
+				{
+					box = AxisAlignedBoundingBox.Union(box, GetRotationCompassAABB(selectedItem));
+				}
+			}
+
+			return box;
+		}
+
 		public Vector3 GetCornerPosition(IObject3D objectBeingRotated)
 		{
 			return GetCornerPosition(objectBeingRotated, out _);
@@ -326,7 +347,7 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 
 				var hitPlane = new PlaneShape(RotationPlanNormal, RotationPlanNormal.Dot(controlCenter), null);
-				IntersectInfo hitOnRotationPlane = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				IntersectInfo hitOnRotationPlane = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 				if (hitOnRotationPlane != null)
 				{
 					AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
@@ -644,6 +665,42 @@ namespace MatterHackers.Plugins.EditorTools
 				Object3DControlContext.World.Render3DLine(startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
 			}
 		}
+
+		private AxisAlignedBoundingBox GetRotationCompassAABB(IObject3D selectedItem)
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			if (Object3DControlContext.Scene.SelectedItem == null)
+			{
+				return box;
+			}
+
+			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+			if (currentSelectedBounds.XSize > 100000)
+			{
+				return box;
+			}
+
+			if (mouseMoveInfo != null)
+			{
+				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
+
+				double innerRadius = radius + RingWidth / 2;
+				double outerRadius = innerRadius + RingWidth;
+				double snappingMarkRadius = outerRadius + 20;
+
+				if (mouseDownInfo != null || MouseIsOver)
+				{
+					double snapMarkerRadius = GuiWidget.DeviceScale * 10;
+					double snapMarkerOuterRadius = snappingMarkRadius + snapMarkerRadius;
+					box = AxisAlignedBoundingBox.Union(box, new AxisAlignedBoundingBox(-snapMarkerOuterRadius, -snapMarkerOuterRadius, 0, snapMarkerOuterRadius, snapMarkerOuterRadius, 0).NewTransformed(rotationCenterTransform));
+				}
+			}
+
+			return box;
+		}
+
+		
 
 		private bool ForceHideAngle()
 		{

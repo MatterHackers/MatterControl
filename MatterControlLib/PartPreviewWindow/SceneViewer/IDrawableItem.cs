@@ -44,5 +44,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		DrawStage DrawStage { get; }
 
 		void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
+
+		/// <returns>The worldspace AABB of the 3D geometry drawn by Draw.</returns>
+		AxisAlignedBoundingBox GetWorldspaceAABB(IObject3D item, bool isSelected, WorldView world);
 	}
 }
