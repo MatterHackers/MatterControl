@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class View3DWidget : GuiWidget, IDrawable
 	{
 		private bool deferEditorTillMouseUp = false;
+		private bool expandSelection;
 
 		public int EditButtonHeight { get; set; } = 44;
 
@@ -182,6 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add the tree view
 			treeView = new TreeView(theme)
 			{
+				Name = "DesignTree",
 				Margin = new BorderDouble(left: theme.DefaultContainerPadding + 12),
 			};
 			treeView.NodeMouseClick += (s, e) =>
@@ -189,10 +191,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e is MouseEventArgs sourceEvent
 					&& s is GuiWidget clickedWidget)
 				{
-					// Ignore AfterSelect events if they're being driven by a SelectionChanged event
-					if (!assigningTreeNode)
+					if (!AggregateSelection(sourceEvent, clickedWidget))
 					{
-						Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
+						var object3D = (IObject3D)treeView.SelectedNode.Tag;
+						if (object3D != Scene.SelectedItem)
+						{
+							Scene.SelectedItem = object3D;
+						}
 					}
 
 					if (sourceEvent.Button == MouseButtons.Right)
@@ -202,15 +207,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			};
-			treeView.ScrollArea.ChildAdded += (s, e) =>
-			{
-				if (e is GuiWidgetEventArgs childEventArgs
-					&& childEventArgs.Child is TreeNode treeNode)
-				{
-					treeNode.AlwaysExpandable = true;
-				}
-			};
-
 			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			treeNodeContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -932,6 +928,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& treeNodesByObject.TryGetValue(selectedItem, out TreeNode treeNode))
 			{
 				treeView.SelectedNode = treeNode;
+				if (expandSelection)
+				{
+					expandSelection = false;
+					treeNode.Expanded = true;
+				}
 			}
 
 			treeView.TopLeftOffset = beforeReubildScrollPosition;
@@ -1423,6 +1424,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Scene.ClearSelection();
 					Scene.SetSelection(matchingSceneChildren.ToList());
+					if (Scene.SelectedItem is SelectionGroupObject3D selectionGroup)
+					{
+						selectionGroup.Expanded = true;
+					}
 				}
 				else
 				{
@@ -1595,6 +1600,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 									&& !selectedItem.Children.Contains(hitObject))
 								{
+									expandSelection = !(selectedItem is SelectionGroupObject3D);
 									Scene.AddToSelection(hitObject);
 								}
 								else if (selectedItem == hitObject || selectedItem.Children.Contains(hitObject))
@@ -2313,6 +2319,71 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		string IDrawable.Description { get; } = "Render axis indicators for shift drag and 3D GCode view";
 
 		DrawStage IDrawable.DrawStage { get; } = DrawStage.OpaqueContent;
+
+		private bool AggregateSelection(MouseEventArgs sourceEvent, GuiWidget clickedWidget)
+		{
+			if (!Keyboard.IsKeyDown(Keys.Control))
+			{
+				return false;
+			}
+
+			if (sourceEvent.Button != MouseButtons.Left)
+			{
+				return false;
+			}
+
+			if (Scene.SelectedItem == null)
+			{
+				return false;
+			}
+
+			var node = (TreeNode)clickedWidget.Parent;
+			var object3D = (IObject3D)node.Tag;
+			if (object3D == Scene.SelectedItem)
+			{
+				// Control-click on the existing selection doesn't change anything.
+				return true;
+			}
+
+			if (object3D.Parent == Scene.SelectedItem && Scene.SelectedItem is SelectionGroupObject3D)
+			{
+				// Part is in a selection group so remove it.
+				var remainingParts = Scene.SelectedItem.Children.Except(new [] {object3D}).ToList();
+				Scene.ClearSelection();
+				Scene.SetSelection(remainingParts);
+				expandSelection = true;
+				return true;
+			}
+
+			if (treeNodesByObject.TryGetValue(Scene.SelectedItem, out var priorSelectedNode))
+			{
+				if (priorSelectedNode.NodeParent != null)
+				{
+					// The existing selection isn't a top-level node so don't create a
+					// new selection group. Restore visuals to prior selected node.
+					treeView.SelectedNode = priorSelectedNode;
+					return true;
+				}
+			}
+
+			if (node.NodeParent != null)
+			{
+				// Only top-level nodes can be aggregated into a selection.
+				treeView.SelectedNode = priorSelectedNode;
+				return true;
+			}
+
+			Scene.AddToSelection(object3D);
+			if (!treeNodesByObject.TryGetValue(Scene.SelectedItem, out _))
+			{
+				// A new selection group has been created and should be expanded by default.
+				// However, the expansion has to be deferred until after tree gets rebuilt
+				// so the new selection group object is included in the tree.
+				expandSelection = true;
+			}
+
+			return true;
+		}
 	}
 
 	public enum HitQuadrant

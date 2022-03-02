@@ -65,26 +65,38 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (TreeView != null)
 				{
 					TreeView.SelectedNode = this;
+					TreeView.NotifyItemClicked(TitleBar, e);
 				}
-
-				this.TreeView.NotifyItemClicked(this.TitleBar, e);
 			};
 
+			TreeNode hitNode = null;
 			this.TitleBar.MouseDown += (s, e) =>
 			{
-				if (TreeView != null
-					&& e.Button == MouseButtons.Left
-					&& e.Clicks == 2)
+				if (TreeView != null && e.Button == MouseButtons.Left)
 				{
-					TreeView.SelectedNode = this;
-
-					if (this.Nodes.Count > 0)
+					if (e.Clicks == 1)
 					{
-						this.Expanded = !this.Expanded;
+						hitNode = this;
 					}
-					else
+					else if (e.Clicks == 2)
 					{
-						this.TreeView.NotifyItemDoubleClicked(this.TitleBar, e);
+						// Nodes can move around in the tree between clicks.
+						// Make sure we're hitting the same node twice.
+						if (this != hitNode)
+						{
+							return;
+						}
+
+						TreeView.SelectedNode = this;
+
+						if (this.Nodes.Count > 0)
+						{
+							this.Expanded = !this.Expanded;
+						}
+						else
+						{
+							this.TreeView.NotifyItemDoubleClicked(TitleBar, e);
+						}
 					}
 				}
 			};

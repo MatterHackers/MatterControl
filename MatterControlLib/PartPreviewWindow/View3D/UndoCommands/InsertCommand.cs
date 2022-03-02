@@ -71,6 +71,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					scene.AddToSelection(item);
 				}
 			}
+			if (scene.SelectedItem is SelectionGroupObject3D selectionGroup)
+			{
+				selectionGroup.Expanded = true;
+			}
 
 			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 		}
