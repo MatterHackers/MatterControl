@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Library
 			var object3D = await collector?.Invoke();
 
 			// If the content has not set a color, we'll assign from the running ColorRange
-			if (object3D.Color == Color.Transparent)
+			if (object3D?.Color == Color.Transparent)
 			{
 				object3D.Color = this.Color;
 			}
