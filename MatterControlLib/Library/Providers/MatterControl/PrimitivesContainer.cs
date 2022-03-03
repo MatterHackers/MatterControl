@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
@@ -135,7 +136,8 @@ namespace MatterHackers.MatterControl.Library
 						SceneOperations.ById("ImageConverter").Action(bedConfig);
 
 						// Return replacement object constructed in ImageConverter operation
-						var constructedComponent = tempScene.SelectedItem;
+						var constructedComponent = tempScene.Children.LastOrDefault();
+						tempScene.SelectedItem = constructedComponent;
 						tempScene.Children.Remove(constructedComponent);
 
 						return Task.FromResult(constructedComponent);

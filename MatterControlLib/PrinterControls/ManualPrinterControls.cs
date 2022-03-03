@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget macroControlsContainer;
 		private GuiWidget tuningAdjustmentControlsContainer;
-		private GuiWidget temperatureControlsContainer;
 		private MovementControls movementControlsContainer;
 		private GuiWidget calibrationControlsContainer;
 		private ThemeConfig theme;
@@ -78,7 +77,7 @@ namespace MatterHackers.MatterControl
 
 			calibrationControlsContainer = this.AddPluginWidget(CalibrationControls.CreateSection(printer, theme));
 
-			temperatureControlsContainer = this.AddPluginWidget(TemperatureControls.CreateSection(printer, theme));
+			this.AddPluginWidget(TemperatureControls.CreateSection(printer, theme));
 
 			macroControlsContainer = this.AddPluginWidget(MacroControls.CreateSection(printer, theme));
 
