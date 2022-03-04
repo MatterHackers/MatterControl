@@ -718,11 +718,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			double refFOV = MathHelper.DegreesToRadians(
+			double refFOVDegrees = 
 				toOrthographic
 				? this.world.VFovDegrees // start FOV
 				: WorldView.DefaultPerspectiveVFOVDegrees  // end FOV
-				);
+				;
 
 			const int numUpdates = 10;
 
@@ -735,16 +735,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					double t = i / (double)numUpdates;
-					double fov = toOrthographic ? refFOV * (1 - t) : refFOV * t;
+					double fov = toOrthographic ? refFOVDegrees * (1 - t) : refFOVDegrees * t;
 
-					double dist = refPlaneHeightInViewspace / 2 / Math.Tan(fov / 2);
+					double dist = WorldView.CalcPerspectiveDistance(refPlaneHeightInViewspace, fov);
 					double eyeZ = refViewspaceZ + dist;
 
 					Vector3 viewspaceEyePosition = new Vector3(0, 0, eyeZ);
 
 					//System.Diagnostics.Trace.WriteLine("{0} {1} {2}".FormatWith(fovDegrees, dist, eyeZ));
 
-					world.CalculatePerspectiveMatrixOffCenter(world.Width, world.Height, CenterOffsetX, WorldView.DefaultNearZ, WorldView.DefaultFarZ, MathHelper.RadiansToDegrees(fov));
+					world.CalculatePerspectiveMatrixOffCenter(world.Width, world.Height, CenterOffsetX, WorldView.DefaultNearZ, WorldView.DefaultFarZ, fov);
 					world.EyePosition = viewspaceEyePosition.TransformPosition(originalViewToWorld);
 				}
 			});

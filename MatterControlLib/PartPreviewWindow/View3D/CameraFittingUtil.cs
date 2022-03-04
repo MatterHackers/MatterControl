@@ -153,13 +153,13 @@ namespace MatterHackers
 			Vector2 viewportSize = world.ViewportSize + new Vector2(centerOffsetX, 0);
 			double margin = MarginScale * Math.Min(viewportSize.X, viewportSize.Y);
 			WorldView reducedWorld = new WorldView(viewportSize.X - margin * 2, viewportSize.Y - margin * 2);
-			double reducedVFOVRadians = Math.Atan(reducedWorld.Height / world.Height * (world.NearPlaneHeightInViewspace / 2) / world.NearZ) * 2;
+			double reducedVFOVDegrees = WorldView.CalcPerspectiveVFOVDegreesFromDistanceAndHeight(world.NearZ, world.NearPlaneHeightInViewspace * (reducedWorld.Height / world.Height));
 			
 			reducedWorld.CalculatePerspectiveMatrixOffCenter(
 				reducedWorld.Width, reducedWorld.Height,
 				0,
 				1, 2, // Arbitrary
-				MathHelper.RadiansToDegrees(reducedVFOVRadians)
+				reducedVFOVDegrees
 				);
 
 			Plane[] viewspacePlanes = Frustum.FrustumFromProjectionMatrix(reducedWorld.ProjectionMatrix).Planes.Take(4).ToArray();
