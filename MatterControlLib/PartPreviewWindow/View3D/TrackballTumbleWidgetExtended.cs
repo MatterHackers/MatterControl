@@ -35,11 +35,17 @@ using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class TrackballTumbleWidgetExtended : GuiWidget
 	{
+		private const double PerspectiveMinZoomDist = 3;
+		private const double PerspectiveMaxZoomDist = 2300;
+		private const double OrthographicMinZoomViewspaceHeight = 0.01;
+		private const double OrthographicMaxZoomViewspaceHeight = 1000;
+
 		public NearFarAction GetNearFar;
 		private readonly MotionQueue motionQueue = new MotionQueue();
 		private readonly GuiWidget sourceWidget;
@@ -65,9 +71,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.world = world;
 			this.sourceWidget = sourceWidget;
 			this.Object3DControlLayer = Object3DControlLayer;
+			this.PerspectiveMode = !this.world.IsOrthographic;
 		}
 
-		public delegate void NearFarAction(out double zNear, out double zFar);
+		public delegate void NearFarAction(WorldView world, out double zNear, out double zFar);
 
 		public double CenterOffsetX
 		{
@@ -86,13 +93,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public TrackBallController TrackBallController { get; }
 		public TrackBallTransformType TransformState { get; set; }
 		public double ZoomDelta { get; set; } = 0.2f;
+		public double OrthographicZoomScalingFactor { get; set; } = 1.2f;
 		public bool TurntableEnabled { get; set; }
-		public bool PerspectiveMode { get; set; } = true;
+		public bool PerspectiveMode { get; private set; }
+		// Projection mode switch animations will capture this value. When this is changed, those animations will cease to have an effect.
+		UInt64 _perspectiveModeSwitchAnimationSerialNumber = 0;
+		Action _perspectiveModeSwitchFinishAnimation = null;
+
+		public void ChangeProjectionMode(bool perspective, bool animate)
+		{
+			FinishProjectionSwitch();
+
+			if (PerspectiveMode == perspective)
+				return;
+
+			PerspectiveMode = perspective;
+
+			if (!PerspectiveMode)
+			{
+				System.Diagnostics.Debug.Assert(!this.world.IsOrthographic);
+				if (!this.world.IsOrthographic)
+				{
+					// Perspective -> Orthographic
+					DoSwitchToProjectionMode(true, GetWorldRefPositionForProjectionSwitch(), animate);
+				}
+			}
+			else
+			{
+				System.Diagnostics.Debug.Assert(this.world.IsOrthographic);
+				if (this.world.IsOrthographic)
+				{
+					// Orthographic -> Perspective
+					DoSwitchToProjectionMode(false, GetWorldRefPositionForProjectionSwitch(), animate);
+				}
+			}
+		}
+
+		private void FinishProjectionSwitch()
+		{
+			++_perspectiveModeSwitchAnimationSerialNumber;
+			_perspectiveModeSwitchFinishAnimation?.Invoke();
+			_perspectiveModeSwitchFinishAnimation = null;
+		}
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
 			if (isRotating)
 			{
+				FinishProjectionSwitch();
+
 				Quaternion activeRotationQuaternion;
 				if (TurntableEnabled)
 				{
@@ -131,22 +180,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			RecalculateProjection();
+			bool wantRefPositionVisibleForTransformInteraction = TrackBallController.CurrentTrackingType == TrackBallTransformType.None && (
+				TransformState == TrackBallTransformType.Translation ||
+				TransformState == TrackBallTransformType.Rotation
+				);
 
-			if (TrackBallController.CurrentTrackingType == TrackBallTransformType.None)
+			bool isSwitchingProjectionMode = _perspectiveModeSwitchFinishAnimation != null;
+
+			if (isSwitchingProjectionMode || wantRefPositionVisibleForTransformInteraction)
 			{
-				switch (TransformState)
-				{
-					case TrackBallTransformType.Translation:
-					case TrackBallTransformType.Rotation:
-						var circle = new Ellipse(world.GetScreenPosition(mouseDownWorldPosition), 8 * DeviceScale);
-						graphics2D.Render(new Stroke(circle, 2 * DeviceScale), theme.PrimaryAccentColor);
-						graphics2D.Render(new Stroke(new Stroke(circle, 4 * DeviceScale), DeviceScale), theme.TextColor.WithAlpha(128));
-						break;
-				}
+				var circle = new Ellipse(world.GetScreenPosition(mouseDownWorldPosition), 8 * DeviceScale);
+				graphics2D.Render(new Stroke(circle, 2 * DeviceScale), theme.PrimaryAccentColor);
+				graphics2D.Render(new Stroke(new Stroke(circle, 4 * DeviceScale), DeviceScale), theme.TextColor.WithAlpha(128));
 			}
 
+
 			base.OnDraw(graphics2D);
+		}
+
+		public void OnBeforeDraw3D()
+		{
+			RecalculateProjection();
 		}
 
 		public void OnDraw3D()
@@ -278,6 +332,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ZoomToMousePosition(Vector2 mousePosition, double zoomDelta)
 		{
+			FinishProjectionSwitch();
+
 			var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
 			var rayAtMousePosition = world.GetRayForLocalBounds(mousePosition);
 			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayAtMousePosition);
@@ -293,7 +349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// we did not hit anything
 				// find a new 3d mouse position by hitting the screen plane at the distance of the last 3d mouse down position
 				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
-				intersectionInfo = hitPlane.GetClosestIntersection(rayAtMousePosition);
+				intersectionInfo = hitPlane.GetClosestIntersectionWithinRayDistanceRange(rayAtMousePosition);
 				if (intersectionInfo != null)
 				{
 					ZoomToWorldPosition(intersectionInfo.HitPosition, zoomDelta);
@@ -305,28 +361,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void RecalculateProjection()
 		{
 			double trackingRadius = Math.Min(Width * .45, Height * .45);
+
+			// TODO: Should probably be `Width / 2`, but currently has no effect?
 			TrackBallController.ScreenCenter = new Vector2(Width / 2 - CenterOffsetX, Height / 2);
 
 			TrackBallController.TrackBallRadius = trackingRadius;
 
-			var zNear = .01;
-			var zFar = 100.0;
+			double zNear = WorldView.DefaultNearZ;
+			double zFar = WorldView.DefaultFarZ;
 
-			GetNearFar?.Invoke(out zNear, out zFar);
+			Vector2 newViewportSize = new Vector2(Math.Max(1, sourceWidget.LocalBounds.Width), Math.Max(1, sourceWidget.LocalBounds.Height));
 
-			if (CenterOffsetX != 0)
+			// Update the projection parameters for GetNearFar.
+			// NOTE: PerspectiveMode != this.world.IsOrthographic due to transition animations.
+			if (this.world.IsOrthographic)
 			{
-				this.world.CalculatePerspectiveMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
-
-				if (!PerspectiveMode)
-				{
-					this.world.CalculatePerspectiveMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar, 2);
-					//this.world.CalculateOrthogrphicMatrixOffCenter(sourceWidget.Width, sourceWidget.Height, CenterOffsetX, zNear, zFar);
-				}
+				this.world.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(newViewportSize.X, newViewportSize.Y, CenterOffsetX, this.world.NearPlaneHeightInViewspace, zNear, zFar);
 			}
 			else
 			{
-				this.world.CalculatePerspectiveMatrix(sourceWidget.Width, sourceWidget.Height, zNear, zFar);
+				this.world.CalculatePerspectiveMatrixOffCenter(newViewportSize.X, newViewportSize.Y, CenterOffsetX, zNear, zFar, this.world.VFovDegrees);
+			}
+
+			GetNearFar?.Invoke(this.world, out zNear, out zFar);
+
+			// Use the updated near/far planes.
+			if (this.world.IsOrthographic)
+			{
+				this.world.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(newViewportSize.X, newViewportSize.Y, CenterOffsetX, this.world.NearPlaneHeightInViewspace, zNear, zFar);
+			}
+			else
+			{
+				this.world.CalculatePerspectiveMatrixOffCenter(newViewportSize.X, newViewportSize.Y, CenterOffsetX, zNear, zFar, this.world.VFovDegrees);
 			}
 		}
 
@@ -338,6 +404,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetRotationWithDisplacement(Quaternion rotationQ)
 		{
+			FinishProjectionSwitch();
+
 			if (isRotating)
 			{
 				ZeroVelocity();
@@ -348,6 +416,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void StartRotateAroundOrigin(Vector2 mousePosition)
 		{
+			FinishProjectionSwitch();
+
 			if (isRotating)
 			{
 				ZeroVelocity();
@@ -360,6 +430,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Translate(Vector2 position)
 		{
+			FinishProjectionSwitch();
+
 			if (isRotating)
 			{
 				ZeroVelocity();
@@ -368,7 +440,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (hitPlane != null)
 			{
 				var rayAtPosition = world.GetRayForLocalBounds(position);
-				var hitAtPosition = hitPlane.GetClosestIntersection(rayAtPosition);
+				var hitAtPosition = hitPlane.GetClosestIntersectionWithinRayDistanceRange(rayAtPosition);
 
 				if (hitAtPosition != null)
 				{
@@ -389,10 +461,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.ClearInterval(runningInterval);
 			}
 			EndRotateAroundOrigin();
+			FinishProjectionSwitch();
 		}
 
 		public void ZoomToWorldPosition(Vector3 worldPosition, double zoomDelta)
 		{
+			FinishProjectionSwitch();
+
 			if (isRotating)
 			{
 				ZeroVelocity();
@@ -400,18 +475,92 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
 			var delta = worldPosition - world.EyePosition;
-			var deltaLength = delta.Length;
-			var minDist = 3;
-			var maxDist = 2300;
-			if ((deltaLength < minDist && zoomDelta < 0)
-				|| (deltaLength > maxDist && zoomDelta > 0))
+
+			if (this.world.IsOrthographic)
 			{
-				return;
+				bool isZoomIn = zoomDelta < 0;
+				double scaleFactor = isZoomIn ? 1 / OrthographicZoomScalingFactor : OrthographicZoomScalingFactor;
+				double newViewspaceHeight = this.world.NearPlaneHeightInViewspace * scaleFactor;
+
+				if (isZoomIn
+					? newViewspaceHeight < OrthographicMinZoomViewspaceHeight
+					: newViewspaceHeight > OrthographicMaxZoomViewspaceHeight)
+				{
+					newViewspaceHeight = this.world.NearPlaneHeightInViewspace;
+				}
+
+				this.world.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(this.world.Width, this.world.Height, CenterOffsetX,
+					newViewspaceHeight, this.world.NearZ, this.world.FarZ);
+
+				// Zero out the viewspace Z component.
+				delta = delta.TransformVector(this.world.ModelviewMatrix);
+				delta.Z = 0;
+				delta = delta.TransformVector(this.world.InverseModelviewMatrix);
 			}
+			else
+			{
+				var deltaLength = delta.Length;
+
+				if ((deltaLength < PerspectiveMinZoomDist && zoomDelta < 0)
+					|| (deltaLength > PerspectiveMaxZoomDist && zoomDelta > 0))
+				{
+					return;
+				}
+			}
+
 			var zoomVec = delta * zoomDelta;
 			world.Translate(zoomVec);
 
 			Invalidate();
+		}
+
+		public void ZoomToAABB(AxisAlignedBoundingBox box)
+		{
+			FinishProjectionSwitch();
+
+			if (isRotating)
+				ZeroVelocity();
+
+			if (world.IsOrthographic)
+			{
+				// Using fake values for near/far.
+				// ComputeOrthographicCameraFit may move the camera to wherever as long as the scene is centered, then
+				// GetNearFar will figure out the near/far planes in the next projection update.
+				CameraFittingUtil.Result result = CameraFittingUtil.ComputeOrthographicCameraFit(world, CenterOffsetX, 0, 1, box);
+
+				WorldView tempWorld = new WorldView(world.Width, world.Height);
+				tempWorld.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(world.Width, world.Height, CenterOffsetX, result.OrthographicViewspaceHeight, 0, 1);
+				double endViewspaceHeight = tempWorld.NearPlaneHeightInViewspace;
+				double startViewspaceHeight = world.NearPlaneHeightInViewspace;
+
+				AnimateOrthographicTranslationAndHeight(
+					world.EyePosition, startViewspaceHeight,
+					result.CameraPosition, endViewspaceHeight
+					);
+			}
+			else
+			{
+				CameraFittingUtil.Result result = CameraFittingUtil.ComputePerspectiveCameraFit(world, CenterOffsetX, box);
+				AnimateTranslation(result.CameraPosition, world.EyePosition);
+			}
+		}
+
+		// Used for testing.
+		public RectangleDouble WorldspaceAabbToBottomScreenspaceRectangle(AxisAlignedBoundingBox box)
+		{
+			var points = box.GetCorners().Select(v => this.world.WorldspaceToBottomScreenspace(v).Xy);
+			var rect = new RectangleDouble(points.First(), points.First());
+			foreach (Vector2 v in points.Skip(1))
+			{
+				rect.ExpandToInclude(v);
+			}
+			return rect;
+		}
+
+		// Used for testing.
+		public Vector3 WorldspaceToBottomScreenspace(Vector3 v)
+		{
+			return this.world.WorldspaceToBottomScreenspace(v);
 		}
 
 		private void ApplyVelocity()
@@ -443,8 +592,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private Vector3 GetWorldRefPositionForProjectionSwitch()
+		{
+			return mouseDownWorldPosition;
+		}
+
 		private void CalculateMouseDownPostionAndPlane(Vector2 mousePosition)
 		{
+			FinishProjectionSwitch();
+
 			var rayAtMousePosition = world.GetRayForLocalBounds(mousePosition);
 			var intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayAtMousePosition);
 			var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
@@ -459,7 +615,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// we did not hit anything
 				// find a new 3d mouse position by hitting the screen plane at the distance of the last 3d mouse down position
 				hitPlane = new PlaneShape(new Plane(rayAtScreenCenter.directionNormal, mouseDownWorldPosition), null);
-				intersectionInfo = hitPlane.GetClosestIntersection(rayAtMousePosition);
+				intersectionInfo = hitPlane.GetClosestIntersectionWithinRayDistanceRange(rayAtMousePosition);
+
 				if (intersectionInfo != null)
 				{
 					mouseDownWorldPosition = intersectionInfo.HitPosition;
@@ -492,6 +649,103 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Animation.Run(this, .25, 10, (update) =>
 			{
 				world.Translate(delta * .1);
+			}, after);
+		}
+
+		// To orthographic:
+		//     Translate the camera towards infinity by maintaining an invariant perspective plane in worldspace and reducing the FOV to zero.
+		//     The animation will switch to true orthographic at the end.
+		// To perspective:
+		//     Translate the camera from infinity by maintaining an invariant perspective plane in worldspace and increasing the FOV to the default.
+		//     The animation will switch out of orthographic in the first frame.
+		private void DoSwitchToProjectionMode(
+			bool toOrthographic,
+			Vector3 worldspaceRefPosition,
+			bool animate)
+		{
+			ZeroVelocity();
+
+			System.Diagnostics.Debug.Assert(toOrthographic != this.world.IsOrthographic); // Starting in the correct projection mode.
+			System.Diagnostics.Debug.Assert(_perspectiveModeSwitchFinishAnimation == null); // No existing animation.
+
+			Matrix4X4 originalViewToWorld = this.world.InverseModelviewMatrix;
+			
+			Vector3 viewspaceRefPosition = worldspaceRefPosition.TransformPosition(this.world.ModelviewMatrix);
+			// Don't let this become negative when the ref position is behind the camera.
+			double refPlaneHeightInViewspace = Math.Abs(this.world.GetViewspaceHeightAtPosition(viewspaceRefPosition));
+			double refZ = viewspaceRefPosition.Z;
+
+			double refFOV = MathHelper.DegreesToRadians(
+				toOrthographic
+				? this.world.VFovDegrees // start FOV
+				: WorldView.DefaultPerspectiveVFOVDegrees  // end FOV
+				);
+
+			const int numUpdates = 10;
+
+			var update = new Action<int>((i) =>
+			{
+				if (toOrthographic && i >= numUpdates)
+				{
+					world.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(world.Width, world.Height, CenterOffsetX, refPlaneHeightInViewspace, 0, 1);
+				}
+				else
+				{
+					double t = i / (double)numUpdates;
+					double fov = toOrthographic ? refFOV * (1 - t) : refFOV * t;
+
+					double dist = refPlaneHeightInViewspace / 2 / Math.Tan(fov / 2);
+					double eyeZ = refZ + dist;
+
+					Vector3 viewspaceEyePosition = new Vector3(0, 0, eyeZ);
+
+					//System.Diagnostics.Trace.WriteLine("{0} {1} {2}".FormatWith(fovDegrees, dist, eyeZ));
+
+					world.CalculatePerspectiveMatrixOffCenter(world.Width, world.Height, CenterOffsetX, WorldView.DefaultNearZ, WorldView.DefaultFarZ, MathHelper.RadiansToDegrees(fov));
+					world.EyePosition = viewspaceEyePosition.TransformPosition(originalViewToWorld);
+				}
+			});
+
+			if (animate)
+			{
+				_perspectiveModeSwitchFinishAnimation = () =>
+				{
+					update(numUpdates);
+				};
+
+				UInt64 serialNumber = ++_perspectiveModeSwitchAnimationSerialNumber;
+
+				Animation.Run(this, 0.25, numUpdates, (i) =>
+				{
+					if (serialNumber == _perspectiveModeSwitchAnimationSerialNumber)
+					{
+						update(i);
+						if (i >= numUpdates)
+						{
+							_perspectiveModeSwitchFinishAnimation = null;
+						}
+					}
+				}, null);
+			}
+			else
+			{
+				update(numUpdates);
+			}
+		}
+
+		private void AnimateOrthographicTranslationAndHeight(
+			Vector3 startCameraPosition, double startViewspaceHeight,
+			Vector3 endCameraPosition, double endViewspaceHeight,
+			Action after = null)
+		{
+			ZeroVelocity();
+			Animation.Run(this, .25, 10, (update) =>
+			{
+				double t = update / 10.0;
+				world.EyePosition = Vector3.Lerp(startCameraPosition, endCameraPosition, t);
+				// Arbitrary near/far planes. The next projection update will re-fit them.
+				double height = startViewspaceHeight * (1 - t) + endViewspaceHeight * t;
+				world.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(world.Width, world.Height, CenterOffsetX, height, 0, 1);
 			}, after);
 		}
 

@@ -30,12 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IEditorDraw
 	{
 		void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e);
+
+		/// <returns>The worldspace AABB of any 3D editing geometry drawn by DrawEditor.</returns>
+		AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer);
 	}
 
 	public interface ICustomEditorDraw : IEditorDraw

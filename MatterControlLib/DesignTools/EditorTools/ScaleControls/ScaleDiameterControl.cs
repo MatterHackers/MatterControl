@@ -171,14 +171,29 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		private bool ShouldDrawScaleControls()
 		{
 			bool shouldDrawScaleControls = controlVisible == null ? true : controlVisible();
 			if (Object3DControlContext.SelectedObject3DControl != null
 				&& Object3DControlContext.SelectedObject3DControl as ScaleDiameterControl == null)
 			{
-				shouldDrawScaleControls = false;
+				return false;
 			}
+
+			return true;
+		}
+
+		private Matrix4X4 GetRingTransform()
+		{
+			Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(RootSelection, placement);
+			var rotation = Matrix4X4.CreateRotation(new Quaternion(RootSelection.Matrix));
+			var translation = Matrix4X4.CreateTranslation(newBottomCenter);
+			return rotation * translation;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
 
 			var selectedItem = RootSelection;
 
@@ -201,10 +216,7 @@ namespace MatterHackers.Plugins.EditorTools
 						GLHelper.Render(grabControlMesh, color.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 
-					Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(selectedItem, placement);
-					var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
-					var translation = Matrix4X4.CreateTranslation(newBottomCenter);
-					Object3DControlContext.World.RenderRing(rotation * translation, Vector3.Zero, getDiameters[diameterIndex](), 60, color.WithAlpha(e.Alpha0to255), 2, 0, e.ZBuffered);
+					Object3DControlContext.World.RenderRing(GetRingTransform(), Vector3.Zero, getDiameters[diameterIndex](), 60, color.WithAlpha(e.Alpha0to255), 2, 0, e.ZBuffered);
 				}
 
 				if (hitPlane != null)
@@ -221,6 +233,35 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			base.Draw(e);
+		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, grabControlMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+
+					var xform = GetRingTransform();
+					var radius = getDiameters[diameterIndex]() / 2;
+					box = AxisAlignedBoundingBox.Union(box, new AxisAlignedBoundingBox(-radius, -radius, 0, radius, radius, 0).NewTransformed(xform));
+				}
+
+				if (shouldDrawScaleControls && (MouseIsOver || MouseDownOnControl))
+				{
+					var (a, b, c, d) = GetMeasureLine();
+					box = AxisAlignedBoundingBox.Union(box, new AxisAlignedBoundingBox(new Vector3[] { a, b, c, d }));
+				}
+			}
+
+			return box;
 		}
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
@@ -269,7 +310,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				var info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				var info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)

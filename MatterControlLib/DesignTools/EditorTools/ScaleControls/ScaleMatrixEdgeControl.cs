@@ -167,7 +167,7 @@ namespace MatterHackers.Plugins.EditorTools
 			transformAppliedByThis = selectedItem.Matrix;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		bool ShouldDrawScaleControls()
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
@@ -175,6 +175,12 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				shouldDrawScaleControls = false;
 			}
+			return shouldDrawScaleControls;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
 
 			var selectedItem = RootSelection;
 
@@ -198,6 +204,24 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			base.Draw(e);
+		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, minXminYMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+			}
+
+			return box;
 		}
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
@@ -275,7 +299,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				IntersectInfo info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)

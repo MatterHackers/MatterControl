@@ -194,16 +194,23 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		bool ShouldDrawScaleControls()
 		{
 			bool shouldDrawScaleControls = true;
-			var selectedItem = RootSelection;
 
 			if (Object3DControlContext.SelectedObject3DControl != null
 				&& Object3DControlContext.SelectedObject3DControl as ScaleHeightControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
+
+			return shouldDrawScaleControls;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+			var selectedItem = RootSelection;
 
 			if (selectedItem != null)
 			{
@@ -249,6 +256,27 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			base.Draw(e);
+		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, topScaleMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+
+				box.ExpandToInclude(GetTopPosition(selectedItem));
+				box.ExpandToInclude(GetBottomPosition(selectedItem));
+			}
+
+			return box;
 		}
 
 		public Vector3 GetBottomPosition(IObject3D selectedItem)
@@ -316,7 +344,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl)
 			{
-				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				IntersectInfo info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)

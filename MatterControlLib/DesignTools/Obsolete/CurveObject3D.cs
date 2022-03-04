@@ -93,6 +93,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				var currentMatrixInv = Matrix.Inverted;
+				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
+				return AxisAlignedBoundingBox.CenteredBox(new Vector3(Diameter, Diameter, aabb.ZSize), new Vector3(rotationCenter, aabb.Center.Z)).NewTransformed(this.WorldMatrix());
+			}
+			
+			return AxisAlignedBoundingBox.Empty();
+		}
+
 		public override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)

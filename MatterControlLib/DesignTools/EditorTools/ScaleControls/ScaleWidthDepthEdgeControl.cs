@@ -195,7 +195,7 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		bool ShouldDrawScaleControls()
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
@@ -203,6 +203,12 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				shouldDrawScaleControls = false;
 			}
+			return shouldDrawScaleControls;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
 
 			var selectedItem = RootSelection;
 
@@ -237,6 +243,32 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			base.Draw(e);
+		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, minXminYMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+
+				if (MouseIsOver || MouseDownOnControl)
+				{
+					var (a0, a1, a2, a3) = GetMeasureLine(selectedItem);
+					box = AxisAlignedBoundingBox.Union(box, new AxisAlignedBoundingBox(new Vector3[] {
+						a0, a1, a2, a3
+					}));
+				}
+			}
+
+			return box;
 		}
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
@@ -289,7 +321,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				var info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				var info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)

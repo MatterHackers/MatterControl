@@ -154,7 +154,7 @@ namespace MatterHackers.Plugins.EditorTools
 			transformAppliedByThis = selectedItem.Matrix;
 		}
 
-		public override void Draw(DrawGlContentEventArgs e)
+		bool ShouldDrawScaleControls()
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
@@ -162,6 +162,12 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				shouldDrawScaleControls = false;
 			}
+			return shouldDrawScaleControls;
+		}
+
+		public override void Draw(DrawGlContentEventArgs e)
+		{
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
 
 			var selectedItem = RootSelection;
 
@@ -200,6 +206,40 @@ namespace MatterHackers.Plugins.EditorTools
 
 			base.Draw(e);
 		}
+
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
+
+			bool shouldDrawScaleControls = ShouldDrawScaleControls();
+			var selectedItem = RootSelection;
+
+			if (selectedItem != null && Object3DControlContext.Scene.ShowSelectionShadow)
+			{
+				if (shouldDrawScaleControls)
+				{
+					box = AxisAlignedBoundingBox.Union(box, minXminYMesh.GetAxisAlignedBoundingBox().NewTransformed(TotalTransform));
+				}
+
+				Vector3 startPosition = GetCornerPosition(selectedItem, quadrantIndex);
+				Vector3 endPosition = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
+				box.ExpandToInclude(startPosition);
+				box.ExpandToInclude(endPosition);
+
+				if (MouseIsOver || MouseDownOnControl)
+				{
+					var (a0, a1, a2, a3) = GetMeasureLine(selectedItem, quadrantIndex);
+					var (b0, b1, b2, b3) = GetMeasureLine(selectedItem, quadrantIndex + 1);
+					box = AxisAlignedBoundingBox.Union(box, new AxisAlignedBoundingBox(new Vector3[] {
+						a0, a1, a2, a3,
+						b0, b1, b2, b3,
+					}));
+				}
+			}
+
+			return box;
+		}
+
 
 		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine(IObject3D selectedItem, int quadrant)
 		{
@@ -308,7 +348,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				IntersectInfo info = hitPlane.GetClosestIntersectionWithinRayDistanceRange(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)

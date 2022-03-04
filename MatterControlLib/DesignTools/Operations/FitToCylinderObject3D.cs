@@ -112,6 +112,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// layer.World.RenderCylinderOutline(Matrix4X4.Identity, Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Green);
 		}
 
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			var aabb = this.WorldAxisAlignedBoundingBox();
+			return AxisAlignedBoundingBox.CenteredBox(new Vector3(Diameter, Diameter, aabb.ZSize), aabb.Center);
+		}
+
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
 		{
 			if (Children.Count == 2)

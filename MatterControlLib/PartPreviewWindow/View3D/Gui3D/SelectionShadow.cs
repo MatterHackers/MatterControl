@@ -85,6 +85,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.Draw(e);
 		}
 
+		public override AxisAlignedBoundingBox GetWorldspaceAABB()
+		{
+			var selectedItem = RootSelection;
+			if (selectedItem != null
+				&& Object3DControlContext.Scene.ShowSelectionShadow)
+			{
+				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
+				return GetNormalShadowMesh().GetAxisAlignedBoundingBox().NewTransformed(withScale);
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
+
 		public override void Dispose()
 		{
 			// no widgets allocated so nothing to close

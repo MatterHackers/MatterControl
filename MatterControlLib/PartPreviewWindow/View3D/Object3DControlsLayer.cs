@@ -667,6 +667,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new AxisIndicatorDrawable(),
 				new ScreenspaceAxisIndicatorDrawable(),
+				new FrustumDrawable(),
+				new Object3DControlBoundingBoxesDrawable(),
 				new SceneTraceDataDrawable(sceneContext),
 				new AABBDrawable(sceneContext),
 				new LevelingDataDrawable(sceneContext),
@@ -1030,6 +1032,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
+		private Matrix4X4 GetEmulatorNozzleTransform()
+		{
+			var emulator = (PrinterEmulator.Emulator)sceneContext.Printer.Connection.serialPort;
+			return Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
+		}
+
 		private HashSet<IObject3D> editorDrawItems = new HashSet<IObject3D>();
 		private void DrawGlContent(DrawEventArgs e)
 		{
@@ -1095,7 +1103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
+				var matrix = GetEmulatorNozzleTransform();
 				GLHelper.Render(emulatorNozzleMesh,
 					MaterialRendering.Color(sceneContext.Printer, emulator.ExtruderIndex),
 					matrix,
@@ -1254,6 +1262,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Wireframe,
 			WireframeAndSolid,
 			None
+		}
+
+		public List<AxisAlignedBoundingBox> MakeListOfObjectControlBoundingBoxes()
+		{
+			var selectedItem = scene.SelectedItem;
+
+			var aabbs = new List<AxisAlignedBoundingBox>(100);
+
+			foreach (var ctrl in Object3DControls)
+			{
+				aabbs.Add(ctrl.GetWorldspaceAABB());
+			}
+
+			if (selectedItem is IEditorDraw editorDraw)
+			{
+				aabbs.Add(editorDraw.GetEditorWorldspaceAABB(this));
+			}
+
+			foreach (var ctrl in scene.Descendants())
+			{
+				if (ctrl is ICustomEditorDraw customEditorDraw1 && customEditorDraw1.DoEditorDraw(ctrl == selectedItem))
+					if (ctrl is IEditorDraw editorDraw2)
+						aabbs.Add(editorDraw2.GetEditorWorldspaceAABB(this));
+			}
+
+			foreach (var ctrl in drawables)
+			{
+				if (ctrl.Enabled)
+					aabbs.Add(ctrl.GetWorldspaceAABB());
+			}
+
+			foreach (var obj in scene.Children)
+			{
+				if (obj.Visible)
+				{
+					foreach (var item in obj.VisibleMeshes())
+					{
+						bool isSelected = selectedItem != null
+							&& (item == selectedItem
+								|| item.Parents().Any(p => p == selectedItem));
+
+						// Invoke all item Drawables
+						foreach (var drawable in itemDrawables)
+						{
+							if (drawable.Enabled)
+							{
+								aabbs.Add(drawable.GetWorldspaceAABB(item, isSelected, this.World));
+							}
+						}
+					}
+				}
+			}
+
+			aabbs.Add(floorDrawable.GetWorldspaceAABB());
+
+			return aabbs;
+		}
+
+		public AxisAlignedBoundingBox GetPrinterNozzleAABB()
+		{
+			if (sceneContext.Printer?.Connection?.serialPort is PrinterEmulator.Emulator emulator)
+			{
+				return emulatorNozzleMesh.GetAxisAlignedBoundingBox().NewTransformed(GetEmulatorNozzleTransform());
+			}
+			
+			return AxisAlignedBoundingBox.Empty();
 		}
 	}
 }

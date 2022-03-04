@@ -456,17 +456,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		Matrix4X4 CalcTransform()
+		{
+			var aabb = this.GetAxisAlignedBoundingBox(this.WorldMatrix());
+			return this.WorldMatrix() * Matrix4X4.CreateTranslation(0, 0, CalculationHeight.Value(this) - aabb.MinXYZ.Z + ExtrusionHeight.Value(this));
+		}
+
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			if (OutlineIsFromMesh)
 			{
-				var aabb = this.GetAxisAlignedBoundingBox(this.WorldMatrix());
-				// ExtrusionHeight
-				layer.World.RenderPathOutline(this.WorldMatrix() * Matrix4X4.CreateTranslation(0, 0, CalculationHeight.Value(this) - aabb.MinXYZ.Z + ExtrusionHeight.Value(this)), VertexSource, Agg.Color.Red, 5);
+				layer.World.RenderPathOutline(CalcTransform(), VertexSource, Agg.Color.Red, 5);
 
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
 			}
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			if (OutlineIsFromMesh)
+			{
+				// TODO: Untested.
+				return layer.World.GetWorldspaceAabbOfRenderPathOutline(CalcTransform(), VertexSource, 5);
+			}
+			return AxisAlignedBoundingBox.Empty();
 		}
 	}
 }

@@ -264,10 +264,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			CreateWidgetIfRequired(controlLayer);
 			markdownWidget.Visible = true;
 
-			var descrpition = Description.Replace("\\n", "\n");
-			if (markdownWidget.Markdown != descrpition)
+			var description = Description.Replace("\\n", "\n");
+			if (markdownWidget.Markdown != description)
 			{
-				markdownWidget.Markdown = descrpition;
+				markdownWidget.Markdown = description;
 			}
 
 			markdownWidget.Width = width;
@@ -296,6 +296,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			var transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * world.RotationMatrix.Inverted * Matrix4X4.CreateTranslation(start);
 			var theme = ApplicationController.Instance.MenuTheme;
 			graphics2DOpenGL.RenderTransformedPath(transform, new Ellipse(0, 0, 5, 5), theme.PrimaryAccentColor, false);
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		{
+			return AxisAlignedBoundingBox.Empty();
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)

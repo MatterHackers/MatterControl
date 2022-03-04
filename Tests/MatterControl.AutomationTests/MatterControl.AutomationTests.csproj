@@ -53,6 +53,7 @@
     <Compile Include="..\MatterControl.Tests\MatterControl\MatterControlUtilities.cs">
       <Link>MatterControlUtilities.cs</Link>
     </Compile>
+    <Compile Include="CameraFittingUtilTests.cs" />
     <Compile Include="DesignTools\SheetTests.cs" />
     <Compile Include="MatterControlTests.cs" />
     <Compile Include="CreateLibraryFolder.cs" />

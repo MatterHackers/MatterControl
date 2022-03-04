@@ -84,6 +84,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
+		public AxisAlignedBoundingBox GetWorldspaceAABB(IObject3D item, bool isSelected, WorldView world)
+		{
+			if (isSelected)
+			{
+				return item.GetAxisAlignedBoundingBox();
+			}
+
+			return AxisAlignedBoundingBox.Empty();
+		}
 	}
 
 	public class BvhItemView
