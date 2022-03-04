@@ -43,9 +43,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private const double PerspectiveMinZoomDist = 3;
 		private const double PerspectiveMaxZoomDist = 2300;
-		// Currently: 2.4852813742385704, 1905.3823869162372
-		private static readonly double OrthographicMinZoomWorldspaceHeight = PerspectiveMinZoomDist * Math.Tan(MathHelper.DegreesToRadians(WorldView.DefaultPerspectiveVFOVDegrees) / 2) * 2;
-		private static readonly double OrthographicMaxZoomWorldspaceHeight = PerspectiveMaxZoomDist * Math.Tan(MathHelper.DegreesToRadians(WorldView.DefaultPerspectiveVFOVDegrees) / 2) * 2;
+
+		// Currently 2.7614237491539679
+		private double OrthographicMinZoomWorldspaceHeight
+		{
+			get
+			{
+				// Get the Z plane height at the perspective limit.
+				// By coincidence, these are currently about the same, with byPerspectiveZoomLimit being slightly less at 2.4852813742385704.
+				double byPerspectiveZoomLimit = WorldView.CalcPerspectiveHeight(PerspectiveMinZoomDist, WorldView.DefaultPerspectiveVFOVDegrees);
+				double byWorldViewLimit = WorldView.OrthographicProjectionMinimumHeight * Vector3.UnitY.TransformVector(this.world.InverseModelviewMatrix).Length;
+				return Math.Max(byPerspectiveZoomLimit, byWorldViewLimit);
+			}
+		}
+
+		// Currently 1905.3823869162372
+		private double OrthographicMaxZoomWorldspaceHeight => WorldView.CalcPerspectiveHeight(PerspectiveMaxZoomDist, WorldView.DefaultPerspectiveVFOVDegrees);
+
+		// When switching the projection from perspective to orthographic, ensure this minimum height.
+		// Will tend to be used when fully zoomed into the hit plane, and then the ref position indicator will appear to drift during the animation.
+		// The resulting projection might be undesired, but at least it would be non-zero.
+		private double PerspectiveToOrthographicMinViewspaceHeight => WorldView.OrthographicProjectionMinimumHeight;
 
 		public NearFarAction GetNearFar;
 		private readonly MotionQueue motionQueue = new MotionQueue();
@@ -685,6 +703,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector3 viewspaceRefPosition = worldspaceRefPosition.TransformPosition(this.world.ModelviewMatrix);
 			// Don't let this become negative when the ref position is behind the camera.
 			double refPlaneHeightInViewspace = Math.Abs(this.world.GetViewspaceHeightAtPosition(viewspaceRefPosition));
+			
+			double refViewspaceZ = viewspaceRefPosition.Z;
+
+			// Ensure a minimum when going from perspective (in case the camera is zoomed all the way into the hit plane).
+			if (toOrthographic)
+			{
+				double minViewspaceHeight = PerspectiveToOrthographicMinViewspaceHeight;
+				if (refPlaneHeightInViewspace < minViewspaceHeight)
+				{
+					// If this happens, the ref position indicator will appear to drift during the animation.
+					refPlaneHeightInViewspace = minViewspaceHeight;
+					refViewspaceZ = -WorldView.CalcPerspectiveDistance(minViewspaceHeight, this.world.VFovDegrees);
+				}
+			}
 
 			double refFOV = MathHelper.DegreesToRadians(
 				toOrthographic
@@ -706,7 +738,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double fov = toOrthographic ? refFOV * (1 - t) : refFOV * t;
 
 					double dist = refPlaneHeightInViewspace / 2 / Math.Tan(fov / 2);
-					double eyeZ = viewspaceRefPosition.Z + dist;
+					double eyeZ = refViewspaceZ + dist;
 
 					Vector3 viewspaceEyePosition = new Vector3(0, 0, eyeZ);
 
