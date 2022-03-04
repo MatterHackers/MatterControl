@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					}
 
-					this.ScrollIntoView(_selectedNode);//, ScrollAmount.Minimum);
+					this.ScrollIntoView(_selectedNode);
 					if (hadFocus)
 					{
 						_selectedNode?.Focus();
