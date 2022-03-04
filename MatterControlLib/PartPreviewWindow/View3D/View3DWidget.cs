@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class View3DWidget : GuiWidget, IDrawable
 	{
 		// Padded by this amount on each side, in case of unaccounted for scene geometry.
-		// For orthogrpahic, this is an offset on either side scaled by far - near.
+		// For orthographic, this is an offset on either side scaled by far - near.
 		// For perspective, this + 1 is used to scale the near and far planes.
 		private const double DynamicNearFarBoundsPaddingFactor = 0.1;
 

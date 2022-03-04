@@ -43,8 +43,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private const double PerspectiveMinZoomDist = 3;
 		private const double PerspectiveMaxZoomDist = 2300;
-		private const double OrthographicMinZoomViewspaceHeight = 0.01;
-		private const double OrthographicMaxZoomViewspaceHeight = 1000;
+		// Currently: 2.4852813742385704, 1905.3823869162372
+		private static readonly double OrthographicMinZoomWorldspaceHeight = PerspectiveMinZoomDist * Math.Tan(MathHelper.DegreesToRadians(WorldView.DefaultPerspectiveVFOVDegrees) / 2) * 2;
+		private static readonly double OrthographicMaxZoomWorldspaceHeight = PerspectiveMaxZoomDist * Math.Tan(MathHelper.DegreesToRadians(WorldView.DefaultPerspectiveVFOVDegrees) / 2) * 2;
 
 		public NearFarAction GetNearFar;
 		private readonly MotionQueue motionQueue = new MotionQueue();
@@ -180,20 +181,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool wantRefPositionVisibleForTransformInteraction = TrackBallController.CurrentTrackingType == TrackBallTransformType.None && (
-				TransformState == TrackBallTransformType.Translation ||
-				TransformState == TrackBallTransformType.Rotation
-				);
-
-			bool isSwitchingProjectionMode = _perspectiveModeSwitchFinishAnimation != null;
-
-			if (isSwitchingProjectionMode || wantRefPositionVisibleForTransformInteraction)
+			void drawCircle(Vector3 worldspacePosition)
 			{
-				var circle = new Ellipse(world.GetScreenPosition(mouseDownWorldPosition), 8 * DeviceScale);
+				var circle = new Ellipse(world.GetScreenPosition(worldspacePosition), 8 * DeviceScale);
 				graphics2D.Render(new Stroke(circle, 2 * DeviceScale), theme.PrimaryAccentColor);
 				graphics2D.Render(new Stroke(new Stroke(circle, 4 * DeviceScale), DeviceScale), theme.TextColor.WithAlpha(128));
 			}
 
+			if (TrackBallController.CurrentTrackingType == TrackBallTransformType.None)
+			{
+				switch (TransformState)
+				{
+				case TrackBallTransformType.Translation:
+				case TrackBallTransformType.Rotation:
+					drawCircle(mouseDownWorldPosition);
+					break;
+				}
+			}
+
+			bool isSwitchingProjectionMode = _perspectiveModeSwitchFinishAnimation != null;
+
+			if (isSwitchingProjectionMode)
+			{
+				drawCircle(GetWorldRefPositionForProjectionSwitch());
+			}
 
 			base.OnDraw(graphics2D);
 		}
@@ -481,10 +492,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				bool isZoomIn = zoomDelta < 0;
 				double scaleFactor = isZoomIn ? 1 / OrthographicZoomScalingFactor : OrthographicZoomScalingFactor;
 				double newViewspaceHeight = this.world.NearPlaneHeightInViewspace * scaleFactor;
+				double newWorldspaceHeight = Vector3.UnitY.TransformVector(this.world.InverseModelviewMatrix).Length * newViewspaceHeight;
 
 				if (isZoomIn
-					? newViewspaceHeight < OrthographicMinZoomViewspaceHeight
-					: newViewspaceHeight > OrthographicMaxZoomViewspaceHeight)
+					? newWorldspaceHeight < OrthographicMinZoomWorldspaceHeight
+					: newWorldspaceHeight > OrthographicMaxZoomWorldspaceHeight)
 				{
 					newViewspaceHeight = this.world.NearPlaneHeightInViewspace;
 				}
@@ -673,7 +685,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector3 viewspaceRefPosition = worldspaceRefPosition.TransformPosition(this.world.ModelviewMatrix);
 			// Don't let this become negative when the ref position is behind the camera.
 			double refPlaneHeightInViewspace = Math.Abs(this.world.GetViewspaceHeightAtPosition(viewspaceRefPosition));
-			double refZ = viewspaceRefPosition.Z;
 
 			double refFOV = MathHelper.DegreesToRadians(
 				toOrthographic
@@ -695,7 +706,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double fov = toOrthographic ? refFOV * (1 - t) : refFOV * t;
 
 					double dist = refPlaneHeightInViewspace / 2 / Math.Tan(fov / 2);
-					double eyeZ = refZ + dist;
+					double eyeZ = viewspaceRefPosition.Z + dist;
 
 					Vector3 viewspaceEyePosition = new Vector3(0, 0, eyeZ);
 
