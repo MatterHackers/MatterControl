@@ -38,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
@@ -104,6 +105,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add to Bed Menu Item");
 				testRunner.WaitForName("Selection");
 				Assert.AreEqual(parts.Length + 1, scene.Children.Count, $"Should have {parts.Length + 1} scene items after second AddToBed");
+
+				return Task.CompletedTask;
+			}, overrideWidth: 1300, maxTimeToRun: 60);
+		}
+
+		[Test]
+		public async Task AddingImageConverterWorks()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.OpenPartTab();
+
+				testRunner.AddItemToBed("Primitives Row Item Collection", "Row Item Image Converter");
+
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
+				var scene = view3D.Object3DControlLayer.Scene;
+
+				testRunner.Assert(() => scene.Children.Count == 1, $"Should have 1 scene item after first AddToBed")
+					.Assert(() => scene.Descendants().Where(i => i is ImageObject3D).Any(), $"Should have 1 scene item after first AddToBed");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 60);

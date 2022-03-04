@@ -134,6 +134,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var partCount = 0;
 			foreach (var partName in partNames)
 			{
+				testRunner.ScrollIntoView(partName);
+
 				foreach (var result in testRunner.GetWidgetsByName(partName))
 				{
 					// Opening the primitive parts library folder causes a second set of primitive part widgets to be created.
@@ -830,6 +832,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var partWidget = testRunner.GetWidgetByName(partName, out _) as ListViewItemBase;
 			if (!partWidget.IsSelected)
 			{
+				testRunner.ScrollIntoView(partName);
 				testRunner.ClickByName(partName);
 			}
 
