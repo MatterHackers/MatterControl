@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
 		{
-			bool settingShouldBeShown = settingsContext.ParseShowString(settingData.ShowIfSet);
+			bool settingShouldBeShown = settingData.Show?.Invoke(settingsContext.Printer.Settings) != false;
 			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)
@@ -872,7 +872,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
 
-			bool settingEnabled = settingsContext.ParseShowString(settingData.EnableIfSet);
+			bool settingEnabled = settingData.Show?.Invoke(settingsContext.Printer.Settings) != false;
 			if (settingEnabled
 				|| settingsContext.ViewFilter == NamedSettingsLayers.Material
 				|| settingsContext.ViewFilter == NamedSettingsLayers.Quality)
