@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public const string ProfileExtension = ".printer";
-		public const string ConfigFileExtension = ".slice";
 		public const string ProfileDocExtension = ".profiles";
 
 		private object writeLock = new object();

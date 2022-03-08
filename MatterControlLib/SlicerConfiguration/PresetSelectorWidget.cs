@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext);
+						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext, true);
 						editMaterialPresetsPage.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditMaterialPresetsPage = null;
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return;
 						}
 
-						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext);
+						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext, false);
 						editQualityPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;

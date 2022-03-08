@@ -1385,7 +1385,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Migrate deprecated OemLayer probe setting
-				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
+				if (settings.OemLayer?.ContainsKey("z_probe_z_offset") == true)
 				{
 					MigrateProbeOffset(settings.OemLayer);
 				}

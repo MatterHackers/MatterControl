@@ -29,13 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -46,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PresetsContext presetsContext;
 		private PrinterConfig printer;
 
-		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext)
+		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext, bool showExport)
 			: base("Close".Localize())
 		{
 			this.presetsContext = presetsContext;
@@ -102,6 +105,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.AddPageAction(duplicateButton);
+
+			if (showExport)
+			{
+				var exportButton = theme.CreateDialogButton("Export".Localize());
+				exportButton.Click += (s, e) =>
+				{
+					// show a system save dialog
+					AggContext.FileDialogs.SaveFileDialog(
+							new SaveFileDialogParams("MatterControl Settings Export|*.material", title: "Export Material Setting")
+							{
+								FileName = presetsContext.PersistenceLayer.Name
+							},
+							(saveParams) =>
+							{
+								// save these settings to a .printer file
+								try
+								{
+									if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+									{
+										// create an empyt profile
+										var materialSettings = new PrinterSettings();
+										// copy just this material setting to it
+										materialSettings.MaterialLayers.Add(presetsContext.PersistenceLayer.Clone());
+										// save it
+										File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(materialSettings, Formatting.Indented));
+									}
+								}
+								catch (Exception e2)
+								{
+									UiThread.RunOnIdle(() =>
+									{
+										StyledMessageBox.ShowMessageBox(e2.Message, "Couldn't save file".Localize());
+									});
+								}
+							});
+				};
+			
+				this.AddPageAction(exportButton);
+			}
 
 			var deleteButton = theme.CreateDialogButton("Delete".Localize());
 			deleteButton.Click += (s, e) =>
