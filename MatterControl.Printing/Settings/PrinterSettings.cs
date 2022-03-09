@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
+		public List<PrinterSettingsLayer> MaterialLayers { get; set; } = new List<PrinterSettingsLayer>();
 
 		public PrinterSettingsLayer OemLayer { get; set; }
 

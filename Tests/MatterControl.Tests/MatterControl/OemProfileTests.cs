@@ -79,7 +79,7 @@ M300 S3000 P30   ; Resume Tone";
 		public void ModifyPrinterProfiles()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
-			return;
+			//return;
 
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -134,6 +134,20 @@ M300 S3000 P30   ; Resume Tone";
 				// e series settings
 				if (printerModel.Contains('E'))
 				{
+					// load the materials settings that we want to add
+					var materialsProfilePath = @"C:\Temp\E_Pulse_Materials.json";
+					var pulseMaterials = PrinterSettings.LoadFile(materialsProfilePath);
+					printerSettings.MaterialLayers = pulseMaterials.MaterialLayers;
+					printerSettings.ActiveMaterialKey = "";
+
+					printerSettings.SetValue(SettingsKey.has_swappable_bed, "1");
+					
+					printerSettings.SetValue(SettingsKey.bed_temperature_buildtak, "55");
+					printerSettings.SetValue(SettingsKey.bed_temperature_garolite, "75");
+					printerSettings.SetValue(SettingsKey.bed_temperature_glass, "75");
+					printerSettings.SetValue(SettingsKey.bed_temperature_kapton, "55");
+					printerSettings.SetValue(SettingsKey.bed_temperature_pei, "75");
+					printerSettings.SetValue(SettingsKey.bed_temperature_pp, "55");
 				}
 
 				// 32 bit settings
