@@ -2369,7 +2369,11 @@ namespace MatterHackers.MatterControl
 
 		public void ShellOpenFile(string file)
 		{
-			UiThread.RunOnIdle(() => this.ShellFileOpened?.Invoke(this, file));
+			UiThread.RunOnIdle(() =>
+			{
+				ShellFileOpened?.Invoke(this, file);
+				AppContext.RootSystemWindow.BringToFront();
+			});
 		}
 
 		private void KeepAwakeIfNeeded()
