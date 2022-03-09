@@ -1,0 +1,39 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "Build Series ABS",
+      "filament_density": "1.04",
+      "layer_id": "8b9e4573-75c3-43cb-b02d-9b9926ed5d27",
+      "bed_temperature": "100",
+      "temperature": "235",
+      "min_fan_speed": "70",
+      "max_fan_speed": "100",
+      "bridge_fan_speed": "50",
+      "merge_overlapping_lines": "1",
+      "enable_fan": "1",
+      "layer_etag": "",
+      "layer_source": "",
+      "min_fan_speed_layer_time": "8",
+      "max_fan_speed_layer_time": "8",
+      "create_skirt": "0",
+      "create_brim": "1",
+      "brims": "5mm",
+      "filament_cost": "19.99",
+      "bed_temperature_buildtak": "100",
+      "bed_temperature_garolite": "100",
+      "bed_temperature_glass": "100",
+      "bed_temperature_kapton": "100",
+      "bed_temperature_pei": "100",
+      "bed_temperature_pp": "100",
+      "material_sku": "MWVCRU99",
+      "material_url": "https://www.matterhackers.com/store/c/mh-build-series/mh-build-series-abs"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

@@ -1,0 +1,37 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "NylonG",
+      "layer_id": "f8bf5181-0d9a-47ac-b8dd-c6ff6e24dc57",
+      "retract_restart_extra_time_to_apply": "0",
+      "retract_restart_extra": "0",
+      "temperature": "255",
+      "bed_temperature": "60",
+      "filament_density": "1.01",
+      "filament_cost": "128",
+      "min_fan_speed": "35",
+      "max_fan_speed": "100",
+      "raft_fan_speed_percent": "0",
+      "bridge_fan_speed": "50",
+      "min_fan_speed_layer_time": "10",
+      "max_fan_speed_layer_time": "10",
+      "layer_etag": "",
+      "layer_source": "",
+      "bed_temperature_buildtak": "60",
+      "bed_temperature_garolite": "75",
+      "bed_temperature_glass": "75",
+      "bed_temperature_kapton": "60",
+      "bed_temperature_pei": "75",
+      "bed_temperature_pp": "60",
+      "material_sku": "MTGV1M9J",
+      "material_url": "https://www.matterhackers.com/store/c/pro-series-nylon/nylong"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

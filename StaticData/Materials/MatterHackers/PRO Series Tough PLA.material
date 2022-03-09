@@ -1,0 +1,33 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "PRO Series Tough PLA",
+      "layer_id": "35158031-fcdf-4e93-bfbc-6b5e78a94d39",
+      "temperature": "215",
+      "bed_temperature": "55",
+      "min_fan_speed_layer_time": "180",
+      "max_fan_speed_layer_time": "60",
+      "min_fan_speed": "60",
+      "disable_fan_first_layers": "5",
+      "extrusion_multiplier": "0.97",
+      "filament_cost": "52",
+      "layer_etag": "",
+      "layer_source": "",
+      "bed_temperature_buildtak": "55",
+      "bed_temperature_garolite": "70",
+      "bed_temperature_glass": "70",
+      "bed_temperature_kapton": "55",
+      "bed_temperature_pei": "70",
+      "bed_temperature_pp": "55",
+      "material_sku": "MY6C8H7E",
+      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-pla"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

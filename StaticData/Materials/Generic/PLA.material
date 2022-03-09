@@ -1,0 +1,34 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "PLA",
+      "filament_density": "1.24",
+      "layer_id": "74679ff2-0dde-4838-bd9d-0ec23e897dfe",
+      "bed_temperature": "75",
+      "temperature": "205",
+      "min_fan_speed": "70",
+      "max_fan_speed": "100",
+      "bridge_fan_speed": "100",
+      "layer_etag": "",
+      "layer_source": "",
+      "filament_cost": "19.99",
+      "min_fan_speed_layer_time": "180",
+      "max_fan_speed_layer_time": "60",
+      "extrusion_multiplier": "0.97",
+      "disable_fan_first_layers": "5",
+      "bed_temperature_buildtak": "50",
+      "bed_temperature_garolite": "75",
+      "bed_temperature_glass": "75",
+      "bed_temperature_kapton": "50",
+      "bed_temperature_pei": "75",
+      "bed_temperature_pp": "75"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

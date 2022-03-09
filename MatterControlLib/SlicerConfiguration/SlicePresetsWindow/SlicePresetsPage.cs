@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					AggContext.FileDialogs.SaveFileDialog(
 							new SaveFileDialogParams("MatterControl Settings Export|*.material", title: "Export Material Setting")
 							{
-								FileName = presetsContext.PersistenceLayer.Name
+								FileName = ApplicationController.Instance.SanitizeFileName(presetsContext.PersistenceLayer.Name)
 							},
 							(saveParams) =>
 							{
