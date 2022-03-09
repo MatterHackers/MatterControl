@@ -37,11 +37,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private IEnumerable<PrinterSettingsLayer> layerCascade;
 		private PrinterSettingsLayer persistenceLayer;
-		private PrinterConfig printer;
+		public PrinterConfig Printer { get; }
 
 		public SettingsContext(PrinterConfig printer, IEnumerable<PrinterSettingsLayer> layerCascade, NamedSettingsLayers viewFilter)
 		{
-			this.printer = printer;
+			this.Printer = printer;
 			this.layerCascade = layerCascade;
 			this.ViewFilter = viewFilter;
 
@@ -58,22 +58,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string GetValue(string slicerConfigName)
 		{
-			return printer.Settings.GetValue(slicerConfigName, layerCascade);
+			return Printer.Settings.GetValue(slicerConfigName, layerCascade);
 		}
 
 		public void SetValue(string slicerConfigName, string settingsValue)
 		{
-			printer.Settings.SetValue(slicerConfigName, settingsValue, persistenceLayer);
+			Printer.Settings.SetValue(slicerConfigName, settingsValue, persistenceLayer);
 		}
 
 		public void SetComPort(string settingsValue)
 		{
-			printer.Settings.Helpers.SetComPort(settingsValue, persistenceLayer);
+			Printer.Settings.Helpers.SetComPort(settingsValue, persistenceLayer);
 		}
 
 		public void ClearValue(string slicerConfigName)
 		{
-			printer.Settings.ClearValue(slicerConfigName, persistenceLayer);
+			Printer.Settings.ClearValue(slicerConfigName, persistenceLayer);
 		}
 
 		public bool ContainsKey(string slicerConfigName)
@@ -81,14 +81,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return persistenceLayer.ContainsKey(slicerConfigName);
 		}
 
-		internal bool ParseShowString(string enableIfSet)
-		{
-			return printer.Settings.ParseShowString(enableIfSet);
-		}
-
 		public T GetValue<T>(string slicerConfigName) where T : IConvertible
 		{
-			return printer.Settings.GetValue<T>(slicerConfigName, this.layerCascade);
+			return Printer.Settings.GetValue<T>(slicerConfigName, this.layerCascade);
 		}
 	}
 }

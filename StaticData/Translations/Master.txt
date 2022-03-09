@@ -2803,6 +2803,12 @@ Translated:Mirror Mode
 English:Mirror On
 Translated:Mirror On
 
+English:Mirror X
+Translated:Mirror X
+
+English:Mirror Y
+Translated:Mirror Y
+
 English:Missing
 Translated:Missing
 
@@ -3933,6 +3939,9 @@ Translated:Resetting to default values will remove your current overrides and re
 
 English:Reshape
 Translated:Reshape
+
+English:Resin
+Translated:Resin
 
 English:Resin density. Only used for estimating mass in the Layer View.
 Translated:Resin density. Only used for estimating mass in the Layer View.

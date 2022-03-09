@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed),
 					DefaultValue = "70"
 				},
 				new SliceSettingData()
@@ -142,7 +142,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -152,7 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is using BuildTak. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -162,7 +164,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is using garolite. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -172,7 +175,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is using glass. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -182,7 +186,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -192,7 +197,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is using PEI. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -202,7 +208,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The temperature to print when the bed is polypropylene. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -212,7 +219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "This should be checked if the printer supports multiple bed surfaces and the bed temperature for the different surfaces needs to vary.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "has_heated_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed),
 					UiUpdate = UiUpdateRequired.Application,
 					DefaultValue = "0"
 				},
@@ -224,7 +231,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					//HelpText = "The current bed surfaces that the printer is using. This is used to set the correct bed temperature for a given material.".Localize(),                  
 					HelpText = "This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.".Localize(),
 					DataEditType = DataEditTypes.LIST,
-					ShowIfSet = "has_heated_bed&has_swappable_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
+						&& settings.GetBool(SettingsKey.has_swappable_bed),
 					ListValues = "Default,Blue Tape,BuildTak,Garolite,Glass,Kapton,PEI,Polypropylene",
 					DefaultValue = "Default"
 				},
@@ -235,7 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the bed will attempt to reach during the first layer of the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed),
 					DefaultValue = "70"
 				},
 				new SliceSettingData()
@@ -246,7 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "°C".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -307,7 +315,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "s".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -363,7 +371,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The Markdown that will be shown on the second extruders Insert Filament page.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "* Insert filament into extruder 2 until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
 				},
 				new SliceSettingData()
@@ -382,7 +390,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The Markdown that will be shown on the second extruders Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "In a few seconds filament should be coming out of the second extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
 				new SliceSettingData()
@@ -664,7 +672,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.OFFSET3,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
-					 // ShowIfSet = "extruder_count>1", // can't do this currently as it breaks legacy printers (kossle & jump start). Have to have a fix for that to enable hiding.
 					DefaultValue = "0x0,0x0,0x0,0x0"
 				},
 				new SliceSettingData()
@@ -686,7 +693,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
@@ -883,7 +890,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which the nozzle will move when recovering a failed print, for 1 layer.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
-					ShowIfSet = "!has_hardware_leveling&recover_is_enabled",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.recover_is_enabled),
 					DefaultValue = "10",
 					RebuildGCodeOnChange = false
 				},
@@ -893,7 +901,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Enable Recovery".Localize(),
 					HelpText = "When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
@@ -916,7 +924,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Home Z Max".Localize(),
 					HelpText = "Indicates that the Z axis homes the hot end away from the bed (z-max homing)".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
@@ -928,7 +936,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
 					Units = "mm".Localize(),
-					ShowIfSet = "!has_hardware_leveling&recover_is_enabled",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.recover_is_enabled),
 					DefaultValue = "0,0",
 					RebuildGCodeOnChange = false
 				},
@@ -988,7 +997,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer has a servo for lowering and raising the z probe.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
-					ShowIfSet = "has_z_probe",
+					Show = (settings) => settings.GetBool(SettingsKey.has_z_probe),
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
@@ -1012,7 +1021,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					DefaultValue = "0",
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.has_conductive_nozzle),
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
@@ -1024,7 +1035,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					DefaultValue = "0",
-					ShowIfSet = "!has_hardware_leveling&has_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe),
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
@@ -1036,7 +1048,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.VECTOR2,
 					ShowAsOverride = true,
 					DefaultValue = "0,0",
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle&measure_probe_offset_conductively",
+					Show = (settings) => ! settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.has_conductive_nozzle)
+						&& settings.GetBool(SettingsKey.measure_probe_offset_conductively),
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -1047,7 +1062,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE,
 					ShowAsOverride = true,
 					DefaultValue = "-1",
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle&measure_probe_offset_conductively",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.has_conductive_nozzle)
+						&& settings.GetBool(SettingsKey.measure_probe_offset_conductively),
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -1088,7 +1106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "!include_firmware_updater=None",
+					Show = (settings) => settings.GetValue(SettingsKey.include_firmware_updater) != "None",
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -1173,7 +1191,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.LIST,
 					ListValues = "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk,Custom Points",
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "3 Point Plane",
 					UiUpdate = UiUpdateRequired.SliceSettings,
@@ -1187,7 +1205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.BOUNDS,
 					Units = "%".Localize(),
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "10,10,10,10"
 				},
@@ -1198,7 +1216,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "20,20,100,180,180,20",
-					ShowIfSet = "!has_hardware_leveling&print_leveling_solution=Custom Points",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetValue(SettingsKey.print_leveling_solution) == "Custom Points",
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -1207,7 +1226,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Require Leveling To Print".Localize(),
 					HelpText = "The printer requires print leveling to run correctly.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					ShowAsOverride = true,
@@ -1245,7 +1264,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "filament_runout_sensor",
+					Show = (settings) => settings.GetBool(SettingsKey.filament_runout_sensor),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "1"
 				},
@@ -1257,7 +1276,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowAsOverride = true,
-					ShowIfSet = "filament_runout_sensor",
+					Show = (settings) => settings.GetBool(SettingsKey.filament_runout_sensor),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "2"
 				},
@@ -1268,7 +1287,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Report the data analysis of the run out sensor data each time it is read.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
-					ShowIfSet = "filament_runout_sonsor",
+					Show = (settings) => settings.GetBool(SettingsKey.filament_runout_sensor),
 
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
@@ -1279,7 +1298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Probe Has Been Calibrated".Localize(),
 					HelpText = "Flag keeping track if probe calibration wizard has been run.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
 				},
@@ -1289,7 +1308,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "X Y Nozzle Offsets Have Been Calibrated".Localize(),
 					HelpText = "Flag keeping track if xy calibration wizard has been run.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "!has_hardware_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling),
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
 				},
@@ -1318,7 +1337,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The starting height (z) of the print head before probing each print level position.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
 					Units = "mm".Localize(),
-					ShowIfSet = "!has_hardware_leveling&has_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe),
 					DefaultValue = "10",
 					RebuildGCodeOnChange = false
 				},
@@ -1329,7 +1349,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe),
 					RebuildGCodeOnChange = false,
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
@@ -1341,7 +1362,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print. This will run immediately after M190 (print bed reaches temp).".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe),
 					RebuildGCodeOnChange = false,
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
@@ -1354,7 +1377,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe&validate_leveling",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe)
+						&& settings.GetBool(SettingsKey.validate_leveling),
 					RebuildGCodeOnChange = false,
 					DefaultValue = ".05"
 				},
@@ -1366,7 +1392,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.OFFSET3,
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0,0,0"
 				},
@@ -1378,7 +1406,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "",
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "1"
 				},
@@ -1390,7 +1420,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°".Localize(),
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe)
+						&& settings.GetBool(SettingsKey.has_z_servo),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0"
 				},
@@ -1402,7 +1435,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°".Localize(),
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
+					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
+						&& settings.GetBool(SettingsKey.has_z_probe)
+						&& settings.GetBool(SettingsKey.use_z_probe)
+						&& settings.GetBool(SettingsKey.has_z_servo),
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0"
 				},
@@ -1494,7 +1530,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Each Extruder Has Fan".Localize(),
 					HelpText = "Each extruder has a separate part cooling fan that is controlled independently.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "has_fan&extruder_count>1",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan)
+						&& settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.SliceSettings
 				},
@@ -1505,7 +1542,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Turn the fan on and off regardless of settings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					UiUpdate = UiUpdateRequired.SliceSettings,
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					DefaultValue = "1"
 				},
 				new SliceSettingData()
@@ -1516,7 +1553,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "seconds".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "60",
 					Converter = new ValueConverter(),
@@ -1528,7 +1565,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power, regardless of layer time.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "%".Localize(),
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "0",
 					Converter = new ValueConverter(),
@@ -1541,7 +1578,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "seconds".Localize(),
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "30",
 					Converter = new ValueConverter(),
@@ -1553,7 +1590,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "%".Localize(),
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "35",
@@ -1567,7 +1604,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "%".Localize(),
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "100",
 					Converter = new ConditionalField(SettingsKey.enable_fan, new ValueConverter()),
@@ -1580,7 +1617,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "%".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "100",
 					Converter = new ConditionalField(SettingsKey.enable_fan, new ValueConverter()),
@@ -1592,7 +1629,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number of layers for which the layer cooling fan will be forced off at the start of the print.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "layers".Localize(),
-					ShowIfSet = "has_fan",
+					Show = (settings) => settings.GetBool(SettingsKey.has_fan),
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "1",
 					Converter = new ValueConverter(),
@@ -1794,7 +1831,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
-					ShowIfSet = "!avoid_crossing_perimeters",
+					Show = (settings) => !settings.GetBool(SettingsKey.avoid_crossing_perimeters),
 					DefaultValue = "5",
 					Converter = new MapFirstValue(),
 				},
@@ -1807,7 +1844,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.enable_retractions,
-					ShowIfSet = "avoid_crossing_perimeters",
+					Show = (settings) => settings.GetBool(SettingsKey.avoid_crossing_perimeters),
 					DefaultValue = "20",
 					Converter = new MapFirstValue(),
 				},
@@ -1849,7 +1886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "When using multiple extruders, the distance filament will reverse before changing to a different extruder.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "10",
@@ -1884,7 +1921,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					EnableIfSet = SettingsKey.enable_retractions,
 					Units = "mm zero to disable".Localize(),
 					DefaultValue = "0",
@@ -2094,7 +2131,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
-					ShowIfSet = null,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2106,7 +2142,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
-					ShowIfSet = null,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2118,7 +2153,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
-					ShowIfSet = null,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2194,7 +2228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.create_per_layer_internal_support,
 					PresentationName = "Generate Everywhere".Localize(),
 					HelpText = "When generating per layer support, evaluate all surfaces rather than only those above the bed.".Localize(),
-					ShowIfSet = "create_per_layer_support",
+					Show = (settings) => settings.GetBool(SettingsKey.create_per_layer_support),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
 					Converter = new MappedToBoolString(),
@@ -2207,7 +2241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "%".Localize(),
-					ShowIfSet = "create_per_layer_support",
+					Show = (settings) => settings.GetBool(SettingsKey.create_per_layer_support),
 					DefaultValue = "50",
 					Converter = new ValueConverter(),
 				},
@@ -2219,7 +2253,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
-					ShowIfSet = "create_per_layer_support",
+					Show = (settings) => settings.GetBool(SettingsKey.create_per_layer_support),
 					DefaultValue = "1",
 					Converter = new ValueConverter(),
 				},
@@ -2227,7 +2261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.support_material_extruder,
 					PresentationName = "Support Material Extruder".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					HelpText = "The extruder to use for support material. Default will use whichever extruder active at the time.".Localize(),
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
@@ -2238,7 +2272,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.raft_extruder,
 					PresentationName = "Raft Extruder".Localize(),
 					HelpText = "The extruder to use to print the raft. Default will use extruder 1.".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					EnableIfSet = "create_raft",
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
@@ -2250,7 +2284,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.support_material_interface_extruder,
 					PresentationName = "Support Interface Extruder".Localize(),
 					HelpText = "The extruder to use to for support material interface layers. Default will use whichever extruder active at the time.".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
 					DefaultValue = "1",
@@ -2260,7 +2294,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.brim_extruder,
 					PresentationName = "Brim Extruder".Localize(),
 					HelpText = "The extruder to use for the brim.  Default will use the first extruder of the print.".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
 					EnableIfSet = SettingsKey.create_brim,
@@ -2346,7 +2380,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The color of the second material (extruder 2).".Localize(),
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(1 / 10.0, .99, .49).ToColor().Html,
 				},
@@ -2357,7 +2391,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The color of the third material (extruder 3).".Localize(),
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
-					ShowIfSet = "extruder_count>2",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 2,
 					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(2 / 10.0, .99, .49).ToColor().Html,
 				},
@@ -2368,7 +2402,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The color of the forth material (extruder 4).".Localize(),
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
-					ShowIfSet = "extruder_count>3",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 3,
 					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(3 / 10.0, .99, .49).ToColor().Html,
 				},
@@ -2389,7 +2423,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -2400,7 +2434,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "100%",
 					Converter = new AsPercentOrDirect()
 				},
@@ -2411,7 +2445,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "extruder_count>2",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 2,
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -2430,7 +2464,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The inset amount for nozzle 1 from the bed (Left, Front, Right, Back).".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2440,7 +2474,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The inset amount for nozzle 2 from the bed (Left, Front, Right, Back).".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2450,7 +2484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					ShowIfSet = "extruder_count>3",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 3,
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -2471,7 +2505,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "°C".Localize(),
-					ShowIfSet = "has_heated_bed",
+					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed),
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -2498,7 +2532,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2506,7 +2540,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode,
 					PresentationName = "After Tool Change G-Code".Localize(),
 					HelpText = "G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2518,7 +2552,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2526,7 +2560,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode_1,
 					PresentationName = "After Tool Change G-Code 2".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2538,7 +2572,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					ShowIfSet = "extruder_count>2",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 2,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2547,7 +2581,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code 3".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>2",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 2,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2558,7 +2592,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					ShowIfSet = "extruder_count>3",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 3,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2567,7 +2601,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code 4".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					ShowIfSet = "extruder_count>3",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 3,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2676,7 +2710,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The serial port to use while connecting to this printer.".Localize(),
 					DataEditType = DataEditTypes.COM_PORT,
 					ShowAsOverride = false,
-					ShowIfSet = "!enable_network_printing",
+					Show = (settings) => !settings.GetBool(SettingsKey.enable_network_printing),
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "",
 					RebuildGCodeOnChange = false
@@ -2687,7 +2721,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Wipe Shield Distance".Localize(),
 					HelpText = "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					Units = "mm".Localize(),
 					DefaultValue = "0",
 					Converter = new ValueConverter(),
@@ -2698,7 +2732,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Perimeters Per Extruder".Localize(),
 					HelpText = "The number of perimeters will be this number times the number of active extruders. Make this a smaller number to make the wipe more hollow or bigger to fill it.".Localize(),
 					DataEditType = DataEditTypes.INT,
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "3",
 					Converter = new ValueConverter(),
 				},
@@ -2709,7 +2743,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
-					ShowIfSet = "extruder_count>1",
+					Show = (settings) => settings.GetInt(SettingsKey.extruder_count) > 1,
 					DefaultValue = "0",
 					Converter = new ValueConverter(),
 				},
@@ -2786,7 +2820,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "List of IP's discovered on the network".Localize(),
 					DataEditType = DataEditTypes.IP_LIST,
 					ShowAsOverride = false,
-					ShowIfSet = "!enable_network_printing",
+					Show = (settings) => !settings.GetBool(SettingsKey.enable_network_printing),
 					DefaultValue = "Manual",
 					RebuildGCodeOnChange = false,
 					UiUpdate = UiUpdateRequired.SliceSettings
@@ -2798,7 +2832,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "IP Address of printer/printer controller".Localize(),
 					DataEditType = DataEditTypes.STRING,
 					ShowAsOverride = false,
-					ShowIfSet = "enable_network_printing",
+					Show = (settings) => settings.GetBool(SettingsKey.enable_network_printing),
 					EnableIfSet = "selector_ip_address=Manual",
 					DefaultValue = "127.0.0.1",
 					RebuildGCodeOnChange = false
@@ -2810,7 +2844,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Port number to be used with IP Address to connect to printer over the network".Localize(),
 					DataEditType = DataEditTypes.INT,
 					ShowAsOverride = false,
-					ShowIfSet = "enable_network_printing",
+					Show = (settings) => settings.GetBool(SettingsKey.enable_network_printing),
 					EnableIfSet = "selector_ip_address=Manual",
 					DefaultValue = "23",
 					RebuildGCodeOnChange = false
@@ -2930,11 +2964,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					UiUpdate = UiUpdateRequired.SliceSettings
 				}
 			};
-		}
-
-		private static string GetSettingsName(string settingsKey)
-		{
-			return PrinterSettings.SettingsData[settingsKey].PresentationName;
 		}
 	}
 }

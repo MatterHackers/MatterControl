@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string PresentationName { get; set; }
 
-		public string ShowIfSet { get; set; }
+		public Func<PrinterSettings, bool> Show { get; set; }
 
 		public string EnableIfSet { get; set; }
 

@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
+		public List<PrinterSettingsLayer> MaterialLayers { get; set; } = new List<PrinterSettingsLayer>();
 
 		public PrinterSettingsLayer OemLayer { get; set; }
 
@@ -942,77 +942,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
 
-		/// <summary>
-		/// Determines if a given field should be shown given its filter
-		/// </summary>
-		/// <param name="filter">The view filter - order of precedence &amp;, |, !, =</param>
-		/// <returns>An indicator if the field should be shown given the current filter</returns>
-		public bool ParseShowString(string filter)
-		{
-			if (!string.IsNullOrEmpty(filter))
-			{
-				string[] splitOnAnd = filter.Split('&');
-				foreach (var andGroup in splitOnAnd)
-				{
-					bool orResult = false;
-					string[] splitOnOr = andGroup.Split('|');
-					foreach (var orGroup in splitOnOr)
-					{
-						var matchString = "1";
-						var orItem = orGroup;
-						bool negate = orItem.StartsWith("!");
-						if (negate)
-						{
-							orItem = orItem.Substring(1);
-						}
-
-						string sliceSettingValue = "";
-						if (orItem.Contains("="))
-						{
-							string[] splitOnEquals = orItem.Split('=');
-
-							sliceSettingValue = this.GetValue(splitOnEquals[0]);
-							matchString = splitOnEquals[1];
-						}
-						else if (orItem.Contains(">"))
-						{
-							matchString = "no_match";
-							string[] splitOnGreater = orItem.Split('>');
-
-							sliceSettingValue = this.GetValue(splitOnGreater[0]);
-							if (double.TryParse(sliceSettingValue, out double doubleValue))
-							{
-								if (double.TryParse(splitOnGreater[1], out double greater))
-								{
-									if (doubleValue > greater)
-									{
-										matchString = sliceSettingValue;
-									}
-								}
-							}
-						}
-						else
-						{
-							sliceSettingValue = this.GetValue(orItem);
-						}
-
-						if ((!negate && sliceSettingValue == matchString)
-							|| (negate && sliceSettingValue != matchString))
-						{
-							orResult = true;
-						}
-					}
-
-					if (orResult == false)
-					{
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
 		private static readonly Regex ConstantFinder = new Regex("(?<=\\[).+?(?=\\])", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		private static readonly Regex SettingsFinder = new Regex("(?<=\\[).+?(?=\\])|(?<=\\{).+?(?=\\})", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -1227,6 +1156,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return bigStringForHashCode.ToString().GetLongHashCode();
+		}
+
+		public bool GetBool(string settingsKey)
+		{
+			return GetValue<bool>(settingsKey);
+		}
+
+		public int GetInt(string settingsKey)
+		{
+			return GetValue<int>(settingsKey);
 		}
 
 		/// <summary>
@@ -1446,7 +1385,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Migrate deprecated OemLayer probe setting
-				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
+				if (settings.OemLayer?.ContainsKey("z_probe_z_offset") == true)
 				{
 					MigrateProbeOffset(settings.OemLayer);
 				}

@@ -1,0 +1,36 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "PRO Series RYNO",
+      "layer_id": "99225341-9133-46be-b075-43009ea8f2a0",
+      "temperature": "245",
+      "filament_density": "1.28",
+      "bed_temperature": "55",
+      "bridge_fan_speed": "50",
+      "max_fan_speed": "100",
+      "min_fan_speed": "35",
+      "min_fan_speed_layer_time": "15",
+      "max_fan_speed_layer_time": "10",
+      "filament_cost": "64",
+      "extrusion_multiplier": "0.95",
+      "disable_fan_first_layers": "3",
+      "bed_temperature_buildtak": "55",
+      "bed_temperature_garolite": "75",
+      "bed_temperature_glass": "75",
+      "bed_temperature_kapton": "55",
+      "bed_temperature_pei": "75",
+      "bed_temperature_pp": "55",
+      "layer_etag": "",
+      "layer_source": "",
+      "material_sku": "M6989PRZ",
+      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-ryno"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

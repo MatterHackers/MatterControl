@@ -349,12 +349,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Action = () =>
 				{
 					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams("settings files|*.printer"),
+						new OpenFileDialogParams("settings files|*.printer,*.material"),
 						(dialogParams) =>
 						{
-							if (!string.IsNullOrEmpty(dialogParams.FileName))
+							// if there is only a single materials setting load it directly
+							var settingsToImport = PrinterSettings.LoadFile(dialogParams.FileName);
+							if (Path.GetExtension(dialogParams.FileName).ToLower() == ".material"
+								&& settingsToImport.MaterialLayers.Count == 1)
 							{
-								DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+								var printerSettingsLayer = new PrinterSettingsLayer();
+								var sourceFilter = new List<PrinterSettingsLayer>()
+								{
+									settingsToImport.MaterialLayers[0]
+								};
+								printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, true);
+								printer.Settings.MaterialLayers.Add(printerSettingsLayer);
+								var newMaterial = printer.Settings.MaterialLayers[printer.Settings.MaterialLayers.Count - 1];
+								printer.Settings.SetValue(SettingsKey.active_material_key, newMaterial.LayerID);
+
+							}
+							else
+							{
+								// else open a dialog to select what setting to improt
+								if (!string.IsNullOrEmpty(dialogParams.FileName))
+								{
+									DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+								}
 							}
 						});
 				}
