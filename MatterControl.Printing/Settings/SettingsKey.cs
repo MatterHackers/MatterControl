@@ -164,6 +164,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string material_color_1 = nameof(material_color_1);
 		public const string material_color_2 = nameof(material_color_2);
 		public const string material_color_3 = nameof(material_color_3);
+		public const string material_sku = nameof(material_sku);
+		public const string material_url = nameof(material_url);
 		public const string max_acceleration = nameof(max_acceleration);
 		public const string max_fan_speed = nameof(max_fan_speed);
 		public const string max_fan_speed_layer_time = nameof(max_fan_speed_layer_time);

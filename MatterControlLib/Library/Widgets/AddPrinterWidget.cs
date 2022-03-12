@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					rootNode.TreeView = treeView;
 					rootNode.Load += (s, e) =>
 					{
-						var image = OemSettings.Instance.GetIcon(oem.Key);
+						var image = OemSettings.Instance.GetIcon(oem.Key, theme);
 
 						SetImage(rootNode, image);
 					};

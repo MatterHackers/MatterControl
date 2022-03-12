@@ -36,6 +36,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -75,7 +77,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
 
-		public ImageBuffer GetIcon(string oemName)
+		public ImageBuffer GetIcon(string oemName, ThemeConfig theme)
 		{
 			var size = (int)(16 * GuiWidget.DeviceScale);
 			var imageBuffer = new ImageBuffer(size, size);
@@ -90,6 +92,15 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			{
 				var graphics = imageBuffer.NewGraphics2D();
 				graphics.Clear(AppContext.Theme.SlightShade);
+			}
+
+			if (theme.IsDarkTheme)
+            {
+				// put the icon on a light background
+				var background = new ImageBuffer(size, size);
+				background.NewGraphics2D().Render(new RoundedRect(background.GetBoundingRect(), 1), theme.TextColor);
+				background.NewGraphics2D().Render(imageBuffer, 0, 0);
+				imageBuffer.CopyFrom(background);
 			}
 
 			return imageBuffer;

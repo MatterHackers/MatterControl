@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			HAnchor = HAnchor.MaxFitOrStretch;
 
 			this.SheetData = sheetData;
-			var countWidth = 10 * GuiWidget.DeviceScale;
 			var cellEditNameWidth = 80 * GuiWidget.DeviceScale;
 
 			// put in the edit row

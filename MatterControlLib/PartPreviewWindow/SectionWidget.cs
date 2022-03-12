@@ -28,9 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -74,8 +76,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Checked = expanded,
 					Padding = 0
 				};
+
 				checkbox.CheckedStateChanged += (s, e) =>
 				{
+					var scrollable = this.Parents<ScrollableWidget>().First();
+					var topPosition = Vector2.Zero;
+					if (scrollable != null)
+                    {
+						topPosition = scrollable.TopLeftOffset;
+                    }
+
 					if (expandingContent)
 					{
 						ContentPanel.Visible = checkbox.Checked;
@@ -84,6 +94,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
 					ContentPanel.Height = 10 * GuiWidget.DeviceScale;
+
+					if (scrollable != null)
+					{
+						scrollable.TopLeftOffset = topPosition;
+					}
 				};
 
 				if (serializationKey != null)

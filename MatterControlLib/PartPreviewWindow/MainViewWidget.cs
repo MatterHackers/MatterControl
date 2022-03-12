@@ -309,9 +309,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.AddTab(
 				tab = new ChromeTab(
 					"Hardware",
-					"Hardware".Localize(),
+					"Printers".Localize(),
 					tabControl,
-					new HardwareTabPage(theme)
+					new PrintersTabPage(theme)
 					{
 						BackgroundColor = theme.BackgroundColor
 					},

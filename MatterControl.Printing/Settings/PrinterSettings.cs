@@ -169,6 +169,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.material_color_1,
 			SettingsKey.material_color_2,
 			SettingsKey.material_color_3,
+			SettingsKey.material_sku,
+			SettingsKey.material_url,
 			SettingsKey.measure_probe_offset_conductively,
 			SettingsKey.model,
 			SettingsKey.number_of_first_layers,

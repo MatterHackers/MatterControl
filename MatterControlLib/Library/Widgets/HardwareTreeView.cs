@@ -127,17 +127,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
 			this.Invalidate();
 
-			// Filament
-			var materialsNode = new TreeNode(theme)
-			{
-				Text = "Materials".Localize(),
-				AlwaysExpandable = true,
-				Image = StaticData.Instance.LoadIcon("filament.png", 16, 16).SetToColor(theme.TextColor)
-			};
-			materialsNode.TreeView = this;
-
-			rootColumn.AddChild(materialsNode);
-
 			// Register listeners
 			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
 
@@ -170,7 +159,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				printerNode.Load += (s, e) =>
 				{
-					printerNode.Image = OemSettings.Instance.GetIcon(printer.Make);
+					printerNode.Image = OemSettings.Instance.GetIcon(printer.Make, theme);
 				};
 
 				printersNode.Nodes.Add(printerNode);
@@ -202,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				printerNode.Load += (s, e) =>
 				{
-					printerNode.Image = OemSettings.Instance.GetIcon(printer.Settings.GetValue(SettingsKey.make));
+					printerNode.Image = OemSettings.Instance.GetIcon(printer.Settings.GetValue(SettingsKey.make), theme);
 				};
 
 				printersNode.Nodes.Add(printerNode);

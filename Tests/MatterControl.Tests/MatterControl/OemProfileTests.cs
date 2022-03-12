@@ -79,7 +79,7 @@ M300 S3000 P30   ; Resume Tone";
 		public void ModifyPrinterProfiles()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
-			return;
+			// return;
 
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -148,6 +148,18 @@ M300 S3000 P30   ; Resume Tone";
 					printerSettings.SetValue(SettingsKey.bed_temperature_kapton, "55");
 					printerSettings.SetValue(SettingsKey.bed_temperature_pei, "75");
 					printerSettings.SetValue(SettingsKey.bed_temperature_pp, "55");
+
+					var zHeight = 215;
+					// check the build height based on the extruder type
+					switch (printerModel[3])
+                    {
+						case '3': // Volcano
+						case '6': // LGX E3Dv6
+							zHeight = 205;
+							break;							
+					}
+
+					printerSettings.SetValue(SettingsKey.build_height, zHeight.ToString());
 				}
 
 				// 32 bit settings
@@ -168,6 +180,26 @@ M300 S3000 P30   ; Resume Tone";
 
 			int a = 0;
 		}
+
+		[Test, RunInApplicationDomain]
+		public void AllMaterialsHaveSkuOrUrlSet()
+		{
+			var materialSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Materials");
+			var directoryInfo = new DirectoryInfo(materialSettingsDirectory);
+			var files = directoryInfo.GetFiles("*.material", SearchOption.AllDirectories);
+			var profiles = files.Select(f => PrinterSettings.LoadFile(f.FullName)).ToList();
+
+			foreach(var profile in profiles)
+            {
+				Assert.AreEqual(1, profile.MaterialLayers.Count, "Each material profile should have 1 material in it");
+				var material = profile.MaterialLayers[0];
+				profile.ActiveMaterialKey = material.LayerID;
+				var hasSku = !string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku));
+				var hasUrl = !string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_url));
+				Assert.IsTrue(hasSku || hasUrl);
+            }
+		}
+
 
 		[Test, RunInApplicationDomain]
 		public void LayerGCodeHasExpectedValue()
