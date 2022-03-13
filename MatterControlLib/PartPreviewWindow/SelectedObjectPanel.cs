@@ -329,8 +329,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = 3;
 								field.ValueChanged += (s, e) =>
 								{
-									cell.Expression = field.Value;
-									firtSheet.SheetData.Recalculate();
+									var oldValue = cell.Expression;
+									var newValue = field.Value;
+									undoBuffer.AddAndDo(new UndoRedoActions(() =>
+									{
+										cell.Expression = oldValue;
+										firtSheet.SheetData.Recalculate();
+									},
+									() =>
+									{
+										cell.Expression = newValue;
+										firtSheet.SheetData.Recalculate();
+									}));
+
 								};
 
 								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);

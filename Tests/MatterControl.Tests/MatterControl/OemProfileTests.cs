@@ -79,7 +79,7 @@ M300 S3000 P30   ; Resume Tone";
 		public void ModifyPrinterProfiles()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
-			// return;
+			return;
 
 			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
