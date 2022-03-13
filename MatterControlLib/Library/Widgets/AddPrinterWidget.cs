@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			printerInfo = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Stretch
 			};
 
 			nameSection.BackgroundColor = theme.MinimalShade;
@@ -144,20 +144,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Margin = new BorderDouble(top: 3)
 			});
 
-			var scrollable = new ScrollableWidget(autoScroll: true)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-
-			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-
 			// Padding allows space for scrollbar
 			printerInfo.Padding = new BorderDouble(right: theme.DefaultContainerPadding + 2);
 
-			scrollable.AddChild(printerInfo);
-
-			panel2Column.AddChild(scrollable);
+			panel2Column.AddChild(printerInfo);
 
 			horizontalSplitter.Panel2.Padding = horizontalSplitter.Panel2.Padding.Clone(right: 0, bottom: 0);
 
@@ -361,7 +351,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									ShowHeadingRow = false,
 									StoreID = storePrinterID?.SID,
 									HAnchor = HAnchor.Stretch,
-									VAnchor = VAnchor.Fit
+									VAnchor = VAnchor.Stretch
 								});
 						}
 

@@ -148,6 +148,9 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 								CreateProductDataWidgets(result.ProductSku);
 
+								contentScroll.Width += 1;
+								contentScroll.Width -= 1;
+
 								contentScroll.TopLeftOffset = new Vector2(0, 0);
 							});
 						});
