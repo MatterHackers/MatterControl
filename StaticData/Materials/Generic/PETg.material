@@ -23,7 +23,8 @@
       "bed_temperature_glass": "75",
       "bed_temperature_kapton": "75",
       "bed_temperature_pei": "75",
-      "bed_temperature_pp": "55"
+      "bed_temperature_pp": "55",
+      "material_url": "https://www.matterhackers.com/store/c/3d-printer-filament/PET"
     }
   ],
   "OemLayer": null,

@@ -1,0 +1,37 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "Quantum PLA",
+      "filament_density": "1.24",
+      "layer_id": "b08a04f9-8d00-4753-b802-3745ffcf5c51",
+      "bed_temperature": "55",
+      "temperature": "225",
+      "min_fan_speed": "70",
+      "max_fan_speed": "100",
+      "bridge_fan_speed": "100",
+      "retract_restart_extra": "0",
+      "retract_restart_extra_time_to_apply": "0",
+      "min_fan_speed_layer_time": "180",
+      "max_fan_speed_layer_time": "60",
+      "filament_cost": "42",
+      "disable_fan_first_layers": "5",
+      "extrusion_multiplier": "0.97",
+      "layer_etag": "",
+      "layer_source": "",
+      "bed_temperature_buildtak": "55",
+      "bed_temperature_garolite": "75",
+      "bed_temperature_glass": "75",
+      "bed_temperature_kapton": "55",
+      "bed_temperature_pei": "75",
+      "bed_temperature_pp": "55",
+      "material_url": "https://www.matterhackers.com/store/c/3d-printer-filament/matterhackers-quantum-pla?s=quantum&ref=search"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

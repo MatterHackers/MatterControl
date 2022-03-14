@@ -43,7 +43,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public SheetData SheetData { get; private set; }
 		Point2D selectedCell = new Point2D(-1, -1);
 		Dictionary<(int, int), GuiWidget> CellWidgetsByLocation = new Dictionary<(int, int), GuiWidget>();
-		private ThemeConfig theme;
+
+        public UndoBuffer UndoBuffer { get; }
+
+        private ThemeConfig theme;
 		private MHTextEditWidget editSelectedName;
 		public MHTextEditWidget EditSelectedExpression { get; private set; }
 		private GridWidget gridWidget;
@@ -51,11 +54,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public SheetEditorWidget(SheetData sheetData, SheetObject3D sheetObject, UndoBuffer undoBuffer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.UndoBuffer = undoBuffer;
 			this.theme = theme;
 			HAnchor = HAnchor.MaxFitOrStretch;
 
 			this.SheetData = sheetData;
-			var countWidth = 10 * GuiWidget.DeviceScale;
 			var cellEditNameWidth = 80 * GuiWidget.DeviceScale;
 
 			// put in the edit row

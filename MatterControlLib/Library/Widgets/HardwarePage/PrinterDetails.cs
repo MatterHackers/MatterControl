@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 		private ThemeConfig theme;
 		private GuiWidget headingRow;
 		private PrinterInfo printerInfo;
-		private FlowLayoutWidget productDataContainer;
+		private GuiWidget productDataContainer;
 
 		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme, bool showOpenButton)
 			: base(FlowDirection.TopToBottom)
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			this.theme = theme;
 
 			headingRow = this.AddHeading(
-				OemSettings.Instance.GetIcon(printerInfo.Make),
+				OemSettings.Instance.GetIcon(printerInfo.Make, theme),
 				printerInfo.Name);
 
 			headingRow.AddChild(new HorizontalSpacer());
@@ -103,6 +104,19 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 			if (!string.IsNullOrWhiteSpace(StoreID))
 			{
+				// add a section to hold the data about the printer
+				var contentScroll = new ScrollableWidget(true);
+				contentScroll.ScrollArea.HAnchor |= HAnchor.Stretch;
+				contentScroll.ScrollArea.VAnchor = VAnchor.Fit;
+				contentScroll.AnchorAll();
+
+				contentScroll.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					HAnchor = HAnchor.Stretch
+				});
+
+				this.AddChild(contentScroll);
+
 				try
 				{
 					// put in controls from the feed that show relevant printer information
@@ -133,6 +147,11 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 								}
 
 								CreateProductDataWidgets(result.ProductSku);
+
+								contentScroll.Width += 1;
+								contentScroll.Width -= 1;
+
+								contentScroll.TopLeftOffset = new Vector2(0, 0);
 							});
 						});
 				}
@@ -140,12 +159,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				{
 					Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
 				}
-
-				// add a section to hold the data about the printer
-				this.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch
-				});
 			}
 
 			headingRow.Visible = this.ShowHeadingRow;

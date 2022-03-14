@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			
+
 			// this must be called first to ensure we get the correct Handled state
 			base.OnKeyDown(keyEvent);
 
@@ -270,12 +270,29 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (this.content.Text != undoContent)
 			{
-				// make sure the is a sheet update
-				SheetData[x, y].Expression = this.content.Text;
-				SheetData.Recalculate();
+				var newValue = this.content.Text;
+				var oldValue = SheetData[x, y].Expression;
+				// this needs to support undo buffer
+				sheetEditorWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() =>
+				{
+					this.content.Text = oldValue;
+					// make sure the is a sheet update
+					SheetData[x, y].Expression = this.content.Text;
+					SheetData.Recalculate();
+					undoContent = this.content.Text;
+				},
+				() =>
+				{
+					this.content.Text = newValue;
+					// make sure the is a sheet update
+					SheetData[x, y].Expression = this.content.Text;
+					SheetData.Recalculate();
+					undoContent = this.content.Text;
+				}));
+
 			}
+
 			EditMode = EditModes.Unknown;
-			undoContent = this.content.Text;
 		}
 
 		private void Navigate(int xOffset, int yOffset)

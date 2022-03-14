@@ -24,7 +24,8 @@
       "bed_temperature_glass": "75",
       "bed_temperature_kapton": "50",
       "bed_temperature_pei": "75",
-      "bed_temperature_pp": "75"
+      "bed_temperature_pp": "75",
+      "material_url": "https://www.matterhackers.com/store/c/PLA"
     }
   ],
   "OemLayer": null,
