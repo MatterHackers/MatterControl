@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public bool ValidateControls()
 		{
-			bool selectionValid = this.SelectedPrinter is AddPrinterWidget.MakeModelInfo selectedPrinter;
+			bool selectionValid = this.SelectedPrinter is MakeModelInfo selectedPrinter;
 
 			if (!selectionValid)
 			{

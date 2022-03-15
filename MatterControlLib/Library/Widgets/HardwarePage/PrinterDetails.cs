@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 		public bool ShowProducts { get; set; } = true;
 
-		public override async void OnLoad(EventArgs args)
+		public override void OnLoad(EventArgs args)
 		{
 			if (string.IsNullOrEmpty(this.StoreID)
 				&& File.Exists(printerInfo.ProfilePath))
@@ -166,7 +166,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			base.OnLoad(args);
 		}
 
-		//private void CreateProductDataWidgets(PrinterSettings printerSettings, ProductSkuData product)
 		private void CreateProductDataWidgets(ProductSkuData product)
 		{
 			var row = new FlowLayoutWidget()
@@ -194,12 +193,13 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 			var description = new MarkdownWidget(theme)
 			{
-				MinimumSize = new VectorMath.Vector2(50, 0),
+				MinimumSize = new Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				AutoScroll = false,
 				Markdown = product.ProductDescription.Trim()
 			};
+
 			descriptionBackground.AddChild(description);
 			descriptionBackground.BeforeDraw += (s, e) =>
 			{
@@ -245,40 +245,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					addonsColumn.AddChild(addOnRow);
 				}
 			}
-
-			//if (false)
-			//{
-			//	var settingsPanel = new GuiWidget()
-			//	{
-			//		HAnchor = HAnchor.Stretch,
-			//		VAnchor = VAnchor.Stretch,
-			//		MinimumSize = new VectorMath.Vector2(20, 20),
-			//		DebugShowBounds = true
-			//	};
-
-			//	settingsPanel.Load += (s, e) =>
-			//	{
-			//		var printer = new PrinterConfig(printerSettings);
-
-			//		var settingsContext = new SettingsContext(
-			//			printer,
-			//			null,
-			//			NamedSettingsLayers.All);
-
-			//		settingsPanel.AddChild(
-			//			new ConfigurePrinterWidget(settingsContext, printer, theme)
-			//			{
-			//				HAnchor = HAnchor.Stretch,
-			//				VAnchor = VAnchor.Stretch,
-			//			});
-			//	};
-
-			//	this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
-			//	{
-			//		VAnchor = VAnchor.Stretch
-			//	});
-			//}
-		}
+        }
 
 		private GuiWidget AddHeading(ImageBuffer icon, string text)
 		{

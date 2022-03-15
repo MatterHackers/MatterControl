@@ -17,7 +17,7 @@ namespace Markdig.Renderers.Agg
 		}
 	}
 
-	public class ParagraphX : FlowLeftRightWithWrapping
+	public class ParagraphX : FlowLeftRightWithWrapping, IHardBreak
 	{
 	}
 
