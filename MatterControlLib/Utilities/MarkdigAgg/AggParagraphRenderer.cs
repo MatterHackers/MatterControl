@@ -19,6 +19,13 @@ namespace Markdig.Renderers.Agg
 
 	public class ParagraphX : FlowLeftRightWithWrapping, IHardBreak
 	{
+		public ParagraphX(bool bottomMargin)
+        {
+			if (bottomMargin)
+			{
+				Margin = new BorderDouble(0, 0, 0, 12);
+			}
+        }
 	}
 
 	//public class ParagraphRenderer : 
@@ -27,7 +34,15 @@ namespace Markdig.Renderers.Agg
 		/// <inheritdoc/>
 		protected override void Write(AggRenderer renderer, ParagraphBlock obj)
 		{
-			var paragraph = new ParagraphX()
+			var bottomMargin = false;
+			if (obj.Parent is MarkdownDocument document
+				&& obj.Parent.Count > 1
+				&& obj.Line != 0)
+            {
+				bottomMargin = true;
+			}
+
+			var paragraph = new ParagraphX(bottomMargin)
 			{
 				RowMargin = 0,
 				RowPadding = 3
