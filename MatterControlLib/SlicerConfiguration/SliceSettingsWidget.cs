@@ -656,7 +656,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.COLOR:
-					uiField = new ColorField(theme);
+					uiField = new ColorField(theme, Color.Transparent, null);
 					break;
 
 				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:

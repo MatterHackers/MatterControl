@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool IsOpen => popupContent?.ContainsFocus == true;
 
-		public ItemColorButton(ThemeConfig theme, Color selectedColor)
+		public ItemColorButton(ThemeConfig theme, Color selectedColor, Action<Action<Color>> getPickedColor)
 		{
 			this.ToolTipText = "Color".Localize();
 			var scaledButtonSize = 24 * GuiWidget.DeviceScale;
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color);
+				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color, getPickedColor);
 				return popupContent;
 			};
 
@@ -99,7 +99,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public static GuiWidget NewColorSelector(ThemeConfig theme, Color selectedColor, ThemeConfig menuTheme, Action<Color> update)
+		public static GuiWidget NewColorSelector(ThemeConfig theme,
+			Color selectedColor,
+			ThemeConfig menuTheme,
+			Action<Color> update,
+			Action<Action<Color>> getPickedColor)
 		{
 			var content = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -204,32 +208,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				picker.SetColorWithoutChangeEvent(Color.White);
 			};
 
-			var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
+			if (getPickedColor != null)
 			{
-				Margin = 0,
-				HAnchor = HAnchor.Fit | HAnchor.Left,
-				VAnchor = VAnchor.Absolute
-			});
-
-			selectButton.Click += (s, e) =>
-			{
-				// change to an eye dropper mode in the design view to allow for color selection
-				ApplicationController.Instance.GetTracedMouseRay((color) =>
+				var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
-					update?.Invoke(color);
-					picker.SelectedColor = color;
+					Margin = 0,
+					HAnchor = HAnchor.Fit | HAnchor.Left,
+					VAnchor = VAnchor.Absolute
 				});
-			};
 
-			selectButton.Visible = false;
-
-			if (selectButton.Width < resetButton.Width)
-			{
-				selectButton.HAnchor = HAnchor.Stretch;
-			}
-			else
-			{
-				resetButton.HAnchor = HAnchor.Stretch;
+				selectButton.Click += (s, e) =>
+				{
+					getPickedColor((color) =>
+					{
+						update?.Invoke(color);
+						picker.SelectedColor = color;
+					});
+				};
+				
+				if (selectButton.Width < resetButton.Width)
+				{
+					selectButton.HAnchor = HAnchor.Stretch;
+				}
+				else
+				{
+					resetButton.HAnchor = HAnchor.Stretch;
+				}
 			}
 
 			return content;

@@ -4222,6 +4222,9 @@ Translated:Select a printer to continue
 English:Select All
 Translated:Select All
 
+English:Select an object to copy its color
+Translated:Select an object to copy its color
+
 English:Select cell to edit
 Translated:Select cell to edit
 

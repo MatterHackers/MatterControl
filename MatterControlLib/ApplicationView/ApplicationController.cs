@@ -233,11 +233,6 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public void GetTracedMouseRay(Action<Color> setColor)
-		{
-			setColor?.Invoke(Color.Cyan);
-		}
-
 		public PopupMenu GetModifyMenu(ISceneContext sceneContext)
 		{
 			var popupMenu = new PopupMenu(this.MenuTheme);
