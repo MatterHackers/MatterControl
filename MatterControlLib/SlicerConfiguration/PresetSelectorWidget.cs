@@ -38,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -261,30 +262,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
+			var addString = layerType == NamedSettingsLayers.Material ? "New Material".Localize() : "New Quality Setting".Localize();
+
+			
 			MenuItem addNewPreset = dropDownList.AddItem(
 				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16),
-				"Add New Setting".Localize() + "...",
+				addString + "...",
 				"new",
 				pointSize: theme.DefaultFontSize);
+
 			addNewPreset.Selected += (s, e) =>
 			{
-				var newLayer = new PrinterSettingsLayer();
-				if (layerType == NamedSettingsLayers.Quality)
+				if (layerType == NamedSettingsLayers.Material)
 				{
-					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
-					printer.Settings.QualityLayers.Add(newLayer);
-					printer.Settings.ActiveQualityKey = newLayer.LayerID;
+					var window = DialogWindow.Show(new AddMaterialDialog((newMaterial) =>
+                    {
+						newMaterial.Name = "Material" + printer.Settings.MaterialLayers.Count;
+						printer.Settings.MaterialLayers.Add(newMaterial);
+						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
+
+						RebuildDropDownList();
+					}));
 				}
 				else
 				{
-					newLayer.Name = "Material" + printer.Settings.MaterialLayers.Count;
-					printer.Settings.MaterialLayers.Add(newLayer);
-					printer.Settings.ActiveMaterialKey = newLayer.LayerID;
+					var newLayer = new PrinterSettingsLayer();
+					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
+					printer.Settings.QualityLayers.Add(newLayer);
+					printer.Settings.ActiveQualityKey = newLayer.LayerID;
+
+					RebuildDropDownList();
+
+					editButton.InvokeClick();
 				}
-
-				RebuildDropDownList();
-
-				editButton.InvokeClick();
 			};
 
 			try
@@ -350,7 +360,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-		private void MenuItem_Selected(object sender, EventArgs e)
+        private void CopyPlateToPrinter(object sceneContext, PrinterConfig printer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MenuItem_Selected(object sender, EventArgs e)
 		{
 			// When a preset is selected store the current values of all known settings to compare against after applying the preset
 			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();

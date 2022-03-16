@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2022, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library.Widgets
 {
 	public class AddPrinterWidget : SearchableTreePanel
 	{
@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     {
 						continue;
                     }
+
 					var rootNode = this.CreateTreeNode(oem);
 					rootNode.Expandable = true;
 					rootNode.TreeView = treeView;

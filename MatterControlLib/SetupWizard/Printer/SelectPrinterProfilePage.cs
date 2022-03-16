@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl

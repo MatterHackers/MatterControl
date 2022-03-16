@@ -37,7 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library.Widgets
 {
 	public abstract class SearchableTreePanel : FlowLayoutWidget
 	{

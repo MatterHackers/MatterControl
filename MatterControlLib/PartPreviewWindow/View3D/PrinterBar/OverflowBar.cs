@@ -38,7 +38,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.Library.Widgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

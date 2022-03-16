@@ -34,9 +34,9 @@ using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library.Widgets
 {
-    public class PrintersTabPage : FlowLayoutWidget
+	public class PrintersTabPage : FlowLayoutWidget
 	{
 		public PrintersTabPage(ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)

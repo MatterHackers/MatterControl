@@ -2953,11 +2953,17 @@ Translated:Networked Printing
 English:New Design
 Translated:New Design
 
+English:New Material
+Translated:New Material
+
 English:New Password
 Translated:New Password
 
 English:New Printer Name
 Translated:New Printer Name
+
+English:New Quality Setting
+Translated:New Quality Setting
 
 English:New updates are ready to install
 Translated:New updates are ready to install
