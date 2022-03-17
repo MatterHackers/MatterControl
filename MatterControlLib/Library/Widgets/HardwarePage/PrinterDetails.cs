@@ -45,12 +45,13 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 {
-	public class PrinterDetails : FlowLayoutWidget
+    public class PrinterDetails : FlowLayoutWidget
 	{
 		private ThemeConfig theme;
 		private GuiWidget headingRow;
 		private PrinterInfo printerInfo;
-		private GuiWidget productDataContainer;
+		public GuiWidget ProductDataContainer { get; private set; }
+		public event EventHandler AfterLoad;
 
 		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme, bool showOpenButton)
 			: base(FlowDirection.TopToBottom)
@@ -69,7 +70,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			{
 				var openButton = new TextButton("Open".Localize(), theme)
 				{
-					BackgroundColor = theme.AccentMimimalOverlay
+					BackgroundColor = theme.AccentMimimalOverlay,
+					Margin = Margin.Clone(right: 17)
 				};
 				openButton.Click += (s, e) =>
 				{
@@ -92,11 +94,14 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			if (string.IsNullOrEmpty(this.StoreID)
 				&& File.Exists(printerInfo.ProfilePath))
 			{
-				// load up the printer profile so we can get the MatterHackers Skew-ID out of it
+				// load up the printer profile so we can get the MatterHackers SKU-ID out of it
 				var printerSettings = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
+				this.StoreID = printerSettings.GetValue(SettingsKey.printer_sku);
+
 				// Use the make-model mapping table
-				if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
+				if (string.IsNullOrEmpty(this.StoreID)
+					&& OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
 				{
 					this.StoreID = storePrinterID?.SID;
 				}
@@ -105,17 +110,17 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			if (!string.IsNullOrWhiteSpace(StoreID))
 			{
 				// add a section to hold the data about the printer
-				var contentScroll = new ScrollableWidget(true);
-				contentScroll.ScrollArea.HAnchor |= HAnchor.Stretch;
-				contentScroll.ScrollArea.VAnchor = VAnchor.Fit;
-				contentScroll.AnchorAll();
+				var scrollableWidget = new ScrollableWidget(true);
+				scrollableWidget.ScrollArea.HAnchor |= HAnchor.Stretch;
+				scrollableWidget.ScrollArea.VAnchor = VAnchor.Fit;
+				scrollableWidget.AnchorAll();
 
-				contentScroll.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				scrollableWidget.AddChild(ProductDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					HAnchor = HAnchor.Stretch
 				});
 
-				this.AddChild(contentScroll);
+				this.AddChild(scrollableWidget);
 
 				try
 				{
@@ -126,7 +131,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 							UiThread.RunOnIdle(() =>
 							{
 								var result = JsonConvert.DeserializeObject<ProductSidData>(json);
-								productDataContainer.RemoveChildren();
+								result.ProductSku.ProductDescription = result.ProductSku.ProductDescription.Replace("•", "-");
+								ProductDataContainer.RemoveChildren();
 
 								foreach (var addOn in result.ProductSku.ProductListing.AddOns)
 								{
@@ -146,12 +152,14 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 										});
 								}
 
-								CreateProductDataWidgets(result.ProductSku);
+								CreateProductDataWidgets(result.ProductSku, StoreID);
 
-								contentScroll.Width += 1;
-								contentScroll.Width -= 1;
+								AfterLoad?.Invoke(this, null);
 
-								contentScroll.TopLeftOffset = new Vector2(0, 0);
+								scrollableWidget.Width += 1;
+								scrollableWidget.Width -= 1;
+
+								scrollableWidget.TopLeftOffset = new Vector2(0, 0);
 							});
 						});
 				}
@@ -166,23 +174,31 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			base.OnLoad(args);
 		}
 
-		private void CreateProductDataWidgets(ProductSkuData product)
+		private void CreateProductDataWidgets(ProductSkuData product, string sku)
 		{
 			var row = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(top: theme.DefaultContainerPadding)
+				Margin = new BorderDouble(top: theme.DefaultContainerPadding, right: 5)
 			};
-			productDataContainer.AddChild(row);
+			ProductDataContainer.AddChild(row);
 
 			var image = new ImageBuffer(150, 10);
-			row.AddChild(new ImageWidget(image)
-			{
-				Margin = new BorderDouble(right: theme.DefaultContainerPadding),
-				VAnchor = VAnchor.Top
-			});
 
 			WebCache.RetrieveImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+			var whiteBackgroundWidget = new WhiteBackground(image);
+			row.AddChild(whiteBackgroundWidget);
+
+			if (sku?.Length == 8)
+			{
+				whiteBackgroundWidget.ImageWidget.Cursor = Cursors.Hand;
+				whiteBackgroundWidget.Selectable = true;
+				whiteBackgroundWidget.ImageWidget.Click += (s, e) =>
+				{
+					ApplicationController.LaunchBrowser($"www.matterhackers.com/qr/{sku}");
+				};
+			}
 
 			var descriptionBackground = new GuiWidget()
 			{
@@ -220,12 +236,17 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				};
 
 				var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
-				productDataContainer.AddChild(addonsSection);
+				ProductDataContainer.AddChild(addonsSection);
 				theme.ApplyBoxStyle(addonsSection);
 				addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
 
 				foreach (var item in product.ProductListing.AddOns)
 				{
+					if (item.Icon.Height == 0)
+                    {
+						continue;
+                    }
+
 					var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, item.Icon)
 					{
 						HAnchor = HAnchor.Stretch,
@@ -268,22 +289,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					{
 						VAnchor = VAnchor.Center
 					});
-
-			return row;
-		}
-
-		private GuiWidget AddHeading(string text)
-		{
-			var row = new FlowLayoutWidget()
-			{
-				Margin = new BorderDouble(top: 5)
-			};
-
-			row.AddChild(
-				new TextWidget(
-					text,
-					textColor: theme.TextColor,
-					pointSize: theme.DefaultFontSize));
 
 			return row;
 		}

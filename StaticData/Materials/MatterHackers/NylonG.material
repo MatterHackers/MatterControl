@@ -26,8 +26,7 @@
       "bed_temperature_kapton": "60",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "60",
-      "material_sku": "MTGV1M9J",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-nylon/nylong"
+      "material_sku": "MTGV1M9J"
     }
   ],
   "OemLayer": null,

@@ -27,7 +27,7 @@
       "bed_temperature_kapton": "55",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "55",
-      "material_url": "https://www.matterhackers.com/store/c/3d-printer-filament/matterhackers-quantum-pla?s=quantum&ref=search"
+      "material_sku": "MS2XWRUN"
     }
   ],
   "OemLayer": null,

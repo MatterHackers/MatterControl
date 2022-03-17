@@ -2695,6 +2695,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.printer_sku,
+					PresentationName = "Printer SKU".Localize(),
+					HelpText = "This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.".Localize(),
+					DataEditType = DataEditTypes.STRING,
+					ShowAsOverride = false,
+					DefaultValue = "",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.auto_connect,
 					PresentationName = "Auto Connect".Localize(),
 					HelpText = "If set, the printer will automatically attempt to connect when selected.".Localize(),

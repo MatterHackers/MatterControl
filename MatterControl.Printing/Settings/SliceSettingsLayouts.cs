@@ -27,240 +27,245 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SliceSettingsLayouts
 	{
+		private static (string categoryName, (string groupName, string[] settings)[] groups)[] sliceSettings;
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SliceSettings()
 		{
-			var settings = new[]
+			if (sliceSettings == null)
 			{
-				("General", new[]
+				sliceSettings = new[]
 				{
 					("General", new[]
 					{
-						SettingsKey.layer_height,
-						SettingsKey.first_layer_height,
-						SettingsKey.perimeters,
-						SettingsKey.top_solid_layers,
-						SettingsKey.bottom_solid_layers,
-						SettingsKey.fill_density,
-						SettingsKey.infill_type,
-						// add settings specific to SLA
-						SettingsKey.sla_layer_height,
-						SettingsKey.sla_decend_speed,
+						("General", new[]
+						{
+							SettingsKey.layer_height,
+							SettingsKey.first_layer_height,
+							SettingsKey.perimeters,
+							SettingsKey.top_solid_layers,
+							SettingsKey.bottom_solid_layers,
+							SettingsKey.fill_density,
+							SettingsKey.infill_type,
+							// add settings specific to SLA
+							SettingsKey.sla_layer_height,
+							SettingsKey.sla_decend_speed,
+						}),
+						("Normal Layers", new[] // this is for SLA resin printing
+						{
+							SettingsKey.sla_exposure_time,
+							SettingsKey.sla_lift_distance,
+							SettingsKey.sla_lift_speed,
+							SettingsKey.sla_min_off_time,
+						}),
+						("Base Layers", new[] // this is for SLA resin printing
+						{
+							SettingsKey.sla_base_layers,
+							SettingsKey.sla_base_exposure_time,
+							SettingsKey.sla_base_lift_distance,
+							SettingsKey.sla_base_lift_speed,
+							SettingsKey.sla_base_min_off_time,
+						}),
+						("Layers / Surface", new[]
+						{
+							SettingsKey.avoid_crossing_perimeters,
+							SettingsKey.avoid_crossing_max_ratio,
+							SettingsKey.external_perimeters_first,
+							SettingsKey.perimeter_start_end_overlap,
+							SettingsKey.merge_overlapping_lines,
+							SettingsKey.seam_placement,
+							SettingsKey.expand_thin_walls,
+							SettingsKey.coast_at_end_distance,
+							SettingsKey.monotonic_solid_infill,
+						}),
+						("Infill", new[]
+						{
+							SettingsKey.fill_angle,
+							SettingsKey.infill_overlap_perimeter,
+							SettingsKey.fill_thin_gaps,
+						}),
+						("Extruder Change", new[]
+						{
+							SettingsKey.wipe_shield_distance,
+							SettingsKey.wipe_tower_size,
+							SettingsKey.wipe_tower_perimeters_per_extruder,
+						}),
+						("Advanced", new[]
+						{
+							SettingsKey.spiral_vase,
+							SettingsKey.layer_to_pause,
+						}),
 					}),
-					("Normal Layers", new[] // this is for SLA resin printing
+					("Speed", new[]
 					{
-						SettingsKey.sla_exposure_time,
-						SettingsKey.sla_lift_distance,
-						SettingsKey.sla_lift_speed,
-						SettingsKey.sla_min_off_time,
+						("Laser Speed", new[]
+						{
+							SettingsKey.laser_speed_025,
+							SettingsKey.laser_speed_100,
+						}),
+						("Infill Speeds", new[]
+						{
+							SettingsKey.first_layer_speed,
+							SettingsKey.infill_speed,
+							SettingsKey.top_solid_infill_speed,
+							SettingsKey.raft_print_speed,
+						}),
+						("Perimeter Speeds", new[]
+						{
+							SettingsKey.perimeter_speed,
+							SettingsKey.external_perimeter_speed,
+							SettingsKey.perimeter_acceleration,
+							SettingsKey.default_acceleration,
+						}),
+						("Other Speeds", new[]
+						{
+							SettingsKey.support_material_speed,
+							SettingsKey.interface_layer_speed,
+							SettingsKey.air_gap_speed,
+							SettingsKey.bridge_speed,
+							SettingsKey.travel_speed,
+							SettingsKey.number_of_first_layers,
+							SettingsKey.bridge_over_infill,
+							SettingsKey.t1_extrusion_move_speed_multiplier,
+						}),
+						("Cooling", new[]
+						{
+							SettingsKey.slowdown_below_layer_time,
+							SettingsKey.min_print_speed,
+						}),
 					}),
-					("Base Layers", new[] // this is for SLA resin printing
+					("Adhesion", new[]
 					{
-						SettingsKey.sla_base_layers,
-						SettingsKey.sla_base_exposure_time,
-						SettingsKey.sla_base_lift_distance,
-						SettingsKey.sla_base_lift_speed,
-						SettingsKey.sla_base_min_off_time,
+						("Bed", new []
+						{
+							SettingsKey.bed_surface,
+						}),
+						("Skirt", new[]
+						{
+							SettingsKey.create_skirt,
+							SettingsKey.skirts,
+							SettingsKey.skirt_distance,
+							SettingsKey.min_skirt_length,
+						}),
+						("Raft", new[]
+						{
+							SettingsKey.create_raft,
+							SettingsKey.raft_extra_distance_around_part,
+							SettingsKey.raft_air_gap,
+							SettingsKey.raft_extruder,
+							// add settings specific to SLA
+							SettingsKey.sla_create_raft,
+						}),
+						("Brim", new[]
+						{
+							SettingsKey.create_brim,
+							SettingsKey.brims,
+							SettingsKey.brims_layers,
+							SettingsKey.brim_extruder,
+						}),
 					}),
-					("Layers / Surface", new[]
+					("Support", new[]
 					{
-						SettingsKey.avoid_crossing_perimeters,
-						SettingsKey.avoid_crossing_max_ratio,
-						SettingsKey.external_perimeters_first,
-						SettingsKey.perimeter_start_end_overlap,
-						SettingsKey.merge_overlapping_lines,
-						SettingsKey.seam_placement,
-						SettingsKey.expand_thin_walls,
-						SettingsKey.coast_at_end_distance,
-						SettingsKey.monotonic_solid_infill,
+						("General", new[]
+						{
+							SettingsKey.support_material_create_perimeter,
+							SettingsKey.support_material_interface_layers,
+							SettingsKey.support_material_xy_distance,
+							SettingsKey.support_air_gap,
+							SettingsKey.support_type,
+							SettingsKey.support_material_spacing,
+							SettingsKey.support_material_infill_angle,
+							SettingsKey.support_material_extruder,
+							SettingsKey.support_material_interface_extruder,
+						}),
+						("Automatic", new[]
+						{
+							SettingsKey.create_per_layer_support,
+							SettingsKey.create_per_layer_internal_support,
+							SettingsKey.support_percent,
+							SettingsKey.support_grab_distance,
+							// add settings specific to SLA
+							SettingsKey.sla_auto_support,
+						}),
 					}),
-					("Infill", new[]
+					("Resin", new[]
 					{
-						SettingsKey.fill_angle,
-						SettingsKey.infill_overlap_perimeter,
-						SettingsKey.fill_thin_gaps,
+						("Properties", new []
+						{
+							SettingsKey.resin_density,
+							SettingsKey.resin_cost,
+						}),
 					}),
-					("Extruder Change", new[]
+					("Filament", new[]
 					{
-						SettingsKey.wipe_shield_distance,
-						SettingsKey.wipe_tower_size,
-						SettingsKey.wipe_tower_perimeters_per_extruder,
+						("Properties", new[]
+						{
+							SettingsKey.material_color,
+							SettingsKey.material_color_1,
+							SettingsKey.material_color_2,
+							SettingsKey.material_color_3,
+							SettingsKey.filament_diameter,
+							SettingsKey.filament_density,
+							SettingsKey.filament_cost,
+							SettingsKey.temperature,
+							SettingsKey.temperature1,
+							SettingsKey.temperature2,
+							SettingsKey.temperature3,
+							SettingsKey.bed_temperature,
+							SettingsKey.bed_temperature_blue_tape,
+							SettingsKey.bed_temperature_buildtak,
+							SettingsKey.bed_temperature_garolite,
+							SettingsKey.bed_temperature_glass,
+							SettingsKey.bed_temperature_kapton,
+							SettingsKey.bed_temperature_pei,
+							SettingsKey.bed_temperature_pp,
+							SettingsKey.inactive_cool_down,
+							SettingsKey.seconds_to_reheat,
+						}),
+						("Fan", new[]
+						{
+							SettingsKey.enable_fan,
+							SettingsKey.min_fan_speed_layer_time,
+							SettingsKey.max_fan_speed_layer_time,
+							SettingsKey.min_fan_speed,
+							SettingsKey.max_fan_speed,
+							SettingsKey.bridge_fan_speed,
+							SettingsKey.disable_fan_first_layers,
+							SettingsKey.min_fan_speed_absolute,
+						}),
+						("Retraction", new[]
+						{
+							SettingsKey.enable_retractions,
+							SettingsKey.retract_length,
+							SettingsKey.retract_restart_extra,
+							SettingsKey.retract_restart_extra_time_to_apply,
+							SettingsKey.retract_speed,
+							SettingsKey.retract_lift,
+							SettingsKey.retract_when_changing_islands,
+							SettingsKey.min_extrusion_before_retract,
+							SettingsKey.retract_before_travel,
+							SettingsKey.retract_before_travel_avoid,
+							SettingsKey.retract_length_tool_change,
+							SettingsKey.retract_restart_extra_toolchange,
+						}),
+						("Advanced", new[]
+						{
+							SettingsKey.extruder_wipe_temperature,
+							SettingsKey.bed_remove_part_temperature,
+							SettingsKey.extrusion_multiplier,
+							SettingsKey.first_layer_extrusion_width,
+							SettingsKey.external_perimeter_extrusion_width,
+						}),
 					}),
-					("Advanced", new[]
-					{
-						SettingsKey.spiral_vase,
-						SettingsKey.layer_to_pause,
-					}),
-				}),
-				("Speed", new[]
-				{
-					("Laser Speed", new[]
-					{
-						SettingsKey.laser_speed_025,
-						SettingsKey.laser_speed_100,
-					}),
-					("Infill Speeds", new[]
-					{
-						SettingsKey.first_layer_speed,
-						SettingsKey.infill_speed,
-						SettingsKey.top_solid_infill_speed,
-						SettingsKey.raft_print_speed,
-					}),
-					("Perimeter Speeds", new[]
-					{
-						SettingsKey.perimeter_speed,
-						SettingsKey.external_perimeter_speed,
-						SettingsKey.perimeter_acceleration,
-						SettingsKey.default_acceleration,
-					}),
-					("Other Speeds", new[]
-					{
-						SettingsKey.support_material_speed,
-						SettingsKey.interface_layer_speed,
-						SettingsKey.air_gap_speed,
-						SettingsKey.bridge_speed,
-						SettingsKey.travel_speed,
-						SettingsKey.number_of_first_layers,
-						SettingsKey.bridge_over_infill,
-						SettingsKey.t1_extrusion_move_speed_multiplier,
-					}),
-					("Cooling", new[]
-					{
-						SettingsKey.slowdown_below_layer_time,
-						SettingsKey.min_print_speed,
-					}),
-				}),
-				("Adhesion", new[]
-				{
-					("Bed", new []
-                    {
-						SettingsKey.bed_surface,
-                    }),
-					("Skirt", new[]
-					{
-						SettingsKey.create_skirt,
-						SettingsKey.skirts,
-						SettingsKey.skirt_distance,
-						SettingsKey.min_skirt_length,
-					}),
-					("Raft", new[]
-					{
-						SettingsKey.create_raft,
-						SettingsKey.raft_extra_distance_around_part,
-						SettingsKey.raft_air_gap,
-						SettingsKey.raft_extruder,
-						// add settings specific to SLA
-						SettingsKey.sla_create_raft,
-					}),
-					("Brim", new[]
-					{
-						SettingsKey.create_brim,
-						SettingsKey.brims,
-						SettingsKey.brims_layers,
-						SettingsKey.brim_extruder,
-					}),
-				}),
-				("Support", new[]
-				{
-					("General", new[]
-					{
-						SettingsKey.support_material_create_perimeter,
-						SettingsKey.support_material_interface_layers,
-						SettingsKey.support_material_xy_distance,
-						SettingsKey.support_air_gap,
-						SettingsKey.support_type,
-						SettingsKey.support_material_spacing,
-						SettingsKey.support_material_infill_angle,
-						SettingsKey.support_material_extruder,
-						SettingsKey.support_material_interface_extruder,
-					}),
-					("Automatic", new[]
-					{
-						SettingsKey.create_per_layer_support,
-						SettingsKey.create_per_layer_internal_support,
-						SettingsKey.support_percent,
-						SettingsKey.support_grab_distance,
-						// add settings specific to SLA
-						SettingsKey.sla_auto_support,
-					}),
-				}),
-				("Resin", new[]
-				{
-					("Properties", new []
-					{
-						SettingsKey.resin_density,
-						SettingsKey.resin_cost,
-					}),
-				}),
-				("Filament", new[]
-				{
-					("Properties", new[]
-					{
-						SettingsKey.material_color,
-						SettingsKey.material_color_1,
-						SettingsKey.material_color_2,
-						SettingsKey.material_color_3,
-						SettingsKey.filament_diameter,
-						SettingsKey.filament_density,
-						SettingsKey.filament_cost,
-						SettingsKey.temperature,
-						SettingsKey.temperature1,
-						SettingsKey.temperature2,
-						SettingsKey.temperature3,
-						SettingsKey.bed_temperature,
-						SettingsKey.bed_temperature_blue_tape,
-						SettingsKey.bed_temperature_buildtak,
-						SettingsKey.bed_temperature_garolite,
-						SettingsKey.bed_temperature_glass,
-						SettingsKey.bed_temperature_kapton,
-						SettingsKey.bed_temperature_pei,
-						SettingsKey.bed_temperature_pp,
-						SettingsKey.inactive_cool_down,
-						SettingsKey.seconds_to_reheat,
-					}),
-					("Fan", new[]
-					{
-						SettingsKey.enable_fan,
-						SettingsKey.min_fan_speed_layer_time,
-						SettingsKey.max_fan_speed_layer_time,
-						SettingsKey.min_fan_speed,
-						SettingsKey.max_fan_speed,
-						SettingsKey.bridge_fan_speed,
-						SettingsKey.disable_fan_first_layers,
-						SettingsKey.min_fan_speed_absolute,
-					}),
-					("Retraction", new[]
-					{
-						SettingsKey.enable_retractions,
-						SettingsKey.retract_length,
-						SettingsKey.retract_restart_extra,
-						SettingsKey.retract_restart_extra_time_to_apply,
-						SettingsKey.retract_speed,
-						SettingsKey.retract_lift,
-						SettingsKey.retract_when_changing_islands,
-						SettingsKey.min_extrusion_before_retract,
-						SettingsKey.retract_before_travel,
-						SettingsKey.retract_before_travel_avoid,
-						SettingsKey.retract_length_tool_change,
-						SettingsKey.retract_restart_extra_toolchange,
-					}),
-					("Advanced", new[]
-					{
-						SettingsKey.extruder_wipe_temperature,
-						SettingsKey.bed_remove_part_temperature,
-						SettingsKey.extrusion_multiplier,
-						SettingsKey.first_layer_extrusion_width,
-						SettingsKey.external_perimeter_extrusion_width,
-					}),
-				}),
-			};
+				};
+				}
 
-			return settings;
+			return sliceSettings;
 		}
 
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] PrinterSettings()
@@ -390,6 +395,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.running_clean_markdown2,
 						SettingsKey.insert_filament_1_markdown,
 						SettingsKey.running_clean_1_markdown,
+						SettingsKey.printer_sku,
 						SettingsKey.created_date,
 					}),
 				}),
@@ -429,6 +435,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return printerSettings;
+		}
+
+		public static (int index, string category, string group, string key) GetLayout(string key)
+		{
+			// find the setting in SliceSettings()
+			var settings = SliceSettings();
+			var index = 0;
+			foreach (var category in settings)
+			{
+				foreach (var group in category.groups)
+				{
+					foreach (var setting in group.settings)
+					{
+						if (setting == key)
+                        {
+							return (index, category.categoryName, group.groupName, key);
+                        }
+						// increment after every setting
+						index++;
+					}
+				}
+			}
+
+			return (-1, "", "", key);
 		}
 	}
 }

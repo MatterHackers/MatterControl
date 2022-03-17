@@ -27,8 +27,7 @@
       "bed_temperature_pp": "60",
       "layer_etag": "",
       "layer_source": "",
-      "material_sku": "MD5LDGS7",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-nylon/NylonX"
+      "material_sku": "MD5LDGS7"
     }
   ],
   "OemLayer": null,

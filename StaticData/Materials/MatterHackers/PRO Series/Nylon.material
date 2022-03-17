@@ -20,8 +20,7 @@
       "bed_temperature_pp": "50",
       "layer_etag": "",
       "layer_source": "",
-      "material_sku": "MCR8GQZT",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-nylon"
+      "material_sku": "MCR8GQZT"
     }
   ],
   "OemLayer": null,

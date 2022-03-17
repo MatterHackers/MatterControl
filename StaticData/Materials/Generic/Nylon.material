@@ -20,7 +20,7 @@
       "bed_temperature_pp": "50",
       "layer_etag": "",
       "layer_source": "",
-      "material_url": "https://www.matterhackers.com/store/c/3d-printer-filament/Nylon"
+      "material_sku": "3d-printer-filament/Nylon"
     }
   ],
   "OemLayer": null,

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 
 		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext, bool showExport)
-			: base("Close".Localize())
+			: base("Save".Localize())
 		{
 			this.presetsContext = presetsContext;
 			this.printer = printer;
@@ -104,8 +104,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				inlineNameEdit.Text = newProfileName;
 			};
 
-			this.AddPageAction(duplicateButton);
-
 			if (showExport)
 			{
 				var exportButton = theme.CreateDialogButton("Export".Localize());
@@ -142,7 +140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							});
 				};
 			
-				this.AddPageAction(exportButton);
+				this.AddPageAction(exportButton, false);
 			}
 
 			var deleteButton = theme.CreateDialogButton("Delete".Localize());
@@ -151,7 +149,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				presetsContext.DeleteLayer();
 				this.DialogWindow.Close();
 			};
-			this.AddPageAction(deleteButton);
+
+			this.AddPageAction(deleteButton, false);
+
+			this.AddPageAction(duplicateButton, false);
+
+			// set the save button to be the accept button and move it to the far left
+			AcceptButton = CancelButton;
+			CancelButton.ParentChanged += (s, e) =>
+			{
+				CancelButton.Parent.Children.Modify((children) =>
+				{
+					var last = children.Last();
+					children.Remove(last);
+					children.Insert(0, last);
+				});
+			};
 		}
 
 		private GuiWidget CreateSliceSettingsWidget(PrinterConfig printer, PrinterSettingsLayer persistenceLayer)

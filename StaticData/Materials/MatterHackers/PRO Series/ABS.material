@@ -26,8 +26,7 @@
       "bed_temperature_kapton": "100",
       "bed_temperature_pei": "100",
       "bed_temperature_pp": "100",
-      "material_sku": "M6A3VYQ9",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-abs"
+      "material_sku": "M6A3VYQ9"
     }
   ],
   "OemLayer": null,

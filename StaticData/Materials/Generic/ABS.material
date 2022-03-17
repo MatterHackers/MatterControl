@@ -28,7 +28,7 @@
       "bed_temperature_kapton": "100",
       "bed_temperature_pei": "100",
       "bed_temperature_pp": "100",
-      "material_url": "https://www.matterhackers.com/store/c/ABS"
+      "material_sku": "ABS"
     }
   ],
   "OemLayer": null,

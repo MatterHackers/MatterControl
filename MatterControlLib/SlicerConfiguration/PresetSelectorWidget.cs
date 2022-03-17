@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.ActiveMaterialKey = "";
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
+								RebuildDropDownList();
 							}
 						};
 
@@ -179,6 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								// Clear QualityKey after removing layer to ensure listeners see update
 								printer.Settings.ActiveQualityKey = "";
+								RebuildDropDownList();
 							}
 						};
 
@@ -263,10 +265,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			var addString = layerType == NamedSettingsLayers.Material ? "New Material".Localize() : "New Quality Setting".Localize();
-
 			
 			MenuItem addNewPreset = dropDownList.AddItem(
-				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16),
+				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16).SetToColor(theme.TextColor),
 				addString + "...",
 				"new",
 				pointSize: theme.DefaultFontSize);
@@ -277,19 +278,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var window = DialogWindow.Show(new AddMaterialDialog((newMaterial) =>
                     {
+						printer.Settings.MaterialLayers.Add(newMaterial);
+						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
+
+						RebuildDropDownList();
+					},
+					() =>
+					{
+						var newMaterial = new PrinterSettingsLayer();
 						newMaterial.Name = "Material" + printer.Settings.MaterialLayers.Count;
 						printer.Settings.MaterialLayers.Add(newMaterial);
 						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
 
 						RebuildDropDownList();
+
+						editButton.InvokeClick();
 					}));
 				}
 				else
 				{
-					var newLayer = new PrinterSettingsLayer();
-					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
-					printer.Settings.QualityLayers.Add(newLayer);
-					printer.Settings.ActiveQualityKey = newLayer.LayerID;
+					var newQuality = new PrinterSettingsLayer();
+					newQuality.Name = "Quality" + printer.Settings.QualityLayers.Count;
+					printer.Settings.QualityLayers.Add(newQuality);
+					printer.Settings.ActiveQualityKey = newQuality.LayerID;
 
 					RebuildDropDownList();
 

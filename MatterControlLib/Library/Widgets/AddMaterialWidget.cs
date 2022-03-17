@@ -29,32 +29,39 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
-using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using static MatterHackers.MatterControl.Library.Widgets.AddPrinterWidget;
 
 namespace MatterHackers.MatterControl.Library.Widgets
 {
     public class AddMaterialWidget : SearchableTreePanel
     {
-        private SectionWidget nameSection;
+        public class MaterialInfo
+        {
+            public string Path { get; set; }
+
+            public string Sku { get; set; }
+
+            public string Name { get; set; }
+        }
+
         private Action<bool> nextButtonEnabled;
-        private FlowLayoutWidget printerInfo;
-        private MHTextEditWidget printerNameInput;
-        private bool usingDefaultName = true;
+        private FlowLayoutWidget materialInfo;
+        public MaterialInfo SelectedMaterial { get; private set; }
 
         public AddMaterialWidget(GuiWidget nextButton, ThemeConfig theme, Action<bool> nextButtonEnabled)
             : base(theme)
         {
             this.nextButtonEnabled = nextButtonEnabled;
-            this.ExistingPrinterNames = new HashSet<string>(ProfileManager.Instance.ActiveProfiles.Select(p => p.Name));
             this.Name = "AddPrinterWidget";
 
             horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
@@ -74,18 +81,11 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
             UiThread.RunOnIdle(() =>
             {
-                foreach (var oem in OemSettings.Instance.OemProfiles.OrderBy(o => o.Key))
+                foreach (var rootDirectory in Directory.EnumerateDirectories(Path.Combine(StaticData.RootPath, "Materials")).OrderBy(f => Path.GetFileName(f)))
                 {
-                    var rootNode = this.CreateTreeNode(oem);
+                    var rootNode = this.CreateTreeNode(rootDirectory);
                     rootNode.Expandable = true;
                     rootNode.TreeView = treeView;
-                    rootNode.Load += (s, e) =>
-                    {
-                        var image = OemSettings.Instance.GetIcon(oem.Key, theme);
-
-                        SetImage(rootNode, image);
-                    };
-
                     contentPanel.AddChild(rootNode);
                 }
 
@@ -104,114 +104,26 @@ namespace MatterHackers.MatterControl.Library.Widgets
                 VAnchor = VAnchor.Stretch
             };
 
-            panel2Column.AddChild(new TextWidget("Select a printer to continue".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-            nameSection = new SectionWidget("New Printer Name".Localize(), container, theme, expandingContent: false)
-            {
-                HAnchor = HAnchor.Stretch,
-                Padding = theme.ToolbarPadding,
-                Enabled = false
-            };
-            theme.ApplyBoxStyle(nameSection);
-
-            // Reset right margin
-            nameSection.Margin = nameSection.Margin.Clone(right: theme.DefaultContainerPadding);
-
-            printerInfo = new FlowLayoutWidget()
+            materialInfo = new FlowLayoutWidget(FlowDirection.TopToBottom)
             {
                 HAnchor = HAnchor.Stretch,
                 VAnchor = VAnchor.Stretch
             };
 
-            nameSection.BackgroundColor = theme.MinimalShade;
-            nameSection.Margin = new BorderDouble(theme.DefaultContainerPadding).Clone(left: 0);
-            panel2Column.AddChild(nameSection);
-
-            panel2Column.AddChild(PrinterNameError = new TextWidget("", 0, 0, 10)
-            {
-                TextColor = Color.Red,
-                HAnchor = HAnchor.Stretch,
-                Margin = new BorderDouble(top: 3)
-            });
-
             // Padding allows space for scrollbar
-            printerInfo.Padding = new BorderDouble(right: theme.DefaultContainerPadding + 2);
+            materialInfo.Padding = new BorderDouble(right: theme.DefaultContainerPadding + 2);
 
-            panel2Column.AddChild(printerInfo);
+            panel2Column.AddChild(materialInfo);
 
             horizontalSplitter.Panel2.Padding = horizontalSplitter.Panel2.Padding.Clone(right: 0, bottom: 0);
 
             horizontalSplitter.Panel2.AddChild(panel2Column);
-
-            printerNameInput = new MHTextEditWidget("", theme)
-            {
-                HAnchor = HAnchor.Stretch,
-            };
-            printerNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
-            {
-                this.ValidateControls();
-                this.usingDefaultName = false;
-            };
-
-            container.AddChild(printerNameInput);
-        }
-
-        public HashSet<string> ExistingPrinterNames { get; private set; }
-
-        public string NewPrinterName => printerNameInput.Text;
-
-        public TextWidget PrinterNameError { get; private set; }
-
-        public MakeModelInfo SelectedPrinter { get; private set; }
-
-        public bool ValidateControls()
-        {
-            bool selectionValid = this.SelectedPrinter is MakeModelInfo selectedPrinter;
-
-            if (!selectionValid)
-            {
-                this.SetError("Invalid printer selection".Localize());
-            }
-
-            string printerName = this.NewPrinterName;
-
-            bool nameValid = !string.IsNullOrWhiteSpace(printerName);
-
-            if (!nameValid)
-            {
-                this.SetError("Printer name cannot be blank".Localize());
-            }
-
-            bool nameIsUnique = !this.ExistingPrinterNames.Any(p => p.Equals(printerName, StringComparison.OrdinalIgnoreCase));
-            if (!nameIsUnique)
-            {
-                this.SetError("Printer name already exists".Localize());
-            }
-
-            bool allValid = selectionValid
-                && nameValid
-                && nameIsUnique;
-
-            nextButtonEnabled(allValid);
-
-            if (allValid)
-            {
-                this.ClearError();
-            }
-
-            return allValid;
-        }
-
-        internal void SetError(string errorMessage)
-        {
-            this.PrinterNameError.Text = errorMessage;
-            this.PrinterNameError.Visible = true;
         }
 
         protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
         {
             // Filter against make/model for printers or make for top level nodes
-            string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
+            string itemText = context.Text;
 
             bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
             context.Visible = hasFilterText || parentVisible;
@@ -258,44 +170,38 @@ namespace MatterHackers.MatterControl.Library.Widgets
             }
         }
 
-        private void ClearError()
-        {
-            this.PrinterNameError.Text = "";
-            this.PrinterNameError.Visible = true;
-        }
-
-        private TreeNode CreateTreeNode(KeyValuePair<string, Dictionary<string, PublicDevice>> make)
+        private TreeNode CreateTreeNode(string directory)
         {
             var treeNode = new TreeNode(theme)
             {
-                Text = make.Key,
+                Text = Path.GetFileName(directory),
             };
 
-            string currentGroup = "";
-
-            var context = treeNode;
-
-            foreach (var printer in make.Value.OrderBy(p => p.Key))
+            foreach (var subDirectory in Directory.EnumerateDirectories(directory).OrderBy(f => Path.GetFileName(f)))
             {
-                if (make.Key == "Pulse"
-                    && currentGroup != printer.Key[0] + " Series")
-                {
-                    currentGroup = printer.Key[0] + " Series";
+                treeNode.Nodes.Add(CreateTreeNode(subDirectory));
+            }
 
-                    treeNode.Nodes.Add(context = new TreeNode(theme, nodeParent: treeNode)
-                    {
-                        Text = currentGroup,
-                    });
+            foreach (var materialFile in Directory.EnumerateFiles(directory, "*.material").OrderBy(f => Path.GetFileName(f)))
+            {
+                var materialToAdd = PrinterSettings.LoadFile(materialFile);
+                var name = materialToAdd.MaterialLayers[0].Name;
+                var fileName = Path.GetFileNameWithoutExtension(materialFile);
+                var sku = "";
+                if (materialToAdd.MaterialLayers[0].ContainsKey(SettingsKey.material_sku))
+                {
+                    sku = materialToAdd.MaterialLayers[0][SettingsKey.material_sku];
                 }
 
-                context.Nodes.Add(new TreeNode(theme, nodeParent: treeNode)
+                treeNode.Nodes.Add(new TreeNode(theme, nodeParent: treeNode)
                 {
-                    Text = printer.Key,
-                    Name = $"Node{make.Key}{printer.Key}",
-                    Tag = new MakeModelInfo()
+                    Text = fileName,
+                    Name = fileName,
+                    Tag = new MaterialInfo()
                     {
-                        Make = make.Key,
-                        Model = printer.Key
+                        Name = name,
+                        Path = materialFile,
+                        Sku = sku
                     }
                 });
             }
@@ -305,50 +211,95 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
         private void TreeView_AfterSelect(object sender, TreeNode e)
         {
-            nameSection.Enabled = treeView.SelectedNode != null;
-            this.ClearError();
-
-            this.PrinterNameError.Visible = false;
-
-            if (nameSection.Enabled
-                && treeView.SelectedNode.Tag != null)
+            if (treeView.SelectedNode?.Tag != null)
             {
                 UiThread.RunOnIdle(() =>
                 {
-                    if (usingDefaultName
-                        && treeView.SelectedNode != null)
+                    if (treeView.SelectedNode != null)
                     {
                         string printerName = treeView.SelectedNode.Tag.ToString();
 
-                        printerNameInput.Text = agg_basics.GetNonCollidingName(printerName, this.ExistingPrinterNames);
+                        this.SelectedMaterial = treeView.SelectedNode.Tag as MaterialInfo;
+                        materialInfo.CloseChildren();
 
-                        this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
-
-                        printerInfo.CloseChildren();
-
-                        if (this.SelectedPrinter != null
-                            && OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))
-                        {
-                            printerInfo.AddChild(
-                                new PrinterDetails(
-                                    new PrinterInfo()
-                                    {
-                                        Make = SelectedPrinter.Make,
-                                        Model = SelectedPrinter.Model,
-                                    },
-                                    theme,
-                                    false)
+                        var printerDetails = new PrinterDetails(
+                                new PrinterInfo()
                                 {
-                                    ShowProducts = false,
-                                    ShowHeadingRow = false,
-                                    StoreID = storePrinterID?.SID,
-                                    HAnchor = HAnchor.Stretch,
-                                    VAnchor = VAnchor.Stretch
-                                });
-                        }
+                                    ID = SelectedMaterial.Sku,
+                                    Make = "Pulse",
+                                    Model = "E-223",
+                                }, theme,
+                                false)
+                        {
+                            ShowProducts = false,
+                            ShowHeadingRow = false,
+                            StoreID = SelectedMaterial.Sku,
+                            HAnchor = HAnchor.Stretch,
+                            VAnchor = VAnchor.Stretch
+                        };
 
-                        nextButtonEnabled(treeView.SelectedNode != null
-                            && !string.IsNullOrWhiteSpace(printerNameInput.Text));
+                        // get the material_sku out of it
+
+                        materialInfo.AddChild(printerDetails);
+
+                        printerDetails.AfterLoad += (s, e2) =>
+                        {
+                            printerDetails.ProductDataContainer.AddChild(new HorizontalLine(theme.TextColor)
+                            {
+                                Margin = new BorderDouble(0, 7)
+                            });
+
+                            var printerProfile = PrinterSettings.LoadFile(SelectedMaterial.Path);
+                            printerProfile.OemLayer = new PrinterSettingsLayer();
+                            // move all the settings to the oem layer
+                            var layout = new List<(int index, string category, string group, string key)>();
+                            foreach (var kvp in printerProfile.MaterialLayers[0])
+                            {
+                                printerProfile.OemLayer[kvp.Key] = kvp.Value;
+                                layout.Add(SliceSettingsLayouts.GetLayout(kvp.Key));
+                            }
+
+                            printerProfile.MaterialLayers[0].Clear();
+
+                            var printer = new PrinterConfig(printerProfile);
+                            var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+                            var tabIndex = 0;
+                            var orderedSettings = layout.OrderBy(i => i.index).Select(i => (i.category, i.key));
+
+                            var lastCategory = "";
+
+                            foreach (var setting in orderedSettings)
+                            {
+                                if (setting.category == "")
+                                {
+                                    continue;
+                                }
+
+                                if (setting.category != lastCategory)
+                                {
+                                    lastCategory = setting.category;
+                                    // add a new setting header
+                                    printerDetails.ProductDataContainer.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
+                                    {
+                                        TextColor = theme.TextColor,
+                                        Margin = new BorderDouble(0, 5, 0, 7)
+                                    });
+                                }
+
+                                var settingsData = PrinterSettings.SettingsData[setting.key];
+                                var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+
+                                if (row is SliceSettingsRow settingsRow)
+                                {
+                                    settingsRow.ArrowDirection = ArrowDirection.Left;
+                                    settingsRow.Enabled = false;
+                                }
+
+                                printerDetails.ProductDataContainer.AddChild(row);
+                            }
+                        };
+
+                        nextButtonEnabled(treeView.SelectedNode != null);
                     }
                 });
             }

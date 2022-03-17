@@ -25,8 +25,7 @@
       "bed_temperature_kapton": "50",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "75",
-      "material_sku": "MY6CYEZM",
-      "material_url": "https://www.matterhackers.com/store/c/mh-build-series/mh-build-series-pla"
+      "material_sku": "MY6CYEZM"
     }
   ],
   "OemLayer": null,

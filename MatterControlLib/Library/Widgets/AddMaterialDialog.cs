@@ -31,7 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 
@@ -43,15 +42,15 @@ namespace MatterHackers.MatterControl.Library.Widgets
         private readonly AddMaterialWidget materialPanel;
         private readonly TextButton nextButton;
 
-        public AddMaterialDialog(Action<PrinterSettingsLayer> addMaterial)
+        public AddMaterialDialog(Action<PrinterSettingsLayer> addedMaterial, Action defineNewClicked)
         {
             bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
 
-            this.HeaderText = this.WindowTitle = "Printer Setup".Localize();
+            this.HeaderText = this.WindowTitle = "Add Material".Localize();
             this.WindowSize = new VectorMath.Vector2(800 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
             contentRow.BackgroundColor = theme.SectionBackgroundColor;
-            nextButton = theme.CreateDialogButton("Next".Localize());
+            nextButton = theme.CreateDialogButton("Add".Localize());
 
             materialPanel = new AddMaterialWidget(nextButton, theme, (enabled) =>
             {
@@ -97,43 +96,25 @@ namespace MatterHackers.MatterControl.Library.Widgets
             nextButton.Name = "Next Button";
             nextButton.Click += (s, e) => UiThread.RunOnIdle(async () =>
             {
-                bool controlsValid = materialPanel.ValidateControls();
-                if (controlsValid
-                    && materialPanel.SelectedPrinter is AddPrinterWidget.MakeModelInfo selectedPrinter)
+                if (materialPanel.SelectedMaterial is AddMaterialWidget.MaterialInfo selectedMaterial)
                 {
-                    var printer = await ProfileManager.CreatePrinterAsync(selectedPrinter.Make, selectedPrinter.Model, materialPanel.NewPrinterName);
-                    if (printer == null)
-                    {
-                        materialPanel.SetError("Error creating profile".Localize());
-                        return;
-                    }
+                    var materialToAdd = PrinterSettings.LoadFile(selectedMaterial.Path);
 
-                    UiThread.RunOnIdle(() =>
-                    {
-                        DialogWindow.ChangeToPage(AppContext.Platform.GetConnectDevicePage(printer) as DialogPage);
-                    });
+                    this.DialogWindow.Close();
+                    addedMaterial(materialToAdd.MaterialLayers[0]);
                 }
             });
 
-            var printerNotListedButton = theme.CreateDialogButton("Define New".Localize());
-            printerNotListedButton.ToolTipText = "Select this option only if your printer does not appear in the list".Localize();
+            var defineNewMaterialButton = theme.CreateDialogButton("Define New".Localize());
+            defineNewMaterialButton.ToolTipText = "Select this option if your material does not appear in the list".Localize();
 
-            printerNotListedButton.Click += async (s, e) =>
+            defineNewMaterialButton.Click += (s, e) =>
             {
-                var printer = await ProfileManager.CreatePrinterAsync("Other", "Other", "Custom Printer");
-                if (printer == null)
-                {
-                    materialPanel.SetError("Error creating profile".Localize());
-                    return;
-                }
-
-                UiThread.RunOnIdle(() =>
-                {
-                    DialogWindow.ChangeToPage(new SetupCustomPrinter(printer) as DialogPage);
-                });
+                this.DialogWindow.Close();
+                defineNewClicked?.Invoke();
             };
 
-            this.AddPageAction(printerNotListedButton, false);
+            this.AddPageAction(defineNewMaterialButton, false);
             this.AddPageAction(nextButton);
 
             SetElementVisibility();
@@ -141,7 +122,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
         private void SetElementVisibility()
         {
-            nextButton.Enabled = materialPanel.SelectedPrinter != null;
+            nextButton.Enabled = materialPanel.SelectedMaterial != null;
         }
     }
 }
