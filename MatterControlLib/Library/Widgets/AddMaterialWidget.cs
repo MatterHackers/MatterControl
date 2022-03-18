@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
                             var lastCategory = "";
 
-                            foreach (var setting in orderedSettings)
+                            foreach ((string category, string key) setting in orderedSettings)
                             {
                                 if (setting.category == "")
                                 {

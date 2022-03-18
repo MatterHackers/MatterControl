@@ -130,29 +130,39 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								var result = JsonConvert.DeserializeObject<ProductSidData>(json);
-								result.ProductSku.ProductDescription = result.ProductSku.ProductDescription.Replace("•", "-");
-								ProductDataContainer.RemoveChildren();
-
-								foreach (var addOn in result.ProductSku.ProductListing.AddOns)
+								if (!json.Contains("ErrorCode")
+									&& !json.Contains("404 Not Found"))
 								{
-									WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{addOn.AddOnSkuReference}?IncludeListingData=True",
-										(addOnJson) =>
+									try
+									{
+										var result = JsonConvert.DeserializeObject<ProductSidData>(json);
+										result.ProductSku.ProductDescription = result.ProductSku.ProductDescription.Replace("•", "-");
+										ProductDataContainer.RemoveChildren();
+
+										foreach (var addOn in result.ProductSku.ProductListing.AddOns)
 										{
-											var addOnResult = JsonConvert.DeserializeObject<ProductSidData>(addOnJson);
+											WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{addOn.AddOnSkuReference}?IncludeListingData=True",
+												(addOnJson) =>
+												{
+													var addOnResult = JsonConvert.DeserializeObject<ProductSidData>(addOnJson);
 
-											var icon = new ImageBuffer(80, 0);
+													var icon = new ImageBuffer(80, 0);
 
-											if (addOnResult?.ProductSku?.FeaturedImage?.ImageUrl != null)
-											{
-												WebCache.RetrieveImageAsync(icon, addOnResult.ProductSku.FeaturedImage.ImageUrl, scaleToImageX: true);
-											}
+													if (addOnResult?.ProductSku?.FeaturedImage?.ImageUrl != null)
+													{
+														WebCache.RetrieveImageAsync(icon, addOnResult.ProductSku.FeaturedImage.ImageUrl, scaleToImageX: true);
+													}
 
-											addOn.Icon = icon;
-										});
+													addOn.Icon = icon;
+												});
+										}
+
+										CreateProductDataWidgets(result.ProductSku, StoreID);
+									}
+									catch
+									{
+									}
 								}
-
-								CreateProductDataWidgets(result.ProductSku, StoreID);
 
 								AfterLoad?.Invoke(this, null);
 
