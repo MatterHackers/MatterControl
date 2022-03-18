@@ -18,8 +18,7 @@
       "bed_temperature_kapton": "70",
       "bed_temperature_pei": "70",
       "bed_temperature_pp": "50",
-      "layer_etag": "",
-      "layer_source": "",
+      "enable_fan": "0",
       "material_sku": "MCR8GQZT"
     }
   ],

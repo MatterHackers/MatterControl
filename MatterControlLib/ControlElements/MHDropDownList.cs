@@ -72,11 +72,11 @@ namespace MatterHackers.MatterControl
 				{
 					return Color.Transparent;
 				}
-				else if (this.mouseInBounds)
+				else if (this.mouseInBounds && this.ContainsFirstUnderMouseRecursive())
 				{
 					return theme.DropList.Hovered.BorderColor;
 				}
-				else if (this.ContainsFocus)
+				else if (this.ContainsFocus && this.ContainsFirstUnderMouseRecursive())
 				{
 					return theme.DropList.Focused.BorderColor;
 				}

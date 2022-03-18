@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 				{
 					return theme.EditFieldColors.Focused.BorderColor;
 				}
-				else if (this.mouseInBounds)
+				else if (this.mouseInBounds && this.ContainsFirstUnderMouseRecursive())
 				{
 					return theme.EditFieldColors.Hovered.BorderColor;
 				}

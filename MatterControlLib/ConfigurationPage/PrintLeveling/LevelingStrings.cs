@@ -64,17 +64,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public string CoarseInstruction2 => string.Format(
-			"\t• {0}\n\t• {1}\n{2}",
-			"Place the paper under the extruder".Localize(),
-			"Using the above controls".Localize(),
-			this.FineInstruction2);
-
-		public string FineInstruction2 => string.Format(
-			"\t• {0}\n\t• {1}\n\n{2}",
+		public static string BelowControlsInstructions => string.Format(
+			"\t• {0}\n\t• {1}",
 			"Press [Z-] until there is resistance to moving the paper".Localize(),
-			"Press [Z+] once to release the paper".Localize(),
-			"Finally click 'Next' to continue.".Localize());
+			"Press [Z+] once to release the paper".Localize());
+
+		public static string BelowControlsUltraFineInstructions => string.Format(
+			"\t• {0}\n\t• {1}",
+			"Press [Z-] until there is resistance to moving the paper".Localize(),
+			"The ideal resistance is when the paper first begins to bend".Localize());
 
 		public string GetStepString(int totalSteps)
 		{

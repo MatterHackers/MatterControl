@@ -320,8 +320,7 @@ Avoid contact with your skin.".Replace("\r", "").Localize().FormatWith(targetHot
 								i + 1,
 								"High Precision".Localize()),
 							probePositions,
-							i,
-							levelingStrings);
+							i);
 					}
 
 					i++;
