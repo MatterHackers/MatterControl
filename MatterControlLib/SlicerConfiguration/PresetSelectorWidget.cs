@@ -272,6 +272,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"new",
 				pointSize: theme.DefaultFontSize);
 
+			var selectedIndex = dropDownList.SelectedIndex;
+
+			dropDownList.SelectionChanged += (s3, e3) =>
+			{
+				if (dropDownList.SelectedIndex < dropDownList.MenuItems.Count - 1)
+				{
+					selectedIndex = dropDownList.SelectedIndex;
+				}
+			};
+
 			addNewPreset.Selected += (s, e) =>
 			{
 				if (layerType == NamedSettingsLayers.Material)
@@ -294,6 +304,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						editButton.InvokeClick();
 					}));
+
+					window.Closed += (s2, e2) =>
+					{
+						if (dropDownList.SelectedIndex >= dropDownList.MenuItems.Count - 1)
+                        {
+							dropDownList.SelectedIndex = selectedIndex < dropDownList.MenuItems.Count - 1 ? selectedIndex : 0;
+                        }
+					};
 				}
 				else
 				{
