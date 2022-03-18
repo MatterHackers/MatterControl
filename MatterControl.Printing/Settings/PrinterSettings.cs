@@ -309,6 +309,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SetValue(SettingsKey.active_material_key, value);
 					MaterialLayer = GetMaterialLayer(value);
+
+					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
+					this.DeactivateConflictingUserOverrides(this.MaterialLayer);
 				}
 			}
 		}
@@ -324,6 +327,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SetValue(SettingsKey.active_quality_key, value);
 					QualityLayer = GetQualityLayer(value);
+
+					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
+					this.DeactivateConflictingUserOverrides(this.QualityLayer);
 				}
 			}
 		}

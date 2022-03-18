@@ -6,12 +6,10 @@
     {
       "layer_name": "NylonG",
       "layer_id": "f8bf5181-0d9a-47ac-b8dd-c6ff6e24dc57",
-      "retract_restart_extra_time_to_apply": "0",
-      "retract_restart_extra": "0",
       "temperature": "255",
       "bed_temperature": "60",
       "filament_density": "1.01",
-      "filament_cost": "128",
+      "filament_cost": "64",
       "min_fan_speed": "35",
       "max_fan_speed": "100",
       "raft_fan_speed_percent": "0",
@@ -26,7 +24,7 @@
       "bed_temperature_kapton": "60",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "60",
-      "material_sku": "MTGV1M9J"
+      "material_sku": "MZ9H8W56"
     }
   ],
   "OemLayer": null,

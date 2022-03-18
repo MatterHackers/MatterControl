@@ -34,13 +34,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		public GetUltraFineBedHeight(ISetupWizard setupWizard, string pageDescription, List<PrintLevelingWizard.ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+		public GetUltraFineBedHeight(ISetupWizard setupWizard,
+			string pageDescription,
+			List<PrintLevelingWizard.ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex)
 			: base(
 				setupWizard, 
 				pageDescription, 
 				"We will now finalize our measurement of the extruder height at this position.".Localize(), 
-				levelingStrings.FineInstruction2, 
+				LevelingStrings.BelowControlsUltraFineInstructions,
+				"https://lh3.googleusercontent.com/ZSbsEWr_jrr_2ZDqbcgbhQrC8pZz8y8sfl2Cg_q2u02P51iACGsmuC6clHt_ULiFIgnZ_RiQA2odLcvqBlOsWYHfq488O8KlVZexSyBE=w220",
+				"Finally click 'Next' to continue.".Localize(),
 				.02, 
 				probePositions, 
 				probePositionsBeingEditedIndex)

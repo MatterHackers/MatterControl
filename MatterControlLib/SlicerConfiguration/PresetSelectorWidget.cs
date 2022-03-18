@@ -389,11 +389,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-        private void CopyPlateToPrinter(object sceneContext, PrinterConfig printer)
-        {
-            throw new NotImplementedException();
-        }
-
         private void MenuItem_Selected(object sender, EventArgs e)
 		{
 			// When a preset is selected store the current values of all known settings to compare against after applying the preset
@@ -419,9 +414,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
 
 						activeSettings.ActiveMaterialKey = item.Value;
-
-						// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
-						activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
 					}
 				}
 				else // set the temperature for the given extruder
@@ -456,9 +448,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					activeSettings.ActiveQualityKey = item.Value;
 					nextSelection = activeSettings.QualityLayer;
-
-					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
-					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
 				}
 			}
 
@@ -492,9 +481,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				foreach (var keyName in settingsToUpdate)
-				{
-					printer.Settings.OnSettingChanged(keyName);
+				// we are about to change many settings only save on the last one
+				var updateList = settingsToUpdate.ToList();
+				ProfileManager.SaveOnSingleSettingChange = false;
+				for (int i=0; i< updateList.Count-1; i++)
+                {
+					printer.Settings.OnSettingChanged(updateList[i]);
+				}
+				ProfileManager.SaveOnSingleSettingChange = true;
+				printer.Settings.OnSettingChanged(updateList[updateList.Count-1]);
+
+				// update the style of every setting
+				var sliceSettingsWidget = this.Parents<SliceSettingsWidget>().FirstOrDefault();
+				if (sliceSettingsWidget != null)
+                {
+					sliceSettingsWidget.UpdateAllStyles();
 				}
 			});
 
@@ -505,6 +506,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			pullDownContainer.CloseChildren();
 			pullDownContainer.AddChild(this.NewPulldownContainer());
+
+			var sliceSettingsWidget = this.Parents<SliceSettingsWidget>().FirstOrDefault();
+			if (sliceSettingsWidget != null)
+			{
+				sliceSettingsWidget.UpdateAllStyles();
+			}
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

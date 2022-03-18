@@ -474,10 +474,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return printerSettings;
 		}
 
+		public static bool SaveOnSingleSettingChange { get; set; } = true;
+
 		// Settings persistence moved from PrinterSettings into ProfileManager to break dependency around ProfileManager paths/MatterControl specific details
 		private static void PrinterSettings_SettingChanged(object sender, StringEventArgs e)
 		{
-			if (sender is PrinterSettings settings)
+			if (SaveOnSingleSettingChange
+				&& sender is PrinterSettings settings)
 			{
 				settings.Save();
 			}

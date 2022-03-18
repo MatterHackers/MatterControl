@@ -331,15 +331,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					yield return new GetUltraFineBedHeight(
 						this,
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(totalSteps),
-							"Position".Localize(),
-							1,
-							"High Precision".Localize()),
+						$"{levelingStrings.GetStepString(totalSteps)} {"Position".Localize()} 1 - {"High Precision".Localize()}",
 						manualProbePositions[extruderIndex],
-						0,
-						levelingStrings);
+						0);
 
 					SetExtruderOffset(autoProbePositions, manualProbePositions, extruderIndex);
 				}

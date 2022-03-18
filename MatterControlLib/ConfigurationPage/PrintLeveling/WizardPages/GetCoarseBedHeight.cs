@@ -49,7 +49,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(context,
 				  pageDescription,
 				  "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
-				  levelingStrings.CoarseInstruction2,
+				  string.Format("\t• {0}\n\t• {1}\n{2}",
+					  "Place the paper under the extruder".Localize(),
+					  "Using the above controls".Localize(),
+					  LevelingStrings.BelowControlsInstructions),
+				  null,
+				  "Finally click 'Next' to continue.".Localize(),
 				  1,
 				  probePositions,
 				  probePositionsBeingEditedIndex)

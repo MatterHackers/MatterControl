@@ -4993,6 +4993,9 @@ Translated:The geometric shape of the support structure for the inside of parts.
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 
+English:The ideal resistance is when the paper first begins to bend
+Translated:The ideal resistance is when the paper first begins to bend
+
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 

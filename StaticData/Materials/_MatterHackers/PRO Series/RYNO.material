@@ -15,7 +15,6 @@
       "min_fan_speed_layer_time": "15",
       "max_fan_speed_layer_time": "10",
       "filament_cost": "64",
-      "extrusion_multiplier": "0.95",
       "disable_fan_first_layers": "3",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "75",
@@ -23,8 +22,6 @@
       "bed_temperature_kapton": "55",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "55",
-      "layer_etag": "",
-      "layer_source": "",
       "material_sku": "M6989PRZ"
     }
   ],

@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -51,12 +53,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public FindBedHeight(ISetupWizard setupWizard,
 			string pageDescription,
-			string setZHeightCoarseInstruction1,
-			string setZHeightCoarseInstruction2,
+			string aboveControlsInstructions,
+			string belowControlsInstructions,
+			string urlToImageToShow,
+			string nextInstructions,
 			double moveDistance,
 			List<PrintLevelingWizard.ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex)
-			: base(setupWizard, pageDescription, setZHeightCoarseInstruction1)
+			: base(setupWizard, pageDescription, aboveControlsInstructions)
 		{
 			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;
@@ -90,8 +94,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			contentRow.AddChild(zButtonsAndInfo);
 
-			contentRow.AddChild(
-				this.CreateTextField(setZHeightCoarseInstruction2));
+			contentRow.AddChild(this.CreateTextField(belowControlsInstructions));
+
+			if (!string.IsNullOrEmpty(urlToImageToShow))
+            {
+				var icon = StaticData.Instance.LoadIcon("internet.png", 16, 16);
+				
+				var sequenceWidget = new ResponsiveImageSequenceWidget(new ImageSequence(icon))
+				{
+					Cursor = Cursors.Hand,
+					Margin = 9
+				}; 
+				
+				WebCache.RetrieveImageSquenceAsync(sequenceWidget.ImageSequence, urlToImageToShow);
+
+				contentRow.AddChild(sequenceWidget);
+			}
+
+			contentRow.AddChild(this.CreateTextField(nextInstructions));
 		}
 
 		public override void OnLoad(EventArgs args)

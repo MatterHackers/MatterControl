@@ -39,8 +39,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(
 				  context, 
 				  pageDescription, 
-				  "We will now refine our measurement of the extruder height at this position.".Localize(), 
-				  levelingStrings.FineInstruction2, 
+				  "We will now refine our measurement of the extruder height at this position.".Localize(),
+				  LevelingStrings.BelowControlsInstructions,
+				  null,
+				  "Finally click 'Next' to continue.".Localize(),
 				  .1, 
 				  probePositions, 
 				  probePositionsBeingEditedIndex)
