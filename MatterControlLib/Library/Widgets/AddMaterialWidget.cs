@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
         {
             var treeNode = new TreeNode(theme)
             {
-                Text = Path.GetFileName(directory),
+                Text = Path.GetFileName(directory).Replace("_", " ").Trim(),
             };
 
             foreach (var subDirectory in Directory.EnumerateDirectories(directory).OrderBy(f => Path.GetFileName(f)))
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
             {
                 var materialToAdd = PrinterSettings.LoadFile(materialFile);
                 var name = materialToAdd.MaterialLayers[0].Name;
-                var fileName = Path.GetFileNameWithoutExtension(materialFile);
+                var fileName = Path.GetFileNameWithoutExtension(materialFile).Replace("_", " ").Trim();
                 var sku = "";
                 if (materialToAdd.MaterialLayers[0].ContainsKey(SettingsKey.material_sku))
                 {
@@ -249,6 +249,32 @@ namespace MatterHackers.MatterControl.Library.Widgets
                                 Margin = new BorderDouble(0, 7)
                             });
 
+                            var settingsBackground = new GuiWidget()
+                            {
+                                Name = "Bacground",
+                                HAnchor = HAnchor.Stretch,
+                                VAnchor = VAnchor.Fit
+                            };
+
+                            var settingsHolder = settingsBackground.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
+                            {
+                                Name = "Holder",
+                                HAnchor = HAnchor.Stretch,
+                            });
+
+                            var settingsCover = settingsBackground.AddChild(new GuiWidget()
+                            {
+                                Name = "Cover",
+                                HAnchor = HAnchor.Stretch,
+                            });
+
+                            settingsHolder.SizeChanged += (s5, e5) =>
+                            {
+                                settingsCover.Height = settingsHolder.Height;
+                            };
+
+                            printerDetails.ProductDataContainer.AddChild(settingsBackground);
+
                             var printerProfile = PrinterSettings.LoadFile(SelectedMaterial.Path);
                             printerProfile.OemLayer = new PrinterSettingsLayer();
                             // move all the settings to the oem layer
@@ -268,7 +294,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
                             var lastCategory = "";
 
-                            foreach (var setting in orderedSettings)
+                            foreach ((string category, string key) setting in orderedSettings)
                             {
                                 if (setting.category == "")
                                 {
@@ -279,7 +305,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
                                 {
                                     lastCategory = setting.category;
                                     // add a new setting header
-                                    printerDetails.ProductDataContainer.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
+                                    settingsHolder.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
                                     {
                                         TextColor = theme.TextColor,
                                         Margin = new BorderDouble(0, 5, 0, 7)
@@ -292,10 +318,10 @@ namespace MatterHackers.MatterControl.Library.Widgets
                                 if (row is SliceSettingsRow settingsRow)
                                 {
                                     settingsRow.ArrowDirection = ArrowDirection.Left;
-                                    settingsRow.Enabled = false;
+                                    settingsRow.Enabled = true;
                                 }
 
-                                printerDetails.ProductDataContainer.AddChild(row);
+                                settingsHolder.AddChild(row);
                             }
                         };
 
