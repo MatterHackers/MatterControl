@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
             }
 
             nextButton.Name = "Next Button";
-            nextButton.Click += (s, e) => UiThread.RunOnIdle(async () =>
+            nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
             {
                 if (materialPanel.SelectedMaterial is AddMaterialWidget.MaterialInfo selectedMaterial)
                 {

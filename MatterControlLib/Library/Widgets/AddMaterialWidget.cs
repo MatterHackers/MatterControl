@@ -244,14 +244,17 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
                         printerDetails.AfterLoad += (s, e2) =>
                         {
-                            printerDetails.ProductDataContainer.AddChild(new HorizontalLine(theme.TextColor)
+                            if (printerDetails.ProductDataContainer.Children.Count > 0)
                             {
-                                Margin = new BorderDouble(0, 7)
-                            });
+                                printerDetails.ProductDataContainer.AddChild(new HorizontalLine(theme.TextColor)
+                                {
+                                    Margin = new BorderDouble(0, 7)
+                                });
+                            }
 
                             var settingsBackground = new GuiWidget()
                             {
-                                Name = "Bacground",
+                                Name = "Background",
                                 HAnchor = HAnchor.Stretch,
                                 VAnchor = VAnchor.Fit
                             };

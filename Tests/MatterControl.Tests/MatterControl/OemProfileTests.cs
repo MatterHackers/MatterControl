@@ -189,13 +189,17 @@ M300 S3000 P30   ; Resume Tone";
 			var files = directoryInfo.GetFiles("*.material", SearchOption.AllDirectories);
 			var profiles = files.Select(f => PrinterSettings.LoadFile(f.FullName)).ToList();
 
+			var allMaterialIds = new HashSet<string>();
+
 			foreach(var profile in profiles)
             {
 				Assert.AreEqual(1, profile.MaterialLayers.Count, "Each material profile should have 1 material in it");
 				var material = profile.MaterialLayers[0];
 				profile.ActiveMaterialKey = material.LayerID;
 				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)));
-            }
+				Assert.IsTrue(!allMaterialIds.Contains(material.LayerID), "Every material needs a unique Id");
+				allMaterialIds.Add(material.LayerID);
+			}
 		}
 
 

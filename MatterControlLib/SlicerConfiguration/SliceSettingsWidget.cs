@@ -112,7 +112,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				showControlBar = value;
 			}
 		}
-	}
+
+        public void UpdateAllStyles()
+        {
+            foreach(var child in this.Descendants<SliceSettingsRow>())
+            {
+				child.UpdateStyle();
+            }
+        }
+    }
 
 	public class SliceSettingsTabView : SimpleTabs
 	{
