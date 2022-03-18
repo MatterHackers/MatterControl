@@ -28,11 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
-using System;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library.Widgets
 {
 	public class ContainerTreeNode : TreeNode
 	{

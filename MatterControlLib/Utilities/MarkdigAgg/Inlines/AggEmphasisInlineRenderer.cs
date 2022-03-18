@@ -7,7 +7,7 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg.Inlines
 {
-	public class EmphasisInlineX : FlowLayoutWidget
+	public class EmphasisInlineX : FlowLayoutWidget, IWrapChildrenSeparatly
 	{
 		private char delimiter;
 

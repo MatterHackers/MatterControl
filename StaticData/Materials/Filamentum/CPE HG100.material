@@ -4,8 +4,8 @@
   "Macros": [],
   "MaterialLayers": [
     {
-      "layer_name": "Build Series PETg",
-      "layer_id": "dbbf12f0-4197-41e8-b15e-85436d833fcc",
+      "layer_name": "Filamentum CPE HG100",
+      "layer_id": "dbbf12f0-4237-41e8-b15e-85436d833fcc",
       "temperature": "245",
       "filament_density": "1.28",
       "bed_temperature": "75",
@@ -24,8 +24,7 @@
       "bed_temperature_kapton": "75",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "55",
-      "material_sku": "MSNJXN9N",
-      "material_url": "https://www.matterhackers.com/store/c/mh-build-series/mh-build-series-petg"
+      "material_sku": "MHSXGFA0"
     }
   ],
   "OemLayer": null,

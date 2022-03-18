@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,33 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
-using MatterHackers.MatterControl.Library.Widgets;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public class AppViewState
-	{
-		public PrintLibraryWidget.ListViewModes LibraryViewMode { get; set; } = PrintLibraryWidget.ListViewModes.IconListView;
-	}
+	public class WhiteBackground : GuiWidget
+    {
+		public WhiteBackground(ImageBuffer image)
+			: base(10, 10)
+        {
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit | VAnchor.Top;
+			// these images expect to be on white so change the background to white
+			BackgroundColor = Color.White;
+			BackgroundRadius = 5 * GuiWidget.DeviceScale;
+			Margin = new BorderDouble(0, 0, 5, 0);
+			Selectable = false;
+
+			ImageWidget = this.AddChild(new ImageWidget(image)
+			{
+				Margin = 3,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			});
+		}
+
+        public GuiWidget ImageWidget { get; }
+    }
 }

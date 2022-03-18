@@ -4,11 +4,11 @@
   "Macros": [],
   "MaterialLayers": [
     {
-      "layer_name": "PRO Series PLA",
+      "layer_name": "Quantum PLA",
       "filament_density": "1.24",
-      "layer_id": "b9e76562-983f-4b04-9a70-468126d2a8cc",
+      "layer_id": "b08a04f9-8d00-4753-b802-3745ffcf5c51",
       "bed_temperature": "55",
-      "temperature": "210",
+      "temperature": "225",
       "min_fan_speed": "70",
       "max_fan_speed": "100",
       "bridge_fan_speed": "100",
@@ -27,8 +27,7 @@
       "bed_temperature_kapton": "55",
       "bed_temperature_pei": "75",
       "bed_temperature_pp": "55",
-      "material_sku": "MY6C8H7E",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-pla"
+      "material_sku": "MS2XWRUN"
     }
   ],
   "OemLayer": null,

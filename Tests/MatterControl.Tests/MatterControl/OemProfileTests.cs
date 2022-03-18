@@ -194,9 +194,7 @@ M300 S3000 P30   ; Resume Tone";
 				Assert.AreEqual(1, profile.MaterialLayers.Count, "Each material profile should have 1 material in it");
 				var material = profile.MaterialLayers[0];
 				profile.ActiveMaterialKey = material.LayerID;
-				var hasSku = !string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku));
-				var hasUrl = !string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_url));
-				Assert.IsTrue(hasSku || hasUrl);
+				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)));
             }
 		}
 

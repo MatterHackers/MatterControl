@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private static Popover activePopover = null;
 		private SystemWindow systemWindow = null;
 
-		protected ImageWidget imageWidget;
+		protected GuiWidget imageWidget;
 
 		public GuiWidget ActionWidget { get; set; }
 
@@ -78,12 +78,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (icon != null)
 				{
-					this.AddChild(
-						imageWidget = new ImageWidget(icon)
-						{
-							Margin = new BorderDouble(right: 6, left: 6),
-							VAnchor = VAnchor.Center
-						});
+					if (true)
+					{
+						this.AddChild(imageWidget = new WhiteBackground(icon));
+					}
+					else
+					{
+						this.AddChild(
+							imageWidget = new ImageWidget(icon)
+							{
+								Margin = new BorderDouble(right: 6, left: 6),
+								VAnchor = VAnchor.Center
+							});
+					}
 				}
 				else if (enforceGutter)
 				{

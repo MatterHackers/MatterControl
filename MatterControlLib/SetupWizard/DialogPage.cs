@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 
 		private TextWidget headerLabel;
 
-		private GuiWidget cancelButton { get; }
+		public GuiWidget CancelButton { get; private set; }
 
 		public Vector2 WindowSize { get; set; }
 
@@ -71,9 +71,9 @@ namespace MatterHackers.MatterControl
 				cancelButtonText = "Cancel".Localize();
 			}
 
-			cancelButton = theme.CreateDialogButton(cancelButtonText);
-			cancelButton.Margin = new BorderDouble(left: 3);
-			cancelButton.Name = "Cancel Wizard Button";
+			CancelButton = theme.CreateDialogButton(cancelButtonText);
+			CancelButton.Margin = new BorderDouble(left: 3);
+			CancelButton.Name = "Cancel Wizard Button";
 
 			// Create the header row for the widget
 			if (useOverflowBar)
@@ -181,23 +181,23 @@ namespace MatterHackers.MatterControl
 
 		protected void SetCancelButtonName(string newName)
 		{
-			cancelButton.Name = newName;
+			CancelButton.Name = newName;
 		}
 
 		protected void SetCancelButtonText(string text)
 		{
-			cancelButton.Text = text;
+			CancelButton.Text = text;
 		}
 
 		protected void HideCancelButton()
 		{
-			cancelButton.Visible = false;
+			CancelButton.Visible = false;
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
 			// Add 'Close' event listener after derived types have had a chance to register event listeners
-			cancelButton.Click += (s, e) =>
+			CancelButton.Click += (s, e) =>
 			{
 				if (this.AllowCancel())
 				{
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl
 			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 			systemWindow.KeyDown += SystemWindow_KeyDown;
 
-			footerRow.AddChild(cancelButton);
+			footerRow.AddChild(CancelButton);
 
 			base.OnLoad(args);
 		}

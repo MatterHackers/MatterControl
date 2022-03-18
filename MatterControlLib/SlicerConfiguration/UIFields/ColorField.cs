@@ -30,23 +30,21 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ColorField : UIField
 	{
 		private ItemColorButton colorWidget;
-		private ThemeConfig theme;
+        private Action<Action<Color>> getPickedColor;
+        private ThemeConfig theme;
 		private Color initialColor;
 
-		public ColorField(ThemeConfig theme)
+		public ColorField(ThemeConfig theme, Color initialColor, Action<Action<Color>> getPickedColor)
 		{
+			this.getPickedColor = getPickedColor;
 			this.theme = theme;
-		}
-
-		public ColorField(ThemeConfig theme, Color initialColor)
-			: this(theme)
-		{
 			this.initialColor = initialColor;
 		}
 
@@ -60,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			colorWidget = new ItemColorButton(theme, initialColor);
+			colorWidget = new ItemColorButton(theme, initialColor, getPickedColor);
 			colorWidget.ColorChanged += (s, e) =>
 			{
 				this.SetValue(Color.Html, true);

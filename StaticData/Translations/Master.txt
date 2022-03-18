@@ -217,6 +217,9 @@ Translated:Add Hook
 English:Add Image
 Translated:Add Image
 
+English:Add Material
+Translated:Add Material
+
 English:Add New Setting
 Translated:Add New Setting
 
@@ -2659,6 +2662,12 @@ Translated:Material density. Only used for estimating mass in the Layer View.
 English:Material Setting
 Translated:Material Setting
 
+English:Material Settings
+Translated:Material Settings
+
+English:Material Setup
+Translated:Material Setup
+
 English:Materials
 Translated:Materials
 
@@ -2953,11 +2962,17 @@ Translated:Networked Printing
 English:New Design
 Translated:New Design
 
+English:New Material
+Translated:New Material
+
 English:New Password
 Translated:New Password
 
 English:New Printer Name
 Translated:New Printer Name
+
+English:New Quality Setting
+Translated:New Quality Setting
 
 English:New updates are ready to install
 Translated:New updates are ready to install
@@ -3661,6 +3676,9 @@ Translated:Printer Setup must be run before printing
 English:Printer Setup Required
 Translated:Printer Setup Required
 
+English:Printer SKU
+Translated:Printer SKU
+
 English:Printers
 Translated:Printers
 
@@ -4222,6 +4240,9 @@ Translated:Select a printer to continue
 English:Select All
 Translated:Select All
 
+English:Select an object to copy its color
+Translated:Select an object to copy its color
+
 English:Select cell to edit
 Translated:Select cell to edit
 
@@ -4236,6 +4257,9 @@ Translated:Select Range
 
 English:Select the baud rate.
 Translated:Select the baud rate.
+
+English:Select this option if your material does not appear in the list
+Translated:Select this option if your material does not appear in the list
 
 English:Select this option only if your printer does not appear in the list
 Translated:Select this option only if your printer does not appear in the list
@@ -5412,6 +5436,9 @@ Translated:This is the angle that raises or stows the z probe.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
 Translated:This is the make (often the manufacturer) of printer this profile is targeting.
+
+English:This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.
+Translated:This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.
 
 English:This is the model of printer this profile is targeting.
 Translated:This is the model of printer this profile is targeting.

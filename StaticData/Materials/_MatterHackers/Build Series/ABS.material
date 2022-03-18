@@ -4,9 +4,9 @@
   "Macros": [],
   "MaterialLayers": [
     {
-      "layer_name": "ABS",
+      "layer_name": "Build Series ABS",
       "filament_density": "1.04",
-      "layer_id": "8b3e457e-75c3-43cb-b02d-9b9926ed5d27",
+      "layer_id": "8b9e4573-75c3-43cb-b02d-9b9926ed5d27",
       "bed_temperature": "100",
       "temperature": "235",
       "min_fan_speed": "70",
@@ -28,7 +28,7 @@
       "bed_temperature_kapton": "100",
       "bed_temperature_pei": "100",
       "bed_temperature_pp": "100",
-      "material_url": "https://www.matterhackers.com/store/c/ABS"
+      "material_sku": "MWVCRU99"
     }
   ],
   "OemLayer": null,

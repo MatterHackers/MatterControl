@@ -4,8 +4,8 @@
   "Macros": [],
   "MaterialLayers": [
     {
-      "layer_name": "PRO Series Nylon",
-      "layer_id": "b8d72ad6-9b04-4bbb-852f-4fec1bc4262b",
+      "layer_name": "Nylon",
+      "layer_id": "b8e72ad6-9b04-4bbb-852f-4fec1bc4262b",
       "temperature": "250",
       "bed_temperature": "55",
       "retract_restart_extra": "0",
@@ -20,8 +20,7 @@
       "bed_temperature_pp": "50",
       "layer_etag": "",
       "layer_source": "",
-      "material_sku": "MCR8GQZT",
-      "material_url": "https://www.matterhackers.com/store/c/pro-series-filament/pro-series-nylon"
+      "material_sku": "3d-printer-filament/Nylon"
     }
   ],
   "OemLayer": null,

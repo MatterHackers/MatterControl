@@ -38,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -132,6 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.ActiveMaterialKey = "";
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
+								RebuildDropDownList();
 							}
 						};
 
@@ -178,6 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								// Clear QualityKey after removing layer to ensure listeners see update
 								printer.Settings.ActiveQualityKey = "";
+								RebuildDropDownList();
 							}
 						};
 
@@ -261,30 +264,66 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
+			var addString = layerType == NamedSettingsLayers.Material ? "New Material".Localize() : "New Quality Setting".Localize();
+			
 			MenuItem addNewPreset = dropDownList.AddItem(
-				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16),
-				"Add New Setting".Localize() + "...",
+				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16).SetToColor(theme.TextColor),
+				addString + "...",
 				"new",
 				pointSize: theme.DefaultFontSize);
+
+			var selectedIndex = dropDownList.SelectedIndex;
+
+			dropDownList.SelectionChanged += (s3, e3) =>
+			{
+				if (dropDownList.SelectedIndex < dropDownList.MenuItems.Count - 1)
+				{
+					selectedIndex = dropDownList.SelectedIndex;
+				}
+			};
+
 			addNewPreset.Selected += (s, e) =>
 			{
-				var newLayer = new PrinterSettingsLayer();
-				if (layerType == NamedSettingsLayers.Quality)
+				if (layerType == NamedSettingsLayers.Material)
 				{
-					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
-					printer.Settings.QualityLayers.Add(newLayer);
-					printer.Settings.ActiveQualityKey = newLayer.LayerID;
+					var window = DialogWindow.Show(new AddMaterialDialog((newMaterial) =>
+                    {
+						printer.Settings.MaterialLayers.Add(newMaterial);
+						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
+
+						RebuildDropDownList();
+					},
+					() =>
+					{
+						var newMaterial = new PrinterSettingsLayer();
+						newMaterial.Name = "Material" + printer.Settings.MaterialLayers.Count;
+						printer.Settings.MaterialLayers.Add(newMaterial);
+						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
+
+						RebuildDropDownList();
+
+						editButton.InvokeClick();
+					}));
+
+					window.Closed += (s2, e2) =>
+					{
+						if (dropDownList.SelectedIndex >= dropDownList.MenuItems.Count - 1)
+                        {
+							dropDownList.SelectedIndex = selectedIndex < dropDownList.MenuItems.Count - 1 ? selectedIndex : 0;
+                        }
+					};
 				}
 				else
 				{
-					newLayer.Name = "Material" + printer.Settings.MaterialLayers.Count;
-					printer.Settings.MaterialLayers.Add(newLayer);
-					printer.Settings.ActiveMaterialKey = newLayer.LayerID;
+					var newQuality = new PrinterSettingsLayer();
+					newQuality.Name = "Quality" + printer.Settings.QualityLayers.Count;
+					printer.Settings.QualityLayers.Add(newQuality);
+					printer.Settings.ActiveQualityKey = newQuality.LayerID;
+
+					RebuildDropDownList();
+
+					editButton.InvokeClick();
 				}
-
-				RebuildDropDownList();
-
-				editButton.InvokeClick();
 			};
 
 			try
@@ -350,7 +389,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dropDownList;
 		}
 
-		private void MenuItem_Selected(object sender, EventArgs e)
+        private void CopyPlateToPrinter(object sceneContext, PrinterConfig printer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MenuItem_Selected(object sender, EventArgs e)
 		{
 			// When a preset is selected store the current values of all known settings to compare against after applying the preset
 			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();

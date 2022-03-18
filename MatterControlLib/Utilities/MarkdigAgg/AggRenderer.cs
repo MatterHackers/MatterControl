@@ -78,8 +78,6 @@ namespace Markdig.Renderers
 			ObjectRenderers.Add(new AggQuoteBlockRenderer());
 			ObjectRenderers.Add(new AggThematicBreakRenderer());
 
-			ObjectRenderers.Add(new AggParagraphRenderer());
-
 			// Default inline renderers
 			ObjectRenderers.Add(new AggAutolinkInlineRenderer());
 			ObjectRenderers.Add(new AggCodeInlineRenderer(theme));

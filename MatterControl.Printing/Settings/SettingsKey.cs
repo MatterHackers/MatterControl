@@ -165,7 +165,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string material_color_2 = nameof(material_color_2);
 		public const string material_color_3 = nameof(material_color_3);
 		public const string material_sku = nameof(material_sku);
-		public const string material_url = nameof(material_url);
 		public const string max_acceleration = nameof(max_acceleration);
 		public const string max_fan_speed = nameof(max_fan_speed);
 		public const string max_fan_speed_layer_time = nameof(max_fan_speed_layer_time);
@@ -199,6 +198,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_leveling_solution = nameof(print_leveling_solution);
 		public const string print_time_estimate_multiplier = nameof(print_time_estimate_multiplier);
 		public const string printer_name = nameof(printer_name);
+		public const string printer_sku = nameof(printer_sku);
 		public const string probe_has_been_calibrated = nameof(probe_has_been_calibrated);
 		public const string probe_offset = nameof(probe_offset);
 		public const string progress_reporting = nameof(progress_reporting);

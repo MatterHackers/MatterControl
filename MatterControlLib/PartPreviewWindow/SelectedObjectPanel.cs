@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using JsonPath;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -242,10 +244,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var undoBuffer = sceneContext.Scene.UndoBuffer;
 
+			void GetNextSelectionColor(Action<Color> setColor)
+			{
+				var scene = sceneContext.Scene;
+				var startingSelection = scene.SelectedItem;
+				CancellationTokenSource cancellationToken = null;
+
+				void SelectionChanged(object s, EventArgs e)
+				{
+					var selection = scene.SelectedItem;
+					if (selection != null)
+					{
+						setColor?.Invoke(selection.Color);
+						scene.SelectionChanged -= SelectionChanged;
+						cancellationToken?.Cancel();
+						scene.SelectedItem = startingSelection;
+					}
+				}
+
+				var durationSeconds = 20;
+
+				ApplicationController.Instance.Tasks.Execute("Select an object to copy its color".Localize(),
+					null,
+					(progress, cancellationTokenIn) =>
+					{
+						cancellationToken = cancellationTokenIn;
+						var time = UiThread.CurrentTimerMs;
+						var status = new ProgressStatus();
+						while (UiThread.CurrentTimerMs < time + durationSeconds * 1000
+							&& !cancellationToken.IsCancellationRequested)
+						{
+							Thread.Sleep(30);
+							status.Progress0To1 = (UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds;
+							progress.Report(status);
+						}
+
+						scene.SelectionChanged -= SelectionChanged;
+						return Task.CompletedTask;
+					});
+
+				scene.SelectionChanged += SelectionChanged;
+			}
+
 			if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
 			{
 				// put in a color edit field
-				var colorField = new ColorField(theme, selectedItem.Color);
+				var colorField = new ColorField(theme, selectedItem.Color, GetNextSelectionColor);
 				colorField.Initialize(0);
 				colorField.ValueChanged += (s, e) =>
 				{
