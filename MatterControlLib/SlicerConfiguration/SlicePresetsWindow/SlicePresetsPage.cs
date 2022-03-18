@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 
 		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext, bool showExport)
-			: base("Save".Localize())
+			: base("Done".Localize())
 		{
 			this.presetsContext = presetsContext;
 			this.printer = printer;
@@ -154,17 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddPageAction(duplicateButton, false);
 
-			// set the save button to be the accept button and move it to the far left
 			AcceptButton = CancelButton;
-			CancelButton.ParentChanged += (s, e) =>
-			{
-				CancelButton.Parent.Children.Modify((children) =>
-				{
-					var last = children.Last();
-					children.Remove(last);
-					children.Insert(0, last);
-				});
-			};
 		}
 
 		private GuiWidget CreateSliceSettingsWidget(PrinterConfig printer, PrinterSettingsLayer persistenceLayer)

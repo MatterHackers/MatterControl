@@ -130,7 +130,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								if (!json.Contains("ErrorCode"))
+								if (!json.Contains("ErrorCode")
+									&& !json.Contains("404 Not Found"))
 								{
 									try
 									{
