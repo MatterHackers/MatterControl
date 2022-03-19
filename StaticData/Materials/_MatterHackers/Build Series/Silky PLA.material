@@ -1,0 +1,32 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "Build Series Silky PLA",
+      "filament_density": "1.24",
+      "layer_id": "74673ff2-0dde-4808-bd9d-06c23e137dfe",
+      "bed_temperature": "75",
+      "temperature": "215",
+      "min_fan_speed": "70",
+      "max_fan_speed": "100",
+      "bridge_fan_speed": "100",
+      "filament_cost": "24.99",
+      "min_fan_speed_layer_time": "180",
+      "max_fan_speed_layer_time": "60",
+      "disable_fan_first_layers": "5",
+      "bed_temperature_buildtak": "50",
+      "bed_temperature_garolite": "75",
+      "bed_temperature_glass": "75",
+      "bed_temperature_kapton": "50",
+      "bed_temperature_pei": "75",
+      "bed_temperature_pp": "75",
+      "material_sku": "M7KY4RCN"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}
