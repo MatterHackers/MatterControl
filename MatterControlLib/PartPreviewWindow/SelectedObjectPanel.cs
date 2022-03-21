@@ -359,37 +359,95 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
 						if (firtSheet != null)
 						{
-							var cellId = selector.Substring(1).ToLower();
+							(string cellId, string cellData) DecodeContent()
+                            {
+								var cellData2 = selector.Substring(1);
+								var cellId2 = cellData2.ToLower();
+								// check if it has embededdata
+								var separator = cellData2.IndexOf(',');
+								if (separator != -1)
+								{
+									cellId2 = cellData2.Substring(0, separator).ToLower();
+									cellData2 = cellData2.Substring(separator);
+								}
+								else
+                                {
+									// We don't have any cache of the cell content, get the current content
+									double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId2), out double value);
+									cellData2 = value.ToString();
+								}
+
+								return (cellId2, cellData2);
+							}
+
+							var (cellId, cellData) = DecodeContent();
 							var cell = firtSheet.SheetData[cellId];
 							if (cell != null)
 							{
-								// add an editor for the cell
-								var field = new DoubleField(theme);
+								// create an expresion editor
+								var field = new ExpressionField(theme)
+								{
+									Name = cellId + " Field"
+								};
 								field.Initialize(0);
-								double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId), out double value);
-								field.DoubleValue = value;
+								if (cellData.Contains("="))
+								{
+									field.SetValue(cellData, false);
+								}
+								else // make sure it is formatted
+								{
+									double.TryParse(cellData, out double value);
+									var format = "0." + new string('#', 5);
+									field.SetValue(value.ToString(format), false);
+								}
+
 								field.ClearUndoHistory();
 
-								field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = 3;
+								void RecalculateSheet()
+                                {
+									var componentLock = componentObject.RebuildLock();
+									firtSheet.SheetData.Recalculate();
+
+									UiThread.RunOnIdle(() =>
+									{
+										// wait until the sheet is done rebuilding (or 30 seconds)
+										var startTime = UiThread.CurrentTimerMs;
+										while (firtSheet.RebuildLocked
+											&& startTime + 30000 < UiThread.CurrentTimerMs)
+										{
+											Thread.Sleep(1);
+										}
+									
+										componentLock.Dispose();
+									});
+								}
+
+								var doOrUndoing = false;
 								field.ValueChanged += (s, e) =>
 								{
-									var oldValue = cell.Expression;
-									var newValue = field.Value;
-									undoBuffer.AddAndDo(new UndoRedoActions(() =>
+									if (!doOrUndoing)
 									{
-										cell.Expression = oldValue;
-										firtSheet.SheetData.Recalculate();
-									},
-									() =>
-									{
-										cell.Expression = newValue;
-										firtSheet.SheetData.Recalculate();
-									}));
+										var oldValue = DecodeContent().cellData;
+										var newValue = field.Value;
+										undoBuffer.AddAndDo(new UndoRedoActions(() =>
+										{
+											doOrUndoing = true;
+											cell.Expression = oldValue;
+											RecalculateSheet();
+											doOrUndoing = false;
+										},
+										() =>
+										{
+											doOrUndoing = true;
+											cell.Expression = newValue;
+											RecalculateSheet();
+											doOrUndoing = false;
+										}));
+									}
 
 								};
 
 								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);
-
 								editorPanel.AddChild(row);
 							}
 						}
