@@ -6052,6 +6052,9 @@ Translated:Wouldn’t Slice Correctly
 English:Write Filter
 Translated:Write Filter
 
+English:Writing G-Code
+Translated:Writing G-Code
+
 English:X and Y Distance
 Translated:X and Y Distance
 
