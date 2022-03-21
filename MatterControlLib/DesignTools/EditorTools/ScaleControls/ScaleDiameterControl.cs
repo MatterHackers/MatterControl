@@ -180,7 +180,7 @@ namespace MatterHackers.Plugins.EditorTools
 				return false;
 			}
 
-			return true;
+			return shouldDrawScaleControls;
 		}
 
 		private Matrix4X4 GetRingTransform()
