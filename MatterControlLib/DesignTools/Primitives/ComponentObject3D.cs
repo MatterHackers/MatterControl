@@ -30,12 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.DesignTools
