@@ -1283,14 +1283,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var ctrl in scene.Descendants())
 			{
 				if (ctrl is ICustomEditorDraw customEditorDraw1 && customEditorDraw1.DoEditorDraw(ctrl == selectedItem))
+				{
 					if (ctrl is IEditorDraw editorDraw2)
+					{
 						aabbs.Add(editorDraw2.GetEditorWorldspaceAABB(this));
+					}
+				}
 			}
 
 			foreach (var ctrl in drawables)
 			{
 				if (ctrl.Enabled)
+				{
 					aabbs.Add(ctrl.GetWorldspaceAABB());
+				}
 			}
 
 			foreach (var obj in scene.Children)

@@ -1,0 +1,41 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "BASF 17-4 PH",
+      "layer_id": "1238d9d9-76b9-44af-3457-a349ba27151f",
+      "enable_fan": "0",
+      "retract_lift": "1",
+      "filament_cost": "465",
+      "temperature": "240",
+      "bed_temperature": "100",
+      "bed_temperature_buildtak": "100",
+      "bed_temperature_garolite": "100",
+      "bed_temperature_glass": "100",
+      "bed_temperature_kapton": "100",
+      "bed_temperature_pei": "100",
+      "bed_temperature_pp": "100",
+      "filament_density": "7851",
+      "fill_density": "100%",
+      "infill_type": "LINES",
+      "perimeter_start_end_overlap": "50",
+      "infill_overlap_perimeter": "50%",
+      "first_layer_speed": "18",
+      "infill_speed": "35",
+      "top_solid_infill_speed": "25",
+      "perimeter_speed": "30",
+      "support_material_speed": "30",
+      "interface_layer_speed": "30",
+      "air_gap_speed": "30",
+      "bridge_speed": "18",
+      "min_print_speed": "10",
+      "material_sku": "MA27ESD5"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

@@ -899,7 +899,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void UpdateRenderView(object sender, EventArgs e)
 		{
-			TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width;
+			UiThread.RunOnUiThread(() => TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width);
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)

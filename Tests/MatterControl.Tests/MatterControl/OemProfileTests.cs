@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
@@ -329,6 +331,24 @@ M300 S3000 P30   ; Resume Tone";
 
 				// Must be a CSV and have only two values
 				Assert.AreEqual(2, segments.Length, "[print_center] should have two values separated by a comma: " + printer.RelativeFilePath);
+
+#if false
+				// save out the material settings
+				foreach(var materialLayer in settings.MaterialLayers)
+                {
+					// create an empyt profile
+					var materialSettings = new PrinterSettings();
+					// copy just this material setting to it
+					materialSettings.MaterialLayers.Add(materialLayer.Clone());
+					// save it
+					var fileName = ApplicationController.Instance.SanitizeFileName(materialLayer.Name);
+					if (!string.IsNullOrEmpty(fileName))
+					{
+						fileName = Path.Combine(@"C:\temp", "materials", fileName) + ".material";
+						File.WriteAllText(fileName, JsonConvert.SerializeObject(materialSettings, Formatting.Indented));
+					}
+				}
+#endif
 			});
 		}
 
