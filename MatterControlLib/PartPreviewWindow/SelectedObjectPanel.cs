@@ -479,7 +479,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     };
 
-                    var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);
+                    var row = new SettingsRow(cell.Name == null ? cellId : cell.Name.Replace("_", " "), null, field.Content, theme);
                     editorPanel.AddChild(row);
                 }
             }
