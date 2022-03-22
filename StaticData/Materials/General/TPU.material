@@ -6,7 +6,7 @@
     {
       "layer_name": "TPU",
       "filament_density": "1.23",
-      "layer_id": "80257dda-abc1-4837-be45-54910ce1071d",
+      "layer_id": "80357dda-abc1-4837-be45-54912ce1071d",
       "first_layer_speed": "15",
       "filament_cost": "24.64",
       "infill_speed": "25",
@@ -26,6 +26,7 @@
       "bed_temperature_kapton": "65",
       "bed_temperature_pei": "55",
       "min_fan_speed": "0",
+      "material_sku": "TPU"
     }
   ],
   "OemLayer": null,

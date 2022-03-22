@@ -5,7 +5,7 @@
   "MaterialLayers": [
     {
       "layer_name": "Polycarbonate",
-      "layer_id": "d9240109-d750-462a-9d72-4c4f53678710",
+      "layer_id": "d924b109-d750-4a2a-9d72-4c4f53178710",
       "bed_temperature": "115",
       "enable_fan": "0",
       "has_fan": "False",
@@ -21,6 +21,7 @@
       "bed_temperature_pei": "100",
       "bed_temperature_pp": "100",
       "top_solid_infill_speed": "22",
+      "material_sku": "PC"
     }
   ],
   "OemLayer": null,

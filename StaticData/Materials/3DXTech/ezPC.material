@@ -8,7 +8,6 @@
       "layer_id": "d9240109-d750-462a-9d72-4c4f53678710",
       "bed_temperature": "115",
       "enable_fan": "0",
-      "has_fan": "False",
       "infill_speed": "30",
       "max_fan_speed": "0",
       "min_fan_speed": "0",

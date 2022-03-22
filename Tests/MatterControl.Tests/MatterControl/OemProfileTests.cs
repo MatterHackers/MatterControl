@@ -193,13 +193,14 @@ M300 S3000 P30   ; Resume Tone";
 
 			var allMaterialIds = new HashSet<string>();
 
-			foreach(var profile in profiles)
+			for(var i = 0; i < profiles.Count; i++)
             {
+				var profile = profiles[i];
 				Assert.AreEqual(1, profile.MaterialLayers.Count, "Each material profile should have 1 material in it");
 				var material = profile.MaterialLayers[0];
 				profile.ActiveMaterialKey = material.LayerID;
-				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)));
-				Assert.IsTrue(!allMaterialIds.Contains(material.LayerID), "Every material needs a unique Id");
+				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)), $"All profiles should have a material_sku set {files[i].FullName}");
+				Assert.IsTrue(!allMaterialIds.Contains(material.LayerID), $"Every material needs a unique Id {files[i].FullName}");
 				allMaterialIds.Add(material.LayerID);
 			}
 		}
