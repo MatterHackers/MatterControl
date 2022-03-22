@@ -374,6 +374,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// The bounds that a mesh can be placed at and the gcode it creates will be within the bed
+		/// </summary>
+		[JsonIgnore]
+		public RectangleDouble MeshAllowedBounds
+		{
+			get
+			{
+				var firstLayerExtrusionWidth = GetDouble(SettingsKey.first_layer_extrusion_width);
+				var bedBounds = BedBounds;
+				var totalOffset = 0.0;
+
+				if (GetBool(SettingsKey.create_raft))
+                {
+					// The slicing engine creates a raft 3x the extrusion width
+					firstLayerExtrusionWidth *= 3;
+					totalOffset += firstLayerExtrusionWidth;
+					totalOffset += GetDouble(SettingsKey.raft_extra_distance_around_part);
+                }
+
+				if (GetBool(SettingsKey.create_skirt))
+				{
+					totalOffset += GetValue<double>(SettingsKey.skirt_distance);
+					totalOffset += (GetDouble(SettingsKey.skirts) + .5) * firstLayerExtrusionWidth;
+					// for every 400mm of min skirt length add another skirt loops
+					totalOffset += GetDouble(SettingsKey.min_skirt_length) / (20 * 20);
+				}
+
+				if (GetBool(SettingsKey.create_brim)
+					&& !GetBool(SettingsKey.create_raft))
+				{
+					totalOffset += GetValue<double>(SettingsKey.brims) * GetDouble(SettingsKey.first_layer_extrusion_width);
+				}
+
+				bedBounds.Inflate(-totalOffset);
+
+				return bedBounds;
+			}
+		}
+
 		[JsonIgnore]
 		public IEnumerable<PrinterSettingsLayer> DefaultLayerCascade
 		{
@@ -1174,6 +1214,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public int GetInt(string settingsKey)
 		{
 			return GetValue<int>(settingsKey);
+		}
+
+		public double GetDouble(string settingsKey)
+		{
+			return GetValue<double>(settingsKey);
 		}
 
 		/// <summary>
