@@ -19,6 +19,9 @@ Translated: \n Vous trouverez ci-dessous une liste de chaque paramètre qui a ch
 English:\nUpdating a default setting will not change any override that you have applied.
 Translated: \n La mise à jour d'un paramètre par défaut ne modifiera aucun remplacement que vous avez appliqué.
 
+English:"{0}" already exists.\nDo you want to replace it?
+Translated:"{0}" existe déjà. \n Voulez-vous le remplacer ?
+
 English:$/kg
 Translated:$/kg
 
@@ -44,7 +47,7 @@ English:{0} must be less than or equal to the {1}.
 Translated:{0} doit être inférieur ou égal au {1}.
 
 English:{0} Overview
-Translated:{0} Aperçu
+Translated:{0} Présentation
 
 English:{0} should be greater than 0.
 Translated:{0} doit être supérieur à 0.
@@ -205,11 +208,17 @@ Translated:Ajouter un fichier .stl, .obj, .amf, .gcode ou .zip à la bibliothèq
 English:Add Base
 Translated:Ajouter une base
 
+English:Add File to Bed
+Translated:Ajouter un fichier au lit
+
 English:Add Hook
 Translated:Ajouter un crochet
 
 English:Add Image
 Translated:Ajouter une image
+
+English:Add Material
+Translated:Ajouter du matériel
 
 English:Add New Setting
 Translated:Ajouter un nouveau paramètre
@@ -219,6 +228,9 @@ Translated:Ajouter une note
 
 English:Add Note...
 Translated:Ajouter une note...
+
+English:Add System File to Bed
+Translated:Ajouter un fichier système au lit
 
 English:Add to Bed
 Translated:Ajouter au lit
@@ -362,7 +374,7 @@ English:Are you sure you want to delete printer '{0}'?
 Translated:Voulez-vous vraiment supprimer l'imprimante '{0}' ?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Êtes-vous sûr de vouloir quitter pendant qu'une impression est en cours depuis la carte SD ? \NN\ Remarque : Si vous quittez, il est recommandé d'attendre la fin de l'impression avant de relancer MatterControl.
+Translated:Êtes-vous sûr de vouloir quitter pendant qu'une impression est en cours à partir de la carte SD ? \NN\ Remarque : Si vous quittez, il est recommandé d'attendre la fin de l'impression avant de relancer MatterControl.
 
 English:Are you sure you want to remove the currently selected items?
 Translated:Voulez-vous vraiment supprimer les éléments actuellement sélectionnés ?
@@ -443,7 +455,7 @@ English:Baby Step Offset
 Translated:Décalage du pas de bébé
 
 English:Back
-Translated:Retour
+Translated:Arrière
 
 English:Back Ratio
 Translated:Rapport arrière
@@ -698,7 +710,7 @@ English:Centering
 Translated:Centrage
 
 English:Change
-Translated:Changer
+Translated:Changement
 
 English:Change Amount
 Translated:Modifier le montant
@@ -818,7 +830,7 @@ English:Coast At End
 Translated:Côte à la fin
 
 English:Collapse
-Translated:Effondrer
+Translated:S'effondrer
 
 English:Color
 Translated:Couleur
@@ -891,6 +903,9 @@ Translated:Configurer les plugins
 
 English:Configure Wifi
 Translated:Configurer le Wi-Fi
+
+English:Confirm Save As
+Translated:Confirmer Enregistrer sous
 
 English:Confirm your new password
 Translated:Confirmez votre nouveau mot de passe
@@ -1270,8 +1285,11 @@ Translated:Distance de l'objet
 English:Distance or Loops
 Translated:Distance ou boucles
 
+English:Documents
+Translated:Documents
+
 English:Done
-Translated:Fait
+Translated:Terminé
 
 English:Don't remind me again
 Translated:Ne me rappelle plus
@@ -1508,7 +1526,7 @@ English:Exit while printing
 Translated:Quitter pendant l'impression
 
 English:Expand
-Translated:Étendre
+Translated:Développer
 
 English:Expand Distance
 Translated:Augmenter la distance
@@ -1646,7 +1664,7 @@ English:Face Orientation
 Translated:Orientation du visage
 
 English:Failed
-Translated:Manqué
+Translated:Échoué
 
 English:Failed to connect server
 Translated:Échec de connexion du serveur
@@ -1665,6 +1683,9 @@ Translated:Vitesse du ventilateur
 
 English:Fastest
 Translated:Le plus rapide
+
+English:Feature Detector
+Translated:Détecteur de fonctionnalités
 
 English:Features
 Translated:Caractéristiques
@@ -1961,10 +1982,10 @@ English:Glass Bed Temperature
 Translated:Température du lit de verre
 
 English:Good
-Translated:Bon
+Translated:Bien
 
 English:Great
-Translated:Super
+Translated:Génial
 
 English:GRID
 Translated:LA GRILLE
@@ -2030,7 +2051,7 @@ English:Have MatterControl send you email messages about your print
 Translated:Demander à MatterControl de vous envoyer des e-mails concernant votre impression
 
 English:Have MatterControl send you text messages about your print
-Translated:Demander à MatterControl de vous envoyer des SMS à propos de votre impression
+Translated:Demandez à MatterControl de vous envoyer des SMS concernant votre impression
 
 English:Heat Before Homing
 Translated:Chauffer avant de rentrer
@@ -2071,6 +2092,9 @@ Translated:Cacher
 English:High Precision
 Translated:Haute précision
 
+English:Histogram
+Translated:Histogramme
+
 English:History
 Translated:Histoire
 
@@ -2087,7 +2111,7 @@ English:Hollow Out
 Translated:Évider
 
 English:Home
-Translated:Accueil
+Translated:Maison
 
 English:Home C
 Translated:Accueil C
@@ -2489,7 +2513,7 @@ English:Lithophane
 Translated:Lithophane
 
 English:Load
-Translated:Charger
+Translated:Charge
 
 English:Load Extruder
 Translated:Charger l'extrudeuse
@@ -2531,7 +2555,7 @@ English:Local Library
 Translated:Bibliothèque locale
 
 English:Location
-Translated:Emplacement
+Translated:Lieu
 
 English:Location of the '{0}' setting
 Translated:Emplacement du paramètre '{0}'
@@ -2578,11 +2602,14 @@ Translated:Macros
 English:Maintain Proportions
 Translated:Maintenir les proportions
 
+English:Maintain Ratio
+Translated:Maintenir le ratio
+
 English:Maintain Surface
 Translated:Maintenir la surface
 
 English:Make
-Translated:Faire
+Translated:Faire, construire
 
 English:Make Component
 Translated:Créer un composant
@@ -2634,6 +2661,12 @@ Translated:Densité du matériau. Utilisé uniquement pour estimer la masse dans
 
 English:Material Setting
 Translated:Réglage du matériau
+
+English:Material Settings
+Translated:Paramètres de matériau
+
+English:Material Setup
+Translated:Configuration du matériel
 
 English:Materials
 Translated:Matériaux
@@ -2747,7 +2780,7 @@ English:Min travel feedrate [mm/s]
 Translated:Avance de déplacement min [mm/s]
 
 English:Minimum Avoid Travel Requiring Retraction
-Translated:Déplacement minimal à éviter nécessitant une rétraction
+Translated:Course minimale à éviter nécessitant une rétraction
 
 English:Minimum Extrusion Length
 Translated:Longueur d'extrusion minimale
@@ -2771,7 +2804,7 @@ English:Minimum Travel Requiring Retraction
 Translated:Course minimale nécessitant une rétraction
 
 English:Mirror
-Translated:Miroir
+Translated:Miroiter
 
 English:Mirror Mode
 Translated:Mode miroir
@@ -2779,8 +2812,14 @@ Translated:Mode miroir
 English:Mirror On
 Translated:Miroir activé
 
+English:Mirror X
+Translated:Miroir X
+
+English:Mirror Y
+Translated:Miroir Y
+
 English:Missing
-Translated:Manquant
+Translated:Disparu
 
 English:mm
 Translated:millimètre
@@ -2834,7 +2873,7 @@ English:Mouse
 Translated:Souris
 
 English:Move
-Translated:Se déplacer
+Translated:Bouge toi
 
 English:Move Direction
 Translated:Direction du déplacement
@@ -2893,6 +2932,9 @@ Translated:Se déplace
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Déplace la buse vers le haut et hors de la pièce pour permettre le refroidissement.
 
+English:Multi Line
+Translated:Multi-ligne
+
 English:Multi-Extruder
 Translated:Multi-extrudeuse
 
@@ -2920,11 +2962,17 @@ Translated:Impression en réseau
 English:New Design
 Translated:Nouveau design
 
+English:New Material
+Translated:Nouveau matériel
+
 English:New Password
 Translated:nouveau mot de passe
 
 English:New Printer Name
 Translated:Nouveau nom d'imprimante
+
+English:New Quality Setting
+Translated:Nouveau paramètre de qualité
 
 English:New updates are ready to install
 Translated:De nouvelles mises à jour sont prêtes à être installées
@@ -2969,7 +3017,7 @@ English:No setting currently need to be updated.
 Translated:Aucun paramètre n'a actuellement besoin d'être mis à jour.
 
 English:None
-Translated:Rien
+Translated:Aucun
 
 English:Non-Manifold
 Translated:Non collecteur
@@ -3113,7 +3161,7 @@ English:Oops! Printer could not be detected
 Translated:Oups! L'imprimante n'a pas pu être détectée
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:Oups! Le fichier de paramètres '{0}' ne contenait aucun paramètre que nous pourrions importer.
+Translated:Oups! Le fichier de paramètres '{0}' ne contient aucun paramètre que nous pourrions importer.
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Oups! Il n'y a pas de mappage eeprom pour le firmware de votre imprimante.
@@ -3146,7 +3194,7 @@ English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:Oups! Votre session a expiré. Veuillez vous reconnecter pour continuer.
 
 English:Open
-Translated:Ouvert
+Translated:Ouvrir
 
 English:Open a copy
 Translated:Ouvrir une copie
@@ -3233,7 +3281,7 @@ English:Overview
 Translated:Aperçu
 
 English:Pan
-Translated:La poêle
+Translated:Poêle
 
 English:Pan View
 Translated:Vue panoramique
@@ -3264,6 +3312,9 @@ Translated:Mise à jour du mot de passe terminée
 
 English:Paste
 Translated:Pâte
+
+English:Paste Into
+Translated:Coller dans
 
 English:Path
 Translated:Chemin
@@ -3341,7 +3392,7 @@ English:Pitch
 Translated:Terrain
 
 English:Pitch Radius
-Translated:Rayon de pas
+Translated:Rayon de lancement
 
 English:Pixels Per mm
 Translated:Pixels par millimètre
@@ -3499,6 +3550,12 @@ Translated:Précédent
 English:Preview
 Translated:Aperçu
 
+English:Priming Height
+Translated:Hauteur d'amorçage
+
+English:Priming Width
+Translated:Largeur d'amorçage
+
 English:Primitive Shapes
 Translated:Formes primitives
 
@@ -3509,7 +3566,7 @@ English:Primitives 2D
 Translated:Primitifs 2D
 
 English:Print
-Translated:Imprimer
+Translated:Impression
 
 English:Print Canceled
 Translated:Impression annulée
@@ -3619,6 +3676,9 @@ Translated:La configuration de l'imprimante doit être exécutée avant l'impres
 English:Printer Setup Required
 Translated:Configuration de l'imprimante requise
 
+English:Printer SKU
+Translated:Référence de l'imprimante
+
 English:Printers
 Translated:Imprimantes
 
@@ -3715,6 +3775,12 @@ Translated:Soulever l'extrudeuse
 English:Randomized
 Translated:Randomisé
 
+English:Range End
+Translated:Fin de gamme
+
+English:Range Start
+Translated:Début de gamme
+
 English:Ratio
 Translated:Rapport
 
@@ -3800,10 +3866,10 @@ English:Remind Me Later
 Translated:Rappelez-moi plus tard
 
 English:remove
-Translated:supprimer
+Translated:retirer
 
 English:Remove
-Translated:Supprimer
+Translated:Retirer
 
 English:Remove all auto generated supports
 Translated:Supprimer tous les supports générés automatiquement
@@ -3837,6 +3903,9 @@ Translated:Données de nivellement du rendu sur le lit
 
 English:Repair
 Translated:réparation
+
+English:Replace
+Translated:Remplacer
 
 English:Replacing
 Translated:Remplacement
@@ -3889,6 +3958,9 @@ Translated:La réinitialisation aux valeurs par défaut supprimera vos remplacem
 English:Reshape
 Translated:Remodeler
 
+English:Resin
+Translated:Résine
+
 English:Resin density. Only used for estimating mass in the Layer View.
 Translated:Densité de résine. Utilisé uniquement pour estimer la masse dans la vue de calque.
 
@@ -3912,6 +3984,9 @@ Translated:Restaurer les paramètres
 
 English:Restore Settings...
 Translated:Restaurer les paramètres...
+
+English:Restoring
+Translated:Restaurer
 
 English:Resume
 Translated:Continuer
@@ -3956,7 +4031,7 @@ English:Retrieving sync information...
 Translated:Récupération des informations de synchronisation...
 
 English:Retry
-Translated:Retenter
+Translated:Réessayez
 
 English:Retry Login
 Translated:Réessayez de vous connecter
@@ -3974,7 +4049,7 @@ English:Revolve
 Translated:Tourner
 
 English:Right
-Translated:À droite
+Translated:Droit
 
 English:Right Arrow
 Translated:Flèche droite
@@ -4025,7 +4100,7 @@ English:Rough Overhangs
 Translated:Surplombs bruts
 
 English:Round
-Translated:Tour
+Translated:Rond
 
 English:Round Segments
 Translated:Segments ronds
@@ -4070,7 +4145,7 @@ English:Sampled Positions
 Translated:Postes échantillonnés
 
 English:Save
-Translated:Sauvegarder
+Translated:sauvegarder
 
 English:Save As
 Translated:Enregistrer sous
@@ -4115,7 +4190,7 @@ English:SCAD Script
 Translated:Scénario SCAD
 
 English:Scale
-Translated:Échelle
+Translated:Escalader
 
 English:Scale About
 Translated:Échelle À propos
@@ -4133,7 +4208,7 @@ English:Seam Placement
 Translated:Placement des coutures
 
 English:Search
-Translated:Chercher
+Translated:Rechercher
 
 English:Search Results
 Translated:Résultats de recherche
@@ -4165,6 +4240,9 @@ Translated:Sélectionnez une imprimante pour continuer
 English:Select All
 Translated:Tout sélectionner
 
+English:Select an object to copy its color
+Translated:Sélectionnez un objet pour copier sa couleur
+
 English:Select cell to edit
 Translated:Sélectionnez la cellule à modifier
 
@@ -4179,6 +4257,9 @@ Translated:Sélectionnez la plage
 
 English:Select the baud rate.
 Translated:Sélectionnez le débit en bauds.
+
+English:Select this option if your material does not appear in the list
+Translated:Sélectionnez cette option si votre matériel n'apparaît pas dans la liste
 
 English:Select this option only if your printer does not appear in the list
 Translated:Sélectionnez cette option uniquement si votre imprimante n'apparaît pas dans la liste
@@ -4277,7 +4358,7 @@ English:Shaded
 Translated:Ombragé
 
 English:Shape
-Translated:Forme
+Translated:Façonner
 
 English:Share
 Translated:Partager
@@ -4645,6 +4726,9 @@ Translated:Cordage / Mauvaises rétractions
 English:Style
 Translated:Style
 
+English:SubAlign
+Translated:Sous-aligner
+
 English:Subtract
 Translated:Soustraire
 
@@ -4667,7 +4751,7 @@ English:Success!\n\nYour filament should now be unloaded
 Translated:Succès! \NN\ Votre filament devrait maintenant être déchargé
 
 English:Support
-Translated:Soutien
+Translated:Support
 
 English:Support Expand Distance
 Translated:Prise en charge de la distance d'extension
@@ -4909,6 +4993,9 @@ Translated:La forme géométrique de la structure de support pour l'intérieur d
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:Hauteur du volume imprimable de l'imprimante, en millimètres. Contrôle la hauteur de la zone d'impression visuelle affichée dans la vue 3D.
 
+English:The ideal resistance is when the paper first begins to bend
+Translated:La résistance idéale est lorsque le papier commence à se plier
+
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:Le montant de l'encart pour chaque côté du lit. \n - En % de la largeur ou de la profondeur \n - Ordre : Gauche, Avant, Droite, Arrière \n - REMARQUE : Le décalage de la sonde est ajouté au-dessus
 
@@ -4923,6 +5010,9 @@ Translated:L'encart montant depuis les bords du lit. Définit la zone imprimable
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:La ou les couches auxquelles l'impression s'arrêtera, permettant un changement de filament. L'imprimante est en pause avant de démarrer la couche donnée. Laissez vide pour désactiver. Pour faire une pause sur plusieurs calques, séparez les numéros de calque par des points-virgules. Par exemple : "16 ; 37".
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37". Rafts layers are not considered. The 1st pause layer is the first above the raft.
+Translated:La ou les couches auxquelles l'impression s'arrêtera, permettant un changement de filament. L'imprimante est en pause avant de démarrer la couche donnée. Laissez vide pour désactiver. Pour faire une pause sur plusieurs calques, séparez les numéros de calque par des points-virgules. Par exemple : "16 ; 37". Les couches de radeaux ne sont pas prises en compte. La 1ère couche de pause est la première au-dessus du radeau.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".
 Translated:La ou les couches auxquelles l'impression s'arrêtera, permettant un changement de filament. L'imprimante est en pause avant de démarrer la couche donnée. Laissez vide pour désactiver. Pour faire une pause sur plusieurs calques, séparez les numéros de calque par des points-virgules. Par exemple : \"16 ; 37\".
@@ -5027,7 +5117,7 @@ English:The number of layers, or the distance in millimeters, to solid fill on t
 Translated:Le nombre de couches, ou la distance en millimètres, jusqu'au remplissage solide sur la ou les surfaces supérieures de l'objet. Ajoutez mm à la fin du nombre pour spécifier la distance en millimètres.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:Le nombre de boucles à tracer autour de toutes les pièces du lit avant de commencer sur les pièces. Utilisé principalement pour amorcer la buse afin que le débit soit égal au début de l'impression proprement dite.
+Translated:Le nombre de boucles à tracer autour de toutes les pièces du lit avant de commencer sur les pièces. Utilisé principalement pour amorcer la buse afin que le débit soit égal lorsque l'impression réelle commence.
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
 Translated:Le nombre de boucles à tracer autour des pièces. Utilisé pour fournir une adhérence supplémentaire au lit
@@ -5275,6 +5365,9 @@ Translated:Le temps qu'il faut pour se réchauffer après un refroidissement.
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:Le temps pendant lequel augmenter la longueur supplémentaire au redémarrage jusqu'à sa valeur maximale. En dessous de ce temps, seule une partie de la longueur supplémentaire sera appliquée. Laissez 0 pour appliquer le montant total tout le temps.
 
+English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
+Translated:Le temps d'impression de ce G-Code est estimé à {0} secondes. \NN\ Veuillez vérifier votre pièce pour les erreurs si cela est inattendu.
+
 English:The Validation Threshold mush be greater than 0 and less than .5mm.
 Translated:Le seuil de validation doit être supérieur à 0 et inférieur à 0,5 mm.
 
@@ -5345,7 +5438,10 @@ English:This is the angle that raises or stows the z probe.
 Translated:C'est l'angle qui soulève ou range la sonde z.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
-Translated:Il s'agit de la marque (souvent le fabricant) de l'imprimante visée par ce profil.
+Translated:Il s'agit de la marque (souvent le fabricant) de l'imprimante ciblée par ce profil.
+
+English:This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.
+Translated:Il s'agit du sku MatterHackers représentant cette imprimante. Si l'imprimante n'est pas proposée sur MatterHackers, cela peut être défini sur une clé de collecte.
 
 English:This is the model of printer this profile is targeting.
 Translated:Il s'agit du modèle d'imprimante visé par ce profil.
@@ -5390,7 +5486,7 @@ English:Threads
 Translated:Fils
 
 English:Threshold
-Translated:Seuil
+Translated:Au seuil
 
 English:Thumbnails
 Translated:Vignettes
@@ -5489,7 +5585,7 @@ English:Trapezoid
 Translated:Trapèze
 
 English:Travel
-Translated:Voyager
+Translated:Voyage
 
 English:Triangle
 Translated:Triangle
@@ -5573,7 +5669,7 @@ English:Ungroup
 Translated:Dissocier
 
 English:Unknown
-Translated:Inconnue
+Translated:Inconnu
 
 English:Unknown Reason
 Translated:Raison inconnue
@@ -5649,6 +5745,9 @@ Translated:Passer à Pro
 
 English:Upload
 Translated:Télécharger
+
+English:Uploading
+Translated:Téléchargement
 
 English:Uploading...
 Translated:Téléchargement...
@@ -5729,7 +5828,7 @@ English:Validation Threshold
 Translated:Seuil de validation
 
 English:Value
-Translated:Valeur
+Translated:Évaluer
 
 English:Variable Sheet
 Translated:Feuille variable
@@ -5759,7 +5858,7 @@ English:View Mode = Non-Manifold
 Translated:Mode d'affichage = non multiple
 
 English:View Mode = Outlines
-Translated:Mode d'affichage = Contours
+Translated:Mode d'affichage = contours
 
 English:View Mode = Overhangs
 Translated:Mode d'affichage = Porte-à-faux
@@ -5811,6 +5910,9 @@ Translated:Attendre que le lit chauffe pour
 
 English:Waiting for the bed to heat to {0} °C\nand the hotend to heat to {1} °C.\n\nThis will improve the accuracy of print leveling\nand ensure that no filament is stuck to your nozzle.\n\nWarning! The tip of the nozzle will be HOT!\nAvoid contact with your skin.
 Translated:Attendre que le lit chauffe à {0} °C \n et que la hotend chauffe à {1} °C. \NN\ Cela améliorera la précision de la mise à niveau de l'impression \n et garantira qu'aucun filament n'est collé à votre buse. \NN\ Attention ! La pointe de la buse sera CHAUDE ! \n Évitez tout contact avec votre peau.
+
+English:Waiting for the bed to heat to {0} °C.\nThis will improve the accuracy of print leveling.
+Translated:Attendre que le lit chauffe à {0} °C. \n Cela améliorera la précision du nivellement de l'impression.
 
 English:Waiting for the hotend to heat to
 Translated:Attendre que le hotend chauffe pour
@@ -5927,7 +6029,7 @@ English:Will be updated to:
 Translated:Sera mis à jour pour :
 
 English:Wipe Shield Distance
-Translated:Distance du bouclier d'essuyage
+Translated:Essuyez la distance du bouclier
 
 English:Wipe Tower Size
 Translated:Taille de la tour d'essuyage
@@ -5950,6 +6052,9 @@ Translated:Ne trancherait pas correctement
 English:Write Filter
 Translated:Filtre d'écriture
 
+English:Writing G-Code
+Translated:Écrire le code G
+
 English:X and Y Distance
 Translated:Distance X et Y
 
@@ -5958,6 +6063,9 @@ Translated:Interception X
 
 English:X Offset
 Translated:Décalage X
+
+English:X Options
+Translated:Options X
 
 English:X Y Nozzle Offsets Have Been Calibrated
 Translated:Les décalages de buse X Y ont été calibrés
@@ -5973,6 +6081,9 @@ Translated:Y intercepter
 
 English:Y Offset
 Translated:Décalage Y
+
+English:Y Options
+Translated:Option Y
 
 English:Yes
 Translated:Oui
@@ -6041,7 +6152,7 @@ English:Your Phone Number
 Translated:Votre numéro de téléphone
 
 English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
-Translated:Votre imprimante a été ajustée, mais nous devons relancer le calibrage pour améliorer la précision.
+Translated:Votre imprimante a été ajustée, mais nous devrions relancer le calibrage pour améliorer la précision.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Votre imprimante signale une ERREUR MATÉRIELLE et a été mise en pause. Vérifiez l'erreur et annulez l'impression si nécessaire.
@@ -6078,6 +6189,9 @@ Translated:Décalage Z
 
 English:Z Offset is too large.
 Translated:Le décalage Z est trop grand.
+
+English:Z Options
+Translated:Options Z
 
 English:ZIP File
 Translated:Fichier zip

@@ -19,6 +19,9 @@ Translated: \n למטה תוכל למצוא רשימה של כל הגדרה שש
 English:\nUpdating a default setting will not change any override that you have applied.
 Translated: \n עדכון הגדרת ברירת מחדל לא ישנה אף עקיפה שהחלת.
 
+English:"{0}" already exists.\nDo you want to replace it?
+Translated:"{0}" כבר קיים. \n האם ברצונך להחליף אותו?
+
 English:$/kg
 Translated:$/ק"ג
 
@@ -205,11 +208,17 @@ Translated:הוסף קובץ an.stl, .obj, .amf, .gcode או.zip לספרייה
 English:Add Base
 Translated:הוסף בסיס
 
+English:Add File to Bed
+Translated:הוסף קובץ למיטה
+
 English:Add Hook
 Translated:הוסף הוק
 
 English:Add Image
 Translated:להוסיף תמונה
+
+English:Add Material
+Translated:הוסף חומר
 
 English:Add New Setting
 Translated:הוסף הגדרה חדשה
@@ -219,6 +228,9 @@ Translated:להוסיף הערה
 
 English:Add Note...
 Translated:להוסיף הערה...
+
+English:Add System File to Bed
+Translated:הוסף קובץ מערכת למיטה
 
 English:Add to Bed
 Translated:הוסף למיטה
@@ -572,7 +584,7 @@ English:Blue Tape
 Translated:קלטת כחולה
 
 English:Blue Tape Bed Temperature
-Translated:טמפרטורת מיטת בלו טייפ
+Translated:טמפרטורת מיטת ה-Blue Tape
 
 English:Bottom Inset
 Translated:הכנס תחתון
@@ -891,6 +903,9 @@ Translated:הגדר פלאגינים
 
 English:Configure Wifi
 Translated:הגדר Wifi
+
+English:Confirm Save As
+Translated:אשר שמירה בשם
 
 English:Confirm your new password
 Translated:אשר את הסיסמה החדשה שלך
@@ -1269,6 +1284,9 @@ Translated:מרחק מאובייקט
 
 English:Distance or Loops
 Translated:מרחק או לולאות
+
+English:Documents
+Translated:מסמכים
 
 English:Done
 Translated:בוצע
@@ -1666,8 +1684,11 @@ Translated:מהירות מאוורר
 English:Fastest
 Translated:הכי מהיר
 
+English:Feature Detector
+Translated:גלאי תכונה
+
 English:Features
-Translated:מאפיינים
+Translated:תכונות
 
 English:Feedrate Ratio
 Translated:יחס קצב הזנה
@@ -1886,7 +1907,7 @@ English:G-Code to be run after switching to extruder 2. Will use standard after 
 Translated:G-Code שיופעל לאחר מעבר ל-extruder 2. ישתמש בתקן לאחר G-Code אם לא הוגדר. אתה יכול להשתמש '; WRITE_RAW' כדי לדלג על סיכומי ביקורת או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
 
 English:G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code שיופעל לאחר מעבר ל-extruder 3. ישתמש בתקן לאחר G-Code אם לא הוגדר. אתה יכול להשתמש '; WRITE_RAW' כדי לדלג על סיכומי בדיקה או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
+Translated:G-Code שיופעל לאחר מעבר ל-extruder 3. ישתמש בתקן לאחר G-Code אם לא הוגדר. אתה יכול להשתמש '; WRITE_RAW' כדי לדלג על סיכומי ביקורת או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-Code שיופעל לאחר השינוי בגובה Z עבור השכבה הבאה.
@@ -1898,10 +1919,10 @@ English:G-Code to be run before every tool change. You can use '; WRITE_RAW' to 
 Translated:G-Code שיופעל לפני כל החלפת כלי. אתה יכול להשתמש '; WRITE_RAW' כדי לדלג על סיכומי ביקורת או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code להפעלה לפני המעבר ל-extruder 2. ישתמש בסטנדרט לפני G-Code אם לא הוגדר. אתה יכול להשתמש ב-[wipe_tower_x] [wipe_tower_y] ו-[wipe_tower_z] כדי להגדיר את מיקום המכבש במידת הצורך. אתה יכול גם להשתמש ב-'; WRITE_RAW' כדי לדלג על סיכומי בדיקה או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
+Translated:G-Code להפעלה לפני המעבר ל-extruder 2. ישתמש בסטנדרט לפני G-Code אם לא הוגדר. אתה יכול להשתמש ב-[wipe_tower_x] [wipe_tower_y] ו-[wipe_tower_z] כדי להגדיר את מיקום המכבש במידת הצורך. אתה יכול גם להשתמש ב'; WRITE_RAW' כדי לדלג על סיכומי ביקורת או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
 
 English:G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code שיופעל לפני המעבר ל-extruder 3. ישתמש בתקן לפני G-Code אם לא מוגדר. אתה יכול להשתמש ב-[wipe_tower_x] [wipe_tower_y] ו-[wipe_tower_z] כדי להגדיר את מיקום המכבש במידת הצורך. אתה יכול גם להשתמש ב-'; WRITE_RAW' כדי לדלג על סיכומי בדיקה או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
+Translated:G-Code שיופעל לפני המעבר ל-extruder 3. ישתמש בתקן לפני G-Code אם לא מוגדר. אתה יכול להשתמש ב-[wipe_tower_x] [wipe_tower_y] ו-[wipe_tower_z] כדי להגדיר את מיקום המכבש במידת הצורך. אתה יכול גם להשתמש ב'; WRITE_RAW' כדי לדלג על סיכומי ביקורת או '; NO_PROCESSING' כדי לדלג על קיזוז מיקום.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:G-Code שיופעל מיד לאחר פקודות הגדרת הטמפרטורה. הכללת פקודות לקביעת טמפרטורה בסעיף זה יגרום לכך שהן לא יופקו מחוץ לקטע זה. יקבל משתני G-Code מותאמים אישית.
@@ -2027,7 +2048,7 @@ English:Has Z Servo
 Translated:יש Z Servo
 
 English:Have MatterControl send you email messages about your print
-Translated:בקש מ-MatterControl לשלוח לך הודעות דוא"ל על ההדפסה שלך
+Translated:בקש מ-MatterControl לשלוח לך הודעות דוא"ל לגבי ההדפסה שלך
 
 English:Have MatterControl send you text messages about your print
 Translated:בקש מ-MatterControl לשלוח לך הודעות טקסט על ההדפסה שלך
@@ -2070,6 +2091,9 @@ Translated:להתחבא
 
 English:High Precision
 Translated:דיוק גבוה
+
+English:Histogram
+Translated:היסטוגרמה
 
 English:History
 Translated:הִיסטוֹרִיָה
@@ -2513,7 +2537,7 @@ English:Load Material
 Translated:טען חומר
 
 English:Loading
-Translated:טעינה
+Translated:טוען
 
 English:Loading Filament
 Translated:טוען נימה
@@ -2578,6 +2602,9 @@ Translated:מאקרו
 English:Maintain Proportions
 Translated:לשמור על פרופורציות
 
+English:Maintain Ratio
+Translated:שמור על יחס
+
 English:Maintain Surface
 Translated:לשמור על פני השטח
 
@@ -2588,7 +2615,7 @@ English:Make Component
 Translated:צור רכיב
 
 English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
-Translated:גרמו ל-MatterControl לחקות את מגבלות המיטה ועצירות הקצה בתוכנה ולמנוע מהמדפסת לעבור למיקומים לא חוקיים.
+Translated:גרמו ל-MatterControl לחקות את גבולות המיטה ועצירות הקצה בתוכנה ולמנוע מהמדפסת לעבור למיקומים לא חוקיים.
 
 English:Make Selection
 Translated:בחר
@@ -2635,6 +2662,12 @@ Translated:צפיפות חומר. משמש רק להערכת מסה בתצוגת
 English:Material Setting
 Translated:הגדרת חומר
 
+English:Material Settings
+Translated:הגדרות חומר
+
+English:Material Setup
+Translated:הגדרת חומר
+
 English:Materials
 Translated:חומרים
 
@@ -2657,7 +2690,7 @@ English:MatterControl Pro Only
 Translated:MatterControl Pro בלבד
 
 English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
-Translated:MatterControl לא הצליח להתחבר לאינטרנט. בדוק את חיבור ה-Wi-Fi שלך ונסה שוב
+Translated:MatterControl לא הצליח להתחבר לאינטרנט. בדוק את חיבור ה-Wifi שלך ונסה שוב
 
 English:MatterControl will now attempt to auto-detect your printer.
 Translated:MatterControl ינסה כעת לזהות אוטומטית את המדפסת שלך.
@@ -2699,13 +2732,13 @@ English:MCX File
 Translated:קובץ MCX
 
 English:Measure Probe Offset Conductively
-Translated:מדוד קיזוז בדיקה באופן מוליך
+Translated:מדוד היסט בדיקה באופן מוליך
 
 English:Measure the nozzle offset
 Translated:מדוד את היסט הזרבובית
 
 English:Measure the nozzle to probe offset using the conductive pad.
-Translated:מדוד את הזרבובית לקיזוז בדיקה באמצעות הרפידה המוליך.
+Translated:מדוד את הזרבובית לקיזוז בדיקה באמצעות הכרית המוליכה.
 
 English:Measure Tool
 Translated:כלי מדידה
@@ -2778,6 +2811,12 @@ Translated:מצב מראה
 
 English:Mirror On
 Translated:מראה פועל
+
+English:Mirror X
+Translated:מראה X
+
+English:Mirror Y
+Translated:מראה Y
 
 English:Missing
 Translated:חָסֵר
@@ -2893,6 +2932,9 @@ Translated:מהלכים
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:מזיז את הזרבובית מעלה ומרחיק מהחלק כדי לאפשר קירור.
 
+English:Multi Line
+Translated:רב קו
+
 English:Multi-Extruder
 Translated:רב אקסטרודר
 
@@ -2900,7 +2942,7 @@ English:My Modified Settings
 Translated:ההגדרות המשוננות שלי
 
 English:My Modified Settings (Printer)
-Translated:ההגדרות שלי שהשתנו (מדפסת)
+Translated:ההגדרות המשוננות שלי (מדפסת)
 
 English:MyDocuments
 Translated:המסמכים שלי
@@ -2920,11 +2962,17 @@ Translated:הדפסה ברשת
 English:New Design
 Translated:עיצוב חדש
 
+English:New Material
+Translated:חומר חדש
+
 English:New Password
 Translated:סיסמה חדשה
 
 English:New Printer Name
 Translated:שם מדפסת חדשה
+
+English:New Quality Setting
+Translated:הגדרת איכות חדשה
 
 English:New updates are ready to install
 Translated:עדכונים חדשים מוכנים להתקנה
@@ -3005,7 +3053,7 @@ English:Nozzle 1 Inset
 Translated:זרבובית 1 הכנסה
 
 English:Nozzle 1 should have offsets set to 0.
-Translated:לזרבובית 1 יש להגדיר קיזוז ל-0.
+Translated:זרבובית 1 צריכה להיות מוגדרת ל-0.
 
 English:Nozzle 2 Inset
 Translated:זרבובית 2 הכנסה
@@ -3140,7 +3188,7 @@ English:Oops! Unable to recognize settings file '{0}'.
 Translated:אופס! לא ניתן לזהות את קובץ ההגדרות '{0}'.
 
 English:Oops! You cannot share this item.
-Translated:אופס! אינך יכול לשתף פריט זה.
+Translated:אופס! אינך יכול לשתף את הפריט הזה.
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:אופס! פג תוקף ההפעלה שלך. אנא היכנס שוב כדי להמשיך.
@@ -3170,7 +3218,7 @@ English:OpenSCAD not installed
 Translated:OpenSCAD לא מותקן
 
 English:Operation
-Translated:מבצע
+Translated:פעולה
 
 English:Optional
 Translated:אופציונאלי
@@ -3264,6 +3312,9 @@ Translated:עדכון הסיסמה הושלם
 
 English:Paste
 Translated:לְהַדבִּיק
+
+English:Paste Into
+Translated:הדבק לתוך
 
 English:Path
 Translated:נָתִיב
@@ -3499,6 +3550,12 @@ Translated:הקודם
 English:Preview
 Translated:תצוגה מקדימה
 
+English:Priming Height
+Translated:גובה תחול
+
+English:Priming Width
+Translated:רוחב תחול
+
 English:Primitive Shapes
 Translated:צורות פרימיטיביות
 
@@ -3619,6 +3676,9 @@ Translated:יש להפעיל את הגדרת המדפסת לפני ההדפסה
 English:Printer Setup Required
 Translated:נדרשת הגדרת מדפסת
 
+English:Printer SKU
+Translated:מק"ט מדפסת
+
 English:Printers
 Translated:מדפסות
 
@@ -3714,6 +3774,12 @@ Translated:הרם את המכבש
 
 English:Randomized
 Translated:באקראי
+
+English:Range End
+Translated:סוף טווח
+
+English:Range Start
+Translated:התחלת טווח
 
 English:Ratio
 Translated:יַחַס
@@ -3838,6 +3904,9 @@ Translated:עיבוד נתוני פילוס על המיטה
 English:Repair
 Translated:לְתַקֵן
 
+English:Replace
+Translated:החלף
+
 English:Replacing
 Translated:מחליף
 
@@ -3889,6 +3958,9 @@ Translated:איפוס לערכי ברירת המחדל יסיר את העקיפ�
 English:Reshape
 Translated:שִׁנוּי צוּרָה
 
+English:Resin
+Translated:שְׂרָף
+
 English:Resin density. Only used for estimating mass in the Layer View.
 Translated:צפיפות שרף. משמש רק להערכת מסה בתצוגת השכבה.
 
@@ -3905,13 +3977,16 @@ English:Restore
 Translated:לשחזר
 
 English:Restore Default
-Translated:שחזר ברירת מחדל
+Translated:להחזיר לברירת מחדל
 
 English:Restore Settings
 Translated:שחזר הגדרות
 
 English:Restore Settings...
 Translated:שחזר הגדרות...
+
+English:Restoring
+Translated:משחזר
 
 English:Resume
 Translated:קורות חיים
@@ -4165,6 +4240,9 @@ Translated:בחר מדפסת כדי להמשיך
 English:Select All
 Translated:בחר הכל
 
+English:Select an object to copy its color
+Translated:בחר אובייקט כדי להעתיק את צבעו
+
 English:Select cell to edit
 Translated:בחר תא לעריכה
 
@@ -4179,6 +4257,9 @@ Translated:בחר טווח
 
 English:Select the baud rate.
 Translated:בחר את קצב ההחזרה.
+
+English:Select this option if your material does not appear in the list
+Translated:בחר באפשרות זו אם החומר שלך אינו מופיע ברשימה
 
 English:Select this option only if your printer does not appear in the list
 Translated:בחר באפשרות זו רק אם המדפסת שלך אינה מופיעה ברשימה
@@ -4520,7 +4601,7 @@ English:Source Polygon Count
 Translated:ספירת מצולעים מקור
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:מציין שלקושחה יש תמיכה בדיווח ros_0 endstop ב-M119. מצב TRIGGERED מגדיר את חוט הלהט. אם מזוהה הפעלה, ההשהיה של המדפסות מופעל G-Code.
+Translated:מציין שלקושחה יש תמיכה בדיווח ros_0 endstop ב-M119. מצב TRIGGERED מגדיר שנגמר חוט נימה. אם מזוהה הפעלה, ההשהיה של המדפסות מופעל G-Code.
 
 English:Speed
 Translated:מְהִירוּת
@@ -4645,6 +4726,9 @@ Translated:מחרוזת / נסיגות גרועות
 English:Style
 Translated:סִגְנוֹן
 
+English:SubAlign
+Translated:יישור משנה
+
 English:Subtract
 Translated:להחסיר
 
@@ -4661,7 +4745,7 @@ English:Success! Your password has been updated.
 Translated:הַצלָחָה! הסיסמא שלך עודכנה.
 
 English:Success!\n\nYour filament should now be loaded
-Translated:הַצלָחָה! \NN\ נימה שלך אמורה להיטען כעת
+Translated:הַצלָחָה! \NN\ הנימה שלך אמורה להיטען כעת
 
 English:Success!\n\nYour filament should now be unloaded
 Translated:הַצלָחָה! \NN\ נימה שלך אמורה להיפרק כעת
@@ -4772,13 +4856,13 @@ English:The acceleration that the printer will be set to by default, will not be
 Translated:התאוצה שהמדפסת תוגדר לה כברירת מחדל, לא תשתנה אם היא מוגדרת ל-0. האצת ברירת מחדל טיפוסית היא 1500.
 
 English:The acceleration that the printer will be set to for perimeters, will not be changed if set to 0. A typical perimeter acceleration is 800.
-Translated:התאוצה שהמדפסת תוגדר עבור היקפים, לא תשתנה אם היא מוגדרת ל-0. תאוצה היקפית טיפוסית היא 800.
+Translated:התאוצה שאליה תוגדר המדפסת עבור היקפים, לא תשתנה אם היא מוגדרת ל-0. תאוצה היקפית טיפוסית היא 800.
 
 English:The actual diameter of the filament used for printing.
 Translated:הקוטר האמיתי של החוט המשמש להדפסה.
 
 English:The amount of filament to insert into the printer when loading.
-Translated:כמות החוט שיש להכניס למדפסת בעת טעינה.
+Translated:כמות החוט שיש להכניס למדפסת בעת הטעינה.
 
 English:The amount of filament to remove from the printer while unloading.
 Translated:כמות החוט שיש להסיר מהמדפסת בזמן הפריקה.
@@ -4802,7 +4886,7 @@ English:The angle of the infill, measured from the X axis. Not used when bridgin
 Translated:זווית המילוי, נמדדת מציר X. לא בשימוש בעת גישור.
 
 English:The angle to generate support for
-Translated:הזווית להפיק תמיכה
+Translated:הזווית ליצור עבורה תמיכה
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:המיטה מתחממת כרגע ולא ניתן לשנות את טמפרטורת היעד שלה עד שתגיע ל-{0}°C. \NN\ אתה יכול להגדיר את טמפרטורת המיטה ההתחלתית בהגדרות -> נימה -> טמפרטורות. \NN\ {1}
@@ -4883,7 +4967,7 @@ English:The extra distance the raft will extend around the edge of the part.
 Translated:המרחק הנוסף שהרפסודה תתארך סביב קצה החלק.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:המכבש מתחמם כרגע ולא ניתן לשנות את טמפרטורת היעד שלו עד שתגיע ל-{0}°C. \NN\ אתה יכול להגדיר את טמפרטורת האקסטרודר ההתחלתית ב'הגדרות פרוסה' -> 'פילמנט'. \NN\ {1}
+Translated:המכבש מתחמם כרגע ולא ניתן לשנות את טמפרטורת היעד שלו עד שתגיע ל-{0}°C. \NN\ אתה יכול להגדיר את טמפרטורת המכבש ההתחלתית ב'הגדרות פרוסה' -> 'פילמנט'. \NN\ {1}
 
 English:The extruder to use for support material. Default will use whichever extruder active at the time.
 Translated:המכבש לשימוש עבור חומר תמיכה. ברירת המחדל תשתמש בכל מכבש פעיל באותו זמן.
@@ -4901,13 +4985,16 @@ English:The file you are attempting to print is a GCode file.\n\nIt is recommend
 Translated:הקובץ שאתה מנסה להדפיס הוא קובץ GCode. \NN\ מומלץ להדפיס רק קובצי Gcode הידועים כמתאימים לתצורת המדפסת שלך. \NN\ האם אתה בטוח שברצונך להדפיס קובץ GCode זה?
 
 English:The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.
-Translated:הקושחה המשמשת את המדפסת. מאפשר שיפורים בהתבסס על קושחה כגון פלט G-Code אופטימלי.
+Translated:הקושחה המשמשת את המדפסת. מאפשר שיפורים המבוססים על קושחה כגון פלט G-Code אופטימלי.
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:הצורה הגיאומטרית של מבנה התמיכה עבור החלק הפנימי של חלקים.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:גובה נפח ההדפסה של המדפסת, במילימטרים. שולט בגובה אזור ההדפסה החזותית המוצג בתצוגת 3D.
+
+English:The ideal resistance is when the paper first begins to bend
+Translated:ההתנגדות האידיאלית היא כאשר הנייר מתחיל להתכופף לראשונה
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:כמות הכניסה לכל צד של המיטה. \n - כ-% מהרוחב או העומק \n - הסדר: שמאל, קדמי, ימין, אחורי \n - הערה: היסט הבדיקה מתווסף על זה
@@ -4923,6 +5010,9 @@ Translated:הכמות המוכנסת מקצוות המיטה. מגדיר את ה
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:השכבה/שכבות שבהן ההדפסה תושהה, מה שמאפשר שינוי בפילמנט. המדפסת מושהית לפני תחילת השכבה הנתונה. השאר ריק כדי להשבית. כדי להשהות על מספר שכבות, הפרד את מספרי השכבות באמצעות נקודה-פסיק. לדוגמה: "16; 37".
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37". Rafts layers are not considered. The 1st pause layer is the first above the raft.
+Translated:השכבה/שכבות שבהן ההדפסה תושהה, מה שמאפשר שינוי בפילמנט. המדפסת מושהית לפני תחילת השכבה הנתונה. השאר ריק כדי להשבית. כדי להשהות על מספר שכבות, הפרד את מספרי השכבות באמצעות נקודה-פסיק. לדוגמה: "16; 37". שכבות רפסודות אינן נחשבות. שכבת ההפסקה הראשונה היא הראשונה מעל הרפסודה.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".
 Translated:השכבה/שכבות שבהן ההדפסה תושהה, מה שמאפשר שינוי בפילמנט. המדפסת מושהית לפני תחילת השכבה הנתונה. השאר ריק כדי להשבית. כדי להשהות על מספר שכבות, הפרד את מספרי השכבות באמצעות נקודה-פסיק. לדוגמה: \"16; 37\".
@@ -5147,7 +5237,7 @@ English:The speed at which interface layers will print.
 Translated:המהירות שבה יודפסו שכבות הממשק.
 
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
-Translated:המהירות שבה מודפס היקפים חיצוניים, חיצוניים או גלויים אחרת.
+Translated:המהירות שבה יודפס היקפים חיצוניים, חיצוניים או גלויים אחרת.
 
 English:The speed at which support material structures will print.
 Translated:המהירות שבה יודפסו מבני חומר תמיכה.
@@ -5201,7 +5291,7 @@ English:The target temperature the extruder will attempt to reach during the pri
 Translated:טמפרטורת היעד שאליה ינסה המכבש להגיע במהלך ההדפסה.
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
-Translated:הטמפרטורה שבה האקסטרודר ינגב את הזרבובית, כפי שצוין ב-Custom G-Code.
+Translated:הטמפרטורה שבה ימחק המכבש את הזרבובית, כפי שצוין ב-Custom G-Code.
 
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
 Translated:הטמפרטורה להדפסה כאשר המיטה מכוסה בקפטון טייפ. הגדר ל-0 כדי להשבית.
@@ -5275,6 +5365,9 @@ Translated:הזמן שלוקח להתחמם בחזרה מהתקררות.
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:הזמן שבו יש להגדיל את האורך הנוסף בהפעלה מחדש לערך המרבי שלו. מתחת לזמן זה יחול רק חלק מהאורך הנוסף. השאר 0 כדי למרוח את כל הכמות כל הזמן.
 
+English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
+Translated:משך הזמן להדפסת G-Code זה מוערך ב-{0} שניות. \NN\ אנא בדוק את החלק שלך עבור שגיאות אם זה לא צפוי.
+
 English:The Validation Threshold mush be greater than 0 and less than .5mm.
 Translated:סף האימות גדול מ-0 וקטן מ-0.5 מ"מ.
 
@@ -5339,13 +5432,16 @@ English:This is a set of regular expressions to apply to lines prior to sending 
 Translated:זוהי קבוצה של ביטויים רגולריים להחלה על שורות לפני שליחה למדפסת. הם יחולו בסדר הרשום לפני השליחה. כדי להחזיר יותר מהוראה אחת הפרידו אותם בפסיק.
 
 English:This is the angle that lowers or deploys the z probe.
-Translated:זוהי הזווית שמנמיכה או פורסת את הגשש z.
+Translated:זוהי הזווית שמורידה או פורסת את בדיקה Z.
 
 English:This is the angle that raises or stows the z probe.
-Translated:זוהי הזווית שמגביה או מאחסנת את הגשושית z.
+Translated:זוהי הזווית שמגביה או מאחסנת את בדיקה Z.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
-Translated:זוהי המותג (לעיתים קרובות היצרן) של המדפסת שהפרופיל שאליו מכוון.
+Translated:זוהי המותג (לעיתים קרובות היצרן) של המדפסת שהפרופיל הזה מכוון אליו.
+
+English:This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.
+Translated:זהו מק"ט MatterHackers המייצג את המדפסת הזו. אם המדפסת אינה מוצעת ב-MatterHackers ניתן להגדיר זאת למפתח איסוף.
 
 English:This is the model of printer this profile is targeting.
 Translated:זהו דגם המדפסת שהפרופיל הזה מכוון אליו.
@@ -5360,16 +5456,16 @@ English:This should be checked if the printer supports multiple bed surfaces and
 Translated:יש לבדוק זאת אם המדפסת תומכת במספר משטחי מיטה וטמפרטורת המיטה עבור המשטחים השונים צריכה להשתנות.
 
 English:This should be in 'G-Code'
-Translated:זה צריך להיות ב'G-Code'
+Translated:זה צריך להיות ב-'G-Code'
 
 English:This should be set to the current bed surfaces of the printer. It is used to select the correct bed temperature for a given material and bed surface combination.
 Translated:יש להגדיר זאת למשטחי המיטה הנוכחיים של המדפסת. הוא משמש לבחירת טמפרטורת המיטה הנכונה עבור שילוב נתון של חומר ומשטח המיטה.
 
 English:This will ensure that filament is able to flow through the nozzle.
-Translated:זה יבטיח כי נימה יכולה לזרום דרך הזרבובית.
+Translated:זה יבטיח שפילמנט יוכל לזרום דרך הזרבובית.
 
 English:This will ensure that no filament is stuck to your nozzle.
-Translated:זה יבטיח ששום חוט לא דבוק לזרבובית שלך.
+Translated:זה יבטיח שאף חוט לא דבוק לזרבובית שלך.
 
 English:This will improve the accuracy of print leveling
 Translated:זה ישפר את הדיוק של פילוס ההדפסה
@@ -5650,6 +5746,9 @@ Translated:שדרוג לפרו
 English:Upload
 Translated:העלה
 
+English:Uploading
+Translated:מעלה
+
 English:Uploading...
 Translated:מעלה...
 
@@ -5708,7 +5807,7 @@ English:Validate After Clear
 Translated:אימות לאחר נקה
 
 English:Validate Calibration Before Printing
-Translated:אמת כיול לפני ההדפסה
+Translated:אימות כיול לפני ההדפסה
 
 English:Validate G Code
 Translated:אמת קוד G
@@ -5812,6 +5911,9 @@ Translated:מחכה שהמיטה תתחמם עד
 English:Waiting for the bed to heat to {0} °C\nand the hotend to heat to {1} °C.\n\nThis will improve the accuracy of print leveling\nand ensure that no filament is stuck to your nozzle.\n\nWarning! The tip of the nozzle will be HOT!\nAvoid contact with your skin.
 Translated:ממתין שהמיטה תתחמם ל-{0} מעלות צלזיוס \n והחם יתחמם ל-{1} מעלות צלזיוס. \NN\ זה ישפר את הדיוק של פילוס ההדפסה \n ויבטיח ששום חוט לא דבוק לזרבובית שלך. \NN\ אזהרה! קצה הזרבובית יהיה חם! \n הימנע ממגע עם העור שלך.
 
+English:Waiting for the bed to heat to {0} °C.\nThis will improve the accuracy of print leveling.
+Translated:ממתין עד שהמיטה תתחמם ל-{0} מעלות צלזיוס. \n זה ישפר את הדיוק של פילוס ההדפסה.
+
 English:Waiting for the hotend to heat to
 Translated:מחכה שההוטנד יתחמם עד
 
@@ -5855,7 +5957,7 @@ English:We will now finalize our measurement of the extruder height at this posi
 Translated:כעת נסיים את המדידה שלנו של גובה המכבש במיקום זה.
 
 English:We will now measure the probe offset from the top of a printed calibration object.
-Translated:כעת נמדוד את היסט הגשוש מהחלק העליון של אובייקט כיול מודפס.
+Translated:כעת נמדוד את היסט הבדיקה מהחלק העליון של אובייקט כיול מודפס.
 
 English:We will now refine our measurement of the extruder height at this position.
 Translated:כעת נחדד את המדידה שלנו של גובה המכבש במיקום זה.
@@ -5950,6 +6052,9 @@ Translated:לא היה חותך נכון
 English:Write Filter
 Translated:כתוב מסנן
 
+English:Writing G-Code
+Translated:כתיבת G-Code
+
 English:X and Y Distance
 Translated:מרחק X ו-Y
 
@@ -5959,8 +6064,11 @@ Translated:X יירוט
 English:X Offset
 Translated:X היסט
 
+English:X Options
+Translated:X אפשרויות
+
 English:X Y Nozzle Offsets Have Been Calibrated
-Translated:קיזועי הזרבובית X Y כוילו
+Translated:קיזוז הזרבובית X Y עבר כיול
 
 English:XY Calibration
 Translated:כיול XY
@@ -5973,6 +6081,9 @@ Translated:Y יירוט
 
 English:Y Offset
 Translated:Y offset
+
+English:Y Options
+Translated:Y אפשרויות
 
 English:Yes
 Translated:כן
@@ -6078,6 +6189,9 @@ Translated:Z Offset
 
 English:Z Offset is too large.
 Translated:Z Offset גדול מדי.
+
+English:Z Options
+Translated:Z אפשרויות
 
 English:ZIP File
 Translated:קובץ ZIP
