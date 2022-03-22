@@ -170,7 +170,8 @@ namespace MatterHackers.MatterControl.Library.Export
 					{
 						this.ApplyStreamPipelineAndExport(
 							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), Printer),
-							outputPath);
+							outputPath,
+							progress);
 
 						return null;
 					}
@@ -266,7 +267,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						if (File.Exists(gcodePath))
 						{
-							ApplyStreamPipelineAndExport(gcodePath, outputPath);
+							ApplyStreamPipelineAndExport(gcodePath, outputPath, progress);
 							return errors;
 						}
 					}
@@ -339,11 +340,19 @@ namespace MatterHackers.MatterControl.Library.Export
 			return accumulatedStream;
 		}
 
-		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath)
+		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath, IProgress<ProgressStatus> progress)
 		{
 			try
 			{
 				var finalStream = GetExportStream(Printer, gCodeFileStream, UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, "1"));
+
+				var totalLines = gCodeFileStream.GCodeFile.LineCount;
+				var currentLine = 0;
+
+				var status = new ProgressStatus()
+				{
+					Status = "Writing G-Code".Localize()
+				};
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
@@ -375,6 +384,13 @@ namespace MatterHackers.MatterControl.Library.Export
 
 							PrinterConnection.KeepTrackOfAbsolutePositionAndDestination(nextLine, ref currentDestination);
 						}
+
+						if (currentLine % 1024 == 0)
+						{
+							status.Progress0To1 = currentLine / (double)totalLines;
+							progress.Report(status);
+						}
+						currentLine++;
 					}
 				}
 			}
@@ -387,7 +403,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 		}
 
-		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath)
+		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath, IProgress<ProgressStatus> progress)
 		{
 			try
 			{
@@ -407,7 +423,8 @@ namespace MatterHackers.MatterControl.Library.Export
 							new Vector4(multiplier, multiplier, multiplier, multiplier),
 							CancellationToken.None),
 						Printer),
-					outputPath);
+					outputPath,
+					progress);
 			}
 			catch (Exception e)
 			{

@@ -1,0 +1,32 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "PEEK",
+      "layer_id": "63342beb-0f41-4afb-bf96-bf73bd168bd7",
+      "bed_temperature": "130",
+      "bridge_fan_speed": "50",
+      "max_fan_speed": "0",
+      "min_fan_speed": "0",
+      "temperature": "360",
+      "infill_speed": "60",
+      "top_solid_infill_speed": "20",
+      "perimeter_speed": "20",
+      "bed_temperature_buildtak": "130",
+      "bed_temperature_garolite": "130",
+      "bed_temperature_glass": "130",
+      "bed_temperature_kapton": "130",
+      "bed_temperature_pei": "130",
+      "bed_temperature_pp": "130",
+      "external_perimeter_speed": "20",
+      "enable_fan": "0",
+      "material_sku": "MRM86607"      
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

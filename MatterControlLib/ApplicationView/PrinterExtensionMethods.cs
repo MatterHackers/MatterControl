@@ -63,13 +63,15 @@ namespace MatterHackers.MatterControl
 				return false;
 			}
 
+			var bedBounds = printerConfig.Settings.MeshAllowedBounds;
+
 			switch (bed.BedShape)
 			{
 				case BedShape.Rectangular:
-					if (aabb.MinXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
-						|| aabb.MaxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
-						|| aabb.MinXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
-						|| aabb.MaxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
+					if (aabb.MinXYZ.X < bedBounds.Left
+						|| aabb.MaxXYZ.X > bedBounds.Right
+						|| aabb.MinXYZ.Y < bedBounds.Bottom
+						|| aabb.MaxXYZ.Y > bedBounds.Top)
 					{
 						return false;
 					}

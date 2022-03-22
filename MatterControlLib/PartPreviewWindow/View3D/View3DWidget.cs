@@ -26,18 +26,15 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-#define INCLUDE_ORTHOGRAPHIC
 #define ENABLE_PERSPECTIVE_PROJECTION_DYNAMIC_NEAR_FAR
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -440,9 +437,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				renderRoundedGroup(.1, .5 + .1);
 
 				// render the perspective and turntable group background
-#if INCLUDE_ORTHOGRAPHIC
 				renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
-#endif
 
 				void renderRoundedLine(double lineWidth, double heightBelowCenter)
 				{
@@ -504,16 +499,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = turntableEnabled,
 				//DoubleBuffer = true,
-#if !INCLUDE_ORTHOGRAPHIC
-				BorderColor = hudStrokeColor,
-#endif
 			};
 
-#if INCLUDE_ORTHOGRAPHIC
 			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
-#else
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .30));
-#endif
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
@@ -526,7 +514,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-#if INCLUDE_ORTHOGRAPHIC
 			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != false.ToString();
 			TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
 			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
@@ -552,7 +539,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				
 				Invalidate();
 			};
-#endif
 
 			var startHeight = 180;
 			var ySpacing = 40;
@@ -913,7 +899,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void UpdateRenderView(object sender, EventArgs e)
 		{
-			TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width;
+			UiThread.RunOnUiThread(() => TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width);
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)

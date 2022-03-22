@@ -30,12 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using MatterHackers.Agg;
+using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -134,7 +133,89 @@ namespace MatterHackers.MatterControl.DesignTools
 			Invalidate(InvalidateType.Children);
 		}
 
-		public override void Cancel(UndoBuffer undoBuffer)
+		public (string cellId, string cellData) DecodeContent(int editorIndex)
+		{
+			var cellData2 = SurfacedEditors[editorIndex].Substring(1);
+			var cellId2 = cellData2.ToLower();
+			// check if it has embededdata
+			var separator = cellData2.IndexOf(',');
+			if (separator != -1)
+			{
+				cellId2 = cellData2.Substring(0, separator).ToLower();
+				cellData2 = cellData2.Substring(separator + 1);
+			}
+			else
+			{
+				var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
+				if (firtSheet != null)
+				{
+					// We don't have any cache of the cell content, get the current content
+					double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId2), out double value);
+					cellData2 = value.ToString();
+				}
+			}
+
+			return (cellId2, cellData2);
+		}
+
+
+		private void RecalculateSheet()
+		{
+			// if there are editors that reference cells
+			for (int i=0; i<SurfacedEditors.Count; i++)
+            {
+				var (cellId, cellData) = this.DecodeContent(i);
+				if (cellData.StartsWith("="))
+				{
+					var expression = new DoubleOrExpression(cellData);
+					var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
+					if (firtSheet != null)
+					{
+						var cell = firtSheet.SheetData[cellId];
+						if (cell != null)
+						{
+							cell.Expression = expression.Value(this).ToString();
+						}
+					}
+				}
+			}
+
+			if (SurfacedEditors.Any(se => se.StartsWith("!"))
+				&& !this.RebuildLocked)
+			{
+				var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
+
+				var componentLock = this.RebuildLock();
+				firtSheet.SheetData.Recalculate();
+
+				UiThread.RunOnIdle(() =>
+				{
+					// wait until the sheet is done rebuilding (or 30 seconds)
+					var startTime = UiThread.CurrentTimerMs;
+					while (firtSheet.RebuildLocked
+						&& startTime + 30000 < UiThread.CurrentTimerMs)
+					{
+						Thread.Sleep(1);
+					}
+
+					componentLock.Dispose();
+				});
+			}
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+        {
+			switch(invalidateType.InvalidateType)
+            {
+				case InvalidateType.SheetUpdated:
+					RecalculateSheet();
+					break;
+            }
+
+            base.OnInvalidate(invalidateType);
+        }
+
+        public override void Cancel(UndoBuffer undoBuffer)
 		{
 			// Make any hiden children visible
 			// on any invalidate ensure that the visibility setting are correct for embedded sheet objects

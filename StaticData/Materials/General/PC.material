@@ -1,0 +1,31 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "Polycarbonate",
+      "layer_id": "d924b109-d750-4a2a-9d72-4c4f53178710",
+      "bed_temperature": "115",
+      "enable_fan": "0",
+      "has_fan": "False",
+      "infill_speed": "30",
+      "max_fan_speed": "0",
+      "min_fan_speed": "0",
+      "perimeter_speed": "26",
+      "temperature": "290",
+      "bed_temperature_buildtak": "100",
+      "bed_temperature_garolite": "100",
+      "bed_temperature_glass": "100",
+      "bed_temperature_kapton": "100",
+      "bed_temperature_pei": "100",
+      "bed_temperature_pp": "100",
+      "top_solid_infill_speed": "22",
+      "material_sku": "PC"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

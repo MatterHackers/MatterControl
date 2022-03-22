@@ -107,21 +107,31 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				}
 			}
 
+			// add a section to hold the data about the printer
+			var scrollableWidget = new ScrollableWidget(true);
+			scrollableWidget.ScrollArea.HAnchor |= HAnchor.Stretch;
+			scrollableWidget.ScrollArea.VAnchor = VAnchor.Fit;
+			scrollableWidget.AnchorAll();
+
+			scrollableWidget.AddChild(ProductDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			});
+
+			this.AddChild(scrollableWidget);
+
+			void DoAfterLoad()
+            {
+				AfterLoad?.Invoke(this, null);
+
+				scrollableWidget.Width += 1;
+				scrollableWidget.Width -= 1;
+
+				scrollableWidget.TopLeftOffset = new Vector2(0, 0);
+			}
+
 			if (!string.IsNullOrWhiteSpace(StoreID))
 			{
-				// add a section to hold the data about the printer
-				var scrollableWidget = new ScrollableWidget(true);
-				scrollableWidget.ScrollArea.HAnchor |= HAnchor.Stretch;
-				scrollableWidget.ScrollArea.VAnchor = VAnchor.Fit;
-				scrollableWidget.AnchorAll();
-
-				scrollableWidget.AddChild(ProductDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch
-				});
-
-				this.AddChild(scrollableWidget);
-
 				try
 				{
 					// put in controls from the feed that show relevant printer information
@@ -164,12 +174,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 									}
 								}
 
-								AfterLoad?.Invoke(this, null);
-
-								scrollableWidget.Width += 1;
-								scrollableWidget.Width -= 1;
-
-								scrollableWidget.TopLeftOffset = new Vector2(0, 0);
+								DoAfterLoad();
 							});
 						});
 				}
@@ -177,6 +182,10 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				{
 					Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
 				}
+			}
+			else
+			{
+				DoAfterLoad();
 			}
 
 			headingRow.Visible = this.ShowHeadingRow;

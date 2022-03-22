@@ -348,101 +348,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
-			{
-				var context = new PPEContext();
-				PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
-				foreach (var selector in componentObject.SurfacedEditors)
-				{
-					// if it is a reference to a sheet cell
-					if (selector.StartsWith("!"))
-					{
-						var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
-						if (firtSheet != null)
-						{
-							var cellId = selector.Substring(1).ToLower();
-							var cell = firtSheet.SheetData[cellId];
-							if (cell != null)
-							{
-								// add an editor for the cell
-								var field = new DoubleField(theme);
-								field.Initialize(0);
-								double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId), out double value);
-								field.DoubleValue = value;
-								field.ClearUndoHistory();
-
-								field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = 3;
-								field.ValueChanged += (s, e) =>
-								{
-									var oldValue = cell.Expression;
-									var newValue = field.Value;
-									undoBuffer.AddAndDo(new UndoRedoActions(() =>
-									{
-										cell.Expression = oldValue;
-										firtSheet.SheetData.Recalculate();
-									},
-									() =>
-									{
-										cell.Expression = newValue;
-										firtSheet.SheetData.Recalculate();
-									}));
-
-								};
-
-								var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);
-
-								editorPanel.AddChild(row);
-							}
-						}
-					}
-					else // parse it as a path to an object
-					{
-						// Get the named property via reflection
-						// Selector example:            '$.Children<CylinderObject3D>'
-						var match = pathGetter.Select(componentObject, selector).ToList();
-
-						//// - Add editor row for each
-						foreach (var instance in match)
-						{
-							if (instance is IObject3D object3D)
-							{
-								if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
-								{
-									ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
-								}
-							}
-							else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
-							{
-								if (reflectionTarget.Source is IObject3D editedChild)
-								{
-									context.item = editedChild;
-								}
-								else
-								{
-									context.item = item;
-								}
-
-								var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
-
-								var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
-								if (editor != null)
-								{
-									editorPanel.AddChild(editor);
-								}
-
-								// Init with custom 'UpdateControls' hooks
-								(context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
-							}
-						}
-					}
-				}
-
-				// Enforce panel padding
-				foreach (var sectionWidget in editorPanel.Descendants<SectionWidget>())
-				{
-					sectionWidget.Margin = 0;
-				}
-			}
-			else
+            {
+                AddComponentEditor(selectedItem, undoBuffer, rows, componentObject);
+            }
+            else
 			{
 				if (item != null
 					&& ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
@@ -452,7 +361,131 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private class OperationButton : TextButton
+        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
+        {
+            var context = new PPEContext();
+            PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
+			var editorList = componentObject.SurfacedEditors;
+            for (var editorIndex = 0; editorIndex < editorList.Count; editorIndex++)
+            {
+                // if it is a reference to a sheet cell
+                if (editorList[editorIndex].StartsWith("!"))
+                {
+                    AddSheetCellEditor(undoBuffer, componentObject, editorList, editorIndex);
+                }
+                else // parse it as a path to an object
+                {
+                    // Get the named property via reflection
+                    // Selector example:            '$.Children<CylinderObject3D>'
+                    var match = pathGetter.Select(componentObject, editorList[editorIndex]).ToList();
+
+                    //// - Add editor row for each
+                    foreach (var instance in match)
+                    {
+                        if (instance is IObject3D object3D)
+                        {
+                            if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+                            {
+                                ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
+                            }
+                        }
+                        else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
+                        {
+                            if (reflectionTarget.Source is IObject3D editedChild)
+                            {
+                                context.item = editedChild;
+                            }
+                            else
+                            {
+                                context.item = item;
+                            }
+
+                            var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
+
+                            var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
+                            if (editor != null)
+                            {
+                                editorPanel.AddChild(editor);
+                            }
+
+                            // Init with custom 'UpdateControls' hooks
+                            (context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
+                        }
+                    }
+                }
+            }
+
+            // Enforce panel padding
+            foreach (var sectionWidget in editorPanel.Descendants<SectionWidget>())
+            {
+                sectionWidget.Margin = 0;
+            }
+        }
+
+        private void AddSheetCellEditor(UndoBuffer undoBuffer, ComponentObject3D componentObject, List<string> editorList, int editorIndex)
+        {
+            var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
+            if (firtSheet != null)
+            {
+                var (cellId, cellData) = componentObject.DecodeContent(editorIndex);
+                var cell = firtSheet.SheetData[cellId];
+                if (cell != null)
+                {
+                    // create an expresion editor
+                    var field = new ExpressionField(theme)
+                    {
+                        Name = cellId + " Field"
+                    };
+                    field.Initialize(0);
+                    if (cellData.Contains("="))
+                    {
+                        field.SetValue(cellData, false);
+                    }
+                    else // make sure it is formatted
+                    {
+                        double.TryParse(cellData, out double value);
+                        var format = "0." + new string('#', 5);
+                        field.SetValue(value.ToString(format), false);
+                    }
+
+                    field.ClearUndoHistory();
+
+                    var doOrUndoing = false;
+                    field.ValueChanged += (s, e) =>
+                    {
+                        if (!doOrUndoing)
+                        {
+                            var oldValue = componentObject.DecodeContent(editorIndex).cellData;
+                            var newValue = field.Value;
+                            undoBuffer.AddAndDo(new UndoRedoActions(() =>
+                            {
+                                doOrUndoing = true;
+								editorList[editorIndex] = "!" + cellId + "," + oldValue;
+								var expression = new DoubleOrExpression(oldValue);
+								cell.Expression = expression.Value(componentObject).ToString();
+								componentObject.Invalidate(InvalidateType.SheetUpdated);
+                                doOrUndoing = false;
+                            },
+                            () =>
+                            {
+                                doOrUndoing = true;
+								editorList[editorIndex] = "!" + cellId + "," + newValue;
+								var expression = new DoubleOrExpression(newValue);
+								cell.Expression = expression.Value(componentObject).ToString();
+								componentObject.Invalidate(InvalidateType.SheetUpdated);
+								doOrUndoing = false;
+                            }));
+                        }
+
+                    };
+
+                    var row = new SettingsRow(cell.Name == null ? cellId : cell.Name, null, field.Content, theme);
+                    editorPanel.AddChild(row);
+                }
+            }
+        }
+
+        private class OperationButton : TextButton
 		{
 			private readonly SceneOperation sceneOperation;
 			private readonly ISceneContext sceneContext;
