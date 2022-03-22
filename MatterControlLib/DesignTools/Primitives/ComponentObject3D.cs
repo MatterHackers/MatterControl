@@ -135,27 +135,32 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public (string cellId, string cellData) DecodeContent(int editorIndex)
 		{
-			var cellData2 = SurfacedEditors[editorIndex].Substring(1);
-			var cellId2 = cellData2.ToLower();
-			// check if it has embededdata
-			var separator = cellData2.IndexOf(',');
-			if (separator != -1)
+			if (SurfacedEditors[editorIndex].StartsWith("!"))
 			{
-				cellId2 = cellData2.Substring(0, separator).ToLower();
-				cellData2 = cellData2.Substring(separator + 1);
-			}
-			else
-			{
-				var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
-				if (firtSheet != null)
+				var cellData2 = SurfacedEditors[editorIndex].Substring(1);
+				var cellId2 = cellData2.ToLower();
+				// check if it has embededdata
+				var separator = cellData2.IndexOf(',');
+				if (separator != -1)
 				{
-					// We don't have any cache of the cell content, get the current content
-					double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId2), out double value);
-					cellData2 = value.ToString();
+					cellId2 = cellData2.Substring(0, separator).ToLower();
+					cellData2 = cellData2.Substring(separator + 1);
 				}
+				else
+				{
+					var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
+					if (firtSheet != null)
+					{
+						// We don't have any cache of the cell content, get the current content
+						double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId2), out double value);
+						cellData2 = value.ToString();
+					}
+				}
+
+				return (cellId2, cellData2);
 			}
 
-			return (cellId2, cellData2);
+			return (null, null);
 		}
 
 

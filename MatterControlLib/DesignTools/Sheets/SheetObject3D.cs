@@ -521,11 +521,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public static IEnumerable<int> GetComponentExpressions(ComponentObject3D component, string checkForString, bool startsWith)
+		{
+			for (var i = 0; i < component.SurfacedEditors.Count; i++)
+			{
+				var (cellId, cellData) = component.DecodeContent(i);
+
+				if (cellId != null)
+				{
+					if (startsWith)
+					{
+						if (cellData.StartsWith(checkForString))
+						{
+							// WIP: check if the value has actually changed, this will update every object on any cell change
+							yield return i;
+						}
+					}
+					else
+					{
+						if (cellData.Contains(checkForString))
+						{
+							yield return i;
+						}
+					}
+				}
+			}
+		}
+
 		public static bool HasExpressionWithString(IObject3D itemToCheck, string checkForString, bool startsWith)
 		{
 			foreach (var item in itemToCheck.DescendantsAndSelf())
 			{
-				if (GetActiveExpressions(item, checkForString, startsWith).Any())
+				if (GetActiveExpressions(item, checkForString, startsWith).Any()
+					|| (itemToCheck is ComponentObject3D component
+						&& GetComponentExpressions(component, checkForString, startsWith).Any()))
                 {
 					// three is one so return true
 					return true;
