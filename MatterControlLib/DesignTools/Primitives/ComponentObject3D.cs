@@ -213,6 +213,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			switch(invalidateType.InvalidateType)
             {
 				case InvalidateType.SheetUpdated:
+				case InvalidateType.Properties:
 					RecalculateSheet();
 					break;
             }

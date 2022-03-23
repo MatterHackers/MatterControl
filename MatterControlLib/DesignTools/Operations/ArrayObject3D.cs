@@ -65,7 +65,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 							if (cellId != null)
 							{
-								cellData = cellData.Replace(expansion.key, SheetObject3D.RetrieveArrayIndex(component, expansion.index).ToString());
+								var newValue = cellData.Replace(expansion.key, SheetObject3D.RetrieveArrayIndex(component, expansion.index).ToString());
+								component.SurfacedEditors[i] = "!" + cellId + "," + newValue;
 							}
 						}
 					}
@@ -103,6 +104,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// we don't need to rebuild our source object
 					return false;
 				}
+				else if (item.Parent is ComponentObject3D)
+                {
+					return false;
+                }
 
 				// process everything else
 				return true;
