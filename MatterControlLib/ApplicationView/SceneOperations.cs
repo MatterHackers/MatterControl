@@ -519,8 +519,7 @@ namespace MatterHackers.MatterControl
 				{
 					var sceneItem = sceneContext.Scene.SelectedItem;
 					return sceneItem?.Parent != null
-						&& sceneItem.Parent.Parent == null
-						&& sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
+						&& sceneItem.Parent.Parent == null;
 				},
 			};
 		}
