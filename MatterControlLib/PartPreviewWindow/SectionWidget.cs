@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				checkbox.CheckedStateChanged += (s, e) =>
 				{
-					var scrollable = this.Parents<ScrollableWidget>().First();
+					var scrollable = this.Parents<ScrollableWidget>().FirstOrDefault();
 					var topPosition = Vector2.Zero;
 					if (scrollable != null)
                     {
