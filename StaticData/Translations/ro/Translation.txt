@@ -19,6 +19,9 @@ Translated: \n Mai jos puteți găsi o listă cu fiecare setare care s-a schimba
 English:\nUpdating a default setting will not change any override that you have applied.
 Translated: \n Actualizarea unei setări implicite nu va modifica nicio modificare pe care ați aplicat-o.
 
+English:"{0}" already exists.\nDo you want to replace it?
+Translated:„{0}” există deja. \n Doriți să-l înlocuiți?
+
 English:$/kg
 Translated:$/kg
 
@@ -205,11 +208,17 @@ Translated:Adăugați un fișier .stl, .obj, .amf, .gcode sau .zip în Bibliotec
 English:Add Base
 Translated:Adăugați o bază
 
+English:Add File to Bed
+Translated:Adăugați fișierul în pat
+
 English:Add Hook
 Translated:Adăugați Hook
 
 English:Add Image
 Translated:Adauga imagine
+
+English:Add Material
+Translated:Adăugați material
 
 English:Add New Setting
 Translated:Adăugați o nouă setare
@@ -219,6 +228,9 @@ Translated:Adauga notita
 
 English:Add Note...
 Translated:Adauga notita...
+
+English:Add System File to Bed
+Translated:Adăugați fișierul de sistem în pat
 
 English:Add to Bed
 Translated:Adaugă în pat
@@ -892,6 +904,9 @@ Translated:Configurați pluginuri
 English:Configure Wifi
 Translated:Configurați Wifi
 
+English:Confirm Save As
+Translated:Confirmați Salvarea ca
+
 English:Confirm your new password
 Translated:Confirmați noua parolă
 
@@ -1270,6 +1285,9 @@ Translated:Distanța față de obiect
 English:Distance or Loops
 Translated:Distanță sau Bucle
 
+English:Documents
+Translated:Documente
+
 English:Done
 Translated:Terminat
 
@@ -1367,7 +1385,7 @@ English:Email
 Translated:E-mail
 
 English:Email Address
-Translated:Adresa de email
+Translated:Adresa de e-mail
 
 English:Empty
 Translated:Gol
@@ -1666,6 +1684,9 @@ Translated:Viteza ventilatorului
 English:Fastest
 Translated:Cel mai rapid
 
+English:Feature Detector
+Translated:Detector de caracteristici
+
 English:Features
 Translated:Caracteristici
 
@@ -1892,13 +1913,13 @@ English:G-Code to be run after the change in Z height for the next layer.
 Translated:Codul G va fi rulat după modificarea înălțimii Z pentru următorul strat.
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:G-Code va fi rulat la sfârșitul tuturor ieșirilor automate (sfârșitul comenzilor G-Code).
+Translated:G-Code va fi rulat la sfârșitul tuturor ieșirii automate (sfârșitul comenzilor G-Code).
 
 English:G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:Codul G trebuie rulat înainte de fiecare schimbare a sculei. Poți să folosești '; WRITE_RAW' pentru a omite sumele de control sau '; NO_PROCESSING' pentru a omite compensarea poziției.
+Translated:Codul G trebuie rulat înainte de fiecare schimbare a sculei. Poți să folosești '; WRITE_RAW' pentru a omite sumele de verificare sau '; NO_PROCESSING' pentru a omite compensarea poziției.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:Codul G trebuie rulat înainte de a trece la extruder 2. Se va folosi standardul înainte de Codul G dacă nu este setat. Puteți folosi [wipe_tower_x] [wipe_tower_y] și [wipe_tower_z] pentru a seta poziția extruderului, dacă este necesar. Puteți folosi și „; WRITE_RAW' pentru a omite sumele de verificare sau '; NO_PROCESSING' pentru a omite compensarea poziției.
+Translated:Codul G trebuie rulat înainte de a trece la extruder 2. Se va folosi standardul înainte de Codul G dacă nu este setat. Puteți folosi [wipe_tower_x] [wipe_tower_y] și [wipe_tower_z] pentru a seta poziția extruderului, dacă este necesar. Puteți folosi și „; WRITE_RAW' pentru a omite sumele de control sau '; NO_PROCESSING' pentru a omite compensarea poziției.
 
 English:G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 Translated:Codul G trebuie rulat înainte de a trece la extruder 3. Se va folosi standardul înainte de Codul G dacă nu este setat. Puteți folosi [wipe_tower_x] [wipe_tower_y] și [wipe_tower_z] pentru a seta poziția extruderului, dacă este necesar. Puteți folosi și „; WRITE_RAW' pentru a omite sumele de verificare sau '; NO_PROCESSING' pentru a omite compensarea poziției.
@@ -1910,7 +1931,7 @@ English:G-Code to be run when the print resumes after a pause.
 Translated:G-Code va fi rulat când imprimarea se reia după o pauză.
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:G-Code pentru a rula la conectarea cu succes la o imprimantă. Acest lucru poate fi util pentru a seta setări specifice unei anumite imprimante.
+Translated:G-Code pentru a rula la conectarea cu succes la o imprimantă. Acest lucru poate fi util pentru a seta setările specifice unei anumite imprimante.
 
 English:G-Code to run when a print is canceled.
 Translated:G-Code va rula atunci când o imprimare este anulată.
@@ -1919,7 +1940,7 @@ English:G-Code to run when the printer is paused.
 Translated:G-Code să ruleze când imprimanta este întreruptă.
 
 English:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
-Translated:Cod G folosit de Autopilot pentru a curăța patul după finalizarea unei imprimări. Acest lucru este util doar pe o imprimantă concepută pentru a curăța patul.
+Translated:G-Code folosit de Autopilot pentru a curăța patul după finalizarea unei imprimări. Acest lucru este util doar pe o imprimantă concepută pentru a curăța patul.
 
 English:Gear
 Translated:Angrenaj
@@ -2070,6 +2091,9 @@ Translated:Ascunde
 
 English:High Precision
 Translated:Precizie ridicata
+
+English:Histogram
+Translated:Histogramă
 
 English:History
 Translated:Istorie
@@ -2345,7 +2369,7 @@ English:Jerk Velocity
 Translated:Viteza de smucitură
 
 English:Junction Deviation [mm/s]
-Translated:Deviația joncțiunii [mm/s]
+Translated:Abaterea joncțiunii [mm/s]
 
 English:Kapton
 Translated:Kapton
@@ -2578,6 +2602,9 @@ Translated:Macro-uri
 English:Maintain Proportions
 Translated:Menține proporțiile
 
+English:Maintain Ratio
+Translated:Menține raportul
+
 English:Maintain Surface
 Translated:Mentine suprafata
 
@@ -2634,6 +2661,12 @@ Translated:Densitatea materialului. Folosit numai pentru estimarea masei în viz
 
 English:Material Setting
 Translated:Setarea materialului
+
+English:Material Settings
+Translated:Setări materiale
+
+English:Material Setup
+Translated:Configurarea materialului
 
 English:Materials
 Translated:Materiale
@@ -2779,6 +2812,12 @@ Translated:Modul oglindă
 English:Mirror On
 Translated:Oglinda activată
 
+English:Mirror X
+Translated:Oglinda X
+
+English:Mirror Y
+Translated:Oglinda Y
+
 English:Missing
 Translated:Dispărut
 
@@ -2893,6 +2932,9 @@ Translated:Mișcări
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Mută duza în sus și în afara piesei pentru a permite răcirea.
 
+English:Multi Line
+Translated:Linie multiplă
+
 English:Multi-Extruder
 Translated:Multi-Extruder
 
@@ -2920,11 +2962,17 @@ Translated:Imprimare în rețea
 English:New Design
 Translated:Design nou
 
+English:New Material
+Translated:Material nou
+
 English:New Password
 Translated:Parolă Nouă
 
 English:New Printer Name
 Translated:Nume nou de imprimantă
+
+English:New Quality Setting
+Translated:Noua setare de calitate
 
 English:New updates are ready to install
 Translated:Actualizări noi sunt gata de instalat
@@ -3062,10 +3110,10 @@ English:Offset For Next Push
 Translated:Offset pentru următoarea apăsare
 
 English:Ok
-Translated:O.K
+Translated:Bine
 
 English:OK
-Translated:O.K
+Translated:Bine
 
 English:'Ok' Responses
 Translated:Răspunsuri „Ok”.
@@ -3265,6 +3313,9 @@ Translated:Actualizarea parolei este finalizată
 English:Paste
 Translated:Pastă
 
+English:Paste Into
+Translated:Lipiți în
+
 English:Path
 Translated:cale
 
@@ -3401,19 +3452,19 @@ English:Please wait while we update your password...
 Translated:Vă rugăm să așteptați până vă actualizăm parola...
 
 English:Please wait. Emailing reset code...
-Translated:Te rog asteapta. Se trimite prin e-mail codul de resetare...
+Translated:Va rugam asteptati. Se trimite prin e-mail codul de resetare...
 
 English:Please wait. Redeeming code...
-Translated:Te rog asteapta. Se valorifică codul...
+Translated:Va rugam asteptati. Se valorifică codul...
 
 English:Please wait. Retrieving share code...
-Translated:Te rog asteapta. Se preia codul de distribuire...
+Translated:Va rugam asteptati. Se preia codul de distribuire...
 
 English:Please wait. Sending invite...
-Translated:Te rog asteapta. Se trimite invitația...
+Translated:Va rugam asteptati. Se trimite invitația...
 
 English:Please wait. Signing in...
-Translated:Te rog asteapta. Conectare...
+Translated:Va rugam asteptati. Conectare...
 
 English:Plug in printer USB cable and turn printer on
 Translated:Conectați cablul USB al imprimantei și porniți imprimanta
@@ -3498,6 +3549,12 @@ Translated:Prev
 
 English:Preview
 Translated:previzualizare
+
+English:Priming Height
+Translated:Înălțimea de amorsare
+
+English:Priming Width
+Translated:Lățimea amorsării
 
 English:Primitive Shapes
 Translated:Forme primitive
@@ -3619,6 +3676,9 @@ Translated:Configurarea imprimantei trebuie executată înainte de imprimare
 English:Printer Setup Required
 Translated:Configurarea imprimantei este necesară
 
+English:Printer SKU
+Translated:SKU imprimantei
+
 English:Printers
 Translated:Imprimante
 
@@ -3714,6 +3774,12 @@ Translated:Ridicați extruderul
 
 English:Randomized
 Translated:Randomizat
+
+English:Range End
+Translated:Sfârșitul intervalului
+
+English:Range Start
+Translated:Range Start
 
 English:Ratio
 Translated:Raport
@@ -3838,6 +3904,9 @@ Translated:Redați datele de nivelare pe pat
 English:Repair
 Translated:Reparație
 
+English:Replace
+Translated:A inlocui
+
 English:Replacing
 Translated:Înlocuirea
 
@@ -3889,6 +3958,9 @@ Translated:Resetarea la valorile implicite va elimina suprascrierile curente și
 English:Reshape
 Translated:Reforma
 
+English:Resin
+Translated:Răşină
+
 English:Resin density. Only used for estimating mass in the Layer View.
 Translated:Densitatea rășinii. Folosit numai pentru estimarea masei în vizualizarea stratului.
 
@@ -3912,6 +3984,9 @@ Translated:Restabiliți setările
 
 English:Restore Settings...
 Translated:Restabiliți setările...
+
+English:Restoring
+Translated:Restaurare
 
 English:Resume
 Translated:Relua
@@ -4165,6 +4240,9 @@ Translated:Selectați o imprimantă pentru a continua
 English:Select All
 Translated:Selectează tot
 
+English:Select an object to copy its color
+Translated:Selectați un obiect pentru a-i copia culoarea
+
 English:Select cell to edit
 Translated:Selectați celula de editat
 
@@ -4179,6 +4257,9 @@ Translated:Selectați Interval
 
 English:Select the baud rate.
 Translated:Selectați viteza de transmisie.
+
+English:Select this option if your material does not appear in the list
+Translated:Selectați această opțiune dacă materialul dvs. nu apare în listă
 
 English:Select this option only if your printer does not appear in the list
 Translated:Selectați această opțiune numai dacă imprimanta dvs. nu apare în listă
@@ -4645,6 +4726,9 @@ Translated:Înșirare / retractii slabe
 English:Style
 Translated:Stil
 
+English:SubAlign
+Translated:SubAlign
+
 English:Subtract
 Translated:Scădea
 
@@ -4652,7 +4736,7 @@ English:Subtract & Replace
 Translated:Scădeți și înlocuiți
 
 English:Success! Please check your email for the reset code.
-Translated:Succes! Vă rugăm să verificați e-mailul pentru codul de resetare.
+Translated:Succes! Vă rugăm să vă verificați e-mailul pentru codul de resetare.
 
 English:Success! Your account has been created.
 Translated:Succes! Contul dvs. a fost creat.
@@ -4901,13 +4985,16 @@ English:The file you are attempting to print is a GCode file.\n\nIt is recommend
 Translated:Fișierul pe care încercați să îl imprimați este un fișier GCode. \NN\ Este recomandat să imprimați numai fișiere Gcode cunoscute pentru a se potrivi cu configurația imprimantei dvs. \NN\ Sigur doriți să imprimați acest fișier GCode?
 
 English:The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.
-Translated:Firmware-ul utilizat de imprimantă. Permite îmbunătățiri bazate pe firmware, cum ar fi ieșirea optimizată G-Code.
+Translated:Firmware-ul utilizat de imprimantă. Permite îmbunătățiri bazate pe firmware, cum ar fi ieșirea G-Code optimizată.
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:Forma geometrică a structurii suport pentru interiorul pieselor.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:Înălțimea volumului imprimabil al imprimantei, în milimetri. Controlează înălțimea zonei de imprimare vizuală afișată în vizualizarea 3D.
+
+English:The ideal resistance is when the paper first begins to bend
+Translated:Rezistența ideală este atunci când hârtia începe să se îndoaie
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:Suma introdusă pentru fiecare parte a patului. \n - Ca % din lățimea sau adâncimea \n - Ordonat: stânga, față, dreapta, spate \n - NOTĂ: compensarea sondei este adăugată deasupra acestui
@@ -4919,10 +5006,13 @@ English:The inset amount for nozzle 2 from the bed (Left, Front, Right, Back).
 Translated:Cantitatea introdusă pentru duza 2 din pat (stânga, față, dreapta, spate).
 
 English:The inset amount from the edges of the bed. Defines the printable area of the bed. Leave as 0s if the entire bed can be printed to (Left, Front, Right, Back).
-Translated:Suma introdusă de la marginile patului. Definește zona imprimabilă a patului. Lăsați 0s dacă întregul pat poate fi imprimat (stânga, față, dreapta, spate).
+Translated:Suma introdusă de la marginile patului. Definește zona imprimabilă a patului. Lăsați ca 0s dacă întregul pat poate fi imprimat (stânga, față, dreapta, spate).
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:Stratul (straturile) la care imprimarea se va opri, permițând schimbarea filamentului. Imprimanta este întreruptă înainte de a începe stratul dat. Lăsați necompletat pentru a dezactiva. Pentru a face pauză pe mai multe straturi, separați numerele stratului cu punct și virgulă. De exemplu: „16; 37”.
+
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37". Rafts layers are not considered. The 1st pause layer is the first above the raft.
+Translated:Stratul (straturile) la care imprimarea se va opri, permițând schimbarea filamentului. Imprimanta este întreruptă înainte de a începe stratul dat. Lăsați necompletat pentru a dezactiva. Pentru a face pauză pe mai multe straturi, separați numerele stratului cu punct și virgulă. De exemplu: „16; 37”. Straturile plutelor nu sunt luate în considerare. Primul strat de pauză este primul de deasupra plutei.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".
 Translated:Stratul (straturile) la care imprimarea se va opri, permițând schimbarea filamentului. Imprimanta este întreruptă înainte de a începe stratul dat. Lăsați necompletat pentru a dezactiva. Pentru a face pauză pe mai multe straturi, separați numerele stratului cu punct și virgulă. De exemplu: \"16; 37\".
@@ -4964,7 +5054,7 @@ English:The maximum speed the printer can move. Uused for print time estimation.
 Translated:Viteza maximă pe care o poate mișca imprimanta. Se utilizează pentru estimarea timpului de imprimare.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:Timpul minim pe care trebuie să-l dureze un strat pentru a imprima. Dacă un strat va dura mai puțin decât această perioadă de timp, viteza de mișcare este redusă, astfel încât timpul de imprimare a stratului se va potrivi cu această valoare, până la viteza minimă de imprimare cel mai lentă.
+Translated:Timpul minim pe care trebuie să-l ia un strat pentru a imprima. Dacă un strat va dura mai puțin decât această perioadă de timp, viteza de mișcare este redusă, astfel încât timpul de imprimare a stratului se va potrivi cu această valoare, până la viteza minimă de imprimare cel mai lentă.
 
 English:The minimum amount of time the light must be off between exposures.
 Translated:Perioada minimă de timp în care lumina trebuie să fie stinsă între expuneri.
@@ -5054,7 +5144,7 @@ English:The pattern to draw for the generation of support material.
 Translated:Model de desenat pentru generarea de material suport.
 
 English:The percentage overlap a given printed line must have over the layer below to be supported.
-Translated:Suprapunerea procentuală pe care o anumită linie tipărită trebuie să aibă peste stratul de mai jos pentru a fi suportată.
+Translated:Suprapunerea procentuală pe care trebuie să o aibă o anumită linie imprimată peste stratul de mai jos pentru a fi suportată.
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:Poziția (coordonatele X și Y) a centrului patului de imprimare, în milimetri. În mod normal, aceasta este 1/2 dimensiunea patului pentru imprimantele carteziene și 0, 0 pentru imprimantele Delta.
@@ -5105,7 +5195,7 @@ English:The printer should now be 'homing'.
 Translated:Imprimanta ar trebui să fie acum „homing”.
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:Profilul pe care încercați să îl încărcați a fost corupt. În schimb, am încărcat ultimul dvs. profil {0} {1} utilizabil din istoricul profilului dvs. recent.
+Translated:Profilul pe care încercați să îl încărcați a fost corupt. În schimb, am încărcat ultimul dvs. profil utilizabil {0} {1} din istoricul profilului dvs. recent.
 
 English:The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.
 Translated:Raportul dintre extrudarea solicitată și extrudarea măsurată de senzori care va declanșa o eroare.
@@ -5171,7 +5261,7 @@ English:The speed at which the nozzle will move when printing the initial layers
 Translated:Viteza cu care se va mișca duza la imprimarea straturilor inițiale. Dacă este exprimată ca procent, viteza de umplere este modificată.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
-Translated:Viteza cu care se va mișca duza la recuperarea unei imprimări eșuate, pentru 1 strat.
+Translated:Viteza cu care se va mișca duza la recuperarea unei imprimări nereușite, pentru 1 strat.
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
 Translated:Viteza cu care se vor imprima straturile solide superioare. Poate fi setat în mod explicit sau ca procent din viteza de umplere.
@@ -5275,6 +5365,9 @@ Translated:Timpul necesar pentru a se încălzi înapoi de la răcire.
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:Timpul peste care să crească Extra Length On Restart la valoarea sa maximă. Sub acest timp se va aplica doar o parte din lungimea suplimentară. Lăsați 0 pentru a aplica toată cantitatea tot timpul.
 
+English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
+Translated:Timpul de imprimare a acestui cod G este estimat la {0} secunde. \NN\ Vă rugăm să verificați piesa dumneavoastră pentru erori dacă acest lucru este neașteptat.
+
 English:The Validation Threshold mush be greater than 0 and less than .5mm.
 Translated:Pragul de validare mush să fie mai mare de 0 și mai mic de 0,5 mm.
 
@@ -5309,7 +5402,7 @@ English:There is a recommended update available for MatterControl. Would you lik
 Translated:Există o actualizare recomandată disponibilă pentru MatterControl. Doriți să-l descărcați acum?
 
 English:There is a required update available
-Translated:Există o actualizare necesară disponibilă
+Translated:Există o actualizare necesară
 
 English:Thermal Runaway - Bed
 Translated:Thermal Runaway - Pat
@@ -5324,7 +5417,7 @@ English:This code to will provide read-only access.
 Translated:Acest cod va oferi acces numai pentru citire.
 
 English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
-Translated:Aceste date compensează dezalinierea mașinii și deformarea patului și asigură o bună aderență a primului strat.
+Translated:Aceste date compensează nealinierea mașinii și deformarea patului și asigură o bună aderență a primului strat.
 
 English:This data improves the alignment of dual extrusion prints.
 Translated:Aceste date îmbunătățesc alinierea imprimărilor cu extrudare duală.
@@ -5346,6 +5439,9 @@ Translated:Acesta este unghiul care ridică sau depozitează sonda z.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
 Translated:Aceasta este marca (de multe ori producătorul) de imprimantă vizată de acest profil.
+
+English:This is the MatterHackers sku representing this printer. If the printer is not offered on MatterHackers this can be set to a collection key.
+Translated:Acesta este codul MatterHackers care reprezintă această imprimantă. Dacă imprimanta nu este oferită pe MatterHackers, aceasta poate fi setată la o cheie de colectare.
 
 English:This is the model of printer this profile is targeting.
 Translated:Acesta este modelul de imprimantă vizat de acest profil.
@@ -5429,7 +5525,7 @@ English:To complete the next few steps you will need
 Translated:Pentru a finaliza următorii câțiva pași, veți avea nevoie
 
 English:To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.
-Translated:Pentru a termina modificarea setărilor monitorului, trebuie să reporniți MatterControl. Dacă după ce ați schimbat fonturile sunt prea mici, puteți ajusta dimensiunea textului.
+Translated:Pentru a termina modificarea setărilor monitorului, trebuie să reporniți MatterControl. Dacă după ce ați schimbat fonturile sunt prea mici, puteți regla dimensiunea textului.
 
 English:To Folder
 Translated:În Folder
@@ -5650,6 +5746,9 @@ Translated:Upgrade la Pro
 English:Upload
 Translated:Încărcați
 
+English:Uploading
+Translated:Încărcare
+
 English:Uploading...
 Translated:Se încarcă...
 
@@ -5812,6 +5911,9 @@ Translated:Așteptând să se încălzească patul
 English:Waiting for the bed to heat to {0} °C\nand the hotend to heat to {1} °C.\n\nThis will improve the accuracy of print leveling\nand ensure that no filament is stuck to your nozzle.\n\nWarning! The tip of the nozzle will be HOT!\nAvoid contact with your skin.
 Translated:Se așteaptă ca patul să se încălzească la {0} °C \n și hotend-ul să se încălzească la {1} °C. \NN\ Aceasta va îmbunătăți acuratețea nivelării imprimării \n și va asigura că niciun filament nu este lipit de duză. \NN\ Atenție! Vârful duzei va fi fierbinte! \n Evitați contactul cu pielea.
 
+English:Waiting for the bed to heat to {0} °C.\nThis will improve the accuracy of print leveling.
+Translated:Se așteaptă ca patul să se încălzească la {0} °C. \n Acest lucru va îmbunătăți acuratețea nivelării imprimării.
+
 English:Waiting for the hotend to heat to
 Translated:Așteptând să se încălzească hotend-ul
 
@@ -5852,13 +5954,13 @@ English:Warping
 Translated:Colmatare
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:Vom finaliza acum măsurarea înălțimii extruderului în această poziție.
+Translated:Acum vom finaliza măsurarea înălțimii extruderului în această poziție.
 
 English:We will now measure the probe offset from the top of a printed calibration object.
 Translated:Vom măsura acum decalajul sondei din partea de sus a unui obiect de calibrare imprimat.
 
 English:We will now refine our measurement of the extruder height at this position.
-Translated:Vom rafina acum măsurarea înălțimii extruderului în această poziție.
+Translated:Acum ne vom rafina măsurarea înălțimii extruderului în această poziție.
 
 English:We will now sample the top of the part.
 Translated:Vom eșantiona acum partea de sus a piesei.
@@ -5894,7 +5996,7 @@ English:What went wrong?
 Translated:Ce a mers prost?
 
 English:What's this?
-Translated:Ce este asta?
+Translated:Ce-i asta?
 
 English:wheel
 Translated:roată
@@ -5950,6 +6052,9 @@ Translated:Nu s-ar tăia corect
 English:Write Filter
 Translated:Filtru de scriere
 
+English:Writing G-Code
+Translated:Scrierea codului G
+
 English:X and Y Distance
 Translated:Distanța X și Y
 
@@ -5958,6 +6063,9 @@ Translated:X Intercept
 
 English:X Offset
 Translated:X Offset
+
+English:X Options
+Translated:X Opțiuni
 
 English:X Y Nozzle Offsets Have Been Calibrated
 Translated:X Y Decalajele duzei au fost calibrate
@@ -5974,11 +6082,14 @@ Translated:Y Intercept
 English:Y Offset
 Translated:Y Offset
 
+English:Y Options
+Translated:Y Opțiuni
+
 English:Yes
 Translated:da
 
 English:You are connected to the Emulator not an actual printer.
-Translated:Sunteți conectat la emulator, nu la o imprimantă reală.
+Translated:Sunteți conectat la emulator, nu o imprimantă reală.
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:Treceți la un alt mod de redare a miniaturilor. Dacă doriți, miniaturile actuale pot fi eliminate și recreate în noul stil. Puteți comuta oricând înainte și înapoi. Va exista o suprasarcină de procesare în timp ce noile miniaturi sunt create. \NN\ Doriți să vă reconstruiți acum miniaturile existente?
@@ -6014,7 +6125,7 @@ English:You may need to wait a minute for your printer to finish initializing.
 Translated:Poate fi necesar să așteptați un minut pentru ca imprimanta să termine de inițializare.
 
 English:You should have at least 3 top layers for this calibration to measure off of.
-Translated:Ar trebui să aveți cel puțin 3 straturi superioare pentru ca această calibrare să poată măsura.
+Translated:Ar trebui să aveți cel puțin 3 straturi superioare pentru ca această calibrare să se măsoare.
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:Imprimarea dvs. 3D a fost întreruptă automat. \NN\ Stratul {0} a fost atins.
@@ -6079,6 +6190,9 @@ Translated:Z Offset
 English:Z Offset is too large.
 Translated:Z Offset este prea mare.
 
+English:Z Options
+Translated:Z Opțiuni
+
 English:ZIP File
 Translated:Fișier Zip
 
@@ -6086,7 +6200,7 @@ English:Zoom
 Translated:Zoom
 
 English:Zoom in
-Translated:A mari
+Translated:Mareste
 
 English:Zoom out
 Translated:A micsora

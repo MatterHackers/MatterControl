@@ -38,12 +38,38 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public override void Apply(Agg.UI.UndoBuffer undoBuffer)
         {
+			var indexExpansions = new (string key, int index)[] 
+			{
+				("[index]", 0),
+				("[index0]", 0),
+				("[index1]", 1),
+				("[index2]", 2),
+			};
+
 			// convert [index] expressions to their constant values
 			foreach (var item in this.Descendants((item) => !(item is ArrayObject3D)))
 			{
-				foreach(var expression in SheetObject3D.GetActiveExpressions(item, "[index]", false))
-                {
-					expression.Expression = expression.Expression.Replace("[index]", SheetObject3D.RetrieveArrayIndex(item, 0).ToString());
+				foreach (var expansion in indexExpansions)
+				{
+					foreach (var expression in SheetObject3D.GetActiveExpressions(item, expansion.key, false))
+					{
+						expression.Expression = expression.Expression.Replace(expansion.key, SheetObject3D.RetrieveArrayIndex(item, expansion.index).ToString());
+					}
+
+					// Also convert index expressions in ComponentObjects to their constants
+					if (item is ComponentObject3D component)
+					{
+						for (int i = 0; i < component.SurfacedEditors.Count; i++)
+						{
+							var (cellId, cellData) = component.DecodeContent(i);
+
+							if (cellId != null)
+							{
+								var newValue = cellData.Replace(expansion.key, SheetObject3D.RetrieveArrayIndex(component, expansion.index).ToString());
+								component.SurfacedEditors[i] = "!" + cellId + "," + newValue;
+							}
+						}
+					}
 				}
 			}
 
@@ -78,6 +104,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// we don't need to rebuild our source object
 					return false;
 				}
+				else if (item.Parent is ComponentObject3D)
+                {
+					return false;
+                }
 
 				// process everything else
 				return true;

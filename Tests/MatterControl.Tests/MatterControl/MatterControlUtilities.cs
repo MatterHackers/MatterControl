@@ -829,7 +829,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder(containerName);
 			}
 
-			var partWidget = testRunner.GetWidgetByName(partName, out _) as ListViewItemBase;
+			var partWidget = testRunner.GetWidgetByName(partName, out _, onlyVisible: false) as ListViewItemBase;
 			if (!partWidget.IsSelected)
 			{
 				testRunner.ScrollIntoView(partName);

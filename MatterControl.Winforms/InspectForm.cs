@@ -1,28 +1,54 @@
-﻿using System;
+﻿/*
+Copyright (c) 2022, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public partial class InspectForm : WinformsSystemWindow.FormInspector
 	{
-		private System.Windows.Forms.TreeNode activeTreeNode;
+		private TreeNode activeTreeNode;
 		private GuiWidget inspectedSystemWindow;
 
 		private Vector2 mousePosition;
 
-		private Dictionary<GuiWidget, System.Windows.Forms.TreeNode> aggTreeNodes = new Dictionary<GuiWidget, System.Windows.Forms.TreeNode>();
-		private Dictionary<IObject3D, System.Windows.Forms.TreeNode> sceneTreeNodes = new Dictionary<IObject3D, System.Windows.Forms.TreeNode>();
+		private Dictionary<GuiWidget, TreeNode> aggTreeNodes = new Dictionary<GuiWidget, TreeNode>();
+		private Dictionary<IObject3D, TreeNode> sceneTreeNodes = new Dictionary<IObject3D, TreeNode>();
 
 		private InteractiveScene scene;
 		private View3DWidget view3DWidget;
@@ -119,7 +145,7 @@ namespace MatterHackers.MatterControl
 					activeTreeNode.Checked = false;
 				}
 
-				if (aggTreeNodes.TryGetValue(_inspectedWidget, out System.Windows.Forms.TreeNode treeNode))
+				if (aggTreeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
 				{
 					aggTreeView.SelectedNode = treeNode;
 
@@ -156,14 +182,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddItemEnsureAncestors(GuiWidget widget, string text = null, System.Windows.Forms.TreeNode childNode = null, bool showAllParents = true)
+		private void AddItemEnsureAncestors(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
 		{
 			if (text == null)
 			{
 				text = BuildDefaultName(widget);
 			}
 
-			if (aggTreeNodes.TryGetValue(widget, out System.Windows.Forms.TreeNode existingNode))
+			if (aggTreeNodes.TryGetValue(widget, out TreeNode existingNode))
 			{
 				if (childNode != null)
 				{
@@ -173,7 +199,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				var node = new System.Windows.Forms.TreeNode(text)
+				var node = new TreeNode(text)
 				{
 					Tag = widget
 				};
@@ -204,9 +230,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private TreeNode AddItem(GuiWidget widget, System.Windows.Forms.TreeNode parentNode)
+		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode)
 		{
-			var node = new System.Windows.Forms.TreeNode(BuildDefaultName(widget))
+			var node = new TreeNode(BuildDefaultName(widget))
 			{
 				Tag = widget
 			};
@@ -226,9 +252,9 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private TreeNode AddItem(IObject3D item, System.Windows.Forms.TreeNode parentNode)
+		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
 		{
-			var node = new System.Windows.Forms.TreeNode(BuildDefaultName(item))
+			var node = new TreeNode(BuildDefaultName(item))
 			{
 				Tag = item
 			};
@@ -249,7 +275,7 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private void AddTree(GuiWidget widget, System.Windows.Forms.TreeNode parent)
+		private void AddTree(GuiWidget widget, TreeNode parent)
 		{
 			var node = AddItem(widget, parent);
 
@@ -259,7 +285,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddTree(IObject3D item, System.Windows.Forms.TreeNode parent)
+		private void AddTree(IObject3D item, TreeNode parent)
 		{
 			var node = AddItem(item, parent);
 
@@ -322,7 +348,7 @@ namespace MatterHackers.MatterControl
 
 		public void MoveUpTree()
 		{
-			if (activeTreeNode?.Parent is System.Windows.Forms.TreeNode parent)
+			if (activeTreeNode?.Parent is TreeNode parent)
 			{
 				this.InspectedWidget = parent.Tag as GuiWidget;
 			}
@@ -330,7 +356,7 @@ namespace MatterHackers.MatterControl
 
 		public void MoveDownTree()
 		{
-			if (activeTreeNode?.Nodes.Cast<System.Windows.Forms.TreeNode>().FirstOrDefault() is System.Windows.Forms.TreeNode firstChild)
+			if (activeTreeNode?.Nodes.Cast<TreeNode>().FirstOrDefault() is TreeNode firstChild)
 			{
 				this.InspectedWidget = firstChild.Tag as GuiWidget;
 			}

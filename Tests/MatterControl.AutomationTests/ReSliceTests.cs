@@ -86,73 +86,62 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					};
 
 					// Add a cube to the bed
-					testRunner.NavigateToFolder("Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cube_20x20x20.stl");
-					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Bed Menu Item");
-					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Bed Menu Item");
-
-					// start the print
-					testRunner.StartPrint(printer, pauseAtLayers: "50;60");
-
-					// Wait for pause
-					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'
-					testRunner.ClickByName("No Button");
-
-					// Delete the cube
-					testRunner.ClickByName("Bed Options Menu");
-					testRunner.ClickByName("Clear Bed Menu Item");
-
-					testRunner.Delay();
-
-					// ensure there is nothing on the bed
+					testRunner.NavigateToFolder("Queue Row Item Collection")
+						.ClickByName("Row Item cube_20x20x20.stl")
+						.ClickByName("Print Library Overflow Menu")
+						.ClickByName("Add to Bed Menu Item")
+						.Delay()
+						.ClickByName("Print Library Overflow Menu")
+						.Delay()
+						.ClickByName("Add to Bed Menu Item")
+						.Delay()
+						// start the print
+						.StartPrint(printer, pauseAtLayers: "50;60")
+						// Wait for pause
+						// the yes button is 'Resume'
+						.ClickByName("No Button", secondsToWait: 80)
+						// Delete the cube
+						.ClickByName("Bed Options Menu")
+						.ClickByName("Clear Bed Menu Item")
+						.Delay();
+						// ensure there is nothing on the bed
 					Assert.AreEqual(0, scene.Children.Count);
 
 					// Add a cylinder
-					testRunner.NavigateToFolder("Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cylinder_5x20.stl");
-					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Bed Menu Item");
-					testRunner.ClickByName("Add Content Menu");
-
-					// re-slice the part
-					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Switch Button", 10); // The change to new g-code
-					testRunner.ClickByName("Switch Button");
-
-					// and resume the print
-					testRunner.ClickByName("Resume Task Button");
-
-					// Wait for next pause
-					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'
-					testRunner.ClickByName("No Button");
-
-					// Switch back to the cube
-					// Delete the cylinder
-					testRunner.ClickByName("Bed Options Menu");
-					testRunner.ClickByName("Clear Bed Menu Item");
-
+					testRunner.NavigateToFolder("Queue Row Item Collection")
+						.ClickByName("Row Item cylinder_5x20.stl")
+						.ClickByName("Print Library Overflow Menu")
+						.ClickByName("Add to Bed Menu Item")
+						.ClickByName("Add Content Menu")
+						// re-slice the part
+						.ClickByName("Re-Slice Button")
+						// The change to new g-code
+						.ClickByName("Switch Button", secondsToWait: 10)
+						// and resume the print
+						.ClickByName("Resume Task Button")
+						// Wait for next pause
+						.ClickByName("No Button", secondsToWait: 80)
+						// Switch back to the cube
+						// Delete the cylinder
+						.ClickByName("Bed Options Menu")
+						.ClickByName("Clear Bed Menu Item");
+					
 					// ensure there is nothing on the bed
 					Assert.AreEqual(0, scene.Children.Count);
 
 					// add the cube
-					testRunner.NavigateToFolder("Queue Row Item Collection");
-					testRunner.ClickByName("Row Item cube_20x20x20.stl");
-					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Bed Menu Item");
-					testRunner.ClickByName("Add Content Menu");
-
-					// re-slice the part
-					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Switch Button", 10); // The change to new g-code
-					testRunner.ClickByName("Switch Button");
-
-					// and resume the print
-					testRunner.ClickByName("Resume Task Button");
-
-					// Wait for done
-					testRunner.WaitForPrintFinished(printer);
+					testRunner.NavigateToFolder("Queue Row Item Collection")
+						.ClickByName("Row Item cube_20x20x20.stl")
+						.ClickByName("Print Library Overflow Menu")
+						.ClickByName("Add to Bed Menu Item")
+						.ClickByName("Add Content Menu")
+						// re-slice the part
+						.ClickByName("Re-Slice Button")
+						.ClickByName("Switch Button", secondsToWait: 10)
+						// and resume the print
+						.ClickByName("Resume Task Button")
+						// Wait for done
+						.WaitForPrintFinished(printer);
 
 					// this will make sure we turned off line splitting and had good data about the extruder position
 					Assert.AreEqual(-7, largestRetraction, "Airwolf HD has a retraction of 7mm, make sure we had one");

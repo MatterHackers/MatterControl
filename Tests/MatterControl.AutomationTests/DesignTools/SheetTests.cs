@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			AutomationRunner.ShowWindowAndExecuteTests(systemWindow, testRunner =>
 			{
-				testRunner.Delay(100);
+				testRunner.Delay(1);
 
 				return Task.CompletedTask;
 			},
