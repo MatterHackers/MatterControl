@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public GuiWidget ActionWidget { get; set; }
 
-		public SettingsRow(string title, string helpText, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
+		public SettingsRow(string title, string helpText, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false, bool iconWhiteBackground = true)
 		{
 			using (this.LayoutLock())
 			{
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (icon != null)
 				{
-					if (true)
+					if (iconWhiteBackground)
 					{
 						this.AddChild(imageWidget = new WhiteBackground(icon));
 					}

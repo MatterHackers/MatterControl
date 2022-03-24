@@ -35,7 +35,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using Newtonsoft.Json;
 using static MatterHackers.DataConverters3D.Object3DExtensions;
 

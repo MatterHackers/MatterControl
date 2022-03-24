@@ -53,8 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var settingsItem = new SettingsItem(
 				title,
 				textWidget,
-				theme,
-				enforceGutter: false);
+				theme);
 
 			this.AddChild(settingsItem);
 

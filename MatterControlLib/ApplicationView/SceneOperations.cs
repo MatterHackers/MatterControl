@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -856,6 +857,9 @@ namespace MatterHackers.MatterControl
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
+#if DEBUG
+						AddSliceSettingsOperation(),
+#endif
 						ToggleSupportOperation(),
 						ToggleWipeTowerOperation(),
 					}
@@ -1312,6 +1316,11 @@ namespace MatterHackers.MatterControl
 
 		private static void RegisterIconsAndIdsRecursive(SceneOperation operation)
 		{
+			if (operation == null)
+            {
+				return;
+            }
+
 			if (operation.ResultType != null
 				&& !Icons.ContainsKey(operation.ResultType))
 			{
@@ -1429,6 +1438,33 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
+			};
+		}
+
+		private static SceneOperation AddSliceSettingsOperation()
+		{
+			var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
+
+#if !DEBUG
+			if (!isExperimental)
+			{
+				return null;
+			}
+#endif
+
+			return new SceneOperation("Add Slice Settings")
+			{
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(SliceSettingsObject3D),
+				TitleGetter = () => "Add Slice Settings".Localize(),
+				Action = (sceneContext) =>
+				{
+					var sliceSettings = new SliceSettingsObject3D();
+					sliceSettings.WrapSelectedItemAndSelect(sceneContext.Scene);
+				},
+				Icon = (theme) => StaticData.Instance.LoadIcon("settings.png", 16, 16).SetToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};

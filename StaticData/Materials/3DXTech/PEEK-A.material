@@ -6,6 +6,7 @@
     {
       "layer_name": "PEEK",
       "layer_id": "63342beb-0f41-4afb-bf96-bf73bd168bd7",
+      "filament_density": "1.32",
       "bed_temperature": "130",
       "bridge_fan_speed": "50",
       "max_fan_speed": "0",

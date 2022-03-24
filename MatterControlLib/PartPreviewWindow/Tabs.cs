@@ -265,11 +265,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TabBar.MouseMove += (s, e) =>
 			{
-				if (e?.DragFiles?.Count > 0
-					&& e.DragFiles.Where(f => ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).Any())
+				try
 				{
-					e.AcceptDrop = true;
+					if (e?.DragFiles?.Count > 0
+						&& e.DragFiles.Where(f => ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).Any())
+					{
+						e.AcceptDrop = true;
+					}
 				}
+				catch
+                {
+                }
 			};
 
 			TabBar.MouseEnterBounds += (s, e) =>

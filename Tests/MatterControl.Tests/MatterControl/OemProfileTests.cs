@@ -184,7 +184,7 @@ M300 S3000 P30   ; Resume Tone";
 		}
 
 		[Test, RunInApplicationDomain]
-		public void AllMaterialsHaveSkuOrUrlSet()
+		public void AllMaterialsLibraryHasGoodProfiles()
 		{
 			var materialSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Materials");
 			var directoryInfo = new DirectoryInfo(materialSettingsDirectory);
@@ -192,6 +192,42 @@ M300 S3000 P30   ; Resume Tone";
 			var profiles = files.Select(f => PrinterSettings.LoadFile(f.FullName)).ToList();
 
 			var allMaterialIds = new HashSet<string>();
+
+			var notPresentKeys = new string[]
+			{
+				"brims",
+				"brims_layers",
+				"coast_at_end_distance",
+				"create_brim",
+				"create_skirt",
+				"expand_thin_walls",
+				"extruder_count",
+				"extrusion_multiplier",
+				"extrusion_ratio",
+				"filament_diameter",
+				"fill_angle",
+				// "fill_density", // BASF uses this
+				"fill_pattern",
+				"fill_thin_gaps",
+				"first_layer_extrusion_width",
+				"first_layer_height",
+				"layer_height",
+				"monotonic_solid_infill"
+			};
+
+			var isPresentKeys = new string[]
+			{
+				"bed_temperature_buildtak",
+				"bed_temperature_garolite",
+				"bed_temperature_glass",
+				"bed_temperature_kapton",
+				"bed_temperature_pei",
+				"filament_density",
+				"layer_id",
+				"layer_name",
+				"material_sku",
+				"temperature",
+			};
 
 			for(var i = 0; i < profiles.Count; i++)
             {
@@ -201,6 +237,15 @@ M300 S3000 P30   ; Resume Tone";
 				profile.ActiveMaterialKey = material.LayerID;
 				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)), $"All profiles should have a material_sku set {files[i].FullName}");
 				Assert.IsTrue(!allMaterialIds.Contains(material.LayerID), $"Every material needs a unique Id {files[i].FullName}");
+				foreach(var key in isPresentKeys)
+                {
+					Assert.IsTrue(material.ContainsKey(key), $"Material {files[i].FullName} should include {key} setting");
+				}
+
+				foreach (var key in notPresentKeys)
+                {
+					Assert.IsTrue(!material.ContainsKey(key), $"Material {files[i].FullName} should not include {key} setting");
+				}
 				allMaterialIds.Add(material.LayerID);
 			}
 		}

@@ -229,6 +229,9 @@ Translated:Add Note
 English:Add Note...
 Translated:Add Note...
 
+English:Add Slice Settings
+Translated:Add Slice Settings
+
 English:Add System File to Bed
 Translated:Add System File to Bed
 

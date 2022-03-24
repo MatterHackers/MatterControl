@@ -66,13 +66,12 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public static SystemWindow RootSystemWindow { get; internal set; }
 
-		public static ThemeConfig Theme => themeset.Theme;
+		public static ThemeConfig Theme => ThemeSet.Theme;
 
-		public static ThemeConfig MenuTheme => themeset.MenuTheme;
+		public static ThemeConfig MenuTheme => ThemeSet.MenuTheme;
 
-		private static ThemeSet themeset;
-
-		public static ThemeSet ThemeSet => themeset;
+		private static ThemeSet _themeset;
+		public static ThemeSet ThemeSet => _themeset;
 
 		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
@@ -106,22 +105,22 @@ namespace MatterHackers.MatterControl
 			{
 				if (File.Exists(ProfileManager.Instance.ProfileThemeSetPath))
 				{
-					themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
-					themeset.Theme.EnsureDefaults();
+					_themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
+					ThemeSet.Theme.EnsureDefaults();
 
 					// If the serialized format is older than the current format, null and fall back to latest default below
-					if (themeset.SchemeVersion != ThemeSet.LatestSchemeVersion)
+					if (ThemeSet.SchemeVersion != ThemeSet.LatestSchemeVersion)
 					{
-						themeset = null;
+						_themeset = null;
 					}
 				}
 			}
 			catch { }
 
-			if (themeset == null)
+			if (ThemeSet == null)
 			{
 				var themeProvider = ThemeProviders["Modern"];
-				themeset = themeProvider.GetTheme("Modern-Dark");
+				_themeset = themeProvider.GetTheme("Modern-Dark");
 			}
 
 			ToolTipManager.CreateToolTip = MatterControlToolTipWidget;
@@ -178,18 +177,18 @@ namespace MatterHackers.MatterControl
 
 		public static void SetThemeAccentColor(Color accentColor)
 		{
-			themeset.SetAccentColor(accentColor);
-			AppContext.SetTheme(themeset);
+			ThemeSet.SetAccentColor(accentColor);
+			AppContext.SetTheme(ThemeSet);
 		}
 
 		public static void SetTheme(ThemeSet themeSet)
 		{
-			themeset = themeSet;
+			_themeset = themeSet;
 
 			File.WriteAllText(
 				ProfileManager.Instance.ProfileThemeSetPath,
 				JsonConvert.SerializeObject(
-					themeset,
+					ThemeSet,
 					Formatting.Indented,
 					new JsonSerializerSettings
 					{
@@ -198,7 +197,7 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(() =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.Name);
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, ThemeSet.Name);
 
 				// Explicitly fire ReloadAll in response to user interaction
 				ApplicationController.Instance.ReloadAll().ConfigureAwait(false);

@@ -349,31 +349,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Action = () =>
 				{
 					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams("settings files|*.printer,*.material"),
+						new OpenFileDialogParams("settings files|*.printer;*.material"),
 						(dialogParams) =>
 						{
-							// if there is only a single materials setting load it directly
-							var settingsToImport = PrinterSettings.LoadFile(dialogParams.FileName);
-							if (Path.GetExtension(dialogParams.FileName).ToLower() == ".material"
-								&& settingsToImport.MaterialLayers.Count == 1)
+							if (!string.IsNullOrEmpty(dialogParams.FileName))
 							{
-								var printerSettingsLayer = new PrinterSettingsLayer();
-								var sourceFilter = new List<PrinterSettingsLayer>()
+								// if there is only a single materials setting load it directly
+								var settingsToImport = PrinterSettings.LoadFile(dialogParams.FileName);
+								if (Path.GetExtension(dialogParams.FileName).ToLower() == ".material"
+									&& settingsToImport.MaterialLayers.Count == 1)
 								{
-									settingsToImport.MaterialLayers[0]
-								};
-								printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, true);
-								printer.Settings.MaterialLayers.Add(printerSettingsLayer);
-								var newMaterial = printer.Settings.MaterialLayers[printer.Settings.MaterialLayers.Count - 1];
-								printer.Settings.SetValue(SettingsKey.active_material_key, newMaterial.LayerID);
+									var printerSettingsLayer = new PrinterSettingsLayer();
+									var sourceFilter = new List<PrinterSettingsLayer>()
+									{
+										settingsToImport.MaterialLayers[0]
+									};
+									
+									printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, true);
+									printer.Settings.MaterialLayers.Add(printerSettingsLayer);
+									var newMaterial = printer.Settings.MaterialLayers[printer.Settings.MaterialLayers.Count - 1];
+									printer.Settings.SetValue(SettingsKey.active_material_key, newMaterial.LayerID);
 
-							}
-							else
-							{
-								// else open a dialog to select what setting to improt
-								if (!string.IsNullOrEmpty(dialogParams.FileName))
+								}
+								else
 								{
-									DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+									// else open a dialog to select what setting to import
+									if (!string.IsNullOrEmpty(dialogParams.FileName))
+									{
+										DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+									}
 								}
 							}
 						});

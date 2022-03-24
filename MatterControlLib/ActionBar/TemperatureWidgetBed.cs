@@ -96,8 +96,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						var goalTemp = itemChecked ? printer.Settings.Helpers.ActiveBedTemperature : 0;
 						printer.Connection.TargetBedTemperature = goalTemp;
 					}
-				},
-				enforceGutter: false));
+				}));
 
 			var toggleWidget = heatedBedSettingItem.Children.Where(o => o is ICheckbox).FirstOrDefault();
 			toggleWidget.Name = "Toggle Heater";

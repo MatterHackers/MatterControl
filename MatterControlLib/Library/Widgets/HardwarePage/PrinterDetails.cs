@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				whiteBackgroundWidget.Selectable = true;
 				whiteBackgroundWidget.ImageWidget.Click += (s, e) =>
 				{
-					ApplicationController.LaunchBrowser($"www.matterhackers.com/qr/{sku}");
+					ApplicationController.LaunchBrowser($"https://www.matterhackers.com/qr/{sku}");
 				};
 			}
 

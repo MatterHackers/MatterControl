@@ -17,12 +17,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			public Action<bool> ToggleAction { get; set; }
 		}
 
-		public SettingsItem(string text, ThemeConfig theme, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
-			: this(text, CreateToggleSwitch(toggleSwitchConfig, theme), theme, optionalControls, iconImage, enforceGutter)
+		public SettingsItem(string text, ThemeConfig theme, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
+			: this(text, CreateToggleSwitch(toggleSwitchConfig, theme), theme, optionalControls, iconImage)
 		{
 		}
 
-		public SettingsItem (string text, GuiWidget settingsControls, ThemeConfig theme, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
+		public SettingsItem (string text, GuiWidget settingsControls, ThemeConfig theme, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null)
 			: base (text, "", theme, imageBuffer)
 		{
 			this.SettingsControl = settingsControls;
