@@ -85,10 +85,11 @@ namespace MatterHackers.MatterControl.Library
 		{
 			var name = bedConfig.Printer.PrinterName;
 			var mcxPath = "";
-			var startTime = UiThread.CurrentTimerMs;
+			var tries = 0;
 			// try to get a valid filename for up to 3 seconds (3 tries at an unused filename)
-			while (File.Exists(mcxPath)
-				&& UiThread.CurrentTimerMs < startTime + 3000)
+			while (string.IsNullOrEmpty(mcxPath)
+				|| (File.Exists(mcxPath)
+				&& tries < 20))
 			{
 				string now = DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 				var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");

@@ -334,6 +334,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(0, 7),
 			};
 
+#if false
 			// buttons for the control of defaults
 			var topButtonData = new (string, string)[]
 			{
@@ -342,14 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				(nameof(Hide_All), "Hide All".Localize()),
 			};
 
-#if false
-			var startingValue = operationGroup.Collapse ? nameof(Collapsed) : nameof(Expanded);
-			if (!operationGroup.Visible)
-			{
-				startingValue = nameof(Hidden);
-			}
-
-			popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
+			popupMenu.CreateButtonSelectMenuItem("Group Setings".Localize(), topButtonData, nameof(Default), (value) =>
 			{
 				switch (value)
 				{
