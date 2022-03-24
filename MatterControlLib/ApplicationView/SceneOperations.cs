@@ -857,7 +857,9 @@ namespace MatterHackers.MatterControl
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
+#if DEBUG
 						AddSliceSettingsOperation(),
+#endif
 						ToggleSupportOperation(),
 						ToggleWipeTowerOperation(),
 					}
