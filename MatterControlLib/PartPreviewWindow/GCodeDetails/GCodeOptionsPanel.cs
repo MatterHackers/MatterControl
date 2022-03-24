@@ -104,8 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new SettingsItem(
 					"Color View".Localize(),
 					theme,
-					optionalControls: buttonPanel,
-					enforceGutter: false));
+					optionalControls: buttonPanel));
 
 			gcodeOptions = sceneContext.RendererOptions;
 
@@ -166,8 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Name = option.Title + " Toggle",
 							Checked = option.IsChecked(),
 							ToggleAction = option.SetValue
-						},
-						enforceGutter: false);
+						});
 
 					settingsItem.Padding = settingsItem.Padding.Clone(right: 8);
 

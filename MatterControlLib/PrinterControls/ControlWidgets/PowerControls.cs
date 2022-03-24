@@ -61,8 +61,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 							printer.Connection.AtxPowerEnabled = itemChecked;
 						}
 					}
-				},
-				enforceGutter: false));
+				}));
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;

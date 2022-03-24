@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				});
 				loadUnloadButtonRow.AddChild(unloadButton);
 
-				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtonRow, theme, enforceGutter: false));
+				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtonRow, theme));
 			}
 
 			// Add the Extrude buttons
@@ -116,8 +116,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(new SettingsItem(
 				loadUnloadButtonRow == null ? "Filament".Localize() : "", // Don't put the name if we put in a load and unload button (it has the name)
 				extrudeRetractButtonRow,
-				theme,
-				enforceGutter: false));
+				theme));
 
 			var moveButtonsContainer = new FlowLayoutWidget()
 			{
@@ -175,7 +174,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(3, 0)
 			});
 
-			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, theme, enforceGutter: false));
+			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, theme));
 		}
 	}
 
@@ -259,8 +258,7 @@ namespace MatterHackers.MatterControl.ActionBar
 							printer.Connection.SetTargetHotendTemperature(hotendIndex, 0);
 						}
 					}
-				},
-				enforceGutter: false));
+				}));
 
 			var toggleWidget = hotendRow.Children.FirstOrDefault(o => o is ICheckbox);
 			toggleWidget.Name = "Toggle Heater";
@@ -373,7 +371,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 
 				// add in the material selector
-				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
+				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme)
 				{
 					Border = new BorderDouble(0, 1),
 					BorderColor = AppContext.MenuTheme.RowBorder

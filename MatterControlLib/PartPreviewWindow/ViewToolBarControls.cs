@@ -423,6 +423,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var operation in operationGroup.Operations)
 			{
+				if (operation == null)
+                {
+					continue;
+                }
+
 				var operationButton = new OperationIconButton(operation, sceneContext, theme);
 				operationButtons.Add(operationButton, operation);
 

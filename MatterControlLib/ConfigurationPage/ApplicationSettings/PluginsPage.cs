@@ -74,8 +74,7 @@ namespace MatterHackers.MatterControl
 									plugins.Disable(plugin.TypeName);
 								}
 							}
-						},
-						enforceGutter: false));
+						}));
 			}
 
 			contentScroll.AddChild(formContainer);

@@ -1314,6 +1314,11 @@ namespace MatterHackers.MatterControl
 
 		private static void RegisterIconsAndIdsRecursive(SceneOperation operation)
 		{
+			if (operation == null)
+            {
+				return;
+            }
+
 			if (operation.ResultType != null
 				&& !Icons.ContainsKey(operation.ResultType))
 			{
