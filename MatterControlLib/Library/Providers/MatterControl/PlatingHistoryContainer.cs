@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -83,9 +84,16 @@ namespace MatterHackers.MatterControl.Library
 		internal ILibraryItem NewBedPlate(BedConfig bedConfig)
 		{
 			var name = bedConfig.Printer.PrinterName;
-			string now =  DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-			var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
-			string mcxPath = Path.Combine(this.FullPath, filename); 
+			var mcxPath = "";
+			var startTime = UiThread.CurrentTimerMs;
+			// try to get a valid filename for up to 3 seconds (3 tries at an unused filename)
+			while (File.Exists(mcxPath)
+				&& UiThread.CurrentTimerMs < startTime + 3000)
+			{
+				string now = DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
+				var filename = ApplicationController.Instance.SanitizeFileName($"{name} - {now}.mcx");
+				mcxPath = Path.Combine(this.FullPath, filename);
+			}
 			
 			File.WriteAllText(mcxPath, new Object3D().ToJson().Result);
 

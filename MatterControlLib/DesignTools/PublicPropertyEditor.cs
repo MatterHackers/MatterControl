@@ -297,6 +297,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
+			if (property == null
+				|| context == null)
+            {
+				return null;
+            }
+
 			var localItem = context.item;
 			var object3D = property.Item;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
