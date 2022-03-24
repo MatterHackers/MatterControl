@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class GroupObject3D : Object3D
+    public class GroupObject3D : Object3D
 	{
 		public override bool CanApply => true;
 

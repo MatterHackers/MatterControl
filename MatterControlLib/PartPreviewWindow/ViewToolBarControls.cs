@@ -323,6 +323,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string Expanded;
 		private string Hidden;
 
+		private string Default;
+		private string Hide_All;
+		private string Expand_All;
+
 		private PopupMenu GenerateToolBarOptionsMenu(ThemeConfig theme)
 		{
 			var popupMenu = new PopupMenu(theme)
@@ -330,6 +334,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(0, 7),
 			};
 
+			// buttons for the control of defaults
+			var topButtonData = new (string, string)[]
+			{
+				(nameof(Default), "Default".Localize()),
+				(nameof(Expand_All), "Expand All".Localize()),
+				(nameof(Hide_All), "Hide All".Localize()),
+			};
+
+#if false
+			var startingValue = operationGroup.Collapse ? nameof(Collapsed) : nameof(Expanded);
+			if (!operationGroup.Visible)
+			{
+				startingValue = nameof(Hidden);
+			}
+
+			popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
+			{
+				switch (value)
+				{
+					case nameof(Expanded):
+						operationGroup.Collapse = false;
+						operationGroup.Visible = true;
+						break;
+
+					case nameof(Collapsed):
+						operationGroup.Collapse = true;
+						operationGroup.Visible = true;
+						break;
+
+					case nameof(Hidden):
+						operationGroup.Visible = false;
+						break;
+				}
+			}, 40 * GuiWidget.DeviceScale);
+
+			popupMenu.CreateSeparator();
+#endif
+
+			// the buttons per setting
 			var buttonData = new (string, string)[]
 			{
 				(nameof(Collapsed), "Collapse".Localize()),
