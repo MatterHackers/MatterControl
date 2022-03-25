@@ -1,0 +1,29 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "t-glase (Taulman)",
+      "layer_id": "2042dcf4-c242-4cb5-a220-91a3aa73f043",
+      "external_perimeter_speed": "15",
+      "extruder_wipe_temperature": "160",
+      "first_layer_speed": "10",
+      "infill_speed": "22",
+      "max_fan_speed": "50",
+      "min_fan_speed": "40",
+      "min_print_speed": "7",
+      "nozzle_diameter": "0.6",
+      "perimeter_speed": "18",
+      "slowdown_below_layer_time": "20",
+      "temperature": "240",
+      "top_solid_infill_speed": "15",
+      "layer_etag": "",
+      "layer_source": ""
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

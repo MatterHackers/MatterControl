@@ -94,11 +94,11 @@ namespace MatterHackers.GCodeVisualizer
 				fixed (ColorVertexData* pFixedColorData = colorVertexData)
 				{
 					byte* pColorData = (byte*)(pFixedColorData + offset);
-					GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(pColorData));
 					byte* pNormalData = pColorData + 4;
-					GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(pNormalData));
 					byte* pPosition = pNormalData + 12;
 					GL.VertexPointer(3, VertexPointerType.Float, ColorVertexData.Stride, new IntPtr(pPosition));
+					GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(pNormalData));
+					GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(pColorData));
 					GL.DrawArrays(BeginMode.Triangles, ColorVertexData.Stride, Math.Min(colorVertexData.Length, count));
 				}
 			}

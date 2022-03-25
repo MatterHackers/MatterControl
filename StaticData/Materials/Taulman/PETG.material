@@ -1,0 +1,26 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "PETG Taulman (on Paper Tape)",
+      "layer_id": "5d87ab7d-5579-4fc8-acf0-33b1331efeff",
+      "bed_temperature": "70",
+      "bridge_fan_speed": "100",
+      "disable_fan_first_layers": "2",
+      "filament_diameter": "1.73",
+      "max_fan_speed": "100",
+      "min_fan_speed": "100",
+      "retract_length": "3",
+      "temperature": "240",
+      "z_offset": "0",
+      "layer_etag": "",
+      "layer_source": ""
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

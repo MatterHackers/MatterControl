@@ -1,0 +1,25 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "bed_temperature": "80",
+      "external_perimeter_speed": "45",
+      "extruder_wipe_temperature": "160",
+      "infill_speed": "55",
+      "layer_id": "07183e86-9108-47fd-b138-7fdec91c4a4c",
+      "layer_name": "PCTPE (Taulman)",
+      "max_fan_speed": "20",
+      "min_fan_speed": "10",
+      "perimeter_speed": "50",
+      "slowdown_below_layer_time": "15",
+      "temperature": "230",
+      "top_solid_infill_speed": "45"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

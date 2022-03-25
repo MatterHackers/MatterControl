@@ -1,0 +1,26 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "bed_temperature": "100",
+      "external_perimeter_speed": "45",
+      "extruder_wipe_temperature": "180",
+      "infill_speed": "55",
+      "layer_id": "a160e052-1fc6-4843-a74e-305d4f01ed13",
+      "layer_name": "Alloy 910 (Taulman)",
+      "max_fan_speed": "50",
+      "min_fan_speed": "3",
+      "perimeter_speed": "50",
+      "retract_length": "1.5",
+      "slowdown_below_layer_time": "15",
+      "temperature": "235",
+      "top_solid_infill_speed": "45"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

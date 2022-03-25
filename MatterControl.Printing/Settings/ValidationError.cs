@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl
 		public static readonly string ItemToSTLExportInvalid = nameof(ItemToSTLExportInvalid);
 		public static readonly string NoItemsToExport = nameof(NoItemsToExport);
 		public static readonly string NoPrintableParts = nameof(NoPrintableParts);
+		public static readonly string BedSurfaceNotSelected = nameof(BedSurfaceNotSelected);
+		public static readonly string MaterialNotSelected = nameof(MaterialNotSelected);
 		public static readonly string NoZipItemsToExport = nameof(NoZipItemsToExport);
 		public static readonly string PrinterDisconnected = nameof(PrinterDisconnected);
 		public static readonly string PrinterSetupRequired = nameof(PrinterSetupRequired);

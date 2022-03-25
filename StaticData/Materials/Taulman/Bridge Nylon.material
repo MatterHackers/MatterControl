@@ -1,0 +1,26 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "bed_temperature": "110",
+      "external_perimeter_speed": "35",
+      "extruder_wipe_temperature": "160",
+      "first_layer_speed": "12",
+      "infill_speed": "45",
+      "layer_id": "96d5a543-c84f-47d1-b55d-6d2a324241c4",
+      "layer_name": "Bridge Nylon (Taulman)",
+      "max_fan_speed": "5",
+      "min_fan_speed": "2",
+      "perimeter_speed": "40",
+      "slowdown_below_layer_time": "15",
+      "temperature": "245",
+      "top_solid_infill_speed": "35"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

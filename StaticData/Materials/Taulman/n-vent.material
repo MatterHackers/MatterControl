@@ -1,0 +1,26 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "layer_name": "n-vent (Taulman)",
+      "layer_id": "3ae26ddb-d19b-4d5b-9e80-61bf5a2d5a08",
+      "external_perimeter_speed": "35",
+      "extruder_wipe_temperature": "150",
+      "filament_diameter": "2.89",
+      "first_layer_speed": "10",
+      "infill_speed": "40",
+      "max_fan_speed": "60",
+      "min_fan_speed": "40",
+      "perimeter_speed": "37",
+      "slowdown_below_layer_time": "15",
+      "temperature": "235",
+      "top_solid_infill_speed": "35",
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

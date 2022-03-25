@@ -12,14 +12,14 @@
       "bed_temperature_pei": "70",
       "bed_temperature_pp": "50",
       "enable_fan": "0",
-      "filament_cost": "73.3",
+      "filament_cost": "60",
       "filament_density": "1.1",
-      "layer_id": "b8d72ad6-9b04-4bbb-852f-4fec1bc4262b",
-      "layer_name": "PRO Series Nylon",
-      "material_sku": "MCR8GQZT",
+      "layer_id": "d0993cbe-031d-4db2-b521-77915c2f8725",
+      "layer_name": "230 Nylon (Taulman)",
+      "material_sku": "MQPV5RUM",
       "retract_restart_extra": "0",
       "retract_restart_extra_time_to_apply": "0",
-      "temperature": "250"
+      "temperature": "235"
     }
   ],
   "OemLayer": null,
