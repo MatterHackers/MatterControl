@@ -96,7 +96,8 @@ namespace MatterHackers.MatterControl
 				var closeAfterSave = true;
 				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
 				{
-					var outputName = Path.ChangeExtension(itemNameWidget?.ActualTextEditWidget.Text ?? "none", ".mcx");
+					var fileName = ApplicationController.Instance.SanitizeFileName(itemNameWidget?.ActualTextEditWidget.Text ?? "none");
+					var outputName = Path.ChangeExtension(fileName, ".mcx");
 
 					if (writableContainer is FileSystemContainer fileSystemContainer)
 					{
