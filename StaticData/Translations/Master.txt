@@ -121,6 +121,9 @@ Translated:A component must be selected
 English:A device attached to the system is not functioning.
 Translated:A device attached to the system is not functioning.
 
+English:A Material Should be Selected
+Translated:A Material Should be Selected
+
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 Translated:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 
@@ -531,6 +534,12 @@ Translated:Bed Size
 
 English:Bed Surface
 Translated:Bed Surface
+
+English:Bed Surface Needs to be Selected
+Translated:Bed Surface Needs to be Selected
+
+English:Bed Surface Should be Selected
+Translated:Bed Surface Should be Selected
 
 English:Bed Surface Temperatures
 Translated:Bed Surface Temperatures
@@ -4270,6 +4279,9 @@ Translated:Select this option only if your printer does not appear in the list
 English:Select What to Import
 Translated:Select What to Import
 
+English:Selected Material and Bed Surface are Incompatable
+Translated:Selected Material and Bed Surface are Incompatable
+
 English:Selected Object Options
 Translated:Selected Object Options
 
@@ -5041,6 +5053,12 @@ Translated:The Markdown that will be shown on the second extruders Insert Filame
 English:The Markdown that will be shown on the Trim Filament page.
 Translated:The Markdown that will be shown on the Trim Filament page.
 
+English:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
+Translated:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
+
+English:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+Translated:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+
 English:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 Translated:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 
@@ -5296,11 +5314,17 @@ Translated:The target temperature the extruder will attempt to reach during the 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
 Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
 
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
 Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
 Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
@@ -5308,11 +5332,17 @@ Translated:The temperature to print when the bed is coverd with blue tape. Set t
 English:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
 Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
 
+English:The temperature to print when the bed is polypropylene. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is polypropylene. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is polypropylene. Set to 0 to disable.
 Translated:The temperature to print when the bed is polypropylene. Set to 0 to disable.
 
 English:The temperature to print when the bed is polypropylene. Set to 0 to use default.
 Translated:The temperature to print when the bed is polypropylene. Set to 0 to use default.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using BuildTak. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
 Translated:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
@@ -5320,17 +5350,26 @@ Translated:The temperature to print when the bed is using BuildTak. Set to 0 to 
 English:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
 Translated:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
 
+English:The temperature to print when the bed is using garolite. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using garolite. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is using garolite. Set to 0 to disable.
 Translated:The temperature to print when the bed is using garolite. Set to 0 to disable.
 
 English:The temperature to print when the bed is using garolite. Set to 0 to use default.
 Translated:The temperature to print when the bed is using garolite. Set to 0 to use default.
 
+English:The temperature to print when the bed is using glass. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using glass. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is using glass. Set to 0 to disable.
 Translated:The temperature to print when the bed is using glass. Set to 0 to disable.
 
 English:The temperature to print when the bed is using glass. Set to 0 to use default.
 Translated:The temperature to print when the bed is using glass. Set to 0 to use default.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using PEI. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is using PEI. Set to 0 to disable.
 Translated:The temperature to print when the bed is using PEI. Set to 0 to disable.
@@ -6127,8 +6166,23 @@ Translated:You have successfully imported a new printer profile. You can find '{
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:You may need to wait a minute for your printer to finish initializing.
 
+English:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
+Translated:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
+
+English:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen
+Translated:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen
+
+English:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.
+Translated:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.
+
 English:You should have at least 3 top layers for this calibration to measure off of.
 Translated:You should have at least 3 top layers for this calibration to measure off of.
+
+English:You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen
+Translated:You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen
+
+English:You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen.
+Translated:You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen.
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
@@ -6159,6 +6213,9 @@ Translated:Your printer has been adjusted but we should run calibrating again to
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
+
+English:Your printer's 'Bed Surface' should be selected under the bed setting menu on the top right of your screen
+Translated:Your printer's 'Bed Surface' should be selected under the bed setting menu on the top right of your screen
 
 English:Your probe is now finely calibrated and should produce excellent first layer results
 Translated:Your probe is now finely calibrated and should produce excellent first layer results

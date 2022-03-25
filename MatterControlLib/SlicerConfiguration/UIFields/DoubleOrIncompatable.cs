@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,30 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class DoubleOrPercentField : ValueOrUnitsField
+    public class DoubleOrIncompatable : TextField
 	{
-		public DoubleOrPercentField(ThemeConfig theme)
-			: base (theme)
+		public DoubleOrIncompatable(ThemeConfig theme)
+			: base(theme)
 		{
-			unitsToken = "%";
+		}
+
+		protected override string ConvertValue(string newValue)
+		{
+			string text = newValue.Trim();
+
+			if (text.ToUpper() == "NC")
+			{
+				return "NC";
+			}
+			else
+			{
+				double.TryParse(text, out double currentValue);
+				return Math.Max(0, currentValue).ToString();
+			}
+
 		}
 	}
 }

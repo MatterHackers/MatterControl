@@ -589,6 +589,54 @@ namespace MatterHackers.MatterControl
 					});
 			}
 
+			if (printer.Connection.IsConnected
+				&& !PrinterSetupRequired(printer)
+				&& validatePrintBed
+				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+				&& printer.PrintableItems(printer.Bed.Scene).Any()
+				&& settings.GetValue<bool>(SettingsKey.has_swappable_bed)
+				&& settings.GetValue(SettingsKey.bed_surface) == "Default")
+			{
+				errors.Add(new ValidationError(ValidationErrors.BedSurfaceNotSelected)
+				{
+					Error = "Bed Surface Needs to be Selected".Localize(),
+					Details = "You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.".Localize(),
+					ErrorLevel = ValidationErrorLevel.Error,
+				});
+			}
+
+			if (printer.Connection.IsConnected
+				&& !PrinterSetupRequired(printer)
+				&& validatePrintBed
+				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+				&& printer.PrintableItems(printer.Bed.Scene).Any()
+				&& settings.GetValue<bool>(SettingsKey.has_swappable_bed)
+				&& settings.GetValue(SettingsKey.bed_surface) != "Default"
+				&& settings.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC")
+			{
+				errors.Add(new ValidationError(ValidationErrors.IncompatableBedSurfaceAndMaterial)
+				{
+					Error = "Selected Material and Bed Surface are Incompatable".Localize(),
+					Details = "The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning,
+				});
+			}
+
+			if (printer.Connection.IsConnected
+				&& !PrinterSetupRequired(printer)
+				&& validatePrintBed
+				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+				&& printer.PrintableItems(printer.Bed.Scene).Any()
+				&& string.IsNullOrEmpty(settings.GetValue(SettingsKey.active_material_key)))
+			{
+				errors.Add(new ValidationError(ValidationErrors.MaterialNotSelected)
+				{
+					Error = "A Material Should be Selected".Localize(),
+					Details = "You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen.".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning,
+				});
+			}
+
 			return errors;
 		}
 
