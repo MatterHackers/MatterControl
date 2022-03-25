@@ -4,13 +4,14 @@
   "Macros": [],
   "MaterialLayers": [
     {
+      "bed_temperature": "115",
+      "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "100",
       "bed_temperature_garolite": "100",
       "bed_temperature_glass": "100",
       "bed_temperature_kapton": "100",
       "bed_temperature_pei": "100",
       "bed_temperature_pp": "100",
-      "bed_temperature": "115",
       "enable_fan": "0",
       "filament_density": "1.20",
       "has_fan": "False",
@@ -22,7 +23,7 @@
       "min_fan_speed": "0",
       "perimeter_speed": "26",
       "temperature": "290",
-      "top_solid_infill_speed": "22",
+      "top_solid_infill_speed": "22"
     }
   ],
   "OemLayer": null,

@@ -5,6 +5,7 @@
   "MaterialLayers": [
     {
       "bed_temperature": "70",
+      "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "70",
       "bed_temperature_glass": "70",
@@ -12,13 +13,11 @@
       "bed_temperature_pei": "70",
       "bed_temperature_pp": "50",
       "enable_fan": "0",
-      "filament_cost": "60",
+      "filament_cost": "80",
       "filament_density": "1.1",
       "layer_id": "b411cd18-3539-46a8-91eb-ad25dad74d33",
       "layer_name": "680 Nylon (Taulman)",
-      "material_sku": "MSFDVGY6",
-      "retract_restart_extra": "0",
-      "retract_restart_extra_time_to_apply": "0",
+      "material_sku": "M4SHDVY7",
       "temperature": "250"
     }
   ],

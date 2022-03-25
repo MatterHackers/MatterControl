@@ -4,19 +4,21 @@
   "Macros": [],
   "MaterialLayers": [
     {
-      "bed_temperature": "100",
-      "external_perimeter_speed": "45",
-      "extruder_wipe_temperature": "180",
-      "infill_speed": "55",
+      "bed_temperature": "70",
+      "bed_temperature_blue_tape": "NC",
+      "bed_temperature_buildtak": "55",
+      "bed_temperature_garolite": "70",
+      "bed_temperature_glass": "70",
+      "bed_temperature_kapton": "70",
+      "bed_temperature_pei": "70",
+      "bed_temperature_pp": "50",
+      "enable_fan": "0",
+      "filament_cost": "80",
+      "filament_density": "1.1",
       "layer_id": "a160e052-1fc6-4843-a74e-305d4f01ed13",
       "layer_name": "Alloy 910 (Taulman)",
-      "max_fan_speed": "50",
-      "min_fan_speed": "3",
-      "perimeter_speed": "50",
-      "retract_length": "1.5",
-      "slowdown_below_layer_time": "15",
-      "temperature": "235",
-      "top_solid_infill_speed": "45"
+      "material_sku": "MVSK2VGK",
+      "temperature": "250"
     }
   ],
   "OemLayer": null,

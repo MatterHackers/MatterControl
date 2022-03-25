@@ -4279,6 +4279,9 @@ Translated:Select this option only if your printer does not appear in the list
 English:Select What to Import
 Translated:Select What to Import
 
+English:Selected Material and Bed Surface are Incompatable
+Translated:Selected Material and Bed Surface are Incompatable
+
 English:Selected Object Options
 Translated:Selected Object Options
 
@@ -5050,6 +5053,12 @@ Translated:The Markdown that will be shown on the second extruders Insert Filame
 English:The Markdown that will be shown on the Trim Filament page.
 Translated:The Markdown that will be shown on the Trim Filament page.
 
+English:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
+Translated:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
+
+English:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+Translated:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+
 English:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 Translated:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 
@@ -5305,11 +5314,17 @@ Translated:The target temperature the extruder will attempt to reach during the 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 
+English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
 Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable.
 
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
 Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to use default.
+
+English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
 Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to disable.
@@ -5317,11 +5332,17 @@ Translated:The temperature to print when the bed is coverd with blue tape. Set t
 English:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
 Translated:The temperature to print when the bed is coverd with blue tape. Set to 0 to use default.
 
+English:The temperature to print when the bed is polypropylene. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is polypropylene. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is polypropylene. Set to 0 to disable.
 Translated:The temperature to print when the bed is polypropylene. Set to 0 to disable.
 
 English:The temperature to print when the bed is polypropylene. Set to 0 to use default.
 Translated:The temperature to print when the bed is polypropylene. Set to 0 to use default.
+
+English:The temperature to print when the bed is using BuildTak. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using BuildTak. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
 Translated:The temperature to print when the bed is using BuildTak. Set to 0 to disable.
@@ -5329,17 +5350,26 @@ Translated:The temperature to print when the bed is using BuildTak. Set to 0 to 
 English:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
 Translated:The temperature to print when the bed is using BuildTak. Set to 0 to use default.
 
+English:The temperature to print when the bed is using garolite. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using garolite. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is using garolite. Set to 0 to disable.
 Translated:The temperature to print when the bed is using garolite. Set to 0 to disable.
 
 English:The temperature to print when the bed is using garolite. Set to 0 to use default.
 Translated:The temperature to print when the bed is using garolite. Set to 0 to use default.
 
+English:The temperature to print when the bed is using glass. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using glass. Set to 0 to disable or 'NC' if Not Compatible.
+
 English:The temperature to print when the bed is using glass. Set to 0 to disable.
 Translated:The temperature to print when the bed is using glass. Set to 0 to disable.
 
 English:The temperature to print when the bed is using glass. Set to 0 to use default.
 Translated:The temperature to print when the bed is using glass. Set to 0 to use default.
+
+English:The temperature to print when the bed is using PEI. Set to 0 to disable or 'NC' if Not Compatible.
+Translated:The temperature to print when the bed is using PEI. Set to 0 to disable or 'NC' if Not Compatible.
 
 English:The temperature to print when the bed is using PEI. Set to 0 to disable.
 Translated:The temperature to print when the bed is using PEI. Set to 0 to disable.

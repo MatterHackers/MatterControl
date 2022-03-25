@@ -11,6 +11,7 @@
       "filament_cost": "465",
       "temperature": "240",
       "bed_temperature": "100",
+      "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "100",
       "bed_temperature_garolite": "100",
       "bed_temperature_glass": "100",

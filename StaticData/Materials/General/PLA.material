@@ -15,6 +15,7 @@
       "min_fan_speed_layer_time": "180",
       "max_fan_speed_layer_time": "60",
       "disable_fan_first_layers": "3",
+      "bed_temperature_blue_tape": "0",
       "bed_temperature_buildtak": "50",
       "bed_temperature_garolite": "75",
       "bed_temperature_glass": "75",

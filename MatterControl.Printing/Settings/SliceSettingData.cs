@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			OFFSET,
 			OFFSET3,
 			POSITIVE_DOUBLE,
+			POSITIVE_DOUBLE_OR_INCOMPATABLE,
 			READONLY_STRING,
 			SLICE_ENGINE,
 			STRING,

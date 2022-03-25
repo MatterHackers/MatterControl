@@ -16,6 +16,7 @@
       "max_fan_speed_layer_time": "60",
       "filament_cost": "37",
       "disable_fan_first_layers": "5",
+      "bed_temperature_blue_tape": "0",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "75",
       "bed_temperature_glass": "75",

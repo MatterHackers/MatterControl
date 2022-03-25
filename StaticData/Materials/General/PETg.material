@@ -16,6 +16,7 @@
       "max_fan_speed_layer_time": "10",
       "layer_etag": "",
       "layer_source": "",
+      "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "75",
       "bed_temperature_glass": "75",

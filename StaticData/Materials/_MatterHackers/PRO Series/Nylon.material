@@ -5,6 +5,7 @@
   "MaterialLayers": [
     {
       "bed_temperature": "70",
+      "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "70",
       "bed_temperature_glass": "70",

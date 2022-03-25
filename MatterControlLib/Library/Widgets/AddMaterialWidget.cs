@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
                 });
             }
 
-            if (directory.Contains("MatterHackers"))
+            if (Path.GetFileName(directory).Contains("MatterHackers"))
             {
                 treeNode.Expanded = true;
             }

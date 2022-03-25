@@ -4,13 +4,14 @@
   "Macros": [],
   "MaterialLayers": [
     {
+      "bed_temperature": "55",
+      "bed_temperature_blue_tape": "0",
       "bed_temperature_buildtak": "55",
       "bed_temperature_garolite": "70",
       "bed_temperature_glass": "70",
       "bed_temperature_kapton": "55",
       "bed_temperature_pei": "70",
       "bed_temperature_pp": "55",
-      "bed_temperature": "55",
       "disable_fan_first_layers": "5",
       "filament_cost": "42",
       "filament_density": "1.24",
@@ -18,8 +19,8 @@
       "layer_name": "BASF PRO1 Tough PLA",
       "material_sku": "MZ2HXEPK",
       "max_fan_speed_layer_time": "60",
-      "min_fan_speed_layer_time": "180",
       "min_fan_speed": "60",
+      "min_fan_speed_layer_time": "180",
       "temperature": "220"
     }
   ],

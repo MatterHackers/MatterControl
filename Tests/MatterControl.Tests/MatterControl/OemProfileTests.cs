@@ -217,6 +217,7 @@ M300 S3000 P30   ; Resume Tone";
 
 			var isPresentKeys = new string[]
 			{
+				"bed_temperature_blue_tape",
 				"bed_temperature_buildtak",
 				"bed_temperature_garolite",
 				"bed_temperature_glass",
