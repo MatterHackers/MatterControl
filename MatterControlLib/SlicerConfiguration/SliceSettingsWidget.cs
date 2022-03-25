@@ -683,8 +683,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new DoubleOrPercentField(theme);
 					break;
 
-				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE:
-					uiField = new DoubleOrIncompatable(theme);
+				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE:
+					uiField = new DoubleOrIncompatible(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.INT_OR_MM:

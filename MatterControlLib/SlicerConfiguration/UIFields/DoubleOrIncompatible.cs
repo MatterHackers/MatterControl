@@ -31,9 +31,9 @@ using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class DoubleOrIncompatable : TextField
+    public class DoubleOrIncompatible : TextField
 	{
-		public DoubleOrIncompatable(ThemeConfig theme)
+		public DoubleOrIncompatible(ThemeConfig theme)
 			: base(theme)
 		{
 		}

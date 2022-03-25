@@ -614,9 +614,9 @@ namespace MatterHackers.MatterControl
 				&& settings.GetValue(SettingsKey.bed_surface) != "Default"
 				&& settings.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC")
 			{
-				errors.Add(new ValidationError(ValidationErrors.IncompatableBedSurfaceAndMaterial)
+				errors.Add(new ValidationError(ValidationErrors.IncompatibleBedSurfaceAndMaterial)
 				{
-					Error = "Selected Material and Bed Surface are Incompatable".Localize(),
+					Error = "Selected Material and Bed Surface are Incompatible".Localize(),
 					Details = "The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.".Localize(),
 					ErrorLevel = ValidationErrorLevel.Warning,
 				});
