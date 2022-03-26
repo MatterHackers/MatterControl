@@ -48,21 +48,21 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="printer">The printer to validate.</param>
 		/// <returns>A list of all warnings and errors.</returns>
-		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null, bool validatePrintBed = true)
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settingsContext = null, bool validatePrintBed = true)
 		{
 			var fffPrinter = printer.Settings.Slicer.PrinterType == PrinterType.FFF;
 
-			if (settings == null)
+			if (settingsContext == null)
 			{
-				settings = new SettingsContext(printer, null, NamedSettingsLayers.All);
+				settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			}
 
 			var errors = new List<ValidationError>();
 
-			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+			var extruderCount = settingsContext.GetValue<int>(SettingsKey.extruder_count);
 
 			// Check to see if supports are required
-			if (!settings.GetValue<bool>(SettingsKey.create_per_layer_support))
+			if (!settingsContext.GetValue<bool>(SettingsKey.create_per_layer_support))
 			{
 				var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
 				if (supportGenerator.RequiresSupport())
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (!settings.GetValue<bool>(SettingsKey.extruder_offset))
+			if (!settingsContext.GetValue<bool>(SettingsKey.extruder_offset))
 			{
 				var t0Offset = printer.Settings.Helpers.ExtruderOffset(0);
 				if (t0Offset != Vector3.Zero)
@@ -101,9 +101,9 @@ namespace MatterHackers.MatterControl
 							Error = "Nozzle 1 should have offsets set to 0.".Localize(),
 							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 								GetSettingsName(SettingsKey.extruder_offset),
-								settings.GetValue<double>(SettingsKey.extruder_offset),
+								settingsContext.GetValue<double>(SettingsKey.extruder_offset),
 								GetSettingsName(SettingsKey.extruder_offset),
-								settings.GetValue<double>(SettingsKey.extruder_offset)),
+								settingsContext.GetValue<double>(SettingsKey.extruder_offset)),
 							ErrorLevel = ValidationErrorLevel.Warning,
 						});
 				}
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 
 			// Check to see if current OEM layer matches downloaded OEM layer
 			{
-				if (printer.Settings.GetValue(SettingsKey.make) != "Other"
+				if (settingsContext.GetValue(SettingsKey.make) != "Other"
 					&& ProfileManager.GetOemSettingsNeedingUpdate(printer).Any())
 				{
 					errors.Add(new ValidationError(ValidationErrors.SettingsUpdateAvailable)
@@ -147,9 +147,9 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				if (settings.GetValue<bool>(SettingsKey.validate_layer_height))
+				if (settingsContext.GetValue<bool>(SettingsKey.validate_layer_height))
 				{
-					if (settings.GetValue<double>(SettingsKey.layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
+					if (settingsContext.GetValue<double>(SettingsKey.layer_height) > settingsContext.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
 						errors.Add(
 							new SettingsValidationError(SettingsKey.layer_height)
@@ -159,12 +159,12 @@ namespace MatterHackers.MatterControl
 									GetSettingsName(SettingsKey.nozzle_diameter)),
 								ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
-									settings.GetValue<double>(SettingsKey.layer_height),
+									settingsContext.GetValue<double>(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter),
-									settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+									settingsContext.GetValue<double>(SettingsKey.nozzle_diameter)),
 							});
 					}
-					else if (settings.GetValue<double>(SettingsKey.layer_height) <= 0)
+					else if (settingsContext.GetValue<double>(SettingsKey.layer_height) <= 0)
 					{
 						errors.Add(
 							new SettingsValidationError(SettingsKey.layer_height)
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 					}
 
 					// make sure the first layer height is not too big
-					if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
+					if (settingsContext.GetValue<double>(SettingsKey.first_layer_height) > settingsContext.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
 						errors.Add(
 							new SettingsValidationError(SettingsKey.first_layer_height)
@@ -184,13 +184,13 @@ namespace MatterHackers.MatterControl
 									GetSettingsName(SettingsKey.nozzle_diameter)),
 								ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.first_layer_height),
-									settings.GetValue<double>(SettingsKey.first_layer_height),
+									settingsContext.GetValue<double>(SettingsKey.first_layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter),
-									settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+									settingsContext.GetValue<double>(SettingsKey.nozzle_diameter)),
 							});
 					}
 					// make sure the first layer height is not too small
-					else if (settings.GetValue<double>(SettingsKey.first_layer_height) < settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2)
+					else if (settingsContext.GetValue<double>(SettingsKey.first_layer_height) < settingsContext.GetValue<double>(SettingsKey.nozzle_diameter) / 2)
 					{
 						errors.Add(
 							new SettingsValidationError(SettingsKey.first_layer_height)
@@ -200,20 +200,20 @@ namespace MatterHackers.MatterControl
 									GetSettingsName(SettingsKey.nozzle_diameter)),
 								ValueDetails = "{0} = {1}\n1/2 {2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.first_layer_height),
-									settings.GetValue<double>(SettingsKey.first_layer_height),
+									settingsContext.GetValue<double>(SettingsKey.first_layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter),
-									settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2),
+									settingsContext.GetValue<double>(SettingsKey.nozzle_diameter) / 2),
 								ErrorLevel = ValidationErrorLevel.Warning,
 							});
 					}
 
 				}
 
-				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
+				string[] startGCode = settingsContext.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 
 				// Print recovery is incompatible with firmware leveling - ensure not enabled in startGCode
-				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled)
-					&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+				if (settingsContext.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !settingsContext.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
 					// Ensure we don't have hardware leveling commands in the start gcode.
 					foreach (string startGCodeLine in startGCode)
@@ -240,8 +240,8 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) & !settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
-				var levelingRequired = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+				var levelingEnabled = settingsContext.GetValue<bool>(SettingsKey.print_leveling_enabled) & !settingsContext.GetValue<bool>(SettingsKey.has_hardware_leveling);
+				var levelingRequired = settingsContext.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 
 				if (levelingEnabled || levelingRequired)
 				{
@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl
 						}
 					}
 
-					bool heatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
+					bool heatedBed = settingsContext.GetValue<bool>(SettingsKey.has_heated_bed);
 
 					double bedTemperature = printer.Settings.Helpers.ActiveBedTemperature;
 
@@ -306,14 +306,14 @@ namespace MatterHackers.MatterControl
 					}
 
 					if (levelingEnabled
-						&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling)
-						&& settings.GetValue<bool>(SettingsKey.has_z_probe)
-						&& settings.GetValue<bool>(SettingsKey.use_z_probe)
-						&& settings.GetValue<bool>(SettingsKey.validate_leveling)
-						&& (settings.GetValue<double>(SettingsKey.validation_threshold) < .001
-						|| settings.GetValue<double>(SettingsKey.validation_threshold) > .5))
+						&& !settingsContext.GetValue<bool>(SettingsKey.has_hardware_leveling)
+						&& settingsContext.GetValue<bool>(SettingsKey.has_z_probe)
+						&& settingsContext.GetValue<bool>(SettingsKey.use_z_probe)
+						&& settingsContext.GetValue<bool>(SettingsKey.validate_leveling)
+						&& (settingsContext.GetValue<double>(SettingsKey.validation_threshold) < .001
+						|| settingsContext.GetValue<double>(SettingsKey.validation_threshold) > .5))
 					{
-						var threshold = settings.GetValue<double>(SettingsKey.validation_threshold);
+						var threshold = settingsContext.GetValue<double>(SettingsKey.validation_threshold);
 						errors.Add(
 							new SettingsValidationError(SettingsKey.validation_threshold)
 							{
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl
 						}
 
 						var delta = maxLevelZ - minLevelZ;
-						var maxDelta = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) * 10;
+						var maxDelta = settingsContext.GetValue<double>(SettingsKey.nozzle_diameter) * 10;
 						if (delta > maxDelta)
 						{
 							errors.Add(
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl
 					}
 				});
 
-				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				if (settingsContext.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settingsContext.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
@@ -393,13 +393,13 @@ namespace MatterHackers.MatterControl
 								GetSettingsName(SettingsKey.nozzle_diameter)),
 							ValueDetails = "{0} = {1}\n{2} * 4 = {3}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
-								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width),
+								settingsContext.GetValue<double>(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter),
-								settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+								settingsContext.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) <= 0)
+				if (settingsContext.GetValue<double>(SettingsKey.first_layer_extrusion_width) <= 0)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
@@ -408,11 +408,11 @@ namespace MatterHackers.MatterControl
 								GetSettingsName(SettingsKey.first_layer_extrusion_width)),
 							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
-								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width)),
+								settingsContext.GetValue<double>(SettingsKey.first_layer_extrusion_width)),
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.fill_density) <= 0)
+				if (settingsContext.GetValue<double>(SettingsKey.fill_density) <= 0)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.fill_density)
@@ -422,11 +422,11 @@ namespace MatterHackers.MatterControl
 							ErrorLevel = ValidationErrorLevel.Warning,
 							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.fill_density),
-								settings.GetValue<double>(SettingsKey.fill_density)),
+								settingsContext.GetValue<double>(SettingsKey.fill_density)),
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.perimeters) <= 0)
+				if (settingsContext.GetValue<double>(SettingsKey.perimeters) <= 0)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.perimeters)
@@ -436,12 +436,12 @@ namespace MatterHackers.MatterControl
 							ErrorLevel = ValidationErrorLevel.Warning,
 							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.perimeters),
-								settings.GetValue<double>(SettingsKey.perimeters)),
+								settingsContext.GetValue<double>(SettingsKey.perimeters)),
 						});
 				}
 
-				if (settings.GetValue<int>(SettingsKey.extruder_count) > 1
-					&& settings.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder) < 3)
+				if (settingsContext.GetValue<int>(SettingsKey.extruder_count) > 1
+					&& settingsContext.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder) < 3)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.wipe_tower_perimeters_per_extruder)
@@ -451,12 +451,12 @@ namespace MatterHackers.MatterControl
 							ErrorLevel = ValidationErrorLevel.Warning,
 							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.wipe_tower_perimeters_per_extruder),
-								settings.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder)),
+								settingsContext.GetValue<double>(SettingsKey.wipe_tower_perimeters_per_extruder)),
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
-					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
+				if (settingsContext.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settingsContext.GetValue<double>(SettingsKey.nozzle_diameter)
+					|| settingsContext.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settingsContext.GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.infill_overlap_perimeter)
@@ -465,9 +465,9 @@ namespace MatterHackers.MatterControl
 								GetSettingsName(SettingsKey.infill_overlap_perimeter)),
 							ValueDetails = "{0} = {1}, {2} = {3}".FormatWith(
 								GetSettingsName(SettingsKey.infill_overlap_perimeter),
-								settings.GetValue<double>(SettingsKey.infill_overlap_perimeter),
+								settingsContext.GetValue<double>(SettingsKey.infill_overlap_perimeter),
 								GetSettingsName(SettingsKey.nozzle_diameter),
-								settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+								settingsContext.GetValue<double>(SettingsKey.nozzle_diameter)),
 						});
 				}
 
@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
+				if (settingsContext.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
@@ -505,11 +505,11 @@ namespace MatterHackers.MatterControl
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width)),
 							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width)),
+								settingsContext.GetValue<double>(SettingsKey.external_perimeter_extrusion_width)),
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.min_fan_speed) > 100)
+				if (settingsContext.GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.min_fan_speed)
@@ -517,11 +517,11 @@ namespace MatterHackers.MatterControl
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.min_fan_speed)),
 							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
-								settings.GetValue<double>(SettingsKey.min_fan_speed)),
+								settingsContext.GetValue<double>(SettingsKey.min_fan_speed)),
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.max_fan_speed) > 100)
+				if (settingsContext.GetValue<double>(SettingsKey.max_fan_speed) > 100)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.max_fan_speed)
@@ -529,7 +529,7 @@ namespace MatterHackers.MatterControl
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.max_fan_speed)),
 							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
-								settings.GetValue<double>(SettingsKey.max_fan_speed)),
+								settingsContext.GetValue<double>(SettingsKey.max_fan_speed)),
 						});
 				}
 
@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.fill_density) < 0 || settings.GetValue<double>(SettingsKey.fill_density) > 1)
+				if (settingsContext.GetValue<double>(SettingsKey.fill_density) < 0 || settingsContext.GetValue<double>(SettingsKey.fill_density) > 1)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.fill_density)
@@ -552,32 +552,80 @@ namespace MatterHackers.MatterControl
 							Error = "The {0} must be between 0 and 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.fill_density)),
 							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
-								settings.GetValue<double>(SettingsKey.fill_density)),
+								settingsContext.GetValue<double>(SettingsKey.fill_density)),
 						});
 				}
 
 				// marlin firmware can only take a max of 128 bytes in a single instruction, make sure no lines are longer than that
-				ValidateGCodeLinesShortEnough(SettingsKey.cancel_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.connect_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.end_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.layer_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.pause_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.resume_gcode, printer, errors);
-				ValidateGCodeLinesShortEnough(SettingsKey.start_gcode, printer, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.cancel_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.connect_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.end_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.layer_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.pause_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.resume_gcode, settingsContext, errors);
+				ValidateGCodeLinesShortEnough(SettingsKey.start_gcode, settingsContext, errors);
 
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.bridge_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.air_gap_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.external_perimeter_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.infill_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.perimeter_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.small_perimeter_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.solid_infill_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.support_material_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.travel_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.retract_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.bridge_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.air_gap_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.external_perimeter_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.infill_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.perimeter_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.small_perimeter_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.solid_infill_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.support_material_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.travel_speed, settingsContext, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.retract_speed, settingsContext, errors);
+
+				if (printer.Connection.IsConnected
+					&& !PrinterSetupRequired(printer)
+					&& validatePrintBed
+					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+					&& printer.PrintableItems(printer.Bed.Scene).Any()
+					&& settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
+					&& settingsContext.GetValue(SettingsKey.bed_surface) == "Default")
+				{
+					errors.Add(new ValidationError(ValidationErrors.BedSurfaceNotSelected)
+					{
+						Error = "Bed Surface Needs to be Selected".Localize(),
+						Details = "You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.".Localize(),
+						ErrorLevel = ValidationErrorLevel.Error,
+					});
+				}
+
+				if (printer.Connection.IsConnected
+					&& !PrinterSetupRequired(printer)
+					&& validatePrintBed
+					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+					&& printer.PrintableItems(printer.Bed.Scene).Any()
+					&& settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
+					&& settingsContext.GetValue(SettingsKey.bed_surface) != "Default"
+					&& settingsContext.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC")
+				{
+					errors.Add(new ValidationError(ValidationErrors.IncompatibleBedSurfaceAndMaterial)
+					{
+						Error = "Selected Material and Bed Surface are Incompatible".Localize(),
+						Details = "The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.".Localize(),
+						ErrorLevel = ValidationErrorLevel.Warning,
+					});
+				}
+
+				if (printer.Connection.IsConnected
+					&& !PrinterSetupRequired(printer)
+					&& validatePrintBed
+					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+					&& printer.PrintableItems(printer.Bed.Scene).Any()
+					&& string.IsNullOrEmpty(settingsContext.GetValue(SettingsKey.active_material_key)))
+				{
+					errors.Add(new ValidationError(ValidationErrors.MaterialNotSelected)
+					{
+						Error = "A Material Should be Selected".Localize(),
+						Details = "You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen.".Localize(),
+						ErrorLevel = ValidationErrorLevel.Warning,
+					});
+				}
 			}
 			catch (Exception e)
 			{
@@ -587,54 +635,6 @@ namespace MatterHackers.MatterControl
 						Error = "Unexpected error validating settings".Localize(),
 						Details = e.Message
 					});
-			}
-
-			if (printer.Connection.IsConnected
-				&& !PrinterSetupRequired(printer)
-				&& validatePrintBed
-				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
-				&& printer.PrintableItems(printer.Bed.Scene).Any()
-				&& settings.GetValue<bool>(SettingsKey.has_swappable_bed)
-				&& settings.GetValue(SettingsKey.bed_surface) == "Default")
-			{
-				errors.Add(new ValidationError(ValidationErrors.BedSurfaceNotSelected)
-				{
-					Error = "Bed Surface Needs to be Selected".Localize(),
-					Details = "You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.".Localize(),
-					ErrorLevel = ValidationErrorLevel.Error,
-				});
-			}
-
-			if (printer.Connection.IsConnected
-				&& !PrinterSetupRequired(printer)
-				&& validatePrintBed
-				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
-				&& printer.PrintableItems(printer.Bed.Scene).Any()
-				&& settings.GetValue<bool>(SettingsKey.has_swappable_bed)
-				&& settings.GetValue(SettingsKey.bed_surface) != "Default"
-				&& settings.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC")
-			{
-				errors.Add(new ValidationError(ValidationErrors.IncompatibleBedSurfaceAndMaterial)
-				{
-					Error = "Selected Material and Bed Surface are Incompatible".Localize(),
-					Details = "The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.".Localize(),
-					ErrorLevel = ValidationErrorLevel.Warning,
-				});
-			}
-
-			if (printer.Connection.IsConnected
-				&& !PrinterSetupRequired(printer)
-				&& validatePrintBed
-				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
-				&& printer.PrintableItems(printer.Bed.Scene).Any()
-				&& string.IsNullOrEmpty(settings.GetValue(SettingsKey.active_material_key)))
-			{
-				errors.Add(new ValidationError(ValidationErrors.MaterialNotSelected)
-				{
-					Error = "A Material Should be Selected".Localize(),
-					Details = "You should select the 'Material' your are printing with under the 'Hotend Temperature' menu on the top right of your screen.".Localize(),
-					ErrorLevel = ValidationErrorLevel.Warning,
-				});
 			}
 
 			return errors;
@@ -707,10 +707,10 @@ namespace MatterHackers.MatterControl
 			return settingData.PresentationName.Localize();
 		}
 
-		private static bool ValidateGCodeLinesShortEnough(string settingsKey, PrinterConfig printer, List<ValidationError> errors)
+		private static bool ValidateGCodeLinesShortEnough(string settingsKey, SettingsContext settingsContext, List<ValidationError> errors)
 		{
 			// make sure the custom gcode does not have lines too long to print
-			foreach (string line in printer.Settings.GetValue(settingsKey).Replace("\\n", "\n").Split('\n'))
+			foreach (string line in settingsContext.GetValue(settingsKey).Replace("\\n", "\n").Split('\n'))
 			{
 				var trimedLine = line.Split(';')[0].Trim();
 				var length = trimedLine.Length;
@@ -732,9 +732,9 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private static void ValidateGoodSpeedSettingGreaterThan0(string settingsKey, PrinterConfig printer, List<ValidationError> errors)
+		private static void ValidateGoodSpeedSettingGreaterThan0(string settingsKey, SettingsContext settingsContext, List<ValidationError> errors)
 		{
-			var actualSpeedValueString = printer.Settings.GetValue(settingsKey);
+			var actualSpeedValueString = settingsContext.GetValue(settingsKey);
 			var speedValueString = actualSpeedValueString;
 			if (speedValueString.EndsWith("%"))
 			{
@@ -749,7 +749,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			if (!valueWasNumber
-				|| (printer.Settings.IsActive(settingsKey)
+				|| (settingsContext.Printer?.Settings?.IsActive(settingsKey) == true
 				&& speedToCheck <= 0))
 			{
 					errors.Add(

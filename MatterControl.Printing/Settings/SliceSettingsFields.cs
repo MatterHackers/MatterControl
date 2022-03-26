@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "3",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -492,7 +492,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					DefaultValue = "15",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "0",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -612,7 +612,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "100%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -642,7 +642,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "70%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -870,7 +870,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "30%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -1160,7 +1160,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -1642,6 +1642,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "10",
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new ValueConverter()),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.max_print_speed,
+					PresentationName = "Maximum Print Speed".Localize(),
+					HelpText = "The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm/s".Localize(),
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					DefaultValue = "0",					
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
@@ -1750,7 +1761,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "30",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2070,7 +2081,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "30",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed))
 				},
 				new SliceSettingData()
 				{
@@ -2090,7 +2101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed))
 				},
 				new SliceSettingData()
 				{
@@ -2329,7 +2340,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2339,7 +2350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2623,7 +2634,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "50",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{

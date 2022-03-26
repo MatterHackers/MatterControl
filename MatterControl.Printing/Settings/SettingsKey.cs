@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string max_acceleration = nameof(max_acceleration);
 		public const string max_fan_speed = nameof(max_fan_speed);
 		public const string max_fan_speed_layer_time = nameof(max_fan_speed_layer_time);
+		public const string max_print_speed = nameof(max_print_speed);
 		public const string max_velocity = nameof(max_velocity);
 		public const string measure_probe_offset_conductively = nameof(measure_probe_offset_conductively);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);

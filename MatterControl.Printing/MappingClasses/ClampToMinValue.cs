@@ -27,17 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-    public class AsPercentOfReferenceOrDirect : ValueConverter
+    public class ClampToMinValue : ValueConverter
 	{
-		private readonly bool change0ToReference;
-		private readonly double scale;
+		private ValueConverter valueConverter;
 
-		public AsPercentOfReferenceOrDirect(string referencedSetting, double scale = 1, bool change0ToReference = true)
+		public ClampToMinValue(string referencedSetting, ValueConverter valueConverter)
 		{
-			this.change0ToReference = change0ToReference;
-			this.scale = scale;
+			this.valueConverter = valueConverter;
 			this.ReferencedSetting = referencedSetting;
 		}
 
@@ -45,30 +45,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 
 		public override string Convert(string value, PrinterSettings settings)
 		{
-			double finalValue = 0;
+			var maxValue = ParseDouble(settings.GetValue(this.ReferencedSetting));
 
-			if (value.Contains("%"))
-			{
-				string withoutPercent = value.Replace("%", "");
-				double ratio = ParseDouble(withoutPercent) / 100.0;
-				string originalReferenceString = settings.GetValue(this.ReferencedSetting);
-				double valueToModify = ParseDouble(originalReferenceString);
-				finalValue = valueToModify * ratio;
-			}
-			else
-			{
-				finalValue = ParseDouble(value);
-			}
+			var convertedValue = valueConverter.Convert(value, settings);
+			if (maxValue > 0)
+            {
+				var valueDouble = ParseDouble(convertedValue);
+				return Math.Min(maxValue, valueDouble).ToString();
+            }
 
-			if (change0ToReference
-				&& finalValue == 0)
-			{
-				finalValue = ParseDouble(settings.GetValue(ReferencedSetting));
-			}
-
-			finalValue *= scale;
-
-			return finalValue.ToString();
+			return convertedValue;
 		}
 	}
 }

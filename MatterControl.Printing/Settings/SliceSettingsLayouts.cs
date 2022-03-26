@@ -133,6 +133,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SettingsKey.bridge_over_infill,
 							SettingsKey.t1_extrusion_move_speed_multiplier,
 						}),
+						("Speed Overrides", new []
+                        {
+							SettingsKey.max_print_speed,
+						}),
 						("Cooling", new[]
 						{
 							SettingsKey.slowdown_below_layer_time,

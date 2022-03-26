@@ -47,12 +47,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsContext SettingsContext { get; private set; }
 
-		private readonly PrinterConfig printer;
-
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.printer = printer;
 			this.SettingsContext = settingsContext;
 
 			settingsControlBar = new PresetsToolbar(printer, theme)
