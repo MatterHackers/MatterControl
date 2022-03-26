@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static string BelowControlsUltraFineInstructions => string.Format(
 			"\t• {0}\n\t• {1}",
 			"Press [Z-] until there is resistance to moving the paper".Localize(),
-			"The ideal resistance is when the paper first begins to bend".Localize());
+			"The ideal resistance is when the paper first begins to bend, but can still be moved\n".Localize());
 
 		public string GetStepString(int totalSteps)
 		{

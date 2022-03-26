@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (showLoadFilamentButton)
 			{
 				int tabIndex = 0;
-				var bedSurfaceChanger = TemperatureWidgetBed.CreateBedSurfaceSelector(printer, theme, ref tabIndex);
+				var bedSurfaceChanger = TemperatureWidgetBed.CreateAdvancedBedSurfaceSelector(printer, theme, ref tabIndex);
 				if (bedSurfaceChanger != null)
 				{
 					contentRow.AddChild(bedSurfaceChanger);
