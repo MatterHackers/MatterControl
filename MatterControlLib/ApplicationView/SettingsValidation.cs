@@ -611,6 +611,23 @@ namespace MatterHackers.MatterControl
 						ErrorLevel = ValidationErrorLevel.Warning,
 					});
 				}
+				// we only check for bad bed temperature if we have not show an incompatable message
+				else if (printer.Connection.IsConnected
+					 && !PrinterSetupRequired(printer)
+					 && validatePrintBed
+					 && errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
+					 && printer.PrintableItems(printer.Bed.Scene).Any()
+					 && settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
+					 && settingsContext.GetValue(SettingsKey.bed_surface) != "Blue Tape")
+				{
+					errors.Add(new ValidationError(ValidationErrors.BedTemperatureError)
+					{
+						Error = "Bed Temperature Set to 0".Localize(),
+						Details = "The temperature for the 'Bed Surface' you have selected is set to 0. You may get poor bed adhesion or printing results. You can change the temperature in the 'Bed Temperature' menu on the top right of your screen.".Localize(),
+						ErrorLevel = ValidationErrorLevel.Warning,
+					});
+				}
+
 
 				if (printer.Connection.IsConnected
 					&& !PrinterSetupRequired(printer)

@@ -547,6 +547,9 @@ Translated:Bed Surface Temperatures
 English:Bed Temperature
 Translated:Bed Temperature
 
+English:Bed Temperature Set to 0
+Translated:Bed Temperature Set to 0
+
 English:Bed Temperature:
 Translated:Bed Temperature:
 
@@ -5328,6 +5331,9 @@ Translated:The target temperature the extruder will attempt to reach during the 
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
+
+English:The temperature for the 'Bed Surface' you have selected is set to 0. You may get poor bed adhesion or printing results. You can change the temperature in the 'Bed Temperature' menu on the top right of your screen.
+Translated:The temperature for the 'Bed Surface' you have selected is set to 0. You may get poor bed adhesion or printing results. You can change the temperature in the 'Bed Temperature' menu on the top right of your screen.
 
 English:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
 Translated:The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.
