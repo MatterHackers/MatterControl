@@ -585,7 +585,8 @@ namespace MatterHackers.MatterControl
 					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
 					&& printer.PrintableItems(printer.Bed.Scene).Any()
 					&& settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
-					&& settingsContext.GetValue(SettingsKey.bed_surface) == "Default")
+					&& settingsContext.GetValue(SettingsKey.bed_surface) == "Default"
+					&& printer.Settings.Helpers.ActiveMaterialHasAnyBedTemperatures)
 				{
 					errors.Add(new ValidationError(ValidationErrors.BedSurfaceNotSelected)
 					{
@@ -602,7 +603,8 @@ namespace MatterHackers.MatterControl
 					&& printer.PrintableItems(printer.Bed.Scene).Any()
 					&& settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
 					&& settingsContext.GetValue(SettingsKey.bed_surface) != "Default"
-					&& settingsContext.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC")
+					&& settingsContext.GetValue(printer.Settings.Helpers.ActiveBedTemperatureSetting) == "NC"
+					&& printer.Settings.Helpers.ActiveMaterialHasAnyBedTemperatures)
 				{
 					errors.Add(new ValidationError(ValidationErrors.IncompatibleBedSurfaceAndMaterial)
 					{
@@ -618,7 +620,9 @@ namespace MatterHackers.MatterControl
 					 && errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
 					 && printer.PrintableItems(printer.Bed.Scene).Any()
 					 && settingsContext.GetValue<bool>(SettingsKey.has_swappable_bed)
-					 && settingsContext.GetValue(SettingsKey.bed_surface) != "Blue Tape")
+					 && settingsContext.GetValue(SettingsKey.bed_surface) != "Blue Tape"
+					 && printer.Settings.Helpers.ActiveMaterialHasAnyBedTemperatures
+					 && printer.Settings.Helpers.ActiveBedTemperature == 0)
 				{
 					errors.Add(new ValidationError(ValidationErrors.BedTemperatureError)
 					{

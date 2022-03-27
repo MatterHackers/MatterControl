@@ -204,11 +204,51 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-        public double ActiveBedTemperature 
+		public bool ActiveMaterialHasAnyBedTemperatures
+		{
+			get
+			{
+				void IncrementIfSet(string settingKey, ref int count)
+				{
+					var materialBedTemp = printerSettings.GetValue<double>(settingKey, printerSettings.MaterialLayerCascade);
+					if (materialBedTemp > 0)
+					{
+						count++;
+					}
+				}
+
+				var bedTemperatureCount = 0;
+				IncrementIfSet(SettingsKey.bed_temperature_blue_tape, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_buildtak, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_garolite, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_glass, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_kapton, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_pei, ref bedTemperatureCount);
+				IncrementIfSet(SettingsKey.bed_temperature_pp, ref bedTemperatureCount);
+
+				return bedTemperatureCount > 0;
+			}
+		}
+
+		public double ActiveBedTemperature 
 		{
 			get
             {
-				return printerSettings.GetValue<double>(ActiveBedTemperatureSetting);
+				var activeKey = ActiveBedTemperatureSetting;
+
+				var bedTemperature = printerSettings.GetValue<double>(activeKey);
+				// Check if the Active Material has settings for bed surfaces
+
+				// If the setting for this bed is 0
+				// and there are not settings (actual temperatures) for differnt beds, return the normal bed_temperature
+				if (!ActiveMaterialHasAnyBedTemperatures
+					&& bedTemperature == 0)
+				{
+					return printerSettings.GetValue<double>(SettingsKey.bed_temperature);
+				}
+
+				// looks like this is a legitimate setting, send it back
+				return bedTemperature;
 			}
 		}
 
@@ -221,7 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return SettingsKey.bed_temperature;
                 }
 
-				switch(printerSettings.GetValue(SettingsKey.bed_surface))
+				switch (printerSettings.GetValue(SettingsKey.bed_surface))
 				{
 					case "Blue Tape":
 						return SettingsKey.bed_temperature_blue_tape;
