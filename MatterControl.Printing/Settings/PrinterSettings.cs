@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -1089,7 +1090,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
 
-			this.OnSettingChanged(settingsKey);
+			// delay to make sure all settings changes have completed
+			UiThread.RunOnIdle(() => this.OnSettingChanged(settingsKey));
 		}
 
 		public string ToJson()

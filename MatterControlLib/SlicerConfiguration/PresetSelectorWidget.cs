@@ -489,7 +489,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printer.Settings.OnSettingChanged(updateList[i]);
 				}
 				ProfileManager.SaveOnSingleSettingChange = true;
-				printer.Settings.OnSettingChanged(updateList[updateList.Count-1]);
+				if (updateList.Count > 0)
+				{
+					printer.Settings.OnSettingChanged(updateList[updateList.Count - 1]);
+				}
 
 				// update the style of every setting
 				var sliceSettingsWidget = this.Parents<SliceSettingsWidget>().FirstOrDefault();
