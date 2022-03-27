@@ -234,21 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
             {
-				var activeKey = ActiveBedTemperatureSetting;
-
-				var bedTemperature = printerSettings.GetValue<double>(activeKey);
-				// Check if the Active Material has settings for bed surfaces
-
-				// If the setting for this bed is 0
-				// and there are not settings (actual temperatures) for differnt beds, return the normal bed_temperature
-				if (!ActiveMaterialHasAnyBedTemperatures
-					&& bedTemperature == 0)
-				{
-					return printerSettings.GetValue<double>(SettingsKey.bed_temperature);
-				}
-
-				// looks like this is a legitimate setting, send it back
-				return bedTemperature;
+				return printerSettings.GetValue<double>(ActiveBedTemperatureSetting);
 			}
 		}
 
@@ -256,7 +242,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (!printerSettings.GetValue<bool>(SettingsKey.has_swappable_bed))
+				if (!printerSettings.GetValue<bool>(SettingsKey.has_swappable_bed)
+					|| !ActiveMaterialHasAnyBedTemperatures)
                 {
 					return SettingsKey.bed_temperature;
                 }

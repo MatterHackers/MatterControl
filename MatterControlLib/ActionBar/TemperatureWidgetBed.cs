@@ -131,7 +131,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					graph.GoalValue = printer.Settings.Helpers.ActiveBedTemperature;
 				}
-				else if (stringEvent.Data == SettingsKey.bed_surface)
+				else if (stringEvent.Data == SettingsKey.bed_surface
+					|| stringEvent.Data == SettingsKey.active_material_key)
 				{
 					AddTemperatureControlForBedSurface();
 					graph.GoalValue = printer.Settings.Helpers.ActiveBedTemperature;
