@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,48 +27,31 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
-{
-    public class AsPercentOfReferenceOrDirect : ValueConverter
-	{
-		private readonly bool change0ToReference;
-		private readonly double scale;
+using System;
 
-		public AsPercentOfReferenceOrDirect(string referencedSetting, double scale = 1, bool change0ToReference = true)
+namespace MatterHackers.MatterControl.SlicerConfiguration
+{
+    public class DoubleOrIncompatible : TextField
+	{
+		public DoubleOrIncompatible(ThemeConfig theme)
+			: base(theme)
 		{
-			this.change0ToReference = change0ToReference;
-			this.scale = scale;
-			this.ReferencedSetting = referencedSetting;
 		}
 
-		public string ReferencedSetting { get; }
-
-		public override string Convert(string value, PrinterSettings settings)
+		protected override string ConvertValue(string newValue)
 		{
-			double finalValue = 0;
+			string text = newValue.Trim();
 
-			if (value.Contains("%"))
+			if (text.ToUpper() == "NC")
 			{
-				string withoutPercent = value.Replace("%", "");
-				double ratio = ParseDouble(withoutPercent) / 100.0;
-				string originalReferenceString = settings.GetValue(this.ReferencedSetting);
-				double valueToModify = ParseDouble(originalReferenceString);
-				finalValue = valueToModify * ratio;
+				return "NC";
 			}
 			else
 			{
-				finalValue = ParseDouble(value);
+				double.TryParse(text, out double currentValue);
+				return Math.Max(0, currentValue).ToString();
 			}
 
-			if (change0ToReference
-				&& finalValue == 0)
-			{
-				finalValue = ParseDouble(settings.GetValue(ReferencedSetting));
-			}
-
-			finalValue *= scale;
-
-			return finalValue.ToString();
 		}
 	}
 }

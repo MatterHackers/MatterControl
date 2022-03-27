@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_blue_tape,
 					PresentationName = "Blue Tape Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is coverd with blue tape. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_buildtak,
 					PresentationName = "BuildTak Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is using BuildTak. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_garolite,
 					PresentationName = "Garolite Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is using garolite. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_glass,
 					PresentationName = "Glass Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is using glass. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_kapton,
 					PresentationName = "Kapton Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is coverd in kapton tape. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_pei,
 					PresentationName = "PEI Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is using PEI. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.bed_temperature_pp,
 					PresentationName = "Polypropylene Bed Temperature".Localize(),
 					HelpText = "The temperature to print when the bed is polypropylene. Set to 0 to disable or 'NC' if Not Compatible.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE,
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE,
 					Units = "°C".Localize(),
 					Show = (settings) => settings.GetBool(SettingsKey.has_heated_bed)
 						&& settings.GetBool(SettingsKey.has_swappable_bed),
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "3",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -492,7 +492,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					DefaultValue = "15",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "0",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -612,7 +612,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "100%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -642,7 +642,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "70%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -870,7 +870,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "30%",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -1160,7 +1160,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -1642,6 +1642,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "10",
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new ValueConverter()),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.max_print_speed,
+					PresentationName = "Maximum Print Speed".Localize(),
+					HelpText = "The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm/s".Localize(),
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					DefaultValue = "0",					
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
@@ -1750,7 +1761,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "30",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2070,7 +2081,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "30",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed))
 				},
 				new SliceSettingData()
 				{
@@ -2090,7 +2101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed))
 				},
 				new SliceSettingData()
 				{
@@ -2329,7 +2340,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2339,7 +2350,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{
@@ -2623,7 +2634,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "50",
-					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
+					Converter = new ClampToMinValue(SettingsKey.max_print_speed, new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)),
 				},
 				new SliceSettingData()
 				{

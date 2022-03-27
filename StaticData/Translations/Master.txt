@@ -2731,6 +2731,9 @@ Translated:Maximum E jerk [mm/s]
 English:Maximum feedrates [mm/s]
 Translated:Maximum feedrates [mm/s]
 
+English:Maximum Print Speed
+Translated:Maximum Print Speed
+
 English:Maximum Speed
 Translated:Maximum Speed
 
@@ -4282,6 +4285,9 @@ Translated:Select What to Import
 English:Selected Material and Bed Surface are Incompatable
 Translated:Selected Material and Bed Surface are Incompatable
 
+English:Selected Material and Bed Surface are Incompatible
+Translated:Selected Material and Bed Surface are Incompatible
+
 English:Selected Object Options
 Translated:Selected Object Options
 
@@ -4623,6 +4629,9 @@ Translated:Speed
 
 English:Speed Multiplier
 Translated:Speed Multiplier
+
+English:Speed Overrides
+Translated:Speed Overrides
 
 English:Speeds
 Translated:Speeds
@@ -5011,6 +5020,9 @@ Translated:The height of the printer's printable volume, in millimeters. Control
 English:The ideal resistance is when the paper first begins to bend
 Translated:The ideal resistance is when the paper first begins to bend
 
+English:The ideal resistance is when the paper first begins to bend, but can still be moved\n
+Translated:The ideal resistance is when the paper first begins to bend, but can still be moved\n
+
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 
@@ -5073,6 +5085,9 @@ Translated:The maximum speed that the printer treats as 0 and changes direction 
 
 English:The maximum speed the printer can move. Uused for print time estimation.
 Translated:The maximum speed the printer can move. Uused for print time estimation.
+
+English:The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.
+Translated:The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
 Translated:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.

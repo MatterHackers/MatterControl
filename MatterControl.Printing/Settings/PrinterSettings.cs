@@ -170,6 +170,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.material_color_2,
 			SettingsKey.material_color_3,
 			SettingsKey.material_sku,
+			SettingsKey.max_print_speed,
 			SettingsKey.measure_probe_offset_conductively,
 			SettingsKey.model,
 			SettingsKey.number_of_first_layers,
@@ -242,6 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.support_material_speed,
 			SettingsKey.travel_speed,
 			SettingsKey.load_filament_speed,
+			SettingsKey.max_print_speed,
 		};
 
 		private PrinterSettingsLayer _baseLayer;

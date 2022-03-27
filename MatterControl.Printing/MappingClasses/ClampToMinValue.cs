@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,29 +29,32 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-    public class DoubleOrIncompatable : TextField
+    public class ClampToMinValue : ValueConverter
 	{
-		public DoubleOrIncompatable(ThemeConfig theme)
-			: base(theme)
+		private ValueConverter valueConverter;
+
+		public ClampToMinValue(string referencedSetting, ValueConverter valueConverter)
 		{
+			this.valueConverter = valueConverter;
+			this.ReferencedSetting = referencedSetting;
 		}
 
-		protected override string ConvertValue(string newValue)
+		public string ReferencedSetting { get; }
+
+		public override string Convert(string value, PrinterSettings settings)
 		{
-			string text = newValue.Trim();
+			var maxValue = ParseDouble(settings.GetValue(this.ReferencedSetting));
 
-			if (text.ToUpper() == "NC")
-			{
-				return "NC";
-			}
-			else
-			{
-				double.TryParse(text, out double currentValue);
-				return Math.Max(0, currentValue).ToString();
-			}
+			var convertedValue = valueConverter.Convert(value, settings);
+			if (maxValue > 0)
+            {
+				var valueDouble = ParseDouble(convertedValue);
+				return Math.Min(maxValue, valueDouble).ToString();
+            }
 
+			return convertedValue;
 		}
 	}
 }

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 		public static readonly string BedLevelingTemperature = nameof(BedLevelingTemperature);
 		public static readonly string BedSurfaceNotSelected = nameof(BedSurfaceNotSelected);
 		public static readonly string ExceptionDuringSliceSettingsValidation = nameof(ExceptionDuringSliceSettingsValidation);
-		public static readonly string IncompatableBedSurfaceAndMaterial = nameof(IncompatableBedSurfaceAndMaterial);
+		public static readonly string IncompatibleBedSurfaceAndMaterial = nameof(IncompatibleBedSurfaceAndMaterial);
 		public static readonly string ItemCannotBeExported = nameof(ItemCannotBeExported);
 		public static readonly string ItemToAMFExportInvalid = nameof(ItemToAMFExportInvalid);
 		public static readonly string ItemToSTLExportInvalid = nameof(ItemToSTLExportInvalid);

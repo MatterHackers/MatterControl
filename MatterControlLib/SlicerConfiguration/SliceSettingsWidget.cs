@@ -47,12 +47,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsContext SettingsContext { get; private set; }
 
-		private readonly PrinterConfig printer;
-
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.printer = printer;
 			this.SettingsContext = settingsContext;
 
 			settingsControlBar = new PresetsToolbar(printer, theme)
@@ -683,8 +680,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new DoubleOrPercentField(theme);
 					break;
 
-				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATABLE:
-					uiField = new DoubleOrIncompatable(theme);
+				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE_OR_INCOMPATIBLE:
+					uiField = new DoubleOrIncompatible(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.INT_OR_MM:

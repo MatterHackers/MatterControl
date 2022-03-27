@@ -196,6 +196,42 @@ namespace MatterHackers.MatterControl.ActionBar
 			return surfaceSelector;
 		}
 
+		public static GuiWidget CreateAdvancedBedSurfaceSelector(PrinterConfig printer, ThemeConfig theme, ref int tabIndex)
+		{
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)
+				|| !printer.Settings.GetValue<bool>(SettingsKey.has_swappable_bed))
+			{
+				return null;
+			}
+
+			var bedSelectorContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			var selectBedSurfaceMessage = new TextWidget("And your printers bed surface.", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = new BorderDouble(15, 7, 0, 13),
+				HAnchor = HAnchor.Left
+			};
+			bedSelectorContainer.AddChild(selectBedSurfaceMessage);
+
+			var surfaceSelector = CreateBedSurfaceSelector(printer, theme, ref tabIndex);
+			bedSelectorContainer.AddChild(surfaceSelector);
+
+			void SetSelectMessageVisibility(object s, EventArgs e)
+			{
+				selectBedSurfaceMessage.Visible = printer.Settings.GetValue(SettingsKey.bed_surface) == "Default";
+			};
+
+			SetSelectMessageVisibility(null, null);
+
+			printer.Settings.SettingChanged += SetSelectMessageVisibility;
+			bedSelectorContainer.Closed += (s, e) => printer.Settings.SettingChanged -= SetSelectMessageVisibility;
+
+			return bedSelectorContainer;
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
