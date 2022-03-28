@@ -505,6 +505,9 @@ Translated:Base Min Off Time
 English:Baud Rate
 Translated:Baud Rate
 
+English:Be sure you are not pressing down on the bed while moving the paper.
+Translated:Be sure you are not pressing down on the bed while moving the paper.
+
 English:Bed
 Translated:Bed
 
@@ -5025,6 +5028,9 @@ Translated:The ideal resistance is when the paper first begins to bend
 
 English:The ideal resistance is when the paper first begins to bend, but can still be moved\n
 Translated:The ideal resistance is when the paper first begins to bend, but can still be moved\n
+
+English:The ideal resistance is when the paper first begins to bend, but can still be moved.
+Translated:The ideal resistance is when the paper first begins to bend, but can still be moved.
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
