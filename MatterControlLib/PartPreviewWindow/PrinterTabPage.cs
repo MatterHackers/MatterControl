@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -782,7 +783,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						bool doSlicing = !activelySlicing && printer.Bed.EditContext.SourceItem != null;
 						if (doSlicing)
 						{
-							var errors = printer.ValidateSettings();
+							var errors = new List<ValidationError>();
+							printer.ValidateSettings(errors);
 							if (errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error))
 							{
 								doSlicing = false;

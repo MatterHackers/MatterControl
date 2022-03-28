@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.Library.Export
 									Printer.Settings.SetValue(SettingsKey.spiral_vase, spiralVaseOverride == SpiralVaseOptions.FORCE_ON ? "1" : "0");
 								}
 
-								errors = Printer.ValidateSettings(validatePrintBed: false);
+								Printer.ValidateSettings(errors, validatePrintBed: false);
 
 								if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 								{

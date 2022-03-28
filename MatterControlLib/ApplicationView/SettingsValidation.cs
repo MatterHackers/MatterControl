@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="printer">The printer to validate.</param>
 		/// <returns>A list of all warnings and errors.</returns>
-		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settingsContext = null, bool validatePrintBed = true)
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, List<ValidationError> errors, SettingsContext settingsContext = null, bool validatePrintBed = true)
 		{
 			var fffPrinter = printer.Settings.Slicer.PrinterType == PrinterType.FFF;
 
@@ -57,38 +57,7 @@ namespace MatterHackers.MatterControl
 				settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			}
 
-			var errors = new List<ValidationError>();
-
 			var extruderCount = settingsContext.GetValue<int>(SettingsKey.extruder_count);
-
-			// Check to see if supports are required
-			if (!settingsContext.GetValue<bool>(SettingsKey.create_per_layer_support))
-			{
-				var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
-				if (supportGenerator.RequiresSupport())
-				{
-					errors.Add(new ValidationError(ValidationErrors.UnsupportedParts)
-					{
-						Error = "Possible Unsupported Parts Detected".Localize(),
-						Details = "Some parts may require support structures to print correctly".Localize(),
-						ErrorLevel = ValidationErrorLevel.Warning,
-						FixAction = new NamedAction()
-						{
-							Title = "Generate Supports".Localize(),
-							Action = () =>
-							{
-								// Find and InvokeClick on the Generate Supports toolbar button
-								var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
-								if (sharedParent != null)
-								{
-									var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
-									supportsPopup.InvokeClick();
-								}
-							}
-						}
-					});
-				}
-			}
 
 			if (!settingsContext.GetValue<bool>(SettingsKey.extruder_offset))
 			{
@@ -473,6 +442,7 @@ namespace MatterHackers.MatterControl
 
 				if (printer.Connection.IsConnected
 					&& printer.Settings?.Helpers.ComPort() == "Emulator"
+					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
 					&& fffPrinter)
 				{
 					errors.Add(
@@ -578,6 +548,36 @@ namespace MatterHackers.MatterControl
 				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, settingsContext, errors);
 				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.travel_speed, settingsContext, errors);
 				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.retract_speed, settingsContext, errors);
+
+				// Check to see if supports are required
+				if (!settingsContext.GetValue<bool>(SettingsKey.create_per_layer_support)
+					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0)
+				{
+					var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
+					if (supportGenerator.RequiresSupport())
+					{
+						errors.Add(new ValidationError(ValidationErrors.UnsupportedParts)
+						{
+							Error = "Possible Unsupported Parts Detected".Localize(),
+							Details = "Some parts may require support structures to print correctly".Localize(),
+							ErrorLevel = ValidationErrorLevel.Warning,
+							FixAction = new NamedAction()
+							{
+								Title = "Generate Supports".Localize(),
+								Action = () =>
+								{
+									// Find and InvokeClick on the Generate Supports toolbar button
+									var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+									if (sharedParent != null)
+									{
+										var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+										supportsPopup.InvokeClick();
+									}
+								}
+							}
+						});
+					}
+				}
 
 				if (printer.Connection.IsConnected
 					&& !PrinterSetupRequired(printer)
@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Concatenate printer and settings errors
-			errors.AddRange(printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource));
+			printer.ValidateSettings(errors, validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
 
 			return errors;
 		}
