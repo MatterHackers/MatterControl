@@ -70,9 +70,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			"Press [Z+] once to release the paper".Localize());
 
 		public static string BelowControlsUltraFineInstructions => string.Format(
-			"\t• {0}\n\t• {1}",
+			"\t• {0}\n\t• {1}\n\t• {2}\n",
 			"Press [Z-] until there is resistance to moving the paper".Localize(),
-			"The ideal resistance is when the paper first begins to bend, but can still be moved\n".Localize());
+			"The ideal resistance is when the paper first begins to bend, but can still be moved.".Localize(),
+			"Be sure you are not pressing down on the bed while moving the paper.".Localize());
 
 		public string GetStepString(int totalSteps)
 		{
