@@ -11,7 +11,7 @@
       "bed_temperature_glass": "110",
       "bed_temperature_kapton": "110",
       "bed_temperature_pei": "110",
-      "bed_temperature_pp": "110",
+      "bed_temperature_pp": "NC",
       "enable_fan": "0",
       "filament_density": "1.20",
       "infill_speed": "30",

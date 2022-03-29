@@ -11,7 +11,7 @@
       "bed_temperature_glass": "130",
       "bed_temperature_kapton": "130",
       "bed_temperature_pei": "130",
-      "bed_temperature_pp": "130",
+      "bed_temperature_pp": "NC",
       "bridge_fan_speed": "50",
       "enable_fan": "0",
       "external_perimeter_speed": "20",

@@ -12,7 +12,7 @@
       "bed_temperature_glass": "100",
       "bed_temperature_kapton": "100",
       "bed_temperature_pei": "100",
-      "bed_temperature_pp": "100",
+      "bed_temperature_pp": "NC",
       "bridge_speed": "18",
       "enable_fan": "0",
       "filament_cost": "465",

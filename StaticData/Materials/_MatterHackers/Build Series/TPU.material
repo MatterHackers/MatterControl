@@ -11,6 +11,7 @@
       "bed_temperature_glass": "65",
       "bed_temperature_kapton": "65",
       "bed_temperature_pei": "55",
+      "bed_temperature_pp": "NC",
       "enable_retractions": "0",
       "external_perimeter_speed": "25",
       "filament_cost": "38.25",
