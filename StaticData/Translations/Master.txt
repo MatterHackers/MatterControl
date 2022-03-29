@@ -4588,6 +4588,12 @@ Translated:Some Parts Lifted
 English:Some parts may require support structures to print correctly
 Translated:Some parts may require support structures to print correctly
 
+English:Some parts may require support structures to print correctly. Check that your parts are on the bed and overhangs are printable.
+Translated:Some parts may require support structures to print correctly. Check that your parts are on the bed and overhangs are printable.
+
+English:Some parts may require support structures to print correctly. Check that your parts are on the bed and overhangs can be printed.
+Translated:Some parts may require support structures to print correctly. Check that your parts are on the bed and overhangs can be printed.
+
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 Translated:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 

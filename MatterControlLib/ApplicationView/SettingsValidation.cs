@@ -559,7 +559,7 @@ namespace MatterHackers.MatterControl
 						errors.Add(new ValidationError(ValidationErrors.UnsupportedParts)
 						{
 							Error = "Possible Unsupported Parts Detected".Localize(),
-							Details = "Some parts may require support structures to print correctly".Localize(),
+							Details = "Some parts may require support structures to print correctly. Check that your parts are on the bed and overhangs are printable.".Localize(),
 							ErrorLevel = ValidationErrorLevel.Warning,
 							FixAction = new NamedAction()
 							{
