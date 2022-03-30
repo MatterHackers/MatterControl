@@ -22,7 +22,7 @@
       "bed_temperature_glass": "75",
       "bed_temperature_kapton": "75",
       "bed_temperature_pei": "75",
-      "bed_temperature_pp": "55",
+      "bed_temperature_pp": "NC",
       "material_sku": "PET"
     }
   ],

@@ -113,7 +113,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							userInitiated: false);
 					}
 
-					var errors2 = printer.ValidateSettings(settingsContext);
+					var errors2 = new List<ValidationError>();
+					printer.ValidateSettings(errors2, settingsContext);
 
 					if (errors != null)
 					{

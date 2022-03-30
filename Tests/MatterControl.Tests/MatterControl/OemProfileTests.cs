@@ -223,6 +223,7 @@ M300 S3000 P30   ; Resume Tone";
 				"bed_temperature_glass",
 				"bed_temperature_kapton",
 				"bed_temperature_pei",
+				"bed_temperature_pp",
 				"filament_density",
 				"layer_id",
 				"layer_name",

@@ -11,7 +11,7 @@
       "bed_temperature_glass": "70",
       "bed_temperature_kapton": "70",
       "bed_temperature_pei": "70",
-      "bed_temperature_pp": "50",
+      "bed_temperature_pp": "NC",
       "enable_fan": "0",
       "filament_cost": "80",
       "filament_density": "1.1",

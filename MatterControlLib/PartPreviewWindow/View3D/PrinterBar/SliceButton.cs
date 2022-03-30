@@ -32,6 +32,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -102,7 +103,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				bool doSlicing = !activelySlicing && printer.Bed.EditContext.SourceItem != null;
 				if (doSlicing)
 				{
-					var errors = printer.ValidateSettings();
+					var errors = new List<ValidationError>();
+					printer.ValidateSettings(errors);
 					if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 					{
 						doSlicing = false;

@@ -237,7 +237,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
 
-				var errors = printer.ValidateSettings(settingsContext);
+				var errors = new List<ValidationError>();
+				printer.ValidateSettings(errors, settingsContext);
 
 				// Loop over categories creating a tab for each
 				foreach (var category in settingsSection.Categories)

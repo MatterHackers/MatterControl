@@ -1943,7 +1943,8 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				var errors = printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
+				var errors = new List<ValidationError>();
+				printer.ValidateSettings(errors, validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
 				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
 					this.ShowValidationErrors("Validation Error".Localize(), errors);
