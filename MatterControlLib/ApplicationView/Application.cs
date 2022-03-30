@@ -776,6 +776,11 @@ namespace MatterHackers.MatterControl
 							DialogWindow.Show<WelcomePage>();
 						});
 					}
+					// this is the place to check if we would like to show a 'What's New' or 'Release Notes' page on first run of a new install
+                    else
+                    {
+
+                    }
 				}
 				catch
 				{
