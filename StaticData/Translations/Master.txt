@@ -574,6 +574,9 @@ Translated:Before Tool Change G-Code 3
 English:Before Tool Change G-Code 4
 Translated:Before Tool Change G-Code 4
 
+English:Before Z-Calibration can begin you need to:
+Translated:Before Z-Calibration can begin you need to:
+
 English:Behavior
 Translated:Behavior
 
@@ -817,6 +820,9 @@ Translated:Clear ZOffset
 English:Clearance
 Translated:Clearance
 
+English:Click 'Done'
+Translated:Click 'Done'
+
 English:Click 'Next' to continue.
 Translated:Click 'Next' to continue.
 
@@ -903,6 +909,9 @@ Translated:Conductive Probe Min Z
 
 English:Conductive Probing
 Translated:Conductive Probing
+
+English:Conductive Z Calibration complete.
+Translated:Conductive Z Calibration complete.
 
 English:Cone
 Translated:Cone
@@ -1458,6 +1467,9 @@ Translated:End Height Percent
 
 English:Ending Angle
 Translated:Ending Angle
+
+English:Ensure the nozzle is clear of any debri or filament
+Translated:Ensure the nozzle is clear of any debri or filament
 
 English:Enter a Design Name Here
 Translated:Enter a Design Name Here
@@ -3421,6 +3433,9 @@ Translated:Pixels Per mm
 English:PLA Temperature Tower
 Translated:PLA Temperature Tower
 
+English:Place the bed back on the printer
+Translated:Place the bed back on the printer
+
 English:Place the paper under the extruder
 Translated:Place the paper under the extruder
 
@@ -3736,6 +3751,9 @@ Translated:Probe Has Been Calibrated
 English:Probe Offset
 Translated:Probe Offset
 
+English:Probe on conductive pad
+Translated:Probe on conductive pad
+
 English:Processing
 Translated:Processing
 
@@ -3903,6 +3921,9 @@ Translated:Remove Mode
 
 English:Remove Subtract Objects
 Translated:Remove Subtract Objects
+
+English:Remove the bed from the printer so the nozzle can get low enough to touch the pad
+Translated:Remove the bed from the printer so the nozzle can get low enough to touch the pad
 
 English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
 Translated:Remove the calibration part from the bed and compare the sides of the pads in each axis.
@@ -4164,6 +4185,9 @@ Translated:Sample the bed center position to determine the probe distance to the
 
 English:Sampled Positions
 Translated:Sampled Positions
+
+English:Sampling the conductive pad position to determine the probe distance to the bed
+Translated:Sampling the conductive pad position to determine the probe distance to the bed
 
 English:Save
 Translated:Save
@@ -5497,6 +5521,9 @@ Translated:This data compensates for machine misalignment and bed distortion, an
 English:This data improves the alignment of dual extrusion prints.
 Translated:This data improves the alignment of dual extrusion prints.
 
+English:This data is required for print leveling and ensures good first layer adhesion.
+Translated:This data is required for print leveling and ensures good first layer adhesion.
+
 English:This data is required for software print leveling and ensures good first layer adhesion.
 Translated:This data is required for software print leveling and ensures good first layer adhesion.
 
@@ -6270,6 +6297,9 @@ Translated:Your Start G-Code should not contain a G30 if you are planning on usi
 
 English:Z Calibration
 Translated:Z Calibration
+
+English:Z Calibration measures the z position of the nozzle.
+Translated:Z Calibration measures the z position of the nozzle.
 
 English:Z Calibration measures the z position of the nozzles.
 Translated:Z Calibration measures the z position of the nozzles.

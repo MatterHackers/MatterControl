@@ -15,6 +15,7 @@
       "disable_fan_first_layers": "5",
       "filament_cost": "42",
       "filament_density": "1.24",
+      "infill_type": "GYROID",
       "layer_id": "42348031-fadf-4e93-bfbc-6b5e78a9ad39",
       "layer_name": "BASF PRO1 Tough PLA",
       "material_sku": "MZ2HXEPK",

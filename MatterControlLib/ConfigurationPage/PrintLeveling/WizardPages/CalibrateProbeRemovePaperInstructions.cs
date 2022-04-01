@@ -71,4 +71,63 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnLoad(args);
 		}
 	}
+
+	public class ConductiveProbeCalibrateComplete : WizardPage
+	{
+		public ConductiveProbeCalibrateComplete(PrinterConfig printer, ISetupWizard setupWizard, string headerText)
+			: base(setupWizard, headerText, "")
+		{
+			var completedText = "Conductive Z Calibration complete.".Localize();
+			if (printer.Settings.GetBool(SettingsKey.has_swappable_bed))
+			{
+				completedText += "\n\n    • " + "Place the bed back on the printer".Localize();
+			}
+
+			completedText += "\n\n" + "Click 'Done'".Localize();
+
+			contentRow.AddChild(this.CreateTextField(completedText));
+
+			contentRow.BackgroundColor = theme.MinimalShade;
+
+			this.ShowWizardFinished();
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			printer.Connection.QueueLine("T0");
+			printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+			{
+				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			}
+			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
+			{
+				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 30, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			}
+
+			base.OnLoad(args);
+		}
+	}
+
+	public class CleanNozzleBeforeConductiveProbe : WizardPage
+	{
+		public CleanNozzleBeforeConductiveProbe(PrinterConfig printer, ISetupWizard setupWizard, string headerText)
+			: base(setupWizard, headerText, "")
+		{
+			var completedText = "Before Z-Calibration can begin you need to:".Localize();
+			if (printer.Settings.GetBool(SettingsKey.has_swappable_bed))
+			{
+				completedText += "\n\n    • " + "Remove the bed from the printer so the nozzle can get low enough to touch the pad".Localize();
+			}
+
+			completedText += "\n    • " + "Ensure the nozzle is clear of any debri or filament".Localize();
+			completedText += "\n\n" + "Click 'Next' to continue.".Localize();
+
+			contentRow.AddChild(this.CreateTextField(completedText));
+
+			contentRow.BackgroundColor = theme.MinimalShade;
+		}
+	}
 }
