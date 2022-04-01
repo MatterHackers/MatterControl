@@ -336,9 +336,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.z_servo_depolyed_angle,
 						SettingsKey.z_servo_retracted_angle,
 						SettingsKey.measure_probe_offset_conductively,
-#if DEBUG
-						SettingsKey.validate_probe_offset,
-#endif
 						SettingsKey.conductive_pad_center,
 						SettingsKey.conductive_probe_min_z,
 					}),
@@ -371,6 +368,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.has_fan,
 						SettingsKey.has_fan_per_extruder,
 						SettingsKey.has_hardware_leveling,
+						SettingsKey.has_independent_z_motors,
 						SettingsKey.has_heated_bed,
 						SettingsKey.has_swappable_bed,
 						SettingsKey.has_sd_card_reader,

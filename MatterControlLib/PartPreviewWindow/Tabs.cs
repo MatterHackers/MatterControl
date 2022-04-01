@@ -141,7 +141,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public string SelectedTabKey
 		{
-			get => this.ActiveTab.Key;
+			get
+			{
+				return this.ActiveTab?.Key;
+			}
 			set
 			{
 				var foundTab = AllTabs.First();

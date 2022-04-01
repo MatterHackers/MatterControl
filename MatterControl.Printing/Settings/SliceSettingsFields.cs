@@ -1015,6 +1015,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.has_independent_z_motors,
+					PresentationName = "Has Independent Z Motors".Localize(),
+					HelpText = "The printer has the ability to move each z motor independently and the firmware has [G34](https://reprap.org/wiki/G-code#G34:_Z_Stepper_Auto-Align) enabled.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "0",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.measure_probe_offset_conductively,
 					PresentationName = "Measure Probe Offset Conductively".Localize(),
 					HelpText = "If the printer has both a conductive nozzle and a z probe this will enable automatic validation of the distance between their readings. Expected output is 'conductive: TRIGGERED' on M119.".Localize(),
@@ -1024,19 +1034,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
 						&& settings.GetBool(SettingsKey.has_z_probe)
 						&& settings.GetBool(SettingsKey.has_conductive_nozzle),
-					UiUpdate = UiUpdateRequired.SliceSettings,
-					RebuildGCodeOnChange = false
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.validate_probe_offset,
-					PresentationName = "Validate Probe Offset Automatically".Localize(),
-					HelpText = "If the printer has a physically touching z probe (like a BLTouch) this will enable automatic validation of the distance between the nozzle and the z probe.".Localize(),
-					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowAsOverride = true,
-					DefaultValue = "0",
-					Show = (settings) => !settings.GetBool(SettingsKey.has_hardware_leveling)
-						&& settings.GetBool(SettingsKey.has_z_probe),
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},

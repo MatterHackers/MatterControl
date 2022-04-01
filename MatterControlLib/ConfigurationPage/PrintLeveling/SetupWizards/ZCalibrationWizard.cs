@@ -154,11 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// Require user confirmation after this point
 			this.RequireCancelConfirmation = true;
 
-			// add in the homing printer page
-			yield return new HomePrinterPage(
-				this,
-				levelingStrings.HomingPageInstructions(true, false));
-
+			// start heating so we are closer to temp after homing
 			if (LevelingPlan.NeedsToBeRun(printer))
 			{
 				// start heating up the bed as that will be needed next
@@ -176,7 +172,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			for (int i = 0; i < extruderCount; i++)
 			{
 				temps[i] = printer.Settings.Helpers.ExtruderTargetTemperature(i);
+				printer.Connection.SetTargetHotendTemperature(i, temps[i]);
 			}
+
+			if (printer.Settings.GetBool(SettingsKey.has_independent_z_motors))
+			{
+				var aligingString = "The printer is now aliging the z-axis. It will do the following:".Localize() +
+					"\n\n    • " + "Home the printer".Clone() +
+					"\n    • " + "Probe multiple times on the left and right".Clone() +
+					"\n    • " + "Save the collected data".Clone() +
+					"\n    • " + "Home the printer again".Clone() +
+					"\n    • " + "Move on to the next calibration step".Clone();
+
+				// do z alignment procedure
+				yield return new AligningZAxisPageInstructions(this, aligingString);
+			}
+
+			// add in the homing printer page
+			yield return new HomePrinterPage(this, levelingStrings.HomingPageInstructions(true, false));
 
 			yield return new WaitForTempPage(
 				this,
@@ -197,7 +210,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"T0");
 			}
 
-			foreach(var page in DoManualOffsetMeasurment(levelingStrings, autoProbePositions, manualProbePositions))
+			foreach(var page in DoZOffsetMeasurment(levelingStrings, autoProbePositions, manualProbePositions))
 			{
 				yield return page;
 			}
@@ -215,34 +228,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				babySteppingValue[i] = 0;
 			}
 
-			var allowValidation = false;
-#if DEBUG
-			allowValidation = true;
-#endif
-
-			if (hotendCount == 1 // this could be improved for dual extrusion calibration in the future. But for now it is single extrusion.
-					&& printer.Settings.Helpers.ProbeBeingUsed
-					&& printer.Settings.GetValue<bool>(SettingsKey.validate_probe_offset)
-					&& allowValidation)
-			{
-				// tell them about the automatic part and any settings that should be changed
-				yield return new ZProbePrintCalibrationPartPage(
-					this,
-					printer,
-					"Validating Z Offset".Localize(),
-					"We will now measure the probe offset from the top of a printed calibration object.".Localize());
-				// measure the top of the part we just printed 
-				yield return new ZProbeCalibrateRetrieveTopProbeData(this, PageTitle);
-				// tell the user we are done and everything should be working
-				yield return new ZCalibrationValidateComplete(this, PageTitle);
-			}
-			else
-			{
-				yield return new CalibrateProbeRemovePaperInstructions(this, PageTitle);
-			}
+			yield return new CalibrateProbeRemovePaperInstructions(this, PageTitle);
 		}
 
-		private IEnumerable<WizardPage> DoManualOffsetMeasurment(LevelingStrings levelingStrings,
+		private IEnumerable<WizardPage> DoZOffsetMeasurment(LevelingStrings levelingStrings,
 			List<PrintLevelingWizard.ProbePosition> autoProbePositions,
 			List<List<PrintLevelingWizard.ProbePosition>> manualProbePositions)
         {

@@ -286,6 +286,9 @@ Translated:Alert
 English:Align
 Translated:Align
 
+English:Aligning Z Axis
+Translated:Aligning Z Axis
+
 English:Alignment
 Translated:Alignment
 
@@ -2061,6 +2064,9 @@ Translated:Has Hardware Leveling
 
 English:Has Heated Bed
 Translated:Has Heated Bed
+
+English:Has Independent Z Motors
+Translated:Has Independent Z Motors
 
 English:Has Power Control
 Translated:Has Power Control
@@ -5259,6 +5265,18 @@ Translated:The printer has the ability to check for continuity on the nozzle.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
+
+English:The printer has the ability to move each motor independently and the firmware has G34 enabled.
+Translated:The printer has the ability to move each motor independently and the firmware has G34 enabled.
+
+English:The printer has the ability to move each z motor independently and the firmware has [G34](https://reprap.org/wiki/G-code#G34:_Z_Stepper_Auto-Align) enabled.
+Translated:The printer has the ability to move each z motor independently and the firmware has [G34](https://reprap.org/wiki/G-code#G34:_Z_Stepper_Auto-Align) enabled.
+
+English:The printer has the ability to move each z motor independently and the firmware has G34 enabled.
+Translated:The printer has the ability to move each z motor independently and the firmware has G34 enabled.
+
+English:The printer is now aliging the z-axis. It will do the following:
+Translated:The printer is now aliging the z-axis. It will do the following:
 
 English:The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.
 Translated:The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.
