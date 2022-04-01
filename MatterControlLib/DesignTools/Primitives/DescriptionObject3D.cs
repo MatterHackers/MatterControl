@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Markdig.Agg;
+using Markdig.Renderers.Agg.Inlines;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -268,6 +269,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (markdownWidget.Markdown != description)
 			{
 				markdownWidget.Markdown = description;
+
+				FixSelectableBasedOnLinks(markdownWidget);
 			}
 
 			markdownWidget.Width = width;
@@ -296,6 +299,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			var transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * world.RotationMatrix.Inverted * Matrix4X4.CreateTranslation(start);
 			var theme = ApplicationController.Instance.MenuTheme;
 			graphics2DOpenGL.RenderTransformedPath(transform, new Ellipse(0, 0, 5, 5), theme.PrimaryAccentColor, false);
+		}
+
+        private void FixSelectableBasedOnLinks(MarkdownWidget markdownWidget)
+        {
+			if (markdownWidget.Descendants<TextLinkX>().Any())
+			{
+				foreach (var child in markdownWidget.Children)
+				{
+					child.Selectable = true;
+				}
+			}
+			else
+            {
+				foreach (var child in markdownWidget.Children)
+				{
+					child.Selectable = false;
+				}
+			}
 		}
 
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
@@ -328,17 +349,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				markdownWidget.Markdown = Description;
 				markdownWidget.Width = width;
 				markdownWidget.ScrollArea.VAnchor = VAnchor.Fit | VAnchor.Center;
-				foreach (var child in markdownWidget.Children)
-				{
-					child.Selectable = false;
-				}
+
+				FixSelectableBasedOnLinks(markdownWidget);
 
 				controlLayer.GuiSurface.AddChild(markdownWidget);
 				controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
 				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
 				markdownWidget.MouseMove += MarkdownWidget_MouseMove;
 				markdownWidget.MouseUp += MarkdownWidget_MouseUp;
-				markdownWidget.KeyDown += MarkdownWidget_KeyDown; ;
+				markdownWidget.KeyDown += MarkdownWidget_KeyDown;
 			}
 		}
 

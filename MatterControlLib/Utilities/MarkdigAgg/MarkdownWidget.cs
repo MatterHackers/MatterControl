@@ -94,7 +94,14 @@ namespace Markdig.Agg
 			this.AddChild(contentPanel);
 		}
 
-		public void LoadUri(Uri uri, HelpArticle sourceArticle = null)
+        public override void OnSizeChanged(EventArgs e)
+        {
+			contentPanel.Height = contentPanel.Height - 1;
+
+			base.OnSizeChanged(e);
+        }
+
+        public void LoadUri(Uri uri, HelpArticle sourceArticle = null)
 		{
 			try
 			{
