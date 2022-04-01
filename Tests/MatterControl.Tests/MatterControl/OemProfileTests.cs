@@ -78,7 +78,7 @@ M300 S3000 P30   ; Resume Tone";
 		}
 
 		[Test, RunInApplicationDomain]
-		public void ModifyPrinterProfiles()
+		public void ModifyPulsePrinterProfilesSettings()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
 			return;
@@ -133,13 +133,13 @@ M300 S3000 P30   ; Resume Tone";
 				printerSettings.SetValue(SettingsKey.pause_gcode, ConvertString(pauseGCode));
 				printerSettings.SetValue(SettingsKey.resume_gcode, ConvertString(resumeGCode));
 
+				printerSettings.SetValue(SettingsKey.support_material_create_perimeter, "1");
+
 				// e series settings
 				if (printerModel.Contains('E'))
 				{
-					// load the materials settings that we want to add
-					var materialsProfilePath = @"C:\Temp\E_Pulse_Materials.json";
-					var pulseMaterials = PrinterSettings.LoadFile(materialsProfilePath);
-					printerSettings.MaterialLayers = pulseMaterials.MaterialLayers;
+					// clear all material settings
+					printerSettings.MaterialLayers = new List<PrinterSettingsLayer>();
 					printerSettings.ActiveMaterialKey = "";
 
 					printerSettings.SetValue(SettingsKey.has_swappable_bed, "1");
@@ -162,6 +162,11 @@ M300 S3000 P30   ; Resume Tone";
 					}
 
 					printerSettings.SetValue(SettingsKey.build_height, zHeight.ToString());
+
+					// make sure the start gcode travels fast to priming line
+					var startGCode = printerSettings.GetValue(SettingsKey.start_gcode);
+					startGCode = startGCode.Replace("G1 Y5 X5 Z0.8 F1800    ; Purge line", "G1 Y5 X5 [travel_speed]    ; Purge line\\nG1 Z0.8 F1800");
+					printerSettings.SetValue(SettingsKey.start_gcode, startGCode);
 				}
 
 				// 32 bit settings

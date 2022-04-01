@@ -35,62 +35,57 @@ using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-    public class HomePrinterPage : WizardPage
+    public class AligningZAxisPageInstructions : WizardPage
     {
-        private bool homingAxisObserved;
+        private bool calibrationComplete;
 
-        public HomePrinterPage(ISetupWizard setupWizard, string instructionsText)
-            : base(setupWizard, "Homing the printer".Localize(), instructionsText)
+        public AligningZAxisPageInstructions(ISetupWizard setupWizard, string instructionsText)
+            : base(setupWizard, "Aligning Z Axis".Localize(), instructionsText)
         {
-            // Register listeners
-            printer.Connection.DetailedPrintingStateChanged += Connection_DetailedPrintingStateChanged;
         }
 
         public override void OnClosed(EventArgs e)
         {
-            homingAxisObserved = false;
+            calibrationComplete = false;
 
             // Unregister listeners
-            printer.Connection.DetailedPrintingStateChanged -= Connection_DetailedPrintingStateChanged;
+            printer.Connection.LineReceived -= Connection_LineRecieved;
 
             base.OnClosed(e);
         }
 
         public override void OnLoad(EventArgs args)
         {
-            printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
-
-            if (!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-            {
-                // move so we don't heat the printer while the nozzle is touching the bed
-                printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
-            }
-
+            // Send the G34 Z Stepper Auto Align (https://reprap.org/wiki/G-code#G34:_Z_Stepper_Auto-Align)
+            // 7 iterations .1 accuracy for early exit
+            printer.Connection.QueueLine("G34 I7 T.1");
             NextButton.Enabled = false;
+
+            // Register listeners
+            printer.Connection.LineReceived += Connection_LineRecieved;
 
             // Always enable the advance button after 15 seconds
             UiThread.RunOnIdle(() =>
             {
-                // TODO: consider if needed. Ensures that if we miss a HomingAxis event, the user can still continue
+                // Wait 30 seconds then ensure that if we miss the ok event, the user can still continue.
                 if (!this.HasBeenClosed)
                 {
                     NextButton.Enabled = true;
                 }
-            }, 15);
+            }, 30);
 
             base.OnLoad(args);
         }
 
-        private void Connection_DetailedPrintingStateChanged(object sender, EventArgs e)
+        private void Connection_LineRecieved(object sender, string reciviedString)
         {
-            if (printer.Connection.DetailedPrintingState == DetailedPrintingState.HomingAxis
-                && !homingAxisObserved)
+            if (reciviedString == "ok")
             {
-                homingAxisObserved = true;
+                calibrationComplete = true;
+                printer.Connection.LineReceived -= Connection_LineRecieved;
             }
 
-            if (homingAxisObserved
-                && printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
+            if (calibrationComplete)
             {
                 NextButton.Enabled = true;
                 UiThread.RunOnIdle(() => NextButton.InvokeClick());

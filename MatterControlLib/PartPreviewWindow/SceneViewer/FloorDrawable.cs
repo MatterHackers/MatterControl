@@ -304,7 +304,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center
 				|| settingsKey == SettingsKey.extruder_count
-				|| settingsKey == SettingsKey.bed_shape)
+				|| settingsKey == SettingsKey.bed_shape
+				|| settingsKey == SettingsKey.build_height)
 			{
 				activeBedToolClippingImage = int.MinValue;
 

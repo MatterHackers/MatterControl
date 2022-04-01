@@ -1675,6 +1675,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				try
 				{
 					while (serialPort != null
+						&& serialPort.IsOpen
 						&& serialPort.BytesToRead > 0
 						&& readThreadHolder.IsCurrentThread())
 					{
@@ -1756,6 +1757,11 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 
 			Console.WriteLine("Exiting ReadFromPrinter method: " + CommunicationState.ToString());
+			if (CommunicationState == CommunicationStates.Connected)
+			{
+				// we are in an error condition where we have lost the com port
+				CommunicationState = CommunicationStates.Disconnected;
+			}
 		}
 
 		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)

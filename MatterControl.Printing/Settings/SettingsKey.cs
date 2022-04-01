@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
+		public const string bed_surface = nameof(bed_surface);
 		public const string bed_temperature = nameof(bed_temperature);
 		public const string bed_temperature_blue_tape = nameof(bed_temperature_blue_tape);
 		public const string bed_temperature_buildtak = nameof(bed_temperature_buildtak);
@@ -53,8 +54,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_temperature_kapton = nameof(bed_temperature_kapton);
 		public const string bed_temperature_pei = nameof(bed_temperature_pei);
 		public const string bed_temperature_pp = nameof(bed_temperature_pp);
-		public const string has_swappable_bed = nameof(has_swappable_bed);
-		public const string bed_surface = nameof(bed_surface);
 		public const string before_toolchange_gcode = nameof(before_toolchange_gcode);
 		public const string before_toolchange_gcode_1 = nameof(before_toolchange_gcode_1);
 		public const string before_toolchange_gcode_2 = nameof(before_toolchange_gcode_2);
@@ -133,8 +132,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_fan_per_extruder = nameof(has_fan_per_extruder);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
+		public const string has_independent_z_motors = nameof(has_independent_z_motors);
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
+		public const string has_swappable_bed = nameof(has_swappable_bed);
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
@@ -306,7 +307,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string validate_leveling = nameof(validate_leveling);
-		public const string validate_probe_offset = nameof(validate_probe_offset);
 		public const string validation_threshold = nameof(validation_threshold);
 		public const string wipe_shield_distance = nameof(wipe_shield_distance);
 		public const string wipe_tower_perimeters_per_extruder = nameof(wipe_tower_perimeters_per_extruder);

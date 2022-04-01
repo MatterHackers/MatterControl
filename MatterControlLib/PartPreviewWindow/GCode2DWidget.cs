@@ -33,12 +33,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
