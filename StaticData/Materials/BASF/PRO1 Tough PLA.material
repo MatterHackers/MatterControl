@@ -22,7 +22,7 @@
       "max_fan_speed_layer_time": "60",
       "min_fan_speed": "60",
       "min_fan_speed_layer_time": "180",
-      "temperature": "220"
+      "temperature": "215"
     }
   ],
   "OemLayer": null,

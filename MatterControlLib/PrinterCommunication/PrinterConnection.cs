@@ -1757,7 +1757,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 
 			Console.WriteLine("Exiting ReadFromPrinter method: " + CommunicationState.ToString());
-			if (CommunicationState == CommunicationStates.Connected)
+			if (CommunicationState != CommunicationStates.Disconnecting)
 			{
 				// we are in an error condition where we have lost the com port
 				CommunicationState = CommunicationStates.Disconnected;

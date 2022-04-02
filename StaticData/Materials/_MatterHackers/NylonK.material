@@ -7,7 +7,7 @@
       "bed_temperature": "70",
       "bed_temperature_blue_tape": "NC",
       "bed_temperature_buildtak": "NC",
-      "bed_temperature_garolite": "NC",
+      "bed_temperature_garolite": "75",
       "bed_temperature_glass": "85",
       "bed_temperature_kapton": "70",
       "bed_temperature_pei": "NC",
