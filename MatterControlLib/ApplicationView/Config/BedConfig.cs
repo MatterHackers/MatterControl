@@ -729,7 +729,7 @@ namespace MatterHackers.MatterControl
 					}
 				});
 
-				this.EditContext?.Save(this.Scene);
+				await this.EditContext?.Save(this.Scene);
 			}
 		}
 

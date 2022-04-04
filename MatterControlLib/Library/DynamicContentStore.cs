@@ -28,15 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public class DynamicContentStore : IContentStore
 	{
-		private Action<ILibraryItem, IObject3D> saveAction;
+		private Func<ILibraryItem, IObject3D, Task> saveAction;
 
-		public DynamicContentStore(Action<ILibraryItem, IObject3D> saveAction)
+		public DynamicContentStore(Func<ILibraryItem, IObject3D, Task> saveAction)
 		{
 			this.saveAction = saveAction;
 		}
@@ -45,9 +46,9 @@ namespace MatterHackers.MatterControl.Library
         {
         }
 
-        public void Save(ILibraryItem item, IObject3D content)
+        public Task Save(ILibraryItem item, IObject3D content)
 		{
-			saveAction.Invoke(item, content);
+			return saveAction.Invoke(item, content);
 		}
 	}
 }

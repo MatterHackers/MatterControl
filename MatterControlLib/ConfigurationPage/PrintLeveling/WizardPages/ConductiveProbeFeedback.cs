@@ -27,131 +27,127 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class ConductiveProbeFeedback : WizardPage
-	{
-		private readonly List<PrintLevelingWizard.ProbePosition> probePositions;
+    public class ConductiveProbeFeedback : WizardPage
+    {
+        private readonly List<PrintLevelingWizard.ProbePosition> probePositions;
 
-		private Vector3 nozzleCurrentPosition;
+        private Vector3 feedRates;
+        private double moveDelta = .5;
+        private Vector3 nozzleCurrentPosition;
 
-		public ConductiveProbeFeedback(ISetupWizard setupWizard, Vector3 nozzleStartPosition, string headerText, string details, List<PrintLevelingWizard.ProbePosition> probePositions)
-			: base(setupWizard, headerText, details)
-		{
-			this.nozzleCurrentPosition = nozzleStartPosition;
-			this.probePositions = probePositions;
+        private State state = State.WaitingForEndstopStatusStart;
 
-			var spacer = new GuiWidget(15, 15);
-			contentRow.AddChild(spacer);
+        public ConductiveProbeFeedback(ISetupWizard setupWizard, Vector3 nozzleStartPosition, string headerText, string details, List<PrintLevelingWizard.ProbePosition> probePositions)
+                    : base(setupWizard, headerText, details)
+        {
+            this.nozzleCurrentPosition = nozzleStartPosition;
+            this.probePositions = probePositions;
 
-			feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
-		}
+            var spacer = new GuiWidget(15, 15);
+            contentRow.AddChild(spacer);
 
-		double moveDelta = .5;
+            feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
+        }
 
-		enum State
-		{
-			WaitingForEndstopStatusStart,
-			WaitingForEndstopStatusOk,
-		}
+        private enum State
+        {
+            WaitingForEndstopStatusStart,
+            WaitingForEndstopStatusOk,
+        }
 
-		State state = State.WaitingForEndstopStatusStart;
-		private Vector3 feedRates;
+        public bool MovedBelowMinZ { get; private set; }
 
-		public bool MovedBelowMinZ { get; private set; }
+        public override void OnClosed(EventArgs e)
+        {
+            printer.Connection.LineReceived -= PrinterLineRecieved;
+            base.OnClosed(e);
+        }
 
-		private void PrinterLineRecieved(object sender, string line)
-		{
-			// looking for 'conductive: TRIGGERED' in an M119 command
-			if (line != null)
-			{
-				switch (state)
-				{
-					case State.WaitingForEndstopStatusStart:
-						if (line.StartsWith("conductive:"))
-						{
-							if (line.Contains("TRIGGERED"))
-							{
-								if (moveDelta > .02)
-								{
-									nozzleCurrentPosition.Z += moveDelta * 3;
-									moveDelta *= .5;
-									state = State.WaitingForEndstopStatusOk;
-								}
-								else
-								{
-									probePositions[0].Position = nozzleCurrentPosition;
+        public override void OnLoad(EventArgs args)
+        {
+            // always make sure we don't have print leveling turned on
+            printer.Connection.AllowLeveling = false;
 
-									// move on to the next page of the wizard
-									UiThread.RunOnIdle(() => NextButton.InvokeClick());
-								}
-							}
-							else // did not find endstop yet
-							{
-								nozzleCurrentPosition.Z -= moveDelta;
-								state = State.WaitingForEndstopStatusOk;
-							}
-						}
-						break;
+            NextButton.Enabled = false;
 
-					case State.WaitingForEndstopStatusOk:
-						// found the ok of the M119 command
-						// move down more
-						if (printer.Connection.CurrentDestination.Z < printer.Settings.GetValue<double>(SettingsKey.conductive_probe_min_z))
-						{
-							// we have gone down too far
-							// abort with error
-							this.MovedBelowMinZ = true;
-							// move on to the next page of the wizard
-							UiThread.RunOnIdle(() => NextButton.InvokeClick());
-						}
-						else if (line.StartsWith("ok"))
-						{
-							state = State.WaitingForEndstopStatusStart;
-							// send the next set of commands
-							printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
-							printer.Connection.QueueLine("G4 P1");
-							printer.Connection.QueueLine("M119");
-						}
-						break;
-				}
-			}
-		}
+            // do a last minute check that the printer is ready to do this action
+            if (printer.Connection.IsConnected
+                && !(printer.Connection.Printing
+                || printer.Connection.Paused))
+            {
+                printer.Connection.LineReceived += PrinterLineRecieved;
+                printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
+                printer.Connection.QueueLine("G4 P1");
+                printer.Connection.QueueLine("M119");
+            }
 
-		public override void OnLoad(EventArgs args)
-		{
-			// always make sure we don't have print leveling turned on
-			printer.Connection.AllowLeveling = false;
+            base.OnLoad(args);
+        }
 
-			NextButton.Enabled = false;
+        private void PrinterLineRecieved(object sender, string line)
+        {
+            // looking for 'conductive: TRIGGERED' in an M119 command
+            if (line != null)
+            {
+                switch (state)
+                {
+                    case State.WaitingForEndstopStatusStart:
+                        if (line.StartsWith("conductive:"))
+                        {
+                            if (line.Contains("TRIGGERED"))
+                            {
+                                if (moveDelta > .02)
+                                {
+                                    nozzleCurrentPosition.Z += moveDelta * 3;
+                                    moveDelta *= .5;
+                                    state = State.WaitingForEndstopStatusOk;
+                                }
+                                else
+                                {
+                                    probePositions[0].Position = nozzleCurrentPosition;
 
-			// do a last minute check that the printer is ready to do this action
-			if (printer.Connection.IsConnected
-				&& !(printer.Connection.Printing
-				|| printer.Connection.Paused))
-			{
-				printer.Connection.LineReceived += PrinterLineRecieved;
-				printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
-				printer.Connection.QueueLine("G4 P1");
-				printer.Connection.QueueLine("M119");
-			}
+                                    // move on to the next page of the wizard
+                                    UiThread.RunOnIdle(() => NextButton.InvokeClick());
+                                }
+                            }
+                            else // did not find endstop yet
+                            {
+                                nozzleCurrentPosition.Z -= moveDelta;
+                                state = State.WaitingForEndstopStatusOk;
+                            }
+                        }
+                        break;
 
-			base.OnLoad(args);
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			printer.Connection.LineReceived -= PrinterLineRecieved;
-			base.OnClosed(e);
-		}
-	}
+                    case State.WaitingForEndstopStatusOk:
+                        // found the ok of the M119 command
+                        // move down more
+                        if (printer.Connection.CurrentDestination.Z < printer.Settings.GetValue<double>(SettingsKey.conductive_probe_min_z))
+                        {
+                            // we have gone down too far
+                            // abort with error
+                            this.MovedBelowMinZ = true;
+                            // move on to the next page of the wizard
+                            UiThread.RunOnIdle(() => NextButton.InvokeClick());
+                        }
+                        else if (line.StartsWith("ok"))
+                        {
+                            state = State.WaitingForEndstopStatusStart;
+                            // send the next set of commands
+                            printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
+                            printer.Connection.QueueLine("G4 P1");
+                            printer.Connection.QueueLine("M119");
+                        }
+                        break;
+                }
+            }
+        }
+    }
 }

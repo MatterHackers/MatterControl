@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public override void Save(ILibraryItem item, IObject3D content)
+		public override async Task Save(ILibraryItem item, IObject3D content)
 		{
 			if (item is FileSystemFileItem fileItem)
 			{
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 				else
 				{
-					ApplicationController.Instance.Tasks.Execute(
+					await ApplicationController.Instance.Tasks.Execute(
 						"Saving Changes".Localize(),
 						null,
 						async (reporter, cancellationTokenSource) =>

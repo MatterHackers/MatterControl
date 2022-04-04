@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void Save(IObject3D scene)
+		public async Task Save(IObject3D scene)
 		{
 			if (!this.FreezeGCode)
 			{
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 					using (new SelectionMaintainer(interactiveScene))
 					{
 						// Call save on the provider
-						this.ContentStore?.Save(this.SourceItem, scene);
+						await this.ContentStore?.Save(this.SourceItem, scene);
 					}
 
 					interactiveScene.MarkSavePoint();
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 				else
                 {
 					// Call save on the provider
-					this.ContentStore?.Save(this.SourceItem, scene);
+					await this.ContentStore?.Save(this.SourceItem, scene);
 				}
 			}
 		}

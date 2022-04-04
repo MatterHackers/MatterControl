@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ReloadContent();
 		}
 
-		public override void Save(ILibraryItem item, IObject3D content)
+		public override Task Save(ILibraryItem item, IObject3D content)
 		{
 			if (item is FileSystemFileItem fileItem)
 			{
@@ -200,6 +200,8 @@ namespace MatterHackers.MatterControl.Library
 
 				this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
 			}
+
+			return null;
 		}
 
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
