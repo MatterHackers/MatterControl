@@ -29,8 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -38,6 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     public class AligningZAxisPageInstructions : WizardPage
     {
         private bool calibrationComplete;
+        private bool g32HasBeenSent;
 
         public AligningZAxisPageInstructions(ISetupWizard setupWizard, string instructionsText)
             : base(setupWizard, "Aligning Z Axis".Localize(), instructionsText)
@@ -50,12 +49,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
             // Unregister listeners
             printer.Connection.LineReceived -= Connection_LineRecieved;
+            printer.Connection.LineSent -= Connection_LineSent;
 
             base.OnClosed(e);
         }
 
         public override void OnLoad(EventArgs args)
         {
+            printer.Connection.LineSent += Connection_LineSent;
+
             // Send the G34 Z Stepper Auto Align (https://reprap.org/wiki/G-code#G34:_Z_Stepper_Auto-Align)
             // 7 iterations .1 accuracy for early exit
             printer.Connection.QueueLine("G34 I7 T.1");
@@ -79,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         private void Connection_LineRecieved(object sender, string reciviedString)
         {
-            if (reciviedString == "ok")
+            if (g32HasBeenSent && reciviedString == "ok")
             {
                 calibrationComplete = true;
                 printer.Connection.LineReceived -= Connection_LineRecieved;
@@ -89,6 +91,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             {
                 NextButton.Enabled = true;
                 UiThread.RunOnIdle(() => NextButton.InvokeClick());
+            }
+        }
+
+        private void Connection_LineSent(object sender, string sentString)
+        {
+            if (sentString.Contains("G34"))
+            {
+                g32HasBeenSent = true;
+                printer.Connection.LineSent -= Connection_LineSent;
             }
         }
     }

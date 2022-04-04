@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 
         public abstract void Remove(IEnumerable<ILibraryItem> items);
 
-        public abstract void Save(ILibraryItem item, IObject3D content);
+        public abstract Task Save(ILibraryItem item, IObject3D content);
 
         public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
         {

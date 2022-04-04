@@ -534,13 +534,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.AddChild(editorWidget);
 		}
 
-		public void Save(ILibraryItem item, IObject3D content)
+		public Task Save(ILibraryItem item, IObject3D content)
 		{
 			this.item.Parent.Children.Modify(children =>
 			{
 				children.Remove(this.item);
 				children.Add(content);
 			});
+
+			return null;
 		}
 
 		public override void OnClosed(EventArgs e)

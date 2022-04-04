@@ -29,11 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.DataConverters3D;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public interface IContentStore : IDisposable
 	{
-		void Save(ILibraryItem item, IObject3D content);
+		Task Save(ILibraryItem item, IObject3D content);
 	}
 }
