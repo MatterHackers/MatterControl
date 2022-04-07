@@ -857,11 +857,9 @@ namespace MatterHackers.MatterControl
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{
-#if DEBUG
-						AddSliceSettingsOperation(),
-#endif
 						ToggleSupportOperation(),
 						ToggleWipeTowerOperation(),
+						ToggleFuzzyOperation(),
 					}
 				},
 				new OperationGroup("Design Apps")
@@ -1443,33 +1441,6 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static SceneOperation AddSliceSettingsOperation()
-		{
-			var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
-
-#if !DEBUG
-			if (!isExperimental)
-			{
-				return null;
-			}
-#endif
-
-			return new SceneOperation("Add Slice Settings")
-			{
-				OperationType = typeof(IObject3D),
-				ResultType = typeof(SliceSettingsObject3D),
-				TitleGetter = () => "Add Slice Settings".Localize(),
-				Action = (sceneContext) =>
-				{
-					var sliceSettings = new SliceSettingsObject3D();
-					sliceSettings.WrapSelectedItemAndSelect(sceneContext.Scene);
-				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("settings.png", 16, 16).SetToColor(theme.TextColor),
-				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
-			};
-		}
-
 		private static SceneOperation ToggleWipeTowerOperation()
 		{
 			return new SceneOperation("Convert to Wipe Tower")
@@ -1496,6 +1467,37 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("wipe_tower.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
+			};
+		}
+
+		private static SceneOperation ToggleFuzzyOperation()
+		{
+			return new SceneOperation("Convert to Fuzzy Region")
+			{
+				TitleGetter = () => "Convert to Fuzzy Region".Localize(),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
+					{
+						bool allAreFuzzy = false;
+
+						if (selectedItem is SelectionGroupObject3D)
+						{
+							allAreFuzzy = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Fuzzy);
+						}
+						else
+						{
+							allAreFuzzy = selectedItem.OutputType == PrintOutputTypes.Fuzzy;
+						}
+
+						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreFuzzy ? PrintOutputTypes.Default : PrintOutputTypes.Fuzzy));
+					}
+				},
+				Icon = (theme) => StaticData.Instance.LoadIcon("fuzzy_region.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};

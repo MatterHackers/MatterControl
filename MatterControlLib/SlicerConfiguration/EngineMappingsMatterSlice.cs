@@ -332,6 +332,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
 				}
 
+				var fuzzyObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Fuzzy);
+				// if we added user generated wipe tower
+				if (fuzzyObjects.Any())
+				{
+					// add a flag to the merge rules to let us know there was a wipe tower
+					mergeRules += ",F" + AddObjectsForExtruder(fuzzyObjects, outputOptions, ref savedStlCount);
+				}
+
 				mergeRules += " ";
 
 				return outputOptions;

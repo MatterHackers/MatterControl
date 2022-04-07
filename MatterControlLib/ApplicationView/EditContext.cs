@@ -146,9 +146,9 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-
-		// Natural path
-		private async Task<string> GCodePath(PrinterConfig printer)
+        
+        // Natural path
+        private async Task<string> GCodePath(PrinterConfig printer)
 		{
 			if (File.Exists(this.SourceFilePath))
 			{

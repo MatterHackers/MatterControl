@@ -1012,6 +1012,9 @@ Translated:Controls the amount of extrusion
 English:Controls the speed of printer moves
 Translated:Controls the speed of printer moves
 
+English:Convert to Fuzzy Region
+Translated:Convert to Fuzzy Region
+
 English:Convert to Support
 Translated:Convert to Support
 
