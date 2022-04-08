@@ -82,6 +82,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SettingsKey.expand_thin_walls,
 							SettingsKey.coast_at_end_distance,
 							SettingsKey.monotonic_solid_infill,
+							SettingsKey.fuzzy_thickness,
+							SettingsKey.fuzzy_frequency,
 						}),
 						("Infill", new[]
 						{
@@ -360,6 +362,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.report_runout_sensor_data,
 					}),
+					("Printer Help", new[]
+					{
+						SettingsKey.trim_filament_markdown,
+						SettingsKey.insert_filament_markdown2,
+						SettingsKey.running_clean_markdown2,
+						SettingsKey.insert_filament_1_markdown,
+						SettingsKey.running_clean_1_markdown,
+						SettingsKey.printer_sku,
+						SettingsKey.created_date,
+					}),
+				}),
+				("Hardware", new (string groupName, string[] settings)[]
+				{
 					("Hardware", new[]
 					{
 						SettingsKey.firmware_type,
@@ -389,16 +404,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.load_filament_length,
 						SettingsKey.unload_filament_length,
 						SettingsKey.load_filament_speed,
-					}),
-					("Printer Help", new[]
-					{
-						SettingsKey.trim_filament_markdown,
-						SettingsKey.insert_filament_markdown2,
-						SettingsKey.running_clean_markdown2,
-						SettingsKey.insert_filament_1_markdown,
-						SettingsKey.running_clean_1_markdown,
-						SettingsKey.printer_sku,
-						SettingsKey.created_date,
 					}),
 				}),
 				("G-Code", new[]

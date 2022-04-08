@@ -88,6 +88,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.bridge_over_infill] = new ExportField("bridgeOverInfill"),
 				[SettingsKey.extrusion_multiplier] = new ExportField("extrusionMultiplier"),
 				[SettingsKey.fill_angle] = new ExportField("infillStartingAngle"),
+				[SettingsKey.fuzzy_thickness] = new ExportField("fuzzyThickness"),
+				[SettingsKey.fuzzy_frequency] = new ExportField("fuzzyFrequency"),
 				[SettingsKey.infill_overlap_perimeter] = new ExportField("infillExtendIntoPerimeter"),
 				[SettingsKey.infill_speed] = new ExportField("infillSpeed"),
 				[SettingsKey.infill_type] = new ExportField("infillType"),
