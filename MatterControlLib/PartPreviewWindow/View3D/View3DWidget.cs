@@ -1785,7 +1785,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					double xToSnap = xSnapOffset + delta.X;
 
-					double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
+					double snappedX = Math.Round(xToSnap / snapGridDistance) * snapGridDistance;
 					delta.X = snappedX - xSnapOffset;
 
 					double ySnapOffset = selectedBounds.MinXYZ.Y;
@@ -1798,7 +1798,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					double yToSnap = ySnapOffset + delta.Y;
 
-					double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
+					double snappedY = Math.Round(yToSnap / snapGridDistance) * snapGridDistance;
 					delta.Y = snappedY - ySnapOffset;
 				}
 
