@@ -1012,6 +1012,9 @@ Translated:Controls the amount of extrusion
 English:Controls the speed of printer moves
 Translated:Controls the speed of printer moves
 
+English:Convert to Fuzzy Region
+Translated:Convert to Fuzzy Region
+
 English:Convert to Support
 Translated:Convert to Support
 
@@ -1917,6 +1920,12 @@ Translated:Found a line that is {0} characters long.\n{1}...
 
 English:Furthest Back
 Translated:Furthest Back
+
+English:Fuzzy Frequency
+Translated:Fuzzy Frequency
+
+English:Fuzzy Thickness
+Translated:Fuzzy Thickness
 
 English:g/cm³
 Translated:g/cm³
@@ -4954,6 +4963,12 @@ Translated:The angle of the infill, measured from the X axis. Not used when brid
 English:The angle to generate support for
 Translated:The angle to generate support for
 
+English:The average distance along the perimeter to change the depth of the fuzzy pattern. You can think of this as the smoothness of the pattern.\n\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+Translated:The average distance along the perimeter to change the depth of the fuzzy pattern. You can think of this as the smoothness of the pattern.\n\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+
+English:The average distance along the perimeter to change the depth of the fuzzy pattern. You can think of this as the smoothness of the pattern.\n\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the arrears you want to make Fuzzy
+Translated:The average distance along the perimeter to change the depth of the fuzzy pattern. You can think of this as the smoothness of the pattern.\n\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the arrears you want to make Fuzzy
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 
@@ -5133,6 +5148,15 @@ Translated:The maximum speed the printer can move. Uused for print time estimati
 
 English:The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.
 Translated:The maximum speed the printer will extrude filament. All extrusion speeds will be clamped to this amount. Set to 0 to have no effect.
+
+English:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+Translated:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+
+English:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+Translated:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the area you want to make Fuzzy
+
+English:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the arrears you want to make Fuzzy
+Translated:The maximum thickness the fuzz will be from the surface.\nTo Create:\n- Right Click a part\n  - Modify\n    - Printing\n      - Convert to Fuzzy Region\n- Place over the arrears you want to make Fuzzy
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
 Translated:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.

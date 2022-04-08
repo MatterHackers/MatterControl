@@ -823,6 +823,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.fuzzy_thickness,
+					PresentationName = "Fuzzy Thickness".Localize(),
+					HelpText = @"The maximum thickness the fuzz will be from the surface.
+To Create:
+- Right Click a part
+  - Modify
+    - Printing
+      - Convert to Fuzzy Region
+- Place over the area you want to make Fuzzy".Replace("\r", "").Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					DefaultValue = ".3",
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.fuzzy_frequency,
+					PresentationName = "Fuzzy Frequency".Localize(),
+					HelpText = @"The average distance along the perimeter to change the depth of the fuzzy pattern. You can think of this as the smoothness of the pattern.
+
+To Create:
+- Right Click a part
+  - Modify
+    - Printing
+      - Convert to Fuzzy Region
+- Place over the area you want to make Fuzzy".Replace("\r", "").Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					DefaultValue = ".8",
+					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.fill_density,
 					QuickMenuSettings = { { "Light", "10%" }, { "Standard", "30%" }, { "Heavy", "90%" } },
 					PresentationName = "Fill Density".Localize(),
@@ -1649,7 +1684,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					DefaultValue = "0",					
+					DefaultValue = "0",
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()

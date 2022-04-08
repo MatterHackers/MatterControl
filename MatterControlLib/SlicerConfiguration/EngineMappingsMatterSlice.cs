@@ -88,6 +88,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.bridge_over_infill] = new ExportField("bridgeOverInfill"),
 				[SettingsKey.extrusion_multiplier] = new ExportField("extrusionMultiplier"),
 				[SettingsKey.fill_angle] = new ExportField("infillStartingAngle"),
+				[SettingsKey.fuzzy_thickness] = new ExportField("fuzzyThickness"),
+				[SettingsKey.fuzzy_frequency] = new ExportField("fuzzyFrequency"),
 				[SettingsKey.infill_overlap_perimeter] = new ExportField("infillExtendIntoPerimeter"),
 				[SettingsKey.infill_speed] = new ExportField("infillSpeed"),
 				[SettingsKey.infill_type] = new ExportField("infillType"),
@@ -330,6 +332,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// add a flag to the merge rules to let us know there was a wipe tower
 					mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
+				}
+
+				var fuzzyObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Fuzzy);
+				// if we added user generated wipe tower
+				if (fuzzyObjects.Any())
+				{
+					// add a flag to the merge rules to let us know there was a wipe tower
+					mergeRules += ",F" + AddObjectsForExtruder(fuzzyObjects, outputOptions, ref savedStlCount);
 				}
 
 				mergeRules += " ";

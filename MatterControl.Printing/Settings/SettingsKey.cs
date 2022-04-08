@@ -125,6 +125,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string first_layer_height = nameof(first_layer_height);
 		public const string first_layer_speed = nameof(first_layer_speed);
 		public const string first_layer_temperature = nameof(first_layer_temperature);
+		public const string fuzzy_thickness = nameof(fuzzy_thickness);
+		public const string fuzzy_frequency = nameof(fuzzy_frequency);
 		public const string g0 = nameof(g0);
 		public const string has_c_axis = nameof(has_c_axis);
 		public const string has_conductive_nozzle = nameof(has_conductive_nozzle);
