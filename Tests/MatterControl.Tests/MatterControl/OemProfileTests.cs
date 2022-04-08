@@ -249,6 +249,13 @@ M300 S3000 P30   ; Resume Tone";
 					Assert.IsTrue(material.ContainsKey(key), $"Material {files[i].FullName} should include {key} setting");
 				}
 
+				if (profile.GetValue(SettingsKey.layer_name).ToLower().Contains("nylon"))
+                {
+					// make sure the setting for garolite is greater than 0 and not NC
+					double.TryParse(profile.GetValue(SettingsKey.bed_temperature_garolite), out double temp);
+					Assert.Greater(temp, 0);
+				}
+
 				foreach (var key in notPresentKeys)
                 {
 					Assert.IsTrue(!material.ContainsKey(key), $"Material {files[i].FullName} should not include {key} setting");
