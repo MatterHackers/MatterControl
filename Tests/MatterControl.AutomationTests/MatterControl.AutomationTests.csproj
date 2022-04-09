@@ -1,148 +1,50 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{418E7058-92EE-4329-86BA-AC26B65AFB25}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterControl.AutomationTests</RootNamespace>
-    <AssemblyName>MatterControl.AutomationTests</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <RuntimeIdentifier>win</RuntimeIdentifier>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit.ApplicationDomain" Version="11.1.0" />
-    <PackageReference Include="NUnit3TestAdapter">
-      <Version>3.12.0</Version>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.310801">
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\MatterControl.Tests\MatterControl\MatterControlUtilities.cs">
       <Link>MatterControlUtilities.cs</Link>
     </Compile>
-    <Compile Include="CameraFittingUtilTests.cs" />
-    <Compile Include="DesignTools\SheetTests.cs" />
-    <Compile Include="MatterControlTests.cs" />
-    <Compile Include="CreateLibraryFolder.cs" />
-    <Compile Include="ExportItemWindowTests.cs" />
-    <Compile Include="HardwareLevelingUITests.cs" />
-    <Compile Include="LibraryActionTests.cs" />
-    <Compile Include="LibraryDownloadsTest.cs" />
-    <Compile Include="LocalLibraryTests.cs" />
-    <Compile Include="OptionsTabTests.cs" />
-    <Compile Include="PartPreviewTests.cs" />
-    <Compile Include="PrinterDropDownTests.cs" />
-    <Compile Include="PrinterConnectionTests.cs" />
-    <Compile Include="PrintQueueTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PrintingTests.cs" />
-    <Compile Include="LibraryContainerTests.cs" />
-    <Compile Include="ReSliceTests.cs" />
-    <Compile Include="SceneUndoRedoCopyTests.cs" />
-    <Compile Include="SliceSettingsTests.cs" />
-    <Compile Include="SqLiteLibraryProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj">
-      <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
-      <Name>MatterControl.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj">
-      <Project>{3EC506A5-3C23-4663-A5F3-600119361A35}</Project>
-      <Name>MatterControl.MeshOperations</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
-      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
-      <Name>MatterControl.Printing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj">
-      <Project>{d6dc2669-7b1f-40fe-89bf-45d4c94473e3}</Project>
-      <Name>MatterControl.Winforms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj">
-      <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
-      <Name>MatterControlLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
-      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
-      <Name>DataConverters3D</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{807F5686-A3EC-4BCC-AA42-B75D79E0D855}</Project>
-      <Name>GuiAutomation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
-      <Name>Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{CD8A3D1A-24D5-4184-8CF3-7B2AD5CD7A71}</Project>
-      <Name>PlatformWin32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
-      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
-      <Name>PolygonMesh</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
-      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
-      <Name>RenderOpenGl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
-      <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
-      <Name>Agg.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
-      <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
-      <Project>{D0B7E0DD-3517-4BFD-A934-95A568FEED1E}</Project>
-      <Name>MatterSliceLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj">
-      <Project>{8cd15b23-d30f-470e-99ba-9276fb7cabd4}</Project>
-      <Name>MatterSlice.Tests</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj" />
+    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj" />
+    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj" />
+    <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj" />
+    <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
+    <ProjectReference Include="..\..\Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="SlicingTests.cs" />
+  </ItemGroup>
 </Project>
