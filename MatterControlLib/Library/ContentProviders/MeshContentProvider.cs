@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
     using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
     using MatterHackers.PolygonMesh.Processors;
-    using MatterHackers.RayTracer;
+    using MatterHackers.RayTracerNS;
 
 	/// <summary>
 	/// Loads IObject3D objects for mesh based ILibraryItems

@@ -34,13 +34,14 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class CreateLibraryFolder
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, ChildProcessTest]
 		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

@@ -41,22 +41,28 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.All)]
 	public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
 
+		internal static string GetPathToRootRelative(params string[] relPathPieces)
+		{
+			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
+		}
+
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = GetPathToRootRelative("StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task CopyRemoveUndoRedo()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -96,7 +102,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task UndoRedoCopy()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -146,7 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoOnUnGroupSingleMesh()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -185,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoOnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -221,7 +227,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoUnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -269,7 +275,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoMirror()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -299,7 +305,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateXY()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -333,7 +339,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateZ()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -397,7 +403,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	{
 		public static void RunDoUndoTest(this AutomationRunner testRunner, InteractiveScene scene, Action performOperation)
 		{
-			string scenePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", "undo_test_scene");
+			string scenePath = SceneUndoRedoCopyTests.GetPathToRootRelative("Tests", "temp", "undo_test_scene");
 			Directory.CreateDirectory(scenePath);
 			Object3D.AssetsPath = Path.Combine(scenePath, "Assets");
 

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>application.ico</ApplicationIcon>
+    <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Community.CsharpSqlite\**" />

@@ -38,23 +38,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launch
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agg-sharp", "agg-sharp", "{2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfInstaller", "PrinterDriverInstaller\InfInstaller.csproj", "{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfInstaller", "PrinterDriverInstaller\InfInstaller.csproj", "{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FBE6DF29-85A9-4A8B-B739-35BE4CA0A9B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataConverters3D", "Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj", "{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl.Tests", "Tests\MatterControl.Tests\MatterControl.Tests.csproj", "{E1455E5C-127C-4282-8CC5-452C300E91D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Tests", "Tests\MatterControl.Tests\MatterControl.Tests.csproj", "{E1455E5C-127C-4282-8CC5-452C300E91D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agg.Tests", "Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj", "{195CBE56-E654-437B-AB05-3BE1B9452497}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agg.Tests", "Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj", "{195CBE56-E654-437B-AB05-3BE1B9452497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice.Tests", "Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj", "{8CD15B23-D30F-470E-99BA-9276FB7CABD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterSlice.Tests", "Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj", "{8CD15B23-D30F-470E-99BA-9276FB7CABD4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuiAutomation", "Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj", "{E9102310-0029-4D8F-B1E9-88FBA6147D45}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataConverters2D", "Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj", "{94838988-523C-4B11-AD82-8B9B76F23A31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl.AutomationTests", "Tests\MatterControl.AutomationTests\MatterControl.AutomationTests.csproj", "{418E7058-92EE-4329-86BA-AC26B65AFB25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.AutomationTests", "Tests\MatterControl.AutomationTests\MatterControl.AutomationTests.csproj", "{418E7058-92EE-4329-86BA-AC26B65AFB25}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{FED00F38-E911-45E1-A788-26980E84C3D6}"
 EndProject
@@ -72,15 +72,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.OpenGL", "Mat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Printing", "MatterControl.Printing\MatterControl.Printing.csproj", "{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl.Winforms", "MatterControl.Winforms\MatterControl.Winforms.csproj", "{D6DC2669-7B1F-40FE-89BF-45D4C94473E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Winforms", "MatterControl.Winforms\MatterControl.Winforms.csproj", "{D6DC2669-7B1F-40FE-89BF-45D4C94473E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterSliceLib", "Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj", "{7F077116-2923-4A77-87CC-EC3BE7EB8BC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice", "Submodules\MatterSlice\MatterSlice.csproj", "{B0AED568-8796-42B9-BAA9-EBC796134E78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterSlice", "Submodules\MatterSlice\MatterSlice.csproj", "{B0AED568-8796-42B9-BAA9-EBC796134E78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControlLib", "MatterControlLib\MatterControlLib.csproj", "{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl", "MatterControl.csproj", "{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Common", "MatterControl.Common\MatterControl.Common.csproj", "{50505F12-985B-4C5F-8DAB-D5BEA734CD51}"
 EndProject
@@ -103,6 +103,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.SLA", "MatterControl.SLA\MatterControl.SLA.csproj", "{34383A75-1831-4816-A38A-AB06B969D7C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "geometry3Sharp", "Submodules\agg-sharp\geometry3Sharp\geometry3Sharp.csproj", "{3A25C796-F676-4422-8F30-01D4FDB240F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInvoker", "Tests\TestInvoker\TestInvoker.csproj", "{23A6104D-7517-4423-957A-1D5576369DD7}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -446,6 +448,14 @@ Global
 		{3A25C796-F676-4422-8F30-01D4FDB240F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3A25C796-F676-4422-8F30-01D4FDB240F1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3A25C796-F676-4422-8F30-01D4FDB240F1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{23A6104D-7517-4423-957A-1D5576369DD7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -493,6 +503,7 @@ Global
 		{7ECC040E-19FC-4E10-B314-412CF7AB2170} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
 		{34383A75-1831-4816-A38A-AB06B969D7C7} = {FED00F38-E911-45E1-A788-26980E84C3D6}
 		{3A25C796-F676-4422-8F30-01D4FDB240F1} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
+		{23A6104D-7517-4423-957A-1D5576369DD7} = {FBE6DF29-85A9-4A8B-B739-35BE4CA0A9B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42D74E06-00EA-43D2-A05B-9BEAD4A2C8A0}

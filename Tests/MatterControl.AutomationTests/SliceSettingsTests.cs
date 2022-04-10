@@ -9,13 +9,19 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class SliceSetingsTests
 	{
-		[Test]
+		private static string GetPathToRootRelative(params string[] relPathPieces)
+		{
+			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
+		}
+
+		[Test, ChildProcessTest]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +42,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RelativeRetractionExecutesCorrectly()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -65,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PauseOnLayerTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -88,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task OemSettingsChangeOfferedToUserTest()
 		{
 			await MatterControlUtilities.RunTest(async (testRunner) =>
@@ -146,7 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task MenuStaysOpenOnRebuildSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -174,7 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task SettingsStayOpenOnRebuildSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -201,7 +207,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -234,7 +240,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */, ChildProcessTest]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -255,7 +261,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 900, maxTimeToRun: 600);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DualExtrusionShowsCorrectHotendData()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -426,10 +432,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SliceSettingsOrganizerSupportsKeyLookup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
+			StaticData.RootPath = GetPathToRootRelative("MatterControl", "StaticData");
 
 			var organizer = PrinterSettings.Layout;
 
@@ -446,7 +452,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsFalse(organizer.AllSliceSettings.ContainsKey("non_existing_setting"));
 		}
 
-		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */, ChildProcessTest]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -513,7 +519,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 1000);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DeleteProfileWorksForGuest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -575,7 +581,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsFalse(printer.Settings.UserLayer.ContainsKey(settingToChange));
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -604,7 +610,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task QualitySettingsStayAsOverrides()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -668,11 +674,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CopyFromTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = GetPathToRootRelative("StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
 
 			var settings = new PrinterSettings();
 			settings.ID = "12345-print";

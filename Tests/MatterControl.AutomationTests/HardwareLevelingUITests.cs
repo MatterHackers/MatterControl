@@ -1,13 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class HardwareLevelingUITests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task HasHardwareLevelingHidesLevelingSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 800);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task SoftwareLevelingTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
