@@ -41,18 +41,28 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("LibraryContainerTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("LibraryContainerTests")]
 	public class LibraryContainerTests
 	{
+		private static string GetPathToRootRelative(params string[] relPathPieces)
+		{
+			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
+		}
+
+		[SetUp]
+		public static void Setup()
+		{
+			StaticData.RootPath = GetPathToRootRelative("StaticData");
+			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
+		}
+
 		[Test]
 		public Task TestExistsForEachContainerType()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			// Find all test methods on this test class
 			var thisClassMethods = this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
@@ -72,9 +82,6 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task NoContentChangedOnLoad()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			bool onIdlePumpActive = true;
 
 			var uiPump = Task.Run(() =>
@@ -95,7 +102,7 @@ namespace MatterControl.Tests.MatterControl
 
 				if (containerType == typeof(FileSystemContainer))
 				{
-					args.Add(TestContext.CurrentContext.ResolveProjectPath(4));
+					args.Add(GetPathToRootRelative());
 				}
 				else if (containerType == typeof(RootLibraryContainer))
 				{
@@ -107,7 +114,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					if (libraryContainer is ZipMemoryContainer zipContainer)
 					{
-						zipContainer.Path = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "Batman.zip");
+						zipContainer.Path = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.zip");
 						zipContainer.RelativeDirectory = Path.GetDirectoryName(zipContainer.Path);
 					}
 
@@ -136,10 +143,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task AddFiresContentChangedEvent()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			string filePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "Batman.stl");
+			string filePath = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.stl");
 
 			bool onIdlePumpActive = true;
 
@@ -182,7 +186,7 @@ namespace MatterControl.Tests.MatterControl
 
 					if (libraryContainer is ZipMemoryContainer zipContainer)
 					{
-						zipContainer.Path = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "Batman.zip");
+						zipContainer.Path = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.zip");
 						zipContainer.RelativeDirectory = Path.GetDirectoryName(zipContainer.Path);
 					}
 

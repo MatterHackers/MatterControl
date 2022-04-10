@@ -35,6 +35,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -66,13 +67,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static event EventHandler UnregisterEvents;
 
-		private static int testID = 0;
-
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
 		public static string PathToDownloadsSubFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
 
 		private static SystemWindow rootSystemWindow;
+
+		private static string GetPathToRootRelative(params string[] relPathPieces)
+		{
+			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", "..", ".." }.Concat(relPathPieces).ToArray());
+		}
 
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
@@ -260,12 +264,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static string PathToExportGcodeFolder
 		{
-			get => TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName);
+			get => GetPathToRootRelative("Tests", "TestData", "ExportedGcode", runName);
 		}
 
 		public static string GetTestItemPath(string queueItemToLoad)
 		{
-			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
+			return GetPathToRootRelative("Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
 		public static void CloseMatterControl(this AutomationRunner testRunner)
@@ -549,7 +553,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Hardware Tab")
 				.ClickByName("Import Printer Button");
 
-			string profilePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestProfiles", profileName + ".printer");
+			string profilePath = GetPathToRootRelative("Tests", "TestData", "TestProfiles", profileName + ".printer");
 
 			// Apply filter
 			testRunner.ClickByName("Profile Path Widget") // Continue to next page
@@ -621,7 +625,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public static void OverrideAppDataLocation(string matterControlDirectory)
 		{
-			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests", "temp", runName, $"Test{testID++}");
+			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests", "temp", runName, Path.GetRandomFileName());
 			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath, () => DesktopSqlite.CreateInstance());
 		}
 
@@ -647,7 +651,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create empty TestParts folder
 			Directory.CreateDirectory(queueData);
 
-			string queueItemsDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "Tests", "TestData", "QueueItems", queueItemFolderToLoad);
+			string queueItemsDirectory = GetPathToRootRelative("..", "MatterControl", "Tests", "TestData", "QueueItems", queueItemFolderToLoad);
 
 			foreach (string file in Directory.GetFiles(queueItemsDirectory))
 			{
@@ -920,6 +924,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			int overrideHeight = -1,
 			string defaultTestImages = null)
 		{
+			//SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
+
 			// Walk back a step in the stack and output the callers name
 			// StackTrace st = new StackTrace(false);
 			// Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
@@ -927,19 +933,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
-				staticDataPathOverride = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
+				staticDataPathOverride = GetPathToRootRelative("..", "MatterControl", "StaticData");
+				Assert.True(Directory.Exists(staticDataPathOverride));
 			}
 
+			// TODO: Fix.
 #if DEBUG
 			string outputDirectory = "Debug";
 #else
 			string outputDirectory = "Release";
 #endif
-
-			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory);
+			
+			Environment.CurrentDirectory = GetPathToRootRelative("..", "MatterControl", "bin", outputDirectory, "net6.0-windows");
+			Assert.True(Directory.Exists(Environment.CurrentDirectory));
 
 			// Override the default SystemWindow type without config.json
-			// AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.OpenGLWinformsWindowProvider, agg_platform_win32";
+			//AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.OpenGLWinformsWindowProvider, agg_platform_win32";
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 
 #if !__ANDROID__
@@ -947,7 +956,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			StaticData.RootPath = staticDataPathOverride;
 #endif
 			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl"));
+			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative("..", "MatterControl"));
 
 			if (queueItemFolderToAdd != QueueTemplate.None)
 			{
@@ -956,7 +965,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (defaultTestImages == null)
 			{
-				defaultTestImages = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestImages");
+				defaultTestImages = GetPathToRootRelative("Tests", "TestData", "TestImages");
 			}
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
@@ -1043,19 +1052,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Move Menu Item");
 		}
 
-		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
+		public static string ResolveProjectPath(this TestContext context, string[] relativePathPieces, [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null)
 		{
-			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-			var allPathSteps = new List<string> { assemblyPath };
-			allPathSteps.AddRange(Enumerable.Repeat("..", stepsToProjectRoot));
-
-			if (relativePathSteps.Any())
-			{
-				allPathSteps.AddRange(relativePathSteps);
-			}
-
-			return Path.GetFullPath(Path.Combine(allPathSteps.ToArray()));
+			return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sourceFilePath), Path.Combine(relativePathPieces)));
 		}
 
 		/// <summary>

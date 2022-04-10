@@ -34,13 +34,14 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class PrintQueueTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddOneItemToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -70,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddTwoItemsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -132,7 +133,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DragTo3DViewAddsItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddAmfFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -216,7 +217,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddStlFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -246,7 +247,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddGCodeFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

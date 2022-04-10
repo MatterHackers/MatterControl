@@ -12,20 +12,21 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class PrimitiveAndSheetsTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", "..", "StaticData" });
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }));
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SheetEditorLayoutAndNavigation()
 		{
 			var systemWindow = new SystemWindow(800, 600)
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			2000);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DimensionsWorkWhenNoSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -125,7 +126,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ScaleObjectWorksWithAndWithoutSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -165,7 +166,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SheetEditorNavigationTests()
 		{
 			var systemWindow = new SystemWindow(800, 600)

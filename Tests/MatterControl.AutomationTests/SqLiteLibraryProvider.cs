@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class SqLiteLibraryProviderTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task LibraryQueueViewRefreshesOnAddItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

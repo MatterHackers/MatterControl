@@ -38,7 +38,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
+using MatterHackers.RayTracerNS;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;

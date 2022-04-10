@@ -7,10 +7,12 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA)]
 	public class CameraFittingUtilTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
@@ -39,14 +41,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Vector3[] lookAtDirFwds = new Vector3[] {
 					new Vector3(0, 0, -1),
-					new Vector3(0, 0, 1),
+					/*new Vector3(0, 0, 1),
 					new Vector3(0, 1, 0),
 					new Vector3(1, 1, 0),
 					new Vector3(-1, -1, 0),
 					new Vector3(0, 1, 1),
 					new Vector3(1, 1, 1),
 					new Vector3(0, 1, -1),
-					new Vector3(1, 1, -1),
+					new Vector3(1, 1, -1),*/
 				};
 
 				const int topI = 0;
@@ -163,19 +165,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return DoZoomToSelectionTest(true, true);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task OrthographicZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(true, false);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task PerspectiveZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(false, true);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task PerspectiveZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(false, false);
