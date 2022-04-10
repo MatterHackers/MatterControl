@@ -147,15 +147,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
             var totalOperations = touchingSets.Sum(t => t.Count);
 
-#if false
-			var resultsMesh = BooleanProcessing.DoArray(items,
-				CsgModes.Union,
-				Processing,
-				InputResolution,
-				OutputResolution,
-				reporter,
-				cancellationToken);
-#else
             double amountPerOperation = 1.0 / totalOperations;
             double ratioCompleted = 0;
 
@@ -169,6 +160,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
                 if (set.Count > 1)
                 {
+#if false
+                    setMesh = BooleanProcessing.DoArray(set.Select(i => (i.mesh, i.matrix)),
+                        CsgModes.Union,
+                        Processing,
+                        InputResolution,
+                        OutputResolution,
+                        reporter,
+                        cancellationToken);
+#else
+
                     bool first = true;
                     foreach (var next in set)
                     {
@@ -203,6 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                         progressStatus.Progress0To1 = ratioCompleted;
                         reporter?.Report(progressStatus);
                     }
+#endif
 
                     setMeshes.Add(setMesh);
                 }
@@ -229,7 +231,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                     resultsMesh.CopyAllFaces(setMesh, Matrix4X4.Identity);
                 }
             }
-#endif
 
             if (resultsMesh != null)
             {

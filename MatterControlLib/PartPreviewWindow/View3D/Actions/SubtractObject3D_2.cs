@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				foreach (var keep in keepItems)
 				{
 #if false
-					var items = removeVisibleItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
+					var items = removeItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
 					items.Insert(0, (keep.Mesh, keep.Matrix));
 					var resultsMesh = BooleanProcessing.DoArray(items,
 						CsgModes.Subtract,
