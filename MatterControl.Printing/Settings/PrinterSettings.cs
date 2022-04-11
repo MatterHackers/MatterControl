@@ -1002,6 +1002,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var value = this.ResolveValue(setting);
 
+				if (setting == SettingsKey.bed_temperature)
+                {
+					value = this.Helpers.ActiveBedTemperature.ToString();
+                }
+
 				if(string.IsNullOrEmpty(value))
 				{
 					return inputString;
