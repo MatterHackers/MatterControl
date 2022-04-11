@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Company>MatterHackers Inc.</Company>
     <ReleaseVersion>2.20.12</ReleaseVersion>
   </PropertyGroup>
@@ -84,6 +84,7 @@
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\Submodules\MatterSlice\MatterSlice.csproj" />
     <ProjectReference Include="..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
   </ItemGroup>
 

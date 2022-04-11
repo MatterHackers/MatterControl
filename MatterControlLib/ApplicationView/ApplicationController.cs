@@ -1820,6 +1820,7 @@ namespace MatterHackers.MatterControl
 				&& !ProfileManager.Instance.ActiveProfiles.Any()
 				&& SystemWindow.AllOpenSystemWindows.Count() < 2)
 			{
+
 				UiThread.RunOnIdle(() =>
 				{
 					DialogWindow.Show<StartupPage>();

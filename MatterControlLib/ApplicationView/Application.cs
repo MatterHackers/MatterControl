@@ -784,6 +784,8 @@ namespace MatterHackers.MatterControl
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
+					
+
 
 					// If we have not cancled the show welcome message and there is a window open
 					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false"
@@ -797,8 +799,7 @@ namespace MatterHackers.MatterControl
 					// this is the place to check if we would like to show a 'What's New' or 'Release Notes' page on first run of a new install
                     else
                     {
-
-                    }
+					}
 				}
 				catch
 				{

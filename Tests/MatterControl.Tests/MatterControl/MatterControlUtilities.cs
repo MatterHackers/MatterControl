@@ -1468,7 +1468,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.InvokeLibraryAddDialog();
 
 			// Generate the full, quoted paths for the requested assets
-			string fullQuotedAssetPaths = string.Join(" ", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));
+			string fullQuotedAssetPaths = string.Join(";", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));
 			testRunner.CompleteDialog(fullQuotedAssetPaths);
 
 			// Assert that the added items *are* in the list

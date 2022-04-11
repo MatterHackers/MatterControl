@@ -38,7 +38,7 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class CreateLibraryFolder
 	{
 		[Test, ChildProcessTest]

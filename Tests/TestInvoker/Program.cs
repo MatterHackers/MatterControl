@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -17,7 +18,7 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 	{
 		public ChildProcessTestAttribute()
 		{
-			if (ChildProcessTestCommand.InChildProcess)
+			if (Program.InChildProcess)
 				Properties.Add(PropertyNames.ApartmentState, ApartmentState.STA);
 		}
 
@@ -28,7 +29,21 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 
 		internal class ChildProcessTestCommand : DelegatingTestCommand
 		{
-			static public bool InChildProcess = false;
+		public class TemporarySynchronizationContext : IDisposable
+			{
+				SynchronizationContext? originalContext = SynchronizationContext.Current;
+
+				public TemporarySynchronizationContext(SynchronizationContext synchronizationContext)
+				{
+					SynchronizationContext.SetSynchronizationContext(synchronizationContext);
+				}
+
+				void IDisposable.Dispose()
+				{
+					if (Interlocked.Exchange(ref originalContext, null) is var context)
+						SynchronizationContext.SetSynchronizationContext(context);
+				}
+			}
 
 			public ChildProcessTestCommand(TestCommand innerCommand)
 				: base(innerCommand)
@@ -36,35 +51,55 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 			}
 			public override TestResult Execute(TestExecutionContext context)
 			{
-				if (InChildProcess)
+				if (Program.InChildProcess)
 				{
-					context.CurrentResult = innerCommand.Execute(context);
+					// Back in .NET Framework, NUnit testing would create a new AppDomain and enter the test with a NULL sync context.
+					// Application.Run would then replace it.
+					// But now, there is no new AppDomain. NUnit sets up its default sync context and Application.Run keeps it, leading to deadlock.
+					// So setup the correct sync context.
+					using (var tempCtx = new TemporarySynchronizationContext(new WindowsFormsSynchronizationContext()))
+						context.CurrentResult = innerCommand.Execute(context);
 				}
 				else
 				{
 					string output;
 					using (var pipeServer = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
+					using (var pipeSense = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable))
 					{
 						var method = innerCommand.Test.Method!.MethodInfo;
 						var type = method.DeclaringType;
 						var psi = new ProcessStartInfo();
 						psi.FileName = "TestInvoker";
 						psi.ArgumentList.Add(pipeServer.GetClientHandleAsString());
+						psi.ArgumentList.Add(pipeSense.GetClientHandleAsString());
 						psi.ArgumentList.Add(type!.Assembly.Location);
 						psi.ArgumentList.Add(type.FullName!);
 						psi.ArgumentList.Add(method.Name);
 						psi.UseShellExecute = false;
 						psi.CreateNoWindow = true;
-						var proc = Process.Start(psi);
-						pipeServer.DisposeLocalCopyOfClientHandle();
-						using (var pipeReader = new StreamReader(pipeServer))
-							output = pipeReader.ReadToEnd();
-						proc!.WaitForExit();
+						using (var proc = Process.Start(psi))
+						{
+							pipeServer.DisposeLocalCopyOfClientHandle();
+							pipeSense.DisposeLocalCopyOfClientHandle();
+							using (var pipeReader = new StreamReader(pipeServer))
+								output = pipeReader.ReadToEnd();
+							proc!.WaitForExit();
+						}
 					}
 
-					XmlSerializer xmlserializer = new XmlSerializer(typeof(TestInvoker.FakeTestResult));
-					var fakeResult = (TestInvoker.FakeTestResult)xmlserializer.Deserialize(XmlReader.Create(new StringReader(output)))!;
-					context.CurrentResult = fakeResult.ToReal(context.CurrentTest);
+					if (output == "")
+						throw new Exception("Test child process did not return a result.");
+
+					try
+					{
+						XmlSerializer xmlserializer = new XmlSerializer(typeof(TestInvoker.FakeTestResult));
+						var fakeResult = (TestInvoker.FakeTestResult)xmlserializer.Deserialize(XmlReader.Create(new StringReader(output)))!;
+						context.CurrentResult = fakeResult.ToReal(context.CurrentTest);
+					}
+					catch (Exception ex)
+					{
+						throw new Exception("Failed to parse the test result's XML.", ex);
+					}
 				}
 				return context.CurrentResult;
 			}
@@ -104,12 +139,17 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 		}
 	}*/
 
-	internal class Program
+	public class Program
 	{
+		public static bool InChildProcess
+		{
+			get;
+			private set;
+		} = false;
+
 		class SpecificTestFilter : TestFilter
 		{
-			public string? TypeName;
-			public string? MethodName;
+			public MethodInfo? TheMethod;
 
 			public override TNode AddToXml(TNode parentNode, bool recursive)
 			{
@@ -118,44 +158,78 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 
 			public override bool Match(ITest test)
 			{
-				/*if (test is TestFixture fixture)
-					if (fixture.TypeInfo.Type.FullName != TypeName)
-						return false;
-
-				if (test.HasChildren)
-					return test.Tests.Any(Match);*/
-
-				var method = test.Method?.MethodInfo;
-				var type = method?.DeclaringType;
-				return type != null && method != null && TypeName == type.FullName && MethodName == method.Name;
+				return test is TestMethod testMethod && testMethod.Method?.MethodInfo == TheMethod;
 			}
 		}
+
+		// P/Invoke required:
+		/*private const UInt32 StdOutputHandle = 0xFFFFFFF5;
+		[DllImport("kernel32.dll")]
+		private static extern IntPtr GetStdHandle(UInt32 nStdHandle);
+		[DllImport("kernel32.dll")]
+		private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool AllocConsole();*/
 
 		//[STAThread]
 		static int Main(string[] args)
 		{
+			InChildProcess = true;
+
+			/*AllocConsole();
+
+
+			{
+				// reopen stdout
+				TextWriter writer = new StreamWriter(Console.OpenStandardOutput())
+				{ AutoFlush = true };
+				Console.SetOut(writer);
+			}*/
+
+			Task.Run(() =>
+			{
+				try
+				{
+					using (var pipeSense = new AnonymousPipeClientStream(PipeDirection.In, args[1]))
+					{
+						while (pipeSense.ReadByte() >= 0)
+							;
+					}
+				}
+				finally
+				{
+					System.Environment.Exit(5);
+				}
+			});
+
 			using (var pipeClient = new AnonymousPipeClientStream(PipeDirection.Out, args[0]))
 			{
-				ChildProcessTestAttribute.ChildProcessTestCommand.InChildProcess = true;
-
-				string assemblyPath = args[1];
-				string typeName = args[2];
-				string methodName = args[3];
+				string assemblyPath = args[2];
+				string typeName = args[3];
+				string methodName = args[4];
 
 				Assembly asm = Assembly.LoadFrom(assemblyPath!);
+				NUnit.Framework.Assert.NotNull(asm);
+
+				MethodInfo? methodInfo = asm.GetType(typeName)?.GetMethod(methodName);
 				NUnit.Framework.Assert.NotNull(asm);
 
 				var runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
 				runner.Load(asm, new Dictionary<string, object>());
 
-				var result = runner.Run(TestListener.NULL, new SpecificTestFilter { TypeName = typeName, MethodName = methodName });
+				var result = runner.Run(TestListener.NULL, new SpecificTestFilter { TheMethod = methodInfo });
 
 				while (result.HasChildren)
 					result = result.Children.Single();
 
-				XmlSerializer xmlserializer = new XmlSerializer(typeof(FakeTestResult));
+				// If nothing was tested, don't output the empty success result.
+				if (result?.Test?.Method?.MethodInfo != methodInfo)
+					return 1;
 
-				XmlWriterSettings settings = new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true };
+				XmlSerializer xmlserializer = new(typeof(FakeTestResult));
+
+				XmlWriterSettings settings = new();
 				using (XmlWriter writer = XmlWriter.Create(pipeClient, settings))
 					xmlserializer.Serialize(writer, FakeTestResult.FromReal(result));
 				return 0;
@@ -237,9 +311,9 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 				Message, StackTrace);
 			//result.Name = result.Name;
 			//result.FullName = result.FullName;
-			result.Duration = result.Duration;
-			result.StartTime = result.StartTime;
-			result.EndTime = result.EndTime;
+			result.Duration = Duration;
+			result.StartTime = StartTime;
+			result.EndTime = EndTime;
 			//result.Message = result.Message;
 			//result.StackTrace = result.StackTrace;
 			//result.TotalCount = result.TotalCount;
@@ -249,9 +323,9 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 			//result.PassCount = result.PassCount;
 			//result.SkipCount = result.SkipCount;
 			//result.InconclusiveCount = result.InconclusiveCount;
-			result.OutWriter.Write(result.Output);
+			result.OutWriter.Write(Output);
 			result.OutWriter.Flush();
-			foreach(var assertion in AssertionResults)
+			foreach (var assertion in AssertionResults)
 			{
 				result.RecordAssertion(new AssertionResult(assertion.Status, assertion.Message, assertion.StackTrace));
 			}
