@@ -11,8 +11,7 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class CameraFittingUtilTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
@@ -159,7 +158,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60 * 3, overrideWidth: 1300, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task OrthographicZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(true, true);

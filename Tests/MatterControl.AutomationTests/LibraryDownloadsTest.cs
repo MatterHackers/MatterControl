@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(
 					string.Format(
-						"\"{0}\" \"{1}\"",
+						"\"{0}\";\"{1}\"",
 						MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					5);
