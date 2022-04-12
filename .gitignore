@@ -121,3 +121,4 @@ MatterControl.userprefs
 
 # JetBrains Rider user configuration directory
 /.idea/
+/MainOutputDirectory.cs
