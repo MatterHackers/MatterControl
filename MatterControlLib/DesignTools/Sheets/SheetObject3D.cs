@@ -33,26 +33,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
 using org.mariuszgromada.math.mxparser;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideChildrenFromTreeView]
+    [HideChildrenFromTreeView]
 	[HideMeterialAndColor]
 	[WebPageLink("Documentation", "Open", "https://www.matterhackers.com/support/mattercontrol-variable-support")]
 	[MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
-	public class SheetObject3D : Object3D, IObject3DControlsProvider, IStaticThumbnail
+	public class SheetObject3D : Object3D, IStaticThumbnail
 	{
 		private SheetData _sheetData;
 		public SheetData SheetData
@@ -604,10 +599,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		
 			return (T)(object)default(T);
-		}
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
 		}
 	}
 }

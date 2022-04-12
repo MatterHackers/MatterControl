@@ -244,7 +244,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (var category in settingsSection.Categories)
 				{
 					if (category.Name == "Printer"
-						&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
+						&& (settingsContext.ViewFilter == NamedSettingsLayers.Material
+							|| settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 					{
 						continue;
 					}
@@ -391,6 +392,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case NamedSettingsLayers.Quality:
 						this.FilterToOverrides(printer.Settings.QualityLayerCascade);
 						break;
+					case NamedSettingsLayers.Scene:
+						this.FilterToOverrides(printer.Settings.SceneLayerCascade);
+						break;
 				}
 			};
 
@@ -473,7 +477,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool firstRow = true;
 			GuiWidget settingsRow = null;
 
-			var presetsView = settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality;
+			var presetsView = settingsContext.ViewFilter == NamedSettingsLayers.Material
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Quality
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Scene;
 			var ignoredPresets = new HashSet<string> { SettingsKey.temperature2, SettingsKey.temperature3 };
 
 			using (groupPanel.LayoutLock())
@@ -527,7 +533,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
 		{
 			bool settingShouldBeShown = settingData.Show?.Invoke(settingsContext.Printer.Settings) != false;
-			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality)
+			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality || NamedSettingsLayers.Scene == settingsContext.ViewFilter)
 			{
 				if (!settingData.ShowAsOverride)
 				{
@@ -885,7 +891,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool settingEnabled = settingData.Show?.Invoke(settingsContext.Printer.Settings) != false;
 			if (settingEnabled
 				|| settingsContext.ViewFilter == NamedSettingsLayers.Material
-				|| settingsContext.ViewFilter == NamedSettingsLayers.Quality)
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Quality
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Scene)
 			{
 				if (placeFieldInDedicatedRow)
 				{

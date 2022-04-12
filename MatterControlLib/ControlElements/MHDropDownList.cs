@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 				{
 					return theme.DropList.Open.BackgroundColor;
 				}
-				else if (this.mouseInBounds)
+				else if (this.ContainsFirstUnderMouseRecursive())
 				{
 					return theme.DropList.Hovered.BackgroundColor;
 				}

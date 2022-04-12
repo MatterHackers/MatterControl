@@ -553,9 +553,8 @@ namespace MatterHackers.MatterControl
 		// Returns the authentication dialog from the authentication plugin
 		public static Func<AuthenticationContext, DialogPage> GetAuthPage;
 
-		public SlicePresetsPage EditMaterialPresetsPage { get; set; }
+		public SlicePresetsPage AcitveSlicePresetsPage { get; set; }
 
-		public SlicePresetsPage EditQualityPresetsWindow { get; set; }
 
 		public MainViewWidget MainView;
 

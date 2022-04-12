@@ -65,44 +65,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			contentRow.BackgroundColor = Color.Transparent;
 
-			var inlineNameEdit = new InlineStringEdit(presetsContext.PersistenceLayer.Name,
-				theme,
-				presetsContext.LayerType.ToString() + " Name",
-				boldFont: true,
-				emptyText: "Setting Name".Localize());
-
-			inlineNameEdit.ValueChanged += (s, e) =>
-			{
-				printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
-			};
-			inlineNameEdit.Closed += (s, e) =>
-			{
-				printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
-			};
-			contentRow.AddChild(inlineNameEdit);
-
 			var sliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
 			contentRow.AddChild(sliceSettingsWidget);
 
-			var duplicateButton = theme.CreateDialogButton("Duplicate".Localize());
-			duplicateButton.Click += (s, e) =>
+			GuiWidget duplicateButton = null;
+
+			if (presetsContext.SetAsActive != null)
 			{
-				string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
-				string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, new HashSet<string>(presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name))));
+				var inlineNameEdit = new InlineStringEdit(presetsContext.PersistenceLayer.Name,
+					theme,
+					presetsContext.LayerType.ToString() + " Name",
+					boldFont: true,
+					emptyText: "Setting Name".Localize());
 
-				var clonedLayer = presetsContext.PersistenceLayer.Clone();
-				clonedLayer.Name = newProfileName;
-				presetsContext.PresetLayers.Add(clonedLayer);
+				inlineNameEdit.ValueChanged += (s, e) =>
+				{
+					printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
+				};
+				inlineNameEdit.Closed += (s, e) =>
+				{
+					printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
+				};
+				contentRow.AddChild(inlineNameEdit);
 
-				presetsContext.SetAsActive(clonedLayer.LayerID);
-				presetsContext.PersistenceLayer = clonedLayer;
+				duplicateButton = theme.CreateDialogButton("Duplicate".Localize());
+				duplicateButton.Click += (s, e) =>
+				{
+					string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
+					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, new HashSet<string>(presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name))));
 
-				sliceSettingsWidget.Close();
-				sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
-				contentRow.AddChild(sliceSettingsWidget);
+					var clonedLayer = presetsContext.PersistenceLayer.Clone();
+					clonedLayer.Name = newProfileName;
+					presetsContext.PresetLayers.Add(clonedLayer);
 
-				inlineNameEdit.Text = newProfileName;
-			};
+					presetsContext.SetAsActive(clonedLayer.LayerID);
+					presetsContext.PersistenceLayer = clonedLayer;
+
+					sliceSettingsWidget.Close();
+					sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
+					contentRow.AddChild(sliceSettingsWidget);
+
+					inlineNameEdit.Text = newProfileName;
+				};
+			}
 
 			if (showExport)
 			{
@@ -143,16 +148,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.AddPageAction(exportButton, false);
 			}
 
-			var deleteButton = theme.CreateDialogButton("Delete".Localize());
-			deleteButton.Click += (s, e) =>
+			if (presetsContext.DeleteLayer != null)
 			{
-				presetsContext.DeleteLayer();
-				this.DialogWindow.Close();
-			};
+				var deleteButton = theme.CreateDialogButton("Delete".Localize());
+				deleteButton.Click += (s, e) =>
+				{
+					presetsContext.DeleteLayer();
+					this.DialogWindow.Close();
+				};
 
-			this.AddPageAction(deleteButton, false);
+				this.AddPageAction(deleteButton, false);
+			}
 
-			this.AddPageAction(duplicateButton, false);
+			if (duplicateButton != null)
+			{
+				this.AddPageAction(duplicateButton, false);
+			}
 
 			AcceptButton = CancelButton;
 		}

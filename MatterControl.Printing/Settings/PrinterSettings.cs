@@ -45,40 +45,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public enum BedShape
 	{
 		Rectangular,
-
 		Circular
 	}
+
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum LevelingSystem
 	{
 		Probe3Points,
-
 		Probe7PointRadial,
-
 		Probe13PointRadial,
-
 		Probe100PointRadial,
-
 		Probe3x3Mesh,
-
 		Probe5x5Mesh,
-
 		Probe10x10Mesh,
-
 		ProbeCustom
 	}
+
 	public enum NamedSettingsLayers
 	{
 		MHBaseSettings,
-
 		OEMSettings,
-
 		Quality,
-
 		Material,
-
+		Scene,
 		User,
-
 		All
 	}
 
@@ -427,6 +417,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					yield return this.UserLayer;
 				}
 
+				var sceneLayer = this.GetSceneLayer?.Invoke();
+				if (sceneLayer != null)
+				{
+					yield return sceneLayer;
+				}
+
 				if (this.MaterialLayer != null)
 				{
 					yield return this.MaterialLayer;
@@ -479,7 +475,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<PrinterSettingsLayer> MaterialLayers { get; set; } = new List<PrinterSettingsLayer>();
 
-		public PrinterSettingsLayer OemLayer { get; set; }
+		public PrinterSettingsLayer OemLayer { get; set; } = new PrinterSettingsLayer();
 
 		[JsonIgnore]
 		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
@@ -495,6 +491,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (this.QualityLayer != null)
 				{
 					yield return this.QualityLayer;
+				}
+
+				if (this.OemLayer != null)
+				{
+					yield return this.OemLayer;
+				}
+
+				yield return this.BaseLayer;
+			}
+		}
+
+		[JsonIgnore]
+		public IEnumerable<PrinterSettingsLayer> SceneLayerCascade
+		{
+			get
+			{
+				if (this.SceneLayer != null)
+				{
+					yield return this.SceneLayer;
 				}
 
 				if (this.OemLayer != null)
@@ -545,6 +560,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// User settings overrides
 		/// </summary>
 		public PrinterSettingsLayer UserLayer { get; private set; } = new PrinterSettingsLayer();
+
+		public PrinterSettingsLayer SceneLayer
+		{
+			get
+			{
+				return GetSceneLayer?.Invoke();
+			}
+		}
+
+		/// <summary>
+		/// Scene settings override (this comes from a SliceSettingsObject3D being in the scene
+		/// </summary>
+		[JsonIgnore]
+		public Func<PrinterSettingsLayer> GetSceneLayer;
 
 		public static PrinterSettings LoadFile(string printerProfilePath, bool performMigrations = false)
 		{
@@ -887,6 +916,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return layer[sliceSetting];
 					}
 					else if (layer == this.MaterialLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+					else if (layer == this.SceneLayer
 						&& layer.ContainsKey(sliceSetting))
 					{
 						return layer[sliceSetting];
@@ -1332,7 +1366,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(BedShape))
 			{
-				switch (GetValue(settingsKey))
+				switch (GetValue(settingsKey, layerCascade))
 				{
 					case "rectangular":
 						return (T)(object)BedShape.Rectangular;
@@ -1342,7 +1376,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					default:
 #if DEBUG
-						throw new NotImplementedException("{0} is not a known bed_shape.".FormatWith(GetValue(SettingsKey.bed_shape)));
+						throw new NotImplementedException("{0} is not a known bed_shape.".FormatWith(GetValue(SettingsKey.bed_shape, layerCascade)));
 #else
 						return (T)(object)BedShape.Rectangular;
 #endif
@@ -1377,6 +1411,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case NamedSettingsLayers.Material:
 					return MaterialLayer?.ContainsKey(sliceSetting) == true;
+
+				case NamedSettingsLayers.Scene:
+					return SceneLayer?.ContainsKey(sliceSetting) == true;
 
 				case NamedSettingsLayers.User:
 					return UserLayer?.ContainsKey(sliceSetting) == true;

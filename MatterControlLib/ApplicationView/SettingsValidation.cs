@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl
 			// Check to see if current OEM layer matches downloaded OEM layer
 			{
 				if (settingsContext.GetValue(SettingsKey.make) != "Other"
+					&& settingsContext.GetValue(SettingsKey.make) != "Undefined"
 					&& ProfileManager.GetOemSettingsNeedingUpdate(printer).Any())
 				{
 					errors.Add(new ValidationError(ValidationErrors.SettingsUpdateAvailable)
