@@ -46,20 +46,21 @@ using MatterHackers.PrinterEmulator;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl.ToolChanges
 {
-	[TestFixture, Category("GCodeStream")]
+	[TestFixture, Category("GCodeStream"), Parallelizable(ParallelScope.Children)]
 	public class ToolChangeTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeNoHeat()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -117,7 +118,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		}
 
 		// A test that proves that: T0, no move, T1, T0, move does not send switch extruder gcode
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task NoToolChangeIfNoMove()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -141,12 +142,16 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X10 Y10 Z10 F2500", // go to the position requested
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-			Assert.AreEqual(expectedLines, sentLines);
+			Console.WriteLine("===");
+			Console.WriteLine(String.Join("\n", sentLines));
+			Console.WriteLine("===");
+			Console.WriteLine(String.Join("\n", expectedLines));
+			Assert.That(sentLines, Is.EqualTo(expectedLines).NoClip);
 		}
 
 		// A test that proves that: T0, no move, T1, temp set, T0, move does not send switch extruder gcode
 		// but there is the correct extruder set, T1, then temp, than T0
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeTempSetWithNoMove()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -177,7 +182,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task SetTempDirectSmoothie()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -206,7 +211,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task SetTempDirectMarlin()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -237,7 +242,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
 		// but does switch to and back for extrude
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task NoMoveOnToolChangeButWithExtrude()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -280,7 +285,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task MarlinPrintingToolChanges()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -329,7 +334,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeTempAndSwitch()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -385,7 +390,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeWithCoolDown()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -470,7 +475,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeHeatOnlyT0()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -496,7 +501,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				// cooling and heating
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ToolChangeHeatOnlyT1()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -595,6 +600,11 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 			// start a print
 			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+			// NOTE: Test can sometimes fail due to resends if this happens too quickly, it seems.
+			//       Extra commands were sent by: WriteRaw(allCheckSumLinesSent[currentLineIndexToSend++] + "\n", "resend");
+			Thread.Sleep(1000);
+
 			await printer.Connection.StartPrint(inputStream, null, null, PrinterConnection.PrintingModes.Normal);
 
 			// wait up to 40 seconds for the print to finish

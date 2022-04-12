@@ -110,6 +110,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.Initialize(tabIndex);
 		}
 
+		private static double StripZeroSign(double x)
+		{
+			return x == 0 ? 0 : x;
+		}
+
 		protected override string ConvertValue(string newValue)
 		{
 			var offsets = newValue?.Split(',');
@@ -126,7 +131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// Import deprecated z_offset data if missing
 					var zOffset = printer.Settings.GetValue<double>(SettingsKey.z_offset);
-					corrected += xyz[0] + "x" + xyz[1] + "x" + (-zOffset).ToString();
+					corrected += xyz[0] + "x" + xyz[1] + "x" + StripZeroSign(-zOffset).ToString();
 				}
 				else
 				{

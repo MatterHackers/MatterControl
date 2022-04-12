@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Test, ChildProcessTest, Ignore("Queue Library might be missing")]
 		public async Task SaveAsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -608,7 +608,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
 		public async Task SaveAsToLocalLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

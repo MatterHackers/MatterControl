@@ -432,7 +432,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task RecoveryT1WithProbe()
 		{
-			await ExtruderT1RecoveryTest("Pulse", "S-500");
+			await ExtruderT1RecoveryTest("FlashForge", "Creator Dual");
 		}
 
 		public async Task ExtruderT1RecoveryTest(string make, string model)
@@ -467,6 +467,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickResumeButton(printer, false, 2) // close the pause dialog pop-up do not resume
 						.ClickByName("Disconnect from printer button")
+						.ClickByName("Yes Button") // Are you sure?
 						.ClickByName("Connect to printer button") // Reconnect
 						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
@@ -522,6 +523,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.ScrollIntoView("Extrusion Multiplier NumberEdit")
 						.ScrollIntoView("Feed Rate NumberEdit");
 
+					testRunner.PausePrint();
+
 					// Tuning values should default to 1 when missing
 					ConfirmExpectedSpeeds(testRunner, 1, 1, "Initial case");
 
@@ -540,6 +543,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
+
+					testRunner.ResumePrint();
 
 					// Wait up to 60 seconds for the print to finish
 					printFinishedResetEvent.WaitOne(60 * 1000);
@@ -598,6 +603,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint(printer);
 
+					testRunner.PausePrint();
+
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
@@ -633,6 +640,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Values should remain after print completes
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
+
+					testRunner.ResumePrint();
 
 					// Wait for printing to complete
 					printFinishedResetEvent.WaitOne();
