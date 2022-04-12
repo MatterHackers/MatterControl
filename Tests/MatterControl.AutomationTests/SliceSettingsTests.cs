@@ -13,15 +13,10 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SliceSetingsTests
 	{
-		private static string GetPathToRootRelative(params string[] relPathPieces)
-		{
-			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
-		}
-
-		[Test, ChildProcessTest]
+		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -435,7 +430,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, ChildProcessTest]
 		public void SliceSettingsOrganizerSupportsKeyLookup()
 		{
-			StaticData.RootPath = GetPathToRootRelative("MatterControl", "StaticData");
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			var organizer = PrinterSettings.Layout;
 
@@ -677,8 +672,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, ChildProcessTest]
 		public void CopyFromTest()
 		{
-			StaticData.RootPath = GetPathToRootRelative("StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var settings = new PrinterSettings();
 			settings.ID = "12345-print";

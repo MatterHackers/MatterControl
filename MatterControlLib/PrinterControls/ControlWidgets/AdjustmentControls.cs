@@ -89,13 +89,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				feedRateRatioSlider.SliderReleased += (s, e) =>
 				{
-					// Update state for runtime use
-					printer.Connection.FeedRateMultiplierStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
-
-					// Persist data for future use
+					// Update the setting. The event handler will handle this.
 					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
-						printer.Connection.FeedRateMultiplierStream.FeedRateRatio.ToString());
+						Math.Round(feedRateRatioSlider.Value, 2).ToString());
 				};
 				settingsRow.AddChild(feedRateRatioSlider);
 
@@ -108,15 +105,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
-					feedRateRatioSlider.Value = feedRateValue.ActuallNumberEdit.Value;
-
-					// Update state for runtime use
-					printer.Connection.FeedRateMultiplierStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
-
-					// Persist data for future use
+					// Update the setting. The event handler will handle this.
 					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
-						printer.Connection.FeedRateMultiplierStream.FeedRateRatio.ToString());
+						Math.Round(feedRateValue.ActuallNumberEdit.Value, 2).ToString());
 				};
 				settingsRow.AddChild(feedRateValue);
 			}
@@ -147,13 +139,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				extrusionRatioSlider.SliderReleased += (s, e) =>
 				{
-					// Update state for runtime use
-					printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
-
-					// Persist data for future use
+					// Update the setting. The event handler will handle this.
 					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
-						printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio.ToString());
+						Math.Round(extrusionRatioSlider.Value, 2).ToString());
 				};
 				settingsRow.AddChild(extrusionRatioSlider);
 
@@ -166,15 +155,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
-					extrusionRatioSlider.Value = extrusionValue.ActuallNumberEdit.Value;
-
-					// Update state for runtime use
-					printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
-
-					// Persist data for future use
+					// Update the setting. The event handler will handle this.
 					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
-						printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio.ToString());
+						Math.Round(extrusionValue.ActuallNumberEdit.Value, 2).ToString());
 				};
 				settingsRow.AddChild(extrusionValue);
 			}
@@ -211,15 +195,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if (eventArgs?.Data == SettingsKey.extrusion_ratio)
 			{
-				double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
-				extrusionRatioSlider.Value = extrusionRatio;
-				extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatio, 2);
+				double value = Math.Round(printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio), 2);
+				extrusionRatioSlider.Value = value;
+				extrusionValue.ActuallNumberEdit.Value = value;
+				printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio = value;
 			}
 			else if (eventArgs?.Data == SettingsKey.feedrate_ratio)
 			{
-				double feedrateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
-				feedRateRatioSlider.Value = feedrateRatio;
-				feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
+				double value = Math.Round(printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio), 2);
+				feedRateRatioSlider.Value = value;
+				feedRateValue.ActuallNumberEdit.Value = value;
+				printer.Connection.FeedRateMultiplierStream.FeedRateRatio = value;
 			}
 		}
 	}

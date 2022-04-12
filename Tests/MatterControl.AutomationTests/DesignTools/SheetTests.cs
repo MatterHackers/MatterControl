@@ -22,8 +22,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", "..", "StaticData" });
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
 		[Test, ChildProcessTest]
@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			2000);
 		}
 
+		// TODO: This test once failed due to timing, probably.
 		[Test, ChildProcessTest]
 		public async Task DimensionsWorkWhenNoSheet()
 		{

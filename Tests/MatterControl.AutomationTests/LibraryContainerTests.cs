@@ -48,16 +48,11 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, Category("LibraryContainerTests")]
 	public class LibraryContainerTests
 	{
-		private static string GetPathToRootRelative(params string[] relPathPieces)
-		{
-			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
-		}
-
 		[SetUp]
 		public static void Setup()
 		{
-			StaticData.RootPath = GetPathToRootRelative("StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
 		[Test]
@@ -102,7 +97,7 @@ namespace MatterControl.Tests.MatterControl
 
 				if (containerType == typeof(FileSystemContainer))
 				{
-					args.Add(GetPathToRootRelative());
+					args.Add(MatterControlUtilities.RootPath);
 				}
 				else if (containerType == typeof(RootLibraryContainer))
 				{
@@ -114,7 +109,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					if (libraryContainer is ZipMemoryContainer zipContainer)
 					{
-						zipContainer.Path = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.zip");
+						zipContainer.Path = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "Batman.zip");
 						zipContainer.RelativeDirectory = Path.GetDirectoryName(zipContainer.Path);
 					}
 
@@ -143,7 +138,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task AddFiresContentChangedEvent()
 		{
-			string filePath = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.stl");
+			string filePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "Batman.stl");
 
 			bool onIdlePumpActive = true;
 
@@ -186,7 +181,7 @@ namespace MatterControl.Tests.MatterControl
 
 					if (libraryContainer is ZipMemoryContainer zipContainer)
 					{
-						zipContainer.Path = GetPathToRootRelative("Tests", "TestData", "TestParts", "Batman.zip");
+						zipContainer.Path = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "Batman.zip");
 						zipContainer.RelativeDirectory = Path.GetDirectoryName(zipContainer.Path);
 					}
 

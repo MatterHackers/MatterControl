@@ -39,10 +39,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TestInvoker;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-    [TestFixture, Category("Agg.PolygonMesh"), RunInApplicationDomain]
+    [TestFixture, Category("Agg.PolygonMesh"), Parallelizable(ParallelScope.Children)]
     public class SceneTests
     {
         private readonly int BlueMaterialIndex = 6;
@@ -83,13 +84,13 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
         public static string GetSceneTempPath(string folder)
         {
-            string tempPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", folder);
+            string tempPath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "temp", folder);
             Directory.CreateDirectory(tempPath);
 
             return tempPath;
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void AmfFilesSaveObjectProperties()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -141,7 +142,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.True(new AxisAlignedBoundingBox(20, -10, -10, 40, 10, 10).Equals(aabb2, .001));
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public async Task AutoArrangeChildrenTests()
         {
             // arrange a single item around the origin
@@ -228,7 +229,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             }
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void CreatesAndLinksAmfsForUnsavedMeshes()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -260,7 +261,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public async Task ResavedSceneRemainsConsistent()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -403,7 +404,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             return scene;
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void SaveSimpleScene()
         {
             var scene = new InteractiveScene();
@@ -426,13 +427,13 @@ namespace MatterHackers.PolygonMesh.UnitTests
         [SetUp]
         public void SetupUserSettings()
         {
-            StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "MatterControl", "StaticData");
-            MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+            StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+            MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
             UserSettings.Instance.set(UserSettingsKey.PublicProfilesSha, "0"); //Clears DB so we will download the latest list
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void WorldColorBasicTest()
         {
             var scene = SampleScene();
@@ -465,7 +466,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(Color.Black, redItem.WorldColor(null), "WorldColor on Red with null param should be root color (Black)");
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void WorldFunctionNonExistingAncestorOverride()
         {
             var scene = SampleScene();
@@ -517,7 +518,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(this.RootOutputType, redItem.WorldOutputType(nonAncestor), "WorldOutputType on Red with non-ancestor should be RootOutputType");
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void WorldMaterialIndexBasicTest()
         {
             var scene = SampleScene();
@@ -550,7 +551,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(this.RootMaterialIndex, redItem.WorldMaterialIndex(null), "WorldMaterialIndex on Red with null param should be root color (RootMaterialIndex)");
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void WorldMatrixBasicTest()
         {
             var scene = SampleScene();
@@ -583,7 +584,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(null), "WorldMatrix on Red with null param should be root color (RootMatrix)");
         }
 
-        [Test]
+        [Test, ChildProcessTest]
         public void WorldOutputTypeBasicTest()
         {
             var scene = SampleScene();

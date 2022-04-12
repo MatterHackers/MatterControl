@@ -19,8 +19,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task StoreAssetFile()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// Create sample asset file
 			string tempFile = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".txt");
@@ -58,8 +58,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task StoreAsset()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// Create sample asset file
 			string tempFile = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".txt");
@@ -98,8 +98,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task StoreMesh()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// Create sample asset file
 			string tempFile = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".txt");

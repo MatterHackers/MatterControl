@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 800);
 		}
 
+		// TODO: This test once failed due to timing, probably.
 		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task SoftwareLevelingTest()
 		{

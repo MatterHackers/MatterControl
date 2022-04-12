@@ -404,4 +404,15 @@ namespace MatterHackers.MatterControl
 	{
 		void ShellOpenFile(string[] files);
 	}
+
+	[AttributeUsage(AttributeTargets.Assembly)]
+	public class MainOutputDirectoryAttribute : Attribute
+	{
+		public readonly string MainOutputDirectory;
+
+		public MainOutputDirectoryAttribute(string path)
+		{
+			MainOutputDirectory = path;
+		}
+	}
 }

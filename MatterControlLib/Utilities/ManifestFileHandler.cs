@@ -57,7 +57,14 @@ namespace MatterHackers.MatterControl
 			get
             {
 				var queueDirectory = LegacyQueueFiles.QueueDirectory;
-				return Directory.EnumerateFiles(queueDirectory).Count();
+				try
+				{
+					return Directory.EnumerateFiles(queueDirectory).Count();
+				}
+				catch (DirectoryNotFoundException)
+				{
+					return 0;
+				}
 			}
 		}
 

@@ -44,8 +44,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task LoadCachableShouldFallbackToStaticData()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			string cacheScope = Path.Combine("Some", "Specific", "Scope");
 
@@ -69,8 +69,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task LoadCachableShouldStoreCollectedResults()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			string cacheScope = Path.Combine("Some", "Specific", "Scope");
 

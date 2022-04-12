@@ -4,8 +4,6 @@
     <OutputType>Library</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <RuntimeIdentifier>win</RuntimeIdentifier>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
@@ -31,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj" />
+    <ProjectReference Include="..\..\MatterControl.csproj" />
     <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj" />
     <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj" />

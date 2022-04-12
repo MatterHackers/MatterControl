@@ -45,21 +45,16 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.All)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
 
-		internal static string GetPathToRootRelative(params string[] relPathPieces)
-		{
-			return TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", ".." }.Concat(relPathPieces).ToArray());
-		}
-
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = GetPathToRootRelative("StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative());
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
 		[Test, ChildProcessTest]
@@ -403,7 +398,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	{
 		public static void RunDoUndoTest(this AutomationRunner testRunner, InteractiveScene scene, Action performOperation)
 		{
-			string scenePath = SceneUndoRedoCopyTests.GetPathToRootRelative("Tests", "temp", "undo_test_scene");
+			string scenePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "temp", "undo_test_scene" + Path.GetRandomFileName());
+
 			Directory.CreateDirectory(scenePath);
 			Object3D.AssetsPath = Path.Combine(scenePath, "Assets");
 
