@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			2000);
 		}
 
-		// TODO: This test once failed due to timing, probably.
+		// TODO: This test once failed, due to timing probably.
 		[Test, ChildProcessTest]
 		public async Task DimensionsWorkWhenNoSheet()
 		{
