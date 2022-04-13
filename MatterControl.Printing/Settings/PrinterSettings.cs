@@ -561,6 +561,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public PrinterSettingsLayer UserLayer { get; private set; } = new PrinterSettingsLayer();
 
+		[JsonIgnore]
 		public PrinterSettingsLayer SceneLayer
 		{
 			get
