@@ -18,6 +18,7 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 	{
 		public ChildProcessTestAttribute()
 		{
+			// Run the test on an STA thread.
 			if (Program.InChildProcess)
 				Properties.Add(PropertyNames.ApartmentState, ApartmentState.STA);
 		}
@@ -87,7 +88,7 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 						}
 					}
 
-					if (output == "")
+					if (output.Length <= 0)
 						throw new Exception("Test child process did not return a result.");
 
 					try
@@ -105,40 +106,7 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 			}
 		}
 	}
-	/*
-	[TestFixture, Apartment(ApartmentState.STA)]
-	internal class TestProxy
-	{
-		static public string? assemblyPath;
-		static public string? typeName;
-		static public string? methodName;
-
-		[Test]
-		public void InvokeTest()
-		{
-			Assembly asm = Assembly.LoadFrom(assemblyPath!);
-			NUnit.Framework.Assert.NotNull(asm);
-
-			Type? type = asm.GetType(typeName!)!;
-			NUnit.Framework.Assert.NotNull(type);
-
-			MethodInfo? methodInfo = type.GetTypeInfo().GetDeclaredMethod(methodName!)!;
-			NUnit.Framework.Assert.NotNull(methodInfo);
-
-			object? instance = null;
-			if (!methodInfo.IsStatic)
-			{
-				instance = Activator.CreateInstance(type);
-				NUnit.Framework.Assert.NotNull(instance);
-			}
-
-			object result = methodInfo.Invoke(instance, null)!;
-
-			if (result is Task task)
-				task.GetAwaiter().GetResult();
-		}
-	}*/
-
+	
 	public class Program
 	{
 		public static bool InChildProcess
@@ -162,31 +130,11 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 			}
 		}
 
-		// P/Invoke required:
-		/*private const UInt32 StdOutputHandle = 0xFFFFFFF5;
-		[DllImport("kernel32.dll")]
-		private static extern IntPtr GetStdHandle(UInt32 nStdHandle);
-		[DllImport("kernel32.dll")]
-		private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
-		[DllImport("kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		static extern bool AllocConsole();*/
-
-		//[STAThread]
 		static int Main(string[] args)
 		{
 			InChildProcess = true;
 
-			/*AllocConsole();
-
-
-			{
-				// reopen stdout
-				TextWriter writer = new StreamWriter(Console.OpenStandardOutput())
-				{ AutoFlush = true };
-				Console.SetOut(writer);
-			}*/
-
+			// Terminate this process if the parent exits.
 			Task.Run(() =>
 			{
 				try
@@ -203,37 +151,36 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 				}
 			});
 
-			using (var pipeClient = new AnonymousPipeClientStream(PipeDirection.Out, args[0]))
-			{
-				string assemblyPath = args[2];
-				string typeName = args[3];
-				string methodName = args[4];
+			using var pipeClient = new AnonymousPipeClientStream(PipeDirection.Out, args[0]);
 
-				Assembly asm = Assembly.LoadFrom(assemblyPath!);
-				NUnit.Framework.Assert.NotNull(asm);
+			string assemblyPath = args[2];
+			string typeName = args[3];
+			string methodName = args[4];
 
-				MethodInfo? methodInfo = asm.GetType(typeName)?.GetMethod(methodName);
-				NUnit.Framework.Assert.NotNull(asm);
+			Assembly asm = Assembly.LoadFrom(assemblyPath!);
+			NUnit.Framework.Assert.NotNull(asm);
 
-				var runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
-				runner.Load(asm, new Dictionary<string, object>());
+			MethodInfo? methodInfo = asm.GetType(typeName)?.GetMethod(methodName);
+			NUnit.Framework.Assert.NotNull(asm);
 
-				var result = runner.Run(TestListener.NULL, new SpecificTestFilter { TheMethod = methodInfo });
+			var runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
+			runner.Load(asm, new Dictionary<string, object>());
 
-				while (result.HasChildren)
-					result = result.Children.Single();
+			var result = runner.Run(TestListener.NULL, new SpecificTestFilter { TheMethod = methodInfo });
 
-				// If nothing was tested, don't output the empty success result.
-				if (result?.Test?.Method?.MethodInfo != methodInfo)
-					return 1;
+			while (result.HasChildren)
+				result = result.Children.Single();
 
-				XmlSerializer xmlserializer = new(typeof(FakeTestResult));
+			// If nothing was tested, don't output the empty success result.
+			if (result == null || result.Test?.Method?.MethodInfo != methodInfo)
+				return 1;
 
-				XmlWriterSettings settings = new();
-				using (XmlWriter writer = XmlWriter.Create(pipeClient, settings))
-					xmlserializer.Serialize(writer, FakeTestResult.FromReal(result));
-				return 0;
-			}
+			XmlSerializer xmlserializer = new(typeof(FakeTestResult));
+
+			XmlWriterSettings settings = new();
+			using (XmlWriter writer = XmlWriter.Create(pipeClient, settings))
+				xmlserializer.Serialize(writer, FakeTestResult.FromReal(result));
+			return 0;
 		}
 	}
 
