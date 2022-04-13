@@ -733,6 +733,8 @@ namespace MatterHackers.MatterControl
 	{
 		public Color MaterialPreset { get; set; } = Color.Orange;
 
+		public Color ScenePreset { get; set; } = Color.Green;
+
 		public Color QualityPreset { get; set; } = Color.Yellow;
 
 		public Color UserOverride { get; set; } = new Color(68, 95, 220, 150);

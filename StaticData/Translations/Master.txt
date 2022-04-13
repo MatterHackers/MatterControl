@@ -3340,6 +3340,9 @@ Translated:Part Cooling Fan
 English:Part Cooling Fan {i}
 Translated:Part Cooling Fan {i}
 
+English:Part Settings
+Translated:Part Settings
+
 English:Part(s) to Subtract
 Translated:Part(s) to Subtract
 

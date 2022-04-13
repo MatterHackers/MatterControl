@@ -72,7 +72,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
 			typeof(Histogram),
-			typeof(List<string>)
+			typeof(List<string>),
+			typeof(PrinterSettingsLayer),
+
 		};
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -564,6 +566,93 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer.AddChild(row2);
 			}
+			else if (propertyValue is PrinterSettingsLayer printerSettingsLayer)
+			{
+				var settingsBackground = new GuiWidget()
+				{
+					Name = "Background",
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					Margin = 7,
+				};
+
+				var settingsHolder = settingsBackground.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Name = "Holder",
+					HAnchor = HAnchor.Stretch,
+				});
+
+				settingsHolder.AddChild(new HorizontalLine(Color.Green)
+                {
+					Height = 4 * GuiWidget.DeviceScale
+                });
+
+				var settingsCover = settingsBackground.AddChild(new GuiWidget()
+				{
+					Name = "Cover",
+					HAnchor = HAnchor.Stretch,
+					BackgroundColor = theme.BackgroundColor.WithAlpha(100),
+				});
+
+				settingsHolder.SizeChanged += (s5, e5) =>
+				{
+					settingsCover.Height = settingsHolder.Height;
+				};
+
+				rowContainer = settingsBackground;
+
+				var printerProfile = new PrinterSettings();
+				printerProfile.OemLayer = new PrinterSettingsLayer();
+				// move all the settings to the oem layer
+				var layout = new List<(int index, string category, string group, string key)>();
+				foreach (var kvp in printerSettingsLayer)
+				{
+					printerProfile.OemLayer[kvp.Key] = kvp.Value;
+					layout.Add(SliceSettingsLayouts.GetLayout(kvp.Key));
+				}
+
+				var printer = new PrinterConfig(printerProfile);
+				var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+				var tabIndex = 0;
+				var orderedSettings = layout.OrderBy(i => i.index).Select(i => (i.category, i.key));
+
+				var lastCategory = "";
+
+				foreach ((string category, string key) setting in orderedSettings)
+				{
+					if (setting.category == "")
+					{
+						continue;
+					}
+
+					if (setting.category != lastCategory)
+					{
+						lastCategory = setting.category;
+						// add a new setting header
+						settingsHolder.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
+						{
+							TextColor = theme.TextColor,
+							Margin = new BorderDouble(0, 5, 0, 7)
+						});
+					}
+
+					var settingsData = PrinterSettings.SettingsData[setting.key];
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+
+					if (row is SliceSettingsRow settingsRow)
+					{
+						settingsRow.ArrowDirection = ArrowDirection.Left;
+						settingsRow.Enabled = true;
+					}
+
+					settingsHolder.AddChild(row);
+				}
+
+				settingsHolder.AddChild(new HorizontalLine(Color.Green)
+				{
+					Height = 4 * GuiWidget.DeviceScale
+				});
+			}
 			else if (propertyValue is SelectedChildren childSelector)
 			{
 				if (property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() is ShowAsListAttribute showAsList)
@@ -625,7 +714,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					imageWidget = new ImageWidget(imageBuffer);
 				}
-				
+
 				if (imageDisplayAttribute != null)
 				{
 					imageWidget.MaximumSize = new Vector2(imageDisplayAttribute.MaxXSize * GuiWidget.DeviceScale, int.MaxValue);
@@ -643,7 +732,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						image = imageObject2.Image;
 					}
-					
+
 					// Show image load error if needed
 					if (image == null)
 					{
@@ -960,7 +1049,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rowContainer = NewImageSearchWidget(theme);
 				}
-				else if(object3D is AssetObject3D assetObject
+				else if (object3D is AssetObject3D assetObject
 					&& property.PropertyInfo.Name == "AssetPath")
 				{
 					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
@@ -1095,7 +1184,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}
 				else
-                {
+				{
 					// create a string editor
 					var field = new TextField(theme);
 					field.Initialize(0);

@@ -111,6 +111,12 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("{infill_speed}", "3600");
 			TestMacroReplacement("{min_print_speed}", "600");
 			TestMacroReplacement("{travel_speed}", "7800");
+
+			// make sure we pick up the right temp when there is a bed surface change
+			settings.SetValue(SettingsKey.has_swappable_bed, "1");
+			settings.SetValue(SettingsKey.bed_temperature_blue_tape, "84.2");
+			settings.SetValue(SettingsKey.bed_surface, "Blue Tape");
+			TestMacroReplacement("[bed_temperature]", "84.2");
 		}
 	}
 }

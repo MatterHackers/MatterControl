@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					if (ApplicationController.Instance.EditMaterialPresetsPage == null)
+					if (ApplicationController.Instance.AcitveSlicePresetsPage == null)
 					{
 						string presetsID = printer.Settings.ActiveMaterialKey;
 						if (string.IsNullOrEmpty(presetsID))
@@ -145,21 +145,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext, true);
 						editMaterialPresetsPage.Closed += (s, e2) =>
 						{
-							ApplicationController.Instance.EditMaterialPresetsPage = null;
+							ApplicationController.Instance.AcitveSlicePresetsPage = null;
 						};
 
-						ApplicationController.Instance.EditMaterialPresetsPage = editMaterialPresetsPage;
+						ApplicationController.Instance.AcitveSlicePresetsPage = editMaterialPresetsPage;
 						DialogWindow.Show(editMaterialPresetsPage);
 					}
 					else
 					{
-						ApplicationController.Instance.EditMaterialPresetsPage.DialogWindow.BringToFront();
+						ApplicationController.Instance.AcitveSlicePresetsPage.DialogWindow.BringToFront();
 					}
 				}
 
 				if (layerType == NamedSettingsLayers.Quality)
 				{
-					if (ApplicationController.Instance.EditQualityPresetsWindow == null)
+					if (ApplicationController.Instance.AcitveSlicePresetsPage == null)
 					{
 						string presetsID = printer.Settings.ActiveQualityKey;
 						if (string.IsNullOrEmpty(presetsID))
@@ -192,15 +192,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext, false);
 						editQualityPresetsWindow.Closed += (s, e2) =>
 						{
-							ApplicationController.Instance.EditQualityPresetsWindow = null;
+							ApplicationController.Instance.AcitveSlicePresetsPage = null;
 						};
 
-						ApplicationController.Instance.EditQualityPresetsWindow = editQualityPresetsWindow;
+						ApplicationController.Instance.AcitveSlicePresetsPage = editQualityPresetsWindow;
 						DialogWindow.Show(editQualityPresetsWindow);
 					}
 					else
 					{
-						ApplicationController.Instance.EditQualityPresetsWindow.DialogWindow.BringToFront();
+						ApplicationController.Instance.AcitveSlicePresetsPage.DialogWindow.BringToFront();
 					}
 				}
 			};

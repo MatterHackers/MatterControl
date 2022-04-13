@@ -38,6 +38,8 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.Linq;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl
 {
@@ -65,9 +67,25 @@ namespace MatterHackers.MatterControl
 			return !printingOrPause && !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
 		}
 
+		private PrinterSettingsLayer GetSceneLayer()
+		{
+			var scene = Bed?.Scene;
+			if (scene != null)
+			{
+				if (scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).FirstOrDefault() is PartSettingsObject3D partSettingsObject3D)
+				{
+					return partSettingsObject3D.Overrides;
+				}
+			}
+
+			return null;
+		}
+
 		public PrinterConfig(PrinterSettings settings)
 		{
 			this.Settings = settings;
+
+			settings.GetSceneLayer = GetSceneLayer;
 
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
