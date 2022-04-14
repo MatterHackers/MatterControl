@@ -247,6 +247,9 @@ Translated:Add to Queue
 English:Add to Selection
 Translated:Add to Selection
 
+English:Add User Overrides
+Translated:Add User Overrides
+
 English:Additional Printing Errors
 Translated:Additional Printing Errors
 
@@ -1041,6 +1044,9 @@ Translated:Copy everything but hardware specific calibration settings
 
 English:Copy extrusions data
 Translated:Copy extrusions data
+
+English:Copy in all current user overides
+Translated:Copy in all current user overides
 
 English:Copy Mesh
 Translated:Copy Mesh

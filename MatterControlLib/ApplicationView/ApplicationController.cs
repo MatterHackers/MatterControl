@@ -387,6 +387,8 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<WorkspacesChangedEventArgs> WorkspacesChanged;
 
+		public event EventHandler ReloadSettingsTriggered;
+
 		public void ReloadSettings(PrinterConfig printer)
 		{
 			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
@@ -415,6 +417,8 @@ namespace MatterHackers.MatterControl
 				sideBar.ReplacePage("Slice Settings", new SliceSettingsWidget(printer, settingsContext, Theme));
 				ApplicationController.Instance.IsReloading = false;
 			}
+
+			ReloadSettingsTriggered?.Invoke(null, null);
 		}
 
 		public static Action WebRequestFailed;
