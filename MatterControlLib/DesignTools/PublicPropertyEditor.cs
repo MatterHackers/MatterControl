@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -568,87 +569,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is PrinterSettingsLayer printerSettingsLayer)
 			{
-				var settingsBackground = new GuiWidget()
-				{
-					Name = "Background",
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-					Margin = 7,
-				};
+				var printerProfile = new PrinterSettings();
+				rowContainer = AddMaterialWidget.CreateSetingsList(printerProfile, printerSettingsLayer, theme);
 
-				var settingsHolder = settingsBackground.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					Name = "Holder",
-					HAnchor = HAnchor.Stretch,
-				});
-
-				settingsHolder.AddChild(new HorizontalLine(Color.Green)
+				rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
                 {
 					Height = 4 * GuiWidget.DeviceScale
-                });
+                }, 0);
 
-				var settingsCover = settingsBackground.AddChild(new GuiWidget()
-				{
-					Name = "Cover",
-					HAnchor = HAnchor.Stretch,
-					BackgroundColor = theme.BackgroundColor.WithAlpha(100),
-				});
-
-				settingsHolder.SizeChanged += (s5, e5) =>
-				{
-					settingsCover.Height = settingsHolder.Height;
-				};
-
-				rowContainer = settingsBackground;
-
-				var printerProfile = new PrinterSettings();
-				printerProfile.OemLayer = new PrinterSettingsLayer();
-				// move all the settings to the oem layer
-				var layout = new List<(int index, string category, string group, string key)>();
-				foreach (var kvp in printerSettingsLayer)
-				{
-					printerProfile.OemLayer[kvp.Key] = kvp.Value;
-					layout.Add(SliceSettingsLayouts.GetLayout(kvp.Key));
-				}
-
-				var printer = new PrinterConfig(printerProfile);
-				var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-				var tabIndex = 0;
-				var orderedSettings = layout.OrderBy(i => i.index).Select(i => (i.category, i.key));
-
-				var lastCategory = "";
-
-				foreach ((string category, string key) setting in orderedSettings)
-				{
-					if (setting.category == "")
-					{
-						continue;
-					}
-
-					if (setting.category != lastCategory)
-					{
-						lastCategory = setting.category;
-						// add a new setting header
-						settingsHolder.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
-						{
-							TextColor = theme.TextColor,
-							Margin = new BorderDouble(0, 5, 0, 7)
-						});
-					}
-
-					var settingsData = PrinterSettings.SettingsData[setting.key];
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
-
-					if (row is SliceSettingsRow settingsRow)
-					{
-						settingsRow.ArrowDirection = ArrowDirection.Left;
-						settingsRow.Enabled = true;
-					}
-
-					settingsHolder.AddChild(row);
-				}
-
-				settingsHolder.AddChild(new HorizontalLine(Color.Green)
+				rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
 				{
 					Height = 4 * GuiWidget.DeviceScale
 				});

@@ -172,9 +172,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     Action = () =>
                     {
                         var settings = new PrinterSettings();
-                        // set this after the PrinterConfig is constructed to change it to overrides
                         settings.GetSceneLayer = () => Overrides;
                         var printer = new PrinterConfig(settings);
+                        if (containingPrinter != null)
+                        {
+                            printer = containingPrinter;
+                        }
+
+                        // set this after the PrinterConfig is constructed to change it to overrides
                         // set this after the PrinterConfig is constructed to change it to overrides
                         settings.GetSceneLayer = () => Overrides;
 
