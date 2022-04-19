@@ -243,10 +243,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static PrinterSettings()
 		{
-			// Convert settings array into dictionary on initial load using settings key (SlicerConfigName)
-			PrinterSettings.SettingsData = SliceSettingsFields.AllSettings().ToDictionary(s => s.SlicerConfigName);
+            // Convert settings array into dictionary on initial load using settings key (SlicerConfigName)
+            SettingsData = SliceSettingsFields.AllSettings().ToDictionary(s => s.SlicerConfigName);
 
-			PrinterSettings.Layout = new SettingsLayout();
+            Layout = new SettingsLayout();
 
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var settingsLayer = new PrinterSettingsLayer();
 
-					foreach (var settingsData in PrinterSettings.SettingsData.Values)
+					foreach (var settingsData in SettingsData.Values)
 					{
 						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
 					}
@@ -591,8 +591,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return null;
 				}
 
-				int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
-				if (documentVersion < PrinterSettings.LatestVersion)
+				int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? LatestVersion;
+				if (documentVersion < LatestVersion)
 				{
 					printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
 				}
@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in PrinterSettings.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -659,10 +659,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Restore user overrides if a non-user override is being cleared
 				if (layer != null && layer != UserLayer)
 				{
-					RestoreUserOverride(layer, settingsKey);
+					RestoreUserOverride(settingsKey);
 				}
 
-				if (PrinterSettings.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
+				if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
 				{
 					if (settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX)
 					{
@@ -744,7 +744,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var settingsKey in settingsLayer.Keys)
 			{
-				StashUserOverride(settingsLayer, settingsKey);
+				StashUserOverride(settingsKey);
 			}
 		}
 
@@ -872,6 +872,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						layerName = "Quality";
 					}
+					else if (layer == this.SceneLayer)
+                    {
+						layerName = "Scene";
+                    }
 
 					return (value, layerName);
 				}
@@ -883,7 +887,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool IsActive(string canonicalSettingsName)
 		{
 			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
-				|| (this.Slicer.PrinterType == PrinterType.FFF && PrinterSettings.DefaultFFFSettings.Contains(canonicalSettingsName));
+				|| (this.Slicer.PrinterType == PrinterType.FFF && DefaultFFFSettings.Contains(canonicalSettingsName));
 		}
 
 		public bool IsOverride(string sliceSetting, IEnumerable<PrinterSettingsLayer> layers)
@@ -984,7 +988,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var sourceFilter = rawSourceFilter.Where(layer => layer != null);
 
-			foreach (var keyName in PrinterSettings.KnownSettings)
+			foreach (var keyName in KnownSettings)
 			{
 				if (settingsToImport.Contains(keyName))
 				{
@@ -1098,7 +1102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var settingsKey in settingsLayer.Keys)
 			{
-				RestoreUserOverride(settingsLayer, settingsKey);
+				RestoreUserOverride(settingsKey);
 			}
 		}
 
@@ -1107,7 +1111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Stash user overrides if a non-user override is being set
 			if (layer != null && layer != UserLayer)
 			{
-				StashUserOverride(layer, settingsKey);
+				StashUserOverride(settingsKey);
 			}
 			else
 			{
@@ -1164,7 +1168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
-			return new HashSet<string>(PrinterSettings.SettingsData.Keys);
+			return new HashSet<string>(SettingsData.Keys);
 		}
 
 		private PrinterSettingsLayer GetQualityLayer(string layerID)
@@ -1200,7 +1204,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		private void RestoreUserOverride(string settingsKey)
 		{
 			if (StagedUserSettings.TryGetValue(settingsKey, out string stagedUserOverride))
 			{
@@ -1212,7 +1216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
 		/// </summary>
-		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		private void StashUserOverride(string settingsKey)
 		{
 			if (this.UserLayer.TryGetValue(settingsKey, out string userOverride))
 			{
@@ -1237,7 +1241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var bigStringForHashCode = new StringBuilder();
 
 			// Loop over all known settings
-			foreach (var keyValue in PrinterSettings.SettingsData)
+			foreach (var keyValue in SettingsData)
 			{
 				// Add key/value to accumulating string for hash
 				if (keyValue.Value?.RebuildGCodeOnChange == true)

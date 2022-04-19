@@ -257,80 +257,13 @@ namespace MatterHackers.MatterControl.Library.Widgets
                                 });
                             }
 
-                            var settingsBackground = new GuiWidget()
-                            {
-                                Name = "Background",
-                                HAnchor = HAnchor.Stretch,
-                                VAnchor = VAnchor.Fit
-                            };
-
-                            var settingsHolder = settingsBackground.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
-                            {
-                                Name = "Holder",
-                                HAnchor = HAnchor.Stretch,
-                            });
-
-                            var settingsCover = settingsBackground.AddChild(new GuiWidget()
-                            {
-                                Name = "Cover",
-                                HAnchor = HAnchor.Stretch,
-                            });
-
-                            settingsHolder.SizeChanged += (s5, e5) =>
-                            {
-                                settingsCover.Height = settingsHolder.Height;
-                            };
-
-                            printerDetails.ProductDataContainer.AddChild(settingsBackground);
-
                             var printerProfile = PrinterSettings.LoadFile(SelectedMaterial.Path);
-                            printerProfile.OemLayer = new PrinterSettingsLayer();
-                            // move all the settings to the oem layer
-                            var layout = new List<(int index, string category, string group, string key)>();
-                            foreach (var kvp in printerProfile.MaterialLayers[0])
-                            {
-                                printerProfile.OemLayer[kvp.Key] = kvp.Value;
-                                layout.Add(SliceSettingsLayouts.GetLayout(kvp.Key));
-                            }
+                            var printerSettingsLayer = printerProfile.MaterialLayers[0];
+                            printerProfile.MaterialLayers.RemoveAt(0);
+                            printerProfile.MaterialLayers.Add(new PrinterSettingsLayer());
 
-                            printerProfile.MaterialLayers[0].Clear();
-
-                            var printer = new PrinterConfig(printerProfile);
-                            var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-                            var tabIndex = 0;
-                            var orderedSettings = layout.OrderBy(i => i.index).Select(i => (i.category, i.key));
-
-                            var lastCategory = "";
-
-                            foreach ((string category, string key) setting in orderedSettings)
-                            {
-                                if (setting.category == "")
-                                {
-                                    continue;
-                                }
-
-                                if (setting.category != lastCategory)
-                                {
-                                    lastCategory = setting.category;
-                                    // add a new setting header
-                                    settingsHolder.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
-                                    {
-                                        TextColor = theme.TextColor,
-                                        Margin = new BorderDouble(0, 5, 0, 7)
-                                    });
-                                }
-
-                                var settingsData = PrinterSettings.SettingsData[setting.key];
-                                var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
-
-                                if (row is SliceSettingsRow settingsRow)
-                                {
-                                    settingsRow.ArrowDirection = ArrowDirection.Left;
-                                    settingsRow.Enabled = true;
-                                }
-
-                                settingsHolder.AddChild(row);
-                            }
+                            var settingsBackground = CreateSetingsList(printerProfile, printerSettingsLayer, theme);
+                            printerDetails.ProductDataContainer.AddChild(settingsBackground);
                         };
 
                         nextButtonEnabled(treeView.SelectedNode != null);
@@ -341,6 +274,83 @@ namespace MatterHackers.MatterControl.Library.Widgets
             {
                 nextButtonEnabled(false);
             }
+        }
+
+        public static GuiWidget CreateSetingsList(PrinterSettings printerProfile, PrinterSettingsLayer printerSettingsLayer, ThemeConfig theme)
+        {
+            var settingsBackground = new GuiWidget()
+            {
+                Name = "Background",
+                HAnchor = HAnchor.Stretch,
+                VAnchor = VAnchor.Fit,
+                Margin = 7,
+            };
+
+            var settingsHolder = settingsBackground.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
+            {
+                Name = "Holder",
+                HAnchor = HAnchor.Stretch,
+            });
+
+            var settingsCover = settingsBackground.AddChild(new GuiWidget()
+            {
+                Name = "Cover",
+                HAnchor = HAnchor.Stretch,
+                BackgroundColor = theme.BackgroundColor.WithAlpha(100),
+            });
+
+            settingsHolder.SizeChanged += (s5, e5) =>
+            {
+                settingsCover.Height = settingsHolder.Height;
+            };
+
+            printerProfile.OemLayer = new PrinterSettingsLayer();
+            // move all the settings to the oem layer
+            var layout = new List<(int index, string category, string group, string key)>();
+            foreach (var kvp in printerSettingsLayer)
+            {
+                printerProfile.OemLayer[kvp.Key] = kvp.Value;
+                layout.Add(SliceSettingsLayouts.GetLayout(kvp.Key));
+            }
+
+            var printer = new PrinterConfig(printerProfile);
+            var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+            var tabIndex = 0;
+            var orderedSettings = layout.OrderBy(i => i.index).Select(i => (i.category, i.key));
+
+            var lastCategory = "";
+
+            foreach ((string category, string key) setting in orderedSettings)
+            {
+                if (setting.category == "")
+                {
+                    continue;
+                }
+
+                if (setting.category != lastCategory)
+                {
+                    lastCategory = setting.category;
+                    // add a new setting header
+                    settingsHolder.AddChild(new TextWidget(setting.category.Localize() + " " + "Settings".Localize() + ":", 0, 0, bold: true)
+                    {
+                        TextColor = theme.TextColor,
+                        Margin = new BorderDouble(0, 5, 0, 7)
+                    });
+                }
+
+                var settingsData = PrinterSettings.SettingsData[setting.key];
+                var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+
+                if (row is SliceSettingsRow settingsRow)
+                {
+                    settingsRow.ArrowDirection = ArrowDirection.Left;
+                    settingsRow.Enabled = true;
+                }
+
+                settingsHolder.AddChild(row);
+            }
+
+            return settingsBackground;
         }
     }
 }

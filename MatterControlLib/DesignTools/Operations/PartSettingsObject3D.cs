@@ -92,8 +92,79 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public string ThumbnailName => nameof(PartSettingsObject3D);
 
+        private void UpdateSettingsDisplay(PrinterConfig containingPrinter)
+        {
+            if (containingPrinter != null)
+            {
+                this.Invalidate(InvalidateType.DisplayValues);
+                ApplicationController.Instance.ReloadSettings(containingPrinter);
+                // refresh the properties pannel by unselecting and selecting
+                containingPrinter.Bed.Scene.SelectedItem = null;
+                containingPrinter.Bed.Scene.SelectedItem = this;
+            }
+        }
+
+        public static HashSet<string> settingsToIgnore = new HashSet<string>()
+        {
+            SettingsKey.spiral_vase,
+            SettingsKey.layer_to_pause,
+            SettingsKey.perimeter_acceleration,
+            SettingsKey.default_acceleration,
+            SettingsKey.t1_extrusion_move_speed_multiplier,
+            SettingsKey.bed_surface,
+            SettingsKey.brim_extruder,
+            SettingsKey.support_material_extruder,
+            SettingsKey.support_material_interface_extruder,
+            SettingsKey.material_color,
+            SettingsKey.material_color_1,
+            SettingsKey.material_color_2,
+            SettingsKey.material_color_3,
+            SettingsKey.filament_diameter,
+            SettingsKey.filament_density,
+            SettingsKey.filament_cost,
+            SettingsKey.temperature,
+            SettingsKey.temperature1,
+            SettingsKey.temperature2,
+            SettingsKey.temperature3,
+            SettingsKey.bed_temperature,
+            SettingsKey.bed_temperature_blue_tape,
+            SettingsKey.bed_temperature_buildtak,
+            SettingsKey.bed_temperature_garolite,
+            SettingsKey.bed_temperature_glass,
+            SettingsKey.bed_temperature_kapton,
+            SettingsKey.bed_temperature_pei,
+            SettingsKey.bed_temperature_pp,
+            SettingsKey.inactive_cool_down,
+            SettingsKey.seconds_to_reheat,
+        };
+
         public IEnumerable<EditorButtonData> GetEditorButtonsData()
         {
+            var containingPrinter = this.ContainingPrinter();
+            if (containingPrinter != null)
+            {
+                yield return new EditorButtonData()
+                {
+                    Action = () =>
+                    {
+                        var settingsContext = new SettingsContext(containingPrinter, null, NamedSettingsLayers.All);
+                        foreach (var setting in containingPrinter.Settings.UserLayer)
+                        {
+                            var data = SliceSettingsRow.GetStyleData(containingPrinter, ApplicationController.Instance.Theme, settingsContext, setting.Key, true);
+
+                            if (!settingsToIgnore.Contains(setting.Key) && data.showRestoreButton)
+                            {
+                                Overrides[setting.Key] = setting.Value;
+                            }
+                        }
+                        UpdateSettingsDisplay(containingPrinter);
+                    },
+                    Name = "Add User Overrides".Localize(),
+                    HelpText = "Copy in all current user overides".Localize()
+                };
+            }
+
+
             if (ApplicationController.Instance.UserHasPermission(this))
             {
                 yield return new EditorButtonData()
@@ -101,7 +172,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     Action = () =>
                     {
                         var settings = new PrinterSettings();
+                        settings.GetSceneLayer = () => Overrides;
                         var printer = new PrinterConfig(settings);
+                        if (containingPrinter != null)
+                        {
+                            printer = containingPrinter;
+                        }
+
+                        // set this after the PrinterConfig is constructed to change it to overrides
                         // set this after the PrinterConfig is constructed to change it to overrides
                         settings.GetSceneLayer = () => Overrides;
 
@@ -114,15 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         editMaterialPresetsPage.Closed += (s, e2) =>
                         {
                             ApplicationController.Instance.AcitveSlicePresetsPage = null;
-                            var containingPrinter = this.ContainingPrinter();
-                            if (containingPrinter != null)
-                            {
-                                this.Invalidate(InvalidateType.DisplayValues);
-                                ApplicationController.Instance.ReloadSettings(containingPrinter);
-                                // refresh the properties pannel by unselecting and selecting
-                                containingPrinter.Bed.Scene.SelectedItem = null;
-                                containingPrinter.Bed.Scene.SelectedItem = this;
-                            }
+                            UpdateSettingsDisplay(containingPrinter);
                         };
 
                         ApplicationController.Instance.AcitveSlicePresetsPage = editMaterialPresetsPage;

@@ -68,6 +68,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var sliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
 			contentRow.AddChild(sliceSettingsWidget);
 
+			void ReloadSettings(object s, EventArgs e)
+            {
+				var newSliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
+				contentRow.ReplaceChild(sliceSettingsWidget, newSliceSettingsWidget);
+				contentRow.Width += 1;
+				contentRow.Width -= 1;
+				sliceSettingsWidget = newSliceSettingsWidget;
+			}
+
+			ApplicationController.Instance.ReloadSettingsTriggered += ReloadSettings;
+
+			this.Closed += (s, e) => ApplicationController.Instance.ReloadSettingsTriggered -= ReloadSettings;
+
 			GuiWidget duplicateButton = null;
 
 			if (presetsContext.SetAsActive != null)
