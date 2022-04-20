@@ -2155,6 +2155,9 @@ Translated:Hold 'Shift' to scale proportionally, Type 'Esc' to cancel
 English:Holding Temperature
 Translated:Holding Temperature
 
+English:Hole
+Translated:Hole
+
 English:Hollow
 Translated:Hollow
 

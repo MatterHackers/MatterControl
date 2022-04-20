@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,22 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class ChangeColor : IUndoRedoCommand
+    public class MakeHole : IUndoRedoCommand
 	{
 		private List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
-		private List<Color> itemsColor = new List<Color>();
 		private List<IObject3D> itemsToChange = new List<IObject3D>();
-		private Color color;
 
-		public ChangeColor(IObject3D selectedItem, Color color)
+		public MakeHole(IObject3D selectedItem)
 		{
-			this.color = color;
 			if (selectedItem is SelectionGroupObject3D)
 			{
 				SetData(selectedItem.Children.ToList());
@@ -60,26 +56,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in itemsToChange)
 			{
 				this.itemsToChange.Add(item);
-				this.itemsColor.Add(item.Color);
 				this.itemsPrintOutputType.Add(item.OutputType);
 			}
 		}
 
 		void IUndoRedoCommand.Do()
 		{
-			foreach(var item in this.itemsToChange)
+			foreach (var item in this.itemsToChange)
 			{
-				item.OutputType = PrintOutputTypes.Solid;
-				item.Color = color;
+				item.OutputType = PrintOutputTypes.Hole;
 			}
 		}
 
 		void IUndoRedoCommand.Undo()
 		{
-			for(int i=0; i< this.itemsToChange.Count; i++)
+			for (int i = 0; i < this.itemsToChange.Count; i++)
 			{
 				itemsToChange[i].OutputType = itemsPrintOutputType[i];
-				itemsToChange[i].Color = itemsColor[i];
 			}
 		}
 	}

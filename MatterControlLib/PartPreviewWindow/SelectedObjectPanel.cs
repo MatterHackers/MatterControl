@@ -310,13 +310,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				// color row
-				var row = new SettingsRow("Color".Localize(), null, colorField.Content, theme);
+				editorPanel.AddChild(new SettingsRow("Color".Localize(), null, colorField.Content, theme)
+				{
+					// Special top border style for first item in editor
+					Border = new BorderDouble(0, 1)
+				});
 
-				// Special top border style for first item in editor
-				row.Border = new BorderDouble(0, 1);
+				// put in a hole edit field
+				var holeField = new ToggleboxField(theme);
+				holeField.Initialize(0);
+				holeField.Checked = selectedItem.WorldOutputType() == PrintOutputTypes.Hole;
+				holeField.ValueChanged += (s, e) =>
+				{
+					if (selectedItem.OutputType == PrintOutputTypes.Hole)
+                    {
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+					}
+					else
+					{
+						undoBuffer.AddAndDo(new MakeHole(selectedItem));
+					}
+				};
 
-				editorPanel.AddChild(row);
+				editorPanel.AddChild(new SettingsRow("Hole".Localize(), null, holeField.Content, theme));
 
 				// put in a material edit field
 				var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
@@ -339,8 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				// material row
-				editorPanel.AddChild(
-					new SettingsRow("Material".Localize(), null, materialField.Content, theme));
+				editorPanel.AddChild(new SettingsRow("Material".Localize(), null, materialField.Content, theme));
 			}
 
 			var rows = new SafeList<SettingsRow>();
