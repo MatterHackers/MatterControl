@@ -32,12 +32,6 @@ namespace MatterControl.Tests
 		[Test, ChildProcessTest, Category("ReleaseQuality")]
 		public void MatterControlKnownAssembliesAreOptimized()
 		{
-#if DEBUG
-			string configuration = "Debug";
-#else
-			string configuration = "Release";
-#endif
-
 			//MatterHackers.RenderOpenGl.dll
 
 			// This list can be refreshed via the rebuildDependencies() helper function below

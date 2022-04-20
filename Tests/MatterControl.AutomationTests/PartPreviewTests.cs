@@ -130,6 +130,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
+		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
 		[Test, ChildProcessTest]
 		public static async Task ControlClickInDesignTreeView()
 		{
