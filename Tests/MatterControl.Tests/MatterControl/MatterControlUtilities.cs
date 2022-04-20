@@ -1014,6 +1014,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				overrideWidth == -1 ? width : overrideWidth,
 				overrideHeight == -1 ? height : overrideHeight);
 
+			rootSystemWindow.Title += " - " + testMethod.GetMethodInfo().Name;
+
 			OemSettings.Instance.ShowShopButton = false;
 
 			if (!config.UseAutomationMouse)
