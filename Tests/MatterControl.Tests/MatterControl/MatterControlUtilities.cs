@@ -1326,7 +1326,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var category = group.Category;
 
 			// Click tab
-			testRunner.ClickByName(category.Name + " Tab");
+			testRunner.ClickByName(category.Name + " SliceSettingsTab");
 
 			// Open the subGroup if required
 			var foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _, .1);

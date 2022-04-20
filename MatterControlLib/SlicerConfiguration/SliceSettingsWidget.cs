@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									hasClose: false,
 									pointSize: theme.DefaultFontSize)
 								{
-									Name = category.Name + " Tab",
+									Name = category.Name + " SliceSettingsTab",
 									InactiveTabColor = Color.Transparent,
 									ActiveTabColor = theme.BackgroundColor
 								});

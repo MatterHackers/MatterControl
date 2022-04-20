@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.AddAndSelectPrinter("Airwolf 3D", "HD")
 					// Navigate to Local Library
 					.SwitchToPrinterSettings()
-					.ClickByName("Features Tab");
+					.ClickByName("Features SliceSettingsTab");
 
 				var printer = testRunner.FirstPrinter();
 
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					testRunner.ClickByName("Features Tab");
+					testRunner.ClickByName("Features SliceSettingsTab");
 
 					// only 1 hotend and 1 extruder
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// Switch back to the general tab
-					testRunner.ClickByName("General Tab")
+					testRunner.ClickByName("General SliceSettingsTab")
 						.SelectSliceSettingsField(SettingsKey.extruder_count)
 						.Type("2")
 						.Type("{Enter}");
