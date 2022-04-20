@@ -352,9 +352,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// click the remove override and have it change to default temp
+					// NOTE: Got test failure twice: The printer should report the expected goal temp
+					//                               Expected: 220
+					//                               But was:  60
+					//       Even though WaitFor was used. Maybe the emulator is just delayed sometimes.
+					//       Adding Math.Round anyway. And more waiting.
 					testRunner.ClickByName("Restore temperature")
-						.WaitFor(() => hipsGoalTemp == emulator.CurrentExtruder.TargetTemperature);
-					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
+						.WaitFor(() => hipsGoalTemp == (int)Math.Round(emulator.CurrentExtruder.TargetTemperature), maxSeconds: 10);
+					Assert.AreEqual(hipsGoalTemp, (int)Math.Round(emulator.CurrentExtruder.TargetTemperature), "The printer should report the expected goal temp");
 
 					// type in 60 and have the heater turn on
 					testRunner.ClickByName("Temperature Input")
