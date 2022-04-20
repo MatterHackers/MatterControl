@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, ChildProcessTest]
 		public async Task RelativeRetractionExecutesCorrectly()
 		{
+			// NOTE: This test once timed out at 120, but took 38.4s when run on its own.
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button");

@@ -27,12 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+// For communication with the main instance. Use ServiceWire or just pipes.
+//#define USE_SERVICEWIRE
+
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -42,8 +46,15 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
 using Mindscape.Raygun4Net;
-using ServiceWire;
 using SQLiteWin32;
+
+#if USE_SERVICEWIRE
+using ServiceWire;
+#else
+using System.IO.Pipes;
+using System.Text;
+using System.Xml.Serialization;
+#endif
 
 namespace MatterHackers.MatterControl
 {
@@ -71,11 +82,7 @@ namespace MatterHackers.MatterControl
 
 		private static RaygunClient _raygunClient;
 
-		//private static string mainServiceName = "shell";
-
-		//private const string ServiceBaseUri = "net.pipe://localhost/mattercontrol";
-
-		private const string ServicePipeName = "mattercontrol";
+		private const string ServicePipeName = "MatterControlMainInstance";
 
 		[DllImport("Shcore.dll")]
 		static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
@@ -171,7 +178,9 @@ namespace MatterHackers.MatterControl
 			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
 			var shellFiles = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 
+			// Single instance handling.
 #if !DEBUG
+#if USE_SERVICEWIRE
 			try
 			{
 				using (var client = new ServiceWire.NamedPipes.NpClient<IMainService>(new ServiceWire.NamedPipes.NpEndPoint(ServicePipeName)))
@@ -199,7 +208,106 @@ namespace MatterHackers.MatterControl
 			var host = new ServiceWire.NamedPipes.NpHost(ServicePipeName, new ServiceWireLogger());
 			host.AddService<IMainService>(new LocalService());
 			host.Open();
+#else
+			NamedPipeServerStream pipeServer = null;
+			try
+			{
+				pipeServer = new NamedPipeServerStream(ServicePipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.CurrentUserOnly);
+			}
+			catch (IOException)
+			{
+				// Server pipe already exists.
+			}
+
+			static string readPipeMessage(PipeStream pipe)
+			{
+				MemoryStream ms = new MemoryStream();
+				using var cancellation = new CancellationTokenSource();
+				byte[] buffer = new byte[1024];
+				do
+				{
+					var task = pipe.ReadAsync(buffer, 0, buffer.Length, cancellation.Token);
+					cancellation.CancelAfter(1000);
+					task.Wait();
+					ms.Write(buffer, 0, task.Result);
+					if (task.Result <= 0)
+						break;
+				} while (!pipe.IsMessageComplete);
+
+				return Encoding.Unicode.GetString(ms.ToArray());
+			}
+
+			if (pipeServer != null)
+			{
+				new Task(() =>
+				{
+					try
+					{
+						var localService = new LocalService();
+
+						for (; ; )
+						{
+							pipeServer.WaitForConnection();
+
+							try
+							{
+								string str = readPipeMessage(pipeServer);
+
+								var serializer = new XmlSerializer(typeof(InstancePipeMessage));
+								localService.ShellOpenFile(((InstancePipeMessage)serializer.Deserialize(new StringReader(str))).Paths);
+
+								using var cancellation = new CancellationTokenSource();
+								var task = pipeServer.WriteAsync(Encoding.Unicode.GetBytes("ok"), cancellation.Token).AsTask();
+								cancellation.CancelAfter(1000);
+								task.Wait();
+							}
+							catch (Exception)
+							{
+							}
+
+							// NamedPipeServerStream can only handle one client ever. Need a new server pipe. ServiceWire does the same thing.
+							// So here, there is a time where there is no server pipe. Another instance could become the main instance.
+							pipeServer.Dispose();
+							pipeServer = new NamedPipeServerStream(ServicePipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.CurrentUserOnly);
+						}
+					}
+					catch (Exception ex) // TimeoutException or IOException
+					{
+						//System.Windows.Forms.MessageBox.Show(ex.ToString());
+						System.Diagnostics.Trace.WriteLine("Main instance pipe server died: " + ex.ToString());
+					}
+
+					pipeServer.Dispose();
+					pipeServer = null;
+				}).Start();
+			}
+			else if (shellFiles.Any())
+			{
+				try
+				{
+					using var pipeClient = new NamedPipeClientStream(".", ServicePipeName, PipeDirection.InOut, PipeOptions.CurrentUserOnly);
+					pipeClient.Connect(1000);
+					pipeClient.ReadMode = PipeTransmissionMode.Message;
+
+					StringBuilder sb = new();
+					using (var writer = new StringWriter(sb))
+						new XmlSerializer(typeof(InstancePipeMessage)).Serialize(writer, new InstancePipeMessage { Paths = shellFiles.ToArray() });
+
+					using var cancellation = new CancellationTokenSource();
+					var task = pipeClient.WriteAsync(Encoding.Unicode.GetBytes(sb.ToString()), cancellation.Token).AsTask();
+					cancellation.CancelAfter(1000);
+					task.Wait();
+					if (task.IsCompletedSuccessfully && readPipeMessage(pipeClient).Trim() == "ok")
+						return;
+				}
+				catch (Exception ex) // TimeoutException or IOException
+				{
+					//System.Windows.Forms.MessageBox.Show(ex.ToString());
+					System.Diagnostics.Trace.WriteLine("Instance pipe client died: " + ex.ToString());
+				}
+			}
 #endif
+#endif // Single instance handling
 
 			if (shellFiles.Any())
 			{
@@ -354,6 +462,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+#if USE_SERVICEWIRE
 		private class ServiceWireLogger : ServiceWire.ILog
 		{
 			static private void Log(ServiceWire.LogLevel level, string formattedMessage, params object[] args)
@@ -398,6 +507,13 @@ namespace MatterHackers.MatterControl
 				Log(LogLevel.Warn, formattedMessage, args);
 			}
 		}
+#else
+		[Serializable]
+		public struct InstancePipeMessage
+		{
+			public string[] Paths;
+		}
+#endif
 	}
 
 	public interface IMainService

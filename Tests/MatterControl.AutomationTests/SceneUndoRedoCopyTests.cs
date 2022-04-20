@@ -300,6 +300,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
+		// NOTE: This test once failed on GLFW. Could be timing or accidental input.
 		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateXY()
 		{
@@ -370,6 +371,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private static void AddBoxABoxBToBed(AutomationRunner testRunner, InteractiveScene scene)
 		{
 			var item = "Calibration - Box.stl";
+			// NOTE: Test once failed here. Probably due to timing.
 			testRunner.AddItemToBed()
 				.Delay(.1)
 				// move the first one over

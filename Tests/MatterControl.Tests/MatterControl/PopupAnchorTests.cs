@@ -16,6 +16,7 @@ using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
+	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
 	[TestFixture, Category("PopupAnchorTests"), Parallelizable(ParallelScope.Children)]
 	public class PopupAnchorTests
 	{

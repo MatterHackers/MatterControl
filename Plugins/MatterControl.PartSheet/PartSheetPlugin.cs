@@ -23,6 +23,10 @@ namespace MatterHackers.MatterControl.Plugins
 				return;
 			}
 
+			// Needed for PDFSharp on .NET core.
+			// https://stackoverflow.com/questions/50858209/system-notsupportedexception-no-data-is-available-for-encoding-1252
+			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 			ApplicationController.Instance.Library.MenuExtensions.Add(
 				new LibraryAction(ActionScope.ListItem)
 				{

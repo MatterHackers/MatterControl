@@ -63,6 +63,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 	}
 
+	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
 	[TestFixture, Category("SliceSettingsTests"), Parallelizable(ParallelScope.Children)]
 	public class SliceSettingsFieldTests
 	{
@@ -408,7 +409,7 @@ namespace MatterControl.Tests.MatterControl
 					// no selection to start
 					Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
 
-`					// select all and ensure everything is selected
+					// select all and ensure everything is selected
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
 					if (selectsOnFocus)
 					{

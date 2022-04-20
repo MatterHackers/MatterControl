@@ -959,7 +959,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
-				staticDataPathOverride = GetPathToRootRelative("..", "MatterControl", "StaticData");
+				staticDataPathOverride = StaticDataPath;
 				Assert.True(Directory.Exists(staticDataPathOverride));
 			}
 
@@ -975,7 +975,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			StaticData.RootPath = staticDataPathOverride;
 #endif
 			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
-			MatterControlUtilities.OverrideAppDataLocation(GetPathToRootRelative("..", "MatterControl"));
+			MatterControlUtilities.OverrideAppDataLocation(RootPath);
 
 			if (queueItemFolderToAdd != QueueTemplate.None)
 			{
