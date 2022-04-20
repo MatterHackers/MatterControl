@@ -27,14 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SliceSettingsLayouts
 	{
 		private static (string categoryName, (string groupName, string[] settings)[] groups)[] sliceSettings;
+		
+		private static (string categoryName, (string groupName, string[] settings)[] groups)[] printerSettings;
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SliceSettings()
 		{
 			if (sliceSettings == null)
@@ -136,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SettingsKey.t1_extrusion_move_speed_multiplier,
 						}),
 						("Speed Overrides", new []
-                        {
+						{
 							SettingsKey.max_print_speed,
 						}),
 						("Cooling", new[]
@@ -269,179 +268,201 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}),
 					}),
 				};
-				}
+			}
 
 			return sliceSettings;
 		}
 
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] PrinterSettings()
 		{
-			var printerSettings = new (string categoryName, (string groupName, string[] settings)[] groups)[]
+			if (printerSettings == null)
 			{
-				("General", new[]
+				printerSettings = new (string categoryName, (string groupName, string[] settings)[] groups)[]
 				{
 					("General", new[]
 					{
-						SettingsKey.make,
-						SettingsKey.model,
-						SettingsKey.auto_connect,
-						SettingsKey.baud_rate,
-						SettingsKey.com_port,
-						SettingsKey.selector_ip_address,
-						SettingsKey.ip_address,
-						SettingsKey.ip_port,
+						("General", new[]
+						{
+							SettingsKey.make,
+							SettingsKey.model,
+							SettingsKey.auto_connect,
+							SettingsKey.baud_rate,
+							SettingsKey.com_port,
+							SettingsKey.selector_ip_address,
+							SettingsKey.ip_address,
+							SettingsKey.ip_port,
+						}),
+						("Bed", new[]
+						{
+							SettingsKey.bed_size,
+							SettingsKey.print_center,
+							SettingsKey.build_height,
+							SettingsKey.bed_shape,
+							// add settings specific to SLA
+							SettingsKey.sla_resolution,
+							SettingsKey.sla_printable_area_inset,
+							SettingsKey.sla_mirror_mode,
+						}),
+						("Extruders", new[]
+						{
+							SettingsKey.extruder_count,
+							SettingsKey.nozzle_diameter,
+							SettingsKey.t0_inset,
+							SettingsKey.t1_inset,
+							SettingsKey.extruders_share_temperature,
+							SettingsKey.extruder_offset,
+						}),
 					}),
-					("Bed", new[]
+					("Features", new (string groupName, string[] settings)[]
 					{
-						SettingsKey.bed_size,
-						SettingsKey.print_center,
-						SettingsKey.build_height,
-						SettingsKey.bed_shape,
-						// add settings specific to SLA
-						SettingsKey.sla_resolution,
-						SettingsKey.sla_printable_area_inset,
-						SettingsKey.sla_mirror_mode,
+						("Leveling", new[]
+						{
+							SettingsKey.print_leveling_solution,
+							SettingsKey.print_leveling_insets,
+							SettingsKey.leveling_sample_points,
+							SettingsKey.print_leveling_required_to_print,
+						}),
+						("Print Recovery", new[]
+						{
+							SettingsKey.recover_is_enabled,
+							SettingsKey.recover_first_layer_speed,
+							SettingsKey.recover_position_before_z_home,
+						}),
+						("Probe", new[]
+						{
+							SettingsKey.print_leveling_probe_start,
+							SettingsKey.use_z_probe,
+							SettingsKey.validate_leveling,
+							SettingsKey.validation_threshold,
+							SettingsKey.z_probe_samples,
+							SettingsKey.probe_offset,
+							SettingsKey.z_servo_depolyed_angle,
+							SettingsKey.z_servo_retracted_angle,
+							SettingsKey.measure_probe_offset_conductively,
+							SettingsKey.conductive_pad_center,
+							SettingsKey.conductive_probe_min_z,
+						}),
+						("Behavior", new[]
+						{
+							SettingsKey.slice_engine,
+							SettingsKey.heat_extruder_before_homing,
+							SettingsKey.auto_release_motors,
+							SettingsKey.validate_layer_height,
+							SettingsKey.emulate_endstops,
+							SettingsKey.send_with_checksum,
+							SettingsKey.additional_printing_errors,
+							SettingsKey.reset_long_extrusion,
+							SettingsKey.output_only_first_layer,
+							SettingsKey.g0,
+							SettingsKey.progress_reporting,
+							SettingsKey.include_firmware_updater,
+							SettingsKey.backup_firmware_before_update,
+							SettingsKey.enable_firmware_sounds,
+						}),
+						("Diagnostics", new[]
+						{
+							SettingsKey.report_runout_sensor_data,
+						}),
+						("Printer Help", new[]
+						{
+							SettingsKey.trim_filament_markdown,
+							SettingsKey.insert_filament_markdown2,
+							SettingsKey.running_clean_markdown2,
+							SettingsKey.insert_filament_1_markdown,
+							SettingsKey.running_clean_1_markdown,
+							SettingsKey.printer_sku,
+							SettingsKey.created_date,
+						}),
 					}),
-					("Extruders", new[]
+					("Hardware", new (string groupName, string[] settings)[]
 					{
-						SettingsKey.extruder_count,
-						SettingsKey.nozzle_diameter,
-						SettingsKey.t0_inset,
-						SettingsKey.t1_inset,
-						SettingsKey.extruders_share_temperature,
-						SettingsKey.extruder_offset,
+						("Hardware", new[]
+						{
+							SettingsKey.firmware_type,
+							SettingsKey.show_reset_connection,
+							SettingsKey.z_homes_to_max,
+							SettingsKey.has_fan,
+							SettingsKey.has_fan_per_extruder,
+							SettingsKey.has_hardware_leveling,
+							SettingsKey.has_independent_z_motors,
+							SettingsKey.has_heated_bed,
+							SettingsKey.has_swappable_bed,
+							SettingsKey.has_sd_card_reader,
+							SettingsKey.has_power_control,
+							SettingsKey.filament_runout_sensor,
+							SettingsKey.runout_sensor_check_distance,
+							SettingsKey.runout_sensor_trigger_ratio,
+							SettingsKey.has_z_probe,
+							SettingsKey.has_z_servo,
+							SettingsKey.has_conductive_nozzle,
+							SettingsKey.has_c_axis,
+							SettingsKey.enable_network_printing,
+							SettingsKey.enable_sailfish_communication,
+							SettingsKey.max_acceleration,
+							SettingsKey.max_velocity,
+							SettingsKey.jerk_velocity,
+							SettingsKey.print_time_estimate_multiplier,
+							SettingsKey.load_filament_length,
+							SettingsKey.unload_filament_length,
+							SettingsKey.load_filament_speed,
+						}),
 					}),
-				}),
-				("Features", new (string groupName, string[] settings)[]
-				{
-					("Leveling", new[]
+					("G-Code", new[]
 					{
-						SettingsKey.print_leveling_solution,
-						SettingsKey.print_leveling_insets,
-						SettingsKey.leveling_sample_points,
-						SettingsKey.print_leveling_required_to_print,
+						("Printer Control", new[]
+						{
+							SettingsKey.start_gcode,
+							SettingsKey.end_gcode,
+							SettingsKey.layer_gcode,
+							SettingsKey.connect_gcode,
+							SettingsKey.clear_bed_gcode,
+						}),
+						("User Control", new[]
+						{
+							SettingsKey.cancel_gcode,
+							SettingsKey.pause_gcode,
+							SettingsKey.resume_gcode,
+						}),
+						("Multi-Extruder", new[]
+						{
+							SettingsKey.before_toolchange_gcode,
+							SettingsKey.toolchange_gcode,
+							SettingsKey.before_toolchange_gcode_1,
+							SettingsKey.toolchange_gcode_1,
+							SettingsKey.before_toolchange_gcode_2,
+							SettingsKey.toolchange_gcode_2,
+							SettingsKey.before_toolchange_gcode_3,
+							SettingsKey.toolchange_gcode_3,
+						}),
+						("Filters", new[]
+						{
+							SettingsKey.write_regex,
+							SettingsKey.read_regex,
+						}),
 					}),
-					("Print Recovery", new[]
-					{
-						SettingsKey.recover_is_enabled,
-						SettingsKey.recover_first_layer_speed,
-						SettingsKey.recover_position_before_z_home,
-					}),
-					("Probe", new[]
-					{
-						SettingsKey.print_leveling_probe_start,
-						SettingsKey.use_z_probe,
-						SettingsKey.validate_leveling,
-						SettingsKey.validation_threshold,
-						SettingsKey.z_probe_samples,
-						SettingsKey.probe_offset,
-						SettingsKey.z_servo_depolyed_angle,
-						SettingsKey.z_servo_retracted_angle,
-						SettingsKey.measure_probe_offset_conductively,
-						SettingsKey.conductive_pad_center,
-						SettingsKey.conductive_probe_min_z,
-					}),
-					("Behavior", new[]
-					{
-						SettingsKey.slice_engine,
-						SettingsKey.heat_extruder_before_homing,
-						SettingsKey.auto_release_motors,
-						SettingsKey.validate_layer_height,
-						SettingsKey.emulate_endstops,
-						SettingsKey.send_with_checksum,
-						SettingsKey.additional_printing_errors,
-						SettingsKey.reset_long_extrusion,
-						SettingsKey.output_only_first_layer,
-						SettingsKey.g0,
-						SettingsKey.progress_reporting,
-						SettingsKey.include_firmware_updater,
-						SettingsKey.backup_firmware_before_update,
-						SettingsKey.enable_firmware_sounds,
-					}),
-					("Diagnostics", new[]
-					{
-						SettingsKey.report_runout_sensor_data,
-					}),
-					("Printer Help", new[]
-					{
-						SettingsKey.trim_filament_markdown,
-						SettingsKey.insert_filament_markdown2,
-						SettingsKey.running_clean_markdown2,
-						SettingsKey.insert_filament_1_markdown,
-						SettingsKey.running_clean_1_markdown,
-						SettingsKey.printer_sku,
-						SettingsKey.created_date,
-					}),
-				}),
-				("Hardware", new (string groupName, string[] settings)[]
-				{
-					("Hardware", new[]
-					{
-						SettingsKey.firmware_type,
-						SettingsKey.show_reset_connection,
-						SettingsKey.z_homes_to_max,
-						SettingsKey.has_fan,
-						SettingsKey.has_fan_per_extruder,
-						SettingsKey.has_hardware_leveling,
-						SettingsKey.has_independent_z_motors,
-						SettingsKey.has_heated_bed,
-						SettingsKey.has_swappable_bed,
-						SettingsKey.has_sd_card_reader,
-						SettingsKey.has_power_control,
-						SettingsKey.filament_runout_sensor,
-						SettingsKey.runout_sensor_check_distance,
-						SettingsKey.runout_sensor_trigger_ratio,
-						SettingsKey.has_z_probe,
-						SettingsKey.has_z_servo,
-						SettingsKey.has_conductive_nozzle,
-						SettingsKey.has_c_axis,
-						SettingsKey.enable_network_printing,
-						SettingsKey.enable_sailfish_communication,
-						SettingsKey.max_acceleration,
-						SettingsKey.max_velocity,
-						SettingsKey.jerk_velocity,
-						SettingsKey.print_time_estimate_multiplier,
-						SettingsKey.load_filament_length,
-						SettingsKey.unload_filament_length,
-						SettingsKey.load_filament_speed,
-					}),
-				}),
-				("G-Code", new[]
-				{
-					("Printer Control", new[]
-					{
-						SettingsKey.start_gcode,
-						SettingsKey.end_gcode,
-						SettingsKey.layer_gcode,
-						SettingsKey.connect_gcode,
-						SettingsKey.clear_bed_gcode,
-					}),
-					("User Control", new[]
-					{
-						SettingsKey.cancel_gcode,
-						SettingsKey.pause_gcode,
-						SettingsKey.resume_gcode,
-					}),
-					("Multi-Extruder", new[]
-					{
-						SettingsKey.before_toolchange_gcode,
-						SettingsKey.toolchange_gcode,
-						SettingsKey.before_toolchange_gcode_1,
-						SettingsKey.toolchange_gcode_1,
-						SettingsKey.before_toolchange_gcode_2,
-						SettingsKey.toolchange_gcode_2,
-						SettingsKey.before_toolchange_gcode_3,
-						SettingsKey.toolchange_gcode_3,
-					}),
-					("Filters", new[]
-					{
-						SettingsKey.write_regex,
-						SettingsKey.read_regex,
-					}),
-				}),
-			};
+					};
+			}
 
 			return printerSettings;
+		}
+
+		public static bool ContainesKey((string categoryName, (string groupName, string[] settings)[] groups)[] settingsGrouping, string key)
+        {
+			foreach (var category in settingsGrouping)
+			{
+				foreach (var group in category.groups)
+				{
+					foreach (var setting in group.settings)
+					{
+						if (setting == key)
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public static (int index, string category, string group, string key) GetLayout(string key)
