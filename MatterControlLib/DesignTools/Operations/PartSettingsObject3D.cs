@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -152,11 +153,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         {
                             var data = SliceSettingsRow.GetStyleData(containingPrinter, ApplicationController.Instance.Theme, settingsContext, setting.Key, true);
 
-                            if (!settingsToIgnore.Contains(setting.Key) && data.showRestoreButton)
+                            if (!settingsToIgnore.Contains(setting.Key)
+                                && data.showRestoreButton
+                                && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key))
                             {
                                 Overrides[setting.Key] = setting.Value;
                             }
                         }
+
+                        foreach (var setting in Overrides.ToList())
+                        {
+                            if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key))
+                            {
+                                Overrides.Remove(setting.Key);
+                            }
+                        }
+
+
                         UpdateSettingsDisplay(containingPrinter);
                     },
                     Name = "Add User Overrides".Localize(),
@@ -183,20 +196,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         // set this after the PrinterConfig is constructed to change it to overrides
                         settings.GetSceneLayer = () => Overrides;
 
-                        var presetsContext = new PresetsContext(null, printer.Settings.SceneLayer)
+                        var presetsContext = new PresetsContext(null, Overrides)
                         {
                             LayerType = NamedSettingsLayers.Scene,
                         };
 
-                        var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext, false);
-                        editMaterialPresetsPage.Closed += (s, e2) =>
+                        var editPartSettingsPresetsPage = new SlicePresetsPage(printer, presetsContext, false);
+                        editPartSettingsPresetsPage.Closed += (s, e2) =>
                         {
                             ApplicationController.Instance.AcitveSlicePresetsPage = null;
                             UpdateSettingsDisplay(containingPrinter);
                         };
 
-                        ApplicationController.Instance.AcitveSlicePresetsPage = editMaterialPresetsPage;
-                        DialogWindow.Show(editMaterialPresetsPage);
+                        ApplicationController.Instance.AcitveSlicePresetsPage = editPartSettingsPresetsPage;
+                        DialogWindow.Show(editPartSettingsPresetsPage);
                     },
                     Name = "Edit".Localize(),
                 };

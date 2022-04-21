@@ -129,15 +129,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			mesh.Faces = new FaceList(keptFaces);
+
+			mesh.CleanAndMerge();
 		}
 
-		public override Task Rebuild()
+        public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
+        {
+            var aabb = base.GetAxisAlignedBoundingBox(matrix);
+			return aabb;
+        }
+
+        public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
 			var rebuildLocks = this.RebuilLockAll();
-
-			var valuesChanged = false;
 
 			return TaskBuilder(
 				"Plane Cut".Localize(),
@@ -148,11 +154,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					root = root == null ? SourceContainer : root;
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
-						var reducedMesh = Cut(sourceItem);
+						var cutMesh = Cut(sourceItem);
 
 						var newMesh = new Object3D()
 						{
-							Mesh = reducedMesh,
+							Mesh = cutMesh,
 							OwnerID = sourceItem.ID
 						};
 						newMesh.CopyWorldProperties(sourceItem, root, Object3DPropertyFlags.All);

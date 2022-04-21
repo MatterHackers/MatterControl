@@ -92,17 +92,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
 
-			if (viewOnlyTexture == null)
+			if (stripeTexture == null)
 			{
-				// TODO: What is the ViewOnlyTexture???
+				// open gl can only be run on the ui thread so make sure it is on it by using RunOnIdle
 				UiThread.RunOnIdle(() =>
 				{
-					viewOnlyTexture = new ImageBuffer(32, 32, 32);
-					var graphics2D = viewOnlyTexture.NewGraphics2D();
+					stripeTexture = new ImageBuffer(32, 32, 32);
+					var graphics2D = stripeTexture.NewGraphics2D();
 					graphics2D.Clear(Color.White);
-					graphics2D.FillRectangle(0, 0, viewOnlyTexture.Width / 2, viewOnlyTexture.Height, Color.LightGray);
+					graphics2D.FillRectangle(0, 0, stripeTexture.Width / 2, stripeTexture.Height, Color.LightGray);
 					// request the texture so we can set it to repeat
-					ImageGlPlugin.GetImageGlPlugin(viewOnlyTexture, true, true, false);
+					ImageGlPlugin.GetImageGlPlugin(stripeTexture, true, true, false);
 				});
 			}
 
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var bvhIterator in allResults)
 			{
-				Object3DControlsLayer.RenderBounds(e, world, bvhIterator.TransformToWorld, bvhIterator.Bvh, bvhIterator.Depth);
+                RenderBounds(e, world, bvhIterator.TransformToWorld, bvhIterator.Bvh, bvhIterator.Depth);
 			}
 		}
 
@@ -635,7 +635,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget GuiSurface => this;
 
-		private static ImageBuffer viewOnlyTexture;
+		private static ImageBuffer stripeTexture;
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
@@ -807,8 +807,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var item in object3D.VisibleMeshes())
 			{
-				// check for correct protection rendering
-				ValidateViewOnlyTexturing(item);
+				// check if the object should have a stripe texture
+				ValidateStripeTexturing(item);
 
 				Color drawColor = this.GetItemColor(item, selectedItem);
 
@@ -849,12 +849,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private static void ValidateViewOnlyTexturing(IObject3D item)
+		private static void ValidateStripeTexturing(IObject3D item)
 		{
-			// if there is no view only texture or the item is locked
-			if (Object3DControlsLayer.viewOnlyTexture == null
+			// if there is no stripe texture built or the item is locked
+			if (stripeTexture == null
 				|| item.Mesh.Faces.Count == 0)
 			{
+				// exit and wait for a later time
 				return;
 			}
 
@@ -864,33 +865,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				item.Mesh.FaceTextures.TryGetValue(0, out FaceTextureData faceTexture);
 				bool faceIsTextured = faceTexture?.image != null;
 
-				// if not persistable and has view only texture, remove the view only texture if it has it
-				if (item.WorldPersistable()
-					&& faceIsTextured)
+				// if persistable and has a stripe texture, remove the stripe texture
+				if (faceIsTextured
+					&& item.WorldPersistable()
+					&& item.WorldOutputType() != PrintOutputTypes.Hole)
 				{
-					// make sure it does not have the view only texture
+					// make sure it does not have a stripe texture
 					using (item.RebuildLock())
 					{
-						item.Mesh.RemoveTexture(Object3DControlsLayer.viewOnlyTexture, 0);
+						item.Mesh.RemoveTexture(stripeTexture, 0);
 					}
 				}
-				else if (!item.WorldPersistable()
-					&& !faceIsTextured
-					&& !item.RebuildLocked)
+				else if (!faceIsTextured
+					&& !item.RebuildLocked 
+					// and it is protected or a hole
+					&& (!item.WorldPersistable() || item.WorldOutputType() == PrintOutputTypes.Hole))
 				{
-					// add a view only texture if it does not have one
-					// make a copy of the mesh and texture it
+					// add a stripe texture if it does not have one
 					Task.Run(() =>
 					{
-						// make sure it does have the view only texture
+						// put on the stripe texture
 						var aabb = item.Mesh.GetAxisAlignedBoundingBox();
 						var matrix = Matrix4X4.CreateScale(.5, .5, 1);
 						matrix *= Matrix4X4.CreateRotationZ(MathHelper.Tau / 8);
 						// make sure it has it's own copy of the mesh
 						using (item.RebuildLock())
 						{
+							// we make a copy so that we don't modify the global instance of a mesh
 							item.Mesh = item.Mesh.Copy(CancellationToken.None);
-							item.Mesh.PlaceTexture(Object3DControlsLayer.viewOnlyTexture, matrix);
+							item.Mesh.PlaceTexture(stripeTexture, matrix);
 						}
 					});
 				}
@@ -1167,7 +1170,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RenderTypes.Outlines,
 					object3D.WorldMatrix() * World.ModelviewMatrix,
 					wireColor,
-					allowBspRendering: transparentMeshes.Count < 1000);
+					allowBspRendering: transparentMeshes.Count < 1000,
+					forceCullBackFaces: false);
 			}
 
 			if (!lookingDownOnBed)

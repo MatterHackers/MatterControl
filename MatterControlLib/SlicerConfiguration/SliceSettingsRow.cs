@@ -546,7 +546,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 					case NamedSettingsLayers.Scene:
 						highlightColor = theme.PresetColors.ScenePreset;
-						showRestoreButton = false;
+						showRestoreButton = true;
 						break;
 				}
 			}
