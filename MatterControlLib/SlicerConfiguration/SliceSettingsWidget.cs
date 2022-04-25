@@ -33,8 +33,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
@@ -47,10 +49,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsContext SettingsContext { get; private set; }
 
-		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
+        private readonly PrinterConfig printer;
+
+        public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.SettingsContext = settingsContext;
+
+			this.printer = printer;
 
 			settingsControlBar = new PresetsToolbar(printer, theme)
 			{
@@ -90,11 +96,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab));
 			}
 
+			var scene = printer?.Bed?.Scene;
+			if(scene != null)
+            {
+                scene.Invalidated += Scene_Invalidated;
+
+				this.Closed += (s, e) => scene.Invalidated -= Scene_Invalidated;
+			}
+
 			this.AnchorAll();
 		}
 
-		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
-		private bool showControlBar = true;
+		private bool foundPartSettingsObject;
+
+		private void Scene_Invalidated(object sender, DataConverters3D.InvalidateArgs e)
+		{
+			var scene = printer?.Bed?.Scene;
+			if (scene != null)
+			{
+				if (scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).Any())
+				{
+					foundPartSettingsObject = true;
+					// if there is a a PartSettingsObject than make sure the settings dislpay is updates on changes
+					UpdateAllStyles();
+				}
+				else if (foundPartSettingsObject)
+                {
+					foundPartSettingsObject = false;
+					// we just delete the last one be sure we still update
+					UpdateAllStyles();
+				}
+			}
+		}
+
+        // TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
+        private bool showControlBar = true;
 
 		public bool ShowControlBar
 		{
@@ -530,7 +566,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnLoad(args);
 		}
 
-		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
+		public static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
 		{
 			bool settingShouldBeShown = settingData.Show?.Invoke(settingsContext.Printer.Settings) != false;
 			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality || NamedSettingsLayers.Scene == settingsContext.ViewFilter)
