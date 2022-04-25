@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -47,6 +48,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
         public PartSettingsObject3D()
         {
             Name = "Part Settings".Localize();
+
+            // Once we are done loading (json load will happen after creation)
+            // Make sure any settings are updated
+            UiThread.RunOnIdle(() =>
+            {
+                // check if the object is part of the scene (it could just be a memory copy)
+                if (Parent != null)
+                {
+                    UpdateSettingsDisplay();
+                }
+            }, .5);
         }
 
         public PrinterSettingsLayer Overrides { get; set; } = new PrinterSettingsLayer();
@@ -93,15 +105,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public string ThumbnailName => nameof(PartSettingsObject3D);
 
-        private void UpdateSettingsDisplay(PrinterConfig containingPrinter)
+        private void UpdateSettingsDisplay()
         {
+            var containingPrinter = this.ContainingPrinter();
+
             if (containingPrinter != null)
             {
-                this.Invalidate(InvalidateType.DisplayValues);
-                ApplicationController.Instance.ReloadSettings(containingPrinter);
-                // refresh the properties pannel by unselecting and selecting
-                containingPrinter.Bed.Scene.SelectedItem = null;
-                containingPrinter.Bed.Scene.SelectedItem = this;
+                // this will check if the current scene layer is the same as the last update
+                containingPrinter.Settings.GetSceneLayer();
+                // ApplicationController.Instance.ReloadSettings(containingPrinter);
+
+                if (containingPrinter.Bed.Scene.SelectedItem == this)
+                {
+                    // refresh the properties pannel by unselecting and selecting
+                    containingPrinter.Bed.Scene.SelectedItem = null;
+                    containingPrinter.Bed.Scene.SelectedItem = this;
+                }
             }
         }
 
@@ -137,6 +156,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             SettingsKey.bed_temperature_pp,
             SettingsKey.inactive_cool_down,
             SettingsKey.seconds_to_reheat,
+            SettingsKey.z_offset,
         };
 
         public IEnumerable<EditorButtonData> GetEditorButtonsData()
@@ -149,13 +169,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     Action = () =>
                     {
                         var settingsContext = new SettingsContext(containingPrinter, null, NamedSettingsLayers.All);
-                        foreach (var setting in containingPrinter.Settings.UserLayer)
+                        foreach (var setting in containingPrinter.Settings.UserLayer.ToList())
                         {
                             var data = SliceSettingsRow.GetStyleData(containingPrinter, ApplicationController.Instance.Theme, settingsContext, setting.Key, true);
 
                             if (!settingsToIgnore.Contains(setting.Key)
                                 && data.showRestoreButton
-                                && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key))
+                                && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
+                                && SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
                             {
                                 Overrides[setting.Key] = setting.Value;
                             }
@@ -163,14 +184,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
                         foreach (var setting in Overrides.ToList())
                         {
-                            if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key))
+                            if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
+                                || !SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
                             {
                                 Overrides.Remove(setting.Key);
                             }
                         }
 
 
-                        UpdateSettingsDisplay(containingPrinter);
+                        UpdateSettingsDisplay();
                     },
                     Name = "Add User Overrides".Localize(),
                     HelpText = "Copy in all current user overides".Localize()
@@ -205,7 +227,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         editPartSettingsPresetsPage.Closed += (s, e2) =>
                         {
                             ApplicationController.Instance.AcitveSlicePresetsPage = null;
-                            UpdateSettingsDisplay(containingPrinter);
+                            UpdateSettingsDisplay();
                         };
 
                         ApplicationController.Instance.AcitveSlicePresetsPage = editPartSettingsPresetsPage;

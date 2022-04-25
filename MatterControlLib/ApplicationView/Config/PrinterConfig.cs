@@ -69,15 +69,19 @@ namespace MatterHackers.MatterControl
 
 		private PrinterSettingsLayer sceneOverrides = new PrinterSettingsLayer();
 
+		private bool watingToCheckSceneLayer;
+
 		private PrinterSettingsLayer GetSceneLayer()
 		{
 			var scene = Bed?.Scene;
 			if (scene != null)
 			{
+				var foundPartSettings = false;
 				var currentSceneOverrides = new PrinterSettingsLayer();
 				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
 				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).OrderBy(i => i.Name))
 				{
+					foundPartSettings = true;
 					var settings = ((PartSettingsObject3D)partSettingsObject).Overrides;
 					foreach (var setting in settings)
 					{
@@ -95,6 +99,16 @@ namespace MatterHackers.MatterControl
 					// stash user overrides for all the values that are set
 					Settings.DeactivateConflictingUserOverrides(sceneOverrides);
 				}
+
+				if (foundPartSettings && !watingToCheckSceneLayer)
+                {
+					watingToCheckSceneLayer = true;
+					UiThread.RunOnIdle(() =>
+					{
+						watingToCheckSceneLayer = false;
+						GetSceneLayer();
+					}, .5);
+                }
 
 				// return the current set
 				return sceneOverrides;
