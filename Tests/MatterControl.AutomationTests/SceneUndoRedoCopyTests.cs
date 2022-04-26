@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	{
 		public static void RunDoUndoTest(this AutomationRunner testRunner, InteractiveScene scene, Action performOperation)
 		{
-			string scenePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "temp", "undo_test_scene" + Path.GetRandomFileName());
+			string scenePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "temp", "undo_test_scene_" + Path.GetRandomFileName());
 
 			Directory.CreateDirectory(scenePath);
 			Object3D.AssetsPath = Path.Combine(scenePath, "Assets");

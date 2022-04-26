@@ -32,14 +32,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using NUnit.Framework;
-using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation")]
 	public class LibraryActionTests
 	{
-		[Test, ChildProcessTest]
+		[Test]
 		public async Task ClickOnExportButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -65,7 +64,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Confirms the Export to Zip feature compresses and exports to a zip file and that file imports without issue
 		/// </summary>
 		/// <returns></returns>
-		[Test, ChildProcessTest]
+		[Test]
 		public async Task ExportToZipImportFromZip()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -118,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, ChildProcessTest, Ignore("Test now works as expected but product does not implement expected functionality")]
+		[Test, Ignore("Test now works as expected but product does not implement expected functionality")]
 		public async Task QueueExportIsDisabledIfEmpty()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -143,7 +142,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Not Finished")]
+		[Test, Ignore("Not Finished")]
 		public async Task ClickCreatePartSheetButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

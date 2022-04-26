@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         private static int pasteObjectXOffset = 5;
 
-        public static async void AddPhilToBed(this ISceneContext sceneContext)
+        public static void AddPhilToBed(this ISceneContext sceneContext)
         {
             var philStl = StaticData.Instance.MapPath(Path.Combine("OEMSettings", "SampleParts", "Phil A Ment.stl"));
             sceneContext.AddToPlate(new string[] { philStl }, false);

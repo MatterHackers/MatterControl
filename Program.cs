@@ -63,8 +63,6 @@ namespace MatterHackers.MatterControl
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
-		private static EventWaitHandle waitHandle;
-
 		private const int RaygunMaxNotifications = 15;
 
 		private static int raygunNotificationCount = 0;
