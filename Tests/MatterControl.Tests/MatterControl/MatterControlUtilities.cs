@@ -1032,7 +1032,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				overrideHeight == -1 ? height : overrideHeight);
 
 			// Stop parallel UI tests fighting over platform UI focus.
-			SystemWindow.EnablePlatformWindowInput = false;
+			IPlatformWindow.EnablePlatformWindowInput = false;
 
 			rootSystemWindow.Title += " - " + testMethod.GetMethodInfo().Name;
 
