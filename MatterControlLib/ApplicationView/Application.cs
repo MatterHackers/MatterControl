@@ -785,8 +785,6 @@ namespace MatterHackers.MatterControl
 					}
 
 					
-
-
 					// If we have not cancled the show welcome message and there is a window open
 					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false"
 						&& ApplicationController.Instance.Workspaces.Count > 0)
@@ -799,6 +797,7 @@ namespace MatterHackers.MatterControl
 					// this is the place to check if we would like to show a 'What's New' or 'Release Notes' page on first run of a new install
                     else
                     {
+
 					}
 				}
 				catch

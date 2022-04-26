@@ -403,7 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				mouseDownObject3DControl.OnMouseDown(new Mouse3DEventArgs(mouseEvent, ray, info));
 				SelectedObject3DControl = mouseDownObject3DControl;
 
-				// Needed for testing DimensionsWorkWhenNoSheet to work (more) reliably. Otherwise, OnMouseMove's defered update won't pick up the hover in time.
+				// Needed for testing DimensionsWorkWhenNoSheet to work (more) reliably. Otherwise, OnMouseMove's defered update might not pick up the hover in time.
 				HoveredObject3DControl = mouseDownObject3DControl;
 			}
 			else

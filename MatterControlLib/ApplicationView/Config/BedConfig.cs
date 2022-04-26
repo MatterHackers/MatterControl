@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl
 					}
 
 					return filesToLoad;
-				}).ConfigureAwait(false);
+				});
 
 				var itemCache = new Dictionary<string, IObject3D>();
 				this.AddToPlate(filePaths.Select(f => new FileSystemFileItem(f)), addUndoCheckPoint);
