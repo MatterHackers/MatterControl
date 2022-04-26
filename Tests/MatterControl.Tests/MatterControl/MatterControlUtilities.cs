@@ -969,8 +969,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			int overrideHeight = -1,
 			string defaultTestImages = null)
 		{
-			//SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-
 			// Walk back a step in the stack and output the callers name
 			// StackTrace st = new StackTrace(false);
 			// Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
