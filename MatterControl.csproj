@@ -135,6 +135,7 @@
 		<ItemGroup>
 			<AssemblyAttributes Include="MatterHackers.MatterControl.MainOutputDirectory">
 				<_Parameter1>$(OutputPath)</_Parameter1>
+				<_Parameter2>$(SolutionDir)</_Parameter2>
 			</AssemblyAttributes>
 		</ItemGroup>
 		<WriteCodeFragment Language="C#" OutputFile="MainOutputDirectory.cs" AssemblyAttributes="@(AssemblyAttributes)" />
