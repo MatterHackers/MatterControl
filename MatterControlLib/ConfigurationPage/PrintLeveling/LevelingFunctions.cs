@@ -41,11 +41,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
-		private PrinterConfig printer;
 
 		public LevelingFunctions(PrinterConfig printer, PrintLevelingData levelingData)
 		{
-			this.printer = printer;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
 			bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
@@ -186,6 +184,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
+			var position2D = new Vector2(currentDestination);
 			int xIndex = (int)Math.Round(currentDestination.X * 100 / bedSize.X);
 			int yIndex = (int)Math.Round(currentDestination.Y * 100 / bedSize.Y);
 
@@ -198,12 +197,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				currentDestination.Z = 0;
 				for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
 				{
-					var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
-					if (Regions[regionIndex].PointInPolyXY(currentDestination.X, currentDestination.Y))
+					if (Regions[regionIndex].PointInPolyXY(position2D))
 					{
 						// we found the one it is in
 						return Regions[regionIndex];
 					}
+
+					var dist = Regions[regionIndex].DistanceXY(position2D);
 					if (dist < bestDist)
 					{
 						bestIndex = regionIndex;
@@ -236,9 +236,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{
-				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
-
+				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0); 
 				double hitDistance = this.Plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+
 				currentDestination.Z += hitDistance;
 
 				return currentDestination;
@@ -254,16 +254,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return -1;
 			}
 
-			public bool PointInPolyXY(double x, double y)
+			public double DistanceXY(Vector2 position)
+            {
+				var vertex0 = new Vector2(V0[0], V0[1]);
+				var vertex1 = new Vector2(V1[0], V1[1]);
+				var vertex2 = new Vector2(V2[0], V2[1]);
+
+				var distToEdge0 = Vector2.DistancePointToLine(position, vertex0, vertex1);
+				var distToEdge1 = Vector2.DistancePointToLine(position, vertex1, vertex2);
+				var distToEdge2 = Vector2.DistancePointToLine(position, vertex2, vertex0);
+
+				return Math.Min(distToEdge0, Math.Min(distToEdge1, distToEdge2));
+			}
+
+			public bool PointInPolyXY(Vector2 position)
 			{
 				// check the bounding rect
-				Vector2 vertex0 = new Vector2(V0[0], V0[1]);
-				Vector2 vertex1 = new Vector2(V1[0], V1[1]);
-				Vector2 vertex2 = new Vector2(V2[0], V2[1]);
-				Vector2 hitPosition = new Vector2(x, y);
-				int sumOfLineSides = FindSideOfLine(vertex0, vertex1, hitPosition);
-				sumOfLineSides += FindSideOfLine(vertex1, vertex2, hitPosition);
-				sumOfLineSides += FindSideOfLine(vertex2, vertex0, hitPosition);
+				var vertex0 = new Vector2(V0[0], V0[1]);
+				var vertex1 = new Vector2(V1[0], V1[1]);
+				var vertex2 = new Vector2(V2[0], V2[1]);
+				int sumOfLineSides = FindSideOfLine(vertex0, vertex1, position);
+				sumOfLineSides += FindSideOfLine(vertex1, vertex2, position);
+				sumOfLineSides += FindSideOfLine(vertex2, vertex0, position);
 				if (sumOfLineSides == -3 || sumOfLineSides == 3)
 				{
 					return true;

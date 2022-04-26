@@ -632,6 +632,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FinishProjectionSwitch();
 
 			var rayAtMousePosition = world.GetRayForLocalBounds(mousePosition);
+
+			// TODO: 
+			// Check if we are in a GCode View
+			var showingGCode = false;
+			if (showingGCode)
+            {
+				// find the layer height that we are currenly showing
+				// create a plane at that height
+				// check if the ray intersects this plane
+				// if we are above the plane set our origin to this intersection
+				// if we are below the plane set it as a limit to the cast distance distance
+
+				// Consideration: Think about what to do if we would be hitting the top of the part that is the layer height plane.
+				// The issue is that there is no mesh geometry at that height but the user will see gcode that they might think
+				// they should be able to click on.
+            }
+
 			var intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayAtMousePosition);
 			var rayAtScreenCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
 			if (intersectionInfo != null)
