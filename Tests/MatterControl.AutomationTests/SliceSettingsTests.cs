@@ -595,8 +595,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.SelectSliceSettingsField(SettingsKey.temperature)
 					// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 					.SwitchToPrinterSettings()
-					.SelectSliceSettingsField(SettingsKey.has_heated_bed)
-					.Delay(.5)
+					//.SelectSliceSettingsField(SettingsKey.has_heated_bed) // NOTE: Happened once: System.Exception : ClickByName Failed: Named GuiWidget not found [Hardware SliceSettingsTab]
+					//.Delay(1.0) // Wait for reload reliably:
+					.WaitForReloadAll(() => testRunner.SelectSliceSettingsField(SettingsKey.has_heated_bed))
 					.SwitchToSliceSettings()
 					.NavigateToSliceSettingsField(SettingsKey.temperature);
 

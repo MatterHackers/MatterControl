@@ -314,6 +314,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Initialize
 				AddCoinToBed(testRunner, scene);
 
+				// NOTE: Test failed with this once:
+				//       Should be same (6): '      "Matrix": "[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,-10.000661239027977,-19.05065578967333,-5.421010862427522E-17,1.0]",
+				//                         ' '      "Matrix": "[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,2.999338760972023,-24.00067986547947,-5.421010862427522E-17,1.0]",
+				//       Expected: True
+				//       But was: False
+				// UndoTestExtensionMethods.SceneFilesAreSame(String fileName1, String fileName2, Boolean expectedResult) line 474
+				// UndoTestExtensionMethods.AssertUndoRedo(AutomationRunner testRunner, InteractiveScene scene, String scenePath, String preOperationPath, String postOperationPath, Int32 preOperationDescendantCount, Int32 postOperationDescendantCount) line 541
+				// UndoTestExtensionMethods.RunDoUndoTest(AutomationRunner testRunner, InteractiveScene scene, Action performOperation) line 453
+
 				// test drag x y translation
 				testRunner.RunDoUndoTest(
 					scene,
@@ -325,6 +334,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						testRunner.DragDropByName(CoinName, CoinName, offsetDrag: new Point2D(-4, 0), offsetDrop: new Point2D(40, 0));
 						var end = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 
+						// NOTE: Test failed with this once: Expected: greater than 15.399987526237965d, But was:  15.399987526237965d
+						//       ClickWidget now waits for 2 redraws in case there is more deferred processing.
+
 						// Assert
 						Assert.Greater(end.X, start.X);
 						Assert.Less(end.Y, start.Y);
@@ -334,6 +346,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
+		// Parallel testing of this single test.
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
+
 
 		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateZ()

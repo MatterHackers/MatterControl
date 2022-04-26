@@ -3,11 +3,10 @@ using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Commands;
-using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -16,21 +15,27 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 	public class ChildProcessTestAttribute : PropertyAttribute, IWrapSetUpTearDown
 	{
-		public ChildProcessTestAttribute()
+		private readonly int _numParallelTests = 1;
+
+		/// <param name="numParallelTests">The number of times to repeat this test in parallel. Set to more than 1 to debug potential timing issues or race conditions. If any of the tests fail, one failing result will be returned.</param>
+		public ChildProcessTestAttribute(int numParallelTests = 1)
 		{
 			// Run the test on an STA thread.
 			if (Program.InChildProcess)
 				Properties.Add(PropertyNames.ApartmentState, ApartmentState.STA);
+			_numParallelTests = numParallelTests;
 		}
 
 		TestCommand ICommandWrapper.Wrap(TestCommand command)
 		{
-			return new ChildProcessTestCommand(command);
+			return new ChildProcessTestCommand(command, _numParallelTests);
 		}
 
 		internal class ChildProcessTestCommand : DelegatingTestCommand
 		{
-		public class TemporarySynchronizationContext : IDisposable
+			private readonly int _numParallelTests;
+
+			public sealed class TemporarySynchronizationContext : IDisposable
 			{
 				SynchronizationContext? originalContext = SynchronizationContext.Current;
 
@@ -46,9 +51,10 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 				}
 			}
 
-			public ChildProcessTestCommand(TestCommand innerCommand)
+			public ChildProcessTestCommand(TestCommand innerCommand, int numParallelTests)
 				: base(innerCommand)
 			{
+				_numParallelTests = numParallelTests;
 			}
 			public override TestResult Execute(TestExecutionContext context)
 			{
@@ -63,43 +69,64 @@ namespace TestInvoker // Note: actual namespace depends on the project name.
 				}
 				else
 				{
-					string output;
-					using (var pipeServer = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
-					using (var pipeSense = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable))
+					TestResult doTest()
 					{
-						var method = innerCommand.Test.Method!.MethodInfo;
-						var type = method.DeclaringType;
-						var psi = new ProcessStartInfo();
-						psi.FileName = "TestInvoker";
-						psi.ArgumentList.Add(pipeServer.GetClientHandleAsString());
-						psi.ArgumentList.Add(pipeSense.GetClientHandleAsString());
-						psi.ArgumentList.Add(type!.Assembly.Location);
-						psi.ArgumentList.Add(type.FullName!);
-						psi.ArgumentList.Add(method.Name);
-						psi.UseShellExecute = false;
-						psi.CreateNoWindow = true;
-						using (var proc = Process.Start(psi))
+						string output;
+						using (var pipeServer = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
+						using (var pipeSense = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable))
 						{
+							var method = innerCommand.Test.Method!.MethodInfo;
+							var type = method.DeclaringType;
+							var psi = new ProcessStartInfo();
+							psi.FileName = "TestInvoker";
+							psi.ArgumentList.Add(pipeServer.GetClientHandleAsString());
+							psi.ArgumentList.Add(pipeSense.GetClientHandleAsString());
+							psi.ArgumentList.Add(type!.Assembly.Location);
+							psi.ArgumentList.Add(type.FullName!);
+							psi.ArgumentList.Add(method.Name);
+							psi.UseShellExecute = false;
+							psi.CreateNoWindow = true;
+							using var proc = Process.Start(psi);
 							pipeServer.DisposeLocalCopyOfClientHandle();
 							pipeSense.DisposeLocalCopyOfClientHandle();
 							using (var pipeReader = new StreamReader(pipeServer))
 								output = pipeReader.ReadToEnd();
 							proc!.WaitForExit();
 						}
+
+						if (output.Length <= 0)
+							throw new Exception("Test child process did not return a result.");
+
+						try
+						{
+							XmlSerializer xmlserializer = new XmlSerializer(typeof(TestInvoker.FakeTestResult));
+							var fakeResult = (TestInvoker.FakeTestResult)xmlserializer.Deserialize(XmlReader.Create(new StringReader(output)))!;
+							return fakeResult.ToReal(context.CurrentTest);
+						}
+						catch (Exception ex)
+						{
+							throw new Exception("Failed to parse the test result's XML.", ex);
+						}
 					}
 
-					if (output.Length <= 0)
-						throw new Exception("Test child process did not return a result.");
+					if (_numParallelTests > 1)
+					{
+						ConcurrentBag <TestResult> results = new();
+						Parallel.For(0, _numParallelTests, (i) =>
+						{
+							results.Add(doTest());
+						});
 
-					try
-					{
-						XmlSerializer xmlserializer = new XmlSerializer(typeof(TestInvoker.FakeTestResult));
-						var fakeResult = (TestInvoker.FakeTestResult)xmlserializer.Deserialize(XmlReader.Create(new StringReader(output)))!;
-						context.CurrentResult = fakeResult.ToReal(context.CurrentTest);
+						foreach (var result in results)
+						{
+							context.CurrentResult = result;
+							if (result.FailCount > 0)
+								break;
+						}
 					}
-					catch (Exception ex)
+					else
 					{
-						throw new Exception("Failed to parse the test result's XML.", ex);
+						context.CurrentResult = doTest();
 					}
 				}
 				return context.CurrentResult;

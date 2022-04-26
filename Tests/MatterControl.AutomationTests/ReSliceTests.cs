@@ -100,6 +100,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.StartPrint(printer, pauseAtLayers: "50;60")
 						// Wait for pause
 						// the yes button is 'Resume'
+						// NOTE: ClickByName Failed: Named GuiWidget not found [No Button]
+						//       It appears that printing can just take too long.
+						//       This might be fixed by using a semaphore in MatterHackers.PrinterEmulator.Emulator.
 						.ClickByName("No Button", secondsToWait: 80)
 						// Delete the cube
 						.ClickByName("Bed Options Menu")
