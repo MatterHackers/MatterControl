@@ -131,13 +131,15 @@
 		</None>
 	</ItemGroup>
 	<Target Name="WriteToFile" BeforeTargets="PreBuildEvent">
-		<!--<WriteLinesToFile File="$(ProjectDir)RootRelativeMainBinPath.txt" Lines="$(OutputPath)" Overwrite="true" Encoding="Unicode" />-->
 		<ItemGroup>
 			<AssemblyAttributes Include="MatterHackers.MatterControl.MainOutputDirectory">
 				<_Parameter1>$(OutputPath)</_Parameter1>
 				<_Parameter2>$(SolutionDir)</_Parameter2>
 			</AssemblyAttributes>
 		</ItemGroup>
-		<WriteCodeFragment Language="C#" OutputFile="MainOutputDirectory.cs" AssemblyAttributes="@(AssemblyAttributes)" />
+		<WriteCodeFragment Language="C#" OutputFile="MainOutputDirectory.cs" AssemblyAttributes="@(AssemblyAttributes)">
+			<Output TaskParameter="OutputFile" ItemName="Compile" />
+			<Output TaskParameter="OutputFile" ItemName="FileWrites" />
+		</WriteCodeFragment>
 	</Target>
 </Project>
