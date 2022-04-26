@@ -337,6 +337,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// and close the product tour offer
 				.ClickByName("Cancel Wizard Button");
 
+			//testRunner.Delay(1);
+			// If testing is to be reliable, that dialog really shouldn't be showing now.
+			Assert.IsFalse(testRunner.NamedWidgetExists("Cancel Wizard Button"));
+
 			if (removeDefaultPhil)
 			{
 				testRunner.VerifyAndRemovePhil();
@@ -432,12 +436,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Yes Button");
 			}
 
-			testRunner.WaitForWidgetEnabled("Print Progress Dial", 15)
-				.WaitForWidgetEnabled("Stop Task Button")
-				.ClickByName("Stop Task Button")
-				.WaitForName("Ok Button", 10); // Wait for and dismiss the new PrintCompleted dialog
+			// Delay to test with an already completed print in PulseLevelingTest.
+			//testRunner.Delay(5);
 
-			testRunner.ClickByName("Cancel Wizard Button");
+			// Race condition: Print may complete by itself at any time.
+			for (; ; )
+			{
+				if (testRunner.NamedWidgetExists("Print Progress Dial")
+					&& testRunner.GetWidgetsByName("Stop Task Button", secondsToWait: 0).FirstOrDefault()?.Widget is GuiWidget widgetStopTask)
+				{
+					System.Console.WriteLine("CancelPrint finishing by stopping task.");
+					testRunner.ClickWidget(widgetStopTask);
+				}
+
+				if (testRunner.GetWidgetsByName("Cancel Wizard Button", secondsToWait: 0).FirstOrDefault()?.Widget is GuiWidget widgetClose)
+				{
+					System.Console.WriteLine("CancelPrint confirming completed print.");
+					testRunner.ClickWidget(widgetClose);
+					break;
+				}
+
+				testRunner.Delay();
+			}
 
 			return testRunner;
 		}
@@ -1014,6 +1034,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				overrideWidth == -1 ? width : overrideWidth,
 				overrideHeight == -1 ? height : overrideHeight);
 
+			// Stop parallel UI tests fighting over platform UI focus.
+			SystemWindow.EnablePlatformWindowInput = false;
+
 			rootSystemWindow.Title += " - " + testMethod.GetMethodInfo().Name;
 
 			OemSettings.Instance.ShowShopButton = false;
@@ -1346,10 +1369,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var category = group.Category;
 
 			// Click tab
-			testRunner.ClickByName(category.Name + " SliceSettingsTab");
+			var foundWidget = testRunner.GetWidgetByName(category.Name + " SliceSettingsTab", out _, 1.0);
+			if (foundWidget == null)
+			{
+				// turn on advanced mode and try to get it again
+				testRunner.ClickByName("Slice Settings Overflow Menu")
+					.ClickByName("Advanced Menu Item");
+				foundWidget = testRunner.GetWidgetByName(category.Name + " SliceSettingsTab", out _, 1.0);
+				//if (foundWidget == null)
+				//{
+				//	System.Diagnostics.Debugger.Launch();
+				//	System.Diagnostics.Debugger.Break();
+				//}
+			}
+
+			testRunner.ClickWidget(foundWidget);
 
 			// Open the subGroup if required
-			var foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _, .1);
+			foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _, .1);
 			if (foundWidget == null)
 			{
 				// turn on advanced mode and try to get it again

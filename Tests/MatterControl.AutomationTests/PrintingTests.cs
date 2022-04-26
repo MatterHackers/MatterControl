@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// assert the leveling is working
 					Assert.AreEqual(12.25, emulator.Destination.Z);
 
+					// NOTE: System.Exception : WaitForWidgetEnabled Failed: Named GuiWidget not found [Print Progress Dial]
+					//       Might be fixed in CancelPrint now.
 					testRunner.CancelPrint();
 
 					// now modify the leveling data manually and assert that it is applied when printing
@@ -316,7 +318,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90);
+			}, maxTimeToRun: 90 * 2); // Once timed out at 90.
 		}
 
 		[Test, ChildProcessTest, Category("Emulator")]

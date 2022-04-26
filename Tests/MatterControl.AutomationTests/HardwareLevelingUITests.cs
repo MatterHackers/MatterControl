@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90);
+			}, maxTimeToRun: 90); // NOTE: This test got stuck in ClickByName("Yes Button") -> WaitforDraw. It appears to be because WaitforDraw waited for a closed window to redraw itself.
 		}
 	}
 }
