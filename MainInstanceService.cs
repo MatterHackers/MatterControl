@@ -1,5 +1,5 @@
 ﻿// For communication with the main instance. Use ServiceWire or just pipes.
-#define USE_SERVICEWIRE
+//#define USE_SERVICEWIRE
 
 using MatterHackers.MatterControl;
 using System;
@@ -64,19 +64,32 @@ namespace MatterHackers.MatterControl
 #if USE_SERVICEWIRE
 			// ServiceWire will allow lots of pipes to exist under the same name, so a mutex is needed.
 			// Locking isn't needed. Windows should clean up when the main instance closes.
-			MainInstanceMutex = new Mutex(false, MainInstanceMutexName, out bool createdNew);
-			if (createdNew)
+			Mutex mutex = new(false, MainInstanceMutexName, out bool createdNew);
+			try
 			{
-				try
+				if (createdNew)
 				{
-					var host = new ServiceWire.NamedPipes.NpHost(ServicePipeName, new ServiceWireLogger());
-					host.AddService<IMainService>(new LocalService());
-					host.Open();
-					return true;
+					try
+					{
+						var host = new ServiceWire.NamedPipes.NpHost(ServicePipeName, new ServiceWireLogger());
+						host.AddService<IMainService>(new LocalService());
+						host.Open();
+
+						// Keep the mutex alive.
+						MainInstanceMutex = mutex;
+						mutex = null;
+
+						return true;
+					}
+					catch (Exception)
+					{
+					}
 				}
-				catch (Exception)
-				{
-				}
+			}
+			finally
+			{
+				// Not the main instance. Release the handle.
+				mutex?.Dispose();
 			}
 
 			return false;
