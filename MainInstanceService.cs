@@ -1,5 +1,5 @@
 ﻿// For communication with the main instance. Use ServiceWire or just pipes.
-//#define USE_SERVICEWIRE
+#define USE_SERVICEWIRE
 
 using MatterHackers.MatterControl;
 using System;
