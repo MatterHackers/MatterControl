@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						return null;
 					}
 				}
-				else if (firstItem.AssetPath == Printer.Bed.EditContext.SourceFilePath)
+				else if (assetStream?.ContentType == "mcx")
 				{
 					// If item is bedplate, save any pending changes before starting the print
 					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), Printer, Printer.Bed.SaveChanges);
