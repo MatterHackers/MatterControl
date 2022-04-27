@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Launcher": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Windows\\notepad.exe 1000"
+    }
+  }
+}
