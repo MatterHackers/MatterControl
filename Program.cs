@@ -141,9 +141,16 @@ namespace MatterHackers.MatterControl
 				var mainOutputDirectoryAttribute = MainOutputDirectoryAttribute.GetFromProgramAssembly();
 				var executableDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
 				var buildOutputDirectory = new DirectoryInfo(Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, mainOutputDirectoryAttribute.MainOutputDirectory));
-				// NOTE: No good way to determine whether two paths refer to the same object without pinvoke? So, just ignore case in all cases.
+				// NOTE: No good way to determine whether two paths refer to the same object without pinvoke? So, just ignore case on all platforms.
 				if (executableDirectory.FullName.Equals(buildOutputDirectory.FullName, StringComparison.OrdinalIgnoreCase))
-					StaticData.OverrideRootPath(Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, "StaticData"));
+				{
+					var path = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, "StaticData");
+					
+					if (Directory.Exists(path) && !StaticData.Instance.DirectoryExists("."))
+					{
+						StaticData.OverrideRootPath(path);
+					}
+				}
 			}
 
 			// Set the global culture for the app, current thread and all new threads
