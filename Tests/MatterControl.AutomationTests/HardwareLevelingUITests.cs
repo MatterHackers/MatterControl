@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.SwitchToPrinterSettings();
-				testRunner.ClickByName("Features Tab");
+				testRunner.ClickByName("Features SliceSettingsTab");
 				testRunner.ClickByName("Slice Settings Overflow Menu");
 				testRunner.ClickByName("Advanced Menu Item");
 				Assert.IsFalse(testRunner.WaitForName("print_leveling_solution Row", .5), "Print leveling should not exist for an Airwolf HD");
@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
 
 				testRunner.SwitchToPrinterSettings();
-				testRunner.ClickByName("Features Tab");
+				testRunner.ClickByName("Features SliceSettingsTab");
 				testRunner.ClickByName("Slice Settings Overflow Menu");
 				testRunner.ClickByName("Advanced Menu Item");
 				Assert.IsTrue(testRunner.WaitForName("print_leveling_solution Row"), "Print leveling should exist for a 3D Factory MendelMax");
