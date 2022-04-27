@@ -43,6 +43,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public MaxLengthStream(PrinterConfig printer, GCodeStream internalStream, double maxSegmentLength)
 			: base(printer, internalStream)
 		{
+			// make sure there is no BabyStepStream already (it must come after max length)
+#if DEBUG
+			foreach(var subStream in this.InternalStreams())
+            {
+				if (subStream is BabyStepsStream)
+                {
+					throw new Exception("MaxLengthStream must come before BabyStepsSteam (we need the max length points to be baby stepped).");
+                }
+
+				if (subStream is PrintLevelingStream)
+				{
+					throw new Exception("MaxLengthStream must come before PrintLevelingStream (we need the max length points to be leveled).");
+				}
+			}
+#endif
 			this.MaxSegmentLength = maxSegmentLength;
 		}
 

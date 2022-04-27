@@ -2464,6 +2464,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				accumulatedStream = new ToolSpeedMultiplierStream(Printer, accumulatedStream);
 			}
 
+			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
+
 			var doValidateLeveling = Printer.Settings.Helpers.ValidateLevelingWithProbe;
 			if (!LevelingPlan.NeedsToBeRun(Printer)
 				|| doValidateLeveling)
@@ -2479,9 +2482,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
-
-			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
 			accumulatedStream = ExtrusionMultiplierStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);

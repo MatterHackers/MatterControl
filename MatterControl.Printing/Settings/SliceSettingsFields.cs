@@ -2765,6 +2765,7 @@ To Create:
 					ShowAsOverride = false,
 					Show = (settings) => !settings.GetBool(SettingsKey.enable_network_printing),
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "",
 					RebuildGCodeOnChange = false
 				},

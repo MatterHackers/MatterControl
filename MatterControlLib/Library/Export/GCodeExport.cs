@@ -307,8 +307,6 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
 
-			accumulatedStream = new BabyStepsStream(printer, accumulatedStream);
-
 			if (levelingEnabled
 				&& printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 			{
@@ -319,17 +317,19 @@ namespace MatterHackers.MatterControl.Library.Export
 				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1000);
 			}
 
+			if (printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			{
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(printer, accumulatedStream);
+				accumulatedStream = softwareEndstopsExStream12;
+			}
+
 			if (levelingEnabled
 				&& !LevelingPlan.NeedsToBeRun(printer))
 			{
 				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream);
 			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
-			{
-				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(printer, accumulatedStream);
-				accumulatedStream = softwareEndstopsExStream12;
-			}
+			accumulatedStream = new BabyStepsStream(printer, accumulatedStream);
 
 			accumulatedStream = new RemoveNOPsStream(printer, accumulatedStream);
 

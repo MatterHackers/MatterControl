@@ -31,6 +31,7 @@ using MatterControl.Printing;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -44,6 +45,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+#if DEBUG
+			foreach (var subStream in this.InternalStreams())
+			{
+				if (subStream is BabyStepsStream)
+				{
+					throw new Exception("PrintLevelingStream must come before BabyStepsSteam (we need the max length points to be baby stepped).");
+				}
+			}
+#endif
+
 			// always reset this when we construct
 			AllowLeveling = true;
 		}
