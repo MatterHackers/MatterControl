@@ -44,7 +44,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
-	[ShowUpdateButton(true)]
+	[ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
 	public class LithophaneObject3D : Object3D
 	{
 		public LithophaneObject3D()

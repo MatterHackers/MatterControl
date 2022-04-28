@@ -159,7 +159,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				AddWebPageLinkIfRequired(context.item, mainContainer, theme);
 
 				// add in an Update button if applicable
-				if (context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate)
+				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+				if (showUpdate?.Show == true)
 				{
 					var updateButton = new TextButton("Update".Localize(), theme)
 					{

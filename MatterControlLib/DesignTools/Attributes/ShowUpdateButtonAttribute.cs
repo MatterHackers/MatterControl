@@ -34,11 +34,11 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Class)]
 	public class ShowUpdateButtonAttribute : Attribute
 	{
-		public bool SuppressPropertyChangeUpdates { get; set; }
+		public bool Show { get; set; } = true;
+        public bool SuppressPropertyChangeUpdates { get; set; }
 		
-		public ShowUpdateButtonAttribute(bool suppressPropertyChangeUpdates)
+		public ShowUpdateButtonAttribute()
 		{
-			SuppressPropertyChangeUpdates = suppressPropertyChangeUpdates;
 		}
 	}
 }
