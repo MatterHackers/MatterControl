@@ -1073,37 +1073,12 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Group")
 			{
 				OperationType = typeof(SelectionGroupObject3D),
-				ResultType = typeof(GroupObject3D),
+				ResultType = typeof(GroupHolesAppliedObject3D),
 				TitleGetter = () => "Group".Localize(),
 				Action = (sceneContext) =>
 				{
-					var scene = sceneContext.Scene;
-					var selectedItem = scene.SelectedItem;
-					scene.SelectedItem = null;
-
-					var newGroup = new GroupObject3D();
-					// When grouping items, move them to be centered on their bounding box
-					newGroup.Children.Modify((gChildren) =>
-					{
-						selectedItem.Clone().Children.Modify((sChildren) =>
-						{
-							var center = selectedItem.GetAxisAlignedBoundingBox().Center;
-
-							foreach (var child in sChildren)
-							{
-								child.Translate(-center.X, -center.Y, 0);
-								gChildren.Add(child);
-							}
-
-							newGroup.Translate(center.X, center.Y, 0);
-						});
-					});
-
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new[] { newGroup }));
-
-					newGroup.MakeNameNonColliding();
-
-					scene.SelectedItem = newGroup;
+					var group = new GroupHolesAppliedObject3D();
+					group.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene is InteractiveScene scene
@@ -1534,6 +1509,7 @@ namespace MatterHackers.MatterControl
 					if (selectedItem != null)
 					{
 						return selectedItem is GroupObject3D
+							|| selectedItem is GroupHolesAppliedObject3D
 							|| selectedItem.GetType() == typeof(Object3D)
 							|| selectedItem.CanApply;
 					}

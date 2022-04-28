@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 		[DisplayName("Part(s) to Subtract")]
-		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
+		public virtual SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 #if DEBUG
 		public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
