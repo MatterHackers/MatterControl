@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				IEnumerable<IObject3D> itemsThisExtruder = GetItemsForExtruder(printableItems, extruderCount, extruderIndex, checkForMeshFile);
+				IEnumerable<IObject3D> itemsThisExtruder = GetSolidsForExtruder(printableItems, extruderCount, extruderIndex, checkForMeshFile);
 				extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
 			}
 		}
@@ -118,15 +118,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return false;
 		}
 
-		public static IEnumerable<IObject3D> GetItemsForExtruder(IEnumerable<IObject3D> meshItemsOnBuildPlate, int extruderCount, int extruderIndex, bool checkForMeshFile)
+		public static IEnumerable<IObject3D> GetSolidsForExtruder(IEnumerable<IObject3D> meshItemsOnBuildPlate, int extruderCount, int extruderIndex, bool checkForMeshFile)
 		{
 			var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-				(!checkForMeshFile || (File.Exists(item.MeshPath) // Drop missing files
-					|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath))))
-				&& (item.WorldMaterialIndex() == extruderIndex
-					|| (extruderIndex == 0
-						&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
-				&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
+			{
+				var outputType = item.WorldOutputType();
+				var material = item.WorldMaterialIndex();
+
+				return (!checkForMeshFile 
+					|| File.Exists(item.MeshPath) // Drop missing files
+					|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath)))
+					&& (material == extruderIndex || (extruderIndex == 0 && (material >= extruderCount || material == -1)))
+					&& (outputType == PrintOutputTypes.Solid || outputType == PrintOutputTypes.Default);
+			});
+
+			return itemsThisExtruder;
+		}
+
+		public static IEnumerable<IObject3D> GetAllHoles(IEnumerable<IObject3D> meshItemsOnBuildPlate)
+		{
+			var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
+			{
+				var outputType = item.WorldOutputType();
+				var material = item.WorldMaterialIndex();
+
+				return (File.Exists(item.MeshPath) // Drop missing files
+					|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath)))
+					&& outputType == PrintOutputTypes.Hole;
+			});
 
 			return itemsThisExtruder;
 		}
