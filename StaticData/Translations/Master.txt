@@ -4339,6 +4339,9 @@ Translated:Select this option only if your printer does not appear in the list
 English:Select What to Import
 Translated:Select What to Import
 
+English:Selected Children
+Translated:Selected Children
+
 English:Selected Material and Bed Surface are Incompatable
 Translated:Selected Material and Bed Surface are Incompatable
 

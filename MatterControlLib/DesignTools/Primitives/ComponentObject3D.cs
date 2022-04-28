@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (newChildren.Count > 1)
 				{
-					var group = new GroupObject3D
+					var group = new GroupHolesAppliedObject3D
 					{
 						Name = this.Name
 					};

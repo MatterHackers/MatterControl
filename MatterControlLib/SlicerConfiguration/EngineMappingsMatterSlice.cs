@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
 				{
 					var extruderIndex = extruderIndexIn;
-					IEnumerable<IObject3D> itemsThisExtruder = Slicer.GetItemsForExtruder(meshItemsOnBuildPlate, extruderCount, extruderIndex, true);
+					IEnumerable<IObject3D> itemsThisExtruder = Slicer.GetSolidsForExtruder(meshItemsOnBuildPlate, extruderCount, extruderIndex, true);
 
 					itemsByExtruder.Add(itemsThisExtruder);
 					if (Slicer.ExtrudersUsed[extruderIndex])
@@ -305,17 +305,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
 
+				var holes = Slicer.GetAllHoles(meshItemsOnBuildPlate);
+
 				int savedStlCount = 0;
-				bool first = true;
+				var firstExtruder = true;
 				for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
 				{
-					if (!first)
+					if (!firstExtruder)
 					{
 						mergeRules += ",";
-						first = false;
 					}
-
-					mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], outputOptions, ref savedStlCount);
+					mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], holes, outputOptions, ref savedStlCount);
+					firstExtruder = false;
 				}
 
 				var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
@@ -323,7 +324,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (supportObjects.Any())
 				{
 					// add a flag to the merge rules to let us know there was support
-					mergeRules += ",S" + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount);
+					mergeRules += "S" + AddObjectsForExtruder(supportObjects, holes, outputOptions, ref savedStlCount);
 				}
 
 				var wipeTowerObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.WipeTower);
@@ -331,7 +332,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (wipeTowerObjects.Any())
 				{
 					// add a flag to the merge rules to let us know there was a wipe tower
-					mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
+					mergeRules += "W" + AddObjectsForExtruder(wipeTowerObjects, holes, outputOptions, ref savedStlCount);
 				}
 
 				var fuzzyObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Fuzzy);
@@ -339,10 +340,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (fuzzyObjects.Any())
 				{
 					// add a flag to the merge rules to let us know there was a wipe tower
-					mergeRules += ",F" + AddObjectsForExtruder(fuzzyObjects, outputOptions, ref savedStlCount);
+					mergeRules += "F" + AddObjectsForExtruder(fuzzyObjects, holes, outputOptions, ref savedStlCount);
 				}
-
-				mergeRules += " ";
 
 				return outputOptions;
 			}
@@ -600,36 +599,70 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static string AddObjectsForExtruder(IEnumerable<IObject3D> items, List<(Matrix4X4 matrix, string fileName)> outputItems, ref int savedStlCount)
+		private static string AddObjectsForExtruder(IEnumerable<IObject3D> solids, IEnumerable<IObject3D> holes, List<(Matrix4X4 matrix, string fileName)> outputItems, ref int savedStlCount)
 		{
 			string mergeString = "";
-			if (items.Any())
+			if (solids.Any())
 			{
-				bool first = true;
-				foreach (var item in items)
+				bool firstSolid = true;
+				foreach (var solid in solids)
 				{
-					if (!first)
-					{
-						mergeString += ",";
-					}
-
-					var itemWorldMatrix = item.WorldMatrix();
-					if (item is GeneratedSupportObject3D generatedSupportObject3D
-						&& item.Mesh != null)
+					var itemWorldMatrix = solid.WorldMatrix();
+					if (solid is GeneratedSupportObject3D generatedSupportObject3D
+						&& solid.Mesh != null)
 					{
 						// grow the support columns by the amount they are reduced by
-						var aabbForCenter = item.Mesh.GetAxisAlignedBoundingBox();
-						var aabbForSize = item.Mesh.GetAxisAlignedBoundingBox(item.Matrix);
+						var aabbForCenter = solid.Mesh.GetAxisAlignedBoundingBox();
+						var aabbForSize = solid.Mesh.GetAxisAlignedBoundingBox(solid.Matrix);
 						var xyScale = (aabbForSize.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabbForSize.XSize;
 						itemWorldMatrix = itemWorldMatrix.ApplyAtPosition(aabbForCenter.Center.Transform(itemWorldMatrix), Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
 
-					outputItems.Add((itemWorldMatrix, Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, item.MeshPath)));
-					mergeString += $"({savedStlCount++}";
-					first = false;
+					outputItems.Add((itemWorldMatrix, Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, solid.MeshPath)));
+					mergeString += $"{savedStlCount++}";
+					if (solids.Count() > 1)
+					{
+						if (firstSolid)
+						{
+							mergeString += ",";
+							firstSolid = false;
+						}
+						else
+						{
+							mergeString += "+";
+						}
+					}
+					else if (holes.Any())
+                    {
+						mergeString += ",";
+                    }
 				}
 
-				mergeString += new string(')', items.Count());
+				if (holes.Any())
+				{
+					bool firstHole = true;
+
+					foreach (var hole in holes)
+					{
+						var itemWorldMatrix = hole.WorldMatrix();
+						outputItems.Add((itemWorldMatrix, Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, hole.MeshPath)));
+						mergeString += $"{savedStlCount++}";
+						if (holes.Count() > 1)
+						{
+							if (firstHole)
+							{
+								mergeString += ",";
+								firstHole = false;
+							}
+							else
+							{
+								mergeString += "+";
+							}
+						}
+					}
+
+					mergeString += "-";
+				}
 			}
 			else
 			{
@@ -646,7 +679,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				StlProcessing.Save(tinyMesh, tinyObjectFileName, CancellationToken.None);
 
 				outputItems.Add((Matrix4X4.Identity, tinyObjectFileName));
-				mergeString += $"({savedStlCount++})";
+				mergeString += $"{savedStlCount++}";
 			}
 
 			return mergeString;

@@ -47,7 +47,7 @@ using MatterHackers.PolygonMesh.Csg;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[Obsolete("Use SubtractObject3D_2 instead", false)]
-	[ShowUpdateButton(true)]
+	[ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
 	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
 		public SubtractObject3D()

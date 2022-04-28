@@ -748,7 +748,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Tuple<double, double> nearFar = null;
 			foreach (var aabb in Object3DControlLayer.MakeListOfObjectControlBoundingBoxes())
 			{
-				nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, aabb);
+				if (!double.IsNaN(aabb.MinXYZ.X) && !double.IsInfinity(aabb.MinXYZ.X))
+				{
+					nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, aabb);
+				}
 			}
 			nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, Object3DControlLayer.GetPrinterNozzleAABB());
 			nearFar = ExpandNearAndFarToClippedBounds(nearFar, world.IsOrthographic, worldspacePlanes, world.ModelviewMatrix, Scene.GetAxisAlignedBoundingBox());

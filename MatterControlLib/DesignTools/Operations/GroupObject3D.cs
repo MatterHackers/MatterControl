@@ -29,16 +29,49 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using System;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class GroupObject3D : Object3D
+	public class GroupObject3D : Object3D
 	{
 		public override bool CanApply => true;
 
 		public GroupObject3D()
 		{
 			Name = "Group".Localize();
+		}
+	}
+
+	[ShowUpdateButton(Show = false)]
+	public class GroupHolesAppliedObject3D : SubtractObject3D_2
+	{
+		public GroupHolesAppliedObject3D()
+		{
+			Name = "Group".Localize();
+		}
+
+		public override SelectedChildren SelectedChildren 
+		{
+			get
+            {
+				var selections = new SelectedChildren();
+
+				foreach(var child in SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Where(i => i.WorldOutputType(this) == PrintOutputTypes.Hole))
+                {
+					selections.Add(child.ID);
+                }
+
+				return selections;
+			}
+
+			set
+            {
+
+            }
 		}
 	}
 }
