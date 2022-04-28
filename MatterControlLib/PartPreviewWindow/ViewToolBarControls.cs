@@ -131,6 +131,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
 			};
+			undoButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + z".Localize();
+			undoButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			undoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Undo();
@@ -146,6 +148,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Enabled = false,
 				VAnchor = VAnchor.Center
 			};
+			redoButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + Y, Ctrl + Shift + Z".Localize();
+			redoButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			redoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Redo();
@@ -258,6 +262,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							HoverColor = theme.ToolbarButtonHover,
 							MouseDownColor = theme.ToolbarButtonDown,
 						};
+
+						if (!string.IsNullOrEmpty(namedAction.UiHint))
+						{
+							button.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = namedAction.UiHint;
+							button.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+						}
 					}
 					else
 					{
@@ -423,6 +433,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
 				var operationButton = new OperationIconButton(operation, sceneContext, theme);
+				if (!string.IsNullOrEmpty(operation.UiHint))
+				{
+					operationButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = operation.UiHint;
+					operationButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+				}
 				operationButtons.Add(operationButton, operation);
 
 				buttonGroup.AddChild(operationButton);
@@ -483,6 +498,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									var iconButton = actionAndDropDown.Children.OfType<IconButton>().First();
 									iconButton.SetIcon(operation.Icon(theme));
 									iconButton.ToolTipText = operation.HelpText ?? operation.Title;
+
+									if (!string.IsNullOrEmpty(operation.UiHint))
+									{
+										iconButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = operation.UiHint;
+										iconButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+									}
 
 									UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
 

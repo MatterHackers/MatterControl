@@ -470,7 +470,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					ApplicationController.Instance.UiHint = "Click to edit values".Localize();
 				}
-				else
+				else if (ApplicationController.Instance.UiHint == "Click to edit values".Localize())
 				{
 					ApplicationController.Instance.UiHint = "";
 				}

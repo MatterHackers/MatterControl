@@ -271,6 +271,24 @@ namespace MatterHackers.MatterControl
 
 							break;
 
+						case Keys.G:
+							if (view3D.Printer == null
+								|| (view3D.Printer != null && view3D.Printer.ViewState.ViewMode == PartViewMode.Model))
+							{
+								var scene = view3D.sceneContext.Scene;
+								if (scene.SelectedItem != null
+									&& scene.SelectedItem is SelectionGroupObject3D
+									&& scene.SelectedItem.Children.Count > 1)
+								{
+									var group = new GroupHolesAppliedObject3D();
+									group.WrapSelectedItemAndSelect(scene);
+								}
+							}
+
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
 						case Keys.Z:
 							if (keyEvent.Control)
 							{

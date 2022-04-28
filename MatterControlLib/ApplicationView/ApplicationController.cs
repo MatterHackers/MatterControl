@@ -1518,8 +1518,11 @@ namespace MatterHackers.MatterControl
 			
 			set
 			{
-				_uiHint = value;
-				UiHintChanged?.Invoke(this, null);
+				if (_uiHint != value)
+				{
+					_uiHint = value;
+					UiHintChanged?.Invoke(this, null);
+				}
 			}
 		}
 
