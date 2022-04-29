@@ -80,37 +80,42 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		private object locker = new object();
+
 		[JsonIgnore]
 		public IObject3D SourceContainer
 		{
 			get
 			{
-				IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
-				if (sourceContainer == null)
+				lock (locker)
 				{
-					using (this.RebuildLock())
+					IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
+					if (sourceContainer == null)
 					{
-						sourceContainer = new OperationSourceObject3D();
-
-						// Move all the children to sourceContainer
-						this.Children.Modify(thisChildren =>
+						using (this.RebuildLock())
 						{
-							sourceContainer.Children.Modify(sourceChildren =>
+							sourceContainer = new OperationSourceObject3D();
+
+							// Move all the children to sourceContainer
+							this.Children.Modify(thisChildren =>
 							{
-								foreach (var child in thisChildren)
+								sourceContainer.Children.Modify(sourceChildren =>
 								{
-									sourceChildren.Add(child);
-								}
-							});
+									foreach (var child in thisChildren)
+									{
+										sourceChildren.Add(child);
+									}
+								});
 
 							// and then add the source container to this
 							thisChildren.Clear();
-							thisChildren.Add(sourceContainer);
-						});
+								thisChildren.Add(sourceContainer);
+							});
+						}
 					}
-				}
 
-				return sourceContainer;
+					return sourceContainer;
+				}
 			}
 		}
 

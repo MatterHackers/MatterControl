@@ -27,12 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -54,13 +55,43 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Group".Localize();
 		}
 
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+			using (RebuildLock())
+			{
+				var newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in this.SourceContainer.Children)
+				{
+					var newChild = child.Clone();
+					newChildren.Add(newChild);
+					newChild.Matrix *= this.Matrix;
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren, maintainCenterAndZHeight: false);
+
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
+			}
+
+			Invalidate(InvalidateType.Children);
+		}
+
+		[HideFromEditor]
 		public override SelectedChildren SelectedChildren 
 		{
 			get
             {
 				var selections = new SelectedChildren();
 
-				foreach(var child in SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Where(i => i.WorldOutputType(this) == PrintOutputTypes.Hole))
+				foreach(var child in SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Where(i => i.WorldOutputType(this) == PrintOutputTypes.Hole && !(i is OperationSourceObject3D) ))
                 {
 					selections.Add(child.ID);
                 }

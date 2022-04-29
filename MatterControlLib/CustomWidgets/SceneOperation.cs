@@ -59,6 +59,8 @@ namespace MatterHackers.Agg.UI
 
 		public string HelpText => this.HelpTextGetter?.Invoke();
 
+		public string UiHint { get; set; }
+
 		public Func<string> TitleGetter { get; set; }
 
 		public string Title => this.TitleGetter?.Invoke();

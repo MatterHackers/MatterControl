@@ -1150,6 +1150,18 @@ Translated:Creating Threads
 English:Creation Data
 Translated:Creation Data
 
+English:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
+Translated:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
+
+English:Ctrl + Y | Ctrl + Shift + Z
+Translated:Ctrl + Y | Ctrl + Shift + Z
+
+English:Ctrl + Y, Ctrl + Shift + Z
+Translated:Ctrl + Y, Ctrl + Shift + Z
+
+English:Ctrl + z
+Translated:Ctrl + z
+
 English:Cube
 Translated:Cube
 
@@ -1203,6 +1215,9 @@ Translated:Define New
 
 English:Delete
 Translated:Delete
+
+English:Delete Key
+Translated:Delete Key
 
 English:Delete Printer
 Translated:Delete Printer
@@ -1932,6 +1947,9 @@ Translated:Fuzzy Frequency
 
 English:Fuzzy Thickness
 Translated:Fuzzy Thickness
+
+English:G Key
+Translated:G Key
 
 English:g/cm³
 Translated:g/cm³
@@ -2967,6 +2985,12 @@ Translated:Move Z positive
 
 English:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
 Translated:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button
+
+English:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button | Shift Arrow Keys
+Translated:Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button | Shift Arrow Keys
+
+English:Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys
+Translated:Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys
 
 English:Movement
 Translated:Movement
@@ -4152,6 +4176,12 @@ Translated:Rotate View
 
 English:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
 Translated:Rotate: Right Mouse Button | Ctrl + Left Mouse Button
+
+English:Rotate: Right Mouse Button | Ctrl + Left Mouse Button | Arrow Keys
+Translated:Rotate: Right Mouse Button | Ctrl + Left Mouse Button | Arrow Keys
+
+English:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
+Translated:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
 
 English:Rotation Distance
 Translated:Rotation Distance
@@ -6402,4 +6432,10 @@ Translated:Zoom View
 
 English:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button
 Translated:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button
+
+English:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button | Ctrl + '+' & Ctrl + '-'
+Translated:Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button | Ctrl + '+' & Ctrl + '-'
+
+English:Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'
+Translated:Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'
 

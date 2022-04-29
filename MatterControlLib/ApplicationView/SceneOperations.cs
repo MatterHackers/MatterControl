@@ -1086,6 +1086,7 @@ namespace MatterHackers.MatterControl
 					&& scene.SelectedItem is SelectionGroupObject3D
 					&& scene.SelectedItem.Children.Count > 1,
 				Icon = (theme) => StaticData.Instance.LoadIcon("group.png", 16, 16).SetPreMultiply(),
+				UiHint = "G Key".Localize(),
 			};
 		}
 
@@ -1324,6 +1325,7 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 				ShowInModifyMenu = (sceneContext) => false,
 				TitleGetter = () => "Remove".Localize(),
+				UiHint = "Delete Key".Localize(),
 			};
 		}
 

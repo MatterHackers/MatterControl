@@ -158,16 +158,16 @@ namespace MatterHackers.MatterControl
 				("ctrl + -","Zoom out".Localize()),
 				("← → ↑ ↓","Rotate".Localize()),
 				("shift + ← → ↑ ↓","Pan".Localize()),
-				//("f","Zoom to fit".Localize()),
 				("w","Zoom to window".Localize()),
 				("z","Zoom to selection".Localize()),
+				("ctrl + a","Select all".Localize()),
+				("space bar","Clear selection".Localize()),
+				("esc","Cancel command".Localize()),
 				("ctrl + s","Save".Localize()),
 				("ctrl + z","Undo".Localize()),
 				("ctrl + y","Redo".Localize()),
 				("ctrl + p","Print".Localize()),
 				("delete","Delete selection".Localize()),
-				("space bar","Clear selection".Localize()),
-				("esc","Cancel command".Localize()),
 				//("enter","Accept command".Localize())
 			});
 

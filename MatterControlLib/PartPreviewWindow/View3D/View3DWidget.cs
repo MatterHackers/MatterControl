@@ -361,7 +361,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Select Parts".Localize(),
 				Margin = theme.ButtonSpacing,
 			};
-			
+
+			partSelectButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag".Localize();
+			partSelectButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
@@ -372,7 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Rotate View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			rotateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Rotate: Right Mouse Button | Ctrl + Left Mouse Button".Localize();
+			rotateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys".Localize();
 			rotateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
@@ -384,7 +386,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Move View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			translateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Move: Middle Mouse Button | Ctrl + Shift + Left Mouse Button".Localize();
+			translateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys".Localize();
 			translateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
@@ -396,7 +398,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Zoom View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			zoomButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Zoom: Mouse Wheel | Ctrl + Alt + Left Mouse Button".Localize();
+			zoomButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'".Localize();
 			zoomButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(zoomButton, RotatedMargin(zoomButton, - MathHelper.Tau * .15));
 			zoomButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
@@ -468,6 +470,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Reset View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
+			homeButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = "W Key";
+			homeButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
 			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
@@ -476,6 +480,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
+			zoomToSelectionButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = "Z Key";
+			zoomToSelectionButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
 			void SetZoomEnabled(object s, EventArgs e)
 			{
 				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null
