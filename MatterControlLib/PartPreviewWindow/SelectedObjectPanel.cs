@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var selection = scene.SelectedItem;
 					if (selection != null)
 					{
-						setColor?.Invoke(selection.Color);
+						setColor?.Invoke(selection.WorldColor());
 						scene.SelectionChanged -= SelectionChanged;
 						cancellationToken?.Cancel();
 						scene.SelectedItem = startingSelection;
