@@ -1519,6 +1519,7 @@ namespace MatterHackers.MatterControl
 					return false;
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("ungroup.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				UiHint = "Shift + G".Localize(),
 			};
 		}
 	}

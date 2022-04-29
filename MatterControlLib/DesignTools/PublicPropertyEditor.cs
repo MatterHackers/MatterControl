@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is Color color)
 			{
-				var field = new ColorField(theme, object3D.Color, null);
+				var field = new ColorField(theme, object3D.Color, null, false);
 				field.Initialize(0);
 				field.ValueChanged += (s, e) =>
 				{
