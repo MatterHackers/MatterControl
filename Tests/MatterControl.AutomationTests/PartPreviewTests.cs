@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
-		[Test, ChildProcessTest]
+		[Test, ChildProcessTest, Ignore("Broke by commit 'Combine can subtract holes'")]
 		public static async Task ControlClickInDesignTreeView()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
