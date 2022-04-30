@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -39,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -350,6 +352,32 @@ namespace MatterHackers.MatterControl.DesignTools
 							initialAabb.MinXYZ.Y - postAabb.MinXYZ.Y,
 							initialAabb.MinXYZ.Z - postAabb.MinXYZ.Z);
 					}
+
+					var removeItems = Children.Where(c => c.OutputType == PrintOutputTypes.Hole && c.Visible);
+					if (removeItems.Any())
+					{
+						var keepItems = Children.Where(c => c.OutputType != PrintOutputTypes.Hole && c.Visible);
+
+						// apply any holes before we return
+						var resultItems = SubtractObject3D_2.DoSubtract(this,
+							keepItems,
+							removeItems,
+							reporter,
+							cancellationToken.Token);
+
+						RemoveAllButSource();
+
+						// add back in the results of the hole removal
+						Children.Modify(list =>
+						{
+							foreach (var child in resultItems)
+							{
+								list.Add(child);
+								child.Visible = true;
+							}
+						});
+					}
+
 
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
