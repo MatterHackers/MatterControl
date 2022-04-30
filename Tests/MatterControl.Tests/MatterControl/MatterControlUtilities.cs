@@ -338,6 +338,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			//testRunner.Delay(1);
 			// If testing is to be reliable, that dialog really shouldn't be showing now.
+			// NOTE: This may fail rarely still. Happened once with OrthographicZoomToSelectionWide.
 			Assert.IsFalse(testRunner.NamedWidgetExists("Cancel Wizard Button"));
 
 			if (removeDefaultPhil)
