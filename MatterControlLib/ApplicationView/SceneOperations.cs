@@ -677,16 +677,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Align")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(AlignObject3D_2),
+				ResultType = typeof(AlignObject3D_3),
 				TitleGetter = () => "Align".Localize(),
 				Action = (sceneContext) =>
 				{
-					var scene = sceneContext.Scene;
-					var selectedItem = scene.SelectedItem;
-					var align = new AlignObject3D_2();
-					align.AddSelectionAsChildren(scene, selectedItem);
-					align.Name = align.NameFromChildren();
-					align.NameOverriden = false;
+					new AlignObject3D_3().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),

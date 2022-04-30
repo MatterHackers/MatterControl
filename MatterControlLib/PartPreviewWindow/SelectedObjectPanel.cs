@@ -288,8 +288,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
 			{
+				var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
+				var worldColor = Color.White;
+				if (firstDetectedColor != null)
+                {
+					worldColor = firstDetectedColor.Value;
+				}
+
 				// put in a color edit field
-				var colorField = new ColorField(theme, selectedItem.Color, GetNextSelectionColor, true);
+				var colorField = new ColorField(theme, worldColor, GetNextSelectionColor, true);
 				colorField.Initialize(0);
 				colorField.ValueChanged += (s, e) =>
 				{
@@ -311,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					var currentOutputType = selectedItem.WorldOutputType();
-					if (currentOutputType != PrintOutputTypes.Solid || currentOutputType != PrintOutputTypes.Default)
+					if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
 					{
 						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
 					}

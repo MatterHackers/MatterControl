@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Group".Localize();
 		}
 
+		// We can't use Subtracts Apply as it will leave a group if there are multiple object results
+		// and we want to always leave the individual results after the ungroup.
         public override void Apply(UndoBuffer undoBuffer)
         {
 			using (RebuildLock())
@@ -91,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             {
 				var selections = new SelectedChildren();
 
-				foreach(var child in SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Where(i => i.WorldOutputType(this) == PrintOutputTypes.Hole && !(i is OperationSourceObject3D) ))
+				foreach(var child in SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf().Children.Where(i => i.WorldOutputType(this) == PrintOutputTypes.Hole && !(i is OperationSourceObject3D) ))
                 {
 					selections.Add(child.ID);
                 }

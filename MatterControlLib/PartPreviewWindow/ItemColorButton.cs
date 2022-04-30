@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public static GuiWidget NewColorSelector(ThemeConfig theme,
-			Color selectedColor,
+			Color startingColor,
 			ThemeConfig menuTheme,
 			Action<Color> update,
 			Action<Action<Color>> getPickedColor,
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var pickerContainer = content.AddChild(new GuiWidget(128 * DeviceScale, 128 * DeviceScale));
 			var picker = pickerContainer.AddChild(new RadialColorPicker()
 			{
-				SelectedColor = selectedColor.WithAlpha(255),
+				SelectedColor = startingColor.WithAlpha(255),
 				BackgroundColor = Color.Transparent,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in an html edit field
 			htmlField.Initialize(0);
-			htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+			htmlField.SetValue(startingColor.Html.Substring(1, 6), false);
 			htmlField.ClearUndoHistory();
 			htmlField.ValueChanged += (s, e) =>
 			{
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// we did not understand the color
 					// set it back to selectedColor
-					htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+					htmlField.SetValue(startingColor.Html.Substring(1, 6), false);
 				}
 				else // valid color set
 				{
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit | HAnchor.Left,
 					VAnchor = VAnchor.Absolute,
 					ToolTipText = "Set the rendering for the object to be transparent".Localize(),
-					Checked = selectedColor.Alpha0To255 < 255,
+					Checked = startingColor.Alpha0To255 < 255,
 				};
 				
 				rightContent.AddChild(transparent);

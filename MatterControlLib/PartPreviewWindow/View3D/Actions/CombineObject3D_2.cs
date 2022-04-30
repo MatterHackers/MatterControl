@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
+            return ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
 				null,
 				(reporter, cancellationTokenSource) =>
@@ -105,10 +105,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>
 					{
-						rebuildLocks.Dispose();
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                        rebuildLocks.Dispose();
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
+
 					return Task.CompletedTask;
 				});
 		}

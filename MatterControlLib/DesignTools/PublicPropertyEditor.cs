@@ -1281,7 +1281,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(0, 3, 0, 0),
 			};
 
-			var parentOfSubtractTargets = sourceContainer.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			var parentOfSubtractTargets = sourceContainer.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 			var sourceChildren = parentOfSubtractTargets.Children.ToList();
 
