@@ -136,22 +136,25 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-			// If running in the build directory, use the StaticData at the project root.
+			// If StaticData is missing, use the StaticData at the relative project root if it exists.
+			if (!StaticData.Instance.DirectoryExists("."))
 			{
 				var mainOutputDirectoryAttribute = MainOutputDirectoryAttribute.GetFromProgramAssembly();
-				var executableDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-				var buildOutputDirectory = new DirectoryInfo(Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, mainOutputDirectoryAttribute.MainOutputDirectory));
-				// NOTE: No good way to determine whether two paths refer to the same object without pinvoke? So, just ignore case on all platforms.
-				if (executableDirectory.FullName.Equals(buildOutputDirectory.FullName, StringComparison.OrdinalIgnoreCase))
+				var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				var buildOutputDirectory = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, mainOutputDirectoryAttribute.MainOutputDirectory);
+
+				// In case the whole project moved, determine the relative path.
+				var buildAbsStaticDataPath = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, "StaticData");
+				var relStaticDataPath = Path.GetRelativePath(buildOutputDirectory, buildAbsStaticDataPath);
+				var workingAbsStaticDataPath = Path.GetFullPath(Path.Combine(executableDirectory, relStaticDataPath));
+
+				if (Directory.Exists(workingAbsStaticDataPath))
 				{
-					var path = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, "StaticData");
-					
-					if (Directory.Exists(path) && !StaticData.Instance.DirectoryExists("."))
-					{
-						StaticData.OverrideRootPath(path);
-					}
+					StaticData.OverrideRootPath(workingAbsStaticDataPath);
 				}
 			}
+
+
 
 			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
