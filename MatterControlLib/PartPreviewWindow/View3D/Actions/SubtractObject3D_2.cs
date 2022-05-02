@@ -341,15 +341,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						};
 
 						var resultsMesh = keep.Mesh;
-						var keepWorldMatrix = keep.WorldMatrix(sourceContainer);
+						var keepWorldMatrix = keep.Matrix;
+						if (sourceContainer != null)
+						{
+							keepWorldMatrix = keep.WorldMatrix(sourceContainer);
+						}
 
 						foreach (var remove in removeItems)
 						{
+							var removeWorldMatrix = remove.Matrix;
+							if (sourceContainer != null)
+							{
+								removeWorldMatrix = remove.WorldMatrix(sourceContainer);
+							}
+
 							resultsMesh = BooleanProcessing.Do(resultsMesh,
 								keepWorldMatrix,
 								// other mesh
 								remove.Mesh,
-								remove.WorldMatrix(sourceContainer),
+								removeWorldMatrix,
 								// operation type
 								CsgModes.Subtract,
 								processingMode,
@@ -381,7 +391,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						};
 
 						// copy all the properties but the matrix
-						resultsItem.CopyWorldProperties(keep, sourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						if (sourceContainer != null)
+						{
+							resultsItem.CopyWorldProperties(keep, sourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						}
+						else
+                        {
+							resultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						}
+
 						// and add it to this
 						results.Add(resultsItem);
 					}

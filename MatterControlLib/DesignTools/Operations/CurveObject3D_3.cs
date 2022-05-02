@@ -69,6 +69,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			Diameter,
 		}
 
+		[HideFromEditor]
+		public Vector3 PostCurveOffset { get; set; } = new Vector3();
+
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BendTypes BendType { get; set; } = BendTypes.Angle;
 
@@ -207,7 +210,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override Task Rebuild()
+        public override void Cancel(UndoBuffer undoBuffer)
+        {
+			this.Matrix *= Matrix4X4.CreateTranslation(-PostCurveOffset);
+			base.Cancel(undoBuffer);
+        }
+
+        public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -348,36 +357,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (firstBuild)
 					{
 						var postAabb = this.GetAxisAlignedBoundingBox();
-						this.Matrix *= Matrix4X4.CreateTranslation(initialAabb.Center.X - postAabb.Center.X,
+						PostCurveOffset = new Vector3(initialAabb.Center.X - postAabb.Center.X,
 							initialAabb.MinXYZ.Y - postAabb.MinXYZ.Y,
 							initialAabb.MinXYZ.Z - postAabb.MinXYZ.Z);
+						this.Matrix *= Matrix4X4.CreateTranslation(PostCurveOffset);
 					}
 
-					var removeItems = Children.Where(c => c.OutputType == PrintOutputTypes.Hole && c.Visible);
-					if (removeItems.Any())
-					{
-						var keepItems = Children.Where(c => c.OutputType != PrintOutputTypes.Hole && c.Visible);
-
-						// apply any holes before we return
-						var resultItems = SubtractObject3D_2.DoSubtract(this,
-							keepItems,
-							removeItems,
-							reporter,
-							cancellationToken.Token);
-
-						RemoveAllButSource();
-
-						// add back in the results of the hole removal
-						Children.Modify(list =>
-						{
-							foreach (var child in resultItems)
-							{
-								list.Add(child);
-								child.Visible = true;
-							}
-						});
-					}
-
+					ApplyHoles(reporter, cancellationToken.Token);
 
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>

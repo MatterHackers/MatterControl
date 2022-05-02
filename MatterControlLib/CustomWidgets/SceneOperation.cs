@@ -99,9 +99,9 @@ namespace MatterHackers.Agg.UI
 
 		public EventHandler CollapseChanged;
 
-		private static string CollapseKey(string opperationGroupName)
+		private static string CollapseKey(string operationGroupName)
 		{
-			return $"scene_operation_collapse_{opperationGroupName}";
+			return $"scene_operation_collapse_{operationGroupName}";
 		}
 
 		public bool Collapse
@@ -123,9 +123,9 @@ namespace MatterHackers.Agg.UI
 
 		public EventHandler VisibleChanged;
 
-		private static string VisibleKey(string opperationGroupName)
+		private static string VisibleKey(string operationGroupName)
 		{
-			return $"scene_operation_visible_{opperationGroupName}";
+			return $"scene_operation_visible_{operationGroupName}";
 		}
 
 		public static bool GetVisible(string id, bool defaultIfNotSet)

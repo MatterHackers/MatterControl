@@ -129,21 +129,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             SourceContainer.Visible = true;
             RemoveAllButSource();
 
-            var participants = SourceContainer.VisibleMeshes();
-            if (participants.Count() < 2)
+            Mesh resultsMesh = null;
+            var participants = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) != PrintOutputTypes.Hole);
+            if (participants.Count() == 0)
             {
-                if (participants.Count() == 1)
-                {
-                    var newMesh = new Object3D();
-                    newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-                    newMesh.Mesh = participants.First().Mesh;
-                    this.Children.Add(newMesh);
-                    SourceContainer.Visible = false;
-                }
-
                 return;
             }
+            else
+            {
+                resultsMesh = CombineParticipanets(reporter, participants, cancellationToken);
+            }
 
+            var resultsItem = new Object3D()
+            {
+                Mesh = resultsMesh
+            };
+
+            if (resultsMesh != null)
+            {
+                var holes = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) == PrintOutputTypes.Hole);
+                if (holes != null)
+                {
+                    var holesMesh = CombineParticipanets(null, holes, cancellationToken);
+                    var holesItem = new Object3D()
+                    {
+                        Mesh = holesMesh
+                    };
+                    var resultItems = SubtractObject3D_2.DoSubtract(null,
+                        new List<IObject3D>() { resultsItem },
+                        new List<IObject3D>() { holesItem },
+                        null,
+                        cancellationToken);
+
+                    resultsItem.Mesh = resultItems.First().Mesh;
+                }
+            }
+
+            resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+            this.Children.Add(resultsItem);
+            SourceContainer.Visible = false;
+        }
+
+        private Mesh CombineParticipanets(IProgress<ProgressStatus> reporter, IEnumerable<IObject3D> participants, CancellationToken cancellationToken)
+        {
             List<List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>> touchingSets = GetTouchingMeshes(participants);
 
             var totalOperations = touchingSets.Sum(t => t.Count);
@@ -233,16 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                 }
             }
 
-            if (resultsMesh != null)
-            {
-                var resultsItem = new Object3D()
-                {
-                    Mesh = resultsMesh
-                };
-                resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-                this.Children.Add(resultsItem);
-                SourceContainer.Visible = false;
-            }
+            return resultsMesh;
         }
 
         private List<List<(Mesh mesh, Matrix4X4 matrix, AxisAlignedBoundingBox aabb)>> GetTouchingMeshes(IEnumerable<IObject3D> participants)
