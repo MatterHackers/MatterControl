@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
@@ -319,6 +320,49 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			scene.SelectedItem = this;
 
 			this.Invalidate(InvalidateType.Children);
+		}
+
+		/// <summary>
+		/// Use after source itmes have been processed to modify the transformed children of the inherited operation.
+		/// Example: A bend operation has been applied and there are still holes, this will remove the holes.
+		/// </summary>
+		/// <param name="reporter">Show progress</param>
+		/// <param name="cancellationToken">Can check if the operation has been canceled</param>
+		/// <returns>Did any holes get subtracted</returns>
+        public bool ApplyHoles(IProgress<ProgressStatus> reporter,
+			CancellationToken cancellationToken)
+        {
+			var removeItems = Children.Where(c => c.OutputType == PrintOutputTypes.Hole && c.Visible);
+			if (removeItems.Any())
+			{
+				var keepItems = Children.Where(c => c.OutputType != PrintOutputTypes.Hole && c.Visible);
+
+				if (keepItems.Any())
+				{
+					// apply any holes before we return
+					var resultItems = SubtractObject3D_2.DoSubtract(null,
+						keepItems,
+						removeItems,
+						reporter,
+						cancellationToken);
+
+					RemoveAllButSource();
+
+					// add back in the results of the hole removal
+					Children.Modify(list =>
+					{
+						foreach (var child in resultItems)
+						{
+							list.Add(child);
+							child.Visible = true;
+						}
+					});
+
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 

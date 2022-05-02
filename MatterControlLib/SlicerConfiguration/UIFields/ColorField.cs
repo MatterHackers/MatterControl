@@ -37,12 +37,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ColorField : UIField
 	{
 		private ItemColorButton colorWidget;
+        private bool transparentCheckbox;
         private Action<Action<Color>> getPickedColor;
         private ThemeConfig theme;
 		private Color initialColor;
 
-		public ColorField(ThemeConfig theme, Color initialColor, Action<Action<Color>> getPickedColor)
+		public ColorField(ThemeConfig theme, Color initialColor, Action<Action<Color>> getPickedColor, bool transparentCheckbox)
 		{
+			this.transparentCheckbox = transparentCheckbox;
 			this.getPickedColor = getPickedColor;
 			this.theme = theme;
 			this.initialColor = initialColor;
@@ -58,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			colorWidget = new ItemColorButton(theme, initialColor, getPickedColor);
+			colorWidget = new ItemColorButton(theme, initialColor, getPickedColor, transparentCheckbox);
 			colorWidget.ColorChanged += (s, e) =>
 			{
 				this.SetValue(Color.Html, true);

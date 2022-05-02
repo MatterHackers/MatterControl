@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var selection = scene.SelectedItem;
 					if (selection != null)
 					{
-						setColor?.Invoke(selection.Color);
+						setColor?.Invoke(selection.WorldColor());
 						scene.SelectionChanged -= SelectionChanged;
 						cancellationToken?.Cancel();
 						scene.SelectedItem = startingSelection;
@@ -288,8 +288,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
 			{
+				var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
+				var worldColor = Color.White;
+				if (firstDetectedColor != null)
+                {
+					worldColor = firstDetectedColor.Value;
+				}
+
 				// put in a color edit field
-				var colorField = new ColorField(theme, selectedItem.Color, GetNextSelectionColor);
+				var colorField = new ColorField(theme, worldColor, GetNextSelectionColor, true);
 				colorField.Initialize(0);
 				colorField.ValueChanged += (s, e) =>
 				{
@@ -299,7 +306,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				colorField.Content.MouseDown += (s, e) =>
+				var colorButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
+				colorButton.Parent.MouseDown += (s, e) =>
 				{
 					// make sure the render mode is set to shaded or outline
 					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
@@ -308,31 +316,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// make sure the render mode is set to outline
 						sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
 					}
+
+					var currentOutputType = selectedItem.WorldOutputType();
+					if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
+					{
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+					}
 				};
 
-				editorPanel.AddChild(new SettingsRow("Color".Localize(), null, colorField.Content, theme)
+				var colorRow = new SettingsRow("Result".Localize(), null, colorField.Content, theme)
 				{
 					// Special top border style for first item in editor
 					Border = new BorderDouble(0, 1)
-				});
+				};
+				editorPanel.AddChild(colorRow);
 
-				// put in a hole edit field
-				var holeField = new ToggleboxField(theme);
-				holeField.Initialize(0);
-				holeField.Checked = selectedItem.WorldOutputType() == PrintOutputTypes.Hole;
-				holeField.ValueChanged += (s, e) =>
+				// put in a hole button
+				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
+				var holeButton = new ColorButton(Color.DarkGray)
 				{
-					if (selectedItem.OutputType == PrintOutputTypes.Hole)
-                    {
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
-					}
-					else
+					Margin = new BorderDouble(5, 0, 11, 0),
+					Width = scaledButtonSize,
+					Height = scaledButtonSize,
+					BackgroundRadius = scaledButtonSize / 2,
+					BackgroundOutlineWidth = 1,
+					VAnchor = VAnchor.Center,
+					DisabledColor = theme.MinimalShade,
+					BorderColor = theme.TextColor,
+					ToolTipText = "Convert to Hole".Localize(),
+				};
+
+				var buttonRow = colorButton.Parents<FlowLayoutWidget>().FirstOrDefault();
+				buttonRow.AddChild(new TextWidget("Solid".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+                {
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(3, 0),
+                }, 0);
+				buttonRow.AddChild(holeButton, 0);
+				buttonRow.AddChild(new TextWidget("Hole".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(3, 0),
+				}, 0);
+
+				holeButton.Click += (s, e) =>
+				{
+					if (selectedItem.WorldOutputType() != PrintOutputTypes.Hole)
 					{
 						undoBuffer.AddAndDo(new MakeHole(selectedItem));
 					}
 				};
-
-				editorPanel.AddChild(new SettingsRow("Hole".Localize(), null, holeField.Content, theme));
 
 				// put in a material edit field
 				var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);

@@ -331,6 +331,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.AddRange(twistedChildren);
 					});
 
+					ApplyHoles(reporter, cancellationToken.Token);
+
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
