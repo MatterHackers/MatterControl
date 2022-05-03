@@ -471,13 +471,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var data = GetStyleData(printer, theme, settingsContext, settingData.SlicerConfigName, settingData.ShowAsOverride);
 
-			if (this.HighlightColor != data.highlightColor
-				&& this.Parent != null)
+			if (this.HighlightColor != data.highlightColor)
 			{
 				this.HighlightColor = data.highlightColor;
-				// make sure the value is also updated
-				printer.Settings.OnSettingChanged(settingData.SlicerConfigName);
 			}
+
 			if (restoreButton != null)
 			{
 				restoreButton.Visible = data.showRestoreButton;
