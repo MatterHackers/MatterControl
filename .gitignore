@@ -4,7 +4,8 @@
 
 # mstest test results
 TestResults
-Tests/temp
+Tests/temp/
+Tests/TestData/ExportedGcode/
 
 StaticData/Translations/L10N/
 
@@ -120,3 +121,4 @@ MatterControl.userprefs
 
 # JetBrains Rider user configuration directory
 /.idea/
+/MainOutputDirectory.cs

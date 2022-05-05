@@ -32,8 +32,8 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.RayTracer;
-using MatterHackers.RayTracer.Traceable;
+using MatterHackers.RayTracerNS;
+using MatterHackers.RayTracerNS.Traceable;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer

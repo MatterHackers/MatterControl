@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
 using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -49,7 +50,8 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 				return;
 			}
 
-			string meshFileName = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestMeshes", "SliceLayers", "Box20x20x10.stl");
+			string meshFileName = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestMeshes", "SliceLayers", "Box20x20x10.stl");
+
 			Mesh cubeMesh = StlProcessing.Load(meshFileName, CancellationToken.None);
 
 			AxisAlignedBoundingBox bounds = cubeMesh.GetAxisAlignedBoundingBox();

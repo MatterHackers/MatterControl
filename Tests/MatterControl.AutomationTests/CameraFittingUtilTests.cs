@@ -7,10 +7,11 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class CameraFittingUtilTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
@@ -157,25 +158,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60 * 3, overrideWidth: 1300, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task OrthographicZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(true, true);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task OrthographicZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(true, false);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task PerspectiveZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(false, true);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task PerspectiveZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(false, false);

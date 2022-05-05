@@ -12,15 +12,16 @@ using System.Xml.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using MatterHackers.MatterControl;
+using TestInvoker;
 
 namespace MatterControl.Tests
 {
-	[TestFixture, Apartment(ApartmentState.STA), RunInApplicationDomain]
+	[TestFixture, Parallelizable(ParallelScope.Children)]
 	public class ReleaseBuildTests
 	{
 		private static Type debuggableAttribute = typeof(DebuggableAttribute);
 
-		[Test, Category("ReleaseQuality")]
+		[Test, ChildProcessTest, Category("ReleaseQuality")]
 		public void MatterControlAssemblyIsOptimized()
 		{
 #if (!DEBUG)
@@ -28,15 +29,9 @@ namespace MatterControl.Tests
 #endif
 		}
 
-		[Test, Category("ReleaseQuality")]
+		[Test, ChildProcessTest, Category("ReleaseQuality")]
 		public void MatterControlKnownAssembliesAreOptimized()
 		{
-#if DEBUG
-			string configuration = "Debug";
-#else
-			string configuration = "Release";
-#endif
-
 			//MatterHackers.RenderOpenGl.dll
 
 			// This list can be refreshed via the rebuildDependencies() helper function below
@@ -56,7 +51,9 @@ namespace MatterControl.Tests
 
 			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))
 			{
-				var assemblyPath = TestContext.CurrentContext.ResolveProjectPath(4, "bin", configuration, assemblyName);
+				var assemblyPath = Path.Combine(MatterControlUtilities.MainBinOutputPath, assemblyName);
+
+
 
 				// Missing/renamed assemblies should fail the test and force a correction
 				Assert.IsTrue(File.Exists(assemblyPath), "Assembly missing: " + assemblyPath);
@@ -90,7 +87,7 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task MatterControlRuns()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -104,7 +101,7 @@ namespace MatterControl.Tests
 		}
 #endif
 
-		[Test, Category("ReleaseQuality")]
+		[Test, ChildProcessTest, Category("ReleaseQuality")]
 		public void MatterControlDependenciesAreOptimized()
 		{
 #if (!DEBUG)
@@ -125,7 +122,7 @@ namespace MatterControl.Tests
 #endif
 		}
 
-		[Test, Category("ReleaseQuality")]
+		[Test, ChildProcessTest, Category("ReleaseQuality")]
 		public void ClassicDebugComplicationFlagTests()
 		{
 #if (!DEBUG)

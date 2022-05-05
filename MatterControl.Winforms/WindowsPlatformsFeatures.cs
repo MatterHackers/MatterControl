@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -207,7 +208,9 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					PluginFinder.LoadTypesFromAssembly(Assembly.LoadFile(file));
+					// Be sure not to load a DLL more than once!
+					// https://github.com/dotnet/runtime/issues/39783
+					PluginFinder.LoadTypesFromAssembly(AssemblyLoadContext.Default.LoadFromAssemblyPath(file));
 				}
 				catch (Exception ex)
 				{

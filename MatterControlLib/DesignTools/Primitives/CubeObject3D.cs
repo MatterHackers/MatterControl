@@ -34,7 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using PolygonMesh.Solids;
+using MatterHackers.PolygonMesh.Solids;
 
 namespace MatterHackers.MatterControl.DesignTools
 {

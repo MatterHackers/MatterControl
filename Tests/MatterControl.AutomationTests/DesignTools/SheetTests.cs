@@ -12,20 +12,21 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrimitiveAndSheetsTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SheetEditorLayoutAndNavigation()
 		{
 			var systemWindow = new SystemWindow(800, 600)
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			2000);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DimensionsWorkWhenNoSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -65,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.DoubleClickByName(primitiveName);
 
 				// Get View3DWidget
-				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
+				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out var window, 3) as View3DWidget;
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitForName(primitive);
@@ -91,9 +92,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// try scaling by text entry
 				testRunner.ClickByName("ScaleWidthLeft")
 					.ClickByName("XValueDisplay")
+					//.Assert(() => testRunner.GetWidgetByName("XValueDisplay", out var _).ContainsFocus, "Focus") // Sometimes, when the moves over to XValueDisplay, XValueDisplay just isn't there.
 					.Type("35")
+					//.Assert(() => ((CustomWidgets.InlineEditControl)testRunner.GetWidgetByName("XValueDisplay", out var _)).Value == 35, "text")
 					.Type("{Enter}");
+				//.WaitFor(() => 35 == cube.Width.Value(cube));
 
+				/*if (35 != cube.Width.Value(cube))
+				{
+					System.Diagnostics.Debugger.Launch();
+					System.Diagnostics.Debugger.Break();
+				}*/
+
+				// NOTE: Happened once: Expected: 35, But was:  20.0d
+				//       This can happen when running only this test, and alt-tabbing frequently.
+				//       Failure again after platform focus fix.
+				//       This can happen when running only this test, and not alt-tabbing frequently.
+				//       Failure can happen in original .NET Framework MatterControl testing too.
+				//       Possible cause is OnMouseMove(MatterHackers.Agg.UI.MouseEventArgs) (MatterHackers.MatterControl.PartPreviewWindow.Object3DControlsLayer) not updating the hover control in time.
 				Assert.AreEqual(35, cube.Width.Value(cube));
 
 				testRunner.ClickByName("3D View Undo");
@@ -125,7 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ScaleObjectWorksWithAndWithoutSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -165,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SheetEditorNavigationTests()
 		{
 			var systemWindow = new SystemWindow(800, 600)

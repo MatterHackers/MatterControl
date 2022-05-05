@@ -36,7 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RayTracer;
+using MatterHackers.RayTracerNS;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools

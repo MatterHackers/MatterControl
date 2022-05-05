@@ -36,16 +36,17 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Parallelizable(ParallelScope.Children)]
 	public class PathTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public Task CacheablePathTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			StaticData.RootPath = StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationController.CacheablePath("scope", "key.file");
 
@@ -57,10 +58,10 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task CacheDirectoryTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationDataStorage.Instance.CacheDirectory;
 
@@ -72,10 +73,10 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task TempPathTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationDataStorage.Instance.ApplicationTempDataPath;
 

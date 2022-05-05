@@ -38,7 +38,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
+using MatterHackers.RayTracerNS;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -402,6 +402,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				mouseDownObject3DControl.OnMouseDown(new Mouse3DEventArgs(mouseEvent, ray, info));
 				SelectedObject3DControl = mouseDownObject3DControl;
+
+				// Needed for testing DimensionsWorkWhenNoSheet to work (more) reliably. Otherwise, OnMouseMove's defered update might not pick up the hover in time.
+				HoveredObject3DControl = mouseDownObject3DControl;
 			}
 			else
 			{

@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private PrinterConfig printer;
 
 		private AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;

@@ -1,13 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class HardwareLevelingUITests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task HasHardwareLevelingHidesLevelingSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +37,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 800);
 		}
 
-		[Test, Category("Emulator")]
+		// NOTE: This test once failed, due to timing probably.
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task SoftwareLevelingTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -82,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90);
+			}, maxTimeToRun: 90); // NOTE: This test got stuck in ClickByName("Yes Button") -> WaitforDraw. It appears to be because WaitforDraw waited for a closed window to redraw itself.
 		}
 	}
 }

@@ -9,6 +9,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -16,7 +17,7 @@ namespace MatterControl.Tests.MatterControl
 	public class OemProfileTests
 	{
 		private static List<PrinterTestDetails> allPrinters;
-		private static string printerSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Profiles");
+		private static string printerSettingsDirectory = Path.Combine(MatterControlUtilities.StaticDataPath, "Profiles");
 
 		private string pauseGCode = @"M76 ; pause print timer
 G91
@@ -63,8 +64,8 @@ M300 S3000 P30   ; Resume Tone";
 
 		static OemProfileTests()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)
 						   select new PrinterTestDetails
@@ -77,14 +78,14 @@ M300 S3000 P30   ; Resume Tone";
 						   }).ToList();
 		}
 
-		[Test, RunInApplicationDomain]
+		[Test, ChildProcessTest]
 		public void ModifyPulsePrinterProfilesSettings()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
 			return;
 
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			string profilePath = @"C:\\Users\\LarsBrubaker\\Downloads\\Pulse E Profiles";
 			allPrinters = (from printerFile in new DirectoryInfo(profilePath).GetFiles("*.printer", SearchOption.TopDirectoryOnly)
@@ -188,10 +189,10 @@ M300 S3000 P30   ; Resume Tone";
 			int a = 0;
 		}
 
-		[Test, RunInApplicationDomain]
+		[Test, ChildProcessTest]
 		public void AllMaterialsLibraryHasGoodProfiles()
 		{
-			var materialSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Materials");
+			var materialSettingsDirectory = Path.Combine(MatterControlUtilities.StaticDataPath, "Materials");
 			var directoryInfo = new DirectoryInfo(materialSettingsDirectory);
 			var files = directoryInfo.GetFiles("*.material", SearchOption.AllDirectories);
 			var profiles = files.Select(f => PrinterSettings.LoadFile(f.FullName)).ToList();
@@ -265,7 +266,7 @@ M300 S3000 P30   ; Resume Tone";
 		}
 
 
-		[Test, RunInApplicationDomain]
+		[Test, ChildProcessTest]
 		public void LayerGCodeHasExpectedValue()
 		{
 			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"

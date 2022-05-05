@@ -46,8 +46,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
 		public void LevelingMesh3x3CorectInterpolation()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.probe_offset, "0,0,0");
