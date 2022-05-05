@@ -9,6 +9,10 @@
     <RuntimeIdentifier>win</RuntimeIdentifier>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+	<!-- AppVeyor builder wants the old paths. -->
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
