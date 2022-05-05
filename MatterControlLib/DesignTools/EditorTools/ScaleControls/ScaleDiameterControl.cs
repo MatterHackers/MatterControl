@@ -185,10 +185,16 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Matrix4X4 GetRingTransform()
 		{
-			Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(RootSelection, placement);
-			var rotation = Matrix4X4.CreateRotation(new Quaternion(RootSelection.Matrix));
-			var translation = Matrix4X4.CreateTranslation(newBottomCenter);
-			return rotation * translation;
+			var rootSelection = RootSelection;
+			if (rootSelection != null)
+			{
+				Vector3 newBottomCenter = ObjectSpace.GetCenterPosition(RootSelection, placement);
+				var rotation = Matrix4X4.CreateRotation(new Quaternion(RootSelection.Matrix));
+				var translation = Matrix4X4.CreateTranslation(newBottomCenter);
+				return rotation * translation;
+			}
+
+			return Matrix4X4.Identity;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)

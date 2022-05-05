@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// remove every face above the cut plane
 			RemoveFacesAboveCut(mesh);
 
-			slice.Vertices().TriangulateFaces(null, mesh, SliceHeight);
+			slice.AsVertices().TriangulateFaces(null, mesh, SliceHeight);
 
 			mesh.Transform(itemMatrix.Inverted);
 
