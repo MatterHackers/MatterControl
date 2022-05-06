@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -234,9 +233,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double speed = 0;
 					if (GCodeFile.GetFirstNumberAfter("S", line, ref speed, 0, ""))
 					{
-						fanSpeeds += separator + $"{speed * 100 / 255:0}%";
+						if (speed == 0)
+						{
+							fanSpeeds += separator + "Off";
+						}
+						else
+						{
+							fanSpeeds += separator + $"{speed * 100 / 255:0}%";
+						}
 						separator = ", ";
 					}
+				}
+			}
+
+			if (string.IsNullOrEmpty(fanSpeeds))
+            {
+				// look back until we find a speed or go back to the begining
+				var speed = loadedGCode.GetLastFanSpeed(activeLayerIndex - 1);
+				if (speed >= 0)
+				{
+					if (speed == 0)
+                    {
+						return "Off";
+                    }
+
+					return $"{speed * 100 / 255:0}%";
+				}
+				else
+				{
+					return "---";
 				}
 			}
 

@@ -76,6 +76,13 @@ namespace MatterControl.Printing
 
 		public abstract double GetLayerHeight(int layerIndex);
 
+		/// <summary>
+		/// Get the speed of the fan at the conculsion of this layer
+		/// </summary>
+		/// <param name="layerIndex">The layer to get the last fan speed for</param>
+		/// <returns>The fan speed 0 to 255</returns>
+		public abstract int GetLastFanSpeed(int layerIndex);
+
 		public abstract double GetLayerTop(int layerIndex);
 
 		public abstract int GetLayerIndex(int instructionIndex);

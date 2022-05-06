@@ -51,6 +51,8 @@ namespace MatterControl.Printing
 		private double parsingLastZ;
 		private readonly List<int> toolChanges = new List<int>();
 
+		private Dictionary<int, int> lastFanSpeed = new Dictionary<int, int>();
+
 		/// <summary>
 		/// Gets total print time that will leave the heaters on at the conclusion of the print.
 		/// </summary>
@@ -288,6 +290,70 @@ namespace MatterControl.Printing
 			}
 
 			return total;
+		}
+
+		public override int GetLastFanSpeed(int requestedLayer)
+		{
+			if (LayerCount == 0 || requestedLayer < 0)
+			{
+				return 0;
+			}
+
+			if (lastFanSpeed.ContainsKey(requestedLayer))
+            {
+				return lastFanSpeed[requestedLayer];
+            }
+
+			var currentLayer = requestedLayer;
+			while (currentLayer >= 0)
+			{
+				int startInstruction = GetFirstLayerInstruction(currentLayer);
+				if (currentLayer == 0)
+				{
+					startInstruction = 0;
+				}
+
+				int endInstruction = GetFirstLayerInstruction(currentLayer + 1);
+
+				var foundSpeed = false;
+				var lastSpeed = 0;
+				for (int i = startInstruction; i < endInstruction; i++)
+				{
+					var line = Instruction(i).Line;
+					if (line.StartsWith("M107")) // fan off
+					{
+						foundSpeed = true;
+						lastSpeed = 0;
+					}
+					else if (line.StartsWith("M106")) // fan on
+					{
+						double speed = 0;
+						if (GCodeFile.GetFirstNumberAfter("S", line, ref speed, 0, ""))
+						{
+							foundSpeed = true;
+							lastSpeed = (int)speed;
+						}
+					}
+				}
+
+				if (foundSpeed)
+				{
+					lastFanSpeed[requestedLayer] = lastSpeed;
+					return lastSpeed;
+				}
+
+				currentLayer--;
+
+				if (lastFanSpeed.ContainsKey(currentLayer))
+				{
+					lastFanSpeed[currentLayer + 1] = lastFanSpeed[currentLayer];
+					lastFanSpeed[requestedLayer] = lastFanSpeed[currentLayer];
+					return lastFanSpeed[currentLayer];
+				}
+			}
+
+			lastFanSpeed[requestedLayer] = 0;
+			return 0;
 		}
 
 		/// <summary>

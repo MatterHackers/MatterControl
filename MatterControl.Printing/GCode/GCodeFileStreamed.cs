@@ -164,7 +164,12 @@ namespace MatterControl.Printing
 			throw new NotImplementedException();
 		}
 
-		public override double PercentComplete(int instructionIndex)
+        public override int GetLastFanSpeed(int layerIndex)
+        {
+			return -1;
+        }
+
+        public override double PercentComplete(int instructionIndex)
 		{
 			lock(locker)
 			{

@@ -129,11 +129,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             SourceContainer.Visible = true;
             RemoveAllButSource();
 
+            var holes = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) == PrintOutputTypes.Hole);
+
             Mesh resultsMesh = null;
             var participants = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) != PrintOutputTypes.Hole);
             if (participants.Count() == 0)
             {
-                return;
+                if (holes.Count() == 0)
+                {
+                    return;
+                }
             }
             else
             {
@@ -145,23 +150,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                 Mesh = resultsMesh
             };
 
-            if (resultsMesh != null)
+            if (holes != null)
             {
-                var holes = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) == PrintOutputTypes.Hole);
-                if (holes != null)
+                var holesMesh = CombineParticipanets(null, holes, cancellationToken);
+                if (holesMesh != null)
                 {
-                    var holesMesh = CombineParticipanets(null, holes, cancellationToken);
                     var holesItem = new Object3D()
                     {
                         Mesh = holesMesh
                     };
-                    var resultItems = SubtractObject3D_2.DoSubtract(null,
-                        new List<IObject3D>() { resultsItem },
-                        new List<IObject3D>() { holesItem },
-                        null,
-                        cancellationToken);
 
-                    resultsItem.Mesh = resultItems.First().Mesh;
+                    if (resultsMesh != null)
+                    {
+                        var resultItems = SubtractObject3D_2.DoSubtract(null,
+                            new List<IObject3D>() { resultsItem },
+                            new List<IObject3D>() { holesItem },
+                            null,
+                            cancellationToken);
+
+                        resultsItem.Mesh = resultItems.First().Mesh;
+                    }
+                    else
+                    {
+                        holesItem.CopyProperties(holes.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+                        this.Children.Add(holesItem);
+                        SourceContainer.Visible = false;
+                        return;
+                    }
                 }
             }
 
