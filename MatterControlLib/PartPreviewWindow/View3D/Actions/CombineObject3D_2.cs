@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
                 if (set.Count > 1)
                 {
-#if false
+#if true
                     setMesh = BooleanProcessing.DoArray(set.Select(i => (i.mesh, i.matrix)),
                         CsgModes.Union,
                         Processing,
