@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 				var foundPartSettings = false;
 				var newSceneOverrides = new PrinterSettingsLayer();
 				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
-				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).OrderBy(i => i.Name))
+				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D && c.Parent?.WorldPrintable() == true).OrderBy(i => i.Name))
 				{
 					foundPartSettings = true;
 					var settings = ((PartSettingsObject3D)partSettingsObject).Overrides;
