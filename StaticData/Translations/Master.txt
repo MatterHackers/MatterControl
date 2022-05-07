@@ -2434,6 +2434,9 @@ Translated:Item cannot be exported
 English:Item cannot be exported as AMF
 Translated:Item cannot be exported as AMF
 
+English:Item cannot be exported as MCX
+Translated:Item cannot be exported as MCX
+
 English:Item not Found
 Translated:Item not Found
 
