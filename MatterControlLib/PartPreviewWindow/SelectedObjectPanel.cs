@@ -306,30 +306,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
+				ColorButton holeButton = null;
+				var solidButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
+				GuiWidget otherContainer = null;
+				TextWidget otherText = null;
 				TextWidget holeText = null;
 				TextWidget solidText = null;
-				void SetButtonStates(ColorButton solid, ColorButton hole)
+				void SetOtherOutputSelection(string text)
                 {
-					if (selectedItem.OutputType == PrintOutputTypes.Hole)
-                    {
-						holeText.Underline = true;
-						hole.BackgroundOutlineWidth = 2;
+					otherText.Text = text;
+					otherContainer.Visible = true;
+					holeText.Underline = false;
+					holeButton.BackgroundOutlineWidth = 1;
 
-						solidText.Underline = false;
-						solid.BackgroundOutlineWidth = 1;
-					}
-					else
-                    {
-						holeText.Underline = false;
-						hole.BackgroundOutlineWidth = 1;
-					
-						solidText.Underline = true;
-						solid.BackgroundOutlineWidth = 2;
-					}
+					solidText.Underline = false;
+					solidButton.BackgroundOutlineWidth = 1;
 				}
 
-				ColorButton holeButton = null;
-				var colorButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
+				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
+				void SetButtonStates()
+				{
+                    switch (selectedItem.WorldOutputType())
+                    {
+                        case PrintOutputTypes.Hole:
+                            holeText.Underline = true;
+                            holeButton.BackgroundOutlineWidth = 2;
+							holeButton.BackgroundRadius = scaledButtonSize / 2 - 1;
+
+                            solidText.Underline = false;
+                            solidButton.BackgroundOutlineWidth = 1;
+							solidButton.BackgroundRadius = scaledButtonSize / 2;
+							otherContainer.Visible = false;
+							break;
+
+                        case PrintOutputTypes.Default:
+                        case PrintOutputTypes.Solid:
+                            holeText.Underline = false;
+                            holeButton.BackgroundOutlineWidth = 1;
+							holeButton.BackgroundRadius = scaledButtonSize / 2;
+
+							solidText.Underline = true;
+                            solidButton.BackgroundOutlineWidth = 2;
+							solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
+							otherContainer.Visible = false;
+							break;
+
+                        case PrintOutputTypes.Support:
+							SetOtherOutputSelection("Support".Localize());
+							break;
+
+                        case PrintOutputTypes.WipeTower:
+							SetOtherOutputSelection("Wipe Tower".Localize());
+							break;
+
+                        case PrintOutputTypes.Fuzzy:
+							SetOtherOutputSelection("Fuzzy".Localize());
+							break;
+                    }
+                }
 
 				void SetToSolid()
                 {
@@ -347,12 +381,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
 					}
 
-					SetButtonStates(colorButton, holeButton);
+					SetButtonStates();
 				}
 
-				colorButton.Parent.MouseDown += (s, e) => SetToSolid();
+				solidButton.Parent.MouseDown += (s, e) => SetToSolid();
 
-				var colorRow = new SettingsRow("Result".Localize(), null, colorField.Content, theme)
+				var colorRow = new SettingsRow("Output".Localize(), null, colorField.Content, theme)
 				{
 					// Special top border style for first item in editor
 					Border = new BorderDouble(0, 1)
@@ -360,7 +394,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editorPanel.AddChild(colorRow);
 
 				// put in a hole button
-				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
 				holeButton = new ColorButton(Color.DarkGray)
 				{
 					Margin = new BorderDouble(5, 0, 11, 0),
@@ -374,7 +407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ToolTipText = "Convert to Hole".Localize(),
 				};
 
-				var buttonRow = colorButton.Parents<FlowLayoutWidget>().FirstOrDefault();
+				var buttonRow = solidButton.Parents<FlowLayoutWidget>().FirstOrDefault();
 				solidText = new TextWidget("Solid".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
 				{
 					VAnchor = VAnchor.Center,
@@ -390,6 +423,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Selectable = true,
 				};
 				buttonRow.AddChild(holeText, 0);
+				otherContainer = new GuiWidget()
+				{
+					Margin = new BorderDouble(5, 0),
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					HAnchor = HAnchor.Fit,
+					BackgroundRadius = 3,
+					BackgroundOutlineWidth = 1,
+					BorderColor = theme.PrimaryAccentColor,
+				};
+				buttonRow.AddChild(otherContainer, 0);
+
+				otherText = new TextWidget("".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+				{
+					Margin = new BorderDouble(5, 5),
+					AutoExpandBoundsToText = true,
+				};
+				otherContainer.AddChild(otherText);
 
 				void SetToHole()
                 {
@@ -397,14 +447,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						undoBuffer.AddAndDo(new MakeHole(selectedItem));
 					}
-					SetButtonStates(colorButton, holeButton);
+					SetButtonStates();
 				}
 
 				holeButton.Click += (s, e) => SetToHole();
 				holeText.Click += (s, e) => SetToHole();
 				solidText.Click += (s, e) => SetToSolid();
 
-				SetButtonStates(colorButton, holeButton);
+				SetButtonStates();
+				void SelectedItemOutputChanged(object sender, EventArgs e)
+                {
+					SetButtonStates();
+				}
+
+				selectedItem.Invalidated += SelectedItemOutputChanged;
+				Closed += (s, e) => selectedItem.Invalidated -= SelectedItemOutputChanged;
 
 				// put in a material edit field
 				var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
@@ -428,9 +485,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// material row
 				editorPanel.AddChild(new SettingsRow("Material".Localize(), null, materialField.Content, theme));
-			}
+            }
 
-			var rows = new SafeList<SettingsRow>();
+            var rows = new SafeList<SettingsRow>();
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
@@ -446,7 +503,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ShowObjectEditor((editor, item, item.Name), selectedItem);
 				}
 			}
-		}
+        }
 
         private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
         {
