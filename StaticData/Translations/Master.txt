@@ -1156,6 +1156,9 @@ Translated:Creation Data
 English:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
 Translated:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
 
+English:Ctrl + P
+Translated:Ctrl + P
+
 English:Ctrl + Y | Ctrl + Shift + Z
 Translated:Ctrl + Y | Ctrl + Shift + Z
 
@@ -1944,6 +1947,9 @@ Translated:Found a line that is {0} characters long.\n{1}...
 
 English:Furthest Back
 Translated:Furthest Back
+
+English:Fuzzy
+Translated:Fuzzy
 
 English:Fuzzy Frequency
 Translated:Fuzzy Frequency
@@ -3339,6 +3345,9 @@ Translated:Outline Width
 
 English:Outlines (default)
 Translated:Outlines (default)
+
+English:Output
+Translated:Output
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
@@ -6237,6 +6246,9 @@ Translated:Will be updated to:
 
 English:Wipe Shield Distance
 Translated:Wipe Shield Distance
+
+English:Wipe Tower
+Translated:Wipe Tower
 
 English:Wipe Tower Size
 Translated:Wipe Tower Size
