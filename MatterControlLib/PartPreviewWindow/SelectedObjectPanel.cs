@@ -306,9 +306,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
+				TextWidget holeText = null;
+				TextWidget solidText = null;
+				void SetButtonStates(ColorButton solid, ColorButton hole)
+                {
+					if (selectedItem.OutputType == PrintOutputTypes.Hole)
+                    {
+						holeText.Underline = true;
+						hole.BackgroundOutlineWidth = 2;
+
+						solidText.Underline = false;
+						solid.BackgroundOutlineWidth = 1;
+					}
+					else
+                    {
+						holeText.Underline = false;
+						hole.BackgroundOutlineWidth = 1;
+					
+						solidText.Underline = true;
+						solid.BackgroundOutlineWidth = 2;
+					}
+				}
+
+				ColorButton holeButton = null;
 				var colorButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
-				colorButton.Parent.MouseDown += (s, e) =>
-				{
+
+				void SetToSolid()
+                {
 					// make sure the render mode is set to shaded or outline
 					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
 							&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
@@ -322,7 +346,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
 					}
-				};
+
+					SetButtonStates(colorButton, holeButton);
+				}
+
+				colorButton.Parent.MouseDown += (s, e) => SetToSolid();
 
 				var colorRow = new SettingsRow("Result".Localize(), null, colorField.Content, theme)
 				{
@@ -333,7 +361,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in a hole button
 				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
-				var holeButton = new ColorButton(Color.DarkGray)
+				holeButton = new ColorButton(Color.DarkGray)
 				{
 					Margin = new BorderDouble(5, 0, 11, 0),
 					Width = scaledButtonSize,
@@ -347,25 +375,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				var buttonRow = colorButton.Parents<FlowLayoutWidget>().FirstOrDefault();
-				buttonRow.AddChild(new TextWidget("Solid".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
-                {
+				solidText = new TextWidget("Solid".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0),
-                }, 0);
+					Selectable = true,
+				};
+				buttonRow.AddChild(solidText, 0);
 				buttonRow.AddChild(holeButton, 0);
-				buttonRow.AddChild(new TextWidget("Hole".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+				holeText = new TextWidget("Hole".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0),
-				}, 0);
+					Selectable = true,
+				};
+				buttonRow.AddChild(holeText, 0);
 
-				holeButton.Click += (s, e) =>
-				{
+				void SetToHole()
+                {
 					if (selectedItem.WorldOutputType() != PrintOutputTypes.Hole)
 					{
 						undoBuffer.AddAndDo(new MakeHole(selectedItem));
 					}
-				};
+					SetButtonStates(colorButton, holeButton);
+				}
+
+				holeButton.Click += (s, e) => SetToHole();
+				holeText.Click += (s, e) => SetToHole();
+				solidText.Click += (s, e) => SetToSolid();
+
+				SetButtonStates(colorButton, holeButton);
 
 				// put in a material edit field
 				var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
