@@ -1156,6 +1156,9 @@ Translated:Creation Data
 English:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
 Translated:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
 
+English:Ctrl + P
+Translated:Ctrl + P
+
 English:Ctrl + Y | Ctrl + Shift + Z
 Translated:Ctrl + Y | Ctrl + Shift + Z
 
