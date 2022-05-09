@@ -63,7 +63,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems,
+			string outputPath,
+			IProgress<ProgressStatus> progress,
+			CancellationToken cancellationToken)
 		{
 			var first = true;
 			List<string> badExports = new List<string>();
@@ -76,7 +79,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					first = false;
 				}
 
-				if (!await MeshExport.ExportMesh(item, filename))
+				if (!await MeshExport.ExportMesh(item, filename, progress))
 				{
 					badExports.Add(item.Name);
 				}

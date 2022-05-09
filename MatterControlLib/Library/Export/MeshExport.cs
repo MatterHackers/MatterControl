@@ -32,21 +32,32 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
 	public static class MeshExport
 	{
-		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave)
+		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave, IProgress<ProgressStatus> progress)
 		{
 			try
 			{
+				var status = new ProgressStatus()
+				{
+					Status = "Exporting".Localize()
+				};
+
 				if (source is ILibraryObject3D contentItem)
 				{
 					// If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
 					var content = await contentItem.GetObject3D(null);
-					return Object3D.Save(content, filePathToSave, CancellationToken.None);
+					return Object3D.Save(content, filePathToSave, CancellationToken.None, reportProgress: (ratio, name) =>
+                    {
+						status.Progress0To1 = ratio;
+						progress.Report(status);
+                    });
 				}
 				else if (source is ILibraryAssetStream streamContent)
 				{
@@ -71,7 +82,11 @@ namespace MatterHackers.MatterControl.Library.Export
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
 								if (item != null)
 								{
-									return Object3D.Save(item, filePathToSave, CancellationToken.None);
+									return Object3D.Save(item, filePathToSave, CancellationToken.None, reportProgress: (ratio, name) =>
+                                    {
+										status.Progress0To1 = ratio;
+										progress.Report(status);
+									});
 								}
 							}
 						}
