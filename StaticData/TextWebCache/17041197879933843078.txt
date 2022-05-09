@@ -1,0 +1,328 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2022-02-18", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageShippingCost": 393, 
+        "BarCodeID": "735810239486", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:23:34.798370", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Feb 18th", 
+        "DisplayAverageShippingCost": "3.93", 
+        "DisplayListPrice": "20.87", 
+        "DisplayPrice": "20.87", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-Y6C-YEZM", 
+        "DisplayWholesaleCost": "7.75", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/c1943d23-5adc-4b39-bee2-09c589af9140", 
+            "ImageUrl": "https://lh3.googleusercontent.com/FzaMBj_rQz3Q6iF-HkU3exVnmuCK8z2ZMKUElUwF5lPGLaIP0DBIDvRYPvQZN-rx-A-a3X7sSgRDhLi7BwjplSs", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWTZDWUVaTQw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kcg4LEgdQcm9kdWN0GKUfDA", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "2.49", 
+            "7.75", 
+            "7.75"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [
+            {
+                "AdjustedPrice": 2081, 
+                "AdjustedPriceDisplay": "20.81", 
+                "PercentOfPrice": 9974, 
+                "PercentOfPriceDisplay": "99.74", 
+                "QualifyingQuantity": 2
+            }, 
+            {
+                "AdjustedPrice": 1982, 
+                "AdjustedPriceDisplay": "19.82", 
+                "PercentOfPrice": 9500, 
+                "PercentOfPriceDisplay": "95.00", 
+                "QualifyingQuantity": 4
+            }, 
+            {
+                "AdjustedPrice": 1836, 
+                "AdjustedPriceDisplay": "18.36", 
+                "PercentOfPrice": 8799, 
+                "PercentOfPriceDisplay": "87.99", 
+                "QualifyingQuantity": 6
+            }, 
+            {
+                "AdjustedPrice": 1794, 
+                "AdjustedPriceDisplay": "17.94", 
+                "PercentOfPrice": 8599, 
+                "PercentOfPriceDisplay": "85.99", 
+                "QualifyingQuantity": 8
+            }, 
+            {
+                "AdjustedPrice": 1735, 
+                "AdjustedPriceDisplay": "17.35", 
+                "PercentOfPrice": 8315, 
+                "PercentOfPriceDisplay": "83.15", 
+                "QualifyingQuantity": 10
+            }, 
+            {
+                "AdjustedPrice": 1617, 
+                "AdjustedPriceDisplay": "16.17", 
+                "PercentOfPrice": 7750, 
+                "PercentOfPriceDisplay": "77.50", 
+                "QualifyingQuantity": 12
+            }
+        ], 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDp9InWCgw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "MH Build PLA is an affordable PLA filament intended for producing quality, 3D printed parts. MH Build PLA comes in a wide selection of bold colors to choose from. MH Build PLA is made with price in mind for any maker, from beginner to advanced, in a wide selection of bold colors.", 
+        "ProductListPrice": 2087, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWTZDWUVaTQw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 4495, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "44.95", 
+                    "AddOnDisplayPrice": "42.75", 
+                    "AddOnDisplaySavings": "2.20", 
+                    "AddOnFloatPrice": 42.75, 
+                    "AddOnListingReference": "175mm-pva-filament-half-kg", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 4275, 
+                    "AddOnSavings": 220, 
+                    "AddOnSkuReference": "M4MJTECR", 
+                    "AddOnTitle": "MH Build Series PVA Filament - 1.75mm (0.5kg)", 
+                    "DisplaySID": "M-4MJ-TECR", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBd1B5V3Nna00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNE1KVEVDUgw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 125, 
+                    "QuantityOnHand": 125, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 7999, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "79.99", 
+                    "AddOnDisplayPrice": "76.00", 
+                    "AddOnDisplaySavings": "3.99", 
+                    "AddOnFloatPrice": 76.0, 
+                    "AddOnListingReference": "pva-filament-175mm-1kg", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 7600, 
+                    "AddOnSavings": 399, 
+                    "AddOnSkuReference": "M582X020", 
+                    "AddOnTitle": "MH Build Series PVA Filament - 1.75mm (1kg)", 
+                    "DisplaySID": "M-582-X020", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAvticCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNTgyWDAyMAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 166, 
+                    "QuantityOnHand": 166, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:08.896510", 
+            "DisplayPriceRange": "2087", 
+            "Elements": [
+                {
+                    "Content": "<p><strong>MH Build Series - Affordable PLA 3D Printer Filament for Every Maker</strong></p>\r\n<p><span>MH Build 3D printing filaments are designed with price in mind; we have taken the best aspects of PLA filament - it is renewable, biodegradable, and adaptable - and created an affordable solution for every 3D maker. MH Build filaments include </span><span>PLA</span><span>, </span><span>ABS</span><span>, and </span><span>PETG</span><span>. So if you&rsquo;re a pure beginner with a limited budget, or an additive manufacturer looking to save on production costs, MatterHackers MH Build PLA is the filament to get any job done.</span></p>\r\n<p><span>PLA, aka Polylactic Acid, is a multipurpose material commonly used in 3D printing. PLA filament is a bioplastic, which means it is made from renewable natural resources such as corn starch and tapioca products. As a biodegradable material, it is much better for the environment, especially compared to petrochemical-based alternatives. All MH Build filament is sealed with desiccant for storage and freshness. </span></p>", 
+                    "ElementCode": "RCBVSV", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/1QR-bCfhQRvlFJFXdPAkLJUK-jfSim3jgm0zOGZlaoAz7IxgOerOZgwi7xu6UI5WzBMurIqRwcWtBpW61FkD0g'></p>", 
+                    "ElementCode": "UDEX3H", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/01941159-3cd0-4e4e-9e70-5cf9b181b137", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/1QR-bCfhQRvlFJFXdPAkLJUK-jfSim3jgm0zOGZlaoAz7IxgOerOZgwi7xu6UI5WzBMurIqRwcWtBpW61FkD0g", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>Specifications</strong></h3>\r\n<ul>\r\n<li>Recommended Extrusion Temperatures: 205&plusmn;15&deg;C</li>\r\n<li>Recommended Bed Temperature: Not needed, but if printer has heated bed, 40&plusmn;15 &deg;C</li>\r\n<li>Spool Dimensions (Approx.): 200mm Total Diameter x 50mm Inner Hole Diameter x 65mm Height</li>\r\n<li>1 kg spool</li>\r\n<li>True Diameter: 1.75mm</li>\r\n<li>Dimensional Accuracy: &plusmn;0.05mm</li>\r\n<li>Density: 1.25 g/cm&sup3;</li>\r\n<li>Volume: 0.80 L</li>\r\n<li>Length: 332.60 m</li>\r\n<li><a title=\"MH Build Series PLA TDS\" href=\"https://www.matterhackers.com/r/vQ0bKO\" target=\"_blank\" rel=\"noopener\">Download the Technical Data Sheet</a></li>\r\n<li><a title=\"MH Build Series PLA MSDS\" href=\"https://www.matterhackers.com/r/yvfisi\" target=\"_blank\" rel=\"noopener\">Download the Safety Data Sheet</a></li>\r\n</ul>", 
+                    "ElementCode": "KKR3KY", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/yYZR_YTDbFC2KdTwKRE1ZZBq8fvDF3i_Ml1Afcafz2kXUjVY6X-7gnXu6A5mCCBSYkJ6tUlAdx1uJW7LXVFwSV8'></p>", 
+                    "ElementCode": "2CCSCE", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/f8dd40f7-11d8-48b2-8073-b2e25f2c2a1f", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/yYZR_YTDbFC2KdTwKRE1ZZBq8fvDF3i_Ml1Afcafz2kXUjVY6X-7gnXu6A5mCCBSYkJ6tUlAdx1uJW7LXVFwSV8", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p><strong>Learn More About 3D Printing With PLA Filament</strong></p>\r\n<p><span>Your success in 3D printing is our goal, so we have created many guides to help you create the highest quality 3D printed parts possible.</span></p>\r\n<ul>\r\n<li><a href=\"https://www.matterhackers.com/articles/how-to-succeed-when-printing-in-pla\"><span>How to succeed when printing with PLA</span></a></li>\r\n<li><a href=\"https://www.matterhackers.com/news/how-to-smooth-and-finish-your-pla-prints\"><span>How to smooth and finish your PLA prints - Part 1</span></a></li>\r\n<li><a href=\"https://www.matterhackers.com/articles/how-to:-smooth-and-finish-you-pla-prints-part-2\"><span>How to smooth and finish your PLA prints - Part 2</span></a></li>\r\n</ul>", 
+                    "ElementCode": "514P5W", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/YbHTTin_u4XOOW4IvM6pQGLFV9HJvmOCnTsjoDnFhZhD_bRlxm3528fERuSZjFE2jhodR7dr9AXNhJ_eP-YSSUc'></p>", 
+                    "ElementCode": "TL4XOR", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/b3671092-2141-4233-858f-49798fe57d3b", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/YbHTTin_u4XOOW4IvM6pQGLFV9HJvmOCnTsjoDnFhZhD_bRlxm3528fERuSZjFE2jhodR7dr9AXNhJ_eP-YSSUc", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/5pULMwLEVkDZU6vQ97VJwiOZgetTjtKbw0iWdjXYQydSaH-tH4ObVP7xhUv0c1R9WuIFhBiAWqUghXp3yvZZeyA'></p>", 
+                    "ElementCode": "RUSWVZ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/baadca10-d2bf-41dd-a23e-6e8e9d22aa6a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/5pULMwLEVkDZU6vQ97VJwiOZgetTjtKbw0iWdjXYQydSaH-tH4ObVP7xhUv0c1R9WuIFhBiAWqUghXp3yvZZeyA", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/c1943d23-5adc-4b39-bee2-09c589af9140", 
+                "ImageUrl": "https://lh3.googleusercontent.com/FzaMBj_rQz3Q6iF-HkU3exVnmuCK8z2ZMKUElUwF5lPGLaIP0DBIDvRYPvQZN-rx-A-a3X7sSgRDhLi7BwjplSs", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": "legacy:ag9zfm1hdHRlcmhhY2tlcnNyDwsSB1Byb2R1Y3QYlvoODA", 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/c1943d23-5adc-4b39-bee2-09c589af9140", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/FzaMBj_rQz3Q6iF-HkU3exVnmuCK8z2ZMKUElUwF5lPGLaIP0DBIDvRYPvQZN-rx-A-a3X7sSgRDhLi7BwjplSs", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/48584842-78bf-48df-8976-0ccbc5af5557", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/cR8wHqOU56_6UTZ_0Q6GjPbByYR3pViJyuBsTvmJ69VIxVeXT2L9tsK1fxU7_D2fLNOzCPe0ebU4b0vTr_Y-dHA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/e7b6b006-7c2d-4b7f-b439-2678452be37e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/smkX5uPKu-qQwYVGTPVNgETwmGZECEshFUm6F5p9iXm0h1cTB92Y_9urO0v6n5cUgZq7bynC5foZO9IMLWLUH30", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/70210f1d-9590-4da6-8ad3-63f5e6063ec9", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/WPoG4Z3whjjCVhoeTODsKl53bwENYdsZU8C5lSPeqD-yl_FIboawebmuO4afVphxQLp98SX49zW_n64FL6e8Dg", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVlsdm9PREEM", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyDwsSB1Byb2R1Y3QYlvoODA", 
+            "MaxPriceRange": 2087, 
+            "MetaTagKeywords": [
+                "Black MH Build Series PLA Filament - 1.75mm (1kg)"
+            ], 
+            "MinPriceRange": 2087, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:05:08.896540", 
+            "ProductEditedOn": "2022-03-17T00:32:47.787839", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "175mm-pla-filament-black-1-kg", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVl6WTRkREEM", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA_8KICgw"
+            ], 
+            "ShortDescription": "MH Build PLA is an affordable PLA filament intended for producing quality, 3D printed parts. MH Build PLA comes in a wide selection of bold colors to choose from. MH Build PLA is made with price in mind for any maker, from beginner to advanced, in a wide selection of bold colors.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Black MH Build Series PLA Filament - 1.75mm (1kg)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVlsdm9PREEM", 
+        "ProductNumber": "4005", 
+        "ProductPrice": 2087, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "735810238267", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 6950, 
+        "QuantityOnHand": 6950, 
+        "QuantityReserved": 6, 
+        "ReferenceUrl": "175mm-pla-filament-black-1-kg", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MY6CYEZM", 
+        "SalesIndexByDollars": 3, 
+        "SalesIndexByUnits": 1, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Black MH Build Series PLA Filament - 1.75mm (1kg)", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 26195, 
+        "SuccessRatingScore": 9885, 
+        "TotalLeadDays": 1, 
+        "TotalWeight": 1307000, 
+        "TotalWeightGrams": "1,307.00", 
+        "TotalWeightKilograms": "1.31", 
+        "TotalWeightPounds": "2.88", 
+        "VendorItemID": "", 
+        "WareHouseLocations": [], 
+        "Weight": 1307000, 
+        "WeightGrams": "1,307.00", 
+        "WeightKilograms": "1.31", 
+        "WeightPounds": "2.88", 
+        "WholesaleCost": 775
+    }, 
+    "Status": "success"
+}

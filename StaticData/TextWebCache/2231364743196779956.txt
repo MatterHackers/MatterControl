@@ -1,0 +1,262 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "175mm", 
+                "DateTimeCreated": "2019-08-13T18:14:39.247333", 
+                "Description": "1.75mm", 
+                "HexColor": null, 
+                "ID": 5665769350234112, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgID86amECgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNzm3YsJDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICAzMufiAoM", 
+                "Name": "1.75mm", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgID86amECgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNzm3YsJDA", 
+                "Reference": "filament-diameter:175mm"
+            }
+        ], 
+        "AvailableDate": "2021-12-20", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageShippingCost": 844, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-08-13T18:55:50.984455", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Dec 20th", 
+        "DisplayAverageShippingCost": "8.44", 
+        "DisplayListPrice": "72.00", 
+        "DisplayPrice": "68.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-XTJ-FMYQ", 
+        "DisplayWholesaleCost": "32.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/4114c5b9-dc4c-4fcc-9b62-16b8237d634d", 
+            "ImageUrl": "https://lh3.googleusercontent.com/sT695yFAyteuN5cr5G36x_-bD5b8MfO2bJIoWS8NfV9YPEhckwQpPCT3_qen5HR6C3jvsY5BHlrjP7lSIXa3HzYT", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWFRKRk1ZUQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "2.00", 
+            "8.00", 
+            "8.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgID5w8yaCgw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "NylonK is a kevlar fiber reinforced nylon 3D printing filament which boasts excellent abrasion resistance and durability, making it ideal for applications that require more stiffness than unfilled nylons and improved durability under frictional forces. For makers looking to create with engineering-grade materials or those in need of ultra-high-performance nylon - this filament delivers.", 
+        "ProductListPrice": 7200, 
+        "ProductListing": {
+            "ActiveSkuCount": 2, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWFRKRk1ZUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjgxV01LSww"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 12000, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "120.00", 
+                    "AddOnDisplayPrice": "115.00", 
+                    "AddOnDisplaySavings": "5.00", 
+                    "AddOnFloatPrice": 115.0, 
+                    "AddOnListingReference": "ionic-hi-temp-hybrid-support-material", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 11500, 
+                    "AddOnSavings": 500, 
+                    "AddOnSkuReference": "MA6Q2PM7", 
+                    "AddOnTitle": "Ionic Hi-Temp Hybrid Support Material - 1.75mm (0.75kg)", 
+                    "DisplaySID": "M-A6Q-2PM7", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCww", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTZRMlBNNww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -12, 
+                    "QuantityOnHand": -12, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 12000, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "120.00", 
+                    "AddOnDisplayPrice": "115.00", 
+                    "AddOnDisplaySavings": "5.00", 
+                    "AddOnFloatPrice": 115.0, 
+                    "AddOnListingReference": "ionic-hi-temp-hybrid-support-material", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 11500, 
+                    "AddOnSavings": 500, 
+                    "AddOnSkuReference": "M4HF3Q59", 
+                    "AddOnTitle": "Ionic Hi-Temp Hybrid Support Material - 2.85mm (0.75kg)", 
+                    "DisplaySID": "M-4HF-3Q59", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCww", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNEhGM1E1OQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -19, 
+                    "QuantityOnHand": -19, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgID86amECgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNzm3YsJDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-08-13T00:38:49.505975", 
+            "DisplayPriceRange": "6800", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>Perfect for Creating Functional, Beautiful Ready-to-Use Parts</strong></h3>\r\n<p>NylonK is the perfect material for the maker of any experience level who is ready to get into the exciting world of materials that can do more than the commonly used PLA and ABS. NylonK has a few more considerations when 3D printing, but don't let that intimidate you - NylonK is designed to for its strength, durability and abrasion resistance, all while remaining as soft and flexible as PRO Series Nylon. In fact, it warps less due to the added Kevlar, so it's a very easy to use material, too! Whether you're already printing with nylon, or you're only experienced with PLA, give NylonK a try - you'll soon be an expert, and making the coolest prints yet!</p>", 
+                    "ElementCode": "DYASJE", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Which nylon is right for me?</h3>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<th>Filament</th>\r\n<th>Benefit</th>\r\n<th>Optimal Use</th>\r\n</tr>\r\n<tr>\r\n<td><a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20Nylon\">PRO Series Nylon</a></td>\r\n<td>Strong, low friction</td>\r\n<td>General Purpose 3D Printing</td>\r\n</tr>\r\n<tr>\r\n<td><a href=\"https://www.matterhackers.com/store/c/nylong\">NylonG</a></td>\r\n<td>Impact Resistance</td>\r\n<td>Parts subjected to repeated shock&nbsp;</td>\r\n</tr>\r\n<tr>\r\n<td><a href=\"https://www.matterhackers.com/store/c/NylonK\">NylonK</a></td>\r\n<td>Abrasion Resistance</td>\r\n<td>Parts subject to constant friction</td>\r\n</tr>\r\n<tr>\r\n<td><a href=\"https://www.matterhackers.com/store/c/NylonX\">NylonX</a></td>\r\n<td>Tensile Strength</td>\r\n<td>Parts needing stiffness and strength</td>\r\n</tr>\r\n</table>\r\n</div>", 
+                    "ElementCode": "67NK91", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Engineering-Grade Material for High-End and Everyday Use</h3>\r\n<p>Nylon is an incredible 3D printing material thanks to its inter-layer adhesion and low friction. Nylon is a rigid filament, but under load does flex slightly to stop the part from shattering. These properties make nylon the right choice for functional parts that go from the printer directly to an end-use part. MatterHackers offers many different nylons for 3D printing from PRO Series to NylonX and NylonG all the way to the new NylonK. No matter what you are making with nylon - we've got you covered.</p>", 
+                    "ElementCode": "BOJ0I3", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/r3hUtyLWKnL4HiUwvUSZh2W-tq6HM1eM_NIjP3HqYRtPzkcMP-xK2wSa6T2IPFYJV1BrKqOnQ0Rg56-Z-6fT6gw'></p>", 
+                    "ElementCode": "QGOE85", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/9b4f7e72-0e88-4037-b036-d45f2a24e017", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/r3hUtyLWKnL4HiUwvUSZh2W-tq6HM1eM_NIjP3HqYRtPzkcMP-xK2wSa6T2IPFYJV1BrKqOnQ0Rg56-Z-6fT6gw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>Printing Recommendations</h3>\r\n<p><span>Like all nylons, NylonK must be kept dry!</span>&nbsp;If it does not remain packaged with desiccant, it will readily absorb moisture from the air; this will lead to degraded print quality and wasted filament. You can dry it out by baking it in an oven at 180&deg;F for 4-6 hours. We also carry the <a href=\"https://www.matterhackers.com/store/l/printdry-filament-drying-system/sk/MNXQRWQC\">PrintDry Filament Drying System</a> for more precise dehydration for all&nbsp;filament types.</p>", 
+                    "ElementCode": "PIKFCY", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>Technical Specifications</strong></h2>\r\n<ul>\r\n<li><span>Nominal Diameter: 1.75mm &plusmn; 0.02mm</span></li>\r\n<li><span>Print temperature: 250-265&deg;C</span></li>\r\n<li><span>Print speed: 25mm/s - 35mm/s</span></li>\r\n<li><span>Bed temperature: 60-65&deg;C with PVA glue stick OR unheated garolite</span></li>\r\n<li><span>Nozzle:<a href=\"https://www.matterhackers.com/store/c/Specialty%20Nozzles\"> Stainless Steel</a>,<a href=\"https://www.matterhackers.com/store/c/olsson-ruby\"> Olsson Ruby</a>, or other hardened nozzle types</span></li>\r\n</ul>", 
+                    "ElementCode": "JVOC92", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/4114c5b9-dc4c-4fcc-9b62-16b8237d634d", 
+                "ImageUrl": "https://lh3.googleusercontent.com/sT695yFAyteuN5cr5G36x_-bD5b8MfO2bJIoWS8NfV9YPEhckwQpPCT3_qen5HR6C3jvsY5BHlrjP7lSIXa3HzYT", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5648528915300352, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/4114c5b9-dc4c-4fcc-9b62-16b8237d634d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/sT695yFAyteuN5cr5G36x_-bD5b8MfO2bJIoWS8NfV9YPEhckwQpPCT3_qen5HR6C3jvsY5BHlrjP7lSIXa3HzYT", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/8eec3837-324a-4d9b-8ad8-a72b1ca2cf16", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/qIHJWF4721KnwuVauMgKK7Yo3m0ojOmeUz1QlNc9_tWFQjhsTu-JSnzcBulga0jSX0qe1bfnFsKBvY94x_QIbH8j", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID86amECgw", 
+            "MaxPriceRange": 6800, 
+            "MetaTagKeywords": [], 
+            "MinPriceRange": 6800, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-08-13T00:38:49.505989", 
+            "ProductEditedOn": "2022-01-20T00:08:26.059886", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "nylonk-kevlar-fiber-filament-05kg", 
+            "RelatedProducts": [], 
+            "ShortDescription": "NylonK is a kevlar fiber reinforced nylon 3D printing filament which boasts excellent abrasion resistance and durability, making it ideal for applications that require more stiffness than unfilled nylons and improved durability under frictional forces. For makers looking to create with engineering-grade materials or those in need of ultra-high-performance nylon - this filament delivers.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "NylonK Kevlar Fiber Filament (0.5kg)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID86amECgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 6800, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 1, 
+        "QuantityOnHand": 1, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "nylonk-kevlar-fiber-filament-05kg", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MXTJFMYQ", 
+        "SalesIndexByDollars": 732, 
+        "SalesIndexByUnits": 728, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "NylonK Kevlar Fiber Filament - 1.75mm (0.5kg)", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 127, 
+        "SuccessRatingScore": 9921, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 822140, 
+        "TotalWeightGrams": "822.14", 
+        "TotalWeightKilograms": "0.82", 
+        "TotalWeightPounds": "1.81", 
+        "VendorItemID": "", 
+        "WareHouseLocations": [], 
+        "Weight": 822140, 
+        "WeightGrams": "822.14", 
+        "WeightKilograms": "0.82", 
+        "WeightPounds": "1.81", 
+        "WholesaleCost": 3200
+    }, 
+    "Status": "success"
+}

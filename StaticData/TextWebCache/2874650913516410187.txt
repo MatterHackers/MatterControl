@@ -1,0 +1,258 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2022-02-03", 
+        "AverageShippingCost": 250, 
+        "BarCodeID": "8436556020025", 
+        "BlockIsDirty": false, 
+        "Brand": "i3D", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-07-22T20:00:02.173821", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Feb 3rd", 
+        "DisplayAverageShippingCost": "2.50", 
+        "DisplayListPrice": "24.95", 
+        "DisplayPrice": "24.95", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-R0V-KNJY", 
+        "DisplayWholesaleCost": "7.55", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/c3a26102-8e4d-4bea-814f-f5c004e0d158", 
+            "ImageUrl": "https://lh3.googleusercontent.com/Ber7GLCJCK2A-fXSJ8chSTwXKLnthFTXyf_DiE5_ylxXBKamhpDRcx48V0gygvbqlgQjFJrrDKeZQEIqa88LjPE", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjBWS05KWQw", 
+        "LeadDays": 0, 
+        "LegacySku": "ZMDIMAFIX", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "5.25", 
+            "1.38", 
+            "1.38"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T21:51:46.833254", 
+            "DateTimeModified": "2020-11-19T00:58:52.395956", 
+            "ID": 6255039964250112, 
+            "IsActive": true, 
+            "IsDropshipReady": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZz52OCww", 
+            "Name": "i3D", 
+            "OrderingEmailAddress": null, 
+            "PrimaryContact": "vanessa.yio@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 1, 
+            "SuppliedSIDs": [
+                "MR0VKNJY"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjBWS05KWQw"
+            ], 
+            "VendorEmailList": []
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZz52OCww", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "Dimafix Pen is the ideal 3D printer adhesive for BASF Ultrafuse 316L metal 3D printing filament as well as polycarbonate filament on glass. The Dimafix Pen provides various bed adhesion characteristics depending on your 3D printer's bed temperature. Dimafix Pen does not contain any gas and is environmentally friendly. After use, close and store Dimafix bed adhesion pen properly.\r\n", 
+        "ProductListPrice": 2495, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjBWS05KWQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-07-22T20:00:02.013306", 
+            "DisplayPriceRange": "2495", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>A 3D Printing Adhesive with great features</strong></h3>\r\n<ul>\r\n<li>Easy to use</li>\r\n<li>Avoid warping</li>\r\n<li>Completely water-soluble for easy cleanup</li>\r\n<li>Over 100 applications possible</li>\r\n<li>Works great with <a href=\"https://www.matterhackers.com/s/store?q=pc\">polycarbonate</a> on Glass</li>\r\n<li>Ideal for use with <a href=\"https://www.matterhackers.com/store/l/essentium-basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm/sk/M3R07U9R\">BASF ultrafuse</a></li>\r\n</ul>", 
+                    "ElementCode": "KTTVZ0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/dAfZWnCR4BsnT-gmLZ25xjNLA3wJVzU0lOx58J_VkvWBij35AW4jF9VfTft2WHFNp59b9I3VUdQbrzxrDVfLc4c'></p>", 
+                    "ElementCode": "72TEON", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/00325fc3-adc1-452a-812a-a86843be38f5", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/dAfZWnCR4BsnT-gmLZ25xjNLA3wJVzU0lOx58J_VkvWBij35AW4jF9VfTft2WHFNp59b9I3VUdQbrzxrDVfLc4c", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>How to use Dimafix Adhesive Pen with your 3D printer</strong></h3>\r\n<ol>\r\n<li>Shake pen before applying to the base</li>\r\n<li>Apply to bed at room temperature</li>\r\n<li>Wait for the print surface to dry and heat the bed</li>\r\n<li>Keep print bed temperature above 85C during printing</li>\r\n<li>After printing, wait for print bed to cool down and remove your 3D print</li>\r\n<li>After use, close and store properly</li>\r\n</ol>\r\n<p></p>", 
+                    "ElementCode": "0WZTTS", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/6Wtf3OjlweRAlf1ysoQX24jpAjx-9VkmP26-NSrXE_8wTuXU9zPp1C9eyz-O4gkS8JTH0AI-I1OPMSBBG6ZZ8w'></p>", 
+                    "ElementCode": "NBOJJH", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/477a0a8d-6e36-4a80-aa93-ff197e661260", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/6Wtf3OjlweRAlf1ysoQX24jpAjx-9VkmP26-NSrXE_8wTuXU9zPp1C9eyz-O4gkS8JTH0AI-I1OPMSBBG6ZZ8w", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>Get different adhesions with Dimafix pen allowing you to print from simple to complex 3D prints</strong></h3>\r\n<p>Below 60&ordm;C:&nbsp;Low adhesion, the objects can be detached from the plate.</p>\r\n<p>60 - 75&ordm;C: Average adhesion, for simple prints</p>\r\n<p>75 - 95&ordm;C:&nbsp;High adhesion, for complex geometries and lengthy prints</p>\r\n<p>Above 95&ordm;C: Very high adhesion, for very complex geometries and very lengthy prints</p>", 
+                    "ElementCode": "IB2NNQ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img src=\"https://lh3.googleusercontent.com/LPUmXRd3v154Om91QK_PJERe764hmVQCBS4WYutgkJJKTZ1EHMmHGus2VdV0VWsCJrhMexgn_Bu7roKzQbYPeX0\" /></p>\r\n<p class=\"align-center\"><em>This chart showcases different print bed temperatures can result in different levels of adhesion</em></p>", 
+                    "ElementCode": "UFG82C", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/b09ce199-f5a1-45dc-8641-826ce1ff8eff", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/LPUmXRd3v154Om91QK_PJERe764hmVQCBS4WYutgkJJKTZ1EHMmHGus2VdV0VWsCJrhMexgn_Bu7roKzQbYPeX0", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><a href=\"https://www.matterhackers.com/r/sKAMMY\">Dimafix Pen Material Safety Data Sheet</a></p>\r\n<p><a href=\"https://www.matterhackers.com/r/lqjFxR\">Dimafix Pen Technical Data Report</a></p>", 
+                    "ElementCode": "53H1RT", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/-JE7K5X_LXbB3g4cpsjGs9YOMwBZZaB33pmiO4FF0ZXpd9uL4xMu2XFUWMEXQYeAW60yQrHf-yaO94u6thREvVOJ'></p>", 
+                    "ElementCode": "L2VQ0Q", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/06e836f6-0a31-42bc-8944-7275896669d8", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/-JE7K5X_LXbB3g4cpsjGs9YOMwBZZaB33pmiO4FF0ZXpd9uL4xMu2XFUWMEXQYeAW60yQrHf-yaO94u6thREvVOJ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/c3a26102-8e4d-4bea-814f-f5c004e0d158", 
+                "ImageUrl": "https://lh3.googleusercontent.com/Ber7GLCJCK2A-fXSJ8chSTwXKLnthFTXyf_DiE5_ylxXBKamhpDRcx48V0gygvbqlgQjFJrrDKeZQEIqa88LjPE", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5682546767560704, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/c3a26102-8e4d-4bea-814f-f5c004e0d158", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Ber7GLCJCK2A-fXSJ8chSTwXKLnthFTXyf_DiE5_ylxXBKamhpDRcx48V0gygvbqlgQjFJrrDKeZQEIqa88LjPE", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/7c98db3c-8140-4965-b412-f5e60d537476", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/n7L4WVcjrGC7913Mw5F2fzU_bNsjeiiJxVdZVqxaGCxXfha-ONCXXemVt9wo_H1nKEV472fYzRaJUf8WP990MA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/04518433-f379-4ed8-95c7-944a4fddde84", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/bSsLtp2y3fpE-MJCUV6HK4SUGkFu6V8QaOtdkcE7UkA8Vau5ZwZqX51cGHwyEBRVzHNTEiFn55CdNyVcW-Qd2w", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/4e68b0c3-0642-490c-9b7b-a95aa63d9bd3", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/JlzW8jEKJIAJO6LPKkSpgl89oH-z_o7LdaPbURs1gUrFdewN30-7QgNAoCcGiGPJF13M3XGuT7x5WH0oI1YB6w", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+            "MaxPriceRange": 2495, 
+            "MetaTagKeywords": [], 
+            "MinPriceRange": 2495, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-07-22T20:00:02.013320", 
+            "ProductEditedOn": "2022-03-15T21:36:55.107978", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "dimafix-3d-printing-adhesive-pen", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgw"
+            ], 
+            "ShortDescription": "Dimafix Pen is the ideal 3D printer adhesive for BASF Ultrafuse 316L metal 3D printing filament as well as polycarbonate filament on glass. The Dimafix Pen provides various bed adhesion characteristics depending on your 3D printer's bed temperature. Dimafix Pen does not contain any gas and is environmentally friendly. After use, close and store Dimafix bed adhesion pen properly.\r\n", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Dimafix 3D Printing Adhesive Pen"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 2495, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 21, 
+        "QuantityOnHand": 21, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "dimafix-3d-printing-adhesive-pen", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MR0VKNJY", 
+        "SalesIndexByDollars": 441, 
+        "SalesIndexByUnits": 144, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Dimafix 3D Printing Adhesive Pen", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 439, 
+        "SuccessRatingScore": 9841, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 99220, 
+        "TotalWeightGrams": "99.22", 
+        "TotalWeightKilograms": "0.10", 
+        "TotalWeightPounds": "0.22", 
+        "VendorItemID": "", 
+        "Weight": 99220, 
+        "WeightGrams": "99.22", 
+        "WeightKilograms": "0.10", 
+        "WeightPounds": "0.22", 
+        "WholesaleCost": 755
+    }, 
+    "Status": "success"
+}
