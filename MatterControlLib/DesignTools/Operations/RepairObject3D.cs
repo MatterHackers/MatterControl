@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					inMesh = sourceMesh.Copy(cancellationToken);
 					if (WeldTolerance > 0)
 					{
-						inMesh.MergeVertices(.01);
+						inMesh.MergeVertices(WeldTolerance);
 					}
 					else
 					{
