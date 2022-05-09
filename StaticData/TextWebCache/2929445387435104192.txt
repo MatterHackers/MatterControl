@@ -1,0 +1,361 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2021-08-11T19:20:47.699384", 
+                "Description": "2 Years of Warranty Protection", 
+                "HexColor": null, 
+                "ID": 5653312427261952, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMD6ma_zCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLr8-bIKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICg-IW1hQoM", 
+                "Name": "2 Year Enhanced Warranty (+$845)", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD6ma_zCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLr8-bIKDA", 
+                "Reference": "ultimaker-enhanced-service-plan-option:ultimaker-s5-with-material-bundle"
+            }
+        ], 
+        "AvailableDate": "2021-09-08", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "Ultimaker", 
+        "ComponentSkuCount": 2, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSDZEVkROSww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNN0oyWkpYOQw"
+        ], 
+        "ConfigurableListing": true, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2021-08-09T07:16:58.278381", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Sep 8th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "7,200.00", 
+        "DisplayPrice": "7,200.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-8VS-CSAU", 
+        "DisplayWholesaleCost": "5,760.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/cb873215-d228-4435-9e2f-2870a64b9f1c", 
+            "ImageUrl": "https://lh3.googleusercontent.com/I2CdThJ5f9iegpKDPiAWLZ1zkzUZrG-TdlC5UB9VYS9Bv0e81-2VN6qql32xz8uLCNWCNR9yVBn7xnEyZYGgt4bhfS0qppICdt8y", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOFZTQ1NBVQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printers", 
+        "ProductDescription": "The Ultimaker S5 3D printer is a powerful, large-format, dual extrusion 3D printer that is the most reliable and easy-to-use 3D printer for professional, industrial, and educational use. \r\n\r\nTop Ultimaker S5 3D Printer Features: \r\n\r\n\u2022  Large-format - 330 x 240 x 300 mm\r\n\u2022  Dual Extrusion - print with multiple materials at once\r\n\u2022  Swappable Print Cores - print with advanced materials\r\n\u2022  Includes free Essentials software - upgrades available\r\n\u2022  Includes one year of free warranty - upgrades available\r\n\r\n", 
+        "ProductListPrice": 720000, 
+        "ProductListing": {
+            "ActiveSkuCount": 3, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSDZEVkROSww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOFZTQ1NBVQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNlo1U05KTAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 9999, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "99.99", 
+                    "AddOnDisplayPrice": "99.99", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 99.99, 
+                    "AddOnListingReference": "matterhackers-launch-pad-ultimaker", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 9999, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MSPP23TK", 
+                    "AddOnTitle": "MatterHackers Launchpad for Ultimaker - 1hr Expert Setup Assistance", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDIo_HICAw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU1BQMjNUSww", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 1795, 
+                    "AddOnDiscountDisplay": 22, 
+                    "AddOnDisplayBasePrice": "17.95", 
+                    "AddOnDisplayPrice": "13.99", 
+                    "AddOnDisplaySavings": "3.96", 
+                    "AddOnFloatPrice": 13.99, 
+                    "AddOnListingReference": "stick-stick-3d-printer-bed-adhesion-50ml", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 1399, 
+                    "AddOnSavings": 396, 
+                    "AddOnSkuReference": "MKDQ0LW1", 
+                    "AddOnTitle": "Stick Stick 3D Printer Bed Adhesion - 50ml", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICsj_SMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNS0RRMExXMQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 81, 
+                    "QuantityOnHand": 81, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 200000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "2,000.00", 
+                    "AddOnDisplayPrice": "2,000.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 2000.0, 
+                    "AddOnListingReference": "smartslice-print-optimization-for-cura", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 200000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M2ZZG36T", 
+                    "AddOnTitle": "SmartSlice Slicing Optimizer - Single User License", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMlpaRzM2VAw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD6ma_zCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLr8-bIKDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-08-20T20:44:01.048062", 
+            "DisplayPriceRange": "635500 - 799500", 
+            "Elements": [
+                {
+                    "Content": "<p class=\"align-left\"><span></span></p>\r\n<h2 class=\"align-left\"><strong>The Ultimaker S5&nbsp;</strong></h2>\r\n<h3 class=\"align-left\"><strong>A Powerful, Large-Format, Dual Extrusion 3D Printer</strong></h3>\r\n<p></p>\r\n<p><span> The Ultimaker S5 3D Printer is a reliable and easy-to-use machine that's great for professionals, educators, and any industrial or manufacturing applications. </span></p>\r\n<p><span>Here are the key features of the Ultimaker S5 3D printer:&nbsp;</span></p>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Large Build Volume</strong>&nbsp;</span><span></span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Dual Extrusion Capabilities</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Swappable Print Cores</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Print with Any Material</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Automatic Bed Leveling</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><strong>Onboard Camera</strong>&nbsp;</li>\r\n</ul>\r\n<p></p>\r\n<ul>\r\n<li><strong>Free Ultimaker Essentials Software</strong>&nbsp;</li>\r\n</ul>\r\n<p><span></span></p>\r\n<hr />", 
+                    "ElementCode": "NV83DN", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"6WtwBtE45S8\" data-size=\"lg\"></div>\r\n<p></p>\r\n<hr />", 
+                    "ElementCode": "81V8X1", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Print Large, Functional Parts<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 3D printer has one of the largest build volumes available, allowing you to create large, end-use parts, prototypes, and custom jigs and fixtures.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Build Volume: 330 x 240 x 300 mm</span></li>\r\n<li aria-level=\"1\"><span>Prototype &amp; create large end-use parts in-house</span></li>\r\n<li aria-level=\"1\"><span>Print more parts at once</span></li>\r\n<li aria-level=\"1\"><span>Beneficial for a <a href=\"#proof\">wide variety of industries</a></span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Dentist Interview\" src=\"https://lh3.googleusercontent.com/1goHjvt-AyOsQ_bNfzlOMeU2Z9AXjsD2yzj1jSyLvQeSN4Xw3DaRG4ihJRZ4Yq-oG-jTGxU64lkIZlYc2jwn9WFi5SNjcDCl91gEbbw\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "Z46JSJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6 icon\"><img alt=\"Thermoformed Braces\" src=\"https://lh3.googleusercontent.com/4H5L5Ge4s9vT7rGz6wghI_rjQEmZ6L96vxG7Of0JTYpKGunYC6GXzE0Ok93ME7hggUTLGO_DN1cT0kge5MeLm1ou2__itU7dcMEDLbk\" class=\"rounded\" /></div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Powerful, Dual Extrusion 3D Printing<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 3D printer has a top-tier dual extrusion system that produces clean, geometrically complex parts.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Use multiple materials at once<br /></span></li>\r\n<li aria-level=\"1\"><span>3D print complex parts with soluble support structures <br /></span></li>\r\n<li aria-level=\"1\"><span>Articulating nozzle-lifting system for cleaner prints<br /></span></li>\r\n</ul>\r\n</div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "BGKRDF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Successfully 3D Print with Any Material<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 3D printer has swappable print cores, making it incredibly easy to print between a wide range of materials, including advanced materials like NylonX and even stainless steel metal. </span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Use a variety of Print Cores designed to help you succeed with any material.</span></li>\r\n<li aria-level=\"1\"><span>Pivot quickly to new projects with the simple print core system.</span></li>\r\n<li aria-level=\"1\"><span>Over 200 tested materials are available, including metal.</span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Print with Any Material\" src=\"https://lh3.googleusercontent.com/j5vcLvBlaTMTSneH3cqf-i4j1VuEUCYIv49wHb7p8JXRqWw9x_Kh4Sa8eT5olDvwziP7nVwV2YeVsS2zukGBjxuuisK86_-FbSpPzw\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "SCBMQ1", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6 icon\"><img alt=\"Get the best results with the Ultimaker S5 3D printer\" src=\"https://lh3.googleusercontent.com/ysWhJ6vWLW0czRjr8QgB8FAQwOW5gnLDmqb-9HyahEQPF4EW_dvKVRsHA5ViWz6NB5hpPJjmDxqfoo4B1aUEvgUsPLIO4V9m67r8LHk\" class=\"rounded\" /></div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Flawless Prints, Time and Time Again<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 3D printer's automatic leveling system makes it easy to get started printing quickly so you can keep productivity up.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Automatic bed leveling ensures great prints every time.<br /></span></li>\r\n<li aria-level=\"1\"><span>Enhanced filament feed system and dual filament flow sensors.<br /></span></li>\r\n<li aria-level=\"1\"><span>Filament runout sensors and power outage protection - never lose a print.<br /></span></li>\r\n</ul>\r\n</div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "9O1L3K", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Award-Winning Interface and Remote Print Monitoring<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 3D printer has swappable print cores, making it incredibly easy to print between a wide range of materials, including advanced materials like NylonX and even stainless steel metal. </span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>4.7 inch touchscreen for smooth interface control.</span></li>\r\n<li aria-level=\"1\"><span>Monitor your print job&rsquo;s progress remotely via onboard camera.</span></li>\r\n<li aria-level=\"1\"><span>Print remotely over Wi-Fi directly to your Ultimaker S5</span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Award Winning Interface\" src=\"https://lh3.googleusercontent.com/auT8G7YahkwC8_Sgr33SbCwyUSKkjusLsKvvw63rQqAdLJrqUWUIZshDrbuTD-2Vnrb4dydONxGeyctGUl-DCcta2Nc-R0MZji1DsA\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "0FFEDN", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6 icon\"><img alt=\"What materials are compatible with the Ultimaker S5 3D printer?\" src=\"https://lh3.googleusercontent.com/4M249FsnQZzlrijwYKrxA9ceC2dijVuAXzAsGRrySD9-0jhyYIS1ejwKZr8rSg1M6apqFb6EfU54xnFA80H6T_LGccybaeIadJeHJw\" class=\"rounded\" /></div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>What Materials Can I Print with the Ultimaker S5 3D Printer?<br /></strong></h2>\r\n</div>\r\n<p><span>The Ultimaker S5 can handle nearly every material available for desktop 3D printing, including advanced materials and composites like carbon fiber-infused <a href=\"https://www.matterhackers.com/store/c/pro-series-nylon/NylonX\">NylonX</a> and <a href=\"https://www.matterhackers.com/store/c/basf-3d-printing-filament-and-materials/metal-3d-printing-filament-from-basf\">Ultrafuse Stainless Steel Metal</a> filaments. Here is a list of 3D printing materials compatible with the Ultimaker S5:&nbsp;</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>PLA and&nbsp;</span>Tough PLA</li>\r\n<li aria-level=\"1\">ABS</li>\r\n<li aria-level=\"1\">PETG and CPE</li>\r\n<li aria-level=\"1\"><span>ASA</span></li>\r\n<li aria-level=\"1\"><span>Nylon,&nbsp;</span><span>NylonX and&nbsp;</span><span>NylonG</span></li>\r\n<li aria-level=\"1\"><span>Ultrafuse 316L and&nbsp;17-4 PH</span></li>\r\n<li aria-level=\"1\"><span>TPU and TPE</span></li>\r\n<li aria-level=\"1\"><span>PVA and&nbsp;</span>Soluble Supports</li>\r\n<li aria-level=\"1\"><span>Polycarbonate</span></li>\r\n<li aria-level=\"1\"><span>Polypropylene</span></li>\r\n<li aria-level=\"1\"><span>View all Ultimaker S5 Compatible materials <a href=\"https://www.matterhackers.com/store/c/3d-printer-filament\">here</a>.</span></li>\r\n</ul>\r\n</div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "YGAG0Z", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong><a id=\"proof\"></a>See How Ultimaker Customers are Succeeding<br /></strong></h2>\r\n</div>\r\n<p><span>Ultimaker 3D printers are being used successfully in many industries, including aerospace, automotive, manufacturing, and education. </span></p>\r\n<ul>\r\n<li aria-level=\"1\"><a href=\"https://www.matterhackers.com/articles/ultimaker-and-volkswagen-autoeuropa\"><span>Volkswagen Autoeuropa </span></a></li>\r\n<li aria-level=\"1\"><a href=\"https://www.matterhackers.com/r/ouui4W\"><span>Metro Plastics</span></a></li>\r\n<li aria-level=\"1\"><a href=\"https://www.matterhackers.com/r/FpxMi2\"><span>Heineken</span></a></li>\r\n<li aria-level=\"1\"><a href=\"https://www.matterhackers.com/articles/getting-started-ultimaker-3d-printers-edu\"><span>Education: A STEM Teacher's Analysis</span></a></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Heineken: Ensuring production continuity with 3D printing\" src=\"https://lh3.googleusercontent.com/TY1DGO_SwiG_tL_w8ophHmJwK5B4_OPFcBypg7Fkasm0eil56CoxhLM9CWkHLLG12FCBUm38J79jWSLdZnkmAm-kh-ul5fvySXStKVY\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "8OOAEF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6 icon\"><img alt=\"Increase productivity with Ultimaker Essentials\" src=\"https://lh3.googleusercontent.com/kQ10pVcxPbgDVmrlvUSuEN0EcaXQr8BLVURzO_j9IOC6uqid8k2zQuhtBW8jzhZfw11Dimn_I844QoRlaQqDS5jLOBM5e0mw9nUfYfaA\" class=\"rounded\" /></div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Streamline your Workflow with Ultimaker Essentials<br /></strong></h2>\r\n</div>\r\n<p><span>Ultimaker Essentials is free with the Ultimaker S5, giving you the power to print remotely via cloud data with increased security and better print queue management.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Reprint from queue history easily to keep production moving.<br /></span></li>\r\n<li aria-level=\"1\"><span>Duplicate and reorder print jobs without reslicing.<br /></span></li>\r\n<li aria-level=\"1\"><span>Upgrade to Ultimaker's Enterprise software to increase team productivity on a larger scale.<br /></span></li>\r\n</ul>\r\n</div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "LBVAGT", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2 class=\"align-left\"><strong>Which Ultimaker 3D Printer is Right for Me?<br /></strong></h2>\r\n</div>\r\n<p><span></span></p>\r\n<p><span>Ultimaker has fine-tuned their robust line of 3D printers to have a solution for every user - find out which printer will best suit your specific need in our comparison article&nbsp;<a href=\"https://www.matterhackers.com/articles/ultimaker-comparison-guide\">here</a>&nbsp;or watch the video below. Here are some Ultimaker 3D printer features at a glance:&nbsp;</span></p>\r\n<p><span></span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span><a href=\"https://www.matterhackers.com/store/l/ultimaker-2-connect-3d-printer/sk/M18NHUJN\"><strong>Ultimaker 2+ Connect</strong></a>: single extrusion workhorse starting at $2,650.</span><span></span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span><a href=\"https://www.matterhackers.com/store/l/ultimaker-s3-3d-printer-fully-assembled/sk/MMZCYN6V\"><strong>Ultimaker S3</strong></a>: all the features of the S5, but with a more compact footprint starting at $4,080.<br /></span><span></span><span></span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span><strong>Ultimaker S5</strong>: powerful, large-format dual extrusion machine starting at $6,355.<br /></span><span></span><span></span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span><a href=\"https://www.matterhackers.com/store/l/ultimaker-s5-pro-bundle/sk/MFXMP6TU\"><strong>Ultimaker S5 Pro Bundle</strong></a>: the S5 paired with the material station and air manager in one ecosystem starting at $9,550.</span></li>\r\n</ul>\r\n<hr />", 
+                    "ElementCode": "8EQ9X0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"TPPWRk5kYBU\" data-size=\"lg\"></div>\r\n<p></p>\r\n<hr />", 
+                    "ElementCode": "R1JMU9", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h4><strong>What Comes with the Ultimaker S5 3D Printer?</strong></h4>\r\n<p><strong>ACCESSORIES</strong></p>\r\n<ul>\r\n<li><span>Glass Build Plate</span></li>\r\n<li><span>Spool Holder with Material Guide</span></li>\r\n<li><span>Power Cable</span></li>\r\n<li><span>Ethernet Cable</span></li>\r\n<li><span>USB Stick</span></li>\r\n<li>Print core AA 0.4 (an additional AA Core is already installed)</li>\r\n<li>Print core BB 0.4 (already installed)</li>\r\n<li>Nozzle cover (3x)</li>\r\n</ul>\r\n<p></p>\r\n<p><strong>CONSUMABLES</strong></p>\r\n<ul>\r\n<li><span>Tough PLA Filament (750 g)</span></li>\r\n<li>PVA Soluble Support Filament (750 g)<span></span></li>\r\n<li>Glue Stick for Bed Adhesion</li>\r\n<li>Oil &amp; Grease for Maintenance</li>\r\n</ul>\r\n<p></p>\r\n<p><strong>TOOLS</strong></p>\r\n<ul>\r\n<li>Hex Screwdriver (2 mm)</li>\r\n<li><span>XY Calibration Sheet</span></li>\r\n<li><span>Calibration Card</span></li>\r\n</ul>\r\n<hr />", 
+                    "ElementCode": "IDU20V", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h4><strong>Ultimaker S5 3D Printer Technical Specifications</strong></h4>\r\n<p><strong></strong></p>\r\n<p><strong>What are the Dimensions for the S5?</strong></p>\r\n<ul>\r\n<li>Build Volume:&nbsp;330 x 240 x 300 mm (13 x 9.5 x 11.8 inches)</li>\r\n<li>Assembled Dimensions (with spool holder installed):&nbsp;495 x 585 x 780 mm&nbsp;(19.5 x 23 x 30.7 inches)</li>\r\n<li><span>Compatible filament diameter: 2.85mm</span></li>\r\n<li><span>Weight: 20.6 kg (45.4 lbs)</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<p><strong>What are the Ultimaker S5's printer properties?</strong></p>\r\n<ul>\r\n<li><span>Print Technology: FFF (Fused filament fabrication)</span></li>\r\n<li><span>Maximum Power Output:&nbsp;500 W</span></li>\r\n<li><span>Layer Resolution:&nbsp;200 - 20 micron with 0.4mm nozzle (stock), 150 - 60 micron with&nbsp;0.25 mm nozzle,&nbsp;300 - 20 micron with 0.6 mm nozzle, and 600 - 20 micron with 0.8mm nozzle. Additional print cores are available <a href=\"https://www.matterhackers.com/store/c/HotEnds/ultimaker-3d-printer-print-cores-hotends\">here</a>.&nbsp; &nbsp; &nbsp;</span></li>\r\n<li>XYZ Resolution:&nbsp;<span>6.9, 6.9, 2.5 micron</span></li>\r\n<li><span>Build Speed:&nbsp;&lt; 24 mm&sup3;/s&nbsp;</span></li>\r\n<li><span>Nozzle Temperature:&nbsp;180 - 280 &deg;C</span></li>\r\n<li><span>Nozzle Heat Up Time:&nbsp;&lt; 2 minutes</span></li>\r\n<li><span>Operating Sound:&nbsp;&lt; 50 dBA</span></li>\r\n<li><span>Build Plate: Heated glass bed -&nbsp;20 - 140 &deg;C</span></li>\r\n<li><span>Build Plate Leveling: automatic advanced leveling</span></li>\r\n<li>Feeder Type:&nbsp;Dual-geared feeder designed for advanced composite materials</li>\r\n<li>Touchscreen Display:&nbsp;4.7-inch (11.9 cm) color</li>\r\n<li>Print Head:&nbsp;Dual extrusion print head with an articulating nozzle-lifting system</li>\r\n<li>Print Core and Nozzles Replacement: Swappable Print Cores</li>\r\n<li>Nozzles Diameters: arrives with 0.4 mm, but&nbsp;0.25 mm, 0.6 mm, and 0.8 mm are available <a href=\"https://www.matterhackers.com/store/c/HotEnds/ultimaker-3d-printer-print-cores-hotends\">here</a>.&nbsp;</li>\r\n</ul>\r\n<p></p>\r\n<p><strong>What is the Software for the Ultimaker S5?</strong></p>\r\n<ul>\r\n<li>Ultimaker Cura: print preparation software (free)</li>\r\n<li>Ultimaker Essentials: printer management software (free and available to upgrade for enterprise solutions)</li>\r\n<li>Supported OS:&nbsp;MacOS, Windows, and Linux</li>\r\n<li>Supported File Types:&nbsp;STL, OBJ, X3D, 3MF, BMP, GIF, JPG, PNG</li>\r\n<li>Printable Formats:&nbsp;G, GCODE, GCODE.gz, UFP</li>\r\n<li>File Transfer:&nbsp;Wi-Fi, Ethernet, USB</li>\r\n</ul>\r\n<p></p>\r\n<p></p>", 
+                    "ElementCode": "VD4Q7Q", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/d18b91f3-c4c8-4237-9f29-2be7790c7cd0", 
+                "ImageUrl": "https://lh3.googleusercontent.com/sUfIElNpMhzSqcaFQ_dTQXZv0NoA6QmER4MRDJ-8MXjZwN9wiZXEgp3-PmOHZ0h6LalNsKlMeWIp6RFxUE9kkA", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": true, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 6136896758480896, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/49e077ea-cca9-4cf6-88e4-e493a7899d5b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/VE2AuptEG1e0ohIN947YlaPyUlcVrg__kskhbeG9IFZ5-YkF2qMO3trDTop-_KMhhP0oKbL3Hq22nl6KSeJChaA2", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/59df5baf-40e2-4a6f-b198-8fd1a55ebcf8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/s0lU2uN4yle5M6p798ux0FkhvJa2IuQ0b2mbu9UqFO4I8Y0GfP-mXMoPACMJSoknHhIyCKG1cdgYihNkXBRwcIc", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d18b91f3-c4c8-4237-9f29-2be7790c7cd0", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/sUfIElNpMhzSqcaFQ_dTQXZv0NoA6QmER4MRDJ-8MXjZwN9wiZXEgp3-PmOHZ0h6LalNsKlMeWIp6RFxUE9kkA", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/627ecd5c-b017-413a-b1a5-6dd30f845eec", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/95_L0FlHIzZInesZlF9coiypH_Uc1zUyQnhS32GGuD4IObzAWks0CzNtQnPv3JxvEcHNXpAR4aip_rvpgUzkgY0", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/7f66c9fb-c88a-4efb-882c-41fbf7d9c8ca", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/hQIOrqiL9Vb1BDrZ6Yj_AMkgMg-YjiUCer61tvHN92DrRkleZvJQgTce5NvlsQwXH6xjs7NkTQcK-BIhRRtHAsU", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/a07af244-f354-4c6b-adc7-9a6b7b960ec8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/dLV40S_z5Ep1iVnJEYpUQJ2iPczSsVmrV0iiQwX8-te7Q4tBoDkJCPR8i1C0SlAI_PS-rwENQm6qCgVeJ_gMChE", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMD6ma_zCgw", 
+            "MaxPriceRange": 799500, 
+            "MetaTagKeywords": [
+                "s5", 
+                "ultimaker", 
+                "professional", 
+                "Ultimaker S5", 
+                "New Ultimaker 3D Printer", 
+                "New Ultimaker", 
+                "Studio 5", 
+                "Ultimaker Studio 5", 
+                "ultimakers5"
+            ], 
+            "MinPriceRange": 635500, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2020-08-20T20:44:01.048056", 
+            "ProductEditedOn": "2022-01-19T21:32:16.585741", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "ultimaker-s5", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNVpLd3Fnb00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMD3-J6ECQw", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBM1ptYnF3b00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBd01IeHZRa00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDY5vT1Cww"
+            ], 
+            "ShortDescription": "The Ultimaker S5 3D printer is a powerful, large-format, dual extrusion 3D printer that is the most reliable and easy-to-use 3D printer for professional, industrial, and educational use. \r\n\r\nTop Ultimaker S5 3D Printer Features: \r\n\r\n\u2022  Large-format - 330 x 240 x 300 mm\r\n\u2022  Dual Extrusion - print with multiple materials at once\r\n\u2022  Swappable Print Cores - print with advanced materials\r\n\u2022  Includes free Essentials software - upgrades available\r\n\u2022  Includes one year of free warranty - upgrades available\r\n\r\n", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Ultimaker S5 3D Printer"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMD6ma_zCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 720000, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 8, 
+        "QuantityOnHand": 8, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "ultimaker-s5", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "M8VSCSAU", 
+        "SalesIndexByDollars": 2, 
+        "SalesIndexByUnits": 620, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Ultimaker S5 3D Printer - 2 Year Warranty", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 48, 
+        "SuccessRatingScore": 9792, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 20866000, 
+        "TotalWeightGrams": "20,866.00", 
+        "TotalWeightKilograms": "20.87", 
+        "TotalWeightPounds": "46.00", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 576000
+    }, 
+    "Status": "success"
+}

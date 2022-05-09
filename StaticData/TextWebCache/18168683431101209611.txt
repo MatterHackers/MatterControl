@@ -1,0 +1,426 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2022-01-11", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageShippingCost": 599, 
+        "BarCodeID": "8.05652E+12", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:26:33.210880", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jan 11th", 
+        "DisplayAverageShippingCost": "5.99", 
+        "DisplayListPrice": "65.00", 
+        "DisplayPrice": "58.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-D5L-DGS7", 
+        "DisplayWholesaleCost": "20.64", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_nWL-DWa1sRQhMCAKDdtMm64ICH4VRGa1SBVWVL3GcF2k71XomEmrfCxIfRd1d-Qg1K14ylkEK3HlR_ND5X8jTqtx", 
+            "ImageUrl": "https://lh3.googleusercontent.com/SEKupVk3CHdPoHZHIqR1iPK-7GjELuC3EdXecIqNU1GAFYKnB8_kLaVY3sU2434kihS0jYmWqHQvNB4SCcksD78", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDVMREdTNww", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GKv5rD8M", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "8.00", 
+            "8.00", 
+            "2.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": {
+            "ImageFile": "/mh-product-images/prod/bf69dd8e-4b93-44f3-bd98-46edc9a4feb1", 
+            "ImageUrl": "https://lh3.googleusercontent.com/CCFNakINQbO4LudKy5LNSPSUAJObc2MikrrbBcE2wBZMi0mw1-4bDP6-HRCsVy5DXnVZahnWxdd2DB7DiMm_q-VC_v09Kdf3SJ8", 
+            "IsFeatured": false
+        }, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [
+            {
+                "AdjustedPrice": 5742, 
+                "AdjustedPriceDisplay": "57.42", 
+                "PercentOfPrice": 9900, 
+                "PercentOfPriceDisplay": "99.00", 
+                "QualifyingQuantity": 2
+            }, 
+            {
+                "AdjustedPrice": 5486, 
+                "AdjustedPriceDisplay": "54.86", 
+                "PercentOfPrice": 9460, 
+                "PercentOfPriceDisplay": "94.60", 
+                "QualifyingQuantity": 4
+            }, 
+            {
+                "AdjustedPrice": 5278, 
+                "AdjustedPriceDisplay": "52.78", 
+                "PercentOfPrice": 9100, 
+                "PercentOfPriceDisplay": "91.00", 
+                "QualifyingQuantity": 6
+            }, 
+            {
+                "AdjustedPrice": 5220, 
+                "AdjustedPriceDisplay": "52.20", 
+                "PercentOfPrice": 9000, 
+                "PercentOfPriceDisplay": "90.00", 
+                "QualifyingQuantity": 8
+            }, 
+            {
+                "AdjustedPrice": 5162, 
+                "AdjustedPriceDisplay": "51.62", 
+                "PercentOfPrice": 8900, 
+                "PercentOfPriceDisplay": "89.00", 
+                "QualifyingQuantity": 10
+            }, 
+            {
+                "AdjustedPrice": 5104, 
+                "AdjustedPriceDisplay": "51.04", 
+                "PercentOfPrice": 8800, 
+                "PercentOfPriceDisplay": "88.00", 
+                "QualifyingQuantity": 14
+            }
+        ], 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFt_ibCQw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "NylonX is an amazing, reinforced nylon filament. By adding micro-carbon fibers to nylon, you get a tough filament capable of printing parts with stiffness, impact resistance, and high tensile strength. NylonX is an engineering grade filament, ready for hobbyists and advanced users alike, which gives you the durability of nylon combined with the stiffness of carbon fiber.", 
+        "ProductListPrice": 6500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDVMREdTNww"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 12000, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "120.00", 
+                    "AddOnDisplayPrice": "115.00", 
+                    "AddOnDisplaySavings": "5.00", 
+                    "AddOnFloatPrice": 115.0, 
+                    "AddOnListingReference": "ionic-hi-temp-hybrid-support-material", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 11500, 
+                    "AddOnSavings": 500, 
+                    "AddOnSkuReference": "MA6Q2PM7", 
+                    "AddOnTitle": "Ionic Hi-Temp Hybrid Support Material - 1.75mm (0.75kg)", 
+                    "DisplaySID": "M-A6Q-2PM7", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCww", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTZRMlBNNww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -12, 
+                    "QuantityOnHand": -12, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 18900, 
+                    "AddOnDiscountDisplay": 8, 
+                    "AddOnDisplayBasePrice": "189.00", 
+                    "AddOnDisplayPrice": "173.63", 
+                    "AddOnDisplaySavings": "15.37", 
+                    "AddOnFloatPrice": 173.63, 
+                    "AddOnListingReference": "printdry-pro-filament-drying-system", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 17363, 
+                    "AddOnSavings": 1537, 
+                    "AddOnSkuReference": "M25THN6X", 
+                    "AddOnTitle": "PrintDry PRO Filament Drying System", 
+                    "DisplaySID": "M-25T-HN6X", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 153, 
+                    "QuantityOnHand": 153, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:07:05.485560", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/HT9DF2frCYyfADzJnbqxkcOVlwXuK53L4vQc9V_QsuW0yTvcMS44bsuscSKxpeolmFOamn0HpLjOU2MVfs0w3kI\" style=\"width:100%\"/></p>", 
+                    "ElementCode": "PEC07I", 
+                    "Images": [], 
+                    "Type": "Html"
+                }, 
+                {
+                    "Content": "<h2><strong>Create Functional, Beautiful Ready-To-Use Parts</strong></h2>\r\n<p>NylonX is the perfect material for any level maker who is ready to transition into something outside the commonly used PLA and ABS. Don't let printing nylon intimidate you - this material is designed to provide strength, durability, and ease of use. If you are already printing with nylon, give NylonX a try - it will soon be your new favorite!</p>", 
+                    "ElementCode": "Z8UL2U", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"62dbeY5iPvU\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "D98483", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>Start Your Adventure with NylonX</strong></h2>\r\n<p>The best part of NylonX is that the carbon fiber adds stability and rigidity, so parts are much less likely to warp than with standard nylon. This means that printing with NylonX is actually easier than printing with traditional nylon while providing parts that are durable and stiff from the carbon fiber. Additionally, less warping means you can enjoy more accurate printed parts with fewer failed prints.</p>", 
+                    "ElementCode": "QV71QC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/DDPVEmO70Q_fIXiPwiB6hmT5LPOdpgHGZDZXN8lQ-pvubemNOHWnyfTN6ZdoExNghWpA5fewPVMT_f13PVNSusA'></p>", 
+                    "ElementCode": "DKAUGR", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/59d5a65f-5c8d-4174-b5b7-7cd55dc429ae", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/DDPVEmO70Q_fIXiPwiB6hmT5LPOdpgHGZDZXN8lQ-pvubemNOHWnyfTN6ZdoExNghWpA5fewPVMT_f13PVNSusA", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em><span>Create functional, durable, shatter-resistant prints with NylonX.</span></em></p>", 
+                    "ElementCode": "SU9B7K", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>Tough Jobs Demand the Toughest Filament</strong></h2>\r\n<p>NylonX is an engineering grade nylon filament which is blended with chopped carbon fibers (approximately 20% by weight), creating a high-strength filament capable of printing tough, shatter-resistant, functional parts.</p>\r\n<p>NylonX is the perfect blend of strength and durability; If you are already printing with nylon it's time to upgrade. NylonX&nbsp;components print with a fantastic matte finish that requires no post-processing. The high precision of this filament makes it a potential replacement for aluminum using 3D printing instead of CNC milling.&nbsp;NylonX is the simple answer for anyone in need of robust, high-quality prints.</p>", 
+                    "ElementCode": "7P2Z6W", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/-VzdUySg3A38nm1ZBex7mMVB_u7oOzUmBA0sk7KA90kFHuob53zAQ9ie4Jbnvh2W1j1xNCQw4j6FD8vqAgDa5w'></p>", 
+                    "ElementCode": "9N6T8Q", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/6182eb62-ab67-4cc3-b526-f30f4837181e", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/-VzdUySg3A38nm1ZBex7mMVB_u7oOzUmBA0sk7KA90kFHuob53zAQ9ie4Jbnvh2W1j1xNCQw4j6FD8vqAgDa5w", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em>NylonX creates ready-to-use functional parts with micro-carbon reinforced nylon.</em></p>", 
+                    "ElementCode": "FGMGAJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>High-Performance Print to Production</strong></h2>\r\n<p>With a unique matte-black finish, that comes out smooth and silky, NylonX all but eliminates post-processing. Finished prints can immediately be moved to production with no sanding, polishing, scraping, or pesky acetone vapor baths. Lessen the time it takes to get parts to production, and eliminate the waste of leftover filament with the print-and-go ease of NylonX.&nbsp;</p>", 
+                    "ElementCode": "00VPZ7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/WAFqgBV-qU0ExXvLNyMxlWOTFQpWT0igdw2GO-eQch7--C-6CkL5pbuwymZ4Ax2bYHFGpdEPuewz0sJINuso_IE'></p>", 
+                    "ElementCode": "8FMGX9", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/1b7c2618-5543-4e4f-b5bc-566408ff1a55", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/WAFqgBV-qU0ExXvLNyMxlWOTFQpWT0igdw2GO-eQch7--C-6CkL5pbuwymZ4Ax2bYHFGpdEPuewz0sJINuso_IE", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em><span>Get outstanding strength and rigidity from carbon-fiber infused NylonX.</span></em></p>", 
+                    "ElementCode": "ZK1539", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>What Can You Create with NylonX?</strong></h2>\r\n<p>With the physical properties of NylonX, the options for 3D printing your favorite projects are unlimited. Use to print:</p>\r\n<ul>\r\n<li><span>RC Cars</span></li>\r\n<li><span>Drone Parts</span></li>\r\n<li><span>Sports Accessories</span></li>\r\n<li><span>Gears</span></li>\r\n<li><span>Fittings for Home Furnishings</span></li>\r\n<li><span>Artistic 3D Prints</span></li>\r\n<li><span>and many more! </span></li>\r\n</ul>", 
+                    "ElementCode": "SR5BJ5", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/j3TYRb_vH3nFZO7AW4fydRLTWnysxNhcOUm_p6RYEj1J8XT0fh2sBv_pmWa9RxocQal_qLadCHuIuet5qrbptsU'></p>", 
+                    "ElementCode": "99CVWY", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/18ab0243-169c-4809-bfee-203c5affca27", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/j3TYRb_vH3nFZO7AW4fydRLTWnysxNhcOUm_p6RYEj1J8XT0fh2sBv_pmWa9RxocQal_qLadCHuIuet5qrbptsU", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em><span>For rigid parts that can stand up to extreme sports, NylonX can handle any job.</span></em></p>", 
+                    "ElementCode": "L7JK7Y", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2><strong>Printing Recommendations</strong></h2>\r\n<p><span>Like all nylons, NylonX must be kept dry!</span>&nbsp;If it does not remain packaged with desiccant, it will readily absorb moisture from the air; this will lead to degraded print quality and wasted filament. You can dry it out by baking it in an oven at 180&deg;F for 4-6 hours. We also carry the <a href=\"https://www.matterhackers.com/store/l/printdry-filament-drying-system/sk/MNXQRWQC\">PrintDry Filament Drying System</a> for more precise dehydration for all&nbsp;filament types.</p>\r\n<p>For more information about printing with NylonX, read our&nbsp;<a href=\"https://www.matterhackers.com/news/a-closer-look-at-nylon-x\">How To Succeed with NylonX</a> article.</p>\r\n<p></p>", 
+                    "ElementCode": "BAU9B8", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"156y6PyyNGQ\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "3WO2YY", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2><strong>Technical Specifications</strong></h2>\r\n<ul>\r\n<li><span>Nominal Diameter: 1.75mm &plusmn; 0.02mm</span></li>\r\n<li>Print temperature:&nbsp;250-265&deg;C</li>\r\n<li>Print speed: 25mm/s - 35mm/s</li>\r\n<li>Bed temperature: 60-65&deg;C with PVA glue stick</li>\r\n<li>Spool Dimensions: 7.88\" OD x 2.12\" ID x 2\" Height</li>\r\n<li>Nozzle: <a href=\"https://www.matterhackers.com/store/c/Specialty%20Nozzles\">Stainless Steel</a>, <a href=\"https://www.matterhackers.com/store/c/olsson-ruby\">Olsson Ruby</a>, or other hardened nozzle types</li>\r\n<li><a href=\"https://www.matterhackers.com/r/9UK0fw\" target=\"_blank\" rel=\"noopener\">Download the Technical Data Sheet</a></li>\r\n<li><a href=\"https://www.matterhackers.com/r/A7mInq\">Download the Material Safety Data Sheet</a></li>\r\n</ul>", 
+                    "ElementCode": "4DBLD9", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/3oJQuzfMIuC2WNrpFbXTf7u08nUI3BHZ-OIhfooeXjZ7nd7_R35pkmqqRs3ZYVgtka5esvhyx5MVtb1pz2ru6-Y'></p>", 
+                    "ElementCode": "NTITNS", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/a5124615-b4d4-4bab-88f3-007309d13d33", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/3oJQuzfMIuC2WNrpFbXTf7u08nUI3BHZ-OIhfooeXjZ7nd7_R35pkmqqRs3ZYVgtka5esvhyx5MVtb1pz2ru6-Y", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_nWL-DWa1sRQhMCAKDdtMm64ICH4VRGa1SBVWVL3GcF2k71XomEmrfCxIfRd1d-Qg1K14ylkEK3HlR_ND5X8jTqtx", 
+                "ImageUrl": "https://lh3.googleusercontent.com/SEKupVk3CHdPoHZHIqR1iPK-7GjELuC3EdXecIqNU1GAFYKnB8_kLaVY3sU2434kihS0jYmWqHQvNB4SCcksD78", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": "legacy:ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICApemm9QkM", 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_nWL-DWa1sRQhMCAKDdtMm64ICH4VRGa1SBVWVL3GcF2k71XomEmrfCxIfRd1d-Qg1K14ylkEK3HlR_ND5X8jTqtx", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/SEKupVk3CHdPoHZHIqR1iPK-7GjELuC3EdXecIqNU1GAFYKnB8_kLaVY3sU2434kihS0jYmWqHQvNB4SCcksD78", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/e77767ae-3329-45b7-b1f0-115641852169", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/8ukF7K0yqJIPyjpVAbmlva51SZF5aeKrn6vJDjS4tlf1oj2HuhS_y8XQ5hdBvJk6MP4ECdZG9ON2LXtuSqXlpw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d4e64046-8139-4a01-bfc5-ca0cfc26531c", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/78GN3_tYnc_CfE39uIyxrZ-w7Cy-dSnWdR2vumpqR5Lqp7scjupqtiOja9LlUdfUlk7i6a86T_0QZVtx6faa_Q", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/63aec48b-8962-4120-8028-7f9809e7bdf2", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/26iCg7z0o-lh0hZ_c2FaddjoNEUmUs-QXnCa0pMrpT-mzEohlZ4OIGogX2XZE0bslSS3Fnhs_KYU35HHXSLDWA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/11eb053d-0312-472e-ac05-f6ff7af5bc2f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/9RgVlAyK6g9LlWTHJVuxKavNd3vPsMcTDhnrKVvT3z62yTZEeHnIJ5b8z2XhksnO017zNl0_eeHH7MEFFhnyq1s", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/dccf80f9-e827-4a13-a770-850435b735cf", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/dSU5HNwH8aUVGIj-y1tYuJh8gj6tKwjs2XOCzjntRbxpG9Pxygdhoco7rQdLHf_Q8YW9UA-1L1hMT5d9pnJbW8U", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICApemm9QkM", 
+            "MaxPriceRange": -1, 
+            "MetaTagKeywords": [
+                "nylon", 
+                "carbon", 
+                "fiber", 
+                "nylon x", 
+                "parts"
+            ], 
+            "MinPriceRange": -1, 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2017-07-25T07:07:05.485600", 
+            "ProductEditedOn": "2022-03-14T18:38:07.047823", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "nylonx-carbon-fiber-nylon-filament-1.75mm", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-rKNCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDs66icCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAgPKICgw", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M"
+            ], 
+            "ShortDescription": "NylonX is an amazing, reinforced nylon filament. By adding micro-carbon fibers to nylon, you get a tough filament capable of printing parts with stiffness, impact resistance, and high tensile strength. NylonX is an engineering grade filament, ready for hobbyists and advanced users alike, which gives you the durability of nylon combined with the stiffness of carbon fiber.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "NylonX Carbon Fiber Filament - 1.75mm (0.5kg)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M", 
+        "ProductNumber": "132857003", 
+        "ProductPrice": 5800, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "ADD", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 719, 
+        "QuantityOnHand": 719, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "nylonx-carbon-fiber-nylon-filament-1.75mm", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MD5LDGS7", 
+        "SalesIndexByDollars": 5, 
+        "SalesIndexByUnits": 6, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "NylonX Carbon Fiber Filament - 1.75mm (0.5kg)", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 7037, 
+        "SuccessRatingScore": 9756, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 700000, 
+        "TotalWeightGrams": "700.00", 
+        "TotalWeightKilograms": "0.70", 
+        "TotalWeightPounds": "1.54", 
+        "VendorItemID": "", 
+        "WareHouseLocations": [], 
+        "Weight": 700000, 
+        "WeightGrams": "700.00", 
+        "WeightKilograms": "0.70", 
+        "WeightPounds": "1.54", 
+        "WholesaleCost": 2064
+    }, 
+    "Status": "success"
+}

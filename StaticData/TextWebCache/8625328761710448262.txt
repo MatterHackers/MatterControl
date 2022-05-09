@@ -4,25 +4,26 @@
         "AdminNote": "Glass sheet adhered to a spring steel plate.", 
         "AttributeOptions": [], 
         "AvailableDate": "2019-07-05", 
-        "AverageShippingCost": 994, 
+        "AverageShippingCost": 1386, 
         "BarCodeID": "", 
         "BlockIsDirty": false, 
         "Brand": "MatterHackers", 
         "ComponentSkuCount": 0, 
         "ComponentSkus": [], 
+        "ConfigurableListing": false, 
         "CustomRuleSet": false, 
         "DateTimeCreated": "2019-05-30T17:09:25.636073", 
         "DigitalLicenseKeys": [], 
         "DisplayAvailableDate": "Jul 5th", 
-        "DisplayAverageShippingCost": "9.94", 
+        "DisplayAverageShippingCost": "13.86", 
         "DisplayListPrice": "75.00", 
         "DisplayPrice": "69.95", 
         "DisplayPriceFlag": true, 
         "DisplaySID": "M-X8F-75EN", 
         "DisplayWholesaleCost": "14.94", 
         "FeaturedImage": {
-            "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
-            "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+            "ImageFile": "/mh-product-images/prod/c9020089-3a1a-48cc-8352-f126d77c7be1", 
+            "ImageUrl": "https://lh3.googleusercontent.com/SDrvRI2ePhhcNzvtFdRXLgFMkUfCgolR0PXoAP-Vp8yhNHleFCxNahDSUWQRDGM5rx-i7OfNj4_ojakZ7oHKNMaZSOm0Rh5L208", 
             "IsFeatured": true
         }, 
         "FulfillmentVerificationRequired": false, 
@@ -45,11 +46,15 @@
         "NoPOBox": false, 
         "PackageDimensions": [
             "0.20", 
-            "9.00", 
+            "9.50", 
             "10.00"
         ], 
         "PackagedToShip": false, 
-        "PickImage": null, 
+        "PickImage": {
+            "ImageFile": "/mh-product-images/prod/73683c18-810f-4679-a4a2-7ab0cf3a8909", 
+            "ImageUrl": "https://lh3.googleusercontent.com/PqQ07tdpKH2LDPmYXcAdbMlfAlZSrJZ2d1kpwutnmmItjpyzMQV39wOpG_ZFr885-wrEi8cJWSB22fmHvYlFkcPC1RqR1DymzwA", 
+            "IsFeatured": false
+        }, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
@@ -73,9 +78,11 @@
                 "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOUhIRjVaVww", 
                 "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWDhGNzVFTgw", 
                 "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWVYwOE03UQw"
-            ]
+            ], 
+            "VendorEmailList": []
         }, 
         "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgID58PeJCQw", 
+        "ProductCategory": "3D Printer Accessories", 
         "ProductDescription": "Want to include a glass surface as one of your reliable build surface options for your Pulse 3D printer's magnetic base print bed? Check out\u00a0the Glass Plate for Magnetic Base 9\" x 10\"!", 
         "ProductListPrice": 7500, 
         "ProductListing": {
@@ -87,7 +94,7 @@
             "Attributes": [], 
             "BasePrice": 0, 
             "DateTimeCreated": "2019-05-30T17:09:25.404235", 
-            "DisplayPriceRange": "", 
+            "DisplayPriceRange": "6995", 
             "Elements": [
                 {
                     "Content": "<h3><strong>Interchangeable Reliability with Glass Plate</strong></h3>\r\n<p>Want a glass surface option for your 3D printer's magnetic base print bed? Check out<span>&nbsp;the Glass Plate for Magnetic Base 9\" x 10\"! Increase the variety of build surfaces currently available for magnetic print beds to include the classic surface every maker can rely on&mdash;the glass plate. When you find yourself missing the shiny, smooth bottom surface achieved through printing on a glass surface, simply take the off the surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base FlexPlate in its place. Because the glass plate is attached to a firm flexplate with high performance transfer adhesive, you end up with a glass flexplate that securely sticks flat against the magnetic bed, removing any chance for bowing around the center of the bed and maintaining consistent heat transfer between the heated print bed and glass plate. Expand your list of reliable, interchangeable build surfaces with the Glass Plate for Magnetic Base.</span></p>", 
@@ -100,55 +107,48 @@
                     "ElementCode": "93L6Z7", 
                     "Images": [], 
                     "Type": "Text"
-                }, 
-                {
-                    "Content": "<h3><span><strong>STREAMLINE YOUR 3D PRINTING EXPERIENCE WITH MATTERHACKERS</strong></span></h3>\r\n<p>At MatterHackers we pride ourselves on offering various quality products for every maker on top of offering friendly service, advice, and support through our staff. Every day MatterHackers constantly works to include various products that streamline the 3D printing experience for makers of every experience level. Have a question about the what conveniences the Glass Extra Plate for Magnetic Base 9\" x 10\" has to offer? No problem. Feel free to give our friendly, knowledgeable staff a call.</p>", 
-                    "ElementCode": "7TKQSC", 
-                    "Images": [], 
-                    "Type": "Text"
                 }
             ], 
             "FeaturedImage": {
-                "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
-                "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+                "ImageFile": "/mh-product-images/prod/c9020089-3a1a-48cc-8352-f126d77c7be1", 
+                "ImageUrl": "https://lh3.googleusercontent.com/SDrvRI2ePhhcNzvtFdRXLgFMkUfCgolR0PXoAP-Vp8yhNHleFCxNahDSUWQRDGM5rx-i7OfNj4_ojakZ7oHKNMaZSOm0Rh5L208", 
                 "IsFeatured": true
             }, 
             "HasBeenPublished": true, 
             "HideRewardsFlag": false, 
             "HideSuccessGuaranteeFlag": false, 
+            "ID": 5637806730772480, 
             "Images": [
                 {
-                    "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+                    "ImageFile": "/mh-product-images/prod/c9020089-3a1a-48cc-8352-f126d77c7be1", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/SDrvRI2ePhhcNzvtFdRXLgFMkUfCgolR0PXoAP-Vp8yhNHleFCxNahDSUWQRDGM5rx-i7OfNj4_ojakZ7oHKNMaZSOm0Rh5L208", 
                     "IsFeatured": true
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/747dda32-6936-45f1-b187-eb7be5bb3c2b", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/0xNduOtAgg1Hr883zb3F5jzPGYkffFHgq4JHZYpJyILU2AyufjaYrAVKalfEdXqTbm1gi9Q6WBBCkXsKdXd4v4U", 
-                    "IsFeatured": false
-                }, 
-                {
-                    "ImageFile": "/mh-product-images/prod/8c42c54b-db6e-44b3-af65-59156835284d", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/9VBRNWNBsXY432gxoYNfwHSU8rXA8E5J2RcjUEkwLPl6ULjGY5r9O2Bu8fh_pwJ-iI-GkPio2jUDz6Ta-xC_gvPU", 
+                    "ImageFile": "/mh-product-images/prod/fca237c8-c064-47d4-ba74-7a53b17d0822", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/z9nULWiVSPuzu7NQx52AWbtCQ64eKzdvU6Cx9rGskPdxLz5DJoeeMZRxRm7uPAMfsbceK0mh97ZlmRonLrXXdWrohzR4L6ErgNkt", 
                     "IsFeatured": false
                 }
             ], 
             "IsActive": true, 
             "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
             "IsCustomizable": false, 
             "IsDeprecated": false, 
             "IsSearchable": true, 
             "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc4vGBCgw", 
+            "MaxPriceRange": 6995, 
             "MetaTagKeywords": [
                 "glass", 
                 "flexplate", 
                 "build plate", 
                 "magnetic glass beds"
             ], 
+            "MinPriceRange": 6995, 
             "PreOrderFlag": false, 
             "ProductCreatedOn": "2019-05-30T17:09:25.404249", 
-            "ProductEditedOn": "2020-01-08T23:52:49.550285", 
-            "ProductType": "physical-inventory", 
+            "ProductEditedOn": "2022-02-07T22:36:41.316952", 
+            "ProductType": "physical-on-demand", 
             "RedirectUrl": "", 
             "ReferenceUrl": "glass-plate-for-magnetic-base-9-x-10", 
             "RelatedProducts": [
@@ -167,28 +167,30 @@
         "ProductPrice": 6995, 
         "ProductType": "physical-on-demand", 
         "ProductUpc": "", 
-        "PromotionDescription": null, 
-        "QuantityAvailable": 33, 
-        "QuantityOnHand": 33, 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 33303, 
+        "QuantityOnHand": 33303, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "glass-plate-for-magnetic-base-9-x-10", 
+        "RequireFulfillmentVerification": false, 
         "RetiredDateTime": null, 
         "SID": "MX8F75EN", 
-        "SalesIndexByDollars": 1024, 
-        "SalesIndexByUnits": 1120, 
+        "SalesIndexByDollars": 1119, 
+        "SalesIndexByUnits": 1218, 
         "SerialNumberRequired": false, 
         "ShipInBox": true, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Glass Plate for Magnetic Base 9\" x 10\"", 
         "SkuWarningMessages": [], 
-        "SuccessRatingCount": 46, 
-        "SuccessRatingScore": 9130, 
+        "SuccessRatingCount": 33, 
+        "SuccessRatingScore": 9697, 
         "TotalLeadDays": 1, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
         "TotalWeightPounds": "0.00", 
+        "VendorItemID": "", 
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 

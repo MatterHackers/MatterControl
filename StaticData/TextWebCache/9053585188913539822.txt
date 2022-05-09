@@ -1,0 +1,258 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2022-04-19", 
+        "AverageShippingCost": 317, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "3D Gloop!", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-10-01T19:08:21.435241", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Apr 19th", 
+        "DisplayAverageShippingCost": "3.17", 
+        "DisplayListPrice": "34.99", 
+        "DisplayPrice": "34.99", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-SJ9-1GXQ", 
+        "DisplayWholesaleCost": "20.09", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/5e8b691d-b99c-4b76-a568-9f1c06d4e158", 
+            "ImageUrl": "https://lh3.googleusercontent.com/w3g3qtNFVoFpN4xRr3XuATTNydj8whFLpP_R15ykLOtMqOk2SBmnE5Xeyj-2RYfVHOFgEwy0yJMt0zd08xFOG_o", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0o5MUdYUQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "3.87", 
+            "2.00", 
+            "2.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T18:20:50.378698", 
+            "DateTimeModified": "2020-11-07T01:22:42.226862", 
+            "ID": 5663109215682560, 
+            "IsActive": true, 
+            "IsDropshipReady": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDpldKHCgw", 
+            "Name": "3D Gloop!", 
+            "OrderingEmailAddress": null, 
+            "PrimaryContact": "vanessa.yio@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 4, 
+            "SuppliedSIDs": [
+                "M8SLQ6L5", 
+                "MF6ZGT5R", 
+                "MSJ91GXQ", 
+                "MXHZZV8Q"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOFNMUTZMNQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRjZaR1Q1Ugw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0o5MUdYUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWEhaWlY4UQw"
+            ], 
+            "VendorEmailList": []
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDpldKHCgw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "PET 3D Gloop! is specially formulated to provide the best bed adhesion on the market for PET FDM printers. Using PET 3D Gloop gives you the best chance of successful first layers on glass and mirror surfaces with PET filament 3D Printing.\r\n\r\nNote: 3D Gloop! is designed to work on glass and mirror surfaces. It is not recommended for use on PEI coated build platforms or any textured print surface as it will likely permanently fuse to it.", 
+        "ProductListPrice": 3499, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0o5MUdYUQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-10-01T19:04:08.223355", 
+            "DisplayPriceRange": "3499", 
+            "Elements": [
+                {
+                    "Content": "<p>Disclaimer: Be sure to use 3DGloop! in a well-ventilated area and to wear PPE (Personal Protective Equipment) when using this product.&nbsp;</p>", 
+                    "ElementCode": "7E7ZOQ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>BED ADHESION AND PRINT BONDING IN ONE!</h3>\r\n<p>Say goodbye to weak or flimsy bonds! With 3D Gloop! simply apply a small amount of Gloop to your print bed or to the bonding surface of parts you wish to fuse to achieve seriously strong adhesion.</p>\r\n<p>To fuse parts simply apply 3D Gloop!, press and hold together for 15-30 seconds to achieve a strong tack hold. Bonds will achieve 80% strength after an hour and full strength within 6 hours of application.</p>\r\n<p></p>\r\n<p>Note: Bonding times will vary depending on bonding surface size and application amount.</p>", 
+                    "ElementCode": "0LE031", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/koFmti5jtRUGz8WNUsWVchjQasu5Vcv6-r_K_9m8nyzPVtnEVRezWcYj4gfFBNZ4AkcqYlXlxjPiDNm6nRwSfw'></p>", 
+                    "ElementCode": "18PAKZ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/36722d00-50f3-4224-808d-ec11282fcc53", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/koFmti5jtRUGz8WNUsWVchjQasu5Vcv6-r_K_9m8nyzPVtnEVRezWcYj4gfFBNZ4AkcqYlXlxjPiDNm6nRwSfw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>THE 3D GLOOP! FAMILY</h3>\r\n<ul>\r\n<li><strong><a href=\"https://www.matterhackers.com/store/l/3d-gloop-abs-glue-gloop-25ml/sk/MXHZZV8Q\">3D Gloop! ABS Glue Gloop Squeeze Tube- 15ml</a></strong></li>\r\n<li><a href=\"https://www.matterhackers.com/store/l/3d-gloop-pla-glue-gloop-25ml/sk/MF6ZGT5R\"><strong>3D Gloop! PLA Glue Gloop Squeeze Tube- 15ml</strong></a></li>\r\n<li><a href=\"https://www.matterhackers.com/store/l/3d-gloop-pla-glue-gloop-30ml/sk/MF6ZGT5R\"><strong>3D Gloop! PLA Glue Gloop-25ml</strong></a></li>\r\n<li><strong><a href=\"https://www.matterhackers.com/store/l/3d-gloop-abs-glue-gloop-30ml/sk/MXHZZV8Q\">3D Gloop! ABS Glue Gloop-25ml</a></strong></li>\r\n<li><a href=\"https://www.matterhackers.com/store/l/3d-gloop-abs-gloop-brushtop-bottle-120ml/sk/MK49QJEC\"><strong>3D Gloop! ABS Gloop Brushtop Bottle-120ml</strong></a></li>\r\n<li><a href=\"https://www.matterhackers.com/store/l/3d-gloop-pla-gloop-brushtop-bottle-120ml/sk/M8SLQ6L5\"><strong>3D Gloop! PLA Gloop Brushtop Bottle-120ml</strong></a></li>\r\n</ul>", 
+                    "ElementCode": "9F0HIE", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/x5DA13yiUK8MLt_LoD-VdJbuvxcZECyM__K9t_JcULLuy77T-3yoRgPjcvBInMXDlUMm3ArwU3KcdPdipxaLfsw'></p>", 
+                    "ElementCode": "KDV5CJ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/012439e8-935a-47f6-bef8-8e04e55a646a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/x5DA13yiUK8MLt_LoD-VdJbuvxcZECyM__K9t_JcULLuy77T-3yoRgPjcvBInMXDlUMm3ArwU3KcdPdipxaLfsw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>MULTI-MATERIAL COMPATABILITY</h3>\r\n<p>Want to bond ABS, PLA, PET prints together? No problem!</p>\r\n<p>Any formulation of Glue Gloop works great when bonding ABS to PLA or PET or vice-versa. It is recommended that the appropriate formulation of Gloop! is used on each bonding surface in order to guarantee the strongest possible bond.</p>", 
+                    "ElementCode": "DM81XR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><span>California Prop 65 Warning: This Product Contains Chemicals Known To The State Of California To Cause Cancer And Birth Defects Or Other Reproductive Harm.</span></p>", 
+                    "ElementCode": "NY0QH0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/5e8b691d-b99c-4b76-a568-9f1c06d4e158", 
+                "ImageUrl": "https://lh3.googleusercontent.com/w3g3qtNFVoFpN4xRr3XuATTNydj8whFLpP_R15ykLOtMqOk2SBmnE5Xeyj-2RYfVHOFgEwy0yJMt0zd08xFOG_o", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5013366179364864, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/5e8b691d-b99c-4b76-a568-9f1c06d4e158", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/w3g3qtNFVoFpN4xRr3XuATTNydj8whFLpP_R15ykLOtMqOk2SBmnE5Xeyj-2RYfVHOFgEwy0yJMt0zd08xFOG_o", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/2729296d-906d-40ee-ab4d-d77a3162d2d3", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/LJ2U92AoyKRMhlZ67K90zlFKI5c7FFTzpQ6atRb3w0pMnCLQRBmXeaPom46cN8hXtSrFDzrmPebdkQxn2p5tIXk", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d3222afc-c257-4214-9b94-7d9ac11d89dc", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/z6M70uXoRA_RGyIXvErFnr8qIXxNTuY4VBrICgTK71debrLBFgeZJ5dXMnKOYWTLXghYPKOWsVRT4AZII9MH02o", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/3ea5e92a-df6e-4ebf-928d-5e0a8c356ea6", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/xsJwOZ1aRAcKhu50Hn4xNd_axqopCK0q21xMjJCXoXxryvtfXMrZh77J0du2jN7BJhDAtdKmZRvFfMYa9PTpvY8", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/1f0a1014-eaa0-4d25-8568-7f383cd5925d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/6NMCtrSkPMZ2KxUheNSOC73PGxiWkiYB_nlu9PWDaLGMWUIFxdgbbD9yF-5eCha3fHv4mp5JTGsTim79T9f-wFM", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICylPTzCAw", 
+            "MaxPriceRange": 3499, 
+            "MetaTagKeywords": [
+                "pet adhesive", 
+                "pet glue", 
+                "petg"
+            ], 
+            "MinPriceRange": 3499, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-10-01T19:04:08.223347", 
+            "ProductEditedOn": "2022-01-20T00:09:24.859769", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "3d-gloop-pet-gloop-brushtop-bottle-120ml", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAv6WPCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAv_6WCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDg2KWOCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICglL6FCgw"
+            ], 
+            "ShortDescription": "PET 3D Gloop! is specially formulated to provide the best bed adhesion on the market for PET FDM printers. Using PET 3D Gloop gives you the best chance of successful first layers on glass and mirror surfaces with PET filament 3D Printing.\r\n\r\nNote: 3D Gloop! is designed to work on glass and mirror surfaces. It is not recommended for use on PEI coated build platforms or any textured print surface as it will likely permanently fuse to it.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "3D Gloop! PET Gloop Brushtop Bottle - 120ml"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICylPTzCAw", 
+        "ProductNumber": null, 
+        "ProductPrice": 3499, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": -2, 
+        "QuantityOnHand": -2, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "3d-gloop-pet-gloop-brushtop-bottle-120ml", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MSJ91GXQ", 
+        "SalesIndexByDollars": 813, 
+        "SalesIndexByUnits": 506, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": true, 
+        "ShowAvailableDate": true, 
+        "ShownInListing": true, 
+        "SkuName": "3D Gloop! PET Gloop Brushtop Bottle - 120ml", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 96, 
+        "SuccessRatingScore": 9479, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 276000, 
+        "TotalWeightGrams": "276.00", 
+        "TotalWeightKilograms": "0.28", 
+        "TotalWeightPounds": "0.61", 
+        "VendorItemID": "", 
+        "Weight": 276000, 
+        "WeightGrams": "276.00", 
+        "WeightKilograms": "0.28", 
+        "WeightPounds": "0.61", 
+        "WholesaleCost": 2009
+    }, 
+    "Status": "success"
+}

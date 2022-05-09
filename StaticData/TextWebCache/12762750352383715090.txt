@@ -3,40 +3,41 @@
  
 You can find the complete release notes [here](release-notes.md)
  
-# Latest Update Details
- 
-# MatterControl 2.21.10 (October, 7, 2021)
-[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgPDU_bySCgwLEgZVcGxvYWQYgIDwyuugmAsM)
- 
-[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgPDM9JiSCwwLEgZVcGxvYWQYgIDw8qOJswsM)
- 
-## Changes
- 
-- Features
-  - Montonic Infill  
-  ![](https://lh3.googleusercontent.com/uZyP83p9sYBG061toxj1Mb6tFqlxBjYaaH5DKV6MoQnvCIXa-m29APu6tCFCu4W5ejSxS5fxs3fPX6D-q4peRB482lVmpxMSC2Xksb0=w300)
-  - Image Editor Improvements
-    - Auto detection of best image mode
-    - Improved histogram slider  
-    ![](https://lh3.googleusercontent.com/SPt08ttQM-YzvWjeO8ePnP9eB6S5HKY7MRNrtzqnaATwMSRcrg0zqm0MdHBEYWxlfIyDU-VBkU_We6aQlbypXVZQLY523namJ6CIdOU=w300)
-  - Added Sliders  
-![](https://lh3.googleusercontent.com/A7u88XsBgE-T0M74CFwyTuRc59fglmaA9GTrqXaUXZyHmEaSB_i9VoJ0LB21QdVa5mib-K1AnqvSCkKej3BkUHYYsolHuPnajhF9Wq4=w300)
-  - Added the ability to expand and colapse toolbar groups  
-![](https://lh3.googleusercontent.com/DJdJGw2ewQ7FUv0aKdfQxu2ypNfxXoc5JeFSQkDTSpxixY26cQ8AaWHXp-5Q4MAr-AaqWWvWrO0QW6J6LiYA2YR960oJX8aW_fTqNjrO)
-  - New seam modes  
-  ![](https://lh3.googleusercontent.com/6_Hdof_ZKHVHxlXtl_ZaGHi95qn7PqWMD4R1IV5HN0VFVfPmsRIPKQA4B0BUMKzC6Lb1sUSyIFbJcyMHT4bvExQh8I4pnXNYJ72JD_Fo=w400)
-  - Library, Save and Bed menus improved  
-  ![](https://lh3.googleusercontent.com/wSsFanpHW5BRmqr1flzqd_dfk0IRngw36cxd8RHVF6YuPKDXF7LwvVHVbAsHZz0iSoGljRQbZPTM5LYfqsHoUJ9q9vZifPelkrb_36kF)
-  - Experimental support for auto printing with MatterControl Pro 'Autopilot'  
- 
-- UI improvements
-  - Added F2 rename to objects and folders
-  - Added back button support to library
-  - Improved [Sheet Editor](https://www.matterhackers.com/support/mattercontrol-variable-support)
- 
-- Bugs
-  - Web image cache misses
-  - Fixed bug with culling back faces
-  - Crash on invalid bounding box
-  - Bug with wrapping on right side
-  - Bug with image comparisons
+# MatterControl 2.22.04 (April, 4, 2022)
+
+[Windows Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY6gcMCxINUHVibGljUmVsZWFzZRiAgPDuk763CAwLEgZVcGxvYWQYgIDwwa6QgAsM)
+
+[Mac Download](https://mattercontrol.appspot.com/downloads/development/ag9zfm1hdHRlcmNvbnRyb2xyOwsSB1Byb2plY3QY7AcMCxINUHVibGljUmVsZWFzZRiAgPCerp-XCAwLEgZVcGxvYWQYgIDwwc7mogkM)
+
+**Orthographic Projection**
+
+Orthographic Projection is an important part of many CAD workflows and we are very excited to announce that MatterControl now supports this critical mode. Thanks to fortsnek9348 who earned the $1,736 bounty for contributing this work.  There are [more bounties](https://github.com/MatterHackers/MatterControl/labels/bounty) offered and they do not all require programming.  
+
+![](https://lh3.googleusercontent.com/o9UhPRAxIlV-9m-gfOlGC75UZnKL_ojp2Y8Qkf-UnOZSwi2HwDn00r5SOC7u72CBxu6Z-qQE5zXSbKX3ZovW5bgYsSFk2v0-2zp4oro=w220)
+
+**Materials Library**
+
+With the inclusion of a new materials library you can always find the right material and its settings. Dozens of materials have been tested and added and there are more on the way.
+
+![](https://lh3.googleusercontent.com/7nE7dr-SumfT-5GmGTRTa868eVghJC8jbhImZli0mUzslVfj7DjOuW-QZnk-02__J6YzU-9W4-0TJSw_sJPqBZAMV5i82xkaDIwT-YaQ=w540)
+
+**Color Picker**
+
+Now it is easier than ever to set the colors of your design to be just the way you want. We have added a new eye dropper tool to the Color Picker. You can now set the color of one part by selecting another part to copy from.  
+
+![](https://lh3.googleusercontent.com/pHjCF4ONK-GkgUM2cKx-rSb_fhUwv1HiYYKyldXvkVnTLD-qrUBpbqugjfnHEwir6b4US4G1ukbwQqXvG0af2LKxn9O45D9R5DuaNg=w540)
+
+**Additional Improvements**
+  - Added equations and cell references to component objects. This allows for creating component objects that can then be a part of a larger component.
+  - Accelerated the processing of Monotonic infill (as much as 10x faster)
+  - Improved Z-Calibration Wizard to have better instructions based on user testing
+  - Show progress bars on export to gcode
+  - Added 'Max Printing Speed' setting. Limits all printing speeds
+  - Improved error and warning messages
+
+**Bug Fixes**
+  - Improved Monotonic infill pathing
+  - Fixed extra segments appearing in air gap bottom layer
+  - Make sure initial printing move is at the correct height
+  - Validate that all parts are within the printing bounds considering raft, skirt and brim before starting a print
+  - Fixed warning and error icons

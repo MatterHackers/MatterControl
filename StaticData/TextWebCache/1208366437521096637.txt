@@ -92,7 +92,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/lUMW7-aMsCKAZ3KBDF4nEt-CwWg9pHXbBF9hYleeAPXkeWhyp1Qmr9NIbKIXcRR2Pj9pSzYldKpjJ_YqH7cCjps-", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20Series%20Filament", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-filament", 
                     "subtitle": "MatterHackers PRO Series Filaments are engineered to highlight the strengths of 3D printer filament. Manufactured to the tightest tolerances and made in the USA.", 
                     "title": "PRO Series Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/kvQGZQueiiMl29GzGaTQ5ks-W_jsdNtRqygm-EJ9AQkGb_SDcgoi1PkH2bY4uDYRBWfPL9i0PMqvKa9AoUQLKDxKDBU"
@@ -100,7 +100,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/YqywX_ag-tecgeOKuqbKiHPI8d9w5HIzd1DcsXSqvMffw1rg_rQr0HvtWm73wMcOmdilL3P2GX4rbh75ER6Us-7NJQ", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20series%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-pla", 
                     "subtitle": "PRO Series PLA 3D printing filament is the best 3D printer PLA plastic available for producing professional, high quality 3D printed parts. Made in the USA.", 
                     "title": "PRO Series PLA", 
                     "widget_url": "https://lh3.googleusercontent.com/RkoN6uHHLl18kGJK5ExEQvD7qj_ibo7K3XEBUF9KLgClDtQZIZ_iPUd72O-DFtrFHhkhnf3pTOnrVzKU2LYg6DG0BQ"
@@ -108,7 +108,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/74E1sz8rp7CLbNho9T0bkpQs0wq2MMCqx-zj_YSBjoe6WWw5-IJ0eOpX3S03EcW5K8ZZlblhg6Es9bjpVfyonGAMzA", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20Series%20ABS", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-abs", 
                     "subtitle": "PRO Series ABS filament is a formulation of ABS plastic intended to help your 3D prints stand out with a beautiful, glossy, opaque finish. Made in the USA.", 
                     "title": "PRO Series ABS", 
                     "widget_url": "https://lh3.googleusercontent.com/cgufEeBX5Q6dJVYLLsxat7jkbVyEYurwIA_lF_R8nh3kWt1RNUhQ9qEvZ4KYVOCwVffg_47arMZ_xuM_5FDHYcSXf9k"
@@ -116,7 +116,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/AkqcBQqhgz1Jd-HuMkng0mETHlK03WMdrdFjalE3rjJnW7OTsFb6YbFxTvQjXQsiYKEjs4-8Y2oRDPzGjewBFa4XqA", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20Series%20PETG", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-petg", 
                     "subtitle": "PRO Series PETG filament is an industrial strength filament that combines the ease of use of PLA filament with the strength and durability of ABS filament.", 
                     "title": "PRO Series PETG", 
                     "widget_url": "https://lh3.googleusercontent.com/Xj6al5pCr6KC7nMnZ4mTz_n6tK2S9O6rL0wQlgAImK9o2TkEzZpGVDdlofvEjNn4Hy5eu9VN0t4aKzMVMJjX53u4"
@@ -132,7 +132,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/G_jGOjQuccyaIPXCnQycqGphuQmiczEu8wot86pBP-Xd6SzMiMxWAlQply1sNYDRavhkjy2EDDnBEQ6X6kJ2dPYFlQ", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20Series%20Flex", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-flex", 
                     "subtitle": "MatterHackers PRO Series Flex 3D printer filament brings all the benefits of flexible filament together with improved strength over other flexible filaments.", 
                     "title": "PRO Series Flex", 
                     "widget_url": "https://lh3.googleusercontent.com/eAn7bGI1g7Nz3sfJyH8eJDpGQBtI8-cJaamcyrMi0lusLM35S3zSnFTbXBeq1RxENeO2VLsrHB806YxKb3j1SrTG-wI"
@@ -140,7 +140,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/vrbKUMChaf7PpYYXqNuVkdwzjimp33zypMJCgog77HKL1Zgque6ysxHZGHVPSXmj8nqq0pm1QuIBgzaRypKpA42Btg", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PRO%20Series%20Nylon", 
+                    "link": "https://www.matterhackers.com/store/c/pro-series-nylon", 
                     "subtitle": "MatterHackers PRO Series Nylon offers the strength and durability of Nylon 3D printer filament now in vibrant colors. Made in the USA.", 
                     "title": "PRO Series Nylon", 
                     "widget_url": "https://lh3.googleusercontent.com/nPfNZbyGPAfK_Zv0LN7AKeDE4NxnaIwaS2pJl5q1sTXp3_MVmoiuFJZY5Mh9ruKTlB-45KTj2zMyu5fq2Zmwm2zimw"
@@ -172,15 +172,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/1.75mm%20PRO%20Series%20PETG", 
-                    "subtitle": "PRO Series PETG filament is an industrial strength filament with several great features, combining the ease of use of PLA filament with the strength and durability of ABS filament.", 
-                    "title": "1.75mm PRO Series PETG", 
-                    "widget_url": "https://lh3.googleusercontent.com/JLKgCB5U542wJvp_DwKkYHvCfqzX9vH0x8bu5nAeQXWNggLhdqqLKBU-N1v0VT_q3yfUuAGIJE3Ii-F86Gy4rVKa"
-                }, 
-                {
-                    "banner_url": null, 
-                    "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Carbon%20Fiber%20Reinforced%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/carbon-fiber-reinforced-pla", 
                     "subtitle": "Adding carbon fiber to PLA reinforces the material, providing more strength and rigidity to your 3D printed projects. ", 
                     "title": "Carbon Fiber Reinforced PLA", 
                     "widget_url": "https://lh3.googleusercontent.com/LAlvwhiBwS3D3rACncARlA61F3rGq0_pjJ4kTR7l-ZtvfUuFlMsgwtUIV2PBut8ewrwN8MZBlPX5hiCcY1Y38FNMYZc"
@@ -196,7 +188,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": "https://lh3.googleusercontent.com/14fbFdC2VgDwjl4d2Hc8rE_pVWOCiIjOuKFaTybUYZRFrrTMJR_-sMXK4qg4FW4AslbEbZlXhuCHlkYFiJP9yVUAtg", 
-                    "link": "https://www.matterhackers.com/store/c/ColorFabb%20Fill%20Series", 
+                    "link": "https://www.matterhackers.com/store/c/colorfabb-fill-series", 
                     "subtitle": "The colorFabb line of specialty 3D printing filaments gives any enthusiast great options for adding variety to their usual prints.", 
                     "title": "ColorFabb Fill Series", 
                     "widget_url": "https://lh3.googleusercontent.com/1wgAJ2fWag1-7kt0sUSMuxiyeI6N28C8GQCf41m3DMPlcCbv4PQiKFOJDoOHf-2UYAcxqGIUuxULRW0AOb1qRl_Fwg"
@@ -204,7 +196,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": "https://lh3.googleusercontent.com/Mp42Clink_lLkj9jCodoUPMLY3_G9Xd-VGrztcOeDfu1-vL1JqTCzGmFBPwN_E5-rZT2XXAO_UAQnh7ijhlWxT_a-g", 
-                    "link": "https://www.matterhackers.com/store/c/ColorFabb%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/colorfabb-pla", 
                     "subtitle": "", 
                     "title": "ColorFabb PLA/PHA Series", 
                     "widget_url": "https://lh3.googleusercontent.com/A2lkbwT7ZxHVLykEpvRX6FkdnfNLIlYQYDRPOZ8yYKWi6LmFlBNBMqLSTsxNmIzja8k6s9MbzjQaXFjlzOdb5L1RwA"
@@ -220,7 +212,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PVA%20%28Polyvinyl%20Alcohol%29", 
+                    "link": "https://www.matterhackers.com/store/c/pva-polyvinyl-alcohol", 
                     "subtitle": "Polyvinyl Alcohol, a water-soluble support material that dissolves away in a water bath to leave only your perfectly printed part. ", 
                     "title": "PVA (Polyvinyl Alcohol)", 
                     "widget_url": "https://lh3.googleusercontent.com/dDceLy9f-KwWH1uo8T8WHOwamYu7Snyoz60sK_q--BiEqYB19NLCytooN-fdxK08VLWk1zoXwG6Vk-PHkG3Isuq2eg"
@@ -228,7 +220,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/emS2Ry_lCT8xchfEnrlvSBDhTdkV4JoIUPfJn8hsx-Qdmu0STAX160cXFR3enZl-Wqntj6rV35unzmvyeK15_U9i", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/PolyMakr%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/polymakr-pla", 
                     "subtitle": "Polymaker manufactures exceptional 3D printing filaments for a range of applications. Post-process using the Polysher alcohol vaporization machine.", 
                     "title": "Polymaker Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/yVy6vaaEixVcSiy_zXyykXFFoaiyoO6UWC1LHH4xRnHv3RPk9s8LrRJ7C_Yv1YX_I63yQKtT-xfIpwfA7W7FUg9jcA"
@@ -244,7 +236,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": "https://lh3.googleusercontent.com/L28WzmI57ccknb2KDdofx21a9QzF5HJ3zyKkyp58ngQrRtbuN3PGs0fLd57GXcz1LbvKQpXVk3clWSgJuJGHfi-O", 
-                    "link": "https://www.matterhackers.com/store/c/Proto-Pasta%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/proto-pasta-pla", 
                     "subtitle": "", 
                     "title": "Proto-Pasta PLA Blends", 
                     "widget_url": "https://lh3.googleusercontent.com/LrdmUoA8XTT4XRsoNp0eNbiksiIOaffbsA2s6R_11HEis4tMKBGAndBrTfsIULkMiBEQV1yidyDp6Z35Zpfk906e"
@@ -252,7 +244,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Soft%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/soft-pla", 
                     "subtitle": "Soft PLA is a very flexible 3D printing material that feels and acts much like rubber. Great for creating parts that can bend to fit their environment.", 
                     "title": "Soft PLA", 
                     "widget_url": "https://lh3.googleusercontent.com/lKUs_y5qnooMoMQkqohWnMRVTj9ntM9AnQ_urxIcwbij5ur83Ca7prdYULyOabQ9AhkyxFHg5CilBj5kZ2sxYfhCLvw"
@@ -260,7 +252,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/EtTFfi1p0IiWdgTYpOKeGoC1lwwEjbBxLcXEahfgyiR8QHf8n9Qvcbcl8-edhC6MGP2NWnuKH0k0BdO3GLGE2z6VBg", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29", 
+                    "link": "https://www.matterhackers.com/store/c/tpu-thermoplastic-polyurethane", 
                     "subtitle": "TPU is a strong yet bendable filament that has excellent layer to layer bonding that does not allow for any layer separation.", 
                     "title": "PRO Series TPU", 
                     "widget_url": "https://lh3.googleusercontent.com/FQ4Oz6ofAI5EfO2VoITIUMnonZdAvS_ESYI3DZsStGSRuwuMoOej8xlGM9-kUql3ozOyABXskf3tgOEFbneAmmvFCw"
@@ -268,7 +260,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/yGZKZX7uzfHxZA7odqj_2VXE7-s3g1o-z1implzlccFKbCLES9YsF3j9z04zcEzHaJXehrJ4whZjfkhROQxMgj5V", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Taulman%203D", 
+                    "link": "https://www.matterhackers.com/store/c/taulman-3d", 
                     "subtitle": "Taulman 3D's high-strength nylons and engineering-grade 3D printing materials for functional and production-level 3D printing.", 
                     "title": "Taulman 3D", 
                     "widget_url": "https://lh3.googleusercontent.com/YHiJ_eSM9aOz-ohBGYm3BvFNmzVr7aIxhMS-lPqLTNr32u7IdIj6WmI20o8AcQfTMelifbZHdECx4PQWGEhDVpitFA"
@@ -276,7 +268,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20ABS", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-abs", 
                     "subtitle": "Explore Ultimaker ABS 3D printing filaments, a multipurpose material capable of withstanding a wide range of temperatures and tend to be more flexible than PLA. ", 
                     "title": "Ultimaker ABS Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/8EzLPNVLTqqDKBeg3yIhTH-WQLg0eZDdJStL4u6we5nOs9zny7Be4nZep9S3bxENBLhZqxPwZr3_hU_95F-DxgQCbg"
@@ -284,7 +276,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20CPE", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-cpe", 
                     "subtitle": "Explore Ultimaker CPE 3D printing filaments, an ideal choice for 3D printing functional prototypes and mechanical parts. ", 
                     "title": "Ultimaker CPE Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/MusGg7GfSt73xX2Ltd6g3RzNEBJLoNKEsQox3pCIpVWsRu1xQDwXa8068nthqDzShB35jxcuGgxirsMy6wTfCyENnf0"
@@ -292,7 +284,7 @@
                 {
                     "banner_url": "https://lh3.googleusercontent.com/BK_RdsfH9cTQk-6u8J4GxK0GgteQr0J91lEJAg5xNsblApS6wpuVKM7WNTs0FawtBSKiSAQekHI_CGLaUNWnjXSv", 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20Materials", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-materials", 
                     "subtitle": "Ultimaker has committed to rigorously testing and engineering their Ultimaker branded materials\u00a0with their\u00a0printers so that you will get great prints.", 
                     "title": "Ultimaker 3D Printing Materials", 
                     "widget_url": "https://lh3.googleusercontent.com/E1CcbNQOG1E8uxNiQYvIq7kE96DCo6YbCD9PxeaUPJE2aumWx2bJixc9QSXiDHQmgZcCiBuVlgcfYBP-qw9n-IlWzA"
@@ -300,7 +292,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20Nylon", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-nylon", 
                     "subtitle": "Ultimaker Nylon filament features reduced humidity absorption and a longer shelf life. Great choice for 3D printing tools, functional prototypes, and end use parts.", 
                     "title": "Ultimaker Nylon Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/UAH5woBjHoTf4aKaiUoMw5BiW5kdITJwb8NA7UaloS6plfIntw_oGPRCfRHtoV2DX4a9uFcqf1dK3eR5lYw_T-BXdA"
@@ -308,7 +300,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20PLA", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-pla", 
                     "subtitle": "Ultimaker PLA filaments has developed a hassle free 3D printing experience. Ultimaker PLA is easy to print at high speeds and excellent detailed surface quality.", 
                     "title": "Ultimaker PLA Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/l_2QptF4aNZnMXy6yTNJdK7CHctVXGITa-5FaFgEGr07ykvqfVoE2LK882h749LerlfO2R1ciwW2Tp-sz-7vZ1TR"
@@ -316,7 +308,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20Polycarbonate", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-polycarbonate", 
                     "subtitle": "Ultimaker PC filament material is top choice for engineers and manufacturers 3D printing parts that retain strength, toughness, and shape.", 
                     "title": "Ultimaker Polycarbonate Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/HDAt9byXNeDwczb9jdUK0Z1Dzwzlusu28p1kbet_8y_aJpMBTT0ou3NevV1fpbKG59iFJIOz0AaNyyktCtIgaP89eQ"
@@ -324,7 +316,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Ultimaker%20TPU", 
+                    "link": "https://www.matterhackers.com/store/c/ultimaker-tpu", 
                     "subtitle": "Ultimaker TPU is an ideal 3D printing material for exceptional wear and tear resistance. Features rubber-like flexibility yet strong durability.", 
                     "title": "Ultimaker TPU Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/flBbWsaQEQoZAHh-1_wZ5xKhZbX6CCePaBGR6pYNB1IZbbaGYHAMs2nv6Lq6zu5USrq8idYztF5ZdHcbSgMIpzLYkA"
@@ -428,7 +420,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/Kai%20Parthy%20Lay%20Series", 
+                    "link": "https://www.matterhackers.com/store/c/kai-parthy-lay-series", 
                     "subtitle": "Kai Parthy, the brains behind Lay Filaments is an early pioneer for a number of innovations in the world of 3D Printing Materials. ", 
                     "title": "Kai Parthy Lay Series", 
                     "widget_url": "https://lh3.googleusercontent.com/og3LLsH57WidmQbebxP2XAO9g2QFz1_tE8vky2cZuifzX--62HVf3z4hZt8mFnZtN3HY_x13Mma9sduA_Q3ihw2_Jw"
@@ -450,11 +442,11 @@
                     "widget_url": "https://lh3.googleusercontent.com/IabeHCd-LqxKxsu9zgMP9xJY2lbmZZvsr1DsBANIOnVmcMAG7Hw72HrYzhpqcYoJPfRFxmHwplhhP_G-UmWbVb0GXQ"
                 }, 
                 {
-                    "banner_url": null, 
+                    "banner_url": "https://lh3.googleusercontent.com/Y1BJdUg_MRoBdvL3hHQjVoxsbhH2jPdaTro_zfSYI7rIWDM4LVp1MvdJLyZWfGLM63AYB03U1JmWyKi4jp09u95GTRKFBjPhKEv-ZHM", 
                     "icon_url": null, 
                     "link": "https://www.matterhackers.com/store/c/makerbot-3d-printing-filament", 
                     "subtitle": "MakerBot 3D printing filament is optimized for use on MakerBot Method 3D Printers and is suitable for a wide range of applications, including end-use part production, prototyping, and manufacturing tools.", 
-                    "title": "MakerBot Method 3D Printing Filament", 
+                    "title": "MakerBot 3D Printing Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/0n1zcua7sVTKaND4BoA8ODJ3T-g98reJH78Db__FobBfX3d4_xKZSjKUccuRCaUVdSe0yS273Rl24NpxxAsHbQEWgg"
                 }, 
                 {
@@ -556,7 +548,7 @@
                 {
                     "banner_url": null, 
                     "icon_url": null, 
-                    "link": "https://www.matterhackers.com/store/c/kodak-pla%2B", 
+                    "link": "https://www.matterhackers.com/store/c/kodak-pla", 
                     "subtitle": "Kodak PLA+", 
                     "title": "Kodak PLA+ 3D Printer Filament", 
                     "widget_url": "https://lh3.googleusercontent.com/B2qoL2nw5MrNOwollTZGVGBqhfkcfTukBkjhHnf3OBBpMzzG1OYXQsy0eJxXwQU0MphtZHWTY2jO4U-Gm7-vRbjJmI8"
@@ -610,7 +602,7 @@
                     "widget_url": "https://lh3.googleusercontent.com/ylAVPK8vr_uQ_bOROiM0CGFamBAoPh6wEUtYmmnLUla2SPPoHq7twRycy_gqIxoZCag8SKbVzW_5yedJn9I3Tw3n_Q"
                 }, 
                 {
-                    "banner_url": "https://lh3.googleusercontent.com/zoeAVfuTMGjJEWwPOtovPjpZurshB9mYtk769HX2n7nBMD4t0dGfyQRvb_sjCQm_vhc7kpDdnueItmhSAxRgFiBTJA", 
+                    "banner_url": "https://lh3.googleusercontent.com/biyrqZFJvtGXUk2kivA5U2xZmXFGTzXfMi743trjTEsOlf0DZH6zGr8HOhSjKBdhZJwigqA_zw15CBuBB_FPy0C1I-Miy6QfLMK_PMw", 
                     "icon_url": null, 
                     "link": "https://www.matterhackers.com/store/c/clearance-items-materials", 
                     "subtitle": "Filament and resins on special Clearance Sale. Check back every day for amazing deals!", 
@@ -627,6 +619,71 @@
         {
             "content_type": "article_group", 
             "group_items": [
+                {
+                    "author": "Alec Richter", 
+                    "category": "articles", 
+                    "date_published": "Jul 15, 2020", 
+                    "description": "Nylon and nylon composites perform exceptionally well in a variety of uses, it just takes a gentler touch to print it successfully.", 
+                    "hero": "https://lh3.googleusercontent.com/vdgd5QVa6KZ_wNlgHjg2XaCgg1boQ0U_Qa8aM8Q2WQVS9y6LC7gxxlsyiV9uKIEFFgp3cOSDjOak24RDBSnRGdGN-w", 
+                    "icon": "https://lh3.googleusercontent.com/IS8vGSYh6WBU95XpxeiA4M_axXMIMCs_6zPPsN0h3S80hgfacvsTn3zUQyp2KMfGK252q8pa4DS2zkHg-gYJ_NQgKg", 
+                    "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAkKjU57QIDA", 
+                    "preview": "<div class='article-block'><p><span>Nylon is one of the most common plastics you will find in consumer products, and there&rsquo;s a reason for that: it&rsquo;s material properties make it an excellent choice for durability. Nylon is ductile, strong, and fairly chemically resistant which is why you&rsquo;ll find a lot of power tools are made of nylon or use a nylon based composite; they&rsquo;re objects that need impact resistance to survive a drop,&nbsp; and potential grease and grime. For these same reasons, nylon is a sought after 3D printing filament that can be challenging to print at times, but there are some helpful tips I can give you so you can be successful too.</span></p>\n<p><span></span></p></div>", 
+                    "reference": "how-to-succeed-3d-printing-with-nylon-and-nylon-composites", 
+                    "title": "How To Succeed: 3D Printing with Nylon and Nylon Composites", 
+                    "url": "/articles/how-to-succeed-3d-printing-with-nylon-and-nylon-composites"
+                }, 
+                {
+                    "author": "MatterHackers", 
+                    "category": "articles", 
+                    "date_published": "Aug 23, 2021", 
+                    "description": "Learn how to 3D print Nylon like a pro. Nylon is a stronger and more durable alternative to PLA or ABS and easy to 3D print with using these Tips and Tricks.", 
+                    "hero": "https://lh3.googleusercontent.com/2lWZqiMthME5PfvdlZEw4u4a_tf_uoyYdazFjhTCVh_8gE6QJzAhKa2rP4GHNLOB-n0uTVKaZ8ijdSsw9T_J7glnTA", 
+                    "icon": "https://lh3.googleusercontent.com/POCNt3Ui9Wadvw0cz1WK-lIpJVWbySGLoahEVwEsLGwl3xtX1jYTf25DxO2_h1mVsYhbZDNLgknyTJpCUZYTQoJHnQ", 
+                    "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgKjTqrEKDA", 
+                    "preview": "<div class='article-block'><p>Everyone with a 3D printer is familiar with PLA and ABS.</p>\n<p>If you&rsquo;ve <a title=\"How to succeed with PLA\" href=\"http://www.matterhackers.com/articles/how-to-succeed-when-printing-in-pla\" target=\"_blank\">3D printed with PLA</a>, you probably know that while it&rsquo;s fairly strong, it&rsquo;s also very brittle. You can&rsquo;t leave parts out in the sun or anywhere that the temperature gets above 100<span>&deg;</span>F.</p>\n<p>If you&rsquo;ve <a title=\"How to succeed with ABS\" href=\"http://www.matterhackers.com/articles/how-to-succeed-when-printing-with-abs\" target=\"_blank\">3D printed with ABS</a>, you know it&rsquo;s much more durable than PLA, but 3D printed ABS parts don&rsquo;t have the strength of injection molded parts, and often aren&rsquo;t strong enough for functional parts.</p>\n<p>Enter <a title=\"Nylon MH\" href=\"http://www.matterhackers.com/store/c/PRO%20Series%20Filament/PRO%20Series%20Nylon\" target=\"_blank\">Nylon</a>.</p></div>", 
+                    "reference": "printing-with-nylon", 
+                    "title": "How To Succeed When 3D Printing With Nylon", 
+                    "url": "/articles/printing-with-nylon"
+                }, 
+                {
+                    "author": "Alec Richter", 
+                    "category": "articles", 
+                    "date_published": "Aug 18, 2021", 
+                    "description": "The first layer of your 3D print is the foundation of everything that comes after, which makes it such an important part of the 3D printing process.", 
+                    "hero": "https://lh3.googleusercontent.com/sFjyuqsM9uzcXhCCxj7dck3UNJwa1yFdi-AN6Y5Mpwzsf1rxvlElPVT2DEAV8pz0hPILFYhZ9o8fKMlmV_veA-W9hw", 
+                    "icon": "https://lh3.googleusercontent.com/ShiJ0UTY1uweHi1fChdTu6ofIvGDX5kIw89CDUDsPhtanKCaFfdc42rRDbIMG7Q37goSwt4GnOlls5T1UAnANVEb3Q", 
+                    "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAkIGf5coKDA", 
+                    "preview": "<div class='article-block'><p><span>At MatterHackers we want to equip you with the knowledge and confidence to succeed with each and every print. To start - let&rsquo;s discuss the initial layer that is printed for any part -&nbsp;</span><span>we refer to it as, not surprisingly, the &ldquo;First Layer.&rdquo; Let's dive into the details</span>.</p></div>", 
+                    "reference": "3d-printing-essentials-first-layer", 
+                    "title": "3D Printing 101: How to Succeed with a Perfect First Layer for Every 3D Print", 
+                    "url": "/articles/3d-printing-essentials-first-layer"
+                }, 
+                {
+                    "author": "Alec Richter", 
+                    "category": "articles", 
+                    "date_published": "Oct 18, 2021", 
+                    "description": "Extruding plastic isn't the only way you can have a manufacturing tool on your desktop; thermo-forming is a rapid and easy-to-use supplement to your toolchest.", 
+                    "hero": "https://lh3.googleusercontent.com/PCPR8dYhemkEX6WNSU7bjhjw3fMRMNAmTfWpMdhYSexV3yRIfrcFSpWFMjA75xYpki-K20UJvnYD9TOxxGGQS8blDkX9SKbUnmFm0N59", 
+                    "icon": "https://lh3.googleusercontent.com/PCPR8dYhemkEX6WNSU7bjhjw3fMRMNAmTfWpMdhYSexV3yRIfrcFSpWFMjA75xYpki-K20UJvnYD9TOxxGGQS8blDkX9SKbUnmFm0N59", 
+                    "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICA0PnXgaMKDA", 
+                    "preview": "<div class='article-block'><p><span>In the wonderful world of desktop manufacturing there are more ways to work with plastic than just heating it up and <a href=\"https://www.matterhackers.com/store/c/3d-printers?ref=mh-nav-dd\">extruding it</a>; you can <a href=\"https://www.matterhackers.com/store/c/laser-cutters-engravers?ref=mh-nav-dd\">cut it</a>, <a href=\"https://www.matterhackers.com/store/c/cnc-machines?ref=mh-nav-dd\">mill it</a>, and one of my favorites: <a href=\"https://www.matterhackers.com/store/c/desktop-vacuum-formers?ref=c-71E64-bc\">vacuum form</a> it. While the others are certainly interesting to watch and exciting to set up, none can go from raw material to finished product as fast as a vacuum forming can. Once you&rsquo;re taken your time on the setup stage, you can breeze through a dozen successful cycles in an hour.&nbsp;</span></p>\n<p><span></span></p></div>", 
+                    "reference": "how-to-use-a-vacuumformer", 
+                    "title": "How To: Use a Vacuumformer to Rapidly Create Unique Products", 
+                    "url": "/articles/how-to-use-a-vacuumformer"
+                }, 
+                {
+                    "author": "Alec Richter", 
+                    "category": "articles", 
+                    "date_published": "Oct 26, 2021", 
+                    "description": "Not only does the Pulse SNAP simplify maintenance by allowing you to quickly swap out the entire hotend, it makes hotend and nozzle changes even easier.", 
+                    "hero": "https://lh3.googleusercontent.com/4gOojTWAzQmgzLZcZYN3H4C3pXcbffN_IvOw7RL1THQMmG0CL6e2cAK4FCwxiVwEH2hHaZZvILQert5RYc5k6K8E6fdF_dFX_CahyAI", 
+                    "icon": "https://lh3.googleusercontent.com/4gOojTWAzQmgzLZcZYN3H4C3pXcbffN_IvOw7RL1THQMmG0CL6e2cAK4FCwxiVwEH2hHaZZvILQert5RYc5k6K8E6fdF_dFX_CahyAI", 
+                    "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICA0KX-35QKDA", 
+                    "preview": "<div class='article-block'><p>With any manufacturing tool, downtime is avoided at nearly all costs; a tool that doesn&rsquo;t work is a tool that will take work to start being useful again. With 3D printers this often comes in the form of nozzle troubles, be it a clog or a swap to better suit material needs. Every newly purchased <a href=\"https://www.matterhackers.com/store/c/fdm-3d-printers/Pulse\">Pulse 3D printer</a> now features the Pulse SNAP, a toolhead with quick-swap capabilities so you can change your hotend to better suit your 3D printing needs or for general maintenance.</p>\n<h4>Let's break it down-</h4>\n<p></p></div>", 
+                    "reference": "tech-breakdown-pulse-snap", 
+                    "title": "Tech Breakdown: Pulse SNAP Toolheads", 
+                    "url": "/articles/tech-breakdown-pulse-snap"
+                }, 
                 {
                     "author": "Tyler Anderson", 
                     "category": "articles", 
@@ -648,9 +705,9 @@
                     "hero": "https://lh3.googleusercontent.com/GGdhlVgjrrVgivTEyQI-MEHrH5DWIL3_wghCSoQj5zG-FD7HybHwQtO1B50WQSAYPxVYN_bFceSpmRQgH5Z9z2fj", 
                     "icon": "https://lh3.googleusercontent.com/lm6UX4qtctQo5bi_cAmM0jQWN4XALyZgWF2vsXB03-Yw-KDswn0QqGAoXYS8cjp3Q_xfuL99dthcLV8EuOIa2M9CAA", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAkNjrlqUJDA", 
-                    "preview": "<div class='article-block'><p><em><span></span></em></p>\n<p><span>PLA is a fantastic 3D printing material: any 3D printer is capable of printing PLA, users of all experience levels can use it with ease, and it&rsquo;s available in an astounding number of colors. </span><span>But every material has different characteristics, and although incredibly useful, PLA isn't resistant to higher temperatures.</span><span> Just leaving a PLA print in a hot car will cause it to soften and deform, and if you&rsquo;re in a place that gets hot enough, the 3D print may just collapse on itself or shrink in bizarre ways. Fortunately, there are derivatives of PLA that look to unlock the next step in its evolution as a 3D printing material, like MatterHackers PRO Series Tough PLA and HTPLA. Let&rsquo;s take a look at what makes these special.</span></p>\n<p><span></span></p></div>", 
+                    "preview": "<div class='article-block'><p>PLA is a fantastic 3D printing material: any 3D printer is capable of printing PLA, users of all experience levels can use it with ease, and it&rsquo;s available in an astounding number of colors. But every material has different characteristics, and although incredibly useful, PLA isn't resistant to higher temperatures. Just leaving a PLA print in a hot car will cause it to soften and deform, and if you&rsquo;re in a place that gets hot enough, the 3D print may just collapse on itself or shrink in bizarre ways. Fortunately, there are derivatives of PLA that look to unlock the next step in its evolution as a 3D printing material, like <a href=\"https://www.matterhackers.com/store/c/pro-series-tough-pla\">MatterHackers PRO Series Tough PLA</a> and <a href=\"https://www.matterhackers.com/store/c/proto-pasta-htpla-series\">HTPLA</a>. Let&rsquo;s take a look at what makes these special.</p>\n<p><span></span></p></div>", 
                     "reference": "how-to-anneal-tough-pla-and-htpla", 
-                    "title": "How To: Annealing Tough PLA for Stronger 3D Printed Parts ", 
+                    "title": "How To: Anneal Tough PLA for Stronger 3D Printed Parts ", 
                     "url": "/articles/how-to-anneal-tough-pla-and-htpla"
                 }, 
                 {
@@ -1228,12 +1285,12 @@
                 {
                     "author": "MatterHackers", 
                     "category": "articles", 
-                    "date_published": "Feb 27, 2013", 
-                    "description": "Discover the best tips for 3D printing with PLA filament - from finding the right temperature, to which surfaces to 3D print on, this step-by-step guide will help you succeed with 3D printing PLA.", 
+                    "date_published": "Jul 27, 2021", 
+                    "description": "Discover the best practices for 3D printing with PLA filament - from finding the right temperature, to which surfaces to 3D print on, this step-by-step guide will help you succeed with 3D printing PLA.", 
                     "hero": "https://lh3.googleusercontent.com/btWe-eB7QA8iyGsfXklSLDFnHg2wOc8hJCbJ_8lmfz2Wo-I1y0B8rY3_FheuWrrA2DqItzKAdyue-oppqyL8CZgAiAWGj3wXBO5org", 
                     "icon": "https://lh3.googleusercontent.com/Qe0fe5d8YmBkND7B-bj_5L6uvdJbFIGDWFX27aso3l4-uZ8-cN5vh2eFWacZtjxDj1DWbSYA8Olp9OWxwBRvKH2_j8I", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyEwsSC0FydGljbGVQYWdlGPDxFgw", 
-                    "preview": "<div class='article-block'><p>PLA is a wonderful, easy to use, 3D printing material. It is a renewable and biodegradable resource. &nbsp;It is non-toxic and has a pleasant smell when printing. &nbsp;<a href=\"../../store/3d-printer-filament/pla\" target=\"_blank\">PLA</a> filament comes in a wide range of <a href=\"../../store/3d-printer-filament/pla\" target=\"_blank\">colors</a> and because of its thermal characteristics, is particularly easy to get great prints with.</p></div>", 
+                    "preview": "<div class='article-block'><p>For years <a href=\"https://www.matterhackers.com/store/c/PLA\">PLA 3D filament</a> has been the top dog in the 3D printing industry; it prints easily, is available in a huge variety of colors and effects, and can be printed on virtually any 3D printer. Being successful with PLA is an essential skill to develop as you are likely to stick with PLA for most of you're projects until you find yourself working on more demanding use cases. PLA is great for demonstration models, jigs, fixtures, your average around-the-office 3D print, or even full-body costumes, so let's jump into what you need to know to perform at your best.</p></div>", 
                     "reference": "how-to-succeed-when-printing-in-pla", 
                     "title": "How To Succeed When 3D Printing With PLA Filament", 
                     "url": "/articles/how-to-succeed-when-printing-in-pla"
@@ -1716,7 +1773,7 @@
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgPTV9qkKDA", 
                     "preview": "<div class='article-element-standard'><p dir=\"ltr\"><span>Your 3D printer extrudes and retracts precise amounts of filaments in order to create your printed masterpieces. Well, it does if it&rsquo;s properly calibrated. Calibrating your extruder is one of the most important, as well as one of the most overlooked, things you can do to your machine. </span></p>\n<p dir=\"ltr\"><span>If you&rsquo;ve been unhappy with your printing results or have noticed either under or over-extrusion, this calibration will help resolve some or all of these issues.</span></p>\n<p dir=\"ltr\"><span>Before we begin, let&rsquo;s identify the components on your printer that we&rsquo;ll be covering, as well as the 2 different types of extruder setups.</span></p></div>", 
                     "reference": "how-to-calibrate-your-extruder", 
-                    "title": "How To Calibrate Your Extruder", 
+                    "title": "How To Calibrate Your 3D Printer's Extruder", 
                     "url": "/articles/how-to-calibrate-your-extruder"
                 }, 
                 {
@@ -1748,12 +1805,12 @@
                 {
                     "author": "MatterHackers", 
                     "category": "news", 
-                    "date_published": "Oct 20, 2016", 
-                    "description": "Durable and easy to print, PETG filament is likely to take over as the most commonly-used filament. This in-depth guide provides a few tips and tricks on how to get started and embrace the fantastic properties of this material. ", 
+                    "date_published": "Aug 1, 2021", 
+                    "description": "This in-depth guide provides a few tips and tricks on how to get started and embrace the fantastic properties of durable and easy to print, PETG filament", 
                     "hero": "https://lh3.googleusercontent.com/h69_9LBIhVlutqY1rjQo9UIqOmJVI8AWEfR6XNKx_EWuP39bGNy0G5Iu8UQm5qTK5oQPZuPqrcR1wk8zU7ABXtKlKsPLmeD4qWPWI9U", 
                     "icon": "https://lh3.googleusercontent.com/45TmCajv4Znajv9kxnWpJWH5Dd_2kxfkSa7_iYIbWMI1jLYqYsJ5ItxMc96mFpyiC3GbUqyF-yjtugAksAC5CYSP", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgP3YibMJDA", 
-                    "preview": "<div class='article-block'><p><a title=\"SHOP PETG\" href=\"http://www.matterhackers.com/store/c/PRO%20Series%20PETG\" target=\"_blank\" rel=\"noopener\">PETG</a>&nbsp;is an&nbsp;abbreviation for Polyethylene Terephthalate (with a glycol modification) which is one of the most common polymers used today. It&rsquo;s used to make water bottles, food packaging, and countless other common plastic items. As a 3D printing filament, PETG plastic has proven its worth as a durable material that is easy to use. Figuratively speaking, it combines the most useful characteristics of ABS filament (the rigidity and mechanical properties for functional parts) with the ease of printing that PLA filament affords. Kind of a &ldquo;best of both worlds&rdquo; scenario.</p></div>", 
+                    "preview": "<div class='article-block'><p>For many years the standard 3D printing filaments were <a href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PLA\">PLA</a> and <a href=\"https://www.matterhackers.com/store/c/3d-printer-filament/ABS\">ABS</a>. 3D printer users knew that if they wanted something decorative, print it in PLA and if they wanted something structural, print it in ABS. That all changed once <a href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PET\">PETG 3D printing filament</a> entered the scene. Not many 3D printers had all-metal hotends that could support it, but those that did were able to print structural components using a much less temperamental material. Nowadays PETG has almost entirely replaced ABS as the \"structural-material of choice,\" with everything from end-use jigs, fixtures, and products to entire 3D printers being made using PETG. In order to 3D print with PETG 3D printing material successfully, there are some hardware requirements and tips you might find helpful, so let's jump into it!</p></div>", 
                     "reference": "how-to-succeed-when-printing-with-petg-filament", 
                     "title": "How to Succeed when 3D Printing with PETG Filament", 
                     "url": "/news/how-to-succeed-when-printing-with-petg-filament"
@@ -1823,11 +1880,11 @@
                     "author": "Chris Morgan", 
                     "category": "articles", 
                     "date_published": "Oct 26, 2020", 
-                    "description": "Our November 2020 Hacker of the Month uses 3D printing to create strong, weather-proof brackets for a custom, ocean-going laboratory built inside a shipping container.", 
+                    "description": "Kenny Nevor uses 3D printing to create strong, weather-proof brackets for a custom, ocean-going laboratory built inside a shipping container.", 
                     "hero": "https://lh3.googleusercontent.com/7rGwclM3EziDiLvBgms8dqlP38spOMAW2M-4ybuKfEulN0ZGwI3SFxjkP_MVUJybSpzhqSGlqHGecjaf3INlheDnJQ", 
                     "icon": "https://lh3.googleusercontent.com/C4CVvy-iDy1-HUoyB4YYIzQjDW3RN4jKEpmv1jWkuZWqz6d2gauymqx9k_7PjYmXRN8SDsi-F7YcZQm1N0SGRisReA", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAkKWSv-YIDA", 
-                    "preview": "<div class='article-block'><p><span>For anyone that follows our Instagram page (@matterhackers in case you&rsquo;re not!), you&rsquo;ll recognize the work of our Hacker of the Month for November 2020. His custom-designed brackets fabricated with <a href=\"https://www.matterhackers.com/store/c/NylonX\">NylonX</a> and <a href=\"https://www.matterhackers.com/store/c/nylong\">NylonG</a> are a welcome addition to our IG Stories page on an almost daily basis.</span></p></div>", 
+                    "preview": "<div class='article-block'><p><span>For anyone that follows our Instagram page (@matterhackers in case you&rsquo;re not!), you&rsquo;ll recognize the work of Kenny Nevor. His custom-designed brackets fabricated with <a href=\"https://www.matterhackers.com/store/c/NylonX\">NylonX</a> and <a href=\"https://www.matterhackers.com/store/c/nylong\">NylonG</a> are a welcome addition to our IG Stories page on an almost daily basis.</span></p></div>", 
                     "reference": "creating-custom-3d-brackets-for-an-ocean-going-laboratory", 
                     "title": "Creating Custom 3D Brackets for an Ocean-Going Laboratory", 
                     "url": "/articles/creating-custom-3d-brackets-for-an-ocean-going-laboratory"
@@ -2006,8 +2063,8 @@
                     "category": "articles", 
                     "date_published": "Dec 18, 2017", 
                     "description": "Neal McKenzie, our January Hacker of the Month, is an educator dedicated to spreading the word about how 3D printing and design can help the visually impaired.", 
-                    "hero": "https://lh3.googleusercontent.com/g3zfSRH2sox8evHr8t1lpjOMZYzB1X0_wSHCh420pbWnDHb-gdqNAdhcIDJZnYX6aW9Npckl6e8kVRKrz-98FjAg5RU", 
-                    "icon": "https://lh3.googleusercontent.com/g3zfSRH2sox8evHr8t1lpjOMZYzB1X0_wSHCh420pbWnDHb-gdqNAdhcIDJZnYX6aW9Npckl6e8kVRKrz-98FjAg5RU", 
+                    "hero": "https://lh3.googleusercontent.com/pOxy4Cf9fDko7C9db4Hvb-sae5c5UzlDcbH35CRculu9luqEOfHvcNuV3IttzE1onKAptaBTYN2PSAxth2hZo71r65hcmb1mwR_yig", 
+                    "icon": "https://lh3.googleusercontent.com/pOxy4Cf9fDko7C9db4Hvb-sae5c5UzlDcbH35CRculu9luqEOfHvcNuV3IttzE1onKAptaBTYN2PSAxth2hZo71r65hcmb1mwR_yig", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAwNLq9rcKDA", 
                     "preview": "<div class='article-block'><p><span>Our January Hacker of the Month is Neal McKenzie, an Assistive Technology Specialist for the Visually Impaired Department at the Sonoma County Office of Education, which works with Blind and Low Vision students K-12. He helps his students use <a href=\"https://www.matterhackers.com/store/c/printer-kits\">3D printing</a> technology in order to make their education more accessible and more comfortable.</span></p></div>", 
                     "reference": "3d-printed-educational-models-for-the-visually-impaired", 
@@ -2277,12 +2334,12 @@
                 {
                     "author": "Chris Morgan", 
                     "category": "articles", 
-                    "date_published": "Jun 25, 2018", 
-                    "description": "July 2018 Hacker of the Month, Emily Ruhl, uses 3D printing to recreate artificial marine habitats to help coral reef fish find homes!", 
+                    "date_published": "Jun 25, 2021", 
+                    "description": "Learn how Emily Ruhl is using 3D printers to recreate artificial marine habitats to help coral reef fish find homes.", 
                     "hero": "https://lh3.googleusercontent.com/SAzjR8yPwKVYL9hmUHp9WAY7AlQMCN1ZcP07gjuH9Q_-9S7tPyXZpXqgbMy4DEZ2KDLid61JNsU6CN59HCAzHgbt", 
                     "icon": "https://lh3.googleusercontent.com/K4RHyAlPbe3mX3dT2uUzhJ-gqUF7rSKJxBdCXrxK7u-wDNBnATp2cUZiL2tymanWHMydroj1sDd6YiRBk0CCBFpA5A", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAwNmS77QKDA", 
-                    "preview": "<div class='article-block'><p><span>Our July 2018 Hacker of the Month is Emily Ruhl, a graduate student at the University of Delaware. Emily is currently pursuing her master&rsquo;s degree in Marine Biosciences in the College of Earth, Ocean and Environment where she is investigating using 3D printing to create marine habitats that simulate coral reefs.</span></p></div>", 
+                    "preview": "<div class='article-block'><p><span>Emily Ruhl, a graduate student at the University of Delaware. Emily is currently pursuing her master&rsquo;s degree in Marine Biosciences in the College of Earth, Ocean and Environment where she is investigating using 3D printing to create marine habitats that simulate coral reefs.</span></p></div>", 
                     "reference": "using-3d-printing-to-save-marine-wildlife", 
                     "title": "Using 3D Printing to Save Marine Wildlife", 
                     "url": "/articles/using-3d-printing-to-save-marine-wildlife"
@@ -2447,26 +2504,26 @@
                     "author": "Erica Derrico", 
                     "category": "news", 
                     "date_published": "Jul 6, 2015", 
-                    "description": "Wait - THAT is 3D printed? Check out what Mekah Design Studios has done to make Standard PLA look like a rustic artifact. ", 
+                    "description": "Check out what Mekah Design Studios has done with 3D printing to grow their business. ", 
                     "hero": "https://lh3.googleusercontent.com/rryDDq6ktt9hbuHJ15GMxv40SLU2FoBSNWgRzQsIfWkiVMXVjMzZjCbg100bKRwVeBFE8F3IpoiF8LMTZiTJQAqgFQ", 
                     "icon": "https://lh3.googleusercontent.com/rryDDq6ktt9hbuHJ15GMxv40SLU2FoBSNWgRzQsIfWkiVMXVjMzZjCbg100bKRwVeBFE8F3IpoiF8LMTZiTJQAqgFQ", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgNKHvbUJDA", 
                     "preview": "<div class='article-element-standard'><p>Congratulations to Mekah Design Studios,&nbsp;our July 2015 Hacker of the Month! Mekah Design Studios has implemeted 3D printing into part of their craft. Printing for about a year, the Mekah team has been improving the speed and quality of their work with the use of their SeeMeCNC Orion. Less than a year ago, the team had a request for 20 trophies that they chose to fulfill with the help of 3D printing.</p></div>", 
                     "reference": "july-2015-hacker-of-the-month", 
-                    "title": "July 2015 Hacker of the Month", 
+                    "title": "Trophy Shop Uses 3D Printing to Design and Manufacture Custom Trophies", 
                     "url": "/news/july-2015-hacker-of-the-month"
                 }, 
                 {
                     "author": "Erica Derrico", 
                     "category": "news", 
                     "date_published": "Jun 1, 2015", 
-                    "description": "3D Printing and Skateboarding? Find out what they have in common with Kevin Seele and BLOCK Riser Innovations. Let all your hobbies collide!", 
+                    "description": "Find out how Kevin Seele and BLOCK Riser Innovations are using 3D printing to develop a new style of skateboard risers.", 
                     "hero": "https://lh3.googleusercontent.com/IpSyhHkSOlayU6b5Qbux8g0VZ7xCdEEumhUAvTd1iLrFNfFDy_gct1tN16uP-6aNmyNBYjNWxq0NNd8Ht4vh6694UTk", 
                     "icon": "https://lh3.googleusercontent.com/IpSyhHkSOlayU6b5Qbux8g0VZ7xCdEEumhUAvTd1iLrFNfFDy_gct1tN16uP-6aNmyNBYjNWxq0NNd8Ht4vh6694UTk", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgMKXt7UJDA", 
                     "preview": "<div class='article-element-standard'><p>It all began three years ago when Kevin Seele, founder of BLOCK Riser Innovations, wanted to combine his two favorite hobbies- skateboarding and building. While the designs for a skateboard's wheels, truck, and body had already expanded and changed over the years, risers had not. In fact, they had stayed exactly the same. Seele realized there was potential for a riser mechanism that had multiple functionalities, which led to the idea of&nbsp;BLOCK risers.</p></div>", 
                     "reference": "june-2015-hacker-of-the-month", 
-                    "title": "June 2015 Hacker of the Month", 
+                    "title": "Using 3D Printing to Develop Skateboard Risers", 
                     "url": "/news/june-2015-hacker-of-the-month"
                 }, 
                 {
@@ -2486,13 +2543,13 @@
                     "author": "Erica Derrico", 
                     "category": "news", 
                     "date_published": "Apr 5, 2015", 
-                    "description": "Introducing Troy Peterson - April's Hacker of the Month! Troy utilizes 3D printing to create silicone molds. Learn how easy it is to quickly develop prototypes for all your future projects that require molds and casts. ", 
+                    "description": "Introducing Troy Peterson from BJB Enterprises. Troy utilizes 3D printing to create silicone molds. Learn how easy it is to quickly develop prototypes for all your future projects that require molds and casts. ", 
                     "hero": "https://lh3.googleusercontent.com/5FvS5s_GytcGfEg6UDuS0ej1e9xcvU9llbbljZWvOsyQz6u6qL1dmrAmG-uqDPdR52VpIvaGjnuG_-z9Xzkxk_8uSA", 
                     "icon": "https://lh3.googleusercontent.com/5FvS5s_GytcGfEg6UDuS0ej1e9xcvU9llbbljZWvOsyQz6u6qL1dmrAmG-uqDPdR52VpIvaGjnuG_-z9Xzkxk_8uSA", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgOz3m78KDA", 
                     "preview": "<div class='article-element-standard'><p>A big congrats to Troy Peterson, our April 2015 Hacker of the Month! Troy intrigued us with his method of using 3D printed parts to make production-ready silicone molds. His submission included a thorough <a href=\"https://www.youtube.com/watch?v=b_KMWhJyYLE&amp;feature=youtu.be\">video</a> about creating molds for a Skin Rejuvenator that often gets mistaken for a hair dryer. Peterson, who works in Technical Sale and Marketing for BJB Enterprises, has<span>&nbsp;a background in aerospace composites, mold-making, and graphic design.&nbsp;<span>BJB has a long history in product development, entertainment, theme park, and manufacturing industries. They produce raw materials; not finished parts.</span></span></p></div>", 
                     "reference": "april-2015-hacker-of-the-month", 
-                    "title": "April 2015 Hacker of the Month", 
+                    "title": "How BJB Enterprises Uses 3D Printing to Create Custom Silicone Molds", 
                     "url": "/news/april-2015-hacker-of-the-month"
                 }, 
                 {

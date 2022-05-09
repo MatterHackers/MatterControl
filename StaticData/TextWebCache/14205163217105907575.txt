@@ -1,0 +1,233 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-11-15", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-11-15T17:57:08.040190", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Nov 15th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "396.45", 
+        "DisplayPrice": "199.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-5WA-YG5F", 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/7f5d01ce-5cfc-449e-bd6e-c46cd397f914", 
+            "ImageUrl": "https://lh3.googleusercontent.com/WHCsUcFBpEgAYXgBHjSelvj-52fSBQptzPtqYe1hZVg5zG1dAK6GQHnoG4J-QLRqFSlgZlAdBRIQJ7QvX8bNaw", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVdBWUc1Rgw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "Print in metal with BASF Ultrafuse 316L and 17-4 PH with absolute confidence using expertise from the professionals at MatterHackers. MatterHackers' goal is always to offer convenient successful experiences from start to finish.  Producing metal prints on the first try with BASF Ultrafuse metal materials may require input from our experienced team of engineers to ensure the final product is designed and printed for successful implementation.", 
+        "ProductListPrice": 39645, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVdBWUc1Rgw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-11-15T17:57:07.661534", 
+            "DisplayPriceRange": "19900", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>SUCCEED AT METAL 3D PRINTING WITH HELP FROM MATTERHACKERS</strong></h3>\r\n<p>In-house Engineers at MatterHackers have the knowledge you need to succeed with 3D printing Ultrafuse 316L and 17-4 PH metal filament. Solution Engineering - Ultrafuse Metal Filament Design Consultation helps realize your idea from design to sintering when you consult with one of our experts regarding the tips and tricks that will help make the design, print, and processing workflow a success. Whether it is a need for CAD model review, tips on the best print settings for your specific 3D printer, or a walkthrough on how to prepare your parts for debinding and sintering, our technicians will provide the best solutions that will guide you in the right direction. Turning ideas into functional metal prototypes is more successful and convenient with MatterHackers' Solution Engineering - Ultrafuse Metal Filament Design Consultation.</p>", 
+                    "ElementCode": "IRHOJB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/I_tMmvL6vSERSb78eyE1t2e27g_4sMp53Id1svPfxjDUCGpqb9cJIj5O9wZP2eFCgROa5h3iVwJnQeJqAdRVzyMm'></p>", 
+                    "ElementCode": "GPCZYQ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/dfe3849b-fc99-4a60-956b-7c19ae2c4f03", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/I_tMmvL6vSERSb78eyE1t2e27g_4sMp53Id1svPfxjDUCGpqb9cJIj5O9wZP2eFCgROa5h3iVwJnQeJqAdRVzyMm", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>HAVE CONFIDENCE IN CONSULTING WITH OUR EXPERT ENGINEERS ON METAL 3D&nbsp;</strong><strong>DESIGNING, PRINTING, AND PROCESSING </strong></h3>\r\n<p>MatterHackers' Engineers meticulously test the products we carry to ensure we understand the ins and outs of how to succeed with each item. This Solution Engineering - Ultrafuse Metal Filament Design Consultation is devised to have our in-house experts provide the knowledgeable resources specific to your needs. Because our experts undergo this thorough evaluation process, you'll have confidence knowing that they will properly provide the best workflow for success. Understand how to design for the manufacturing process when you talk with an expert today with MatterHackers' Solution Engineering - Ultrafuse Metal Filament Design Consultation.</p>", 
+                    "ElementCode": "3ZDCZO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/DpMJIa2nsJr8s064QpjbX4rxIho9czCPMR4a7_lHsJBfyvDnUKjCmKa3EME0Lcy7jtjCY9RBcG-Xpxz8WYOlQjU9'></p>", 
+                    "ElementCode": "QEOJBK", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/4c7399be-0c0d-47b6-929d-bee87fefbf92", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/DpMJIa2nsJr8s064QpjbX4rxIho9czCPMR4a7_lHsJBfyvDnUKjCmKa3EME0Lcy7jtjCY9RBcG-Xpxz8WYOlQjU9", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>PRODUCE THE METAL PART YOU IMAGINED WITH CONVENIENT ASSISTANCE</strong></h3>\r\n<p>Receive professional assistance on BASF Ultrafuse 316L and 17-4 PH inquiries when you purchase MatterHackers' Solution Engineering - Ultrafuse Metal Filament Design Consultation. Our in-house technicians will be available to answer any questions you have regarding the designing, printing, and processing steps of the metal 3D printing workflow. This consultation guarantees you will be paired with one of our specialists who will help you stay on the right track to manufacturing success. Having convenient access to assistance from an experienced expert through MatterHackers' Solution Engineering - Ultrafuse Metal Filament Design Consultation will provide you with the right tools for successful metal 3D printing.</p>", 
+                    "ElementCode": "RYIKZC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/UX-YGDh2pVNE9Bwmxz52Aa4iza-Tt1Q44bFgscjB1hfvm_cU3TRQGC7a-SkmZaSUpd0C6qNlfsVnwaIqZewOAsk'></p>", 
+                    "ElementCode": "DYNQ75", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/71c61e5e-422b-4443-9b30-ab235935ea09", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/UX-YGDh2pVNE9Bwmxz52Aa4iza-Tt1Q44bFgscjB1hfvm_cU3TRQGC7a-SkmZaSUpd0C6qNlfsVnwaIqZewOAsk", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>If the Solution Engineering is not for you - some tips on how to succeed with 3D printing metal filament on a desktop FDM 3D printer can be found in our article <a title=\"How to Succeed with 3D Printing Metal on a Desktop 3D Printer\" href=\"https://www.matterhackers.com/support/how-to-succeed-with-3d-printing-metal-on-a-desktop-3d-printer\" target=\"_blank\" rel=\"noopener\">here</a>.</p>", 
+                    "ElementCode": "CNBS6N", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/7f5d01ce-5cfc-449e-bd6e-c46cd397f914", 
+                "ImageUrl": "https://lh3.googleusercontent.com/WHCsUcFBpEgAYXgBHjSelvj-52fSBQptzPtqYe1hZVg5zG1dAK6GQHnoG4J-QLRqFSlgZlAdBRIQJ7QvX8bNaw", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5679753767944192, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/7f5d01ce-5cfc-449e-bd6e-c46cd397f914", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/WHCsUcFBpEgAYXgBHjSelvj-52fSBQptzPtqYe1hZVg5zG1dAK6GQHnoG4J-QLRqFSlgZlAdBRIQJ7QvX8bNaw", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/cd3423ea-d6d5-4a41-912b-0a26d28e09df", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/9HzNZnymZ8WqfLxwUxBqnFmrMit0SqtJEFIcvcyvSx85Vv7nflz8SY3isaRnoq5D0OlPjjVl9o3rI8IyfHWAHbU", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/3255fae4-d01a-4649-9993-6c85ef74d29b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/AuY5x2Y0DbmH49LQi4LmkqrSoaG44HYWg8GhxPESdldr_YmUwK4Ch4PBPuoJmKPp3v2Eg6qIAunlks2HsPIgjQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/1aeae734-443a-42c3-af23-f42615e9921b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/8cwtwk3GeOFDhP3uCTsAIwq0_Ew7PpSkJ8TGVeEVWNm8LtOWzZZ5Qj0pT9rklRRA-5K4IV2fvBrwKid5NeuW6g", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/c4ea9c26-110a-444c-9663-f8d9fb2f12e8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/GRfVpZUYgPnA45MmVfYVPDmASvW8g44qxmaM94gqymP_cbnGZv3PJAOkX8zDGYNQ5GNJYLAzoEi29Gqmza_atA8", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+            "MaxPriceRange": 19900, 
+            "MetaTagKeywords": [], 
+            "MinPriceRange": 19900, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-11-15T17:57:07.661556", 
+            "ProductEditedOn": "2022-03-23T21:42:10.475014", 
+            "ProductType": "service", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "matterhackers-basf-ultrafuse-316l-design-consultation", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw"
+            ], 
+            "ShortDescription": "Print in metal with BASF Ultrafuse 316L and 17-4 PH with absolute confidence using expertise from the professionals at MatterHackers. MatterHackers' goal is always to offer convenient successful experiences from start to finish.  Producing metal prints on the first try with BASF Ultrafuse metal materials may require input from our experienced team of engineers to ensure the final product is designed and printed for successful implementation.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Solution Engineering - BASF Ultrafuse Metal Filament Design Consultation"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 19900, 
+        "ProductType": "service", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 33303, 
+        "QuantityOnHand": 33303, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "matterhackers-basf-ultrafuse-316l-design-consultation", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "M5WAYG5F", 
+        "SalesIndexByDollars": 1356, 
+        "SalesIndexByUnits": 2134, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Solution Engineering - BASF Ultrafuse Metal Filament Design Consultation", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 5, 
+        "SuccessRatingScore": 10000, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}
