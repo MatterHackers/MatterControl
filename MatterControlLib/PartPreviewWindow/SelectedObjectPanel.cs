@@ -317,9 +317,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					otherText.Text = text;
 					otherContainer.Visible = true;
 					holeText.Underline = false;
+					holeText.Bold = false;
 					holeButton.BackgroundOutlineWidth = 1;
 
 					solidText.Underline = false;
+					solidText.Bold = false;
 					solidButton.BackgroundOutlineWidth = 1;
 				}
 
@@ -330,10 +332,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         case PrintOutputTypes.Hole:
                             holeText.Underline = true;
-                            holeButton.BackgroundOutlineWidth = 2;
+                            holeText.Bold = true;
+							holeButton.BackgroundOutlineWidth = 2;
 							holeButton.BackgroundRadius = scaledButtonSize / 2 - 1;
 
-                            solidText.Underline = false;
+							solidText.Underline = false;
+							solidText.Bold = false;
                             solidButton.BackgroundOutlineWidth = 1;
 							solidButton.BackgroundRadius = scaledButtonSize / 2;
 							otherContainer.Visible = false;
@@ -342,10 +346,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         case PrintOutputTypes.Default:
                         case PrintOutputTypes.Solid:
                             holeText.Underline = false;
+                            holeText.Bold = false;
                             holeButton.BackgroundOutlineWidth = 1;
 							holeButton.BackgroundRadius = scaledButtonSize / 2;
 
 							solidText.Underline = true;
+							solidText.Bold = true;
                             solidButton.BackgroundOutlineWidth = 2;
 							solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
 							otherContainer.Visible = false;
@@ -413,6 +419,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0),
 					Selectable = true,
+					AutoExpandBoundsToText = true,
 				};
 				buttonRow.AddChild(solidText, 0);
 				buttonRow.AddChild(holeButton, 0);
@@ -421,7 +428,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0),
 					Selectable = true,
-				};
+                    AutoExpandBoundsToText = true,
+                };
 				buttonRow.AddChild(holeText, 0);
 				otherContainer = new GuiWidget()
 				{
