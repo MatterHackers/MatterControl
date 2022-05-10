@@ -310,16 +310,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var solidButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
 				GuiWidget otherContainer = null;
 				TextWidget otherText = null;
-				TextWidget holeText = null;
-				TextWidget solidText = null;
+				GuiWidget holeContainer = null;
+				GuiWidget solidContainer = null;
 				void SetOtherOutputSelection(string text)
                 {
 					otherText.Text = text;
 					otherContainer.Visible = true;
-					holeText.Underline = false;
+					holeContainer.BackgroundOutlineWidth = 0;
 					holeButton.BackgroundOutlineWidth = 1;
 
-					solidText.Underline = false;
+					solidContainer.BackgroundOutlineWidth = 0;
 					solidButton.BackgroundOutlineWidth = 1;
 				}
 
@@ -329,24 +329,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     switch (selectedItem.WorldOutputType())
                     {
                         case PrintOutputTypes.Hole:
-                            holeText.Underline = true;
-                            holeButton.BackgroundOutlineWidth = 2;
+							holeContainer.BackgroundOutlineWidth = 1;
+							holeButton.BackgroundOutlineWidth = 2;
 							holeButton.BackgroundRadius = scaledButtonSize / 2 - 1;
 
-                            solidText.Underline = false;
-                            solidButton.BackgroundOutlineWidth = 1;
+							solidContainer.BackgroundOutlineWidth = 0;
+							solidButton.BackgroundOutlineWidth = 1;
 							solidButton.BackgroundRadius = scaledButtonSize / 2;
 							otherContainer.Visible = false;
 							break;
 
                         case PrintOutputTypes.Default:
                         case PrintOutputTypes.Solid:
-                            holeText.Underline = false;
-                            holeButton.BackgroundOutlineWidth = 1;
+							holeContainer.BackgroundOutlineWidth = 0;
+							holeButton.BackgroundOutlineWidth = 1;
 							holeButton.BackgroundRadius = scaledButtonSize / 2;
 
-							solidText.Underline = true;
-                            solidButton.BackgroundOutlineWidth = 2;
+							solidContainer.BackgroundOutlineWidth = 1;
+							solidButton.BackgroundOutlineWidth = 2;
 							solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
 							otherContainer.Visible = false;
 							break;
@@ -382,6 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					SetButtonStates();
+					Invalidate();
 				}
 
 				solidButton.Parent.MouseDown += (s, e) => SetToSolid();
@@ -407,39 +408,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ToolTipText = "Convert to Hole".Localize(),
 				};
 
+				GuiWidget NewTextContainer(string text)
+                {
+					var textWidget = new TextWidget(text.Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+					{
+						Margin = new BorderDouble(5, 4, 5, 5),
+						AutoExpandBoundsToText = true,
+					};
+
+					var container = new GuiWidget()
+					{
+						Margin = new BorderDouble(5, 0),
+						VAnchor = VAnchor.Fit | VAnchor.Center,
+						HAnchor = HAnchor.Fit,
+						BackgroundRadius = 3,
+						BackgroundOutlineWidth = 1,
+						BorderColor = theme.PrimaryAccentColor,
+						Selectable = true,
+					};
+
+					container.AddChild(textWidget);
+
+					return container;
+				}
+
 				var buttonRow = solidButton.Parents<FlowLayoutWidget>().FirstOrDefault();
-				solidText = new TextWidget("Solid".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
-				{
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(3, 0),
-					Selectable = true,
-				};
-				buttonRow.AddChild(solidText, 0);
+				solidContainer = NewTextContainer("Solid");
+				buttonRow.AddChild(solidContainer, 0);
+
 				buttonRow.AddChild(holeButton, 0);
-				holeText = new TextWidget("Hole".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
-				{
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(3, 0),
-					Selectable = true,
-				};
-				buttonRow.AddChild(holeText, 0);
-				otherContainer = new GuiWidget()
-				{
-					Margin = new BorderDouble(5, 0),
-					VAnchor = VAnchor.Fit | VAnchor.Center,
-					HAnchor = HAnchor.Fit,
-					BackgroundRadius = 3,
-					BackgroundOutlineWidth = 1,
-					BorderColor = theme.PrimaryAccentColor,
-				};
+				holeContainer = NewTextContainer("Hole");
+				buttonRow.AddChild(holeContainer, 0);
+
+				otherContainer = NewTextContainer("");
 				buttonRow.AddChild(otherContainer, 0);
 
-				otherText = new TextWidget("".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
-				{
-					Margin = new BorderDouble(5, 5),
-					AutoExpandBoundsToText = true,
-				};
-				otherContainer.AddChild(otherText);
+				otherText = otherContainer.Children.First() as TextWidget;
 
 				void SetToHole()
                 {
@@ -448,11 +452,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						undoBuffer.AddAndDo(new MakeHole(selectedItem));
 					}
 					SetButtonStates();
+					Invalidate();
 				}
 
 				holeButton.Click += (s, e) => SetToHole();
-				holeText.Click += (s, e) => SetToHole();
-				solidText.Click += (s, e) => SetToSolid();
+				holeContainer.Click += (s, e) => SetToHole();
+				solidContainer.Click += (s, e) => SetToSolid();
 
 				SetButtonStates();
 				void SelectedItemOutputChanged(object sender, EventArgs e)
