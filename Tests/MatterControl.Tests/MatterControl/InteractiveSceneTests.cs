@@ -625,7 +625,7 @@ namespace MatterControl.Tests.MatterControl
 					new CancellationToken());
 				Assert.AreEqual(12, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(15, aabb.YSize, .001);
+				Assert.AreEqual(20, aabb.YSize, .001);
 			}
 		}
 

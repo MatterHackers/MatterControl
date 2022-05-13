@@ -368,11 +368,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				void SetToSolid()
                 {
 					// make sure the render mode is set to shaded or outline
-					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
-							&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
-					{
-						// make sure the render mode is set to outline
-						sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
+					switch(sceneContext.ViewState.RenderType)
+                    {
+                        case RenderOpenGl.RenderTypes.Shaded:
+                        case RenderOpenGl.RenderTypes.Outlines:
+						case RenderOpenGl.RenderTypes.Polygons:
+							break;
+
+						default:
+							// make sure the render mode is set to outline
+							sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
+							break;
 					}
 
 					var currentOutputType = selectedItem.WorldOutputType();
