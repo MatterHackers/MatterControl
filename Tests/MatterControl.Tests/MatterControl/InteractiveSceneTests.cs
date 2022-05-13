@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Linq;
@@ -627,6 +628,32 @@ namespace MatterControl.Tests.MatterControl
 				var aabb = mesh.GetAxisAlignedBoundingBox();
 				Assert.AreEqual(20, aabb.YSize, .001);
 			}
+
+			// multiple overlaping faces all combine
+			{
+				// right side at 0
+				var meshA = PlatonicSolids.CreateCube(10, 5, 10);
+				meshA.Translate(-5, 0, 0);
+				// left side at -5
+				var meshB = PlatonicSolids.CreateCube(10, 5, 10);
+				meshB.Translate(0, 0, 0);
+				// right side at 0
+				var meshC = PlatonicSolids.CreateCube(5, 10, 10);
+				meshC.Translate(-2.5, 0, 0);
+				var mesh = Object3D.CombineParticipants(null,
+					new IObject3D[]
+					{
+						new Object3D() { Mesh = meshA },
+						new Object3D() { Mesh = meshB },
+						new Object3D() { Mesh = meshC },
+					},
+					new CancellationToken());
+				StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
+				Assert.AreEqual(20, mesh.Faces.Count());
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(16, aabb.YSize, .001);
+			}
+
 		}
 
 		[Test, Category("InteractiveScene")]
