@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -39,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -66,6 +68,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			[Description("Bend the part around a specified diameter")]
 			Diameter,
 		}
+
+		[HideFromEditor]
+		public Vector3 PostCurveOffset { get; set; } = new Vector3();
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BendTypes BendType { get; set; } = BendTypes.Angle;
@@ -205,7 +210,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override Task Rebuild()
+        public override void Cancel(UndoBuffer undoBuffer)
+        {
+			this.Matrix *= Matrix4X4.CreateTranslation(-PostCurveOffset);
+			base.Cancel(undoBuffer);
+        }
+
+        public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -346,10 +357,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (firstBuild)
 					{
 						var postAabb = this.GetAxisAlignedBoundingBox();
-						this.Matrix *= Matrix4X4.CreateTranslation(initialAabb.Center.X - postAabb.Center.X,
+						PostCurveOffset = new Vector3(initialAabb.Center.X - postAabb.Center.X,
 							initialAabb.MinXYZ.Y - postAabb.MinXYZ.Y,
 							initialAabb.MinXYZ.Z - postAabb.MinXYZ.Z);
+						this.Matrix *= Matrix4X4.CreateTranslation(PostCurveOffset);
 					}
+
+					ApplyHoles(reporter, cancellationToken.Token);
 
 					this.cancellationToken = null;
 					UiThread.RunOnIdle(() =>

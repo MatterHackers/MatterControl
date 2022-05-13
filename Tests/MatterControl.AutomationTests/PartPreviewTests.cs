@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, ChildProcessTest]
-		public async Task DesignTabFileOpperations()
+		public async Task DesignTabFileOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{

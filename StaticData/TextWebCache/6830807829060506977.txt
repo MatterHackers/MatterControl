@@ -1,0 +1,535 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2021-06-18", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "BCN3D", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:10:48.806610", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jun 18th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "2,995.00", 
+        "DisplayPrice": "2,995.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-CN1-YNVE", 
+        "DisplayWholesaleCost": "1,930.50", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/41dd21c1-d7d0-4a9d-ade6-5fd6543242cb", 
+            "ImageUrl": "https://lh3.googleusercontent.com/re3y990OBednaotCVkpUG_p42Ltx3cSm8nJ7N8kTBKWuymr4oESdiyW030jR_AjyeY0FNPdc_lospovElarR8A", 
+            "IsFeatured": true
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": true, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": true, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ04xWU5WRQw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GLn5kFEM", 
+        "ListingIsActive": true, 
+        "NoPOBox": true, 
+        "PackageDimensions": [
+            "22.00", 
+            "23.00", 
+            "27.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T21:07:45.248458", 
+            "DateTimeModified": "2021-08-13T20:29:04.107026", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFzYSXCQw", 
+            "Name": "BCN3D", 
+            "PrimaryContact": "max.bz@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 55, 
+            "SuppliedSIDs": [
+                "M04A7NPM", 
+                "M0AAM1TS", 
+                "M0P0MWQP", 
+                "M1NZR2QH", 
+                "M1PVDHAD", 
+                "M2HH9U8D", 
+                "M2V5ZMA1", 
+                "M487NU8Y", 
+                "M4MXGEL8", 
+                "M5M7Z34Z", 
+                "M5X61CJC", 
+                "M68S958L", 
+                "M7KRDS8C", 
+                "MAK2W9F9", 
+                "MCN1YNVE", 
+                "MD3GLR72", 
+                "MDWJMV0N", 
+                "ME01UKS8", 
+                "MFCU500A", 
+                "MFETZ5D2", 
+                "MFQMZL1W", 
+                "MGJXV1RZ", 
+                "MGZU7NEQ", 
+                "MH0ETX0J", 
+                "MJRPTCEJ", 
+                "ML1TFG0K", 
+                "MLCNKSPE", 
+                "MLFEXU5K", 
+                "MLNDXAX3", 
+                "MLV760CX", 
+                "MM62M53X", 
+                "MM6XT3ZE", 
+                "MMTXMX6V", 
+                "MNYX13KT", 
+                "MPEQ11LG", 
+                "MPK6SHAS", 
+                "MPTXGXZC", 
+                "MQA7REP6", 
+                "MQKYXE2E", 
+                "MQLAD2QT", 
+                "MR4PYM73", 
+                "MSJPVMP6", 
+                "MSXNGZAA", 
+                "MTCF2AV1", 
+                "MUFQZ0EV", 
+                "MV9JU5SD", 
+                "MVCVHDN5", 
+                "MW9LLX7A", 
+                "MYF91VLD", 
+                "MYQGVAVH", 
+                "M82SUGF1", 
+                "MJ5JC18X", 
+                "MN7L1LPK", 
+                "MM6M4JLU", 
+                "MJCL36HY"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMDRBN05QTQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEFBTTFUUww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMFAwTVdRUAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMU5aUjJRSAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMVBWREhBRAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMkhIOVU4RAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMlY1Wk1BMQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNDg3TlU4WQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNE1YR0VMOAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNU03WjM0Wgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVg2MUNKQww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNjhTOTU4TAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNN0tSRFM4Qww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQUsyVzlGOQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ04xWU5WRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDNHTFI3Mgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdKTVYwTgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRTAxVUtTOAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRkNVNTAwQQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRkVUWjVEMgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRlFNWkwxVww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNR0pYVjFSWgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNR1pVN05FUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSDBFVFgwSgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSlJQVENFSgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTDFURkcwSww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTENOS1NQRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTEZFWFU1Sww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTE5EWEFYMww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTFY3NjBDWAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTTYyTTUzWAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTTZYVDNaRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTVRYTVg2Vgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTllYMTNLVAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUEVRMTFMRww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUEs2U0hBUww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUFRYR1haQww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUUE3UkVQNgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUUtZWEUyRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUUxBRDJRVAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjRQWU03Mww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0pQVk1QNgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU1hOR1pBQQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVENGMkFWMQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVUZRWjBFVgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVjlKVTVTRAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVkNWSERONQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVzlMTFg3QQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWUY5MVZMRAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWVFHVkFWSAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNODJTVUdGMQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSjVKQzE4WAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTjdMMUxQSww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTTZNNEpMVQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSkNMMzZIWQw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFzYSXCQw", 
+        "ProductDescription": "The BCN3D Sigma R19 is a reliable and easy-to-use desktop 3D Printer with Independent Dual Extruder (IDEX) system that delivers high-resolution multi-material parts. The team at BCN3D leverages the IDEX design with duplication and mirror printing modes, along with other design improvements, to boost productivity and shorten the design and production process.", 
+        "ProductListPrice": 299500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ04xWU5WRQw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 12499, 
+                    "AddOnDiscountDisplay": 12, 
+                    "AddOnDisplayBasePrice": "124.99", 
+                    "AddOnDisplayPrice": "109.99", 
+                    "AddOnDisplaySavings": "15.00", 
+                    "AddOnFloatPrice": 109.99, 
+                    "AddOnListingReference": "printdry-filament-drying-system", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 10999, 
+                    "AddOnSavings": 1500, 
+                    "AddOnSkuReference": "MNXQRWQC", 
+                    "AddOnTitle": "PrintDry Filament Drying System", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 1995, 
+                    "AddOnDiscountDisplay": 10, 
+                    "AddOnDisplayBasePrice": "19.95", 
+                    "AddOnDisplayPrice": "17.95", 
+                    "AddOnDisplaySavings": "2.00", 
+                    "AddOnFloatPrice": 17.95, 
+                    "AddOnListingReference": "magigoo-3d-printer-bed-adhesion-solution", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 1795, 
+                    "AddOnSavings": 200, 
+                    "AddOnSkuReference": "M9DAG2J4", 
+                    "AddOnTitle": "Magigoo 3D Printer Bed Adhesion Solution", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAhMqbCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOURBRzJKNAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 112, 
+                    "QuantityOnHand": 112, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 1799, 
+                    "AddOnDiscountDisplay": 33, 
+                    "AddOnDisplayBasePrice": "17.99", 
+                    "AddOnDisplayPrice": "11.99", 
+                    "AddOnDisplaySavings": "6.00", 
+                    "AddOnFloatPrice": 11.99, 
+                    "AddOnListingReference": "stick-stick-3d-printer-bed-adhesion-50ml", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 1199, 
+                    "AddOnSavings": 600, 
+                    "AddOnSkuReference": "MKDQ0LW1", 
+                    "AddOnTitle": "Stick Stick 3D Printer Bed Adhesion - 50ml", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICsj_SMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNS0RRMExXMQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 193, 
+                    "QuantityOnHand": 193, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 125895, 
+                    "AddOnDiscountDisplay": 11, 
+                    "AddOnDisplayBasePrice": "1,258.95", 
+                    "AddOnDisplayPrice": "1,118.00", 
+                    "AddOnDisplaySavings": "140.95", 
+                    "AddOnFloatPrice": 1118.0, 
+                    "AddOnListingReference": "3d-printpro-3-fume-extractor", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 111800, 
+                    "AddOnSavings": 14095, 
+                    "AddOnSkuReference": "M0LNHLF4", 
+                    "AddOnTitle": "BOFA 3D PrintPRO 3 Fume Extraction System", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDAnOaRCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMExOSExGNAw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:45.755610", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p><strong><span>Please note, all&nbsp;<span class=\"il\">Clearance</span>&nbsp;Item purchases are final and are not covered by the MatterHackers Return Policy - this excludes Refurbished 3D printers and machines which have at least a 6-month warranty.</span></strong></p>\r\n<p><strong>Reason for Clearance:&nbsp; This item is being discontinued.</strong></p>", 
+                    "ElementCode": "9VML7Y", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Explore BCN3D's Sigma R19 - A Desktop 3D Printer Made for Manufacturing</h3>\r\n<p>The BCN3D Sigma R19 is a professional-grade desktop-sized 3D printer characterized by its innovative approach to dual extrusion. The engineers behind the Sigma R19 have spent the time needed to curate a machine that not only contains some of the 3D printing industry's leading components for reliable printing, but that delivers quality parts, time after time, using unique use-case settings and features, like duplication batch printing and mirroring mode.&nbsp;</p>", 
+                    "ElementCode": "H9ZEDW", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"XB3QaKmJq-4\" data-size=\"lg\"></div>\r\n<p><em>MatterHackers' Video Tech Breakdown on the Sigma &amp; Sigma R19 from BCN3D Technologies.&nbsp;</em></p>", 
+                    "ElementCode": "XYG2KO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "", 
+                    "ElementCode": "C15OVG", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/3cd4ca71-c583-4a22-b873-54d3352a6850", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Ult4bCsd6xj-kB68Xw8vGGoFCZ5_cjq0YWPF0KU6A463Cu5wScnldmZROoGr0wx3ZQhDT-cfm0t9dgqjwR8NvKg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Innovative IDEX Dual Extrusion Design</h3>\r\n<p><span>The BCN3D Sigma R19's IDEX technology is the only extrusion system capable of printing with two heads independently. This means that during multi-material prints, one toolhead is active while the other stays out of the way. This is important for a few reasons:&nbsp;</span></p>\r\n<ol>\r\n<li>It's the cleanest solution on the market for dual extrusion 3D printing.&nbsp;This is because the two extruders work independently when printing water-soluble supports or multi-material parts. While one extruder is printing the second one is parked, preventing the drip of molten plastic into the part.</li>\r\n<li>It allows for Duplication Mode, which means that both toolheads can perform tasks separately, essentially splitting the work, but doubling the output. It makes batch printing components faster and easier than ever before.&nbsp;</li>\r\n<li>The BCN3D Sigma R19's IDEX setup gives the machine a unique setting called mirror mode. This 3D printer can print two opposite parts at the same time - instead of creating two different models that are essentially the same part, you create one, and print them both, or the \"mirroring\" part at the same time.&nbsp;</li>\r\n</ol>", 
+                    "ElementCode": "2ZCZP7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"HfwoylhF0_4\" data-size=\"lg\"></div>\r\n<p><em>Learn how BCN3D's print farm showcases the capabilities of the Sigma and Sigmax to produce usable components.</em>&nbsp;</p>", 
+                    "ElementCode": "7MFNCI", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Why BCN3D's IDEX System Creates Cleaner, More Accurate 3D Printed Parts</h3>\r\n<p>The Independent Dual Extrusion (IDEX) System that is on both the Sigma and Sigmax R19 3D printers is designed specifically to create cleaner and more complex 3D printed parts. Because the toolheads are independent, one can be \"parked\" or inactive while the other is printed. This eliminates any chance of part contamination, which is when one of the nozzles/toolheads on a 3D printer will have filament residue on it while it's not actively printing, but will still leak or \"drag\" across your 3D printed part, leaving streaks or undesirable marks. Since the Sigma R19 can literally move one nozzle clear out of the way while the other is printing, it eliminates unwanted filament residue on your parts, making them as high-quality as possible.&nbsp;</p>\r\n<p>This technology applies to whether you are 3D printing multi-material parts that require a distinct line between different colors, or printing with soluble support materials that require a crisp edge once dissolved. The Sigma R19 can handle both these aspects extremely well thanks to the IDEX system.&nbsp;&nbsp;</p>", 
+                    "ElementCode": "EV3KNZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/lJReeBXv6nSFtXO8oQmHKe6POpAQJZjt3KX2Q5mCf-nor4LAXNA43bBNMSGsQVe3JLK1oXWQG0U1-mrC5_GrThQ\" /></p>\r\n<p class=\"align-center\"><em>Print accurately using multiple materials and soluble support materials with the BCN3D Sigmax R19's IDEX system.</em></p>", 
+                    "ElementCode": "F7LI4M", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/9ae94533-4e1d-480f-b2a0-c5a5df493a00", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/lJReeBXv6nSFtXO8oQmHKe6POpAQJZjt3KX2Q5mCf-nor4LAXNA43bBNMSGsQVe3JLK1oXWQG0U1-mrC5_GrThQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Activate Batch Production 3D Printing using the Sigma R19's Duplication Mode to Double Your Productivity</h3>\r\n<p>Another great feature of BCN3D's IDEX system is Duplication Mode 3D printing. Due to the Sigma R19 and <a href=\"https://www.matterhackers.com/store/l/bcn3d-sigmax-idex/sk/M487NU8Y\">Sigmax R19</a> 3D printer's independent dual extrusion systems, an engineer or designer can easily double their production capacity and 3D print faster. The independent toolheads will work side-by-side on the print bed creating duplicate models, thus doubling your production output in the same amount of time that a non-IDEX 3D printer would take to create one. It's not just for creating two 3D printed models - you can attain faster 3D printing by running production batches for smaller end-use 3D printed parts as well.</p>", 
+                    "ElementCode": "1IEP11", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/M0RvaniM5g7TIC6v602MFMRbark8-3jkwMcd-5F0v_I93IMeGcb3UAn53ua6RxdIcKQLOcPdsQluoNf9TvsMjHRN\" /></p>\r\n<p><em>BCN3D's Duplication Mode prints two identical models simultaneously, doubling the production capacity. </em></p>", 
+                    "ElementCode": "OBTPPV", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/404741a3-c0f2-4573-9f52-c6e787d0d13d", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/M0RvaniM5g7TIC6v602MFMRbark8-3jkwMcd-5F0v_I93IMeGcb3UAn53ua6RxdIcKQLOcPdsQluoNf9TvsMjHRN", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Produce Symmetrical 3D Printed Models Simultaneously using BCN3D's Mirror Mode</h3>\r\n<p>Manufacturing oftentimes requires functional parts that are \"mirrored\" to attach on opposite sides of a product. For example, think about the side view mirrors on your car - they are essentially the same part, but are designed specifically to fit the right and left sides of the car, making them actually quite different. Instead of designing two different models, BCN3D has made the process much easier using their Mirror Mode. The IDEX dual extrusion system allows the extruders to print separately on symmetrical parts at the same time. Again, this increases productivity and time - there is less time spent on designing and more uptime on your printer, both creating a faster turnaround time.&nbsp;</p>", 
+                    "ElementCode": "XYO135", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/lIEVggBaA_ODkejYWimh65lQFKe6FDeSRaUFNQstuIxjinGakA50ENz_tfA-NLFa_4Cbj6a_X3g2vwiTR3Ci944\" class=\"align-center\" /></p>\r\n<p class=\"align-center\"><em>Professionals can iterate quickly and utilize batch manufacturing with BCN3D's Duplication and mirror mode.&nbsp;</em></p>", 
+                    "ElementCode": "FF4LV6", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c02de327-0283-4b74-aaab-8327bb321859", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/lIEVggBaA_ODkejYWimh65lQFKe6FDeSRaUFNQstuIxjinGakA50ENz_tfA-NLFa_4Cbj6a_X3g2vwiTR3Ci944", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/lewxHtL-EbziX9WhRjDTcIvLwHBA7FjT99nsCZOfr3XaMa98gi_G_dUI6f4aUpnlY_8iKGOOLs0XWeZyWQI8XVI\" class=\"align-left\" /></p>\r\n<p><em>Create symmetrical parts simultaneously using BCN3D's Mirror Mode to increase productivity.&nbsp;</em></p>", 
+                    "ElementCode": "WHT151", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/f01d7f60-e5d5-4c70-94f0-27f793b7225e", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/lewxHtL-EbziX9WhRjDTcIvLwHBA7FjT99nsCZOfr3XaMa98gi_G_dUI6f4aUpnlY_8iKGOOLs0XWeZyWQI8XVI", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Industry-Leading Components Provide Reliability and Consistent 3D Printed Results</h3>\r\n<p>The BCN3D Sigma R19 is equipped with industry-leading components like two authentic E3D v6 All-metal hotends. E3D's v6 hotends are known for their temperature control, making sure that your filament is heated precisely throughout the duration of your print. Because of E3D's optimized heatbreak and heatsink geometries, underextrusion caused by heat creep is no longer a worry, making your finished products looking as clean and ready as possible.&nbsp;</p>\r\n<p>The BCN3D Sigma R19 3D printer also contains two high-tech dual-drive gears by Bondtech, the extrusion powerhouses of the 3D printing industry. Bondtech extruder's&nbsp;dual-drive gears are the best feeding system to ensure smooth extrusion - no matter the filament you are printing with, there will be no grinding issues that can lead to low-quality prints.&nbsp;</p>\r\n<p>BCN3D's dedication to quality control with every printer includes using the best parts available. Print with peace of mind knowing that your Sigma R19 will deliver quality prints, time after time.&nbsp;</p>", 
+                    "ElementCode": "BZY3YE", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/PHSltdOxydoSZUp-vLcLdVbOh8I_Twb1iAriMrrkxjwUl1myMI7j4jBomndltf0hn2FLkJzMkBuVEwlCXSt2epM\" class=\"align-left\" /></p>\r\n<p><em>Integrate 3D printing into your prototyping and production process easily with the BCN3D Sigma R19.</em></p>", 
+                    "ElementCode": "589TD2", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/23b884e3-cb6b-4249-863c-de849c6bb248", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/PHSltdOxydoSZUp-vLcLdVbOh8I_Twb1iAriMrrkxjwUl1myMI7j4jBomndltf0hn2FLkJzMkBuVEwlCXSt2epM", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2>What's In The Box</h2>\r\n<ul>\r\n<li>1x BCN3D Sigma R19 IDEX 3D Printer</li>\r\n<li>1x Tool Kit</li>\r\n<li>1x 3DLac Adhesive Spray</li>\r\n<li>1x Quick Start Guide</li>\r\n<li>2x PLA Spools</li>\r\n</ul>", 
+                    "ElementCode": "KQOSS2", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Technical Specifications</h3>\r\n<p><strong>Printer Properties</strong></p>\r\n<ul>\r\n<li>Architecture: IDEX</li>\r\n<li>Technology: Fused Filament Fabrication (FFF)</li>\r\n<li>Build Volume: 210mm x 297mm x 210mm (<span>8.3\" x 11.7\" x 8.3\")</span></li>\r\n<li>Extruders: 2</li>\r\n<li>Nozzle diameter: <span>The Sigma come stock with two 0.4mm hotends and is c</span><span>ompatible with BCN3D hotends 0.3 / 0.4 / 0.5 / 0.6 / 0.8 / 1mm</span></li>\r\n<li>Heated Bed: PCB</li>\r\n<li>Screen: Full Color Capacitive Touchscreen</li>\r\n<li>Electronics: BCN3D Electronics v1.0. and Independent Stepper Drivers</li>\r\n<li>Firmware: BCN3D Sigma - Marlin</li>\r\n<li>Supported files: gcode</li>\r\n<li>Operating Sound: 50 dBA</li>\r\n<li>Connectivity: SD (autonomous operation) / USB</li>\r\n<li>Certifications: CE / FCC</li>\r\n</ul>\r\n<p><strong>Printing Properties</strong></p>\r\n<ul>\r\n<li>Layer Height: 0.05-.5mm (depending on the nozzle diameter)</li>\r\n<li>Positioning Resolution (X/Y/Z): 12.5 &micro;m / 12.5 &micro;m / 1 &micro;m</li>\r\n<li>Operating Temperature: 15 &ordm;C - 35 &ordm;C</li>\r\n<li>Maximum extruder temperature: 290 &ordm;C</li>\r\n<li>Maximum printing temperature: 280 &ordm;C</li>\r\n<li>Maximum hot bed temperature: 100 &ordm;C</li>\r\n<li>Support material: PVA for PLA /HIPS for ABS</li>\r\n</ul>\r\n<p><strong>Materials</strong></p>\r\n<ul>\r\n<li>Filament diameter: 2.85 &plusmn; 0.05 mm</li>\r\n<li>Compatible Materials: <span>PLA / ABS / Nylon / PET-G / TPU / PVA / Composites / Others</span></li>\r\n</ul>\r\n<p><strong>Electrical</strong></p>\r\n<ul>\r\n<li>Input: AC 84-240V, AC 3,6-1,3A, 50-60Hz</li>\r\n<li>Output: 24V DC, 13A</li>\r\n<li>Power consumption: 240W</li>\r\n</ul>", 
+                    "ElementCode": "825WUR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/p798dGBkIxsgOP0llasPv26dDF38Aa04LmYxjgaKzZgm-4SylAnvccAPk17xo7mMTrChGkjJ-DNAx6CiZG7jtw\" class=\"align-left\" /></p>\r\n<p><em>Have questions? Contact <a href=\"mailto:sales@matterhackers.com\">sales@matterhackers.com</a>&nbsp;or call (949) 613-5838 for help today.&nbsp;</em></p>", 
+                    "ElementCode": "MTLHRC", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/4286ee3a-d250-48db-b305-875256360982", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/p798dGBkIxsgOP0llasPv26dDF38Aa04LmYxjgaKzZgm-4SylAnvccAPk17xo7mMTrChGkjJ-DNAx6CiZG7jtw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Shipping Notice</strong></h3>\r\n<p>Please note that, due to its size and weight, this product cannot be shipped to a PO Box. If you have any questions or would like help making shipping arrangements, please contact support@matterhackers.com.</p>", 
+                    "ElementCode": "CGWY67", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/41dd21c1-d7d0-4a9d-ade6-5fd6543242cb", 
+                "ImageUrl": "https://lh3.googleusercontent.com/re3y990OBednaotCVkpUG_p42Ltx3cSm8nJ7N8kTBKWuymr4oESdiyW030jR_AjyeY0FNPdc_lospovElarR8A", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/41dd21c1-d7d0-4a9d-ade6-5fd6543242cb", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/re3y990OBednaotCVkpUG_p42Ltx3cSm8nJ7N8kTBKWuymr4oESdiyW030jR_AjyeY0FNPdc_lospovElarR8A", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/01368519-0a25-4855-a750-286eb1433f4d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/-22m4f60NMYFLKZZ_kv2LWO4Lnn4JMmPrj8QadwsXqxrh9X3EHkN9HxbbzQn1TRVg2Ta_vpHhfkZ1qelH-l9HA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/2bb760bf-8f2d-439e-8531-5f7de0e49bd7", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/0EiNSMbn4SEzYsa2plGAtrvgNhEnRMv3wIjpTE9IvJFKV-i-gu71aCKnA4vLUTwJA7a1-IA16PNifbJHLtTXMQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/281b8b01-8cb2-4ae4-a8df-08a977446f33", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/vC9rO5zenzGV56ck8fK4Iiu30f3ZchPiAGeKCTS3t3tPLNUuW2OC2IummToPU7C1A06Aaw04eDJWbAxBAlUlOA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/6ceb1ccc-a7dc-442c-9d29-48ecbd237b90", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/X9S1NOmvZM9tr_3Cvt_hPn0bFaiSkH2DegML2e3HHcfJBZrVZOtsqavB6_OCtCZomoxMrbq1RviRyQUtiGqG50g", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBdV95RXVRc00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAu_yEuQsM", 
+            "MetaTagKeywords": [
+                "r19", 
+                "Sigma", 
+                "BCN"
+            ], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2017-07-25T07:05:45.755650", 
+            "ProductEditedOn": "2021-08-13T20:34:06.181343", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "bcn3d-sigma-r19-independent-dual-extruder-3d-printer", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDAnOaRCgw"
+            ], 
+            "ShortDescription": "The BCN3D Sigma R19 is a reliable and easy-to-use desktop 3D Printer with Independent Dual Extruder (IDEX) system that delivers high-resolution multi-material parts. The team at BCN3D leverages the IDEX design with duplication and mirror printing modes, along with other design improvements, to boost productivity and shorten the design and production process.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "CLEARANCE - BCN3D Sigma R19 Independent Dual Extrusion 3D Printer"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBdV95RXVRc00M", 
+        "ProductNumber": "170147001", 
+        "ProductPrice": 299500, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 3, 
+        "QuantityOnHand": 3, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "bcn3d-sigma-r19-independent-dual-extruder-3d-printer", 
+        "RetiredDateTime": "2021-08-13T20:33:57.070510", 
+        "SID": "MCN1YNVE", 
+        "SalesIndexByDollars": 339, 
+        "SalesIndexByUnits": 2566, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "CLEARANCE - BCN3D Sigma R19 Independent Dual Extrusion 3D Printer", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 36, 
+        "SuccessRatingScore": 8611, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 24131000, 
+        "TotalWeightGrams": "24,131.00", 
+        "TotalWeightKilograms": "24.13", 
+        "TotalWeightPounds": "53.20", 
+        "VendorItemID": "", 
+        "Weight": 24131000, 
+        "WeightGrams": "24,131.00", 
+        "WeightKilograms": "24.13", 
+        "WeightPounds": "53.20", 
+        "WholesaleCost": 193050
+    }, 
+    "Status": "success"
+}

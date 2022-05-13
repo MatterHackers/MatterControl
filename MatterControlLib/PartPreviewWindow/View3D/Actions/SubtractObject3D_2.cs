@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem == this)
 			{
-				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = this.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 				var removeObjects = parentOfSubtractTargets.Children
 					.Where(i => SelectedChildren.Contains(i.ID))
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		
 			if (SelectedChildren.Count == 0)
 			{
-				SelectedChildren.Add(SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf().Children.Last().ID);
+				SelectedChildren.Add(SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf().Children.Last().ID);
 			}
 		}
 
@@ -212,28 +212,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Subtract(CancellationToken.None, null);
 		}
 
-		private (IEnumerable<IObject3D>, IEnumerable<IObject3D>) GetSubtractItems()
+		private static (IEnumerable<IObject3D>, IEnumerable<IObject3D>) GetSubtractItems(IObject3D source, SelectedChildren selectedChildren)
         {
-			var parentOfSubtractTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			var parentOfSubtractTargets = source.FirstWithMultipleChildrenDescendantsAndSelf();
 
-			if (parentOfSubtractTargets.Children.Count() < 2)
-			{
-				if (parentOfSubtractTargets.Children.Count() == 1)
-				{
-					this.Children.Add(SourceContainer.Clone());
-					SourceContainer.Visible = false;
-				}
-
+			// if there are 0 results
+			if (parentOfSubtractTargets.Children.Count() == 0)
+            {
 				return (null, null);
+            }
+
+			// if there is only 1 result (regardless of it being a keep or remove) return it as a keep
+			if (parentOfSubtractTargets.Children.Count() == 1)
+			{
+				return (new IObject3D[] { source }, null);
 			}
 
 			var removeItems = parentOfSubtractTargets.Children
-				.Where((i) => SelectedChildren
+				.Where((i) => selectedChildren
 				.Contains(i.ID))
 				.SelectMany(c => c.VisibleMeshes());
 
 			var keepItems = parentOfSubtractTargets.Children
-				.Where((i) => !SelectedChildren
+				.Where((i) => !selectedChildren
 				.Contains(i.ID))
 				.SelectMany(c => c.VisibleMeshes());
 
@@ -247,98 +248,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			CleanUpSelectedChildrenIDs(this);
 
-			var (keepItems, removeItems) = GetSubtractItems();
-			var removeItemsCount = removeItems == null ? 0 : removeItems.Count();
-			var keepItemsCount = keepItems == null ? 0 : keepItems.Count();
+			var (keepItems, removeItems) = GetSubtractItems(SourceContainer, SelectedChildren);
 
-			if (removeItems?.Any() == true
-				&& keepItems?.Any() == true)
-			{
-				foreach (var keep in keepItems)
+			var resultItems = DoSubtract(SourceContainer,
+				keepItems,
+				removeItems,
+				reporter,
+				cancellationToken,
+				Processing,
+				InputResolution,
+				OutputResolution);
+
+			foreach(var resultsItem in resultItems)
+            {
+				this.Children.Add(resultsItem);
+
+				if (!RemoveSubtractObjects)
 				{
-#if false
-					var items = removeItems.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer))).ToList();
-					items.Insert(0, (keep.Mesh, keep.Matrix));
-					var resultsMesh = BooleanProcessing.DoArray(items,
-						CsgModes.Subtract,
-						Processing,
-						InputResolution,
-						OutputResolution,
-						reporter,
-						cancellationToken);
-#else
-					var totalOperations = removeItemsCount * keepItemsCount;
-					double amountPerOperation = 1.0 / totalOperations;
-					double ratioCompleted = 0;
-
-					var progressStatus = new ProgressStatus
+					this.Children.Modify((list) =>
 					{
-						Status = "Do CSG"
-					};
-
-					var resultsMesh = keep.Mesh;
-					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
-
-					foreach (var remove in removeItems)
-					{
-						resultsMesh = BooleanProcessing.Do(resultsMesh,
-							keepWorldMatrix,
-							// other mesh
-							remove.Mesh,
-							remove.WorldMatrix(SourceContainer),
-							// operation type
-							CsgModes.Subtract,
-							Processing,
-							InputResolution,
-							OutputResolution,
-							// reporting
-							reporter,
-							amountPerOperation,
-							ratioCompleted,
-							progressStatus,
-							cancellationToken);
-
-						// after the first time we get a result the results mesh is in the right coordinate space
-						keepWorldMatrix = Matrix4X4.Identity;
-
-						// report our progress
-						ratioCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = ratioCompleted;
-						reporter?.Report(progressStatus);
-					}
-
-#endif
-					// store our results mesh
-					var resultsItem = new Object3D()
-					{
-						Mesh = resultsMesh,
-						Visible = false,
-						OwnerID = keep.ID
-					};
-
-					// copy all the properties but the matrix
-					resultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
-					// and add it to this
-					this.Children.Add(resultsItem);
-
-					if (!RemoveSubtractObjects)
-					{
-						this.Children.Modify((list) =>
+						foreach (var item in removeItems)
 						{
-							foreach (var item in removeItems)
+							var newObject = new Object3D()
 							{
-								var newObject = new Object3D()
-								{
-									Mesh = item.Mesh
-								};
+								Mesh = item.Mesh
+							};
 
-								newObject.CopyWorldProperties(item, SourceContainer, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Visible));
-								list.Add(newObject);
-							}
-						});
-					}
+							newObject.CopyWorldProperties(item, SourceContainer, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Visible));
+							list.Add(newObject);
+						}
+					});
 				}
+			}
 
+			if (Children.Count == 1)
+			{
+				// we only have the source item, leave it visible
+			}
+			else // hide the source and show the children
+			{
 				bool first = true;
 				foreach (var child in Children)
 				{
@@ -360,7 +308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			if (item is ISelectableChildContainer selectableChildContainer)
 			{
-				var parentOfSubtractTargets = item.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = item.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 				var allVisibleIDs = parentOfSubtractTargets.Children.Select(i => i.ID);
 				// remove any names from SelectedChildren that are not a child we can select
@@ -384,7 +332,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
         public override string NameFromChildren()
         {
-			var (keepItems, removeItems) = GetSubtractItems();
+			var (keepItems, removeItems) = GetSubtractItems(SourceContainer, SelectedChildren);
 			return CalculateName(keepItems, ", ", " - ", removeItems, ", ");
 		}
 	}

@@ -1,0 +1,409 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "175mm", 
+                "DateTimeCreated": "2020-02-04T00:59:59.394565", 
+                "Description": "1.75mm", 
+                "HexColor": null, 
+                "ID": 5164350358683648, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0y5EKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICApbCelgkM", 
+                "Name": "1.75mm", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0y5EKDA", 
+                "Reference": "filament-diameter:175mm"
+            }, 
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2020-02-04T01:05:21.241293", 
+                "Description": "750 grams of material", 
+                "HexColor": null, 
+                "ID": 5667979230445568, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0oZ4JDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICAhfTfiAoM", 
+                "Name": "0.75kg", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0oZ4JDA", 
+                "Reference": "filament-weight:075kg"
+            }
+        ], 
+        "AvailableDate": "2022-05-24", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageInboundTraffic": 0, 
+        "AverageShippingCost": 818, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-04-19T18:10:04.771953", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "May 24th", 
+        "DisplayAverageShippingCost": "8.18", 
+        "DisplayListPrice": "120.00", 
+        "DisplayPrice": "120.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-A6Q-2PM7", 
+        "DisplayWholesaleCost": "50.10", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/0afcb12d-f78b-4408-933b-19735ba41b6e", 
+            "ImageUrl": "https://lh3.googleusercontent.com/PZ2D9RFGNfmSBzB4TUC3SroxFi2thzZrzUUCn6nDjrt_zhe0GV2pYY8xvqMpFs93arCQVma3se799SN4BrJdCh8", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTZRMlBNNww", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "2.25", 
+            "7.93", 
+            "7.93"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFt92fCgw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "Successfully print beautiful, intricate 3D models in high temperature filaments like NylonX without painstaking post-processing using Ionic\u2014the reliable hybrid-support material designed specifically for nylon filaments and other advanced high temperature materials. No need to use same material supports that are a hassle to remove and run the risk of damaging your print\u2019s surface finish. With Ionic, you have filament that is rigid enough to print reliable supports for advanced materials, but also pliable enough to be easily removed and dissolve in water. Print the complex parts you\u2019ve always wanted out of high temperature materials without struggling over leftover supports using Ionic filament. ", 
+        "ProductListPrice": 12000, 
+        "ProductListing": {
+            "ActiveSkuCount": 4, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSjlEMUczUAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV0ZBNjQyVQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTZRMlBNNww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNEhGM1E1OQw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 5800, 
+                    "AddOnDiscountDisplay": 5, 
+                    "AddOnDisplayBasePrice": "58.00", 
+                    "AddOnDisplayPrice": "55.10", 
+                    "AddOnDisplaySavings": "2.90", 
+                    "AddOnFloatPrice": 55.1, 
+                    "AddOnListingReference": "nylonx-carbon-fiber-filament-285mm-05kg", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 5510, 
+                    "AddOnSavings": 290, 
+                    "AddOnSkuReference": "MNP2JAEC", 
+                    "AddOnTitle": "NylonX Carbon Fiber Filament - 2.85mm (0.5kg)", 
+                    "DisplaySID": "M-NP2-JAEC", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNVpLd3Fnb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlAySkFFQww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 52, 
+                    "QuantityOnHand": 52, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 6400, 
+                    "AddOnDiscountDisplay": 5, 
+                    "AddOnDisplayBasePrice": "64.00", 
+                    "AddOnDisplayPrice": "60.80", 
+                    "AddOnDisplaySavings": "3.20", 
+                    "AddOnFloatPrice": 60.8, 
+                    "AddOnListingReference": "nylong-glass-fiber-filament", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 6080, 
+                    "AddOnSavings": 320, 
+                    "AddOnSkuReference": "MG8LEGU3", 
+                    "AddOnTitle": "Silver NylonG Glass Fiber Filament - 2.85mm (0.5kg)", 
+                    "DisplaySID": "M-G8L-EGU3", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDt_cDeCww", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRzhMRUdVMww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -16, 
+                    "QuantityOnHand": -16, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 12499, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "124.99", 
+                    "AddOnDisplayPrice": "118.75", 
+                    "AddOnDisplaySavings": "6.24", 
+                    "AddOnFloatPrice": 118.75, 
+                    "AddOnListingReference": "printdry-filament-drying-system", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 11875, 
+                    "AddOnSavings": 624, 
+                    "AddOnSkuReference": "MNXQRWQC", 
+                    "AddOnTitle": "PrintDry Filament Drying System", 
+                    "DisplaySID": "M-NXQ-RWQC", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0y5EKDA", 
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAgIX0oZ4JDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-02-04T00:59:25.298550", 
+            "DisplayPriceRange": "12000 - 45000", 
+            "Elements": [
+                {
+                    "Content": "<p><span>Ionic Hi-Temp Hybrid Support Material is available in 1.75mm or 2.85mm and on spools of 0.75kg or 3kg for high-volume production. This material is vacuum sealed with desiccant for storage and freshness.</span></p>", 
+                    "ElementCode": "NTB5P0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"5OPvEVcqkIg\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "ELNFI7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/WXOBguo2HrwVpFUc0IX-qGmLaeSpZTnm7GysnU1gi8f06IzcKXPkEDrv2k9exEIhFJc7m6Y9e5BvAzdF-VHXM2eJ'></p>", 
+                    "ElementCode": "W4MM28", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/34b75c51-1ecb-4ead-bb2b-52add21cb9d1", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/WXOBguo2HrwVpFUc0IX-qGmLaeSpZTnm7GysnU1gi8f06IzcKXPkEDrv2k9exEIhFJc7m6Y9e5BvAzdF-VHXM2eJ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>Advanced Support Material for NylonX and Other Advanced Materials</strong></h3>\r\n<p>Reliable support materials for high temperature, advanced filaments such as NylonX are extremely hard to find. That&rsquo;s why we have Ionic&mdash;the reliable hybrid-support material designed specifically for nylon and other advanced high temp filaments. Engineered to be rigid enough as sturdy supports while also being pliable enough to breakaway and dissolve in water, Ionic is perfect for anyone who wants to print complex, advanced material 3D models without stressing about complex post-processing.</p>", 
+                    "ElementCode": "QAGBWG", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/wdBF0yYS23kJ0-PHr5GHovmphvfJotjTUOCCMM5jwMsmjRXmGy_ErubrLVRp2GE5isSqhY5nCNXnAKVc3mYdw0A'></p>", 
+                    "ElementCode": "2UK4VV", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/040d3fd3-930f-4f1a-b751-146d1aac55b5", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/wdBF0yYS23kJ0-PHr5GHovmphvfJotjTUOCCMM5jwMsmjRXmGy_ErubrLVRp2GE5isSqhY5nCNXnAKVc3mYdw0A", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em>Want to successfully produce a complex multi-part project in one go? Print it with the help of Ionic Hi-Temp Hybrid Support Material.</em></p>", 
+                    "ElementCode": "9BB0FR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Achieve Printing Stability with Thermal Stability</strong></h3>\r\n<p>Ionic is the perfect support material engineered to keep up with the high temperatures needed for advanced projects. Although it is possible and common to use the same material you&rsquo;re printing with as robust supports, you run the risk of surface blemishes and sometimes even damages to prints during the removal process. Ionic resolves these issues by being a water-soluble material that still has the thermal stability to provide rigid supports at high temperatures without degrading, reducing in print quality, or fusing to the print in the process. Achieve the sturdy support you need for overhangs, cavities, and other complex geometries without having to potentially compromise the surface finish of your print using Ionic&mdash;the support material designed for stability and reliability.</p>", 
+                    "ElementCode": "RUXENF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/2m0vJE360dpXSdlK5ZaCq_z7KG2QU2R95lUB1PI-52acrZUCNwqev0UG5GpzEpje4YnWRCsAOsBI6f4-erutIRI'></p>", 
+                    "ElementCode": "ZON1PP", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/50aefbde-3eea-4cea-a2f3-63ed25e907dc", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/2m0vJE360dpXSdlK5ZaCq_z7KG2QU2R95lUB1PI-52acrZUCNwqev0UG5GpzEpje4YnWRCsAOsBI6f4-erutIRI", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em>With Ionic Hi-Temp Hybrid Support Material, you'll have support that will help you achieve complex printing you need to successfully produce advanced parts out of advanced engineering-grade materials.</em></p>", 
+                    "ElementCode": "UU39UO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Hybrid-Support for Faster, Easier Post-Processing</strong></h3>\r\n<p>Cleaning leftover bits and blemishes from supports can be extremely difficult and time consuming. Ionic easily reduces that time and extra effort thanks to its ability to breakaway from prints and and its water-solubility. Instead of risking extra post-processing fixes resulting from same material support breakaway, you can simply place your part in a container of water post printing and wait as that water removes it for you! For an even faster, efficient turnaround time, you can break off larger, easier to reach chunks of the supports and leave the smaller, harder to detach and reach bits to dissolve in water. Voila! Extra hours of labor intensive post-processing have been avoided for that intricately designed NylonX part you&rsquo;ve always wanted to print than. Do more with your time and creativity when you cut out support removal from precious post-processing time using Ionic.</p>", 
+                    "ElementCode": "NBL9AH", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/ZL1Ww4XHJ1yRfQCLccZ-81lKxm8uYDRJ5YU7Hr3M5ZOvnzD7he0_3HPyNWGsAORXc04Bz906wCbaAnLocp9xaIg'></p>", 
+                    "ElementCode": "5OFLCQ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/16e06a40-adb9-44cd-a049-efdb92eb108a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/ZL1Ww4XHJ1yRfQCLccZ-81lKxm8uYDRJ5YU7Hr3M5ZOvnzD7he0_3HPyNWGsAORXc04Bz906wCbaAnLocp9xaIg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><em>With Ionic's easy dissolvability and breakability, you can use your complex functional parts fresh off the 3D printer!</em></p>", 
+                    "ElementCode": "7SBM0X", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MATERIAL COMPATIBILITY</strong></h3>\r\n<ul>\r\n<li><a title=\"NylonX\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a></li>\r\n<li><a title=\"NylonG\" href=\"https://www.matterhackers.com/store/c/nylong\" target=\"_blank\" rel=\"noopener\">NylonG</a></li>\r\n<li><a title=\"Nylon\" href=\"https://www.matterhackers.com/store/c/1.75mm%20Nylon%20Filament\" target=\"_blank\" rel=\"noopener\">Nylon</a></li>\r\n<li><a title=\"PETG\" href=\"https://www.matterhackers.com/store/c/1.75mm%20PRO%20Series%20PETG\" target=\"_blank\" rel=\"noopener\">PETG</a></li>\r\n<li><a title=\"PRO Series RYNO\" href=\"https://www.matterhackers.com/store/c/175-pro-series-ryno\" target=\"_blank\" rel=\"noopener\">RYNO</a></li>\r\n<li><a title=\"PRO Series TPU\" href=\"https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29\" target=\"_blank\" rel=\"noopener\">TPU</a></li>\r\n<li><a title=\"ABS\" href=\"https://www.matterhackers.com/store/c/1.75mm%20ABS%20Filament\" target=\"_blank\" rel=\"noopener\">ABS</a></li>\r\n</ul>\r\n<p>Please note that some of the materials above may change in shape or dimensions when submerged in water during support removal.</p>", 
+                    "ElementCode": "390Z77", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li>Recommended Extrusion Temperatures: 240&plusmn;10&deg;C</li>\r\n<li>Recommended Bed Temperatures: 60&deg;C - 90&deg;C</li>\r\n<ul>\r\n<li>Choose the temperature based on what the filament you're mainly printing with recommends. (i.e. Bed Temperature recommended for NylonX is 60&deg;C&plusmn;10&deg;C)</li>\r\n</ul>\r\n<li>Spool Dimensions (Approx.):</li>\r\n<li>Diameter: 1.75mm OR 2.85mm</li>\r\n<li>Filament weight: 0.75kg OR 3kg</li>\r\n<li>Removal Process\r\n<ul>\r\n<li>Dissolves faster in warm water</li>\r\n<li>Agitating it in water from time to time can also speed along the degradation process</li>\r\n<li>Dissolve in a container of water that is much larger than the size of your print</li>\r\n<ul>\r\n<li>A small container works as well, however you will need to replace the water more frequently as the degradation process slows the more the water is saturated with the support material.</li>\r\n<li>This mainly applies if all or a majority of the supports are printed out of this support material.</li>\r\n</ul>\r\n</ul>\r\n</li>\r\n<ul>\r\n<li>Breakaway by Hand</li>\r\n<li>Dissolves in Tap Water</li>\r\n</ul>\r\n<li><a title=\"Ionic Support Material - Technical Data Sheet\" href=\"https://www.matterhackers.com/r/rBkKjC\" target=\"_blank\" rel=\"noopener\">Click here to download the Technical Data Sheet.</a></li>\r\n<li><a title=\"Ionic Support Material - Safety Data Sheet\" href=\"https://www.matterhackers.com/r/9uNvMA\" target=\"_blank\" rel=\"noopener\">Click here to download the Safety Data Sheet.</a></li>\r\n</ul>", 
+                    "ElementCode": "M4NHEF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MAINTENANCE</strong></h3>\r\n<p>Because Ionic is hygroscopic (readily absorbs moisture from the air), this filament must be baked in an oven or some kind of filament drying system before use in order to fully maximize its capabilities. We also highly recommend storing Ionic in some kind of sealed container with a packet or two of silica gel desiccants if you do not intend to use the filament immediately.</p>\r\n<p>To purchase a filament drying system, check out our PrintDry <a title=\"PrintDry Filament Drying System\" href=\"https://www.matterhackers.com/store/l/printdry-filament-drying-system/sk/MNXQRWQC\" target=\"_blank\" rel=\"noopener\">here</a>.</p>", 
+                    "ElementCode": "8LT8UC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/57fe2d53-878f-4c7d-b7e8-d56d601e0377", 
+                "ImageUrl": "https://lh3.googleusercontent.com/ps38tR7VvKPjJ_BqXFZNRS-7yl8Vrs3mmzh8D0KACXG_UWAK-JjYYMR7Iv2UN9rh71FjbRddFJCQ1_oHheC11UI", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 6224260576051200, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/b830fb21-69a9-482a-bf5f-c7c9a56b72c9", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/jkTk05IRSHlN6u5IjaJOUoi0pk3v78IZxuV0TUYbszTz03X3UmjHl3kInJA55oqENAT2rMsPfKqbykJXK8la9shi", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/644ad107-93f7-408d-a82a-29a50214d757", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/h5yz5ilj2Vw_C42yINS7FATSe4a1PkVjHQ6ZZPyVWnEpWcxHK_zZBVLKF1xz3sUFlQPyJTgrVHmxnDYevWfFMQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/57fe2d53-878f-4c7d-b7e8-d56d601e0377", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ps38tR7VvKPjJ_BqXFZNRS-7yl8Vrs3mmzh8D0KACXG_UWAK-JjYYMR7Iv2UN9rh71FjbRddFJCQ1_oHheC11UI", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/81c1b541-f56a-420e-996f-5178eb1d44a7", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/CV8v7QMb6gNhAKZlwkCN0rBwF4nZEdRO1AZkFKUghmryZ3TksmhRa7EVKqr4FmsNwzluZJyAUcfcT9OrbnX_wADG", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/da210caf-0bf6-4c22-9563-ac7fef6085a7", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/_Gon6idNN6zr0lvHtLaw5VJxeJBkC-plx3GhsSSSw_MzGqui3snho3UjUIvWHC7mAsdC1b5jb57_LeFIScWXLQjO", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/b355c497-3ddd-427c-8a6b-9d6a7930e34c", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Xyf9yKH8EYDqQSlo8fgE2iRgJycfU2pSXdHD4p3me3h9d-K9fN57u5Gn9fKAPaK_lY8lIa4TYKLafTIfZuMRjAE", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/20788238-e8bb-4a02-a938-a795c3632d1e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kjsxljf1X_DyPDAodo6dk3OAlCkx-1DuzfEoKsDc1Gc9FKnlq7X4LTfUkD4V1pOKPaGvTb-2AvDS09iqkuKsHl8", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCww", 
+            "MaxPriceRange": 45000, 
+            "MetaTagKeywords": [
+                "ionic", 
+                "nylonx", 
+                "nylong", 
+                "breakaway support"
+            ], 
+            "MinPriceRange": 12000, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2020-02-04T00:59:25.298545", 
+            "ProductEditedOn": "2022-01-20T00:02:43.711234", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "ionic-hi-temp-hybrid-support-material", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA392DCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDAzMyGCgw"
+            ], 
+            "ShortDescription": "Successfully print beautiful, intricate 3D models in high temperature filaments like NylonX without painstaking post-processing using Ionic\u2014the reliable hybrid-support material designed specifically for nylon filaments and other advanced high temperature materials. No need to use same material supports that are a hassle to remove and run the risk of damaging your print\u2019s surface finish. With Ionic, you have filament that is rigid enough to print reliable supports for advanced materials, but also pliable enough to be easily removed and dissolve in water. Print the complex parts you\u2019ve always wanted out of high temperature materials without struggling over leftover supports using Ionic filament. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Ionic Hi-Temp Hybrid Support Material"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDF6Z2HCww", 
+        "ProductNumber": null, 
+        "ProductPrice": 12000, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": -12, 
+        "QuantityOnHand": -12, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "ionic-hi-temp-hybrid-support-material", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MA6Q2PM7", 
+        "SalesIndexByDollars": 361, 
+        "SalesIndexByUnits": 578, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": true, 
+        "ShownInListing": true, 
+        "SkuName": "Ionic Hi-Temp Hybrid Support Material - 1.75mm (0.75kg)", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 104, 
+        "SuccessRatingScore": 7308, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 965000, 
+        "TotalWeightGrams": "965.00", 
+        "TotalWeightKilograms": "0.96", 
+        "TotalWeightPounds": "2.13", 
+        "VendorItemID": "", 
+        "WareHouseLocations": [], 
+        "Weight": 965000, 
+        "WeightGrams": "965.00", 
+        "WeightKilograms": "0.96", 
+        "WeightPounds": "2.13", 
+        "WholesaleCost": 5010
+    }, 
+    "Status": "success"
+}

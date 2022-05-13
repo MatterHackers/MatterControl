@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is Color color)
 			{
-				var field = new ColorField(theme, object3D.Color, null);
+				var field = new ColorField(theme, object3D.Color, null, false);
 				field.Initialize(0);
 				field.ValueChanged += (s, e) =>
 				{
@@ -1281,7 +1281,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(0, 3, 0, 0),
 			};
 
-			var parentOfSubtractTargets = sourceContainer.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			var parentOfSubtractTargets = sourceContainer.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 			var sourceChildren = parentOfSubtractTargets.Children.ToList();
 

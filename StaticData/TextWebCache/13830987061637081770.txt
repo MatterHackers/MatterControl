@@ -1,0 +1,311 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": null, 
+        "AttributeOptions": [], 
+        "AvailableDate": "2022-02-18", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageShippingCost": 529, 
+        "BarCodeID": "735810239639", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:25:46.380300", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Feb 18th", 
+        "DisplayAverageShippingCost": "5.29", 
+        "DisplayListPrice": "51.00", 
+        "DisplayPrice": "44.95", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-4MJ-TECR", 
+        "DisplayWholesaleCost": "18.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/058762f0-8c0f-4979-82f3-74dcdea7ab11", 
+            "ImageUrl": "https://lh3.googleusercontent.com/AePltd_Cw69rxjOnjb5k1im1mZ6EycuJLqEhq_gaw2mE7ZOgfJg-FyFcALrwTWwQ5TKHSRIH2dWvnu2blJ4sIQ", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNE1KVEVDUgw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GNHyzAEM", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [
+            {
+                "AdjustedPrice": 4483, 
+                "AdjustedPriceDisplay": "44.83", 
+                "PercentOfPrice": 9975, 
+                "PercentOfPriceDisplay": "99.75", 
+                "QualifyingQuantity": 2
+            }, 
+            {
+                "AdjustedPrice": 4270, 
+                "AdjustedPriceDisplay": "42.70", 
+                "PercentOfPrice": 9500, 
+                "PercentOfPriceDisplay": "95.00", 
+                "QualifyingQuantity": 4
+            }, 
+            {
+                "AdjustedPrice": 3955, 
+                "AdjustedPriceDisplay": "39.55", 
+                "PercentOfPrice": 8800, 
+                "PercentOfPriceDisplay": "88.00", 
+                "QualifyingQuantity": 6
+            }, 
+            {
+                "AdjustedPrice": 3865, 
+                "AdjustedPriceDisplay": "38.65", 
+                "PercentOfPrice": 8600, 
+                "PercentOfPriceDisplay": "86.00", 
+                "QualifyingQuantity": 8
+            }, 
+            {
+                "AdjustedPrice": 3596, 
+                "AdjustedPriceDisplay": "35.96", 
+                "PercentOfPrice": 8000, 
+                "PercentOfPriceDisplay": "80.00", 
+                "QualifyingQuantity": 10
+            }, 
+            {
+                "AdjustedPrice": 3551, 
+                "AdjustedPriceDisplay": "35.51", 
+                "PercentOfPrice": 7900, 
+                "PercentOfPriceDisplay": "79.00", 
+                "QualifyingQuantity": 12
+            }
+        ], 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDp9InWCgw", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "MH Build PVA is an affordable PVA filament intended for producing quality support prints for your 3D printed parts. PVA (Polyvinyl Alcohol) is a water-soluble material that is often used as a support material, but can also be used to print independently. PVA supports are useful for complex designs where removing support material manually is difficult or impossible, but leaving the part in a water bath overnight will completely dissolve this material. MH Build PVA is made with price in mind for any maker, from beginner to advanced.", 
+        "ProductListPrice": 5100, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNE1KVEVDUgw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:23.328530", 
+            "DisplayPriceRange": "4495", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>MH Build Series - Affordable PLA 3D Printer Filament for Every Maker</strong></h3>\r\n<p><span>MH Build 3D printing filaments are designed with price in mind; we have taken the best aspects of PVA filament and created an affordable solution for every 3D maker. MH Build filaments include&nbsp;</span><span>PLA</span><span>,&nbsp;</span><span>ABS</span><span>, and&nbsp;</span><span>PETG</span><span>. So if you&rsquo;re a pure beginner with a limited budget, or an additive manufacturer looking to save on production costs, MatterHackers MH Build PVA is the filament to get any job done.</span></p>\r\n<p>PVA filament is easy to print with due to its low melting temperature of 185&deg;C, which also make it a perfect match with&nbsp;<a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a>, which has very similar printer settings. The only special characteristic to keep in mind is that PVA is very hygroscopic, meaning it very easily absorbs water from the atmosphere. Best practices for managing this include storing the filament in a sealed container or drying it in an oven before printing.</p>\r\n<p></p>", 
+                    "ElementCode": "55KRLB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"video-container\">\n<div class=\"embed-youtube\" data-embed=\"loLcTNukEKs\" data-size=\"lg\">\n</div>\n</div>", 
+                    "ElementCode": "ATVIPE", 
+                    "Images": [], 
+                    "Type": "html"
+                }, 
+                {
+                    "Content": "<h3><strong>PRINTS BEAUTIFULLY ALONGSIDE PLA</strong></h3>\r\n<p><a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a>&nbsp;is a favorite filament in the 3D printing world, and shared common printing temperature with PVA.&nbsp;<a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a>&nbsp;is also hydrophobic, meaning it doesn't absorb water, which means you don't risk affecting your parts by submerging them in a water bath to dissolve your supports. PVA and PLA also share a very similar glass transition temperature which is very helpful as you are not printing two materials next to each other at heavily varying temperatures. MH Build PVA prints&nbsp;translucent with a slightly yellow tint. It is most often used on 3D printers with dual extruders,&nbsp;with one extruder printing a primary material (such as&nbsp;<a title=\"PRO Series ABS\" href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PRO%20Series%20ABS\" target=\"_blank\" rel=\"noopener\">ABS</a>&nbsp;or&nbsp;<a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/3d-printer-filament/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a>) and the other printing this easily-dissolved material to provide support for overhanging features.</p>", 
+                    "ElementCode": "5N4FQT", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img alt=\"\" src=\"https://lh3.googleusercontent.com/uogyv9BydLzOiEeAnnI1u2vY7kX79nJhOVYCbBkJLvqYFdxDCq4M9l577ZbpePoZErc5mVdzi2dgzm510XTpP3Uhiw\" title=\"PVA Filament- 1.75mm (0.50kg)\" /></p>\r\n<p class=\"align-center\"><em>A full suit of T-60 Power Armor printed with MH Build PVA supports</em></p>", 
+                    "ElementCode": "8CGRIU", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_uogyv9BydLzOiEeAnnI1u2vY7kX79nJhOVYCbBkJLvqYFdxDCq4M9l577ZbpePoZErc5mVdzi2dgzm510XTpP3Uhiw", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/sQyZ3NcFUJPAa7mB9gLiqyoOjmiin0i5Uz-qxElcffSAHYN17WXigfJJmjDo0wzmqw3OvW6-FhYninN5IHa6l8x8", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img alt=\"\" src=\"https://lh3.googleusercontent.com/QZ3Vjv1ZRFyiy9c0ZsNpOsJaTwTQjdpdRr1-s0L2y2J8k3o-jD4lO4ESvq_m_LwQuCTBZvDOcx_d7lMmBEPZASkB\" title=\"PVA Filament- 1.75mm (0.50kg)\" /></p>\r\n<p class=\"align-center\"><em>This Power Armor is ready to take on the Wasteland!</em></p>", 
+                    "ElementCode": "AND3LX", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_QZ3Vjv1ZRFyiy9c0ZsNpOsJaTwTQjdpdRr1-s0L2y2J8k3o-jD4lO4ESvq_m_LwQuCTBZvDOcx_d7lMmBEPZASkB", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/1oIgliK2x9hvxZCPbXWIC_Up1d9I9j_9LL3aDPKRB3MEqRch7fBC2QrxaZwopj_aoA9oaCSS1TA7qo9h-qVZh0s", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MH Build PVA Specifications</strong></h3>\r\n<ul>\r\n<li>Printing Temperature: <span>185&plusmn;15</span>&deg;C&nbsp;</li>\r\n<li>Heated Bed: Not required</li>\r\n<li>Filament Volume:&nbsp;0.50kg</li>\r\n<li>Filament Diameter: 1.75mm</li>\r\n<li><a title=\"MH PVA TDS\" href=\"https://www.matterhackers.com/r/4qas6S\" target=\"_blank\" rel=\"noopener\">Download the Technical Data Sheet</a></li>\r\n<li><a title=\"MH PVA MSDS\" href=\"https://www.matterhackers.com/r/OKrLxH\" target=\"_blank\" rel=\"noopener\">Download the Safety Data Sheet</a></li>\r\n</ul>", 
+                    "ElementCode": "QZH20G", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img title='PVA Filament- 1.75mm (0.50kg)' src='https://lh3.googleusercontent.com/ZthecNc-ls-P_Y5Su-QSlG4hiferzakhU8GUH8WxjoLbIZU0mLCW9SPHLXPMoBrEB2NadSXTqAy00i2Z3NnDu1Xt1Ho'></p>", 
+                    "ElementCode": "9PPU5V", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_ZthecNc-ls-P_Y5Su-QSlG4hiferzakhU8GUH8WxjoLbIZU0mLCW9SPHLXPMoBrEB2NadSXTqAy00i2Z3NnDu1Xt1Ho", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/8RqQgf3uQNCpzZgq3yYn3P-ViJFuahEuaRkAVdc2zAYYv0wQ82JUpAtb0w8c7TMrHlRrgVZqPXxenjdgUpjYpIw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h3><strong>LEARN MORE ABOUT 3D PRINTING WITH MH BUILD PVA FILAMENT</strong></h3>\r\n<p><span>Your success in 3D printing is our goal, so we have created guides to help you create the highest quality 3D printed parts possible.</span></p>\r\n<ul>\r\n<li><a href=\"https://www.matterhackers.com/news/how-to-succeed-when-3d-printing-with-pva-support-material\"><span>How To Succeed When 3D Printing With PVA Filament</span></a></li>\r\n<li><a href=\"https://www.matterhackers.com/news/how-to-use-support-material:-part-2\">How To Use Dissolvable and Breakaway Support Material</a></li>\r\n</ul>", 
+                    "ElementCode": "XUYOZZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img src=\"https://lh3.googleusercontent.com/DvEWkSD3B0rm5SiN8_Jjri1DndwtB31tKqPrKUKsefZADx7JuCGv-T6fuqzDRimG3-eK_aQ4gmRWwf0vxMRE7w\" /></p>", 
+                    "ElementCode": "4D5GPH", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img src=\"https://lh3.googleusercontent.com/pOHDcYsCSEo5Erl0KNC8xd7fo57rf8ynp9CAnzJxCavkjWDZGgIPalJozYHlY000SXvHFIqvMvcCRrGeT7tcPQ\" class=\"align-center\" /></p>", 
+                    "ElementCode": "H0SU7H", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/971694ca-cbcd-4201-807d-f4f891229ce7", 
+                "ImageUrl": "https://lh3.googleusercontent.com/X3o9I18kzUpLOiG9fJrrpBqAGSgeJQyxyHzT5c6x3vlANtHRysT0ZVY79N_5EgFn7hvGQriDY74_TmO34BkE7tqa", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": "legacy:ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAwPyWsgkM", 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_sk-TWgcWZgqc9v6pH0qgMy4G9YIpoAEa87QnNBBo9cqTTUIBLEjdYu2UyrV-77AZ14RtD0reN8bhFzvchxo1EEHwRW8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/d8wo4djpBMUC4BHVPBvmJUs2eLUScOwRjYEmckm7NUoc5lvM-nNc_HA6mX91brlMHvynJ3tMeNYA-i9BHKRGI0Q", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_YrUA5C3bj7tuCa4KEKMABB3rbjoxnhMDAzCacVZqidmsnrgpfGSOf5Vvq5izDXebwWrJNwUyrJ1t48uhE6gOcQJi1OE", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/E_8aAkCwQz119v4dDg_tclSD6G7ERHG-mFNr-XQ09xxMMnQt4yuy69cEYuKKLlqeEoKizpjUQStqWzOyrVaQJh8", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_78HoIE6mrQSUobs68HnS-d7e5OXN_aYi719bhJoVchbZO7Ip6p_3wJiucmSrUz8INOv4uLp6xfEIrorMqTf2s5YwjAM", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/h4ZqWRHaxvmh8UqxU5j-RDMVIAZ2rb3EcEhBPtYuD10x-HlUMYU9vFButWOQg4AzB0uf_D3mpSUOzvQIqD5vnDY", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_Qr1jO7YOVl03ABJwEYHNtQkTksli4AovrZxnqa_haF4XdFKfBKtSGxDvPL_hL6iZVzsBWmPnfOQmjW_4X91noF6d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/STkbschww683zV8uFgdVhT5Ou-bj5OeSOCq8eN3zdEg4ylWlcJvyIoawg8TOy2mXxJTVsrukEJPo_6jO0HAaMw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/971694ca-cbcd-4201-807d-f4f891229ce7", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/X3o9I18kzUpLOiG9fJrrpBqAGSgeJQyxyHzT5c6x3vlANtHRysT0ZVY79N_5EgFn7hvGQriDY74_TmO34BkE7tqa", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d8e58a54-f0de-468a-9cff-50b1d24d9adf", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/UgSHDM41vLbi_xODLzQulREmWHLvlWYia-pRmhfZUTZ9jZQWGUhYG4kHTycZJ_ITP9Sb5zlVePxohFZwiIv2oNU", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/5eacd74c-40b8-4ca5-b48f-db286595edee", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kCR30rUoV68Is-jfs_MskKHnmLgzBZrIqPQGKwA4ISRUTfYTB98U10Ye2fX7nKA8gXRtSGWCIHv9fJrNcqbC22jV", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBd1B5V3Nna00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAwPyWsgkM", 
+            "MaxPriceRange": 4495, 
+            "MetaTagKeywords": [
+                "Dissolvable support", 
+                "PVA support", 
+                "support"
+            ], 
+            "MinPriceRange": 4495, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:05:23.328550", 
+            "ProductEditedOn": "2022-01-20T01:19:28.060666", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "175mm-pva-filament-half-kg", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVl5ZlI0REEM"
+            ], 
+            "ShortDescription": "MH Build PVA is an affordable PVA filament intended for producing quality support prints for your 3D printed parts. PVA (Polyvinyl Alcohol) is a water-soluble material that is often used as a support material, but can also be used to print independently. PVA supports are useful for complex designs where removing support material manually is difficult or impossible, but leaving the part in a water bath overnight will completely dissolve this material. MH Build PVA is made with price in mind for any maker, from beginner to advanced.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "MH Build Series PVA Filament - 1.75mm (0.5kg)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBd1B5V3Nna00M", 
+        "ProductNumber": "3357009", 
+        "ProductPrice": 4495, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "735810238410", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 125, 
+        "QuantityOnHand": 125, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "175mm-pva-filament-half-kg", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "M4MJTECR", 
+        "SalesIndexByDollars": 246, 
+        "SalesIndexByUnits": 147, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "MH Build Series PVA Filament - 1.75mm (0.5kg)", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 251, 
+        "SuccessRatingScore": 9761, 
+        "TotalLeadDays": 1, 
+        "TotalWeight": 800000, 
+        "TotalWeightGrams": "800.00", 
+        "TotalWeightKilograms": "0.80", 
+        "TotalWeightPounds": "1.76", 
+        "VendorItemID": "", 
+        "WareHouseLocations": [], 
+        "Weight": 800000, 
+        "WeightGrams": "800.00", 
+        "WeightKilograms": "0.80", 
+        "WeightPounds": "1.76", 
+        "WholesaleCost": 1800
+    }, 
+    "Status": "success"
+}

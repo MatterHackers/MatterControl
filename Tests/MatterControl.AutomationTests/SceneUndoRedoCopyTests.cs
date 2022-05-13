@@ -246,10 +246,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.SelectNone()
 					.WaitFor(() => scene.Children.Count() == 1);
 				Assert.AreEqual(1, scene.Children.Count());
-				// TODO: The scene, the group and the 2 objects
-				//       Expected: 4
-				//       But was:  5
-				Assert.AreEqual(4, scene.DescendantsAndSelf().Count(), "The scene, the group and the 2 objects");
+				// group object can now process holes so it is a source object and has an extra object in it.
+				Assert.AreEqual(5, scene.DescendantsAndSelf().Count(), "The scene, the group and the 2 objects");
 
 				// test un-group 2 grouped objects
 				testRunner.RunDoUndoTest(

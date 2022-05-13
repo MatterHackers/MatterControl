@@ -81,7 +81,7 @@ namespace MatterControl.Tests.MatterControl
 
 			PrinterConfig printer = null;
 
-			MaxLengthStream maxLengthStream = new MaxLengthStream(printer, new TestGCodeStream(printer, lines), 6);
+			MaxLengthStream maxLengthStream = new MaxLengthStream(printer, new TestGCodeStream(printer, lines), 6, true);
 			ValidateStreamResponse(expected, maxLengthStream);
 		}
 
@@ -292,7 +292,7 @@ namespace MatterControl.Tests.MatterControl
 			streamList.Add(new RelativeToAbsoluteStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new WaitForTempStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new BabyStepsStream(printer, streamList[streamList.Count - 1]));
-			streamList.Add(new MaxLengthStream(printer, streamList[streamList.Count - 1], 1));
+			streamList.Add(new MaxLengthStream(printer, streamList[streamList.Count - 1], 1, true));
 			streamList.Add(new ExtrusionMultiplierStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new FeedRateMultiplierStream(printer, streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];

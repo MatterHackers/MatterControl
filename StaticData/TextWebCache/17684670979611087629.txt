@@ -1,0 +1,269 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2021-03-31T23:10:43.077013", 
+                "Description": "Single User", 
+                "HexColor": null, 
+                "ID": 4593149192699904, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAwLEhBQcm9kdWN0QXR0cmlidXRlGICAwP-n8MkKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICgkJ6ulAgM", 
+                "Name": "Single User License", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAwLEhBQcm9kdWN0QXR0cmlidXRlGICAwP-n8MkKDA", 
+                "Reference": "license-type:enterprise-license"
+            }
+        ], 
+        "AvailableDate": "2021-03-31", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "Teton Simulation", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2021-03-31T23:10:57.209570", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Mar 31st", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "2,000.00", 
+        "DisplayPrice": "2,000.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-2ZZ-G36T", 
+        "DisplayWholesaleCost": "800.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/7e42757e-d17a-41fd-9ada-b9fcf1395630", 
+            "ImageUrl": "https://lh3.googleusercontent.com/AmsJSCP1_U8M1S0_FXu7zr6nvJDFyy2zhhFD39zx34mfbILD4c7VfPj0dnyrY_kc9ecCQuzFOEYqH965apWJwNDx41Owiken4B_q", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMlpaRzM2VAw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "Educational Software", 
+        "ProductDescription": "SmartSlice is a slicing software plug-in from Teton Simulation that works with your design needs to ensure that your 3D prints succeed at the jobs you've made them for.\r\n\r\n\u2022Validate and optimize print parameters\r\n\u2022Apply STL modifications to confidently achieve end-use requirements\r\n\u2022Use within your slicer--Cura, STRATOS, and more\r\n\u2022Automatically identifies print profiles for your FFF parts\r\n\u2022Achieve the best part performance", 
+        "ProductListPrice": 200000, 
+        "ProductListing": {
+            "ActiveSkuCount": 3, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMlpaRzM2VAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTDUxMVA3SAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMk5DTEZHRww"
+            ], 
+            "AddOns": [], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAwLEhBQcm9kdWN0QXR0cmlidXRlGICAwP-n8MkKDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2021-03-31T22:46:45.629751", 
+            "DisplayPriceRange": "200000", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>Designed for Users of Every Experience Level to Be Fast, Accurate and Intuitive</strong></h3>\r\n<p>SmartSlice bridges the gap between design and application by simulating real world physics to tell you how your part will perform once it's been printed and installed. This frees you from the countless cycles of printing, testing, and revising that eats up precious time and materials.</p>\r\n<p>As a plug-in for any flavor of Cura as well as STRATOS from BCN3D, the interface is unobtrusive and incredibly easy, and allows you to define performance requirements for your part, before it engages in&nbsp;cloud-based optimization to return a number of solutions to achieve the results you need. This could be as simple as revising the slicer settings such as infill or layer thickness, or it could mean incorporating model modifications, provided by SmartSlice.</p>\r\n<p>Once you've worked with SmartSlice to finalize your part, simply print and install into your application. No need to adjust the design and print again: it works the first time.</p>", 
+                    "ElementCode": "TO91TZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"nQNHOYjKBvE\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "YEI0T4", 
+                    "Images": [], 
+                    "Type": "Html"
+                }, 
+                {
+                    "Content": "<h3><strong>See How Customers are Saving Time and Money by Using SmartSlice</strong></h3>\r\n<p><strong>Carbotech</strong></p>\r\n<p><em>Rob Ellis, owner of Carbotech shared how SmartSlice has helped his business: \"SmartSlice has proven to give substantial savings which are already showing benefits both for us and for our clients.\"</em></p>\r\n<p>Read the <a href=\"https://www.matterhackers.com/r/r4uSpL\">Case Study Here</a></p>\r\n<p><strong>RE: Suspensions</strong></p>\r\n<p><em>As soon as Jason Enders, the owner of RE Suspension, was introduced to SmartSlice&trade;, he immediately&nbsp;</em><em>realized the impact it would have on their additive manufacturing workflow and their ability to configure&nbsp;</em><em>parts for the FFF process.</em></p>\r\n<p>Read the <a href=\"https://www.matterhackers.com/r/PYQ8JF\">Case Study Here</a></p>", 
+                    "ElementCode": "WST25J", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/G6ARHfy3WbzygnpM1Ri_Sr0E__z_KhF7OA748f-mPZ0XPtkj5M-XQw9cbSJJ2-nRY-Q3-U8FHhb_vWEYiHK91uTag8ItVtY9MC4\" /></p>\r\n<p><em>For one project, Carbotech was able to save 50.4 hours in print time thanks to SmartSlice.</em></p>", 
+                    "ElementCode": "NTWZAB", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/6148e1d5-3058-4380-8480-07c586acf693", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/G6ARHfy3WbzygnpM1Ri_Sr0E__z_KhF7OA748f-mPZ0XPtkj5M-XQw9cbSJJ2-nRY-Q3-U8FHhb_vWEYiHK91uTag8ItVtY9MC4", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Cut Down on Time and Material, Improve Performance</strong></h3>\r\n<p>By using the integrated plug-in in Cura or STRATOS, SmartSlice helps you to make certain your part will perform exactly how you need it, on the first print. Rather than testing it in its use-case, allow SmartSlice to simulate the part in action and hand you the adjustments you need before you 3D printer even heats up.</p>\r\n<p>The ROI is excellent, and Teton Simulations' studies have shown that the cost-savings can pay for itself--and your 3D printer--within a matter of months.</p>", 
+                    "ElementCode": "9SW7MQ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/ti5ONIcHMsIUfk91QklqK7lf6qKr9cEYzPhYjzLULjj09RnirTdhUjB9E5_uzR8hQ2peieUnYn-vyWedb9ivMhG_nwTMMe2Cipo\" /></p>\r\n<p><em>Within your slicer, define surfaces that will be experiencing stress, and provide weight and pressure minimums they need to withstand.</em></p>", 
+                    "ElementCode": "37GBNP", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/0bb2a557-8acc-4c67-ba8d-f9d344fdde4a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/ti5ONIcHMsIUfk91QklqK7lf6qKr9cEYzPhYjzLULjj09RnirTdhUjB9E5_uzR8hQ2peieUnYn-vyWedb9ivMhG_nwTMMe2Cipo", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/nJEsZ5C_vWAxrNTFFVC475xLjMuI-llnVyoIe-UqrK2_G_EyBXv5QQwx-GEdE4D1PVbpxGVqRyWE--kNojHGFLKsxKKCC-fbOiLsWg\" /></p>\r\n<p><em>Once SmartSlice runs its simulation, it will present a number of suggestions for improving your design to achieve your needs, on the first print.</em></p>", 
+                    "ElementCode": "JBEVGF", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/8287073a-f262-4b13-ab2b-a44a9de75cfd", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/nJEsZ5C_vWAxrNTFFVC475xLjMuI-llnVyoIe-UqrK2_G_EyBXv5QQwx-GEdE4D1PVbpxGVqRyWE--kNojHGFLKsxKKCC-fbOiLsWg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>SmartSlice is Engineering to Save You Time</strong>&nbsp;</h3>\r\n<p>SmartSlize was developed to optimize the engineering of your parts specifically for faster, better 3D printing. Not only does this help you save time, but it also cuts down on material use, making your spools last longer.&nbsp;</p>", 
+                    "ElementCode": "XNNWXZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/LeaSuEg4xPoDDVFM4UIs_2Vh4D2wjQaSyatXoSOxS0JLqMXfVH4qFFhKC0qvbeRYbJ-CceRec7MtAM7HoxUr0dxLuGZIYcDNfDRB'></p>", 
+                    "ElementCode": "B21KQA", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/6a2e2803-fb4a-4ebc-bd5a-f7b8d6dd689a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/LeaSuEg4xPoDDVFM4UIs_2Vh4D2wjQaSyatXoSOxS0JLqMXfVH4qFFhKC0qvbeRYbJ-CceRec7MtAM7HoxUr0dxLuGZIYcDNfDRB", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>Compatibility List</strong></h3>\r\n<p>SmartSlice is compatible with the following FFF 3D printers:</p>\r\n<ul>\r\n<li>Artillery Genius</li>\r\n<li>Artillery Sidewinder X1</li>\r\n<li>BIQU B1</li>\r\n<li>Creality3D Ender 3 (all models)</li>\r\n<li>Creality3D Ender 5 (all models)</li>\r\n<li>Creality3D CR-10 (all models)</li>\r\n<li>Creality3D CR-20 (all models)</li>\r\n<li>Creality3D CR-6 SE</li>\r\n<li>Creality3D CR-X</li>\r\n<li>LulzBot Mini 2</li>\r\n<li>LulzBot TAZ Pro</li>\r\n<li>MakerBot Replicator</li>\r\n<li>Monoprice Select Mini</li>\r\n<li>Monoprice Ultimate</li>\r\n<li>MP Mini Delta</li>\r\n<li>Prusa i3 (all models)</li>\r\n<li>Raise3D N2 (all models)</li>\r\n<li>SeeMeCNC Artemis</li>\r\n<li>SeeMeCNC Rostock Max V3.2</li>\r\n<li>Snapmaker 2 (all models)</li>\r\n<li>Tevo Black Widow</li>\r\n<li>Tevo Tarantula/Pro</li>\r\n<li>Tevo Tornado</li>\r\n<li>Ultimaker Original</li>\r\n<li>Ultimaker 2/2+ (and Extended, Go)</li>\r\n<li>Ultimaker 3/3+ (and Extended)</li>\r\n<li>Ultimaker 2+ Connect</li>\r\n<li>Ultimaker S3</li>\r\n<li>Ultimaker S5</li>\r\n<li>Wanhao Duplicator</li>\r\n</ul>\r\n<p>Other models are being added all the time! If you have a question as to whether your 3D printer's slicer is compatible with SmartSlice, email support@matterhackers.com.</p>", 
+                    "ElementCode": "32LW4D", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/7c9aa87f-3a98-49ed-ad58-6d69b83aea6a", 
+                "ImageUrl": "https://lh3.googleusercontent.com/hOcKl-ITdmZy26YzbeTdnSgjewGRn7yKxY8jfPg6WTe-WWMkpswA_xZu1VFaCP6Nn6Mttqgdn2aQhpAXILtePbEflgD3e4ie5WU", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5038618201030656, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/7c9aa87f-3a98-49ed-ad58-6d69b83aea6a", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/hOcKl-ITdmZy26YzbeTdnSgjewGRn7yKxY8jfPg6WTe-WWMkpswA_xZu1VFaCP6Nn6Mttqgdn2aQhpAXILtePbEflgD3e4ie5WU", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/e9b5a4d2-aac4-4c0c-a5d9-02dceaa1d4ec", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/21KRCdBjzgDs3Ya88MnTO-0KGXC1f1DvyuBCOdteZ_yS-PVxihNa2famuzoVmPM0aF3ktSZ3xH06Nl3cKCA1Zik2Kh4O8QBH8ZI", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/1cce2f7e-c1bd-4568-8560-acdd6308a093", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Py7xV66x4ucM-TDNiwZbmbLezc0ZWfgPDgh1esvBLMM1gVqzh8L6bn7xB0jFRTh66MN89j2htDH5LKqWxESeP-kzR68dSHG_aUYB", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/cfc7ce7a-4c57-412e-9bd9-9d1d5dea9812", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/h2Spu-TvL-x8eiK6m2EHhyELAqqqpwKz7YvWMLCg8eJz19AG8eMLbindk9josKMRUMtqC6CHOL6Cicggf4J2qz_bWQ26ss_8GfVV", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAw", 
+            "MaxPriceRange": 200000, 
+            "MetaTagKeywords": [
+                "smart slice"
+            ], 
+            "MinPriceRange": 200000, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2021-03-31T22:46:45.629767", 
+            "ProductEditedOn": "2022-03-02T23:44:57.351997", 
+            "ProductType": "dropship", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "smartslice-print-optimization-for-cura", 
+            "RelatedProducts": [], 
+            "ShortDescription": "SmartSlice is a slicing software plug-in from Teton Simulation that works with your design needs to ensure that your 3D prints succeed at the jobs you've made them for.\r\n\r\n\u2022Validate and optimize print parameters\r\n\u2022Apply STL modifications to confidently achieve end-use requirements\r\n\u2022Use within your slicer--Cura, STRATOS, and more\r\n\u2022Automatically identifies print profiles for your FFF parts\r\n\u2022Achieve the best part performance", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "SmartSlice Slicing Optimizer"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDAi9P5CAw", 
+        "ProductNumber": null, 
+        "ProductPrice": 200000, 
+        "ProductType": "dropship", 
+        "ProductUpc": "", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 33303, 
+        "QuantityOnHand": 33303, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "smartslice-print-optimization-for-cura", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "M2ZZG36T", 
+        "SalesIndexByDollars": 215, 
+        "SalesIndexByUnits": 1544, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "SmartSlice Slicing Optimizer - Single User License", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 10, 
+        "SuccessRatingScore": 10000, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 80000
+    }, 
+    "Status": "success"
+}

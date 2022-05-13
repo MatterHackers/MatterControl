@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem == this)
 			{
-				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = this.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 				var removeObjects = parentOfSubtractTargets.Children
 					.Where(i => SelectedChildren.Contains(i.ID))
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
 
-			var parentOfPaintTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			var parentOfPaintTargets = SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 			if (parentOfPaintTargets.Children.Count() < 2)
 			{

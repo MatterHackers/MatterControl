@@ -64,6 +64,10 @@ namespace MatterHackers.MatterControl.Library
 					async () => await CubeObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
+					"Hole".Localize(),
+					async () => await CubeHoleObject3D.Create())
+					{ DateCreated = new DateTime(index++) },
+				new GeneratorItem(
 					"Pyramid".Localize(),
 					async () => await PyramidObject3D.Create())
 					{ DateCreated = new DateTime(index++) },

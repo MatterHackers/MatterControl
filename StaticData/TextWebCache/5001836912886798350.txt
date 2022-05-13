@@ -1,0 +1,352 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2019-08-16T21:44:12.196367", 
+                "Description": "Return Delivery of about 1 Business Day (after processing is complete)", 
+                "HexColor": null, 
+                "ID": 5070026012884992, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNyWr4gKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICA3JblgAkM", 
+                "Name": "Expedited", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNyWr4gKDA", 
+                "Reference": "return-shipping-service:expedited-return-delivery-of-about-1-business-day"
+            }
+        ], 
+        "AvailableDate": "2019-09-20", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "BASF", 
+        "ComponentNoPOBox": false, 
+        "ComponentSkuCount": 1, 
+        "ComponentSkuWeight": -1, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0NSVzU2Ugw"
+        ], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-08-16T21:58:55.535297", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Sep 20th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "80.00", 
+        "DisplayPrice": "80.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-Z70-V488", 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/a0e19eeb-dc7c-479a-89fc-ff8c49d5c717", 
+            "ImageUrl": "https://lh3.googleusercontent.com/U0195CIcdxNB_XzkykvlvopavAi4TDBFKxDiZ3bHsOWMQsapiFki0C4qDlYiEVHxO6frs8a4-cr1wGggMlStGeQ", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWjcwVjQ4OAw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "Need a reliable, convenient service for debinding and sintering Ultrafuse 316L parts? Order a processing ticket with MatterHackers today to process your soon-to-be-metal parts through the reliable professionals over at DSH Technologies. Instead of investing thousands of dollars for industrial equipment and materials, professionals can outsource their processing needs at a much more cost-effective rate. One processing ticket comes with one email code and covers a single package of Ultrafuse 316L printed parts that weigh a total of 1kg or less. Within 48 business hours of purchase, please expect a follow-up email from a MatterHackers' support team member with your unique processing ticket code, packaging instructions, and form. Approved by BASF, this Ultrafuse 316L Processing Ticket is designed to make debinding and sintering your printed Ultrafuse green parts a success. Please note that customers outside of the U.S. may have additional shipping charges. ", 
+        "ProductListPrice": 8000, 
+        "ProductListing": {
+            "ActiveSkuCount": 2, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTE5XMFZLRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWjcwVjQ4OAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 19900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "199.00", 
+                    "AddOnDisplayPrice": "199.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 199.0, 
+                    "AddOnListingReference": "matterhackers-basf-ultrafuse-316l-design-consultation", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 19900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M5WAYG5F", 
+                    "AddOnTitle": "Solution Engineering - BASF Ultrafuse Metal Filament Design Consultation", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVdBWUc1Rgw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNyWr4gKDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-08-16T21:22:49.083999", 
+            "DisplayPriceRange": "5000 - 8000", 
+            "Elements": [
+                {
+                    "Content": "<p class=\"align-left\">How do you prepare your freshly printed <a title=\"BASF Ultrafuse 316L Metal 3D Printing Filament\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm/sk/MRDKJRRS\" target=\"_blank\" rel=\"noopener\">Ultrafuse 316L</a> parts for the debinding and sintering process? Why do you even need to debind and sinter? Learn how, why, and more in our guide \"<a title=\"How to Prepare Ultrafuse 316L Parts for Debinding and Sintering\" href=\"https://www.matterhackers.com/articles/how-to-prepare-metal-3d-printed-basf-ultrafuse-316l-parts-for-debinding-and-sintering\" target=\"_blank\" rel=\"noopener\">How to Prepare Ultrafuse 316L Parts for Debinding and Sintering</a>\". To successfully 3D print with metal filament, click <a title=\"How to Succeed with 3D Printing Metal on a Desktop 3D Printer\" href=\"https://www.matterhackers.com/support/how-to-succeed-with-3d-printing-metal-on-a-desktop-3d-printer\" target=\"_blank\" rel=\"noopener\">here</a>.</p>", 
+                    "ElementCode": "450R2E", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/N4Fv99yyJkDmS4UPNMQGHOlMF3K-RrQy1eHOaaRjOJJcSTvQcSavk_JYaIcBECbmp57YghyFP2kVtyv7NuEbkQ=s660\" /></p>", 
+                    "ElementCode": "MEBV06", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/a7b90549-36ea-4699-866a-c784f08a836b", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/N4Fv99yyJkDmS4UPNMQGHOlMF3K-RrQy1eHOaaRjOJJcSTvQcSavk_JYaIcBECbmp57YghyFP2kVtyv7NuEbkQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MEET THE SOLUTION TO METAL 3D PRINTING</strong></h3>\r\n<p>We've worked to set up a network of debinding and sintering solutions to converting parts has never been easier by using ordering the processing ticket system from MatterHackers. 3D printing metal parts is now more accessible and cost-effective with&nbsp;<a title=\"BASF Ultrafuse 316L Metal 3D Printing Filament\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm/sk/MRDKJRRS\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse 316L </a>. One thing to note is that producing metal-polymer parts doesn't stop with your FFF 3D printer. Debinding and sintering after 3D printing is a must in order to truly produce a nearly 100% solid 316 stainless steel part. This means you need to find a debind and sinter company that is reliable, economical and available for services to the general public.</p>", 
+                    "ElementCode": "JBAA1B", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/JrAhprdgpZlcwYWq3BDJeN-zhMauDMGndW2dMOSel7FAoDVK0_AAZhW1B3GHi9uT-LTxXAjm1823okqcuzBYGsw'></p>", 
+                    "ElementCode": "AFMFXL", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/14d1ae6f-e619-4ca9-88ee-e58ec2ee99b6", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/JrAhprdgpZlcwYWq3BDJeN-zhMauDMGndW2dMOSel7FAoDVK0_AAZhW1B3GHi9uT-LTxXAjm1823okqcuzBYGsw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>Enter MatterHackers' BASF Ultrafuse 316L Processing Tickets. We've teamed up with the professionals at BASF and DSH Technologies to set up a quick and easy procedure that makes the process following 3D printing <a title=\"BASF Ultrafuse 316L Metal 3D Printing Filament\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm/sk/MRDKJRRS\" target=\"_blank\" rel=\"noopener\">Ultrafuse 316L</a> easier than ever. Instead of spending hours looking for a trustworthy company and negotiating prices, you can purchase one of our processing tickets for a reliable debinding and sintering company that will quickly process and deliver your printed parts thanks to the existing systems currently in place. This partnership is BASF approved so you know this process is designed to succeed with your printed BASF Ultrafuse green parts. How do you get started? Simply purchase a processing ticket. Receive a form and ticket code through email. Ship the printed, filled out form and code with your printed Ultrafuse 316L parts. MatterHackers and DSH take care of the rest. It's that convenient.</p>", 
+                    "ElementCode": "V2YSX1", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>QUICK AND EASY DEBIND AND SINTER PROCESS</strong></h3>\r\n<p>When you order a processing ticket, our staff works together with experts from DSH to have your <a title=\"BASF Ultrafuse 316L Metal 3D Printing Filament\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm/sk/MRDKJRRS\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse 316L</a> parts debound and sintered quickly, with minimal effort on your end. Once your printed green parts (metal-polymer parts that have not been debound or sintered) are delivered to DSH, they work quickly to process your order on a scheduled run over a two day period and ship out your now solid 316 stainless steel parts back to you next day.</p>\r\n<p>Purchase a processing ticket. Ship your green prints, code, and form. Receive your now metal parts. All completed quickly and easily with MatterHackers' BASF Ultrafuse 316L Processing Ticket.</p>", 
+                    "ElementCode": "6VW0CN", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/f2UAP7xgoDzkYsoJxdgSs1hqhGJjmjzICxOAv_FgYsusb5nNNgekNBQ5nRqXzSqBDkGEdFDuHIbt7fHlKJR2Tg'></p>", 
+                    "ElementCode": "GS0MIP", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/ffcba22c-f913-4092-aa33-e91391adf6c2", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/f2UAP7xgoDzkYsoJxdgSs1hqhGJjmjzICxOAv_FgYsusb5nNNgekNBQ5nRqXzSqBDkGEdFDuHIbt7fHlKJR2Tg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>SUPPORT FROM START TO FINISH</strong></h3>\r\n<p>You purchase a ticket and ship your prints; MatterHackers assists in the process every step of the way. Our staff works closely with both you and DSH to ensure the communication regarding your order, delivery, their processing and the return goes as smoothly as possible. Our system handles the logistics to ensure both parties are on the same page. Debinding and sintering can be a complicated process if unfamiliar with the procedures required to figure out the right method and price for you. That's why we present MatterHackers' BASF Ultrafuse 316L Processing Tickets<span>&mdash;a method that streamlines the basic debinding and sintering process quickly and conveniently for both the customer and manufacturer.</span></p>", 
+                    "ElementCode": "CSVRJL", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/0on9HMcaAL8iRkvRpVwFxwHzM2zvzh_A2aB-3rX6-0b84NZtN5h4AML-zEzSUYQcWag6AeGTSt0lob8nqoD_MA'></p>", 
+                    "ElementCode": "KE2BSP", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/56fd8507-2aec-47ac-b928-822714028901", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/0on9HMcaAL8iRkvRpVwFxwHzM2zvzh_A2aB-3rX6-0b84NZtN5h4AML-zEzSUYQcWag6AeGTSt0lob8nqoD_MA", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>PROCESSING SCHEDULE</strong></h3>\r\n<p>DSH has Debinding and Sintering runs scheduled every other Tuesday, on the 2nd and 4th week of every month. See the schedule below for the days when they will run any properly packaged and shipped Ultrafuse 316L parts they have received. What counts as properly packaged and shipped parts? Check out our \"<a title=\"How to Prepare Ultrafuse 316L Parts for Debinding and Sintering\" href=\"https://www.matterhackers.com/articles/how-to-prepare-metal-3d-printed-basf-ultrafuse-316l-parts-for-debinding-and-sintering\" target=\"_blank\" rel=\"noopener\">How to Prepare Ultrafuse 316L Parts for Debinding and Sintering</a>\" guide.</p>", 
+                    "ElementCode": "0BWKOA", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/sznq3IU92EWTqmBojTMObWYdKMCrRUHgIAIajuwH2QzsIkL2Fm5KynOimcAIfgPWJarSjriGuv7QgZVarnd0gDC1JZHGggWN8zediQ'></p>", 
+                    "ElementCode": "MFDK39", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/16e5670a-a28e-4bd7-bc00-b9e5a30e073f", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/sznq3IU92EWTqmBojTMObWYdKMCrRUHgIAIajuwH2QzsIkL2Fm5KynOimcAIfgPWJarSjriGuv7QgZVarnd0gDC1JZHGggWN8zediQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>PROCESS AND RETURN SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li>Within 48 business hours of purchase, <strong>please expect a follow-up email from a MatterHackers' support team member</strong> with your unique processing ticket code, packaging instructions, and form.\r\n<ul>\r\n<li>Processing ticket codes only cover return delivery within the U.S. Additional shipping charges may be applied to c<span>ustomers outside of the U.S. </span>If you want to use a processing ticket and live outside of the U.S., please contact <a href=\"mailto:support@matterhackers.com\">support@matterhackers.com</a>&nbsp;for options.</li>\r\n</ul>\r\n</li>\r\n<li>Packages must include a processing ticket code and printed form that is included in the follow-up email, as well as your 3D printed green parts that total up to 1kg or less in weight. <strong>Any packages that do not include all of the previously listed items will result in a delay.</strong>\r\n<ul>\r\n<li>Weight exceeding 1kg will either require another purchase of an additional processing ticket or acknowledgment/agreement that only the amount of weight in parts you purchased with a ticket will be processed.</li>\r\n</ul>\r\n</li>\r\n<li><strong>DSH processes packages the second and fourth Tuesday of every month.</strong><span>&nbsp;This excludes holidays.</span>\r\n<ul>\r\n<li>i.e. If your package arrives just before a Christmas falls on the fourth Tuesday of December, then your parts will be processed later in the week. Refer to the schedule posted on the Processing Ticket product page for accurate dates.</li>\r\n</ul>\r\n</li>\r\n<li>To have your package processed on the week of a run, it must<span>&nbsp;</span><strong>arrive no later than the Monday right before the scheduled run</strong>. An updated calendar on when DSH will perform their next processing run is located above.</li>\r\n<li><span>During a processing week, parts are checked in on Tuesday, debound and sintered from Wednesday through Thursday, and shipped out no later than Friday that same week.</span></li>\r\n<li>There are currently two return shipping options available:\r\n<ul>\r\n<li><strong>Standard</strong> - Return delivery of about 2 - 5 business days, depending on your sender address' proximity to DSH's location, AFTER green parts have been processed</li>\r\n<li><strong>Expedited</strong> - Overnight/One day return delivery AFTER parts have been processed</li>\r\n</ul>\r\n</li>\r\n<li>Elnik Systems, the parent company of DSH Technologies, also performs debinding and sintering at its Germany location. For more information on services outside the U.S., please contact <a href=\"mailto:support@matterhackers.com\">support@matterhackers.com</a></li>\r\n</ul>", 
+                    "ElementCode": "EQUY9S", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/1i1bF-B7xI12PzY4QidCOrRVI3YvshXVQ2q_PNWzV5z_jbPr1_Zky-MyQNPTzLV8AejlCOUog6U5l5vtjwPY_iZM'></p>", 
+                    "ElementCode": "9XMNZZ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/23c7df65-a239-471e-bc2f-43741b0ed807", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/1i1bF-B7xI12PzY4QidCOrRVI3YvshXVQ2q_PNWzV5z_jbPr1_Zky-MyQNPTzLV8AejlCOUog6U5l5vtjwPY_iZM", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>STREAMLINE YOUR 3D PRINTING EXPERIENCE WITH MATTERHACKERS</strong></h3>\r\n<p>At MatterHackers we pride ourselves in offering various quality products and services for every maker. Our well-knowledged staff diligently provides friendly service, advice and support on all of our products and services that streamline the 3D printing experience to customers of every experience level. Still have questions about BASF Ultrafuse 316L Processing Ticket? Feel free to give our experts a call.</p>", 
+                    "ElementCode": "N75ARM", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/4415acb7-af34-40ed-9995-40003bc14374", 
+                "ImageUrl": "https://lh3.googleusercontent.com/UEwc1GrYzX_J1veJUfApO97BaPb20DykaPgEHy3PCIAmokemYY4vIe6IGCFjGDgCrg72J1JVqUUszOawX6Qfg0I", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5688933564284928, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/3acfbdcd-c2e0-4275-b674-289b75a9e2ed", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/lstlwOi5_wjhoQEiLgUUvvuQmOhPsZJPoCaOXPuHP8XSP8TnKExi-JCCNHla5HjK-kOvw5IlmNbw2VBPZvipQg_N", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/bb9b482e-756f-4cc2-a9a3-4cc4959e6023", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/XV_b63AdpatQa1sBFeQR8jItJ-m3OLkp1EU1z2aoiq-Qta_9K3vGJJDYKefD8cU0AlJ_a_4b03DPPj_1qpolyqs", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/f2953782-7d55-4678-adc3-7b37f825d731", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/FIQu0zzvU3LJX95UGnRqaVmeDEkpgKuxEkplD0q_QzBQWodEH5rquEK_uuxOnSPyek3uBppUzV6SKudocu20n6X4", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/49846dc3-201f-4430-b32f-711b23e2cabb", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/lXKSYPLXhOJyd2bUylO5ZZA3YLk6S6olq6IKL2VEe9hr_AIW5SGRwoinwBqSU-hTSbcYjyk1GVdeLGgYAkbHLoP4", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/4415acb7-af34-40ed-9995-40003bc14374", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/UEwc1GrYzX_J1veJUfApO97BaPb20DykaPgEHy3PCIAmokemYY4vIe6IGCFjGDgCrg72J1JVqUUszOawX6Qfg0I", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw", 
+            "MaxPriceRange": 8000, 
+            "MetaTagKeywords": [
+                "metal", 
+                "3d printing", 
+                "fff", 
+                "fdm", 
+                "sintering", 
+                "debinding", 
+                "debind", 
+                "sinter", 
+                "sintered", 
+                "debinded", 
+                "debound", 
+                "ultrafuse316L", 
+                "essentium"
+            ], 
+            "MinPriceRange": 5000, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-08-16T21:22:49.084044", 
+            "ProductEditedOn": "2022-01-20T09:54:08.813471", 
+            "ProductType": "dropship", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "metal-3d-printing-processing-ticket", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsz6KFCQw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw"
+            ], 
+            "ShortDescription": "Need a reliable, convenient service for debinding and sintering Ultrafuse 316L parts? Order a processing ticket with MatterHackers today to process your soon-to-be-metal parts through the reliable professionals over at DSH Technologies. Instead of investing thousands of dollars for industrial equipment and materials, professionals can outsource their processing needs at a much more cost-effective rate. One processing ticket comes with one email code and covers a single package of Ultrafuse 316L printed parts that weigh a total of 1kg or less. Within 48 business hours of purchase, please expect a follow-up email from a MatterHackers' support team member with your unique processing ticket code, packaging instructions, and form. Approved by BASF, this Ultrafuse 316L Processing Ticket is designed to make debinding and sintering your printed Ultrafuse green parts a success. Please note that customers outside of the U.S. may have additional shipping charges. ", 
+            "ShowAddToCart": false, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "BASF Ultrafuse 316L Processing Ticket"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 8000, 
+        "ProductType": "dropship", 
+        "ProductUpc": "", 
+        "PromotionDescription": null, 
+        "QuantityAvailable": 33303, 
+        "QuantityOnHand": 33303, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "metal-3d-printing-processing-ticket", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MZ70V488", 
+        "SalesIndexByDollars": 419, 
+        "SalesIndexByUnits": 454, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "BASF Ultrafuse 316L Processing Ticket - Expedited", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 54, 
+        "SuccessRatingScore": 10000, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}

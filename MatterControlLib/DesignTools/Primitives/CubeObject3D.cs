@@ -159,4 +159,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Radius), () => Round);
 		}
 	}
+
+    public class CubeHoleObject3D : CubeObject3D
+    {
+        public override string ThumbnailName => "CubeHole";
+
+        public CubeHoleObject3D()
+        {
+			OutputType = PrintOutputTypes.Hole;
+        }
+
+		public static async Task<CubeHoleObject3D> Create()
+		{
+			var item = new CubeHoleObject3D();
+			await item.Rebuild();
+			return item;
+		}
+
+	}
 }

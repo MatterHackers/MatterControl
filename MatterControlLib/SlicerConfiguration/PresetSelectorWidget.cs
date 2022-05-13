@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.ActiveMaterialKey = "";
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
-								RebuildDropDownList();
+								RebuildDropDownList(true);
 							}
 						};
 
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								// Clear QualityKey after removing layer to ensure listeners see update
 								printer.Settings.ActiveQualityKey = "";
-								RebuildDropDownList();
+								RebuildDropDownList(true);
 							}
 						};
 
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					|| (layerType == NamedSettingsLayers.Quality && stringEvent.Data == SettingsKey.active_quality_key)
 					|| stringEvent.Data == SettingsKey.layer_name))
 			{
-				RebuildDropDownList();
+				RebuildDropDownList(false);
 			}
 		}
 
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						printer.Settings.MaterialLayers.Add(newMaterial);
 						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
 
-						RebuildDropDownList();
+						RebuildDropDownList(true);
 					},
 					() =>
 					{
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						printer.Settings.MaterialLayers.Add(newMaterial);
 						printer.Settings.ActiveMaterialKey = newMaterial.LayerID;
 
-						RebuildDropDownList();
+						RebuildDropDownList(true);
 
 						editButton.InvokeClick();
 					}));
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printer.Settings.QualityLayers.Add(newQuality);
 					printer.Settings.ActiveQualityKey = newQuality.LayerID;
 
-					RebuildDropDownList();
+					RebuildDropDownList(true);
 
 					editButton.InvokeClick();
 				}
@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton.Enabled = item.Text != defaultMenuItemText;
 		}
 
-		private void RebuildDropDownList()
+		private void RebuildDropDownList(bool updateAllSettings)
 		{
 			pullDownContainer.CloseChildren();
 			pullDownContainer.AddChild(this.NewPulldownContainer());
@@ -513,13 +513,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var sliceSettingsWidget = this.Parents<SliceSettingsWidget>().FirstOrDefault();
 			if (sliceSettingsWidget != null)
 			{
-				sliceSettingsWidget.UpdateAllStyles();
+				if (updateAllSettings)
+				{
+					ApplicationController.Instance.ReloadSettings(printer);
+				}
+				else
+                {
+					sliceSettingsWidget.UpdateAllStyles();
+				}
 			}
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			RebuildDropDownList();
+			RebuildDropDownList(false);
 		}
 	}
 }

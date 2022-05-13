@@ -115,6 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// set the matrix back
 					Matrix = currentMatrix;
 					SourceContainer.Visible = false;
+					ApplyHoles(reporter, cancellationToken.Token);
 					rebuildLocks.Dispose();
 
 					Invalidate(InvalidateType.DisplayValues);

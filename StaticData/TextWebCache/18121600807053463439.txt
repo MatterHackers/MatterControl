@@ -1,0 +1,8 @@
+## "Part Settings" feature is Locked
+
+To Unlock upgrade to MatterControl Pro:
+
+MatterControl Pro includes:
+- Professional support provided by MatterHackers
+- Unlimited storage of your designs in Cloud Library
+- Expanding set of Pro Design Tools
