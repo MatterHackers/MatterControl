@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             }
             else
             {
-                resultsMesh = Object3D.CombineParticipanets(SourceContainer, participants, cancellationToken, reporter);
+                resultsMesh = Object3D.CombineParticipants(SourceContainer, participants, cancellationToken, reporter);
             }
 
             var resultsItem = new Object3D()
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
             if (holes != null)
             {
-                var holesMesh = CombineParticipanets(SourceContainer, holes, cancellationToken, null);
+                var holesMesh = CombineParticipants(SourceContainer, holes, cancellationToken, null);
                 if (holesMesh != null)
                 {
                     var holesItem = new Object3D()
