@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class LocalLibraryTests
 	{
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task ParentFolderRefreshedOnPathPop()
 		{
 			// Expected: When descending into a child folder and moving items into the parent, popping the path to the parent should refresh and show the moved content
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

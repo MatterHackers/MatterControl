@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
-		[Test, ChildProcessTest, Ignore("Broke by commit 'Combine can subtract holes'")]
+		[Test, ChildProcessTest]
 		public static async Task ControlClickInDesignTreeView()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Queue Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task SaveAsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task SaveAsToLocalLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

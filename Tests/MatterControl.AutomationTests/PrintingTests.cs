@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrintingTests
 	{
-		[Test, ChildProcessTest, Category("Emulator"), Ignore("Broken by commit 'updating ui hints'")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

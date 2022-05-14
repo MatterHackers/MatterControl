@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrintQueueTests
 	{
-		[Test, ChildProcessTest, Ignore("Queue Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task AddOneItemToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Queue Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task AddTwoItemsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		
-		[Test, ChildProcessTest, Ignore("Local Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task DragTo3DViewAddsItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, ChildProcessTest, Ignore("Queue Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task AddAmfFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Queue Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task AddStlFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Queue Library may be missing")]
+		[Test, ChildProcessTest]
 		public async Task AddGCodeFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

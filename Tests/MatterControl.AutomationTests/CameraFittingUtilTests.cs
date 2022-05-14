@@ -36,7 +36,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(!view3D.TrackballTumbleWidget.PerspectiveMode);
 				}
 				else
+				{
 					Assert.IsTrue(view3D.TrackballTumbleWidget.PerspectiveMode);
+				}
 
 				Vector3[] lookAtDirFwds = new Vector3[] {
 					new Vector3(0, 0, -1),

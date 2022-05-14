@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("Agg.UI.Automation")]
 	public class ExportGcodeFromExportWindow
 	{
-		[Test, ChildProcessTest, Ignore("Queue Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task ExportAsGcode()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task ExportStreamG92HandlingTest()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

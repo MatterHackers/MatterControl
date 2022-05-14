@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest, Ignore("Broken by commit 'Combine can subtract holes'")]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoUnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

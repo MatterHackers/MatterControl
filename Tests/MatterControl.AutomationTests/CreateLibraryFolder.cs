@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class CreateLibraryFolder
 	{
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

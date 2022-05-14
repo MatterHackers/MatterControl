@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class SqLiteLibraryProviderTests
 	{
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task LibraryQueueViewRefreshesOnAddItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

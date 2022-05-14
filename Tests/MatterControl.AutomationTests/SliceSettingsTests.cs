@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SliceSetingsTests
 	{
-		[Test, ChildProcessTest, Ignore("Local Library might be missing")]
+		[Test, ChildProcessTest]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -453,7 +453,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsFalse(organizer.AllSliceSettings.ContainsKey("non_existing_setting"));
 		}
 
-		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */, ChildProcessTest, Ignore("Broken by UpdateStyle in 'Better updating of setting when part settings object on bed'")]
+		[Test, ChildProcessTest]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
