@@ -584,6 +584,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.AddAndSelectPrinter("Airwolf 3D", "HD")
 					// Navigate to Settings Tab and make sure Bed Temp Text box is visible
 					.SwitchToSliceSettings()
+					.ClickByName("Slice Settings Overflow Menu")
+					.ClickByName("Advanced Menu Item")
 					.SelectSliceSettingsField(SettingsKey.bed_temperature)
 					.SelectSliceSettingsField(SettingsKey.temperature)
 					// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
