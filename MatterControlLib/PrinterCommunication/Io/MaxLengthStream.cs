@@ -40,21 +40,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<PrinterMove> movesToSend = new List<PrinterMove>();
 		private int layerCount = -1;
 
-		public MaxLengthStream(PrinterConfig printer, GCodeStream internalStream, double maxSegmentLength)
+		public MaxLengthStream(PrinterConfig printer, GCodeStream internalStream, double maxSegmentLength, bool testing = false)
 			: base(printer, internalStream)
 		{
 			// make sure there is no BabyStepStream already (it must come after max length)
 #if DEBUG
-			foreach(var subStream in this.InternalStreams())
-            {
-				if (subStream is BabyStepsStream)
-                {
-					throw new Exception("MaxLengthStream must come before BabyStepsSteam (we need the max length points to be baby stepped).");
-                }
-
-				if (subStream is PrintLevelingStream)
+			if (!testing)
+			{
+				foreach (var subStream in this.InternalStreams())
 				{
-					throw new Exception("MaxLengthStream must come before PrintLevelingStream (we need the max length points to be leveled).");
+					if (subStream is BabyStepsStream)
+					{
+						throw new Exception("MaxLengthStream must come before BabyStepsSteam (we need the max length points to be baby stepped).");
+					}
+
+					if (subStream is PrintLevelingStream)
+					{
+						throw new Exception("MaxLengthStream must come before PrintLevelingStream (we need the max length points to be leveled).");
+					}
 				}
 			}
 #endif

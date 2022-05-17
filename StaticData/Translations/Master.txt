@@ -1018,6 +1018,9 @@ Translated:Controls the speed of printer moves
 English:Convert to Fuzzy Region
 Translated:Convert to Fuzzy Region
 
+English:Convert to Hole
+Translated:Convert to Hole
+
 English:Convert to Support
 Translated:Convert to Support
 
@@ -1152,6 +1155,9 @@ Translated:Creation Data
 
 English:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
 Translated:Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag
+
+English:Ctrl + P
+Translated:Ctrl + P
 
 English:Ctrl + Y | Ctrl + Shift + Z
 Translated:Ctrl + Y | Ctrl + Shift + Z
@@ -1942,6 +1948,9 @@ Translated:Found a line that is {0} characters long.\n{1}...
 English:Furthest Back
 Translated:Furthest Back
 
+English:Fuzzy
+Translated:Fuzzy
+
 English:Fuzzy Frequency
 Translated:Fuzzy Frequency
 
@@ -2431,8 +2440,14 @@ Translated:Item cannot be exported
 English:Item cannot be exported as AMF
 Translated:Item cannot be exported as AMF
 
+English:Item cannot be exported as MCX
+Translated:Item cannot be exported as MCX
+
 English:Item not Found
 Translated:Item not Found
+
+English:Items To Subtract
+Translated:Items To Subtract
 
 English:Iterations
 Translated:Iterations
@@ -3334,6 +3349,9 @@ Translated:Outline Width
 English:Outlines (default)
 Translated:Outlines (default)
 
+English:Output
+Translated:Output
+
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
@@ -4081,6 +4099,9 @@ Translated:Restore Settings...
 English:Restoring
 Translated:Restoring
 
+English:Result
+Translated:Result
+
 English:Resume
 Translated:Resume
 
@@ -4420,6 +4441,9 @@ Translated:Set Temperature
 English:Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.
 Translated:Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.
 
+English:Set the rendering for the object to be transparent
+Translated:Set the rendering for the object to be transparent
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 
@@ -4491,6 +4515,9 @@ Translated:Share with someone
 
 English:Shared with Me
 Translated:Shared with Me
+
+English:Shift + G
+Translated:Shift + G
 
 English:Shop
 Translated:Shop
@@ -4659,6 +4686,9 @@ Translated:Snapping Turned Off
 
 English:Software License Agreement
 Translated:Software License Agreement
+
+English:Solid
+Translated:Solid
 
 English:Solid Infill
 Translated:Solid Infill
@@ -6219,6 +6249,9 @@ Translated:Will be updated to:
 
 English:Wipe Shield Distance
 Translated:Wipe Shield Distance
+
+English:Wipe Tower
+Translated:Wipe Tower
 
 English:Wipe Tower Size
 Translated:Wipe Tower Size

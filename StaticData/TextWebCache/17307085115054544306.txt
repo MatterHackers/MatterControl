@@ -1,0 +1,401 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "175mm", 
+                "DateTimeCreated": "2020-12-04T23:26:36.256908", 
+                "Description": "1.75mm", 
+                "HexColor": null, 
+                "ID": 5385454634401792, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLOv4bcJDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgIDA863ByAkM", 
+                "Name": "1.75mm", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLOv4bcJDA", 
+                "Reference": "filament-diameter:175mm"
+            }, 
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2020-12-04T23:27:04.365917", 
+                "Description": "3000 grams of material", 
+                "HexColor": null, 
+                "ID": 5442205698228224, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwPPt-MwKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgIDAi4S11QkM", 
+                "Name": "3kg", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwPPt-MwKDA", 
+                "Reference": "filament-weight:3kg"
+            }
+        ], 
+        "AvailableDate": "2020-12-04", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "BASF", 
+        "ComponentNoPOBox": false, 
+        "ComponentSkuCount": 2, 
+        "ComponentSkuWeight": 0, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTEdYQUZNQww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMUVKOUNLRgw"
+        ], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2020-12-04T23:27:17.182223", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Dec 4th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "349.00", 
+        "DisplayPrice": "349.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-A27-ESD5", 
+        "DisplayWholesaleCost": "187.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/7746f9f9-0442-4639-9aa4-32e2ebffecc6", 
+            "ImageUrl": "https://lh3.googleusercontent.com/USwOCr8S_lCzk2sMTbLLgLEwxv8JxhLSPZ5dhlsDt-eAMOwAcPrSXUFZDbrac3XjhtromBga2AsQ6yoXxKyEbrtcNNZRbq3Fvpoi", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTI3RVNENQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "Accessible metal additive manufacturing on desktop 3D printers is here thanks to BASF 3D Printing Solutions' Ultrafuse 17-4 PH Metal 3D Printing Filament. Cost-effectively produce functional prototypes and end-use products made out of stainless steel metal, right from your office. Also referred to as Type 630, this chromium-copper martensitic precipitation hardened stainless steel is magnetic, heat treatable, and easy to print. Advanced production is even more attainable for any user interested in elevating their 3D printing experience to an industrial level. Each spool of filament comes with one free BASF Ultrafuse 17-4 PH Processing Ticket which covers the debinding and sintering of 1kg or less of 3D printed Ultrafuse green parts. For best results, we highly recommend printing this material on a glass bed with Dimafix for successful bed adhesion. Please note that customers outside of the U.S. may have additional shipping charges. If you want to use a processing ticket and live outside of the U.S., please contact support@matterhackers.com for options.", 
+        "ProductListPrice": 34900, 
+        "ProductListing": {
+            "ActiveSkuCount": 4, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOEgyNlZTTQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUTk4TE4wMgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTI3RVNENQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVlVWVzNaSgw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 19900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "199.00", 
+                    "AddOnDisplayPrice": "199.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 199.0, 
+                    "AddOnListingReference": "matterhackers-basf-ultrafuse-316l-design-consultation", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 19900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M5WAYG5F", 
+                    "AddOnTitle": "Solution Engineering - BASF Ultrafuse Metal Filament Design Consultation", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVdBWUc1Rgw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 2495, 
+                    "AddOnDiscountDisplay": 27, 
+                    "AddOnDisplayBasePrice": "24.95", 
+                    "AddOnDisplayPrice": "18.00", 
+                    "AddOnDisplaySavings": "6.95", 
+                    "AddOnFloatPrice": 18.0, 
+                    "AddOnListingReference": "dimafix-3d-printing-adhesive-pen", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 1800, 
+                    "AddOnSavings": 695, 
+                    "AddOnSkuReference": "MR0VKNJY", 
+                    "AddOnTitle": "Dimafix 3D Printing Adhesive Pen", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjBWS05KWQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 21, 
+                    "QuantityOnHand": 21, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 5000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "50.00", 
+                    "AddOnDisplayPrice": "50.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 50.0, 
+                    "AddOnListingReference": "basf-ultrafuse-17-4-ph-processing-ticket", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 5000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M8NCJ01G", 
+                    "AddOnTitle": "BASF Ultrafuse 17-4 PH Processing Ticket - Standard", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDIz46jCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOE5DSjAxRww", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 8000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "80.00", 
+                    "AddOnDisplayPrice": "80.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 80.0, 
+                    "AddOnListingReference": "basf-ultrafuse-17-4-ph-processing-ticket", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 8000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M3ZSKZWA", 
+                    "AddOnTitle": "BASF Ultrafuse 17-4 PH Processing Ticket - Expedited", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDIz46jCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNM1pTS1pXQQw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 4700, 
+                    "AddOnDiscountDisplay": 5, 
+                    "AddOnDisplayBasePrice": "47.00", 
+                    "AddOnDisplayPrice": "44.50", 
+                    "AddOnDisplaySavings": "2.50", 
+                    "AddOnFloatPrice": 44.5, 
+                    "AddOnListingReference": "magigoo-pro-metal-3d-bed-adhesion-solution-for-basf-ultrafuse-316l", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 4450, 
+                    "AddOnSavings": 250, 
+                    "AddOnSkuReference": "MCZ7G24T", 
+                    "AddOnTitle": "Magigoo Pro Metal 3D Bed Adhesion Solution for BASF Ultrafuse 316L", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDI14WRCAw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ1o3RzI0VAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 27, 
+                    "QuantityOnHand": 27, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwLOv4bcJDA", 
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCwwLEhBQcm9kdWN0QXR0cmlidXRlGICAwPPt-MwKDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-12-04T23:26:07.333225", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p>BASF Ultrafuse 17-4 PH Metal 3D Printing Filament is an industrial material designed for digital fabrication on virtually any desktop 3D printer. When debound and sintered, users are left with a 3D printed part made of nearly 100% solid 17-4 stainless steel.&nbsp;Every spool comes with one <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse 17-4 PH Processing Ticket</a>, which covers one debinding and sintering run of up to 1kg of 3D printed Ultrafuse 17-4 PH green parts. For best bed adhesion results, we recommend a glass bed with <a title=\"Dimafix 3D Printing Adhesive Pen\" href=\"https://www.matterhackers.com/store/l/dimafix-3d-printing-adhesive-pen/sk/MR0VKNJY\" target=\"_blank\" rel=\"noopener\">Dimafix</a>. Learn how to 3D print with metal filament by checking out our article <a href=\"https://www.matterhackers.com/support/how-to-succeed-with-3d-printing-metal-on-a-desktop-3d-printer\">here</a> or watching the video below.</p>", 
+                    "ElementCode": "WMBQRO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"xy9VrkW9k4k\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "M1OXCZ", 
+                    "Images": [], 
+                    "Type": "Html"
+                }, 
+                {
+                    "Content": "<h3><strong>RELIABLE METAL PRODUCTION VIA DESKTOP 3D PRINTING</strong></h3>\r\n<p>Combining the processes of Fused Filament Fabrication (FFF) and Metal Injection Molding (MIM),&nbsp;metal additive manufacturing on a desktop 3D printer is now even easier and more attainable for advanced makers with&nbsp;BASF's Ultrafuse 17-4 PH Metal 3D Printing Filament! Use any FFF 3D printer like the <a title=\"BCN3D Epsilon W50 Fully Enclosed Large Format Independent Dual Extrusion 3D Printer\" href=\"https://www.matterhackers.com/store/l/bcn3d-epsilon-fully-enclosed-large-format-independent-dual-extrusion-3d-printer/sk/M82SUGF1\" target=\"_blank\" rel=\"noopener\">BCN3D Epsilon W50</a>, <a title=\"Ultimaker S5 Dual Extrusion Large-Format 3D Printer\" href=\"https://www.matterhackers.com/store/l/ultimaker-s5/sk/MH6DVDNK\" target=\"_blank\" rel=\"noopener\">Ultimaker S5</a> or <a title=\"Pulse 3D Printer\" href=\"https://www.matterhackers.com/store/c/Pulse\" target=\"_blank\" rel=\"noopener\">Pulse</a> to produce metal-polymer parts that are industrially debound and sintered, leaving a final product that is nearly 100% solid 17-4 PH stainless steel. Print your parts at your office. Ship them out to be debound and sintered using the one free <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse Processing Ticket</a> that is included with every purchased spool. Receive a functional metal part ready to go. Investing in&nbsp;BASF's Ultrafuse 17-4 PH Metal 3D Printing Filament is the ideal convenience and cost-effective choice for any maker interested in advancing their prototypes to the next level through metal desktop 3D printing.</p>", 
+                    "ElementCode": "2BU714", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/TyvdVN1NZMrsg8LXzxR32VfznVYotVK7c-WdLLw3hy7gBsPrysAZDsoza2LB1AK7YyvpemOGNTvR05BA8dsUTDl8nqswS6XLFkw'></p>", 
+                    "ElementCode": "THF1DK", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c6000898-09b7-4394-8320-57600cb0da7e", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/TyvdVN1NZMrsg8LXzxR32VfznVYotVK7c-WdLLw3hy7gBsPrysAZDsoza2LB1AK7YyvpemOGNTvR05BA8dsUTDl8nqswS6XLFkw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>INDUSTRIAL MATERIALS FOR INDUSTRIAL PROJECTS</strong></h3>\r\n<p>Interested in dabbling with industrial metal materials for your projects? Ultrafuse 17-4 PH Metal 3D Printing Filament is the solution for you. Made out of over 80% 17-4 stainless steel particles with a polymer base, this metal-polymer filament is specifically engineered to provide fantastic reliable metal 3D printed results for industrial projects via FFF printing. Easily produce a functional metal prototype of your advanced projects starting right from your desktop 3D printer. What kind of projects can you dive into with BASF's Ultrafuse 17-4 PH Metal 3D Printing Filament?</p>\r\n<p>Applications for Stainless Steel Include (but are not limited to):</p>\r\n<ul>\r\n<li>Functional Prototyping</li>\r\n<li>Automotive Parts</li>\r\n<li>Pipes, pumps and valves for chemicals, gas, and oils</li>\r\n<li>Parts for tooling and mold inlays with near-surface cooling</li>\r\n<li>Magnetizable surfaces</li>\r\n</ul>", 
+                    "ElementCode": "W3UV0N", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/A1yvjX3sNN5X3g3SQu-KOs_NwPFDHxq6DbWvVh66FXzDPDyPqp14KOZFzRdgru2kjZBt-LDVnob8je5bt3o14Kn2NB6PzutnzTgpmQ'></p>", 
+                    "ElementCode": "4DQ2RH", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/afb8082b-0aa6-459d-9f71-ea00cef2fd9d", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/A1yvjX3sNN5X3g3SQu-KOs_NwPFDHxq6DbWvVh66FXzDPDyPqp14KOZFzRdgru2kjZBt-LDVnob8je5bt3o14Kn2NB6PzutnzTgpmQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>LOW INVESTMENT FOR HIGH RETURN</strong></h3>\r\n<p>Makers substantially save producing metal prototypes via desktop 3D printing&nbsp;and materials like Ultrafuse 17-4 PH Metal 3D Printing Filament by BASF 3D Printing Solutions. Purchasing entry-level industrial machines and materials can be an expensive commitment for the general public, which is why we're happy to introduce a more affordable option for anyone passionate about small scale, industrial metal production. Take any FFF 3D printer with the appropriate components and upgrades, use cost-effective specialty materials like Ultrafuse 17-4 PH, and ship out your newly 3D printed parts with a <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">processing ticket</a> to be debound, sintered, and quickly returned for the final functional metal product. With BASF's Ultrafuse 17-4 PH Metal 3D Printing Filament, you can do this for any number of projects you have in mind, anytime with your desktop 3D printer.</p>", 
+                    "ElementCode": "QN715W", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/DL2RjtC3JhqhzyMstZn5vcGxtoGwjFZ9_ItP4I388_Fpu_pCT2Y8qHsXVTwwWWpTw15h7-KxFBO9m6ELuCdpRaIB_ypXZNhUp-Vm'></p>", 
+                    "ElementCode": "UKJ418", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/63fe631b-eb83-4db1-9274-3502e3407cba", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/DL2RjtC3JhqhzyMstZn5vcGxtoGwjFZ9_ItP4I388_Fpu_pCT2Y8qHsXVTwwWWpTw15h7-KxFBO9m6ELuCdpRaIB_ypXZNhUp-Vm", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<table>\r\n<tr>\r\n<td>\r\n<p>316L</p>\r\n</td>\r\n<td>\r\n<p><span>17</span>-<span>4</span><span>&nbsp;</span>PH</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>\r\n<ul>\r\n<li>Stainless steel</li>\r\n<li>Non-magnetic</li>\r\n<li>Excellent corrosion resistance</li>\r\n<li>Excellent weldability</li>\r\n<li>Ductile mechanical properties</li>\r\n</ul>\r\n</td>\r\n<td>\r\n<ul>\r\n<li>Stainless steel</li>\r\n<li>Magnetic</li>\r\n<li>Good corrosion resistance</li>\r\n<li>Heat treatable</li>\r\n<li>Very strong mechanical properties</li>\r\n</ul>\r\n</td>\r\n</tr>\r\n</table>", 
+                    "ElementCode": "QK4018", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>QUICK AND EASY DEBIND AND SINTER PROCESS</strong></h3>\r\n<p>When you order a processing ticket, our staff works together with experts from DSH to have your BASF Ultrafuse 17-4 PH metal parts debound and sintered quickly, with minimal effort on your end. Every spool comes with one <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse Processing Ticket</a>, with more you can purchase either as an add on or through <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">here</a>. Once your printed green parts (metal-polymer parts that have not been debound or sintered) are delivered to DSH, they work quickly to process your order on a scheduled run over a two day period and ship out your now solid 17-4 PH stainless steel parts back to you the following day.</p>\r\n<p>Purchase a processing ticket. Ship your Ultrafuse green prints, processing ticket code, and form. Receive your now metal parts. All completed quickly and easily with MatterHackers' <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse Processing Ticket</a>.&nbsp;For details on how to prepare your printed parts for outsource processing, check out our \"<a title=\"How to Prepare 3D Printed BASF Ultrafuse 316L Parts for Debinding and Sintering\" href=\"https://www.matterhackers.com/articles/how-to-prepare-metal-3d-printed-basf-ultrafuse-316l-parts-for-debinding-and-sintering\" target=\"_blank\" rel=\"noopener\">How to Prepare 3D Printed BASF Ultrafuse 316L Parts for Debinding and Sintering</a>.\"</p>", 
+                    "ElementCode": "4ZC9YC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/hfH8QUBREX88OZUM1ypVNTTWicOdkjCSMFj7y9G7p2s03rQmRBnsOde4_hm3hTy50eepdixV2cAvjev3Q5vO6i_S6ltTSMzS51ty3w'></p>", 
+                    "ElementCode": "H4ZEHI", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/a3742a2f-fdf5-4bf2-9baf-21bde3514bdd", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/hfH8QUBREX88OZUM1ypVNTTWicOdkjCSMFj7y9G7p2s03rQmRBnsOde4_hm3hTy50eepdixV2cAvjev3Q5vO6i_S6ltTSMzS51ty3w", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>TECHNICAL SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li><span>Comes with one <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/basf-ultrafuse-17-4-ph-processing-ticket/sk/M8NCJ01G\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse Processing Ticket</a></span>\r\n<ul>\r\n<li>Within 48 business hours of purchase, please expect a follow-up email from a MatterHackers' support team member with your unique processing ticket code, packaging instructions, and form.&nbsp;</li>\r\n<li><span>This processing ticket comes with <strong>Standard Return Delivery</strong>. Parts will return to the customer between 2 - 5 business days AFTER green parts have been debound and sintered. Time of delivery will be based on the sender address' location in proximity to DSH's facility.</span></li>\r\n<li>This processing ticket only covers return delivery within the U.S. Additional shipping charges may be applied to c<span>ustomers outside of the U.S.&nbsp;</span>If you want to use a processing ticket and live outside of the U.S., please contact <a href=\"mailto:support@matterhackers.com\">support@matterhackers.com</a>&nbsp;for options.</li>\r\n</ul>\r\n</li>\r\n<li><span>Recommended Extrusion Temperatures: 230 - 250 &deg;C</span></li>\r\n<li><span>Recommended Bed Temperature: 100 - 120&deg;C</span></li>\r\n<li><span>Recommended Print Surface: Glass Bed with <a title=\"Dimafix 3D Printing Adhesive Pen\" href=\"https://www.matterhackers.com/store/l/dimafix-3d-printing-adhesive-pen/sk/MR0VKNJY\" target=\"_blank\" rel=\"noopener\">Dimafix</a> Bed Adhesive</span></li>\r\n<li><span>Recommended Nozzle: Any Abrasion Resistant Nozzle</span>\r\n<ul>\r\n<li><span>Make sure your nozzle is 100% purged of other filaments before printing</span></li>\r\n</ul>\r\n</li>\r\n<li><span>Density: 7800kg/m&sup3;</span></li>\r\n<li>Filament Diameter: 1.75mm / 2.85mm</li>\r\n<li>Spool Size: 3kg</li>\r\n<li>Print Speed: 15 - 40mm/s</li>\r\n<li>Part Cooling: None</li>\r\n</ul>\r\n<p><a href=\"https://www.matterhackers.com/r/DTtQcI\">Click here to download the Ultrafuse 17-4 PH TDS.</a></p>", 
+                    "ElementCode": "K43VHS", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/3eb79a81-75e0-4977-82ec-3af403ad2d8b", 
+                "ImageUrl": "https://lh3.googleusercontent.com/ThD5bmaVMwa3zEnbIIah2-W4BsvcEGXg2REcv3tDEPR5P56jHbMg6nbjvUiDDoCbtf_gjbnAWz6vXwaeaclhvBqLHHL9MX4GwUH3dQ", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 6591920259203072, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/3eb79a81-75e0-4977-82ec-3af403ad2d8b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ThD5bmaVMwa3zEnbIIah2-W4BsvcEGXg2REcv3tDEPR5P56jHbMg6nbjvUiDDoCbtf_gjbnAWz6vXwaeaclhvBqLHHL9MX4GwUH3dQ", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d44cd438-811a-4041-815b-fec7d0a48ff4", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/f6jBJLh6byIcbRJEnUvoryG-W9VQjNvi1rGYWdZ3QzFrOBEfKJZiUdD3EgjuCkqE-1eU5s2VAAimbzH1jrkgivRWaWErmZqmI4IDFA", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCww", 
+            "MaxPriceRange": -1, 
+            "MetaTagKeywords": [], 
+            "MinPriceRange": -1, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2020-12-04T23:26:07.333255", 
+            "ProductEditedOn": "2022-03-23T21:44:24.408879", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "basf-ultrafuse-17-4-ph-metal-3d-printing-filament", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsz6KFCQw"
+            ], 
+            "ShortDescription": "Accessible metal additive manufacturing on desktop 3D printers is here thanks to BASF 3D Printing Solutions' Ultrafuse 17-4 PH Metal 3D Printing Filament. Cost-effectively produce functional prototypes and end-use products made out of stainless steel metal, right from your office. Also referred to as Type 630, this chromium-copper martensitic precipitation hardened stainless steel is magnetic, heat treatable, and easy to print. Advanced production is even more attainable for any user interested in elevating their 3D printing experience to an industrial level. Each spool of filament comes with one free BASF Ultrafuse 17-4 PH Processing Ticket which covers the debinding and sintering of 1kg or less of 3D printed Ultrafuse green parts. For best results, we highly recommend printing this material on a glass bed with Dimafix for successful bed adhesion. Please note that customers outside of the U.S. may have additional shipping charges. If you want to use a processing ticket and live outside of the U.S., please contact support@matterhackers.com for options.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "BASF Ultrafuse 17-4 PH Metal 3D Printing Filament"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCww", 
+        "ProductNumber": null, 
+        "ProductPrice": 34900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 38, 
+        "QuantityOnHand": 38, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "basf-ultrafuse-17-4-ph-metal-3d-printing-filament", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MA27ESD5", 
+        "SalesIndexByDollars": 220, 
+        "SalesIndexByUnits": 832, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "BASF Ultrafuse 17-4 PH Metal 3D Printing Filament - 1.75mm (3kg)", 
+        "SkuWarningMessages": [
+            "prop65-cancer"
+        ], 
+        "SuccessRatingCount": 27, 
+        "SuccessRatingScore": 9630, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 18700
+    }, 
+    "Status": "success"
+}

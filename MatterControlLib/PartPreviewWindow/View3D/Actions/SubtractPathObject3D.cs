@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
 
-			var parentOfSubtractTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			var parentOfSubtractTargets = SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
 			if (parentOfSubtractTargets.Children.Count() < 2)
 			{
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			if (item is ISelectableChildContainer selectableChildContainer)
 			{
-				var parentOfSubtractTargets = item.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = item.FirstWithMultipleChildrenDescendantsAndSelf();
 
 				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.ID);
 				// remove any names from SelectedChildren that are not a child we can select

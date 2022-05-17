@@ -1,0 +1,405 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "175mm", 
+                "DateTimeCreated": "2019-09-05T15:55:40.276272", 
+                "Description": "1.75mm", 
+                "HexColor": null, 
+                "ID": 5665599006965760, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgMLCi4AKDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICAgtGaiAoM", 
+                "Name": "1.75mm", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgMLCi4AKDA", 
+                "Reference": "filament-diameter:175mm"
+            }
+        ], 
+        "AvailableDate": "2020-06-18", 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "BASF", 
+        "ComponentNoPOBox": false, 
+        "ComponentSkuCount": 2, 
+        "ComponentSkuWeight": 3424620, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU0NSVzU2Ugw", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNDNVNjhIOQw"
+        ], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-09-05T15:55:46.427465", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jun 18th", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "465.00", 
+        "DisplayPrice": "465.00", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-RDK-JRRS", 
+        "DisplayWholesaleCost": "192.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/0c39bd98-307a-43b8-afd5-91cfebd686b3", 
+            "ImageUrl": "https://lh3.googleusercontent.com/T-WVv_-2pR4eomwq4TpgtuSYARWcOHc6hIpH01-1--ZVBSrIuj5Nv8YwhK3L0r96l84pmUMZF_KEWt8epW_UU3CZ", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": false, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUkRLSlJSUww", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "2.68", 
+            "8.25", 
+            "8.37"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printer Accessories", 
+        "ProductDescription": "BASF 3D Printing Solutions' Ultrafuse 316L Metal 3D Printing Filament makes metal additive manufacturing on desktop 3D printers accessible.\r\n\r\nTop Ultrafuse 316L Features:\r\n\r\n\u2022  Produce end-use products made from stainless steel\r\n\u2022  Make functional prototypes from real metal\r\n\u2022  Cost-effective and convenient to print and process\r\n\u2022  Elevate the 3D printing experience to an industrial level\r\n\u2022  Easily ship out for debinding and sintering Ultrafuse green parts", 
+        "ProductListPrice": 46500, 
+        "ProductListing": {
+            "ActiveSkuCount": 2, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUkRLSlJSUww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOUNSMUVaSAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 19900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "199.00", 
+                    "AddOnDisplayPrice": "199.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 199.0, 
+                    "AddOnListingReference": "matterhackers-basf-ultrafuse-316l-design-consultation", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 19900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M5WAYG5F", 
+                    "AddOnTitle": "Solution Engineering - BASF Ultrafuse Metal Filament Design Consultation", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNVdBWUc1Rgw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 2495, 
+                    "AddOnDiscountDisplay": 27, 
+                    "AddOnDisplayBasePrice": "24.95", 
+                    "AddOnDisplayPrice": "18.00", 
+                    "AddOnDisplaySavings": "6.95", 
+                    "AddOnFloatPrice": 18.0, 
+                    "AddOnListingReference": "dimafix-3d-printing-adhesive-pen", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 1800, 
+                    "AddOnSavings": 695, 
+                    "AddOnSkuReference": "MR0VKNJY", 
+                    "AddOnTitle": "Dimafix 3D Printing Adhesive Pen", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUjBWS05KWQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 21, 
+                    "QuantityOnHand": 21, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 5000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "50.00", 
+                    "AddOnDisplayPrice": "50.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 50.0, 
+                    "AddOnListingReference": "metal-3d-printing-processing-ticket", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 5000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MLNW0VKE", 
+                    "AddOnTitle": "BASF Ultrafuse 316L Processing Ticket - Standard", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTE5XMFZLRQw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 8000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "80.00", 
+                    "AddOnDisplayPrice": "80.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 80.0, 
+                    "AddOnListingReference": "metal-3d-printing-processing-ticket", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 8000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MZ70V488", 
+                    "AddOnTitle": "BASF Ultrafuse 316L Processing Ticket - Expedited", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWjcwVjQ4OAw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 4700, 
+                    "AddOnDiscountDisplay": 5, 
+                    "AddOnDisplayBasePrice": "47.00", 
+                    "AddOnDisplayPrice": "44.50", 
+                    "AddOnDisplaySavings": "2.50", 
+                    "AddOnFloatPrice": 44.5, 
+                    "AddOnListingReference": "magigoo-pro-metal-3d-bed-adhesion-solution-for-basf-ultrafuse-316l", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 4450, 
+                    "AddOnSavings": 250, 
+                    "AddOnSkuReference": "MCZ7G24T", 
+                    "AddOnTitle": "Magigoo Pro Metal 3D Bed Adhesion Solution for BASF Ultrafuse 316L", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDI14WRCAw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ1o3RzI0VAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 27, 
+                    "QuantityOnHand": 27, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgwLEhBQcm9kdWN0QXR0cmlidXRlGICAgMLCi4AKDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-09-05T15:52:22.085799", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p class=\"align-left\"><span></span></p>\r\n<h2 class=\"align-left\"><strong>BASF Ultrafuse 316L Metal Filament&nbsp;</strong></h2>\r\n<h3 class=\"align-left\"><strong>3D Print Steel Parts</strong></h3>\r\n<p></p>\r\n<p><span>BASF Ultrafuse 316L is a convenient, affordable way to create stainless steel metal parts on your desktop 3D printer.</span></p>\r\n<p><span>Here are the key features of BASF Ultrafuse 316L:&nbsp;</span></p>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Produce end-use products made from stainless steel</strong>&nbsp;</span><span></span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Make functional prototypes from real metal</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Cost-effective and convenient to print and process</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Elevating their 3D printing experience to an industrial level</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Easily ship out for debinding and sintering Ultrafuse green parts</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<ul>\r\n<li><span><strong>Print on nearly any desktop 3D printer</strong>&nbsp;</span></li>\r\n</ul>\r\n<p><span></span></p>\r\n<hr />", 
+                    "ElementCode": "NNF4TA", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"xy9VrkW9k4k\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "T3AJPU", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>3D Print Stainless Steel Parts<br /></strong></h2>\r\n</div>\r\n<p><span>Formerly the provenance of thermoplastics, Ultrafuse 316L allows production of genuine metal parts from your desktop 3D printer, saving huge costs in Metal Injection Molding or metal machining.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Made from 80% 316L stainless steel particles in polymer base</span></li>\r\n<li aria-level=\"1\"><span>Specifically engineered for desktop 3D printing</span></li>\r\n<li><span>Non-magnetizable with high corrosion resistance</span><span></span></li>\r\n<li aria-level=\"1\"><span>Applications include:</span></li>\r\n<ul>\r\n<li aria-level=\"2\"><span>Functional Prototyping</span></li>\r\n<li aria-level=\"2\"><span>Medical Equipment</span></li>\r\n<li aria-level=\"2\"><span>Automotive Parts</span></li>\r\n<li aria-level=\"2\"><span>Chemicals pipes, pumps and valves</span></li>\r\n<li aria-level=\"2\"><span>Mold inlays with near-surface cooling</span></li>\r\n</ul>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Print metal objects with stunning tolerances\" src=\"https://www.matterhackers.com/r/RHn5Gj\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "SHPXYZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6 icon\"><img alt=\"Green Part\" src=\"https://www.matterhackers.com/r/9I7Nj9\" class=\"rounded\" /></div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Print On Any Desktop 3D Printer<br /></strong></h2>\r\n</div>\r\n<p><span>The path to printing metal is shorter than you might think, with virtually any desktop 3D printer being capable.</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Install a hardened nozzle<br /></span></li>\r\n<li aria-level=\"1\"><span>Make sure your bed is heated<br /></span></li>\r\n<li aria-level=\"1\"><span>Prints on an <a href=\"https://www.matterhackers.com/store/c/fdm-3d-printers/all-creality-3d-printers\">Ender</a>, an <a href=\"https://www.matterhackers.com/store/c/fdm-3d-printers/ultimaker-3d-printers\">Ultimaker</a>, a <a href=\"https://www.matterhackers.com/store/c/modix-3d-printers\">Modix</a>, or a Voron!<br /></span></li>\r\n<li aria-level=\"1\"><span>Read best to print metal filament in our&nbsp;<a href=\"https://www.matterhackers.com/support/how-to-succeed-with-3d-printing-metal-on-a-desktop-3d-printer\">article, here.</a><br /></span></li>\r\n</ul>\r\n</div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "XZFAWY", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-heading\">\r\n<h2><strong>Quick and Easy Debind and Sinter Process<br /></strong></h2>\r\n</div>\r\n<p><span>Your spool of 316L comes with a <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">Processing Ticket</a>, to easily get your part through the necessary debinidng and sintering process that turns your printed, \"green part\" into a fully metal, \"brown part\".</span></p>\r\n<ul>\r\n<li aria-level=\"1\"><span>Mail your parts to the experts at DSH</span></li>\r\n<li aria-level=\"1\"><span>We work with DSH to quickly process parts on scheduled runs</span></li>\r\n<li aria-level=\"1\"><span>DSH mails your processed, solid steel parts back to you!</span></li>\r\n<li aria-level=\"1\"><span>Purchase additional <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">Processing Tickets</a>&nbsp;at your convenience</span></li>\r\n<li aria-level=\"1\"><span><a title=\"How to Prepare 3D Printed BASF Ultrafuse 316L Parts for Debinding and Sintering\" href=\"https://www.matterhackers.com/articles/how-to-prepare-metal-3d-printed-basf-ultrafuse-316l-parts-for-debinding-and-sintering\" target=\"_blank\" rel=\"noopener\">How to Prepare 3D Printed BASF Ultrafuse 316L Parts for Processing</a></span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Tools and bits made from Ultrafuse 316L\" src=\"https://www.matterhackers.com/r/dte9Mq\" class=\"rounded\" /></div>\r\n</div>\r\n</div>\r\n<hr />", 
+                    "ElementCode": "PEPBWO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/FHCgoBUMHlPLAt3D0HH3dRicXsIaoBtHrWL0W-kWUQrHWK0VBUi9BN-2hHVOuTi7e4z4m7LHfvqUIvbSwqeXhVbj=s660\" /></p>", 
+                    "ElementCode": "ZTNGJO", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/4d702d42-a633-4bff-850b-0c47cd4d17a7", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/FHCgoBUMHlPLAt3D0HH3dRicXsIaoBtHrWL0W-kWUQrHWK0VBUi9BN-2hHVOuTi7e4z4m7LHfvqUIvbSwqeXhVbj", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>TECHNICAL SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li><span>Comes with one <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse 316L Processing Ticket</a></span>\r\n<ul>\r\n<li>Within 48 business hours of purchase, please expect a follow-up email from a MatterHackers' support team member with your unique processing ticket code, packaging instructions, and form.&nbsp;</li>\r\n<li><span>This processing ticket comes with <strong>Standard Return Delivery</strong>. Parts will return to the customer between 2 - 5 business days AFTER green parts have been debound and sintered. Time of delivery will be based on the sender address' location in proximity to DSH's facility.</span></li>\r\n<li>This processing ticket only covers return delivery within the U.S. Additional shipping charges may be applied to c<span>ustomers outside of the U.S.&nbsp;</span>If you want to use a processing ticket and live outside of the U.S., please contact <a href=\"mailto:support@matterhackers.com\">support@matterhackers.com</a>&nbsp;for options.</li>\r\n</ul>\r\n</li>\r\n<li><span>Recommended Extrusion Temperatures: 230 - 250 &deg;C</span></li>\r\n<li><span>Recommended Bed Temperature: 100 - 120&deg;C</span></li>\r\n<li><span>Recommended Print Surface: Glass Bed with <a title=\"Dimafix 3D Printing Adhesive Pen\" href=\"https://www.matterhackers.com/store/l/dimafix-3d-printing-adhesive-pen/sk/MR0VKNJY\" target=\"_blank\" rel=\"noopener\">Dimafix</a> Bed Adhesive</span></li>\r\n<li><span>Recommended Nozzle: Any Abrasion Resistant Nozzle</span>\r\n<ul>\r\n<li><span>Make sure your nozzle is 100% purged of other filaments before printing</span></li>\r\n</ul>\r\n</li>\r\n<li><span>Density: 7800kg/m&sup3;</span></li>\r\n<li>Filament Diameter: 1.75mm / 2.85mm</li>\r\n<li>Spool Size: 3kg</li>\r\n<li>Print Speed: 15 - 40mm/s</li>\r\n<li>Part Cooling: None</li>\r\n</ul>\r\n<p><a href=\"https://www.matterhackers.com/r/w1ID16\">Click here to view or download the Ultrafuse 316L TDS.</a></p>", 
+                    "ElementCode": "CZCJ3T", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>CONSIDERATIONS FOR SUCCESS</strong></h3>\r\n<ul>\r\n<li><a title=\"How to Succeed with 3D Printing Metal on a Desktop 3D Printer\" href=\"https://www.matterhackers.com/support/how-to-succeed-with-3d-printing-metal-on-a-desktop-3d-printer\" target=\"_blank\" rel=\"noopener\">Learn the Do's and Don'ts to Designing Your Metal Prints for Debinding and Sintering Success Here.</a></li>\r\n<li><a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">Process Your Printed Ultrafuse 316L Parts Here.</a></li>\r\n<li><a title=\"How to Prepare 3D Printed BASF Ultrafuse 316L Parts for Debinding and Sintering\" href=\"https://www.matterhackers.com/articles/how-to-prepare-metal-3d-printed-basf-ultrafuse-316l-parts-for-debinding-and-sintering\" target=\"_blank\" rel=\"noopener\">Learn How to Properly Prepare Your Prints for Debinding and Sintering Here.</a></li>\r\n</ul>", 
+                    "ElementCode": "FDKYZ3", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>FREQUENTLY ASKED QUESTIONS</strong></h3>\r\n<ul>\r\n<li><strong>Q: What is the shrinkage % with this material?</strong>\r\n<ul>\r\n<li><strong>A:</strong>&nbsp;It is recommended to scale the part up by 120% (119.82% for more accuracy) in the X and Y, then scale the Z up by 126% (126.10% for more accuracy) for printing.<strong></strong></li>\r\n</ul>\r\n</li>\r\n<li><strong>Q:&nbsp;Can the debinding and sintering be done without outsourcing? Can I purchase the equipment and debind and sinter the parts myself?</strong>\r\n<ul>\r\n<li><strong>A:</strong>&nbsp;It is absolutely possible to process the Debinding and Sintering steps yourself, if you have access to a facility with the correct equipment or are interested in doing debinding and sintering on the scale that justifies the capital equipment. The most cost-effective method for the majority of users will be utilizing the network of debinding and sintering service centers prepared to handle the parts. To shorten research and negotiation time, you can purchase a MatterHackers <a title=\"BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">BASF Ultrafuse 316L Processing Ticket</a> that connects you with a reliable debinding and sintering company at a simple, established price.<strong></strong></li>\r\n</ul>\r\n</li>\r\n<li><strong>Q:&nbsp;How much does outsourcing debinding and sintering cost?</strong>\r\n<ul>\r\n<li><strong>A:</strong> Outsourcing cost ranges widely depending on the debinding and sintering company, bulk of parts being processed and method used. <a title=\"BASF Ultrafuse 316L printed green parts, check out our BASF Ultrafuse 316L Processing Ticket\" href=\"https://www.matterhackers.com/store/l/metal-3d-printing-processing-ticket/sk/MLNW0VKE\" target=\"_blank\" rel=\"noopener\">For a set cost on processing up to 1 kg of BASF Ultrafuse 316L printed green parts, check out our BASF Ultrafuse 316L Processing Ticket.</a> <strong>Please note that every purchase of a BASF Ultrafuse 316L Metal 3D Printing Filament spool from MatterHackers comes with 1 free BASF Ultrafuse 316L Processing Ticket.</strong></li>\r\n</ul>\r\n</li>\r\n<li><strong>Q: Can I use support materials for this filament?</strong>\r\n<ul>\r\n<li><strong>A:</strong> We do not recommend using supports with your Ultrafuse 316L prints. While it is possible to use breakaway and water soluble supports to help produce your Ultrafuse 316L parts, they will not be able to maintain the print's shape during the sintering process, which will lead to deformity. Using Ultrafuse 316L filament as its own support material is also possible, but it will require <span>machining, cutting, or grinding the support off after sintering</span>.</li>\r\n</ul>\r\n</li>\r\n</ul>", 
+                    "ElementCode": "E67YFS", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/3484bbdc-991c-43e1-94cc-a74c240e7d49", 
+                "ImageUrl": "https://lh3.googleusercontent.com/KoQ02oEXdjaZXRQXyTyuiwsjzj1q4yMC8lqMDKAgn9YoouvWQ5WTO0HKAj9PUdnBXwuc07oOqCWgLG2I0hqJ0SE", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5693315492085760, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/43c55183-da77-4758-91e1-9a65fa6571e8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Wzu7-BFp2XfZTggXmDfMIAYtHqtljUjCvOb6NLbxtG07JHnnK7U8kVPN8Vpob8qVgR_6wUqvMmyZ3IDMxzwJmRtr", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/5e5e75e2-4187-4891-8c72-76f0891799e6", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/aS-23wZcDNL-gBcjQqkLEf9Y-x29itgMzovAaMSF5fIXjTzW7TvEZ4yiIzYRD6ggpNdrohtXwKW37xUPB-97sg", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/eb360b5a-1dcd-477c-9160-05f91570f452", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/mygQ6QJEnN7wgFJqyTcyB4U08yDDXRvGHOpRVXXQNzlkLnNjlYdT2miuhqK_Y0X-6xdBoHzc2Lc8F-Atm3zBRHqB", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/f9d10986-3dd5-429f-89b2-7b4915290486", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/p6sLi4WcWR6NtrvJ2OFNWqaD3xTlgXsjSq21w8HpBdNlynMCWRn7NioLTaB5cmp0BJ__kKjZIDRhAYKkVyqcg6cs", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/a3467188-625e-408b-9202-ccbc59a98e84", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/xqg9hyXtZwl57a4LIB8_ekgakWRQWFrvziMmrlYuyULdTkGkmCg15LPm5Ibs9XHsiBK_FNdc5bQiP9VLFU_sbrU", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/3484bbdc-991c-43e1-94cc-a74c240e7d49", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/KoQ02oEXdjaZXRQXyTyuiwsjzj1q4yMC8lqMDKAgn9YoouvWQ5WTO0HKAj9PUdnBXwuc07oOqCWgLG2I0hqJ0SE", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/0119fd90-5dd5-493b-b847-93048d663d97", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/zwPEMSK0b11NP2KdjytrGFbDbt9847zEaH7n4ejFL6EwGDR_5Wlvg1KyW4QUmpP5PdZykTxVxLxdTBOpCR9cUt2R", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/a8c21e4f-4bbd-40a1-b3b7-d11d0d99c80d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kO2q339E0KXIkcg0chc-xYlxDvK0LY25wLUd4mX_3EQTxjkb-_Gj5_05BXsee2hSU_g0AlMwv4hgFYMgKw45SA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d914031e-75f3-4276-bb0b-9ff9237c83b5", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kkhJMhAtP8bceiIzEyi6Ka0Ro2YGZMaDlPkwun3gUjTFNhY4ueAOGoZ3dtwsKYFo1UucsCcOJNrqvyY1_X2FlgE", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d19aa160-ecd2-4986-8bf1-dd2ec12a0fbe", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/AcBoCvE2ng92Dja8KdoJiJ6M3tvqwBwCExgK_zmXfAPsu3KI6vtAjDx3nAOjYC-a0Y8-qU6IAzw-PD99aiIwpts", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/404f17f3-cdc6-4e7d-af0f-931e499085b4", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/7NVyUrnt8xcGTgv1-DNQKJhtHq7-hPni1Zaawn2hnTrhahs1APSGNzOoFLzmbL6vQk-myOBbisbVsNPYccYwYA", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgw", 
+            "MaxPriceRange": -1, 
+            "MetaTagKeywords": [
+                "BASF", 
+                "essentium", 
+                "316lx", 
+                "BASF 3D Printing Solutions", 
+                "metal filament"
+            ], 
+            "MinPriceRange": -1, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-09-05T15:52:22.085787", 
+            "ProductEditedOn": "2022-03-17T17:15:20.959498", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs8IeMCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICC4cGNCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDOy7aLCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-rKNCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAgoGUCgw", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBOU5uNXR3b00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDLkOraCww"
+            ], 
+            "ShortDescription": "BASF 3D Printing Solutions' Ultrafuse 316L Metal 3D Printing Filament makes metal additive manufacturing on desktop 3D printers accessible.\r\n\r\nTop Ultrafuse 316L Features:\r\n\r\n\u2022  Produce end-use products made from stainless steel\r\n\u2022  Make functional prototypes from real metal\r\n\u2022  Cost-effective and convenient to print and process\r\n\u2022  Elevate the 3D printing experience to an industrial level\r\n\u2022  Easily ship out for debinding and sintering Ultrafuse green parts", 
+            "ShowAddToCart": false, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "BASF Ultrafuse 316L Metal 3D Printing Filament (3kg)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgID8pMGOCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 46500, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "PromotionDescription": "", 
+        "QuantityAvailable": 36, 
+        "QuantityOnHand": 36, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "basf-ultrafuse-316l-metal-composite-3d-printing-filament-175mm", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MRDKJRRS", 
+        "SalesIndexByDollars": 60, 
+        "SalesIndexByUnits": 315, 
+        "SerialNumberRequired": false, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "BASF Ultrafuse 316L Metal 3D Printing Filament - 1.75mm (3kg)", 
+        "SkuWarningMessages": [
+            "prop65-cancer"
+        ], 
+        "SuccessRatingCount": 225, 
+        "SuccessRatingScore": 9778, 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 3424620, 
+        "TotalWeightGrams": "3,424.62", 
+        "TotalWeightKilograms": "3.42", 
+        "TotalWeightPounds": "7.55", 
+        "VendorItemID": "", 
+        "Weight": 3424620, 
+        "WeightGrams": "3,424.62", 
+        "WeightKilograms": "3.42", 
+        "WeightPounds": "7.55", 
+        "WholesaleCost": 19200
+    }, 
+    "Status": "success"
+}

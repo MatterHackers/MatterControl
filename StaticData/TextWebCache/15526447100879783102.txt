@@ -1,0 +1,640 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2020-07-01T16:59:35.339788", 
+                "Description": "BigTreeTech SKR Turbo 1.4 with four TMC2209 Drivers", 
+                "HexColor": null, 
+                "ID": 4801241642172416, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKS81rAJDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgIDA9MLWwwgM", 
+                "Name": "32-bit (+$399)", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKS81rAJDA", 
+                "Reference": "motherboard:32-bit-smoothieboard"
+            }, 
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2020-07-01T17:00:42.244761", 
+                "Description": "No magnetic base will be installed", 
+                "HexColor": null, 
+                "ID": 6307450031439872, 
+                "Image": null, 
+                "IsDeleted": false, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwJS72JMJDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgIDAtPqSmgsM", 
+                "Name": "None", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwJS72JMJDA", 
+                "Reference": "magnetic-base:none"
+            }
+        ], 
+        "AvailableDate": "2021-03-23", 
+        "AverageInboundFreight": 0, 
+        "AverageInboundTariff": 0, 
+        "AverageShippingCost": 0, 
+        "BarCodeID": "", 
+        "BlockIsDirty": false, 
+        "Brand": "MatterHackers", 
+        "ComponentNoPOBox": false, 
+        "ComponentSkuCount": 4, 
+        "ComponentSkuWeight": 19186490, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDVMREdTNww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDVMREdTNww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNU5LNFJGWAw", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw"
+        ], 
+        "ConfigurableListing": false, 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2020-07-01T17:03:09.540981", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Mar 23rd", 
+        "DisplayAverageShippingCost": "0.00", 
+        "DisplayListPrice": "2,013.75", 
+        "DisplayPrice": "1,853.31", 
+        "DisplayPriceFlag": true, 
+        "DisplaySID": "M-TF2-MW2W", 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/11ddfbf5-da00-4b76-9fe0-c6dfdf58b5fe", 
+            "ImageUrl": "https://lh3.googleusercontent.com/58GdgY4rE0Tj4lIxyk0bVljwAIf53JQahmgOjsR2i5ciGA5TJVsJUYqL1lAMJuppMnqy-kcAabdOzpkp0ZzCmYDoyoF1frcvF0E", 
+            "IsFeatured": false
+        }, 
+        "FulfillmentVerificationRequired": true, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "HexColor": "", 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnClearance": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRefurbished": false, 
+        "IsRetired": false, 
+        "IsSearchable": false, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVEYyTVcyVww", 
+        "LeadDays": 3, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "22.50", 
+            "18.50", 
+            "20.25"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductCategory": "3D Printers", 
+        "ProductDescription": "Built on the foundation of our very own Pulse 3D printer platform, which was born from the Prusa i3 design, comes our most popular member of our MatterHackers family - the Pulse XE. Built with amazing upgrades like a LayerLock Garolite heated print bed, a Bondtech Extruder with an E3D V6 HotEnd, the Pulse XE can not only print nylon with ease but any abrasive or standard filament with accurate, beautiful results. Pulse XE also comes with one spool of MatterHackers PRO Series Ryno, two spools of NylonX filament, and a PrintDry PRO Filament Drying System to get you started on your advanced projects. Plus, all standard upgrades come pre-assembled and tested for you, so you know it will work right out of the box.", 
+        "ProductListPrice": 201375, 
+        "ProductListing": {
+            "ActiveSkuCount": 4, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRUhBMkdTNww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDc5WE1XUAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVEYyTVcyVww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRjdHOFI4OAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 9999, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "99.99", 
+                    "AddOnDisplayPrice": "99.99", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 99.99, 
+                    "AddOnListingReference": "matterhackers-launch-pad", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 9999, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MMY4NZEZ", 
+                    "AddOnTitle": "MatterHackers Launchpad for Pulse - 1hr Expert Setup Assistance", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgKDwpqSSCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTVk0TlpFWgw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 4100, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "41.00", 
+                    "AddOnDisplayPrice": "50.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 50.0, 
+                    "AddOnListingReference": "buildtak-extra-flexplate-9-x-10", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 5000, 
+                    "AddOnSavings": -900, 
+                    "AddOnSkuReference": "MCMHW0TM", 
+                    "AddOnTitle": "BuildTak Extra Spring Steel Plate 9\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA1KybCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ01IVzBUTQw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 5500, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "55.00", 
+                    "AddOnDisplayPrice": "64.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 64.0, 
+                    "AddOnListingReference": "garolite-extra-flexplate-9-x-10", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 6400, 
+                    "AddOnSavings": -900, 
+                    "AddOnSkuReference": "M9X79CWL", 
+                    "AddOnTitle": "LayerLock Garolite Extra FlexPlate 9\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA1J-BCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOVg3OUNXTAw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 3999, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "39.99", 
+                    "AddOnDisplayPrice": "39.99", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 39.99, 
+                    "AddOnListingReference": "layerlock-powder-coated-pei-build-plate-9-5-x-10-for-pulse-upgrade", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 3999, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MWN4A16M", 
+                    "AddOnTitle": "LayerLock Powder Coated PEI Build Plate 9.5\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDspfCYCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV040QTE2TQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 102, 
+                    "QuantityOnHand": 102, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 11000, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "110.00", 
+                    "AddOnDisplayPrice": "110.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 110.0, 
+                    "AddOnListingReference": "pulse-3d-printer-maintenance-kit", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 11000, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MS9CV8YC", 
+                    "AddOnTitle": "Pulse 3D Printer Maintenance Kit", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsm8OICQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUzlDVjhZQww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 29900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "299.00", 
+                    "AddOnDisplayPrice": "299.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 299.0, 
+                    "AddOnListingReference": "pulse-protection-extended-2-year-warranty", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 29900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MG3ZJCA9", 
+                    "AddOnTitle": "Pulse Protection Extended 2 Year Warranty", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDArMmUCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRzNaSkNBOQw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33303, 
+                    "QuantityOnHand": 33303, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 27900, 
+                    "AddOnDiscountDisplay": 10, 
+                    "AddOnDisplayBasePrice": "279.00", 
+                    "AddOnDisplayPrice": "249.00", 
+                    "AddOnDisplaySavings": "30.00", 
+                    "AddOnFloatPrice": 249.0, 
+                    "AddOnListingReference": "pulse-enclosure-kit", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 24900, 
+                    "AddOnSavings": 3000, 
+                    "AddOnSkuReference": "MDWWV1J0", 
+                    "AddOnTitle": "Pulse Enclosure Kit - White", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 21, 
+                    "QuantityOnHand": 21, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 29900, 
+                    "AddOnDiscountDisplay": 6, 
+                    "AddOnDisplayBasePrice": "299.00", 
+                    "AddOnDisplayPrice": "279.00", 
+                    "AddOnDisplaySavings": "20.00", 
+                    "AddOnFloatPrice": 279.0, 
+                    "AddOnListingReference": "pulse-enclosure-kit-black", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 27900, 
+                    "AddOnSavings": 2000, 
+                    "AddOnSkuReference": "MMH4KUCT", 
+                    "AddOnTitle": "Pulse Enclosure Kit - Black", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTUg0S1VDVAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 4, 
+                    "QuantityOnHand": 4, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 6000, 
+                    "AddOnDiscountDisplay": 24, 
+                    "AddOnDisplayBasePrice": "60.00", 
+                    "AddOnDisplayPrice": "45.59", 
+                    "AddOnDisplaySavings": "14.41", 
+                    "AddOnFloatPrice": 45.59, 
+                    "AddOnListingReference": "printdry-pro-additional-chamber-kit", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 4559, 
+                    "AddOnSavings": 1441, 
+                    "AddOnSkuReference": "MW3WFTL6", 
+                    "AddOnTitle": "Printdry PRO Additional Chamber Kit", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC7qcG6Cww", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVzNXRlRMNgw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 239, 
+                    "QuantityOnHand": 239, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 9600, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "96.00", 
+                    "AddOnDisplayPrice": "96.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 96.0, 
+                    "AddOnListingReference": "matterhackers-3d-printing-tool-kit-premium", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 9600, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MNUYE0VF", 
+                    "AddOnTitle": "MatterHackers FDM 3D Printing Tool Kit Premium", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -8, 
+                    "QuantityOnHand": -8, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 4800, 
+                    "AddOnDiscountDisplay": 31, 
+                    "AddOnDisplayBasePrice": "48.00", 
+                    "AddOnDisplayPrice": "32.98", 
+                    "AddOnDisplaySavings": "15.02", 
+                    "AddOnFloatPrice": 32.98, 
+                    "AddOnListingReference": "printdry-pro-large-spool-kit", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 3298, 
+                    "AddOnSavings": 1502, 
+                    "AddOnSkuReference": "MWU296R0", 
+                    "AddOnTitle": "Printdry PRO Large Spool Kit", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDr0svLCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV1UyOTZSMAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 94, 
+                    "QuantityOnHand": 94, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKS81rAJDA", 
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwJS72JMJDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-07-01T16:41:29.499043", 
+            "DisplayPriceRange": "145431 - 190831", 
+            "Elements": [
+                {
+                    "Content": "<div class=\"collection-marketing\">\r\n<div class=\"collection-copy\">\r\n<div class=\"h3 subtitle\"><strong>For Engineering Grade Projects and 3D Printing with NylonX and Other Advanced Materials</strong></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "MUE7RD", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"collection-features\">\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Strongest Materials\" src=\"https://lh3.googleusercontent.com/ceBlNEkf6MAQxgurU8J-N4ZWilEk0WDlVrpWYdtkNDSw-4hpUpWlO4lsIn2T4PBMLrKz1eGgFeH88C0Vs1sFuw-BDUw=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Use the Strongest Materials</h4>\r\n<div class=\"desc\">Create functional, ready-to-use parts with NylonX&mdash;the strong, micro carbon fiber reinforced material&mdash; and other advanced materials right from the box. The Pulse XE arrives with 2 spools of NylonX and a PrintDry PRO Filament Drying System, ready for printing.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Components\" src=\"https://lh3.googleusercontent.com/Mzi1opnIg1sH6XMAxYcI_j4A5VrYun85R-FYLL-_OlvhY952NHlxSNWlpYQL41pIqOE6QsdBGPRJCqw3xLn6r_1tCqk=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Fully Calibrated with Industry-Leading Components</h4>\r\n<div class=\"desc\">Built for reliability, the Pulse XE arrives ready to print with best-in-class components, like the E3D v6 All-metal HotEnd, Capricorn XS Premium PTFE Bowden Tubing, and Bondtech Extruder.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Care\" src=\"https://lh3.googleusercontent.com/CLXOeq99P238S9AYWBj3OqokTVb3dn_vQpbVLqC9VjGetgIXDnVvCivP18UdVk3Dxc-yZLAZkUy2e14r3s5Zzy0EJg=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Constructed With Care</h4>\r\n<div class=\"desc\">Our Pulse Pros team is attentive to every nitty-gritty step that goes into building every single Pulse XE. The care we provide doesn&rsquo;t stop once your 3D printer is shipped from our warehouse. Made right here in the US, every Pulse XE is backed with phone and email support by experts at MatterHackers who will happily help make caring for your printer as easy as possible.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Investment with Immediate Return\" src=\"https://lh3.googleusercontent.com/gYCINhPqLtHk7c46kbgmmeBCNa5MZP9nY6WlZ8F5zBBdZJBNAxM8fT7J3PT4eDIdA1Pu7dOWmJNBq3lHY4Tu8Rz8Uw=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Investment with Immediate Return</h4>\r\n<div class=\"desc\">Every dollar that goes towards this Pulse XE bundle is an investment towards making your 3D printing experience even better. Fully assembled and fully calibrated with industry-leading components, the price paid upfront is for a 3D printer that&rsquo;s ready to successfully print both simple and advanced projects right out of the box. Along with this high-quality machine comes a bundle with extra goodies like two spools of quality NylonX and PrintDry PRO that will elevate your successful 3D printing experience right from the get-go.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Support\" src=\"https://lh3.googleusercontent.com/wFYYubc_5A-h5vlgSWcv7zaEhkcl-ty1N8oN2dxgZuyTmiwXbVqzDFEedU_ccxd2TZ73r4z7myX3bHgUiydXO-lRig=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Lifetime Support</h4>\r\n<div class=\"desc\">Using time-tested, best-in-class components allows you the capability to print on the Pulse XE for years to come. The experts at MatterHackers are available for any questions you may have about this stunning 3D printer package through lifetime email and phone support. If you need assistance, we&rsquo;re there.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "BKTY15", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"vHV-DeD2Wa0\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "RERC4E", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>About Pulse XE - Print Advanced Materials Now</h2>\r\n</div>\r\n<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<p>From the start, MatterHackers has been committed to reaching for better design standards in creating a robust and adaptable 3D printer that would work for all our users - thus was born the Pulse - strong, customizable, and easy-to-use; but we didn&rsquo;t stop there. After more research and design, MatterHackers has created an amazing 3D printer in the Pulse XE. Feedback from the 3D printing community pushed us to create a system that not only prints standard filaments with laser accuracy, but also stands up to the rigors of printing with specialty filaments while still giving you fantastic finished results. From the included NylonX, to <a href=\"https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29\">TPU</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/abs\">ABS</a>, <a href=\"https://www.matterhackers.com/store/c/mh-build-series-petg\">PETG</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/pla\">PLA</a>, our very own <a href=\"https://www.matterhackers.com/store/c/mh-build-series\">MH Build</a> and <a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20Filament\">PRO Series</a>, and everything in between, Pulse XE can print it all.</p>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/fOEvAq3ja6heiESigpIqgcn47EzjsLV1zgjom8krFp1zdEIR4InF7O5NvG-MxLkqCSQd2Saj423M0HpTwQNVie_weg=s150\" /> <img alt=\"Pulse in use\" src=\"https://lh3.googleusercontent.com/65QRzB-FcZ_9xY16HpRwl919cTUP69-IiOIQtlZ_ADwLzUj_yIR0LcNl9tQGEfQau5NSuytyjEh6mY1RichC-IUSrhmT67X9rIcDUQ=w300-h200-pp\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "I8NKFX", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Pulse XE 3D Printer Bundle</h2>\r\n</div>\r\n<div class=\"section\">\r\n<p>The Pulse XE, with its amazing line-up of included upgrades, is a fantastic option for those who plan on printing with nylon, NylonX, and other advanced, engineering grade filaments. With the Pulse XE, you can print using <a href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PLA%20Filament\">PLA</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PET%20Filament\">PETG</a>, <a href=\"/store/3d-printer-filament/colorfabb-bronzefill-175-750g\">Bronzefill</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/colorfabb-copperfill-metal-filament-1.75mm-075-kg\">Copperfill</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/colorfabb-brassfill-filament-1.75mm\">Brassfill</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/colorfabb-bamboofill-1.75mm\">Bamboofill</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/colorfabb-woodfill-1.75mm\">Woodfill</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/colorfabb-xt-cf20-1.75mm\">Carbon Fiber</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament/proto-pasta-stainless-steel-pla-1.75mm\">Stainless Steel</a>, and many more. The machine design is based on the popular Prusa i3, the communities most popular design, known for its sturdy build and reliable printing. Every Pulse XE comes standard with several powerful upgrades. Pulse XE components are precision machined, and each portion of the experience finely honed so that you can achieve the best 3D printing results possible. By purchasing the Pulse XE Bundle, you get a discount on our most popular Pulse XE model, two spools of NylonX, and the PrintDry Pro.</p>\r\n</div>", 
+                    "ElementCode": "A53ESM", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/6Nd4rMzwRA-d1AgklAQXm-G6jdPZWFvz1rbbQqhvCe4PFsbgeUbHSWKVDG4fPviva-Uf2lu0NC0lK1L0itarqQ'></p>", 
+                    "ElementCode": "X3GLT5", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c8b73197-f6c6-4174-b28e-f28560f72c27", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/6Nd4rMzwRA-d1AgklAQXm-G6jdPZWFvz1rbbQqhvCe4PFsbgeUbHSWKVDG4fPviva-Uf2lu0NC0lK1L0itarqQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"section\">\r\n<h3><span>Built Robust to Print Robust</span></h3>\r\n<p>The Pulse XE is built with robust components so it can print robust components. This high-performance, low-maintenance 3D printer has been designed and tested to deliver consistent, high-quality results without any fuss. Comprised of an E3D V6 HotEnd and an E3D Hardened Steel Nozzle, the Pulse XE&rsquo;s hotend setup is more than capable of heating up and extruding abrasive filament like NylonX. No question about it; the Pulse XE is made to print NylonX.</p>\r\n<h3>Functional and Sturdy Parts</h3>\r\n<p>Use the Pulse XE to produce strong printed parts out of NylonX for everyday use. A buckle, a socket wrench, a carabiner&mdash;NylonX is suitable printing material for them all. Its nylon makeup mixed with micro-carbon fibers allows for the same durability as nylon and similar stiffness as carbon fiber, making it an ideal material to use for functional parts.</p>\r\n<h3>Perfect Precise Prints</h3>\r\n<p>The Pulse XE prints with the same amazing laser accuracy as the standard Pulse, but with even smoother results using NylonX. With the right fine-tuned settings, your prints will require no post processing leaving a super smooth, clean print that you can distinctly achieve with NylonX.</p>\r\n<h3>Everything You Need Pre-Installed</h3>\r\n<p>With the Pulse XE Bundle, we worry about the correct components and installation process so you don&rsquo;t have to. Don&rsquo;t fret about whether or not you bought a compatible nozzle or installed the hotend correctly. Sit back and let the Pulse Pros handle the configuring so you can jump right into printing as soon as your Pulse XE 3D printer arrives.</p>\r\n</div>\r\n</div>", 
+                    "ElementCode": "5S7F54", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Designed to Print NylonX</h2>\r\n</div>\r\n<p>All variations of the Pulse 3D printer are designed to be reliable, then further fine-tuned to specialize in specific printing needs. For the Pulse XE, it is designed to specialize in printing engineering grade filaments like NylonX. With a hotend capable of reaching temperatures of up to 290&deg;C and a nozzle designed to handle harsh filaments, the Pulse XE, without a doubt, is made to handle pumping out micro-carbon fiber filled filament with this hotend setup. This bundle also comes with PrintDry PRO to ensure your filament is ready to successfully extrude without issue.</p>\r\n<p>The bed surface on the Pulse XE is engineered for NylonX; LayerLock Garolite Build Surface, an interwoven glass fiber fabric impregnated with epoxy resin, guarantees better NylonX adhesion to the bed and long-lasting durability for numerous prints. With a garolite surface installed on the Pulse XE&rsquo;s heated bed, rest easy knowing you&rsquo;ll struggle less with warping and bed adhesion compared to other bed surfaces.</p>", 
+                    "ElementCode": "TX5ZFC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/ktnuvJZDHhd5oi4GRGCso117Et8jVMrY5rpi7KcfWJCetQaem_C7htZDaZoHl44-yW7I9guH9AgiU8oDaBI3ycg'></p>", 
+                    "ElementCode": "GIVKPG", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/eb456838-47ac-4bb2-abfb-b80a9523e0b6", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/ktnuvJZDHhd5oi4GRGCso117Et8jVMrY5rpi7KcfWJCetQaem_C7htZDaZoHl44-yW7I9guH9AgiU8oDaBI3ycg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>The Pulse XE 3D Printer Bundle is designed to provide you the necessary hotend setup, heated bed surface, and filament to get you started printing NylonX right out of the box.</p>", 
+                    "ElementCode": "MHGQC5", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>A Tough Hotend for Tough Filament</h2>\r\n</div>\r\n<p>The carbon fiber in NylonX is very hard and abrasive and it will quickly abrade and ruin brass or other soft metal nozzles. While most 3D printers can print with NylonX, they require anywhere between a nozzle change to completely switching out the hotend in order to handle multiple NylonX print jobs. The Pulse XE, however, is designed to print NylonX right out of the box for years to come.</p>\r\n<p>With a hotend setup designed to meet NylonX&rsquo;s 250-265&deg;C print temperature requirement and equipped with an E3D Hardened Steel Nozzle that withstands tough, abrasive filament, the Pulse XE is built for you to print NylonX with zero hardware configuration. Rest easy knowing you can start printing NylonX parts with the right sturdy hotend system already installed by our Pulse Pros.</p>", 
+                    "ElementCode": "O7XJZ3", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img alt=\"No need to install the right nozzle and hotend on the FDM 3D printer yourself. We&rsquo;ll do it for you!\" src=\"https://lh3.googleusercontent.com/Sv0ywCComNCNJehVxbjoebZnEvov1Dy0g_tiCoFttfsi1jEttu11bgv3BGDy_TgYE8UutK8Zyy9ybaHuwmpifm--8JQMPR-G9V_e\" /></p>", 
+                    "ElementCode": "CSG5GH", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/764934c3-47df-40af-b96a-3f99b5b4aaf9", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/aPj4jyTU7Z3rJggRzWsvDszzngYavxZ9vGh_90R8vrZlaOdeCDsM9q4qSvO0DVDbIhghRSMpzNxHn15nPSTggTc", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p>No need to install the right nozzle and hotend yourself. We&rsquo;ll do it for you!</p>", 
+                    "ElementCode": "KKBXSX", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Functional Robust Prints With NylonX</h2>\r\n</div>\r\n<p>Add NylonX filament to the list of strong materials you can print with the Pulse XE. Made of engineering grade nylon filament blended with chopped carbon fibers, NylonX is the perfect blend of strength and durability. Maximizing its strength to weight ratio, this filament is sturdy, impact resistant, and high in tensile strength while still being light enough to not disrupt functional use. Its high thermal resistance also aids in lack of warping, adding onto NylonX&rsquo;s trusted reputation for stiffness. Need to print a part that's both functional and robust? NylonX is the reliable solution for you.</p>", 
+                    "ElementCode": "BI18BI", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/Qyq1emhsnwhxNThwiQXWA3QHCrgx6W5kG3p6WrRS-Nzk0Wukn1VNCRgcKx6CVk0ubV0p03WB_kSsc-Im9ciJiSw'></p>", 
+                    "ElementCode": "T2LGTA", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/0c22b70f-e6a6-46ff-aecb-d9e2675add56", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Qyq1emhsnwhxNThwiQXWA3QHCrgx6W5kG3p6WrRS-Nzk0Wukn1VNCRgcKx6CVk0ubV0p03WB_kSsc-Im9ciJiSw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>Need a new paddle board handle? How about a bike pedal replacement? The Pulse XE and NylonX can fulfill those needs.</p>", 
+                    "ElementCode": "I14VOQ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Sleek Look With Engineering Grade Filament</h2>\r\n</div>\r\n<p>While standard filaments like <a title=\"PLA Filament\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> can print very smoothly, NylonX prints come out even more precise, giving a much sleeker look that would make you think the print was produced by a factory machine instead of a desktop 3D printer. With the correct settings, the smooth and silky matte-black finish of a NylonX print requires zero post processing meaning no filament waste and no time wasted cleaning. The PrintDry PRO Filament Drying System comes stock with this bundle to remove any moisture in your material while printing, ensuring your parts print and look smooth.</p>\r\n<p>Distinctive print layers can be indications of sturdy prints, but don&rsquo;t let NylonX&rsquo;s smooth finish fool you into thinking it equates to low sturdiness. The strength and durability you get in these NylonX prints come from its chemical makeup of micro-carbon fiber strands. If extremely smooth prints that also happen to be reliably sturdy are your preference, NylonX is perfect for you.</p>", 
+                    "ElementCode": "DB0DZJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/TA4WpwcrwhAHqly63V9OElqvFRFO3ivorbsJoHE2OrPyHsWz-7fW57Hr-7N29C8g7fBjUN2Pip79AjHGUXP_Mkqi'></p>", 
+                    "ElementCode": "KSC64P", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/30f85e32-0b3e-4652-8ab6-141dac4b0697", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/TA4WpwcrwhAHqly63V9OElqvFRFO3ivorbsJoHE2OrPyHsWz-7fW57Hr-7N29C8g7fBjUN2Pip79AjHGUXP_Mkqi", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>Printing parts as sleek and sturdy as this skateboard truck are only a Pulse XE away.</p>", 
+                    "ElementCode": "GA7NXZ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>What Our Customers Say About Pulse</h2>\r\n</div>\r\n<h2><strong><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span></strong></h2>\r\n<h2><strong>I just love this machine so much! &nbsp;<span>\u2605</span><span>\u2605</span><span>\u2605</span><span>\u2605</span><span>\u2605</span></strong></h2>\r\n<p><em>-Bill White | <span>Applied Engineering and Technology Teacher &amp; MatterHackers Education Ambassador</span></em></p>\r\n<p>\"It is the perfect printer for printing functional parts in the school setting or for personal use!\"<br />Read Bill's full review of the Pulse XE <a title=\"MatterHackers Education Ambassador Review: Pulse XE 3D Printer\" href=\"https://www.matterhackers.com/articles/education-ambassador-review-pulse-xe-3d-printer\" target=\"_blank\" rel=\"noopener\">here</a>.</p>\r\n<h2><strong><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span></strong></h2>\r\n<h2><strong>A unit well built and of high quality...&nbsp;&nbsp;<span>\u2605</span><span>\u2605</span><span>\u2605</span><span>\u2605</span><span>\u2605</span></strong></h2>\r\n<p><em>-Richard H. Ford | Medical Institute of Northeast Georgia</em></p>\r\n<p><span>\"We were surprised at what we found when we received our first printer. A unit well built and of high quality... It worked like a charm right out of the box... No tweaking like other units, just plug it in and run the initial setup as instructed and off you go.\"</span></p>\r\n<h2><strong><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span><span>\u2501</span></strong></h2>", 
+                    "ElementCode": "T92FKP", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades for the Pulse XE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade available for the Pulse XE 3D printer has been thoroughly tested and calibrated by the Pulse Pros team, and are the highest quality parts on the market. With each upgrade you add on, you unlock more 3D printing capabilities such as expanding the variety of materials you can print with, increasing the strength of your printed pieces, and more.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><a title=\"32-Bit Upgrade for Pulse\" href=\"https://www.matterhackers.com/store/l/32-bit-viki-2-upgrade-for-pulse\" target=\"_blank\" rel=\"noopener\"><img alt=\"32-Bit Upgrade\" src=\"https://lh3.googleusercontent.com/JF-OcKNPEGzNtsFnWESfQ0bimBrdy7prVTpCG9ZvAF9nDEhVPQu6hYMrQuVbvZCHf_PLps5rnbYFteDc5hPZCUPhDSuLbx2Xepvs=s150\" /></a></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">32-Bit Upgrade <span class=\"subtitle\">+$399</span></div>\r\n<div class=\"desc\">Print faster, cleaner, and more accurately with the 32-Bit Upgrade! A faster CPU clock, more RAM, and optimized firmware&mdash;these are just some of the many perks you can unlock with this upgrade. The 32-bit SKR 1.4 Turbo with four stepper drivers attached is the solution you need to take the planning ability of your printer to the next level. <strong>This upgrade replaces the 8-bit Einsy RAMBo Board that comes stock with the Pulse XE.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit - Black<span class=\"subtitle\">+$279</span></div>\r\n<div class=\"desc\">Need to regulate the temperature around your printer to reduce warping? Check out the Pulse Enclosure Kit! Designed to consistently help keep heated and moving parts functional, this enclosure also helps regulate temperature and reduce warping that can occur during 3D printing. This kit is made up of laser cut panels that sit on the same surface as your Pulse 3D printer, making it a desktop-friendly enclosure. Prevent irregular temperatures and other outside variables from affecting the success of your 3D printing results when you use the Pulse Enclosure.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Magnetic FlexPlate System\" src=\"https://lh3.googleusercontent.com/NeuUWtfMyhxaoUz_z4bbQ-6ZGWFxWSnkvlD763wHWjn_imhAp7hUxS2H_0oKtk5PMXAVBlhq1gm3ev9aUsWYU4R3O74=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak FlexPlate System <span class=\"subtitle\">+$99</span></div>\r\n<div class=\"desc\">Easily remove large prints off of the bed with the BuildTak FlexPlate System 9\" x 10\". Removable build plates save you from the effort of scraping off a print by simply detaching the build plate from the magnetic base and popping your print off with a little flexing. Make 3D print removal super easy and quick with the BuildTak FlexPlate System. <strong>This upgrade comes with garolite installed on the build plate.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock MagBase\" src=\"https://lh3.googleusercontent.com/msfMu7MUQsM8wbKsCKtszQM20wZcFA-3LPFMuZmLuaNjDr33alubTM15TPCT0JDtemcWOx5EdPcb3abowLz8MRE=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock MagBase<span class=\"subtitle\">&nbsp;+$70</span></div>\r\n<div class=\"desc\">When printing large parts, there is a huge advantage to having a build plate that can be removed and flexed to easily remove the print off of the bed. LayerLock MagBase 9&rdquo; x 10&rdquo; ensures part removal is super easy and saves you time and effort. Switch between different bed surfaces like BuildTak, Garolite, PEI, Polypropylene and more. This comes with a sheet of Garolite installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/FpCCwyTL9MQ37uRU6bLjBz_JoiBn9euXQ1zJWm0-A9TrYggPaGM1x04GvwZLJHS1xesihofeYNpHg2YvW-exWtaFadkbEZFbWVc6=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Extra Spring Steel Plate <span class=\"subtitle\">+$50</span></div>\r\n<div class=\"desc\">Save time and effort alternating between multiple build surfaces for different print jobs with an extra LayerLock Spring Steel Plate! Just take off the Garolite build plate right after a finished <a title=\"NylonX Filament\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a> print, place the extra BuildTak build plate onto the magnetic base for a <a title=\"PLA Filament\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> print job and you're ready to go. This upgrade comes with a sheet of BuildTak installed on the build plate and can be paired with the LayerLock Garolite Extra FlexPlate upgrade. <strong>This upgrade must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/CZPPnUefRCub2cZeb8-AwLRjvhA0afUtohilFJaiQDVu_bIcHYP33wr-YRIk0DIh-tK1SUyNPTMiT9vwtumqJjC-TGZ8PhSi-zCs6A=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra Spring Steel Plate <span class=\"subtitle\">+$64</span></div>\r\n<div class=\"desc\">Quickly move on to your next print with an extra LayerLock Garolite Spring Steel Plate. Detach the build plate right after a finished print, swap the spare onto the magnetic base and begin your next project. Pausing between prints to scrape off a part is a thing of the past. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate and can be paired with the LayerLock Extra Spring Steel Plate. <strong>This upgrade must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Powder Coated PEI Build Plate\" src=\"https://lh3.googleusercontent.com/9r_AsVUuAiHeKdBRtFWbd4lshBGzAPm0iL4uMnaHcx2JqbTAg7K5B9uFmaD0yf9CWAGPyyVkuNTqMG31_9ngwQ=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Powder Coated PEI Build Plate <span class=\"subtitle\">+$50</span></div>\r\n<div class=\"desc\">Achieve strong bed adhesion using the LayerLock Powder Coated PEI Build Plate! If you're having trouble with standard filaments such as PLA, ABS, PETG, and flexibles such as TPU and TPE sticking to your current build surface, this is a great alternative that will provide better bed adhesion. Powder coated with PEI, this durable build plate is resistant to scratches and requires no careful installation of adhesive. This build surface is also guaranteed to last you much longer than adhesives and sheets, saving you money on multiple replacements in the long run. Have your prints locked down with our durable and reliable LayerLock Powder Coated PEI Build Plate. <strong>This upgrade must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">Increase the variety of build surfaces currently available for magnetic print beds to include the classic surface every maker can rely on&mdash;the glass plate. When you find yourself missing the shiny, smooth bottom surface achieved through printing on a glass surface, simply take the off the surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base in its place.&nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$96</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$110</span></div>\r\n<div class=\"desc\">Every 3D printer occassionally needs a little touch up. While the Pulse 3D printer is built to last, we recommend you give some TLC to your printer from time to time. Enter in the Pulse Maintenance Kit. Keep your printer working in tip top shape for years to come with simple, minimal maintenance using essential components and tools in this kit.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">With this extended 2 year warranty, you can repair or replace your Pulse XE 3D printer, at no extra charge, for another year. This is on top of the standard 1 year warranty, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "1OP9UP", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Technical Specifications - Pulse XE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>The Pulse XE - NylonX Advanced Materials 3D Printer Bundle is created specifically for printing NylonX, on top of standard filament, without easily wearing down. This is made possible thanks to the industry-leading components and features we install to ensure 3D printing success. Each of the components listed below are thoroughly assembled and calibrated before you receive your Pulse XE.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BLTouch Probe\" src=\"https://lh3.googleusercontent.com/J6xFdtfQxARxIHtStcCDBnPuOMrF406HcoaUk44t6neh-hR50JRlvGMDOHISXHAKAaizX0DyguBIaRZAUtYniMuqc_Y=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BLTouch Bed Leveling Probe</div>\r\n<div class=\"desc\">Enjoy a faster, flexible, and more efficient 3D printing process with a BLTouch Automatic Bed Leveling Probe, the most technologically advanced auto-calibration solution available. This sensor gathers accurate data by using a probe to physically touch the bed. Whether you want to use a magnetic base system, a clipped on sheet of glass or a simple heated bed with tape, your Pulse XE 3D printer will be able to print on all of these surfaces easily thanks to this feature that arrives stock with every Pulse.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Filament Runout Sensor\" src=\"https://lh3.googleusercontent.com/XkaQLf3O8s3t3NQFlgBg5bYBizMncVMzkqtXZFpQWhWEd6o1LGllvjSTADIvlD-lDlskvf-DigxXTrFqXPXMzj_HsqhCXxce9No=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Filament Runout Sensor<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">The Filament Runout Sensor constantly monitors filament to ensure successful printing. Run out of filament mid-print? Our Sensor will alert MatterControl to pause your print session. This will allow you to reload filament and seamlessly continue printing. Rest easy knowing incomplete print results will drastically reduce with the Filament Runout Sensor that comes stock in the Pulse XE Professional Bundle.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Heated Bed with Installed LayerLock Garolite Build Surface\" src=\"https://lh3.googleusercontent.com/c5_njxguU0qCp83eHYW-SMCtdSoIFSL0G7YLgF_ADHh70Hi5BpCHfHMQ9is3MzcojwNXe_M1-DVaAc83HXnSV3g=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Heated Bed with Installed LayerLock Garolite Build Surface<span class=\"included\"></span></div>\r\n<div class=\"desc\">Print with a wide variety of materials on your Pulse XE 3D printer heated bed. The bed has a pre-installed LayerLock Garolite Build Surface, making it ideal to print on for a wide variety of materials from <a title=\"PLA Filament\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> to <a title=\"NylonX Filament\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>. Improve bed adhesion and further reduce chances of warping with this advance printing material.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Bondtech Extruder\" src=\"https://lh3.googleusercontent.com/w9iZ65vDxyb-cYn70b7UcArS3uUUgEpfhW3i5Hoc9_0LshQ-iUcNacXVnU-bkPiaU0TwP4LqJb3YIXb-r4ch2lwh=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Bondtech Extruder with E3D V6 HotEnd and Hardened Steel Nozzle<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">The Pulse XE 3D printer comes stock with a Bondtech extruder that all but eliminates slipping, deformation, and under-extrusion. Its E3D V6 hotend reaches temperatures of up to 300&deg;C, making it more than capable of melting tough filaments like NylonX.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Filament Runout Sensor\" src=\"https://lh3.googleusercontent.com/djrC8a5VD3LhySjk3C6mxL57y6ASAreCRGFlHIP6dLImhn7w1EQEuVhD41pT5tfbdHZDhnp7fKYDdfbsAMpYX-S9ZpA=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Filament Runout Sensor</div>\r\n<div class=\"desc\">The Filament Runout Sensor constantly monitors filament during print sessions to ensure successful 3D printing. If your filament runs out mid-print, this sensor will pause the session, allowing you to reload filament and seamlessly continue printing. Incomplete prints will be a thing of the past with this upgrade.</div>\r\n</div>\r\n</div>--> <!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Olsson Ruby Nozzle\" src=\"https://lh3.googleusercontent.com/t3joFTVZu-VT5dqErHd2CwzfHy4hIcnWbkX0cliwo3ACVYoK-MLNltIc4ZnbcpAIXBQ1tLKj3vIN9Yd04h2aFP7ZjmQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Olsson Ruby Nozzle<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">Whether you&rsquo;re using PLA or NylonX, the wear-resistant Olsson Ruby Nozzle beautifully prints them all and comes stock with your Pulse XE 3D printer. This 0.40mm ruby-tipped beauty can handle endless amounts of abrasive NylonX, no problem. Ready to tackle any project you can imagine, you&rsquo;ll see why this will be the only nozzle you will ever need.</div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Capricorn Tubing XS Tubing\" src=\"https://lh3.googleusercontent.com/z-nzDdtvWsS-e8N9Y7rs48go2uo5lhBiPqololq2sidYgkTB6sA9Ddotq81mZ5a1WYSk1laaDNzRj3D9FnDNCdKSwYxwlhgfjyr9=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Capricorn Tubing XS Tubing - Premium Bowden Tubing (1.75mm)</div>\r\n<div class=\"desc\">The Pulse XE delivers a smooth and reliable experience&mdash;right down to the Bowden tube. Every Pulse 3D printer comes stock with Capricorn XS Tubing, the premium brand of PTFE Bowden Tubing carefully designed to succeed with FDM 3D printing. Engineered to adhere to stricter diameter tolerances and formulated with additional additives that increase lubricity, issues resulting from hysteresis are effectively eliminated so jams, clogs, and gaps in printing are avoided from a small, but vital, component of a 3D printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Deluxe Hi-Res LCD Screen\" src=\"https://lh3.googleusercontent.com/bcYmpN_8kQlOsZiy2J_ilbMi6og_-aeQWALrIMJuq3XMIVBQX0SaV4U8G4Yt6oWvVhUtxibeyzu6vc2Gb5969mH8orKaqVQtpsL_=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Deluxe Hi-Res LCD Screen<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">Don&rsquo;t want to only use USB connectivity for the Pulse XE? We offer the option to add untethered printing using the Deluxe Hi-Res LCD screen with a control wheel and standard SD memory card slot. Export your gcode from MatterControl onto the SD card, plug into the printer and you're ready to roll! Simply and easily manage your print projects without your computer using the Deluxe Hi-Res LCD Screen.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"PrintDry PRO Filament Drying System\" src=\"https://lh3.googleusercontent.com/ikVic3jNlymhydZY58PKVdFtLLN8bSHdNtgxfnwN9NRqa9nf31_kYsTZR852o7taTXgMjaeWMvMwaSKPufbLITbP=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">PrintDry PRO Filament Drying System<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\"><span>Quickly and simply store your filament without any hassle. PrintDry is the perfect moisture control solution for filament storage. Adjust temperatures anywhere between 35&deg;C-70&deg;C and feed filament through small openings on the sides of the chamber if you&rsquo;d like to print while drying. This filament dry container that comes stock with the Pulse XE also has automatic humidity control and can hold up to two standard spools. Accessories are available to upgrade the PrintDry PRO to hold up to 4 spools or a large spool.</span></div>\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Two Spools of 1.75mm NylonX (0.5kg)\" src=\"https://lh3.googleusercontent.com/rdeQQKcNRTP59Br5VCKChxbWgqypBijLRKpL3eMh0b8FZu2aWH1NtqJKAlPyi6z-gr_VZOl13sOHN4XQ8utSUQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Two Spools of 1.75mm NylonX (0.5kg)<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\"><span>Our very own engineering grade nylon filament is blended with chopped carbon fibers (approximately 20% by weight), creating a high-strength filament capable of printing tough, smooth, functional parts. This is the only bundle that comes stock with 2 NylonX spools.</span></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"One Spool of 1.75mm PRO Series Ryno (0.75kg)\" src=\"https://lh3.googleusercontent.com/rB1VvrOkRgBKwCAG75oOPV76GVY5-sTKYd-kBiGyZdHEnDoylIy5p7cmiTrdvnrXUBeWzXBopI0Z4AYikSQpa90=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm PRO Series Ryno (0.75kg)<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\"><span>Our MatterHackers PRO Series Ryno filament is all about easily producing high quality prints. We trust this material so much, we make the 3D printed parts on the Pulse out of it! Solid bed adhesion with low oozing and great bridging comes easy with our PRO Series Ryno, making strong, beautiful print production look like a breeze. This professional quality copolymer filament is the best of the best, and made here in the USA.</span></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Robust and Stable i3 design\" src=\"https://lh3.googleusercontent.com/aB1ryie5-7X4VbWNkCcnVil8y656SfKGyum7Mx53sWRyWOQctSQRT_5olAkyxutKajR0_6jScGcqGTDK-55DLlQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Robust and Reliable i3 Design</div>\r\n<div class=\"desc\">Based on the proven, open-source Prusa i3 frame design, the Pulse XE 3D printer&rsquo;s design is robust and reliable at its core. Its current iteration has been improved to include an aluminum extrusion base that provides more rigidity&mdash;a new design with an even better robust and reliable printer base.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterControl\" src=\"https://lh3.googleusercontent.com/L9JDIQzvzJQ4KR8jTN-ckCvA4_QXt3xJq9NxKkbtV8P83kTPF_MK186PuKfsSINaRv63pVajSbJTAP3WJSSZIsSC=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterControl 3D Printer Software Including Power Recovery</div>\r\n<div class=\"desc\">MatterControl is a free, open-source, all-in-one software package that lets you design, slice, organize, and manage your 3D prints. Developed in-house by MatterHackers, MatterControl is paired with printer settings ideal for the Pulse XE 3D printer. Increase your chances of printing success with helpful features such a power recovery, reloading filament mid-print, real-time modification of Z-offset, and more. Do more with your creativity, your time, and your Pulse XE using MatterControl.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "KWJTS0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>What's in the Bundle?</h2>\r\n</div>\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-6\">\r\n<ul>\r\n<li>Pulse XE Fully Assembled 3D Printer</li>\r\n<li>Two Spools of MatterHackers NylonX - 1.75mm (0.5kg)</li>\r\n<li>One Spool of MatterHackers PRO Series Ryno - 1.75mm (0.75kg)</li>\r\n<!--<li>Print Dry Filament Drying System</li>-->\r\n<li>PVA Glue Stick</li>\r\n<li>Art Knife</li>\r\n<li>3pc Hex Wrench Set</li>\r\n<li>Spool Holder</li>\r\n<li>USB Cable</li>\r\n<li>Quick Start Guide</li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/b2HK-l-YncRW4-WFATl7j1LMlSPPM77xnwFJCdX9Ebmdn7on8Kx19n5kBcSEzlU4Cj2CxM72Ltd2KOBFslTdI-6ibUobPJMuk0I=w660\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "GS6R9Z", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"flex-center section\"><img alt=\"Pulse XE Logo\" src=\"https://lh3.googleusercontent.com/fOEvAq3ja6heiESigpIqgcn47EzjsLV1zgjom8krFp1zdEIR4InF7O5NvG-MxLkqCSQd2Saj423M0HpTwQNVie_weg=s400\" /></div>\r\n<div id=\"technical\">\r\n<div class=\"collection-table collection-slant\">\r\n<h2>Technical Information</h2>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<td>Build Volume</td>\r\n<td>250 x 220 x 215 mm (10 x 9 x 8.5 in)</td>\r\n</tr>\r\n<tr>\r\n<td>Machine Volume<br />(L x W x H)</td>\r\n<td>559 x 464 x 584 mm (22 x 18.25 x 23 in)<br />These dimensions include wires protruding from the machine. The X, Y, and Z movement do not go beyond these dimensions.</td>\r\n</tr>\r\n<tr>\r\n<td>Speed</td>\r\n<td>Travel speed of up to 250 mm/s and a print speed as high as 60 mm/s</td>\r\n</tr>\r\n<tr>\r\n<td>Resolution</td>\r\n<td>20 microns (.02mm), and as large as 300 microns (.3 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Layer Height</td>\r\n<td>30 microns (.03mm) to 350 microns (.35 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Filament Diameter</td>\r\n<td>&Oslash;<strong>&nbsp;</strong>1.75 mm</td>\r\n</tr>\r\n<tr>\r\n<td>Extruder</td>\r\n<td>Bondetch QR Extruder</td>\r\n</tr>\r\n<tr>\r\n<td>Nozzle</td>\r\n<td>Hardened Steel Nozzle 0.4mm</td>\r\n</tr>\r\n<tr>\r\n<td>Max HotEnd Temp</td>\r\n<td>\r\n<p>E3D V6 &lt;295&deg;C</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Max Heated Bed Temp</td>\r\n<td>100&deg;C</td>\r\n</tr>\r\n<tr>\r\n<td>Print Surface</td>\r\n<td>\r\n<p>Heated Bed with installed LayerLock Garolite Build Surface</p>\r\n<p>LayerLock MagBase available as an upgrade</p>\r\n</td>\r\n</tr>\r\n<!--<tr>\r\n<td>Filament Sensor</td>\r\n<td>Yes - monitoring filament to ensure successful printing</td>\r\n</tr>-->\r\n<tr>\r\n<td>Power Recovery</td>\r\n<td>Yes - MatterControl will recover a printer power loss</td>\r\n</tr>\r\n<tr>\r\n<td>Calibration</td>\r\n<td>Automatic Print Leveling - 25 point BLTouch sensor</td>\r\n</tr>\r\n<tr>\r\n<td>Remote Control</td>\r\n<td><span>Monitor and control your Pulse XE 3D printer from your tablet or phone over networking using the integrated MatterControl Sync portal</span></td>\r\n</tr>\r\n<tr>\r\n<td>Open Standards</td>\r\n<td>Pulse uses open standard technology, which means compatibility with open source tools and no artificial restrictions on the materials you can use.</td>\r\n</tr>\r\n<tr>\r\n<td>Returns/Warranty</td>\r\n<td>Standard 1-year repair-or-replace warranty, lifetime support.</td>\r\n</tr>\r\n</table>\r\n</div>\r\n</div>\r\n</div>\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/6oQE5djPllmsrGQYLGzKR32jokY0VTLyDqjhq6JuvRF6bobyjhCv2DwQ9KsraS5noOIyNE3pKTbSmQGzNUAGcgB1UA=w660-h200-pp\" class=\"rounded\" /></div>", 
+                    "ElementCode": "MD0T1T", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/61696a13-6b50-4e16-8af3-b127b8b72bee", 
+                "ImageUrl": "https://lh3.googleusercontent.com/75l-rN1z8wS1h6sLyO5FAab-_VyWjUEgG7vAcFWEhajdqLp6Guqk8NurHJeecxg921wJgMhCbnT723TEBjjkRKP7XMu3BQLiUImR", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "HideSuccessGuaranteeFlag": false, 
+            "ID": 5308648004780032, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/61696a13-6b50-4e16-8af3-b127b8b72bee", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/75l-rN1z8wS1h6sLyO5FAab-_VyWjUEgG7vAcFWEhajdqLp6Guqk8NurHJeecxg921wJgMhCbnT723TEBjjkRKP7XMu3BQLiUImR", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/cfb13e40-9f26-48fd-a5b9-48c3a0eb9d3e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/RsKYgnt2aEpX_tBRQT_rNE6ZCsMrmOEl4VYZ7hLZ2KwGfIudUBmwOEggARg3uRRnBJq3dVRM3rc7Rmo5gUigpQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/c2b291f7-3e40-4c63-89ae-520cba039f25", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/qB2mGMakZeYZdqrmFyOddQz4CuOz9ioSXTVsaevdhOLmxNdNJa7aPyA4qRuXxocIun-vz6X63UWrRKZV4uVOAy9nao2zSQrtfaeG", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/473a93f5-e9db-4231-ba4d-93995982833b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/AqOiscGLFmKdqQRVipCDxYi3iaIMiJOeIAxvoQVmN36jZc5AOHFkmKOmWbC5PIGBr_WSPk0Lojt8PVW7lp_OGQsw1UMCy5jFDto", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/2f8e2bf3-d6ba-4ece-b1e5-8cbe1ed6ce36", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Edf0AzulBUDQOa9CNcO5v4PfyTtoqnc95Bi8U7EXRpPy7Bd7MBNpFhXC44nS7-tUD91cfKJhSkCrkuoLsG6i3yLFL-rdaP24E2_slw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/042f9255-b60d-448e-8632-6fe8417391d3", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/HJwsA8rZ70gJ4KPIq2_v7aLI5OQBnJtl6zWuLbIdJBTRgCggcRwR1NVfJla5f92mHPQSATSzgPI_jCejLxFrLAY", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/6d2c69cb-e854-4894-95ef-c267b0ca15cf", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/JdFxC5O9mkg0yPG5_XDDFPAZVybS03c1jL4LviIiykZWQuKw3Bf8IHv2vQHb4-fDtqyVAWTqlPa2qzTFZeZD_LE2Q8XxYflaYgC3Mw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/feb9bb2c-2bd0-4747-bf45-6eb4b8f9cf0b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/T7cvLAKcDGtC4hNgutjjRbg_zHaVmm-O2r6kXK4r3d708hj9sh0OtRV9-mUB7Et5mc_pzUrc68sOl2D8FV4JvVV4SogIfHNR6aK0", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsConfigurableMultiSku": false, 
+            "IsCustomizable": true, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQw", 
+            "MaxPriceRange": 190831, 
+            "MetaTagKeywords": [], 
+            "MinPriceRange": 145431, 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2020-07-01T16:41:29.499035", 
+            "ProductEditedOn": "2022-04-01T15:50:43.798180", 
+            "ProductType": "physical-on-demand", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "pulse-xe-3d-printer-nylonx-advanced-materials-professional-bundle", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-rKNCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDAzMyGCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAgPKICgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw"
+            ], 
+            "ShortDescription": "Built on the foundation of our very own Pulse 3D printer platform, which was born from the Prusa i3 design, comes our most popular member of our MatterHackers family - the Pulse XE. Built with amazing upgrades like a LayerLock Garolite heated print bed, a Bondtech Extruder with an E3D V6 HotEnd, the Pulse XE can not only print nylon with ease but any abrasive or standard filament with accurate, beautiful results. Pulse XE also comes with one spool of MatterHackers PRO Series Ryno, two spools of NylonX filament, and a PrintDry PRO Filament Drying System to get you started on your advanced projects. Plus, all standard upgrades come pre-assembled and tested for you, so you know it will work right out of the box.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "ag9zfm1hdHRlcmhhY2tlcnNyGQsSDFBhZ2VUZW1wbGF0ZRiAgOCN8Y-VCww", 
+            "Title": "Pulse XE - NylonX Professional Bundle"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMD0_oW3CQw", 
+        "ProductNumber": null, 
+        "ProductPrice": 185331, 
+        "ProductType": "physical-on-demand", 
+        "ProductUpc": "", 
+        "PromotionDescription": "Get TWO FREE Spools of 0.5kg NylonG (1.75mm) with a Pulse XE purchase until the end of March\u2014WHILE SUPPLIES LAST!", 
+        "QuantityAvailable": 33303, 
+        "QuantityOnHand": 33303, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "pulse-xe-3d-printer-nylonx-advanced-materials-professional-bundle", 
+        "RequireFulfillmentVerification": false, 
+        "RetiredDateTime": null, 
+        "SID": "MTF2MW2W", 
+        "SalesIndexByDollars": -1, 
+        "SalesIndexByUnits": -1, 
+        "SerialNumberRequired": true, 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Pulse XE - NylonX Professional Bundle", 
+        "SkuWarningMessages": [], 
+        "SuccessRatingCount": 7, 
+        "SuccessRatingScore": 7143, 
+        "TotalLeadDays": 3, 
+        "TotalWeight": 19186490, 
+        "TotalWeightGrams": "19,186.49", 
+        "TotalWeightKilograms": "19.19", 
+        "TotalWeightPounds": "42.30", 
+        "VendorItemID": "", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}

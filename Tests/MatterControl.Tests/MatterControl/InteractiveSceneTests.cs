@@ -36,9 +36,12 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterControl.Tests.MatterControl
@@ -280,6 +283,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task SubtractTests()
 		{
+			StartupMC();
+
 			// Subtract has correct number of results
 			{
 				var root = new Object3D();
@@ -287,7 +292,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeB = await CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
-				var subtract = new SubtractObject3D();
+				var subtract = new SubtractObject3D_2();
 				subtract.Children.Add(cubeA);
 				subtract.Children.Add(offsetCubeB);
 				subtract.SelectedChildren.Add(offsetCubeB.ID);
@@ -562,6 +567,94 @@ namespace MatterControl.Tests.MatterControl
 			root.Children.Add(align);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
 			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
+		}
+
+		[Test]
+		public void CombineTests2()
+        {
+			// overlaping results in simple new mesh
+			{
+				var meshA = PlatonicSolids.CreateCube(10, 10, 10);
+				meshA.Translate(0, 0, 0);
+				var meshB = PlatonicSolids.CreateCube(10, 10, 10);
+				meshB.Translate(0, 5, 0);
+				var mesh = Object3D.CombineParticipants(null,
+					new IObject3D[]
+					{
+						new Object3D() { Mesh = meshA },
+						new Object3D() { Mesh = meshB },
+					},
+					new CancellationToken());
+				Assert.AreEqual(12, mesh.Faces.Count());
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(15, aabb.YSize, .001);
+			}
+
+			// multiple overlaping faces all combine
+			{
+				var meshA = PlatonicSolids.CreateCube(10, 10, 10);
+				meshA.Translate(0, 0, 0);
+				var meshB = PlatonicSolids.CreateCube(10, 10, 10);
+				meshB.Translate(0, -3, 0);
+				var meshC = PlatonicSolids.CreateCube(10, 10, 10);
+				meshC.Translate(0, 3, 0);
+				var mesh = Object3D.CombineParticipants(null,
+					new IObject3D[]
+					{
+						new Object3D() { Mesh = meshA },
+						new Object3D() { Mesh = meshB },
+						new Object3D() { Mesh = meshC },
+					},
+					new CancellationToken());
+				Assert.AreEqual(12, mesh.Faces.Count());
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(16, aabb.YSize, .001);
+			}
+
+			// a back face against a front face, both are removed
+			{
+				var meshA = PlatonicSolids.CreateCube(10, 10, 10);
+				meshA.Translate(0, -5, 0);
+				var meshB = PlatonicSolids.CreateCube(10, 10, 10);
+				meshB.Translate(0, 5, 0);
+				var mesh = Object3D.CombineParticipants(null,
+					new IObject3D[]
+					{
+						new Object3D() { Mesh = meshA },
+						new Object3D() { Mesh = meshB },
+					},
+					new CancellationToken());
+				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
+				Assert.AreEqual(12, mesh.Faces.Count());
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(20, aabb.YSize, .001);
+			}
+
+			// multiple overlaping faces all combine
+			{
+				// right side at 0
+				var meshA = PlatonicSolids.CreateCube(10, 5, 10);
+				meshA.Translate(-5, 0, 0);
+				// left side at -5
+				var meshB = PlatonicSolids.CreateCube(10, 5, 10);
+				meshB.Translate(0, 0, 0);
+				// right side at 0
+				var meshC = PlatonicSolids.CreateCube(5, 10, 10);
+				meshC.Translate(-2.5, 0, 0);
+				var mesh = Object3D.CombineParticipants(null,
+					new IObject3D[]
+					{
+						new Object3D() { Mesh = meshA },
+						new Object3D() { Mesh = meshB },
+						new Object3D() { Mesh = meshC },
+					},
+					new CancellationToken());
+				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
+				Assert.AreEqual(44, mesh.Faces.Count());
+				var aabb = mesh.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(10, aabb.YSize, .001);
+			}
+
 		}
 
 		[Test, Category("InteractiveScene")]

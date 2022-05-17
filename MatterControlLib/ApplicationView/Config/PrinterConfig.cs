@@ -40,6 +40,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -69,7 +70,8 @@ namespace MatterHackers.MatterControl
 
 		private PrinterSettingsLayer sceneOverrides = new PrinterSettingsLayer();
 
-		private bool watingToCheckSceneLayer;
+		private RunningInterval checkForSceneLayer;
+		private object locker = new object();
 
 		private PrinterSettingsLayer GetSceneLayer()
 		{
@@ -77,38 +79,80 @@ namespace MatterHackers.MatterControl
 			if (scene != null)
 			{
 				var foundPartSettings = false;
-				var currentSceneOverrides = new PrinterSettingsLayer();
+				var newSceneOverrides = new PrinterSettingsLayer();
 				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
-				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).OrderBy(i => i.Name))
+				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D && c.Parent?.WorldPrintable() == true).OrderBy(i => i.Name))
 				{
 					foundPartSettings = true;
 					var settings = ((PartSettingsObject3D)partSettingsObject).Overrides;
 					foreach (var setting in settings)
 					{
-						currentSceneOverrides[setting.Key] = setting.Value;
+						newSceneOverrides[setting.Key] = setting.Value;
 					}
 				}
 
-				var same = currentSceneOverrides.Count == sceneOverrides.Count && !currentSceneOverrides.Except(sceneOverrides).Any();
+				var same = newSceneOverrides.Count == sceneOverrides.Count && !newSceneOverrides.Except(sceneOverrides).Any();
+				// if settings count and keys the same, check the value of the settings
+				if (same && sceneOverrides.Count > 0)
+				{
+					// check each setting if it is the same
+					foreach (var kvp in newSceneOverrides)
+					{
+						if (sceneOverrides[kvp.Key] != newSceneOverrides[kvp.Key])
+						{
+							same = false;
+						}
+					}
+				}
 
 				// if they are different 
 				if (!same)
                 {
+					var settingsToUpdate = new HashSet<string>();
+					foreach (var kvp in sceneOverrides)
+					{
+						settingsToUpdate.Add(kvp.Key);
+					}
+					foreach (var kvp in newSceneOverrides)
+					{
+						settingsToUpdate.Add(kvp.Key);
+					}
+
 					// store that current set
-					sceneOverrides = currentSceneOverrides;
-					// stash user overrides for all the values that are set
-					Settings.DeactivateConflictingUserOverrides(sceneOverrides);
+					sceneOverrides = newSceneOverrides;
+
+					// we are about to update settings but they are stored in the scene not the profile so we don't have to save anything
+					var updateList = settingsToUpdate.ToList();
+					ProfileManager.SaveOnSingleSettingChange = false;
+					for (int i = 0; i < updateList.Count; i++)
+					{
+						Settings.OnSettingChanged(updateList[i]);
+					}
+					ProfileManager.SaveOnSingleSettingChange = true;
 				}
 
-				if (foundPartSettings && !watingToCheckSceneLayer)
+				if (foundPartSettings)
                 {
-					watingToCheckSceneLayer = true;
-					UiThread.RunOnIdle(() =>
+					lock (locker)
 					{
-						watingToCheckSceneLayer = false;
-						GetSceneLayer();
-					}, .5);
+						if (checkForSceneLayer == null)
+						{
+							checkForSceneLayer = UiThread.SetInterval(() =>
+							{
+								GetSceneLayer();
+							}, .5);
+						}
+					}
                 }
+				else if (checkForSceneLayer != null)
+                {
+					lock (locker)
+					{
+						// we don't have a scene layer so remove the interval
+						UiThread.ClearInterval(checkForSceneLayer);
+						checkForSceneLayer = null;
+					}
+				}
 
 				// return the current set
 				return sceneOverrides;

@@ -33,7 +33,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -51,7 +50,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool IsOpen => popupContent?.ContainsFocus == true;
 
-		public ItemColorButton(ThemeConfig theme, Color selectedColor, Action<Action<Color>> getPickedColor)
+		private static int TransparentAmount => 120;
+
+		public ItemColorButton(ThemeConfig theme, Color selectedColor, Action<Action<Color>> getPickedColor, bool transparentCheckbox)
 		{
 			this.ToolTipText = "Color".Localize();
 			var scaledButtonSize = 24 * GuiWidget.DeviceScale;
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color, getPickedColor);
+				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color, getPickedColor, transparentCheckbox);
 				return popupContent;
 			};
 
@@ -100,11 +101,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public static GuiWidget NewColorSelector(ThemeConfig theme,
-			Color selectedColor,
+			Color startingColor,
 			ThemeConfig menuTheme,
 			Action<Color> update,
-			Action<Action<Color>> getPickedColor)
+			Action<Action<Color>> getPickedColor,
+			bool transparentCheckbox)
 		{
+			CheckBox transparent = null;
+
 			var content = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				Padding = new BorderDouble(5),
@@ -116,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var pickerContainer = content.AddChild(new GuiWidget(128 * DeviceScale, 128 * DeviceScale));
 			var picker = pickerContainer.AddChild(new RadialColorPicker()
 			{
-				SelectedColor = selectedColor.WithAlpha(255),
+				SelectedColor = startingColor.WithAlpha(255),
 				BackgroundColor = Color.Transparent,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
@@ -124,6 +128,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			picker.SelectedColorChanged += (s, newColor) =>
 			{
 				htmlField.SetValue(picker.SelectedColor.Html.Substring(1, 6), false);
+				if (transparent?.Checked == true)
+				{
+					picker.SelectedColor = picker.SelectedColor.WithAlpha(TransparentAmount);
+				}
+				else
+				{
+					picker.SelectedColor = picker.SelectedColor.WithAlpha(255);
+				}
 				update?.Invoke(picker.SelectedColor);
 			};
 
@@ -135,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in an html edit field
 			htmlField.Initialize(0);
-			htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+			htmlField.SetValue(startingColor.Html.Substring(1, 6), false);
 			htmlField.ClearUndoHistory();
 			htmlField.ValueChanged += (s, e) =>
 			{
@@ -150,11 +162,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// we did not understand the color
 					// set it back to selectedColor
-					htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+					htmlField.SetValue(startingColor.Html.Substring(1, 6), false);
 				}
 				else // valid color set
 				{
-					picker.SelectedColor = color;
+					if (transparent?.Checked == true)
+					{
+						picker.SelectedColor = color.WithAlpha(TransparentAmount);
+					}
+					else
+					{
+						picker.SelectedColor = color.WithAlpha(255);
+					}
 				}
 			};
 
@@ -193,6 +212,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			picker.SelectedColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
 
+			if (transparentCheckbox)
+            {
+				transparent = new CheckBox("Transparent".Localize())
+				{
+					TextColor = theme.TextColor,
+					Margin = new BorderDouble(15, 0, 0, 3),
+					HAnchor = HAnchor.Fit | HAnchor.Left,
+					VAnchor = VAnchor.Absolute,
+					ToolTipText = "Set the rendering for the object to be transparent".Localize(),
+					Checked = startingColor.Alpha0To255 < 255,
+				};
+				
+				rightContent.AddChild(transparent);
+
+				transparent.CheckedStateChanged += (s, e) =>
+				{
+					if (transparent.Checked)
+					{
+						picker.SelectedColor = picker.SelectedColor.WithAlpha(TransparentAmount);
+					}
+					else
+					{
+						picker.SelectedColor = picker.SelectedColor.WithAlpha(255);
+					}
+
+					update?.Invoke(picker.SelectedColor);
+				};
+			}
+
 			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
 			{
 				Margin = new BorderDouble(0, 0, 0, 3),
@@ -222,7 +270,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					getPickedColor((color) =>
 					{
 						update?.Invoke(color);
-						picker.SelectedColor = color;
+						if (transparent?.Checked == true)
+						{
+							picker.SelectedColor = color.WithAlpha(TransparentAmount);
+						}
+						else
+						{
+							picker.SelectedColor = color;
+						}
 					});
 				};
 				

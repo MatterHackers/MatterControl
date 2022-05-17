@@ -235,23 +235,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Verify grouping parts creates a group.
 				testRunner.ClickByName("Group Button");
 				Assert.AreEqual(partCount - 1, scene.Children.Count, "Should have {0} parts after group", partCount - 1);
-				Assert.IsInstanceOf<GroupObject3D>(scene.SelectedItem, "Scene selection should be group");
-				Assert.IsInstanceOf<GroupObject3D>(designTree.SelectedNode.Tag, "Group should be selected in design tree");
+				Assert.IsInstanceOf<GroupHolesAppliedObject3D>(scene.SelectedItem, "Scene selection should be group");
+				Assert.IsInstanceOf<GroupHolesAppliedObject3D>(designTree.SelectedNode.Tag, "Group should be selected in design tree");
 				Assert.AreSame(scene.SelectedItem, designTree.SelectedNode.Tag, "Same group object should be selected in scene and design tree");
 
 				treeNodes = FetchTreeNodes();
 				Assert.AreEqual(scene.Children.Count, treeNodes.Count, "Scene part count should equal tree node count after group");
-				Assert.IsTrue(treeNodes.Any(node => node.Tag is GroupObject3D), "Design tree should have node for group");
-				Assert.AreSame(designTree.SelectedNode.Tag, treeNodes.Single(node => node.Tag is GroupObject3D).Tag, "Selected node in design tree should be group node");
+				Assert.IsTrue(treeNodes.Any(node => node.Tag is GroupHolesAppliedObject3D), "Design tree should have node for group");
+				Assert.AreSame(designTree.SelectedNode.Tag, treeNodes.Single(node => node.Tag is GroupHolesAppliedObject3D).Tag, "Selected node in design tree should be group node");
 
-				var groupNode = treeNodes.Where(node => node.Tag is GroupObject3D).Single();
+				var groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
 				Assert.AreEqual(2, groupNode.Nodes.Count, "Group should have 2 parts");
 				Assert.IsTrue(
 					new HashSet<string>(groupNode.Nodes.Select(node => ((IObject3D)node.Tag).Name)).SetEquals(new[] {"Half Cylinder", "Pyramid"}),
 					"Half Cylinder and Pyramind should be grouped");
 
 				var singleItemNodes = treeNodes
-					.Where(node => !(node.Tag is GroupObject3D))
+					.Where(node => !(node.Tag is GroupHolesAppliedObject3D))
 					.Where(node => !(node.Tag is SelectionGroupObject3D))
 					.ToList();
 				var singleItemNames = new HashSet<string>(singleItemNodes.Select(item => ((IObject3D)item.Tag).Name));
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Verify control-clicking a part in the group does not get added to the selection group. Only top-level nodes can be
 				// selected.
 				treeNodes = FetchTreeNodes();
-				groupNode = treeNodes.Where(node => node.Tag is GroupObject3D).Single();
+				groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(groupNode.Nodes.Last())
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selected item should be a selection group after control-clicking on group");
 				Assert.AreEqual(3, scene.SelectedItem.Children.Count, "Selection should have 3 items after control-clicking on group");
 				Assert.IsTrue(
-					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] {"Half Wedge", "Sphere", "Group"}),
+					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] {"Half Wedge", "Sphere", "Half Cylinder, Pyramid" }),
 					"Selection should have Group, Half Wedge, Sphere");
 
 				//===========================================================================================//
@@ -316,14 +316,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection group should exist after removing a child");
 				Assert.AreEqual(2, scene.SelectedItem.Children.Count, "Selection should have 2 parts after removing a child");
 				Assert.IsTrue(
-					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] {"Group", "Sphere"}),
+					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] { "Half Cylinder, Pyramid", "Sphere"}),
 					"Group and Sphere should be in selection after removing a child");
 
 				//===========================================================================================//
 				// Verify control-clicking on second-to-last part in the selection removes it from the selection
 				// and destroys selection group.
 				treeNodes = FetchTreeNodes();
-				groupNode = treeNodes.Where(node => node.Tag is GroupObject3D).Single();
+				groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
 				sphereNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Sphere").Single();
 
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
 
 				treeNodes = FetchTreeNodes();
-				groupNode = treeNodes.Where(node => node.Tag is GroupObject3D).Single();
+				groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(groupNode.Nodes.Last())
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task DesignTabFileOpperations()
+		public async Task DesignTabFileOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
