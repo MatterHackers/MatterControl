@@ -605,6 +605,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (solids.Any())
 			{
 				bool firstSolid = true;
+				var solidsCount = solids.Count();
 				foreach (var solid in solids)
 				{
 					var itemWorldMatrix = solid.WorldMatrix();
@@ -620,7 +621,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					outputItems.Add((itemWorldMatrix, Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, solid.MeshPath)));
 					mergeString += $"{savedStlCount++}";
-					if (solids.Count() > 1)
+					if (solidsCount > 1)
 					{
 						if (firstSolid)
 						{
