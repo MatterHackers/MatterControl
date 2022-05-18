@@ -698,67 +698,6 @@ namespace MatterControl.Tests.MatterControl
 					// {"", "0x0x0"}, // no values should become 0s
 				});
 		}
-
-		[Test, Ignore("Not Implemented")]
-		public void TextFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void ReadOnlyTextFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void BoundDoubleFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void CharFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void DirectionVectorFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void EnumFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void IconEnumFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public async Task MarkdownEditFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public async Task ListStringFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public async Task SurfacedEditorsFieldTest()
-		{
-			Assert.Fail();
-		}
-
 		public class ValueMap
 		{
 			[DebuggerStepThrough]

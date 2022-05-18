@@ -143,14 +143,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					"M109 S205",
 					"G1 X5 Y5 Z3.13 F1800",
 					"G92 E0                 ; Purge line",
-					"G1 X5.83 Y5 Z3.04 E0.833 F900",
-					"G1 X6.67 Y5 Z2.96 E1.667",
-					"G1 X7.5 Y5 Z2.87 E2.5",
-					"G1 X8.33 Y5 Z2.79 E3.333",
-					"G1 X9.17 Y5 Z2.7 E4.167",
-					"G1 X10 Y5 Z2.62 E5",
+					"G1 X5.83 Z3.04 E0.833 F900",
+					"G1 X6.67 Z2.96 E1.667",
+					"G1 X7.5 Z2.87 E2.5",
+					"G1 X8.33 Z2.79 E3.333",
+					"G1 X9.17 Z2.7 E4.167",
+					"G1 X10 Z2.62 E5",
 					"G92 E0                 ; Purge line",
-					"G1 X10 Y5 Z2.62 E-2 F2400",
+					"G1 E-2 F2400",
 					"M75                    ; start print timer",
 				};
 
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					for (int j = 0; j < expectedLines.Length; j++)
 					{
-						Assert.AreEqual(actualLines[i + j], expectedLines[j], "All lines should match");
+						Assert.AreEqual(expectedLines[j], actualLines[i + j], "All lines should match");
 						// Debug.WriteLine("\"" + actualLines[i + j] + "\",");
 					}
 

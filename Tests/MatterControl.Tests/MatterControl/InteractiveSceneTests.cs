@@ -624,6 +624,7 @@ namespace MatterControl.Tests.MatterControl
 						new Object3D() { Mesh = meshB },
 					},
 					new CancellationToken());
+				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
 				Assert.AreEqual(12, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
 				Assert.AreEqual(20, aabb.YSize, .001);
@@ -648,10 +649,10 @@ namespace MatterControl.Tests.MatterControl
 						new Object3D() { Mesh = meshC },
 					},
 					new CancellationToken());
-				StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
-				Assert.AreEqual(20, mesh.Faces.Count());
+				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
+				Assert.AreEqual(44, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(16, aabb.YSize, .001);
+				Assert.AreEqual(10, aabb.YSize, .001);
 			}
 
 		}

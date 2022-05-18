@@ -161,47 +161,47 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public IEnumerable<EditorButtonData> GetEditorButtonsData()
         {
-            var containingPrinter = this.ContainingPrinter();
-            if (containingPrinter != null)
-            {
-                yield return new EditorButtonData()
-                {
-                    Action = () =>
-                    {
-                        var settingsContext = new SettingsContext(containingPrinter, null, NamedSettingsLayers.All);
-                        foreach (var setting in containingPrinter.Settings.UserLayer.ToList())
-                        {
-                            var data = SliceSettingsRow.GetStyleData(containingPrinter, ApplicationController.Instance.Theme, settingsContext, setting.Key, true);
-
-                            if (!settingsToIgnore.Contains(setting.Key)
-                                && data.showRestoreButton
-                                && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
-                                && SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
-                            {
-                                Overrides[setting.Key] = setting.Value;
-                            }
-                        }
-
-                        foreach (var setting in Overrides.ToList())
-                        {
-                            if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
-                                || !SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
-                            {
-                                Overrides.Remove(setting.Key);
-                            }
-                        }
-
-
-                        UpdateSettingsDisplay();
-                    },
-                    Name = "Add User Overrides".Localize(),
-                    HelpText = "Copy in all current user overides".Localize()
-                };
-            }
-
-
             if (ApplicationController.Instance.UserHasPermission(this))
             {
+                var containingPrinter = this.ContainingPrinter();
+                if (containingPrinter != null)
+                {
+                    yield return new EditorButtonData()
+                    {
+                        Action = () =>
+                        {
+                            var settingsContext = new SettingsContext(containingPrinter, null, NamedSettingsLayers.All);
+                            foreach (var setting in containingPrinter.Settings.UserLayer.ToList())
+                            {
+                                var data = SliceSettingsRow.GetStyleData(containingPrinter, ApplicationController.Instance.Theme, settingsContext, setting.Key, true);
+
+                                if (!settingsToIgnore.Contains(setting.Key)
+                                    && data.showRestoreButton
+                                    && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
+                                    && SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
+                                {
+                                    Overrides[setting.Key] = setting.Value;
+                                }
+                            }
+
+                            foreach (var setting in Overrides.ToList())
+                            {
+                                if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
+                                    || !SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
+                                {
+                                    Overrides.Remove(setting.Key);
+                                }
+                            }
+
+
+                            UpdateSettingsDisplay();
+                        },
+                        Name = "Add User Overrides".Localize(),
+                        HelpText = "Copy in all current user overides".Localize()
+                    };
+                }
+
+
                 yield return new EditorButtonData()
                 {
                     Action = () =>
