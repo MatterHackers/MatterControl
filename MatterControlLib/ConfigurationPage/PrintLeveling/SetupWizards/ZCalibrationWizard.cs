@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this,
 					ProbeStartPosition,
 					"Conductive Probing".Localize(),
-					"Measure the nozzle to probe offset using the conductive pad.".Localize(),
+					"Measuring the nozzle to probe offset using the conductive pad.".Localize(),
 					manualProbePositions[0]);
 
 				yield return conductiveProbeFeedback;
@@ -264,18 +264,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (conductiveProbeFeedback.MovedBelowMinZ)
 				{
 					// show an error message
-					yield return new WizardPage(
+					var errorPage = new WizardPage(
 						this,
 						"Error: Below Conductive Probe Min Z".Localize(),
-						"The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.".Localize());
-				}
+						"The printer moved below the minimum height set for conductive probing.".Localize() + "\n"
+						+ "Check that the nozzle is clean and there is continuity with the pad.".Localize() + "\n\n"
+						+ "After cleaning the nozzle, run the wizard again.".Localize());
+                    
+					errorPage.Load += (s, e) =>
+                    {
+						errorPage.ShowWizardFinished();
+					};
+
+                    yield return errorPage;
+                }
 				else // found a good probe height
 				{
 					SetExtruderOffset(autoProbePositions, manualProbePositions, 0);
-				}
 
-				// let the user know we are done with the automatic probing
-				yield return new ConductiveProbeCalibrateComplete(printer, this, PageTitle);
+					// let the user know we are done with the automatic probing
+					yield return new ConductiveProbeCalibrateComplete(printer, this, PageTitle);
+				}
 			}
 			else // collect the probe information manually
 			{
