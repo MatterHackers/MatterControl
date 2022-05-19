@@ -1316,7 +1316,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// Invoke all item Drawables
 						foreach (var drawable in itemDrawables)
 						{
-							if (drawable.Enabled)
+							var selectedItemDrawable = drawable as SelectedItemDrawable;
+							if ((selectedItemDrawable != null && isSelected) 
+								|| (selectedItemDrawable == null && drawable.Enabled))
 							{
 								aabbs.Add(drawable.GetWorldspaceAABB(item, isSelected, this.World));
 							}
