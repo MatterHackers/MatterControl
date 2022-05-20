@@ -208,7 +208,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 					hsl.h = colorAngle / MathHelper.Tau;
 
-					Invalidate();
+                    if (hsl.s == 0)
+                    {
+                        hsl.s = .75;
+                        hsl.l = .5;
+                    }
+
+                    Invalidate();
 				}
 				else
 				{
