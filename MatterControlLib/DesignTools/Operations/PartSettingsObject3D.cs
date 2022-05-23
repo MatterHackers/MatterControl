@@ -170,6 +170,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     {
                         Action = () =>
                         {
+                            var startingOverrides = new PrinterSettingsLayer(Overrides);
+                            var editOverrides = new PrinterSettingsLayer(Overrides);
+
                             var settingsContext = new SettingsContext(containingPrinter, null, NamedSettingsLayers.All);
                             foreach (var setting in containingPrinter.Settings.UserLayer.ToList())
                             {
@@ -180,21 +183,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                                     && SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
                                     && SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
                                 {
-                                    Overrides[setting.Key] = setting.Value;
+                                    editOverrides[setting.Key] = setting.Value;
                                 }
                             }
 
-                            foreach (var setting in Overrides.ToList())
+                            foreach (var setting in editOverrides.ToList())
                             {
                                 if (!SliceSettingsLayouts.ContainesKey(SliceSettingsLayouts.SliceSettings(), setting.Key)
                                     || !SliceSettingsTabView.CheckIfShouldBeShown(PrinterSettings.SettingsData[setting.Key], settingsContext))
                                 {
-                                    Overrides.Remove(setting.Key);
+                                    editOverrides.Remove(setting.Key);
                                 }
                             }
 
-
-                            UpdateSettingsDisplay();
+                            var scene = this.ContainingScene();
+                            scene.UndoBuffer.AddAndDo(new UndoRedoActions(() =>
+                            {
+                                Overrides = new PrinterSettingsLayer(startingOverrides);
+                                UpdateSettingsDisplay();
+                            },
+                            () =>
+                            {
+                                Overrides = new PrinterSettingsLayer(editOverrides);
+                                UpdateSettingsDisplay();
+                            }));
                         },
                         Name = "Add User Overrides".Localize(),
                         HelpText = "Copy in all current user overides".Localize()
@@ -207,7 +219,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     Action = () =>
                     {
                         var settings = new PrinterSettings();
-                        settings.GetSceneLayer = () => Overrides;
+                        var startingOverrides = new PrinterSettingsLayer(Overrides);
+                        var editOverrides = new PrinterSettingsLayer(Overrides);
+                        settings.GetSceneLayer = () => editOverrides;
                         var printer = new PrinterConfig(settings);
                         if (containingPrinter != null)
                         {
@@ -216,9 +230,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
                         // set this after the PrinterConfig is constructed to change it to overrides
                         // set this after the PrinterConfig is constructed to change it to overrides
-                        settings.GetSceneLayer = () => Overrides;
+                        settings.GetSceneLayer = () => editOverrides;
 
-                        var presetsContext = new PresetsContext(null, Overrides)
+                        var presetsContext = new PresetsContext(null, editOverrides)
                         {
                             LayerType = NamedSettingsLayers.Scene,
                         };
@@ -227,9 +241,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                         editPartSettingsPresetsPage.Closed += (s, e2) =>
                         {
                             ApplicationController.Instance.AcitveSlicePresetsPage = null;
-                            UpdateSettingsDisplay();
-                        };
 
+                            // push the new settings into this object
+                            var scene = this.ContainingScene();
+                            scene.UndoBuffer.AddAndDo(new UndoRedoActions(() =>
+                            {
+                                Overrides = new PrinterSettingsLayer(startingOverrides);
+                                UpdateSettingsDisplay();
+                            },
+                            () =>
+                            {
+                                Overrides = new PrinterSettingsLayer(editOverrides);
+                                UpdateSettingsDisplay();
+                            }));
+                        };
+                        
                         ApplicationController.Instance.AcitveSlicePresetsPage = editPartSettingsPresetsPage;
                         DialogWindow.Show(editPartSettingsPresetsPage);
                     },
