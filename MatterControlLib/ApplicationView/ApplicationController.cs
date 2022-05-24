@@ -762,7 +762,12 @@ namespace MatterHackers.MatterControl
 			await this.MainView.CreateNewDesignTab(false);
 			
 			var workspace = this.Workspaces.Last();
-			workspace.SceneContext.AddToPlate(selectedLibraryItems);
+			var insertionGroup = workspace.SceneContext.AddToPlate(selectedLibraryItems);
+
+            // wait for the insertion to finish
+            await insertionGroup.LoadingItemsTask;
+            // then clear the undo buffer so we don't ask to save and undoing does not remove the starting part
+			workspace.SceneContext.Scene.UndoBuffer.ClearHistory();
 		}
 
 		internal void BlinkTab(ITab tab)

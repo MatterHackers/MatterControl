@@ -1344,7 +1344,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			TrackballTumbleWidget.OnBeforeDraw3D();
+			TrackballTumbleWidget.RecalculateProjection();
 
 			base.OnDraw(graphics2D);
 		}

@@ -227,11 +227,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public void OnBeforeDraw3D()
-		{
-			RecalculateProjection();
-		}
-
 		public void OnDraw3D()
 		{
 			if (hitPlane != null)

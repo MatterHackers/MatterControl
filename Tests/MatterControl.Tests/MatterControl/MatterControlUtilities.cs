@@ -1570,51 +1570,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <returns>The AutomationRunner</returns>
 		public static AutomationRunner RectangleSelectParts(this AutomationRunner testRunner, Object3DControlsLayer controlLayer, IEnumerable<string> partNames)
 		{
-			var topWindow = controlLayer.Parents<SystemWindow>().First();
-			var widgets = partNames
-				.Select(name => ResolveName(controlLayer.Scene.Children, name))
-				.Where(x => x.Ok)
-				.Select(x =>
-				{
-					var widget = testRunner.GetWidgetByName(x.Name, out var containingWindow, 1);
-					return new
-					{
-						Widget = widget ?? controlLayer,
-						ContainingWindow = widget != null ? containingWindow : topWindow,
-						x.Bounds
-					};
-				})
-				.ToList();
-			if (!widgets.Any())
-			{
-				return testRunner;
-			}
-
-			var minPosition = widgets.Aggregate((double.MaxValue, double.MaxValue), (acc, wi) =>
-			{
-				var bounds = wi.Widget.TransformToParentSpace(wi.ContainingWindow, wi.Bounds);
-				var x = bounds.Left - 1;
-				var y = bounds.Bottom - 1;
-				return (x < acc.Item1 ? x : acc.Item1, y < acc.Item2 ? y : acc.Item2);
-			});
-			var maxPosition = widgets.Aggregate((0d, 0d), (acc, wi) =>
-			{
-				var bounds = wi.Widget.TransformToParentSpace(wi.ContainingWindow, wi.Bounds);
-				var x = bounds.Right + 1;
-				var y = bounds.Top + 1;
-				return (x > acc.Item1 ? x : acc.Item1, y > acc.Item2 ? y : acc.Item2);
-			});
-
-			var systemWindow = widgets.First().ContainingWindow;
-			testRunner.SetMouseCursorPosition(systemWindow, (int)minPosition.Item1, (int)minPosition.Item2);
-			testRunner.DragToPosition(systemWindow, (int)maxPosition.Item1, (int)maxPosition.Item2).Drop();
-
-			return testRunner;
-
 			RectangleDouble GetBoundingBox(IObject3D part)
 			{
 				var screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
-				var bounds = part.GetBVHData().GetAxisAlignedBoundingBox();
+				var bounds = part.GetAxisAlignedBoundingBox();
 
 				for (var i = 0; i < 4; i += 1)
 				{
@@ -1625,41 +1584,87 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return screenBoundsOfObject3D;
 			}
 
-			(bool Ok, string Name, RectangleDouble Bounds)
+			(string Name, RectangleDouble Bounds)
 				ResolveName(IEnumerable<IObject3D> parts, string name)
 			{
 				foreach (var part in parts)
 				{
 					if (part.Name == name)
 					{
-						return (true, name, GetBoundingBox(part));
+						return (name, GetBoundingBox(part));
 					}
 
 					if (part is GroupObject3D group)
 					{
-						var (ok, _, bounds) = ResolveName(group.Children, name);
-						if (ok)
+						var (nameOut, bounds) = ResolveName(group.Children, name);
+						if (nameOut != null)
 						{
 							// WARNING the position of a part changes when it's added to a group.
 							// Not sure if there's some sort of offset that needs to be applied or
 							// if this is a bug. It is restored to its correct position when the
 							// part is ungrouped.
-							return (true, name, bounds);
+							return (nameOut, bounds);
 						}
 					}
 
 					if (part is SelectionGroupObject3D selection)
 					{
-						var (ok, _, bounds) = ResolveName(selection.Children, name);
-						if (ok)
+						var (nameOut, bounds) = ResolveName(selection.Children, name);
+						if (nameOut != null)
 						{
-							return (true, name, bounds);
+							return (nameOut, bounds);
 						}
 					}
 				}
 
-				return (false, null, RectangleDouble.ZeroIntersection);
+				return (null, RectangleDouble.ZeroIntersection);
 			}
+
+			var topWindow = controlLayer.Parents<SystemWindow>().First();
+
+			var widgetContainingWindowBounds = partNames
+				.Select(name => ResolveName(controlLayer.Scene.Children, name))
+				.Where(nameBounds => nameBounds.Name != null)
+				.Select(nameBounds =>
+				{
+					var widget = testRunner.GetWidgetByName(nameBounds.Name, out var containingWindow, 1);
+					return new
+					{
+						Widget = widget ?? controlLayer,
+						ContainingWindow = widget != null ? containingWindow : topWindow,
+						nameBounds.Bounds
+					};
+				})
+				.ToList();
+			
+			if (!widgetContainingWindowBounds.Any())
+			{
+				return testRunner;
+			}
+
+            // start out with a big number so we can find the smallest
+            var minPosition = widgetContainingWindowBounds.Aggregate((double.MaxValue, double.MaxValue), (acc, wcwb) =>
+			{
+				var bounds = wcwb.Widget.TransformToParentSpace(wcwb.ContainingWindow, wcwb.Bounds);
+				var x = bounds.Left - 1;
+				var y = bounds.Bottom - 1;
+				return (x < acc.Item1 ? x : acc.Item1, y < acc.Item2 ? y : acc.Item2);
+			});
+            
+            // start out with a small number so we can find the bigest
+			var maxPosition = widgetContainingWindowBounds.Aggregate((double.MinValue, double.MinValue), (acc, wi) =>
+			{
+				var bounds = wi.Widget.TransformToParentSpace(wi.ContainingWindow, wi.Bounds);
+				var x = bounds.Right + 1;
+				var y = bounds.Top + 1;
+				return (x > acc.Item1 ? x : acc.Item1, y > acc.Item2 ? y : acc.Item2);
+			});
+
+			var systemWindow = widgetContainingWindowBounds.First().ContainingWindow;
+			testRunner.SetMouseCursorPosition(systemWindow, (int)minPosition.Item1, (int)minPosition.Item2);
+			testRunner.DragToPosition(systemWindow, (int)maxPosition.Item1, (int)maxPosition.Item2).Drop();
+
+			return testRunner;
 		}
 	}
 

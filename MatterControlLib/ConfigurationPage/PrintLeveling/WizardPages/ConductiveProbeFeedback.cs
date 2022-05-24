@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                                 {
                                     probePositions[0].Position = nozzleCurrentPosition;
 
+                                    // make sure we are no longer listening for responses
+                                    printer.Connection.LineReceived -= PrinterLineRecieved;
                                     // move on to the next page of the wizard
                                     UiThread.RunOnIdle(() => NextButton.InvokeClick());
                                 }
@@ -134,6 +136,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                             // we have gone down too far
                             // abort with error
                             this.MovedBelowMinZ = true;
+                            // make sure we are no longer listening for responses
+                            printer.Connection.LineReceived -= PrinterLineRecieved;
+                            printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.Z, 10, printer.Settings.ZSpeed());
                             // move on to the next page of the wizard
                             UiThread.RunOnIdle(() => NextButton.InvokeClick());
                         }

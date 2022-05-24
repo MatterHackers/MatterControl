@@ -72,13 +72,20 @@ namespace MatterHackers.MatterControl
 
 		private RunningInterval checkForSceneLayer;
 		private object locker = new object();
+		private ulong undoBufferHashCode = 0;
 
 		private PrinterSettingsLayer GetSceneLayer()
 		{
 			var scene = Bed?.Scene;
 			if (scene != null)
 			{
-				var foundPartSettings = false;
+                if (sceneOverrides != null
+                    && undoBufferHashCode == scene.UndoBuffer.GetLongHashCode())
+                {
+					return sceneOverrides;
+                }
+
+                var foundPartSettings = false;
 				var newSceneOverrides = new PrinterSettingsLayer();
 				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
 				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D && c.Parent?.WorldPrintable() == true).OrderBy(i => i.Name))
@@ -155,6 +162,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				// return the current set
+				undoBufferHashCode = scene.UndoBuffer.GetLongHashCode();
 				return sceneOverrides;
 			}
 

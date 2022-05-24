@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		protected void ShowWizardFinished(Action doneClicked = null)
+		public void ShowWizardFinished(Action doneClicked = null)
 		{
 			var doneButton = new TextButton("Done".Localize(), theme)
 			{

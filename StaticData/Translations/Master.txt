@@ -265,6 +265,9 @@ Translated:Advanced
 English:Advanced Array
 Translated:Advanced Array
 
+English:After cleaning the nozzle, run the wizard again.
+Translated:After cleaning the nozzle, run the wizard again.
+
 English:After Tool Change G-Code
 Translated:After Tool Change G-Code
 
@@ -756,6 +759,9 @@ Translated:Check for Update
 
 English:Check For Update
 Translated:Check For Update
+
+English:Check that the nozzle is clean and there is continuity with the pad.
+Translated:Check that the nozzle is clean and there is continuity with the pad.
 
 English:Checking Cloud Services
 Translated:Checking Cloud Services
@@ -2832,6 +2838,9 @@ Translated:Measure the nozzle to probe offset using the conductive pad.
 
 English:Measure Tool
 Translated:Measure Tool
+
+English:Measuring the nozzle to probe offset using the conductive pad.
+Translated:Measuring the nozzle to probe offset using the conductive pad.
 
 English:Mechanical
 Translated:Mechanical
@@ -5376,6 +5385,9 @@ Translated:The printer has the ability to move each z motor independently and th
 
 English:The printer is now aliging the z-axis. It will do the following:
 Translated:The printer is now aliging the z-axis. It will do the following:
+
+English:The printer moved below the minimum height set for conductive probing.
+Translated:The printer moved below the minimum height set for conductive probing.
 
 English:The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.
 Translated:The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.

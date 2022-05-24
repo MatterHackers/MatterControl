@@ -70,6 +70,12 @@ namespace MatterHackers.PrinterEmulator
 				return "ok\n";
 			}
 
+            string TurnOnConductive(string a)
+			{
+                this.ConductivePad = true;
+                return "ok\n";
+            }
+
 			string ChangeToFast(string a)
 			{
 				this.RunSlow = false;
@@ -80,6 +86,7 @@ namespace MatterHackers.PrinterEmulator
 			{
 				{ "A",    Echo },
 				{ "FAST", ChangeToFast },
+				{ "CONDUCTIVE", TurnOnConductive },
 				{ "G0",   ParseMovmentCommand },
 				{ "G1",   ParseMovmentCommand },
 				{ "G28",  HomeAxis },
@@ -129,6 +136,19 @@ namespace MatterHackers.PrinterEmulator
 			status += $"x_max: {xMaxOpen}\n";
 			status += $"y_min: open\n";
 			status += $"z_min: open\n";
+
+			if (ConductivePad)
+			{
+				if (conductivePadTriggerRegion.Contains(CurrentPosition))
+				{
+					status += $"conductive: TRIGGERED\n";
+				}
+				else
+                {
+					status += $"conductive: open\n";
+				}
+			}
+
 			status += "ok\n";
 			return status;
 		}
@@ -762,6 +782,13 @@ ok
 		public Vector3 HomePosition { get; set; } = default(Vector3);
 
 		public Vector3 XYZProbeOffset { get; set; } = new Vector3(0, 0, -5);
+
+        /// <summary>
+        /// The emulated printer has a conductive pad that can be used to probe the bed.
+        /// </summary>
+        public bool ConductivePad { get; set; }
+
+		private AxisAlignedBoundingBox conductivePadTriggerRegion = new AxisAlignedBoundingBox(40, 210, -10, 60, 240, 0);
 
 		public void Close()
 		{

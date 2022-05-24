@@ -367,6 +367,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+
+		[JsonIgnore]
+		private RectangleDouble _meshAllowedBounds;
+        
 		/// <summary>
 		/// The bounds that a mesh can be placed at and the gcode it creates will be within the bed
 		/// </summary>
@@ -375,36 +379,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				var firstLayerExtrusionWidth = GetDouble(SettingsKey.first_layer_extrusion_width);
-				var bedBounds = BedBounds;
-				var totalOffset = 0.0;
-
-				if (GetBool(SettingsKey.create_raft))
-                {
-					// The slicing engine creates a raft 3x the extrusion width
-					firstLayerExtrusionWidth *= 3;
-					totalOffset += firstLayerExtrusionWidth;
-					totalOffset += GetDouble(SettingsKey.raft_extra_distance_around_part);
-                }
-
-				if (GetBool(SettingsKey.create_skirt))
+				if (_meshAllowedBounds.Width == 0)
 				{
-					totalOffset += GetValue<double>(SettingsKey.skirt_distance);
-					totalOffset += (GetDouble(SettingsKey.skirts) + .5) * firstLayerExtrusionWidth;
-					// for every 400mm of min skirt length add another skirt loops
-					totalOffset += GetDouble(SettingsKey.min_skirt_length) / (20 * 20);
+					CacluateMeshAllowedBounds();
 				}
 
-				if (GetBool(SettingsKey.create_brim)
-					&& !GetBool(SettingsKey.create_raft))
-				{
-					totalOffset += GetValue<double>(SettingsKey.brims) * GetDouble(SettingsKey.first_layer_extrusion_width);
-				}
-
-				bedBounds.Inflate(-totalOffset);
-
-				return bedBounds;
+				return _meshAllowedBounds;
 			}
+		}
+
+		private void CacluateMeshAllowedBounds()
+		{
+			var firstLayerExtrusionWidth = GetDouble(SettingsKey.first_layer_extrusion_width);
+			var bedBounds = BedBounds;
+			var totalOffset = 0.0;
+
+			if (GetBool(SettingsKey.create_raft))
+			{
+				// The slicing engine creates a raft 3x the extrusion width
+				firstLayerExtrusionWidth *= 3;
+				totalOffset += firstLayerExtrusionWidth;
+				totalOffset += GetDouble(SettingsKey.raft_extra_distance_around_part);
+			}
+
+			if (GetBool(SettingsKey.create_skirt))
+			{
+				totalOffset += GetValue<double>(SettingsKey.skirt_distance);
+				totalOffset += (GetDouble(SettingsKey.skirts) + .5) * firstLayerExtrusionWidth;
+				// for every 400mm of min skirt length add another skirt loops
+				totalOffset += GetDouble(SettingsKey.min_skirt_length) / (20 * 20);
+			}
+
+			if (GetBool(SettingsKey.create_brim)
+				&& !GetBool(SettingsKey.create_raft))
+			{
+				totalOffset += GetValue<double>(SettingsKey.brims) * GetDouble(SettingsKey.first_layer_extrusion_width);
+			}
+
+			bedBounds.Inflate(-totalOffset);
+
+			_meshAllowedBounds = bedBounds;
 		}
 
 		[JsonIgnore]
@@ -1026,6 +1040,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				|| slicerConfigName == SettingsKey.print_center)
 			{
 				this.ResetHotendBounds();
+			}
+
+			if (slicerConfigName == SettingsKey.first_layer_extrusion_width
+				|| slicerConfigName == SettingsKey.create_raft
+				|| slicerConfigName == SettingsKey.raft_extra_distance_around_part
+				|| slicerConfigName == SettingsKey.create_skirt
+				|| slicerConfigName == SettingsKey.skirt_distance
+				|| slicerConfigName == SettingsKey.skirts
+				|| slicerConfigName == SettingsKey.min_skirt_length
+				|| slicerConfigName == SettingsKey.create_brim
+				|| slicerConfigName == SettingsKey.print_center
+				|| slicerConfigName == SettingsKey.bed_size
+				|| slicerConfigName == SettingsKey.bed_shape)
+			{
+                // cleare this so it will be recaculated
+				_meshAllowedBounds = new RectangleDouble();
 			}
 
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));

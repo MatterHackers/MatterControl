@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportPillarSize);
+				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportPillarSize, "4");
 				if (value < 1.5)
 				{
 					return 1.5;
