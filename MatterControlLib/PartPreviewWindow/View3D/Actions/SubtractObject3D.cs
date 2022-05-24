@@ -155,12 +155,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 					{
-						progressStatus.Status = "Copy Remove";
-						reporter?.Report(progressStatus);
-
-						progressStatus.Status = "Copy Keep";
-						reporter?.Report(progressStatus);
-
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
 						var result = BooleanProcessing.Do(keep.obj3D.Mesh,

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var worldMatrix = item.WorldMatrix();
-			// probably need , true (require precision)
+			// probably need, true (require precision)
 			var aabb = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
 
 			var bed = printerConfig.Bed;
