@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 						// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
 						// to show the file (at least on Windows).
-						Process.Start(pathAndFileToSaveTo);
+						ApplicationController.ProcessStart(pathAndFileToSaveTo);
 					}
 					catch (Exception)
 					{
