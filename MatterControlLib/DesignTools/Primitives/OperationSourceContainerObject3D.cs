@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (keepItems.Any())
 				{
 					// apply any holes before we return
-					var resultItems = SubtractObject3D_2.DoSubtract(null,
+					var resultItems = SubtractObject3D_2.DoSubtract(this,
 						keepItems,
 						removeItems,
 						reporter,
