@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
                     if (resultsMesh != null)
                     {
-                        var resultItems = SubtractObject3D_2.DoSubtract(null,
+                        var resultItems = SubtractObject3D_2.DoSubtract(this,
                             new List<IObject3D>() { resultsItem },
                             new List<IObject3D>() { holesItem },
                             null,
