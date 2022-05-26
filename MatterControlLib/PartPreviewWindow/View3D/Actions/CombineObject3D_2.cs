@@ -129,10 +129,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             SourceContainer.Visible = true;
             RemoveAllButSource();
 
-            var holes = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) == PrintOutputTypes.Hole);
+            var holes = SourceContainer.VisibleMeshes().Where(m => m.OutputType == PrintOutputTypes.Hole);
 
             Mesh resultsMesh = null;
-            var participants = SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(this) != PrintOutputTypes.Hole);
+            var participants = SourceContainer.VisibleMeshes().Where(m => m.OutputType != PrintOutputTypes.Hole);
             if (participants.Count() == 0)
             {
                 if (holes.Count() == 0)
