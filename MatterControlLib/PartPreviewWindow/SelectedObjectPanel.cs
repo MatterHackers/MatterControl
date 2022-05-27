@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (selectedItem.Color != colorField.Color)
 					{
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
 					}
 				};
 
@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var currentOutputType = selectedItem.OutputType;
 					if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
 					{
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
 					}
 
 					SetButtonStates();

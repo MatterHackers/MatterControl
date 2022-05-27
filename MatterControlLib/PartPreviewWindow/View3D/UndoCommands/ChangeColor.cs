@@ -41,10 +41,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<Color> itemsColor = new List<Color>();
 		private List<IObject3D> itemsToChange = new List<IObject3D>();
 		private Color color;
+		private PrintOutputTypes outputTypeToSet;
 
-		public ChangeColor(IObject3D selectedItem, Color color)
+		public ChangeColor(IObject3D selectedItem, Color color, PrintOutputTypes outputType)
 		{
 			this.color = color;
+			this.outputTypeToSet = outputType;
 			if (selectedItem is SelectionGroupObject3D)
 			{
 				SetData(selectedItem.Children.ToList());
@@ -69,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach(var item in this.itemsToChange)
 			{
-				item.OutputType = PrintOutputTypes.Solid;
+				item.OutputType = outputTypeToSet;
 				item.Color = color;
 			}
 		}
