@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             {
 				var selections = new SelectedChildren();
 
-				foreach(var child in SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf().Children.Where(i => i.OutputType == PrintOutputTypes.Hole && !(i is OperationSourceObject3D) ))
+				foreach(var child in SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf().Children.Where(i => i.WorldOutputType(SourceContainer) == PrintOutputTypes.Hole && !(i is OperationSourceObject3D) ))
                 {
 					selections.Add(child.ID);
                 }
