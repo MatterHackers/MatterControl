@@ -302,7 +302,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (selectedItem.Color != colorField.Color)
 					{
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
+						if (colorField.Color == Color.Transparent)
+						{
+							undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
+						}
+                        else
+                        {
+							undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
+						}
 					}
 				};
 
