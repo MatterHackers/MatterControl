@@ -633,7 +633,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							mergeString += "+";
 						}
 					}
-					else if (holes.Any())
+					else if (holes?.Any() == true)
                     {
 						mergeString += ",";
                     }
