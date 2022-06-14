@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (supportObjects.Any())
 				{
 					// add a flag to the merge rules to let us know there was support
-					mergeRules += "S" + AddObjectsForExtruder(supportObjects, holes, outputOptions, ref savedStlCount);
+					mergeRules += "S" + AddObjectsForExtruder(supportObjects, null, outputOptions, ref savedStlCount);
 				}
 
 				var wipeTowerObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.WipeTower);
@@ -633,13 +633,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							mergeString += "+";
 						}
 					}
-					else if (holes.Any())
+					else if (holes?.Any() == true)
                     {
 						mergeString += ",";
                     }
 				}
 
-				if (holes.Any())
+				if (holes?.Any() == true)
 				{
 					bool firstHole = true;
 

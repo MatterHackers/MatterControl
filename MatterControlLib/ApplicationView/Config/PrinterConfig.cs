@@ -79,8 +79,11 @@ namespace MatterHackers.MatterControl
 			var scene = Bed?.Scene;
 			if (scene != null)
 			{
+                var undoBuffer = scene.UndoBuffer;
+
                 if (sceneOverrides != null
-                    && undoBufferHashCode == scene.UndoBuffer.GetLongHashCode())
+                    && undoBuffer != null
+                    && undoBufferHashCode == undoBuffer.GetLongHashCode())
                 {
 					return sceneOverrides;
                 }
@@ -162,7 +165,10 @@ namespace MatterHackers.MatterControl
 				}
 
 				// return the current set
-				undoBufferHashCode = scene.UndoBuffer.GetLongHashCode();
+				if (undoBuffer != null)
+				{
+					undoBufferHashCode = undoBuffer.GetLongHashCode();
+				}
 				return sceneOverrides;
 			}
 

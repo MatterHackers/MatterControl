@@ -380,7 +380,10 @@ namespace MatterHackers.MatterControl
 				{
 					var newNode = new HelpArticleTreeNode(helpArticle, theme);
 
-					nodesByPath[helpArticle.Path] = newNode;
+					if (!string.IsNullOrEmpty(helpArticle.Path))
+					{
+						nodesByPath[helpArticle.Path] = newNode;
+					}
 
 					if (helpArticle.Name == guideKey
 						|| (guideKey != null

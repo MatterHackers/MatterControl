@@ -302,7 +302,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (selectedItem.Color != colorField.Color)
 					{
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+						if (colorField.Color == Color.Transparent)
+						{
+							undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
+						}
+                        else
+                        {
+							undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
+						}
 					}
 				};
 
@@ -326,7 +333,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var scaledButtonSize = 24 * GuiWidget.DeviceScale;
 				void SetButtonStates()
 				{
-                    switch (selectedItem.WorldOutputType())
+                    switch (selectedItem.OutputType)
                     {
                         case PrintOutputTypes.Hole:
 							holeContainer.BackgroundOutlineWidth = 1;
@@ -381,10 +388,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							break;
 					}
 
-					var currentOutputType = selectedItem.WorldOutputType();
+					var currentOutputType = selectedItem.OutputType;
 					if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
 					{
-						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
 					}
 
 					SetButtonStates();
@@ -453,7 +460,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				void SetToHole()
                 {
-					if (selectedItem.WorldOutputType() != PrintOutputTypes.Hole)
+					if (selectedItem.OutputType != PrintOutputTypes.Hole)
 					{
 						undoBuffer.AddAndDo(new MakeHole(selectedItem));
 					}

@@ -332,15 +332,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
         public bool ApplyHoles(IProgress<ProgressStatus> reporter,
 			CancellationToken cancellationToken)
         {
-			var removeItems = Children.Where(c => c.OutputType == PrintOutputTypes.Hole && c.Visible);
+			var removeItems = Children.Where(c => c.WorldOutputType(SourceContainer) == PrintOutputTypes.Hole && c.Visible);
 			if (removeItems.Any())
 			{
-				var keepItems = Children.Where(c => c.OutputType != PrintOutputTypes.Hole && c.Visible);
+				var keepItems = Children.Where(c => c.WorldOutputType(SourceContainer) != PrintOutputTypes.Hole && c.Visible);
 
 				if (keepItems.Any())
 				{
 					// apply any holes before we return
-					var resultItems = SubtractObject3D_2.DoSubtract(null,
+					var resultItems = SubtractObject3D_2.DoSubtract(SourceContainer,
 						keepItems,
 						removeItems,
 						reporter,

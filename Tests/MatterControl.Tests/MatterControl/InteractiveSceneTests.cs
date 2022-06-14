@@ -326,6 +326,62 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
+		public async Task HoleTests()
+		{
+			StartupMC();
+
+			// Subtract has correct number of results with combine
+			{
+				var root = new Object3D();
+				var cubeA1 = await CubeObject3D.Create(20, 20, 20);
+				var cubeA2 = await CubeObject3D.Create(20, 20, 20);
+				var cubeB = await CubeObject3D.Create(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 0, 10);
+
+				var align = new AlignObject3D_2();
+				align.Children.Add(cubeA1);
+				align.Children.Add(cubeA2);
+				align.OutputType = PrintOutputTypes.Hole;
+				await align.Rebuild();
+
+				var combine = new CombineObject3D_2();
+				combine.Children.Add(align);
+				combine.Children.Add(offsetCubeB);
+				root.Children.Add(combine);
+				await combine.Rebuild();
+
+				Assert.AreEqual(1, root.Children.Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(10, rootAabb.YSize, .001);
+			}
+
+			// Subtract has correct number of results with group
+			{
+				var root = new Object3D();
+				var cubeA1 = await CubeObject3D.Create(20, 20, 20);
+				var cubeA2 = await CubeObject3D.Create(20, 20, 20);
+				var cubeB = await CubeObject3D.Create(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 0, 10);
+
+				var align = new AlignObject3D_2();
+				align.Children.Add(cubeA1);
+				align.Children.Add(cubeA2);
+				align.OutputType = PrintOutputTypes.Hole;
+				await align.Rebuild();
+
+				var combine = new GroupHolesAppliedObject3D();
+				combine.Children.Add(align);
+				combine.Children.Add(offsetCubeB);
+				root.Children.Add(combine);
+				await combine.Rebuild();
+
+				Assert.AreEqual(1, root.Children.Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.AreEqual(10, rootAabb.YSize, .001);
+			}
+		}
+
+		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
 			StartupMC();
