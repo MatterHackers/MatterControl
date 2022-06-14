@@ -89,8 +89,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.14.0" />
-    <PackageReference Include="CsvHelper" Version="18.0.0" />
+    <PackageReference Include="AngleSharp" Version="0.17.1" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
