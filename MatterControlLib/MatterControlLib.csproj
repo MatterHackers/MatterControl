@@ -95,7 +95,7 @@
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
     <PackageReference Include="Markdig" Version="0.15.2" />
-    <PackageReference Include="MathParser.org-mXparser" Version="4.4.2" />
+    <PackageReference Include="MathParser.org-mXparser" Version="5.0.6" />
     <PackageReference Include="MIConvexHull" Version="1.1.19.1019" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

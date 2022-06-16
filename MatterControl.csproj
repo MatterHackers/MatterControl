@@ -106,7 +106,7 @@
 		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.310801">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="System.IO.Ports" Version="6.0.0" />
+		<PackageReference Include="System.IO.Ports" Version="7.0.0-preview.5.22301.12" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="ConfigurationPage\ApplicationSettings\ThemeColorPanel.cs" />
