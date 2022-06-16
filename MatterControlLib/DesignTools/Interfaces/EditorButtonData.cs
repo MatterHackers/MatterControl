@@ -69,6 +69,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	/// </summary>
 	public interface IParentRightClickMenuProvider
 	{
-		void AddRightClickMenuItemsItems(PopupMenu popupMenu, IObject3D itemRightClicked);
+		void AddRightClickMenuItems(PopupMenu popupMenu, IObject3D itemRightClicked);
 	}
 }

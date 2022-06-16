@@ -214,12 +214,82 @@ namespace MatterHackers.MatterControl
                 menuProvider.AddRightClickMenuItemsItems(popupMenu);
             }
 
-			if (selectedItem.Parent is IParentRightClickMenuProvider parentMenuProvider)
+			var parent = selectedItem.Parent;
+			if (parent != null)
 			{
-				parentMenuProvider.AddRightClickMenuItemsItems(popupMenu, selectedItem);
+				var orderChildrenByIndex = parent.GetType().GetCustomAttributes(typeof(OrderChildrenByIndexAttribute), true).Any();
+				if (orderChildrenByIndex)
+				{
+					AddReorderChildrenRightClickMenuItems(popupMenu, selectedItem);
+				}
 			}
 
 			return popupMenu;
+		}
+
+		public void AddReorderChildrenRightClickMenuItems(PopupMenu popupMenu, IObject3D itemRightClicked)
+		{
+			popupMenu.CreateSeparator();
+			var parent = itemRightClicked.Parent;
+            if(parent == null)
+            {
+				return;
+            }
+
+			// move to the top
+			var moveTopItem = popupMenu.CreateMenuItem("↑↑ Move Top".Localize());
+
+			moveTopItem.Enabled = parent.Children.IndexOf(itemRightClicked) != 0;
+			moveTopItem.Click += (s, e) =>
+			{
+				parent.Children.Modify((list) =>
+				{
+					list.Remove(itemRightClicked);
+					list.Insert(0, itemRightClicked);
+				});
+			};
+
+			// move up one position
+			var moveUpItem = popupMenu.CreateMenuItem("↑ Move Up".Localize());
+
+			moveUpItem.Enabled = parent.Children.IndexOf(itemRightClicked) != 0;
+			moveUpItem.Click += (s, e) =>
+			{
+				parent.Children.Modify((list) =>
+				{
+					var index = list.IndexOf(itemRightClicked);
+					list.Remove(itemRightClicked);
+					list.Insert(index - 1, itemRightClicked);
+				});
+			};
+
+			// move down one position
+			var moveDownItem = popupMenu.CreateMenuItem("↓ Move Down".Localize());
+
+			moveDownItem.Enabled = parent.Children.IndexOf(itemRightClicked) != parent.Children.Count - 1;
+			moveDownItem.Click += (s, e) =>
+			{
+				parent.Children.Modify((list) =>
+				{
+					var index = list.IndexOf(itemRightClicked);
+					list.Remove(itemRightClicked);
+					list.Insert(index + 1, itemRightClicked);
+				});
+			};
+
+			// move to the bottom
+			var moveBottomItem = popupMenu.CreateMenuItem("↓↓ Move Bottom".Localize());
+
+			moveBottomItem.Enabled = parent.Children.IndexOf(itemRightClicked) != parent.Children.Count - 1;
+			moveBottomItem.Click += (s, e) =>
+			{
+				parent.Children.Modify((list) =>
+				{
+					var index = list.IndexOf(itemRightClicked);
+					list.Remove(itemRightClicked);
+					list.Add(itemRightClicked);
+				});
+			};
 		}
 
 		public PopupMenu GetModifyMenu(ISceneContext sceneContext)
