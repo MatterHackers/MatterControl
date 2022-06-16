@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				completedText += "\n\n    • " + "Remove the bed from the printer so the nozzle can get low enough to touch the pad".Localize();
 			}
 
-			completedText += "\n    • " + "Ensure the nozzle is clear of any debri or filament".Localize();
+			completedText += "\n    • " + "Ensure the nozzle is clear of any debris or filament".Localize();
 			completedText += "\n\n" + "Click 'Next' to continue.".Localize();
 
 			contentRow.AddChild(this.CreateTextField(completedText));
