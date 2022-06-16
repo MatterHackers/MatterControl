@@ -209,25 +209,14 @@ namespace MatterHackers.MatterControl
 
 			menuTheme.CreateMenuItems(popupMenu, actions);
 
-			if (selectedItem is ComponentObject3D componentObject)
+			if (selectedItem is IRightClickMenuProvider menuProvider)
 			{
-				popupMenu.CreateSeparator();
+                menuProvider.AddRightClickMenuItemsItems(popupMenu);
+            }
 
-				string componentID = componentObject.ComponentID;
-
-				var helpItem = popupMenu.CreateMenuItem("Help".Localize());
-				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && this.HelpArticlesByID.ContainsKey(componentID);
-				helpItem.Click += (s, e) =>
-				{
-					var helpTab = ApplicationController.Instance.ActivateHelpTab("Docs");
-					if (helpTab.TabContent is HelpTreePanel helpTreePanel)
-					{
-						if (this.HelpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
-						{
-							helpTreePanel.ActiveNodePath = componentID;
-						}
-					}
-				};
+			if (selectedItem.Parent is IParentRightClickMenuProvider parentMenuProvider)
+			{
+				parentMenuProvider.AddRightClickMenuItemsItems(popupMenu, selectedItem);
 			}
 
 			return popupMenu;

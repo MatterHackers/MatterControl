@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             }
             else
             {
-                resultsMesh = Object3D.CombineParticipants(SourceContainer, participants, cancellationToken, reporter);
+                resultsMesh = Object3D.CombineParticipants(SourceContainer, participants, cancellationToken, reporter, Processing, InputResolution, OutputResolution);
             }
 
             var resultsItem = new Object3D()

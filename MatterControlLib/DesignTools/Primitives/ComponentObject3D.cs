@@ -36,11 +36,12 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	public class ComponentObject3D : Object3D
+	public class ComponentObject3D : Object3D, IRightClickMenuProvider
 	{
 		private const string ImageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
 
@@ -292,6 +293,28 @@ namespace MatterHackers.MatterControl.DesignTools
 					base.Cancel(undoBuffer);
 				}
 			}
+		}
+
+        public void AddRightClickMenuItemsItems(PopupMenu popupMenu)
+        {
+			popupMenu.CreateSeparator();
+
+			string componentID = this.ComponentID;
+
+			var helpItem = popupMenu.CreateMenuItem("Help".Localize());
+			var helpArticlesByID = ApplicationController.Instance.HelpArticlesByID;
+			helpItem.Enabled = !string.IsNullOrEmpty(componentID) && helpArticlesByID.ContainsKey(componentID);
+			helpItem.Click += (s, e) =>
+			{
+				var helpTab = ApplicationController.Instance.ActivateHelpTab("Docs");
+				if (helpTab.TabContent is HelpTreePanel helpTreePanel)
+				{
+					if (helpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
+					{
+						helpTreePanel.ActiveNodePath = componentID;
+					}
+				}
+			};
 		}
 	}
 }

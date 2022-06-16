@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using System;
 using System.Collections.Generic;
 
@@ -52,5 +54,21 @@ namespace MatterHackers.MatterControl.DesignTools
 	public interface IEditorButtonProvider
 	{
 		IEnumerable<EditorButtonData> GetEditorButtonsData();
+	}
+
+    /// <summary>
+	/// Whene this item is right clicked it will append menu items to the right click menu
+	/// </summary>
+	public interface IRightClickMenuProvider
+	{
+		void AddRightClickMenuItemsItems(PopupMenu popupMenu);
+	}
+
+    /// <summary>
+	/// When a child of this item is right clicked, it will add menu items
+	/// </summary>
+	public interface IParentRightClickMenuProvider
+	{
+		void AddRightClickMenuItemsItems(PopupMenu popupMenu, IObject3D itemRightClicked);
 	}
 }
