@@ -58,6 +58,16 @@ namespace MatterHackers.MatterControl.Library
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
+                    "Scripting".Localize(),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "scripting_icon.png")),
+                    () => new ScriptingPartsContainer())
+                {
+                    IsReadOnly = true
+                });
+
+            this.ChildContainers.Add(
+                new DynamicContainerLink(
                     "Primitives".Localize(),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),

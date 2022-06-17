@@ -39,46 +39,32 @@ using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.Library
 {
-    public class CalibrationPartsContainer : LibraryContainer
+    public class ScriptingPartsContainer : LibraryContainer
 	{
-		public CalibrationPartsContainer()
+		public ScriptingPartsContainer()
 		{
 			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Items = new SafeList<ILibraryItem>();
-			this.Name = "Calibration Parts".Localize();
+			this.Name = "Scripting".Localize();
 		}
 
 		public override void Load()
 		{
-			var oemParts = StaticData.Instance.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
-			Items = new SafeList<ILibraryItem>(oemParts.Select(s => new StaticDataItem(s)));
+			Items = new SafeList<ILibraryItem>();
 
 			Items.Add(new GeneratorItem(
-				"PLA Temperature Tower".Localize(),
-				async () => await TemperatureTowerObject3D.Create(220))
+				"Set Temperature".Localize(),
+				async () => await SetTemperatureObject3D.Create())
 			{
 				Category = this.Name
 			});
+
 			Items.Add(new GeneratorItem(
-				"ABS Temperature Tower".Localize(),
-				async () => await TemperatureTowerObject3D.Create(250))
+				"Send G-Code".Localize(),
+				async () => await SendGCodeObject3D.Create())
 			{
 				Category = this.Name
 			});
-			Items.Add(new GeneratorItem(
-				"PETG Temperature Tower".Localize(),
-				async () => await TemperatureTowerObject3D.Create(260))
-			{
-				Category = this.Name
-			});
-#if DEBUG
-			Items.Add(new GeneratorItem(
-				"XY Calibration".Localize(),
-				async () => await XyCalibrationFaceObject3D.Create())
-			{
-				Category = this.Name
-			});
-#endif
 		}
 
 		private class StaticDataItem : ILibraryAssetStream
