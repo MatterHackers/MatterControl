@@ -59,12 +59,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.BackgroundColor;
 		}
 
-		public HorizontalLine CreateSeparator()
+		public HorizontalLine CreateSeparator(double height = 1)
 		{
 			var line = new HorizontalLine(ApplicationController.Instance.MenuTheme.BorderColor20)
 			{
 				Margin = new BorderDouble(8, 1),
-				BackgroundColor = theme.RowBorder
+				BackgroundColor = theme.RowBorder,
+				Height = height * DeviceScale,
 			};
 
 			this.AddChild(line);
@@ -430,6 +431,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return this.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter, minSpacerWidth);
 		}
 
+		public MenuItem CreateButtonMenuItem(string text,
+			IEnumerable<(string key, string text, EventHandler<MouseEventArgs> click)> buttonKvps,
+			double minSpacerWidth = 0,
+			bool bold = false)
+		{
+			var textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor, bold: bold)
+			{
+				Padding = MenuPadding,
+				VAnchor = VAnchor.Center,
+			};
+
+			return this.CreateButtonMenuItem(textWidget, text, buttonKvps, minSpacerWidth);
+		}
+
 		public MenuItem CreateButtonSelectMenuItem(string text, ImageBuffer icon, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
 		{
 			var row = new FlowLayoutWidget()
@@ -472,6 +487,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				row.AddChild(button);
 			}
 			
+			var menuItem = new MenuItemHoldOpen(row, theme)
+			{
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
+		}
+
+		public MenuItem CreateButtonMenuItem(GuiWidget guiWidget, string name, IEnumerable<(string key, string text, EventHandler<MouseEventArgs> click)> buttonKvps, double minSpacerWidth = 0)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Name = name + " Menu Item",
+			};
+
+			row.AddChild(guiWidget);
+			row.AddChild(new HorizontalSpacer()
+			{
+				MinimumSize = new Vector2(minSpacerWidth, 0)
+			});
+
+			foreach (var buttonKvp in buttonKvps)
+			{
+				var button = EnumDisplayField.CreateThemedButton(buttonKvp.text, buttonKvp.key, "", theme);
+				button.Click += buttonKvp.click;
+				row.AddChild(button);
+			}
+
 			var menuItem = new MenuItemHoldOpen(row, theme)
 			{
 			};
