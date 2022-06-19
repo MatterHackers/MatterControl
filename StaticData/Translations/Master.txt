@@ -1984,6 +1984,9 @@ Translated:Fuzzy Frequency
 English:Fuzzy Thickness
 Translated:Fuzzy Thickness
 
+English:G Code To Send
+Translated:G Code To Send
+
 English:G Key
 Translated:G Key
 
@@ -4369,6 +4372,9 @@ Translated:Scale Offset
 English:Scale Type
 Translated:Scale Type
 
+English:Scripting
+Translated:Scripting
+
 English:SD Card
 Translated:SD Card
 
@@ -4458,6 +4464,9 @@ Translated:Send
 
 English:Send email notifications
 Translated:Send email notifications
+
+English:Send G-Code
+Translated:Send G-Code
 
 English:Send SMS notifications
 Translated:Send SMS notifications

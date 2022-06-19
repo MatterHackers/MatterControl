@@ -1091,7 +1091,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			foreach (var item in scene.Descendants().Where(i => i is ICustomEditorDraw customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
+			foreach (var item in scene.Descendants().Where(i => i is IEditorDrawControled customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
 			{
 				editorDrawItems.Add(item);
 			}
