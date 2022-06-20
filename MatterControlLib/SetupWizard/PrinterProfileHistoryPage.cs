@@ -78,7 +78,12 @@ namespace MatterHackers.MatterControl.SetupWizard
 
 			var profile = ProfileManager.Instance[printer.Settings.ID];
 
-			var results = await ApplicationController.GetProfileHistory?.Invoke(profile.DeviceToken);
+			Dictionary<string, string> results = null;
+			if (ApplicationController.GetProfileHistory != null)
+			{
+				results = await ApplicationController.GetProfileHistory.Invoke(profile.DeviceToken);
+			}
+
 			printerProfileData = results;
 			if(printerProfileData != null)
 			{
