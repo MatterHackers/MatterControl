@@ -42,10 +42,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer);
 	}
 
-	public interface ICustomEditorDraw : IEditorDraw
+    public interface IEditorDrawControled : IEditorDraw
+    {
+        bool DoEditorDraw(bool isSelected);
+    }
+
+    public interface ICustomEditorDraw : IEditorDrawControled
 	{
 		void AddEditorTransparents(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e);
-
-		bool DoEditorDraw(bool isSelected);
 	}
 }

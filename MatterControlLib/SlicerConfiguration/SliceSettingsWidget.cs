@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string databaseMRUKey,
 			string justMySettingsTitle,
 			Action<PopupMenu> extendPopupMenu = null)
-			: base(theme)
+			: base(theme, "View".Localize())
 		{
 			using (this.LayoutLock())
 			{

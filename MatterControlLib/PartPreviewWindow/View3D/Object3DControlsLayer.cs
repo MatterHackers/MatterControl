@@ -1088,7 +1088,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			foreach (var item in scene.Descendants().Where(i => i is ICustomEditorDraw customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
+			foreach (var item in scene.Descendants().Where(i => i is IEditorDrawControled customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
 			{
 				editorDrawItems.Add(item);
 			}
@@ -1126,11 +1126,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var bedNormalInViewSpace = Vector3Ex.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
 			var pointOnBedInViewSpace = Vector3Ex.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
-			var lookingDownOnBed = Vector3Ex.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
+			floorDrawable.LookingDownOnBed = Vector3Ex.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
 
-			floorDrawable.LookingDownOnBed = lookingDownOnBed;
+			floorDrawable.SelectedObjectUnderBed = false;
+			if (selectedItem != null)
+			{
+				var aabb = selectedItem.GetAxisAlignedBoundingBox();
+				if (aabb.MinXYZ.Z < 0)
+				{
+					floorDrawable.SelectedObjectUnderBed = true;
+				}
+			}
 
-			if (lookingDownOnBed)
+			var renderBedTransparent = !floorDrawable.LookingDownOnBed || floorDrawable.SelectedObjectUnderBed;
+
+			if (renderBedTransparent)
 			{
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
@@ -1174,7 +1184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					forceCullBackFaces: false);
 			}
 
-			if (!lookingDownOnBed)
+			if (!renderBedTransparent)
 			{
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}

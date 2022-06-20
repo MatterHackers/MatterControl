@@ -294,6 +294,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return radioButton;
 		}
 
+		public static TextButton CreateThemedButton(string text, string key, string toolTipText, ThemeConfig theme)
+		{
+			var button = new TextButton(text, theme)
+			{
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				BackgroundRadius = (theme.ButtonRadius + 4) * GuiWidget.DeviceScale,
+				Margin = new BorderDouble(5, 0, 0, 0),
+				Padding = new BorderDouble(9, 5),
+				// BackgroundInset = new BorderDouble(5, 4),
+				BackgroundColor = theme.MinimalShade,
+				ToolTipText = toolTipText
+			};
+
+			return button;
+		}
+
 		private void AddIconRow(List<(string key, string name, string description)> items)
 		{
 			var iconsRow = new FlowLayoutWidget();

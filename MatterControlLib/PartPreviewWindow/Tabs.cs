@@ -58,14 +58,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// </summary>
 	public class SimpleTabs : FlowLayoutWidget
 	{
-		public SimpleTabs(ThemeConfig theme, GuiWidget rightAnchorItem = null)
+		public SimpleTabs(ThemeConfig theme, string overflowText, GuiWidget rightAnchorItem = null)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.TabContainer = this;
 
 			if (rightAnchorItem == null)
 			{
-				TabBar = new OverflowBar(theme)
+				TabBar = new OverflowBar(null, theme, overflowText)
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public event EventHandler PlusClicked;
 
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
-			: base(theme, rightAnchorItem)
+			: base(theme, null, rightAnchorItem)
 		{
 			leadingTabAdornment = new GuiWidget()
 			{

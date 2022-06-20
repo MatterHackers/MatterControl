@@ -51,17 +51,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: this(null, theme)
 		{ }
 
-		public OverflowBar(ImageBuffer icon, ThemeConfig theme)
+		public OverflowBar(ImageBuffer icon, ThemeConfig theme, string text = null)
 			: base(theme.TabbarPadding)
 		{
 			this.theme = theme;
 
 			if (icon == null)
 			{
-				this.OverflowButton = new OverflowMenuButton(this, theme)
+				if (text != null)
 				{
-					AlignToRightEdge = true,
-				};
+					this.OverflowButton = new PopupMenuButton(text, theme)
+					{
+						AlignToRightEdge = true,
+						DrawArrow = true,
+					};
+				}
+				else
+				{
+					this.OverflowButton = new OverflowMenuButton(this, theme)
+					{
+						AlignToRightEdge = true,
+					};
+				}
 			}
 			else
 			{
@@ -70,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					AlignToRightEdge = true,
 				};
 			}
+			AddMenuItemsFunction(OverflowButton);
 
 			// We want to set right margin to overflow button width but width is already scaled - need to inflate value by amount needed to hit width when rescaled in Margin setter
 			this.ActionArea.Margin = new BorderDouble(right: Math.Ceiling(this.OverflowButton.Width / GuiWidget.DeviceScale));
@@ -78,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 
-		public OverflowMenuButton OverflowButton { get; }
+		public PopupMenuButton OverflowButton { get; }
 
 		public Action<PopupMenu> ExtendOverflowMenu { get; set; }
 
@@ -120,6 +132,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private void AddMenuItemsFunction(PopupMenuButton menuButton)
+		{
+			menuButton.DynamicPopupContent = () =>
+			{
+				var menuTheme = ApplicationController.Instance.MenuTheme;
+				var popupMenu = new PopupMenu(menuTheme);
+
+				// Perform overflow
+				bool hasOverflowItems = false;
+				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+				{
+					if (widget is ToolbarSeparator)
+					{
+						popupMenu.CreateSeparator();
+						continue;
+					}
+
+					hasOverflowItems = true;
+
+					PopupMenu.MenuItem menuItem;
+
+					var iconButton = widget as IconButton;
+
+					var iconImage = iconButton?.IconImage;
+
+					menuItem = popupMenu.CreateMenuItem(
+						widget.ToolTipText ?? widget.Text,
+						iconImage);
+
+					menuItem.Enabled = widget.Enabled;
+
+					menuItem.Click += (s, e) =>
+					{
+						widget.InvokeClick();
+					};
+				}
+
+				if (hasOverflowItems)
+				{
+					popupMenu.CreateSeparator();
+				}
+
+				// Extend menu with non-overflow/standard items
+				this.OnExtendPopupMenu(popupMenu);
+
+				return popupMenu;
+			};
+		}
+
 		/// <summary>
 		/// A PopupMenuButton with the standard overflow icon
 		/// </summary>
@@ -142,55 +203,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public OverflowMenuButton(OverflowBar overflowBar, ImageBuffer icon, ThemeConfig theme)
 				: base(icon, theme)
-			{
-				this.DynamicPopupContent = () =>
-				{
-					var menuTheme = ApplicationController.Instance.MenuTheme;
-					var popupMenu = new PopupMenu(menuTheme);
+            {
+            }
 
-					// Perform overflow
-					bool hasOverflowItems = false;
-					foreach (var widget in overflowBar.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
-					{
-						if (widget is ToolbarSeparator)
-						{
-							popupMenu.CreateSeparator();
-							continue;
-						}
-
-						hasOverflowItems = true;
-
-						PopupMenu.MenuItem menuItem;
-
-						var iconButton = widget as IconButton;
-
-						var iconImage = iconButton?.IconImage;
-
-						menuItem = popupMenu.CreateMenuItem(
-							widget.ToolTipText ?? widget.Text,
-							iconImage);
-
-						menuItem.Enabled = widget.Enabled;
-
-						menuItem.Click += (s, e) =>
-						{
-							widget.InvokeClick();
-						};
-					}
-
-					if (hasOverflowItems)
-					{
-						popupMenu.CreateSeparator();
-					}
-
-					// Extend menu with non-overflow/standard items
-					overflowBar.OnExtendPopupMenu(popupMenu);
-
-					return popupMenu;
-				};
-			}
-
-			private static ImageBuffer CreateOverflowIcon(ThemeConfig theme)
+            private static ImageBuffer CreateOverflowIcon(ThemeConfig theme)
 			{
 				return StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
 			}

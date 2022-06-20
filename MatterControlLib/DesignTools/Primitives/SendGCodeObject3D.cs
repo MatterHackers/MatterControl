@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -43,29 +44,29 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, IEditorDrawControled
+    public class SendGCodeObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, IEditorDrawControled
 	{
 		private bool hasBeenReached;
 		private double accumulatedLayerHeight;
 
-		public SetTemperatureObject3D()
+		public SendGCodeObject3D()
 		{
-			Name = "Set Temperature".Localize();
-			Color = Color.White.WithAlpha(.2);
+			Name = "Send G-Code".Localize();
+			Color = Color.White.WithAlpha(.4);
 			Mesh = new RoundedRect(-20, -20, 20, 20, 3)
 			{
 				ResolutionScale = 10
 			}.Extrude(.2);
 		}
 
-		public static async Task<SetTemperatureObject3D> Create()
+		public static async Task<SendGCodeObject3D> Create()
 		{
-			var item = new SetTemperatureObject3D();
+			var item = new SendGCodeObject3D();
 			await item.Rebuild();
 			return item;
 		}
 
-		public double Temperature { get; set; } = 210;
+		public string GCodeToSend { get; set; } = "";
 
 		public override bool Printable => false;
 
@@ -87,15 +88,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override Task Rebuild()
+        public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool valuesChanged = false;
 
 			using (RebuildLock())
 			{
-				Temperature = agg_basics.Clamp(Temperature, 140, 400, ref valuesChanged);
-
 				using (new CenterAndHeightMaintainer(this))
 				{
 				}
@@ -110,9 +108,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
-		private double WorldZ => default(Vector3).Transform(this.WorldMatrix()).Z;
+		private (string gcode, double worldZ) displayInfo = ("", double.MinValue);
 
-		private (double temp, double worldZ) displayInfo = (double.MinValue, double.MinValue);
+		private double WorldZ => default(Vector3).Transform(this.WorldMatrix()).Z;
 
 		public IEnumerable<string> ProcessCGcode(string lineToWrite, PrinterConfig printer)
 		{
@@ -126,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (accumulatedLayerHeight > WorldZ)
 					{
 						hasBeenReached = true;
-						yield return $"M104 S{Temperature} ; Change Layer Temperature";
+						yield return $"{GCodeToSend} ; G-Code from Scene Object";
 					}
 				}
 			}
@@ -138,36 +136,60 @@ namespace MatterHackers.MatterControl.DesignTools
 			accumulatedLayerHeight = 0;
 		}
 
+
 		public void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e)
 		{
-			if (displayInfo.temp == double.MinValue
-				|| displayInfo.temp != Temperature
-				|| displayInfo.worldZ != WorldZ)
-			{
+			if (displayInfo.worldZ != WorldZ
+                || displayInfo.gcode != DisplayGCode)
+            {
 				UpdateTexture();
 			}
 		}
 
+        private string DisplayGCode
+        {
+            get
+            {
+				var max40Chars = GCodeToSend;
+				if (GCodeToSend.Length > 35)
+                {
+					max40Chars = GCodeToSend.Substring(0, 35) + "...";
+				}
+				EnglishTextWrapping wrapper = new EnglishTextWrapping(10);
+				max40Chars = wrapper.InsertCRs(max40Chars, 120);
+				return max40Chars;
+            }
+        }
+
 		private void UpdateTexture()
 		{
 			Mesh.FaceTextures.Clear();
-			displayInfo.temp = Temperature;
 			displayInfo.worldZ = WorldZ;
+			displayInfo.gcode = DisplayGCode;
 			var theme = AppContext.Theme;
 			var texture = new ImageBuffer(128, 128, 32);
 			var graphics2D = texture.NewGraphics2D();
 			graphics2D.Clear(theme.BackgroundColor);
 			graphics2D.DrawString($"Height: {displayInfo.worldZ:0.##}",
 				texture.Width / 2,
-				texture.Height / 5 * 3,
+				texture.Height * .7,
 				14,
 				Agg.Font.Justification.Center,
 				Agg.Font.Baseline.BoundsCenter,
 				theme.TextColor);
-			graphics2D.DrawString($"Temp: {displayInfo.temp:0.##}",
+			graphics2D.DrawString($"G-Code",
 				texture.Width / 2,
-				texture.Height / 5 * 2,
+				texture.Height * .45,
 				14,
+				Agg.Font.Justification.Center,
+				Agg.Font.Baseline.BoundsCenter,
+				theme.TextColor);
+			var height = texture.Height * .37;
+			graphics2D.Line(texture.Width / 5, height, texture.Width / 5 * 4, height, theme.TextColor);
+			graphics2D.DrawString($"{displayInfo.gcode}",
+				texture.Width / 2,
+				texture.Height * .3,
+				10,
 				Agg.Font.Justification.Center,
 				Agg.Font.Baseline.BoundsCenter,
 				theme.TextColor);
@@ -179,9 +201,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return AxisAlignedBoundingBox.Empty();
 		}
 
-		public bool DoEditorDraw(bool isSelected)
-		{
+        public bool DoEditorDraw(bool isSelected)
+        {
 			return true;
-		}
-	}
+        }
+    }
 }

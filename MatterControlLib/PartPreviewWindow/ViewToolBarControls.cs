@@ -298,10 +298,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add the options menu
 			this.AddChild(new HorizontalSpacer());
 
-			var overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
-			var optionsButton = new PopupMenuButton(overflowIcon, theme)
+			optionsButton = new PopupMenuButton("Tools".Localize(), theme)
 			{
-				AlignToRightEdge = true
+				AlignToRightEdge = true,
+				DrawArrow = true,
 			};
 			this.AddChild(optionsButton);
 			optionsButton.Name = "ToolBar Overflow Menu";
@@ -336,6 +336,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string Default;
 		private string Hide_All;
 		private string Expand_All;
+        private PopupMenuButton optionsButton;
+
+        private IEnumerable<OperationGroup> GroupOperations
+
+		{
+			get
+			{
+				foreach (var namedAction in SceneOperations.All)
+				{
+					if (namedAction is OperationGroup operationGroup)
+					{
+						yield return operationGroup;
+					}
+				}
+			}
+		}
 
 		private PopupMenu GenerateToolBarOptionsMenu(ThemeConfig theme)
 		{
@@ -344,36 +360,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(0, 7),
 			};
 
-#if false
-			// buttons for the control of defaults
-			var topButtonData = new (string, string)[]
+#if true
+			void DefaultClicked(object e, MouseEventArgs mouseEvent)
 			{
-				(nameof(Default), "Default".Localize()),
-				(nameof(Expand_All), "Expand All".Localize()),
-				(nameof(Hide_All), "Hide All".Localize()),
+				foreach (var operationGroup in GroupOperations)
+				{
+					switch(operationGroup.Id)
+                    {
+						case "Path":
+						case "Printing":
+						case "Design Apps":
+							operationGroup.Visible = false;
+							break;
+
+						default:
+							operationGroup.Collapse = true;
+							operationGroup.Visible = true;
+							break;
+                    }
+				}
+
+				optionsButton.InvokeClick();
+				UiThread.RunOnIdle(optionsButton.InvokeClick);
+			}
+
+			void HideAll(object e, MouseEventArgs mouseEvent)
+			{
+				foreach (var operationGroup in GroupOperations)
+				{
+					operationGroup.Visible = false;
+				}
+
+				optionsButton.InvokeClick();
+				UiThread.RunOnIdle(optionsButton.InvokeClick);
+			}
+
+			void ExpandAll(object e, MouseEventArgs mouseEvent)
+			{
+				foreach (var operationGroup in GroupOperations)
+				{
+					operationGroup.Collapse = false;
+					operationGroup.Visible = true;
+				}
+
+				optionsButton.InvokeClick();
+				UiThread.RunOnIdle(optionsButton.InvokeClick);
+			}
+
+			// buttons for the control of defaults
+			var topButtonData = new (string, string, EventHandler<MouseEventArgs>)[]
+			{
+				(nameof(Default), nameof(Default).Replace("_", " ").Localize(), DefaultClicked),
+				(nameof(Expand_All), nameof(Expand_All).Replace("_", " ").Localize(), ExpandAll),
+				(nameof(Hide_All), nameof(Hide_All).Replace("_", " ").Localize(), HideAll),
 			};
 
-			popupMenu.CreateButtonSelectMenuItem("Group Setings".Localize(), topButtonData, nameof(Default), (value) =>
-			{
-				switch (value)
-				{
-					case nameof(Expanded):
-						operationGroup.Collapse = false;
-						operationGroup.Visible = true;
-						break;
+			popupMenu.CreateButtonMenuItem("Design Tools".Localize(), topButtonData, 40 * GuiWidget.DeviceScale, true);
 
-					case nameof(Collapsed):
-						operationGroup.Collapse = true;
-						operationGroup.Visible = true;
-						break;
-
-					case nameof(Hidden):
-						operationGroup.Visible = false;
-						break;
-				}
-			}, 40 * GuiWidget.DeviceScale);
-
-			popupMenu.CreateSeparator();
+			popupMenu.CreateSeparator(5);
 #endif
 
 			// the buttons per setting
@@ -384,38 +428,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				(nameof(Hidden), "Hide".Localize()),
 			};
 
-			foreach (var namedAction in SceneOperations.All)
+			foreach (var operationGroup in GroupOperations)
 			{
-				if (namedAction is OperationGroup operationGroup)
+				var startingValue = operationGroup.Collapse ? nameof(Collapsed) : nameof(Expanded);
+				if (!operationGroup.Visible)
 				{
-					var startingValue = operationGroup.Collapse ? nameof(Collapsed) : nameof(Expanded);
-					if(!operationGroup.Visible)
-					{
-						startingValue = nameof(Hidden);
-					}
-
-					popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
-					{
-						switch (value)
-						{
-							case nameof(Expanded):
-								operationGroup.Collapse = false;
-								operationGroup.Visible = true;
-								break;
-
-							case nameof(Collapsed):
-								operationGroup.Collapse = true;
-								operationGroup.Visible = true;
-								break;
-
-							case nameof(Hidden):
-								operationGroup.Visible = false;
-								break;
-						}
-					}, 40 * GuiWidget.DeviceScale);
-
-					popupMenu.CreateSeparator();
+					startingValue = nameof(Hidden);
 				}
+
+				popupMenu.CreateButtonSelectMenuItem(operationGroup.Title, buttonData, startingValue, (value) =>
+				{
+					switch (value)
+					{
+						case nameof(Expanded):
+							operationGroup.Collapse = false;
+							operationGroup.Visible = true;
+							break;
+
+						case nameof(Collapsed):
+							operationGroup.Collapse = true;
+							operationGroup.Visible = true;
+							break;
+
+						case nameof(Hidden):
+							operationGroup.Visible = false;
+							break;
+					}
+				}, 40 * GuiWidget.DeviceScale);
+
+				popupMenu.CreateSeparator();
 			};
 
 			return popupMenu;

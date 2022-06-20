@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.ConstrainedWidth = resizePage.Width;
 				};
 
-				tabControl = new SimpleTabs(theme, this.CreatePinButton())
+				tabControl = new SimpleTabs(theme, null, this.CreatePinButton())
 				{
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
