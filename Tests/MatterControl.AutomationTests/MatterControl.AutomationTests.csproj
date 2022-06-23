@@ -43,10 +43,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NUnit" Version="3.11.0" />
-    <PackageReference Include="NUnit.ApplicationDomain" Version="11.1.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit.ApplicationDomain" Version="12.0.0" />
     <PackageReference Include="NUnit3TestAdapter">
-      <Version>3.12.0</Version>
+      <Version>4.2.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
