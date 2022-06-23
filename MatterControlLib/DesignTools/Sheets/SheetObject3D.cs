@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static List<UpdateItem> SortAndLockUpdateItems(IObject3D root, Func<IObject3D, bool> includeObject)
+		public static List<UpdateItem> SortAndLockUpdateItems(IObject3D root, Func<IObject3D, bool> includeObject, bool checkForExpression)
 		{
 			var requiredUpdateItems = new Dictionary<IObject3D, UpdateItem>();
 			foreach (var child in root.Descendants())
@@ -146,8 +146,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						depthToThis++;
 						parent = parent.Parent;
 					}
-
-					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, depthToThis, includeObject);
+                    
+					AddItemsRequiringUpdateToDictionary(child, requiredUpdateItems, depthToThis, includeObject, checkForExpression);
 				}
 			}
 
@@ -181,13 +181,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				return true;
-			});
+			}, true);
 
 			SendInvalidateInRebuildOrder(updateItems, InvalidateType.SheetUpdated, this);
 		}
 
 		public static RunningInterval SendInvalidateInRebuildOrder(List<UpdateItem> updateItems,
-			InvalidateType sheetUpdated,
+			InvalidateType invalidateType,
 			IObject3D sender = null)
 		{
 			// and send the invalidate
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								updateItem.rebuildLock.Dispose();
 								updateItem.rebuildLock = null;
 								var updateSender = sender == null ? updateItem.item : sender;
-								updateItem.item.Invalidate(new InvalidateArgs(updateSender, sheetUpdated));
+								updateItem.item.Invalidate(new InvalidateArgs(updateSender, invalidateType));
 							}
 						}
 					}
@@ -250,17 +250,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return runningInterval;
 		}
 
-		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem, Dictionary<IObject3D, UpdateItem> updatedItems, int inDepth, Func<IObject3D, bool> includeObject)
+		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem,
+			Dictionary<IObject3D, UpdateItem> updatedItems,
+			int inDepth,
+			Func<IObject3D, bool> includeObject,
+			bool checkForExpression)
 		{
 			// process depth first
 			foreach(var child in inItem.Children)
 			{
-				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1, includeObject);
+				AddItemsRequiringUpdateToDictionary(child, updatedItems, inDepth + 1, includeObject, checkForExpression);
 			}
 
 			var depth2 = inDepth;
 			if (includeObject(inItem)
-				&& HasExpressionWithString(inItem, "=", true))
+				&& (!checkForExpression || HasExpressionWithString(inItem, "=", true)))
 			{
 				var itemToAdd = inItem;
 				while (itemToAdd != null
