@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				// process everything else
 				return true;
-			});
+			}, true);
 
 			var runningInterval = SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties);
 

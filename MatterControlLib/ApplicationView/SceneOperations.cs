@@ -754,6 +754,9 @@ namespace MatterHackers.MatterControl
 				ArrangeAllPartsOperation(),
 				new SceneSelectionSeparator(),
 				LayFlatOperation(),
+#if DEBUG
+				RebuildOperation(),
+#endif
 				GroupOperation(),
 				UngroupOperation(),
 				new SceneSelectionSeparator(),
@@ -1171,6 +1174,42 @@ namespace MatterHackers.MatterControl
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 				Icon = (theme) => StaticData.Instance.LoadIcon("lay_flat.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+			};
+		}
+
+		private static SceneOperation RebuildOperation()
+		{
+			return new SceneOperation("Rebuild")
+			{
+				TitleGetter = () => "Rebuild".Localize(),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
+					{
+						try
+						{
+							var updateItems = SheetObject3D.SortAndLockUpdateItems(selectedItem.Parent, (item) =>
+							{
+								if (item == selectedItem || item.Parent == selectedItem)
+								{
+									// don't process this
+									return false;
+								}
+								return true;
+							}, false);
+
+							SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
+						}
+						catch
+						{
+						}
+					}
+				},
+				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				Icon = (theme) => StaticData.Instance.LoadIcon("update.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 			};
 		}
 
