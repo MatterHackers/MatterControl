@@ -129,6 +129,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					try
 					{
 						Combine(cancellationTokenSource.Token, reporter);
+
+						if (cancellationToken.IsCancellationRequested)
+                        {
+							// the combine was canceled set our children to the source object children
+							SourceContainer.Visible = true;
+							RemoveAllButSource();
+							Children.Modify((list) =>
+							{
+								foreach (var child in SourceContainer.Children)
+								{
+									list.Add(child);
+								}
+							});
+
+							SourceContainer.Visible = false;
+						}
 					}
 					catch
 					{
