@@ -1483,129 +1483,138 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			var selectedItem = Scene.SelectedItem;
-			mouseDownPositon = mouseEvent.Position;
-			worldMatrixOnMouseDown = sceneContext.World.GetTransform4X4();
-			// Show transform override
-			if (activeButtonBeforeMouseOverride == null
-				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
+			using (new QuickTimer("View3DWidget_OnMouseDown", .3))
 			{
-				if (Keyboard.IsKeyDown(Keys.Shift))
+				var selectedItem = Scene.SelectedItem;
+				mouseDownPositon = mouseEvent.Position;
+				worldMatrixOnMouseDown = sceneContext.World.GetTransform4X4();
+				// Show transform override
+				if (activeButtonBeforeMouseOverride == null
+					&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
+				{
+					if (Keyboard.IsKeyDown(Keys.Shift))
+					{
+						activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+						viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+					}
+					else if (Keyboard.IsKeyDown(Keys.Alt))
+					{
+						activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+						viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+					}
+					else
+					{
+						activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+						viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+					}
+				}
+				else if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Middle)
 				{
 					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
 					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 				}
-				else if (Keyboard.IsKeyDown(Keys.Alt))
+
+				if (mouseEvent.Button == MouseButtons.Right ||
+					mouseEvent.Button == MouseButtons.Middle)
 				{
-					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+					this.Object3DControlLayer.SuppressObject3DControls = true;
 				}
-				else
+
+				base.OnMouseDown(mouseEvent);
+
+				if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse
+					&& sceneContext.ViewState.ModelView)
 				{
-					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-			}
-			else if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Middle)
-			{
-				activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-				viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
-			}
-
-			if (mouseEvent.Button == MouseButtons.Right ||
-				mouseEvent.Button == MouseButtons.Middle)
-			{
-				this.Object3DControlLayer.SuppressObject3DControls = true;
-			}
-
-			base.OnMouseDown(mouseEvent);
-
-			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse
-				&& sceneContext.ViewState.ModelView)
-			{
-				if ((mouseEvent.Button == MouseButtons.Left
-					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
-					&& ModifierKeys == Keys.Shift)
-					|| (TrackballTumbleWidget.TransformState == TrackBallTransformType.None
-						&& ModifierKeys != Keys.Control
-						&& ModifierKeys != Keys.Alt))
-				{
-					if (!this.Object3DControlLayer.MouseDownOnObject3DControlVolume)
+					if ((mouseEvent.Button == MouseButtons.Left
+						&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
+						&& ModifierKeys == Keys.Shift)
+						|| (TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+							&& ModifierKeys != Keys.Control
+							&& ModifierKeys != Keys.Alt))
 					{
-						this.Object3DControlLayer.SuppressObject3DControls = true;
-
-						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, out IntersectInfo info);
-						if (hitObject == null)
+						if (!this.Object3DControlLayer.MouseDownOnObject3DControlVolume)
 						{
-							if (selectedItem != null)
+							this.Object3DControlLayer.SuppressObject3DControls = true;
+
+							IObject3D hitObject = null;
+							IntersectInfo info = null;
+							using (new QuickTimer("View3DWidget_OnMouseDown_FindHitObject3D", .3))
 							{
-								Scene.ClearSelection();
+								hitObject = FindHitObject3D(mouseEvent.Position, out info);
 							}
 
-							// start a selection rect
-							DragSelectionStartPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
-							DragSelectionEndPosition = DragSelectionStartPosition;
-							DragSelectionInProgress = true;
-						}
-						else
-						{
-							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.Z, null);
-
-							if (hitObject != selectedItem)
+							if (hitObject == null)
 							{
-								if (selectedItem == null)
+								if (selectedItem != null)
 								{
-									// No selection exists
-									Scene.SelectedItem = hitObject;
-								}
-								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
-									&& !selectedItem.Children.Contains(hitObject))
-								{
-									expandSelection = !(selectedItem is SelectionGroupObject3D);
-									Scene.AddToSelection(hitObject);
-								}
-								else if (selectedItem == hitObject || selectedItem.Children.Contains(hitObject))
-								{
-									// Selection should not be cleared and drag should occur
-								}
-								else if (ModifierKeys != Keys.Shift)
-								{
-									Scene.SelectedItem = hitObject;
+									Scene.ClearSelection();
 								}
 
-								// Selection may have changed, update local reference to current value
-								selectedItem = Scene.SelectedItem;
-
-								Invalidate();
-							}
-
-							TransformOnMouseDown = selectedItem.Matrix;
-
-							Invalidate();
-							CurrentSelectInfo.DownOnPart = true;
-
-							AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-
-							if (info.HitPosition.X < selectedBounds.Center.X)
-							{
-								if (info.HitPosition.Y < selectedBounds.Center.Y)
-								{
-									CurrentSelectInfo.HitQuadrant = HitQuadrant.LB;
-								}
-								else
-								{
-									CurrentSelectInfo.HitQuadrant = HitQuadrant.LT;
-								}
+								// start a selection rect
+								DragSelectionStartPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
+								DragSelectionEndPosition = DragSelectionStartPosition;
+								DragSelectionInProgress = true;
 							}
 							else
 							{
-								if (info.HitPosition.Y < selectedBounds.Center.Y)
+								CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.Z, null);
+
+								if (hitObject != selectedItem)
 								{
-									CurrentSelectInfo.HitQuadrant = HitQuadrant.RB;
+									if (selectedItem == null)
+									{
+										// No selection exists
+										Scene.SelectedItem = hitObject;
+									}
+									else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
+										&& !selectedItem.Children.Contains(hitObject))
+									{
+										expandSelection = !(selectedItem is SelectionGroupObject3D);
+										Scene.AddToSelection(hitObject);
+									}
+									else if (selectedItem == hitObject || selectedItem.Children.Contains(hitObject))
+									{
+										// Selection should not be cleared and drag should occur
+									}
+									else if (ModifierKeys != Keys.Shift)
+									{
+										Scene.SelectedItem = hitObject;
+									}
+
+									// Selection may have changed, update local reference to current value
+									selectedItem = Scene.SelectedItem;
+
+									Invalidate();
+								}
+
+								TransformOnMouseDown = selectedItem.Matrix;
+
+								Invalidate();
+								CurrentSelectInfo.DownOnPart = true;
+
+								AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+
+								if (info.HitPosition.X < selectedBounds.Center.X)
+								{
+									if (info.HitPosition.Y < selectedBounds.Center.Y)
+									{
+										CurrentSelectInfo.HitQuadrant = HitQuadrant.LB;
+									}
+									else
+									{
+										CurrentSelectInfo.HitQuadrant = HitQuadrant.LT;
+									}
 								}
 								else
 								{
-									CurrentSelectInfo.HitQuadrant = HitQuadrant.RT;
+									if (info.HitPosition.Y < selectedBounds.Center.Y)
+									{
+										CurrentSelectInfo.HitQuadrant = HitQuadrant.RB;
+									}
+									else
+									{
+										CurrentSelectInfo.HitQuadrant = HitQuadrant.RT;
+									}
 								}
 							}
 						}
