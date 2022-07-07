@@ -767,6 +767,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						break;
 
 					case "Calibration Parts Row Item Collection":
+					case "Scripting Row Item Collection":
 					case "Primitives Row Item Collection":
 						// If visible, navigate into Libraries container before opening target
 						testRunner.DoubleClickByName("Design Apps Row Item Collection")
@@ -1330,13 +1331,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
 				testRunner.ClickByName("Printer Overflow Menu")
-					.ClickByName("Show Printer Menu Item");
-
-				if (!pinSettingsOpen)
-				{
+					.Delay()
+					.ClickByName("Show Printer Menu Item")
 					// close the menu
-					testRunner.ClickByName("Printer Overflow Menu");
-				}
+					.ClickByName("Printer Overflow Menu");
 			}
 
 			if (pinSettingsOpen)

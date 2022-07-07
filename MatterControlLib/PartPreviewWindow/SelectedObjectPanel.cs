@@ -131,11 +131,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(cancelButton);
 
-			overflowButton = new OverflowBar.OverflowMenuButton(theme)
+			overflowButton = new PopupMenuButton("Action".Localize(), theme)
 			{
 				Enabled = scene.SelectedItem != null,
+				DrawArrow = true,
 			};
-			overflowButton.ToolTipText = "Selected Object Options".Localize();
+			overflowButton.ToolTipText = "Object Actions".Localize();
 			overflowButton.DynamicPopupContent = () =>
 			{
 				return ApplicationController.Instance.GetModifyMenu(view3DWidget.sceneContext);
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly JsonPathContext pathGetter = new JsonPathContext();
 		private readonly IconButton applyButton;
 		private readonly IconButton cancelButton;
-		private readonly OverflowBar.OverflowMenuButton overflowButton;
+		private readonly PopupMenuButton overflowButton;
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
 

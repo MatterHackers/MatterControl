@@ -593,6 +593,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.SwitchToSliceSettings()
 					.ClickByName("Slice Settings Overflow Menu")
 					.ClickByName("Advanced Menu Item")
+					.Delay()
 					.SelectSliceSettingsField(SettingsKey.bed_temperature)
 					.SelectSliceSettingsField(SettingsKey.temperature)
 					// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible

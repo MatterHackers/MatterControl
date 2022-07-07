@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "MatterControl - " + "Markdown Edit".Localize();
 			this.HeaderText = "Edit Page".Localize() + ":";
 
-			var tabControl = new SimpleTabs(theme, new GuiWidget())
+			var tabControl = new SimpleTabs(theme, null, new GuiWidget())
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,

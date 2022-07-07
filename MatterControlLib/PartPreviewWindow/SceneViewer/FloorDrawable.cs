@@ -89,8 +89,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public DrawStage DrawStage { get; } = DrawStage.First;
 
 		public bool LookingDownOnBed { get; set; }
+        public bool SelectedObjectUnderBed { get; set; }
 
-		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+        public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			if (!sceneContext.RendererOptions.RenderBed)
 			{
@@ -101,13 +102,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.EnsureBedTexture(sceneContext.Scene.SelectedItem);
 
+				var alpha = 255;
+				if (SelectedObjectUnderBed)
+                {
+					alpha = 200;
+                }
+				if (!LookingDownOnBed)
+				{
+					alpha = 32;
+				}
+
+				GL.Disable(EnableCap.Lighting);
 				GLHelper.Render(
 					sceneContext.Mesh,
-					theme.UnderBedColor.WithAlpha(32),
+					Color.White.WithAlpha(alpha),
 					RenderTypes.Shaded,
 					world.ModelviewMatrix,
-					blendTexture: !this.LookingDownOnBed,
 					forceCullBackFaces: false);
+				GL.Enable(EnableCap.Lighting);
 
 				if (sceneContext.PrinterShape != null)
 				{

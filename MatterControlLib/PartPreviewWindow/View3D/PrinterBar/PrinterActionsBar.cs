@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Dictionary<PartViewMode, RadioIconButton> viewModes = new Dictionary<PartViewMode, RadioIconButton>();
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
-			: base(theme)
+			: base(null, theme, "Printer Options".Localize())
 		{
 			this.printer = printer;
 			this.printerTabPage = printerTabPage;
@@ -232,7 +232,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.OverflowButton.Name = "Printer Overflow Menu";
-			this.OverflowButton.ToolTipText = "Printer Options".Localize();
 			this.ExtendOverflowMenu = (popupMenu) =>
 			{
 				this.GeneratePrinterOverflowMenu(popupMenu, ApplicationController.Instance.MenuTheme);

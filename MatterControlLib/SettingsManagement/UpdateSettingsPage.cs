@@ -113,8 +113,8 @@ namespace MatterHackers.MatterControl
 			var make = printer.Settings.GetValue(SettingsKey.make);
 			var model = printer.Settings.GetValue(SettingsKey.model);
 			var message = $"The default settings for the {make} {model} have been updated.";
-			message += "\nBelow you can find a list of each setting that has changed.".Localize();
-			message += "\nUpdating a default setting will not change any override that you have applied.".Localize();
+			message += "\n" + "Below you can find a list of each setting that has changed.".Localize();
+			message += "\n" + "Updating a default setting will not change any override that you have applied.".Localize();
 			generalPanel.AddChild(new WrappedTextWidget(message, pointSize: 11)
 			{
 				Margin = new BorderDouble(5, 15),

@@ -72,7 +72,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #endif
 		public bool IsBuilding => this.cancellationToken != null;
-		
+
+		public static void CheckManifoldData(CombineObject3D_2 item, IObject3D result)
+		{
+			bool IsManifold(Mesh mesh)
+			{
+				var meshEdgeList = mesh.NewMeshEdges();
+
+				foreach (var meshEdge in meshEdgeList)
+				{
+					if (meshEdge.Faces.Count() != 2)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			if (!IsManifold(result.Mesh))
+			{
+				// create a new combine of a and b and add it to the root
+				var combine = new CombineObject3D_2();
+
+				var participants = item.SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(item.SourceContainer) != PrintOutputTypes.Hole);
+				// all participants are manifold
+				foreach (var participant in participants)
+				{
+					combine.SourceContainer.Children.Add(new Object3D() 
+					{ 
+						Mesh = participant.Mesh.Copy(new CancellationToken()),
+						Matrix = participant.Matrix
+					});
+				}
+
+				var scene = result.Parents().Last();
+				scene.Children.Add(combine);
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -91,6 +129,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					try
 					{
 						Combine(cancellationTokenSource.Token, reporter);
+
+						if (cancellationToken.IsCancellationRequested)
+                        {
+							// the combine was canceled set our children to the source object children
+							SourceContainer.Visible = true;
+							RemoveAllButSource();
+							Children.Modify((list) =>
+							{
+								foreach (var child in SourceContainer.Children)
+								{
+									list.Add(child);
+								}
+							});
+
+							SourceContainer.Visible = false;
+						}
 					}
 					catch
 					{
@@ -183,7 +237,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
             resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
             this.Children.Add(resultsItem);
-            SourceContainer.Visible = false;
+#if DEBUG
+			//resultsItem.Mesh.MergeVertices(.01);
+			//resultsItem.Mesh.CleanAndMerge();
+			//CheckManifoldData(this, resultsItem);
+#endif
+			SourceContainer.Visible = false;
         }
 
         public void UpdateControls(PublicPropertyChange change)

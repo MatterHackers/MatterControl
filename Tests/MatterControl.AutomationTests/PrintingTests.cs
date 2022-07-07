@@ -413,7 +413,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddItemToBed()
-						.AddItemToBed(partName: "Row Item Set Temperature")
+						.AddItemToBed("Scripting Row Item Collection", "Row Item Set Temperature")
 						.DragDropByName("MoveInZControl", "MoveInZControl", offsetDrag: new Point2D(0, 0), offsetDrop: new Point2D(0, 10))
 						.ClickByName("Temperature Edit")
 						.Type("222.2")
