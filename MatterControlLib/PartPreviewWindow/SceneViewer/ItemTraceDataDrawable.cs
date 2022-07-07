@@ -33,8 +33,8 @@ using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracerNS;
-using MatterHackers.RayTracerNS.Traceable;
+using MatterHackers.RayTracer;
+using MatterHackers.RayTracer.Traceable;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow

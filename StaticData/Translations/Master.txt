@@ -1,44 +1,35 @@
 English:
 Translated:
 
+English:\nBelow you can find a list of each setting that has changed.
+Translated:\nBelow you can find a list of each setting that has changed.
+
+English:\nUpdating a default setting will not change any override that you have applied.
+Translated:\nUpdating a default setting will not change any override that you have applied.
+
 English:    • Remove the paper
 Translated:    • Remove the paper
 
 English: is reporting a Hardware Error
 Translated: is reporting a Hardware Error
 
-English:- none -
-Translated:- none -
-
 English: Once it is finished homing we will heat the bed.
 Translated: Once it is finished homing we will heat the bed.
 
-English:\nBelow you can find a list of each setting that has changed.
-Translated:\nBelow you can find a list of each setting that has changed.
+English:- none -
+Translated:- none -
 
-English:\nUpdating a default setting will not change any override that you have applied.
-Translated:\nUpdating a default setting will not change any override that you have applied.
+English:'Ok' Responses
+Translated:'Ok' Responses
+
+English:'Wait' Responses
+Translated:'Wait' Responses
 
 English:"{0}" already exists.\nDo you want to replace it?
 Translated:"{0}" already exists.\nDo you want to replace it?
 
-English:$/kg
-Translated:$/kg
-
-English:%
-Translated:%
-
 English:(Press 'Skip' to setup connection later)
 Translated:(Press 'Skip' to setup connection later)
-
-English:\"{0}\" already exists.\nDo you want to replace it?
-Translated:\"{0}\" already exists.\nDo you want to replace it?
-
-English:\nBelow you can find a list of each setting that has changed.
-Translated:\nBelow you can find a list of each setting that has changed.
-
-English:\nUpdating a default setting will not change any override that you have applied.
-Translated:\nUpdating a default setting will not change any override that you have applied.
 
 English:{0} (Update Available)
 Translated:{0} (Update Available)
@@ -67,14 +58,23 @@ Translated:{0} should be greater than 2.
 English:{0} should be greater than or equal to 1/2 the {1}.
 Translated:{0} should be greater than or equal to 1/2 the {1}.
 
-English:<< Back
-Translated:<< Back
+English:\"{0}\" already exists.\nDo you want to replace it?
+Translated:\"{0}\" already exists.\nDo you want to replace it?
+
+English:%
+Translated:%
 
 English:°
 Translated:°
 
 English:°C
 Translated:°C
+
+English:<< Back
+Translated:<< Back
+
+English:$/kg
+Translated:$/kg
 
 English:1. Power on your 3D Printer.
 Translated:1. Power on your 3D Printer.
@@ -400,9 +400,6 @@ Translated:Are you sure you want to delete printer '{0}'?
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 
-English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-
 English:Are you sure you want to remove the currently selected items?
 Translated:Are you sure you want to remove the currently selected items?
 
@@ -601,6 +598,9 @@ Translated:Before Z-Calibration can begin you need to:
 English:Behavior
 Translated:Behavior
 
+English:Below you can find a list of each setting that has changed.
+Translated:Below you can find a list of each setting that has changed.
+
 English:Bend Direction
 Translated:Bend Direction
 
@@ -709,6 +709,15 @@ Translated:Calibration Print
 English:Calibration Tab
 Translated:Calibration Tab
 
+English:Can't access
+Translated:Can't access
+
+English:Can't log out while printing
+Translated:Can't log out while printing
+
+English:Can't sign in while printing
+Translated:Can't sign in while printing
+
 English:Cancel
 Translated:Cancel
 
@@ -726,15 +735,6 @@ Translated:Cancel Print?
 
 English:Cancel the current print?
 Translated:Cancel the current print?
-
-English:Can't access
-Translated:Can't access
-
-English:Can't log out while printing
-Translated:Can't log out while printing
-
-English:Can't sign in while printing
-Translated:Can't sign in while printing
 
 English:Categories
 Translated:Categories
@@ -1366,11 +1366,11 @@ Translated:Distance or Loops
 English:Documents
 Translated:Documents
 
-English:Done
-Translated:Done
-
 English:Don't remind me again
 Translated:Don't remind me again
+
+English:Done
+Translated:Done
 
 English:Down Arrow
 Translated:Down Arrow
@@ -1590,9 +1590,6 @@ Translated:Error: Could not create file for saving. Original error
 
 English:Error: Could not read file from disk. Original error:
 Translated:Error: Could not read file from disk. Original error:
-
-English:Error: Could not read file from disk. Original error: 
-Translated:Error: Could not read file from disk. Original error: 
 
 English:Estimated Cost
 Translated:Estimated Cost
@@ -1969,9 +1966,6 @@ Translated:Forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Found a line that is {0} characters long.\n{1}...
 
-English:Found a line that is {0} characters long.\n{1}...
-Translated:Found a line that is {0} characters long.\n{1}...
-
 English:Furthest Back
 Translated:Furthest Back
 
@@ -1989,15 +1983,6 @@ Translated:G Code To Send
 
 English:G Key
 Translated:G Key
-
-English:g/cm³
-Translated:g/cm³
-
-English:Garolite
-Translated:Garolite
-
-English:Garolite Bed Temperature
-Translated:Garolite Bed Temperature
 
 English:G-Code
 Translated:G-Code
@@ -2046,6 +2031,15 @@ Translated:G-Code to run when the printer is paused.
 
 English:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
 Translated:G-Code used by Autopilot to clear the bed after a print completes. This is only useful on a printer designed to clear the bed.
+
+English:g/cm³
+Translated:g/cm³
+
+English:Garolite
+Translated:Garolite
+
+English:Garolite Bed Temperature
+Translated:Garolite Bed Temperature
 
 English:Gear
 Translated:Gear
@@ -2467,9 +2461,6 @@ Translated:IP Finder
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 
-English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-
 English:It is currently set to {0}.
 Translated:It is currently set to {0}.
 
@@ -2668,11 +2659,11 @@ Translated:Loading
 English:Loading Filament
 Translated:Loading Filament
 
-English:Loading GCode
-Translated:Loading GCode
-
 English:Loading G-Code
 Translated:Loading G-Code
+
+English:Loading GCode
+Translated:Loading GCode
 
 English:Loading Help
 Translated:Loading Help
@@ -3154,11 +3145,11 @@ Translated:No results found
 English:No setting currently need to be updated.
 Translated:No setting currently need to be updated.
 
-English:None
-Translated:None
-
 English:Non-Manifold
 Translated:Non-Manifold
+
+English:None
+Translated:None
 
 English:Normal
 Translated:Normal
@@ -3232,6 +3223,9 @@ Translated:Number of Samples
 English:Number Printed
 Translated:Number Printed
 
+English:Object Actions
+Translated:Object Actions
+
 English:of
 Translated:of
 
@@ -3252,9 +3246,6 @@ Translated:Ok
 
 English:OK
 Translated:OK
-
-English:'Ok' Responses
-Translated:'Ok' Responses
 
 English:On Connect G-Code
 Translated:On Connect G-Code
@@ -3811,6 +3802,9 @@ Translated:Printer Options
 English:Printer Paused
 Translated:Printer Paused
 
+English:Printer Settings
+Translated:Printer Settings
+
 English:Printer Setup
 Translated:Printer Setup
 
@@ -3940,6 +3934,12 @@ Translated:Ratio
 English:Ratio or %
 Translated:Ratio or %
 
+English:Re-enter New Password
+Translated:Re-enter New Password
+
+English:Re-enter Password
+Translated:Re-enter Password
+
 English:Read Filter
 Translated:Read Filter
 
@@ -3990,12 +3990,6 @@ Translated:Reduce
 
 English:Reduced Width
 Translated:Reduced Width
-
-English:Re-enter New Password
-Translated:Re-enter New Password
-
-English:Re-enter Password
-Translated:Re-enter Password
 
 English:Refresh
 Translated:Refresh
@@ -4107,9 +4101,6 @@ Translated:Reset to Factory Defaults
 
 English:Reset View
 Translated:Reset View
-
-English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
@@ -4942,6 +4933,12 @@ Translated:Subtract
 English:Subtract & Replace
 Translated:Subtract & Replace
 
+English:Success!\n\nYour filament should now be loaded
+Translated:Success!\n\nYour filament should now be loaded
+
+English:Success!\n\nYour filament should now be unloaded
+Translated:Success!\n\nYour filament should now be unloaded
+
 English:Success! Please check your email for the reset code.
 Translated:Success! Please check your email for the reset code.
 
@@ -4950,18 +4947,6 @@ Translated:Success! Your account has been created.
 
 English:Success! Your password has been updated.
 Translated:Success! Your password has been updated.
-
-English:Success!\n\nYour filament should now be loaded
-Translated:Success!\n\nYour filament should now be loaded
-
-English:Success!\n\nYour filament should now be unloaded
-Translated:Success!\n\nYour filament should now be unloaded
-
-English:Success!\n\nYour filament should now be loaded
-Translated:Success!\n\nYour filament should now be loaded
-
-English:Success!\n\nYour filament should now be unloaded
-Translated:Success!\n\nYour filament should now be unloaded
 
 English:Support
 Translated:Support
@@ -5052,6 +5037,12 @@ Translated:Text Size
 
 English:Text2
 Translated:Text2
+
+English:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+Translated:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
+
+English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
+Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
 
 English:The {0} can only go as high as 100%.
 Translated:The {0} can only go as high as 100%.
@@ -5188,9 +5179,6 @@ Translated:The extra distance the raft will extend around the edge of the part.
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 
-English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-
 English:The extruder to use for support material. Default will use whichever extruder active at the time.
 Translated:The extruder to use for support material. Default will use whichever extruder active at the time.
 
@@ -5202,9 +5190,6 @@ Translated:The extruder to use to for support material interface layers. Default
 
 English:The extruder to use to print the raft. Default will use extruder 1.
 Translated:The extruder to use to print the raft. Default will use extruder 1.
-
-English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
@@ -5226,9 +5211,6 @@ Translated:The ideal resistance is when the paper first begins to bend, but can 
 
 English:The ideal resistance is when the paper first begins to bend, but can still be moved.
 Translated:The ideal resistance is when the paper first begins to bend, but can still be moved.
-
-English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
-Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
@@ -5277,9 +5259,6 @@ Translated:The Markdown that will be shown on the Trim Filament page.
 
 English:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
 Translated:The Material you have selected is incompatible with the Bed Surface you have selected. You may get poor bed adhesion or printing results. Changing the bed is recommended.
-
-English:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
-Translated:The 'Material' you have selected is incompatible with the 'Bed Surface' you have selected. You may get poor bed adhesion or printing results. Changing the 'Bed Surface' is recommended. You can change it in the 'Bed Temperature' menu on the top right of your screen.
 
 English:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
 Translated:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
@@ -5479,12 +5458,6 @@ Translated:The serial driver to use
 English:The serial port communication speed of the printers firmware.
 Translated:The serial port communication speed of the printers firmware.
 
-English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-
-English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-
 English:The serial port to use while connecting to this printer.
 Translated:The serial port to use while connecting to this printer.
 
@@ -5640,9 +5613,6 @@ Translated:The temperature to which the bed will heat (or cool) in order to remo
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
 Translated:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-
-English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
@@ -6037,6 +6007,9 @@ Translated:Update Settings
 English:Update Settings...
 Translated:Update Settings...
 
+English:Updating a default setting will not change any override that you have applied.
+Translated:Updating a default setting will not change any override that you have applied.
+
 English:Updating firmware...
 Translated:Updating firmware...
 
@@ -6142,6 +6115,9 @@ Translated:Velocity Paint
 English:Version
 Translated:Version
 
+English:View
+Translated:View
+
 English:View Icons
 Translated:View Icons
 
@@ -6186,9 +6162,6 @@ Translated:Visit MatterHackers.com to Purchase
 
 English:Wait For Running Clean
 Translated:Wait For Running Clean
-
-English:'Wait' Responses
-Translated:'Wait' Responses
 
 English:Waiting For Bed To Heat
 Translated:Waiting For Bed To Heat
@@ -6238,26 +6211,20 @@ Translated:Warning - GCode file
 English:Warning - No EEProm Mapping
 Translated:Warning - No EEProm Mapping
 
-English:Warning! The tip of the nozzle will be HOT!
-Translated:Warning! The tip of the nozzle will be HOT!
-
 English:Warning, very short print
 Translated:Warning, very short print
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 
-English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-
-English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 
 English:WARNING: Write Failed!
 Translated:WARNING: Write Failed!
+
+English:Warning! The tip of the nozzle will be HOT!
+Translated:Warning! The tip of the nozzle will be HOT!
 
 English:Warping
 Translated:Warping
@@ -6350,7 +6317,7 @@ English:Wizard
 Translated:Wizard
 
 English:Wolud you like to save changes before closing?
-Translated:Would you like to save changes before closing?
+Translated:Wolud you like to save changes before closing?
 
 English:Would you like to save changes before closing?
 Translated:Would you like to save changes before closing?
@@ -6406,9 +6373,6 @@ Translated:You are connected to the Emulator not an actual printer.
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 
-English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-
 English:You can also
 Translated:You can also
 
@@ -6439,14 +6403,14 @@ Translated:You have successfully imported a new printer profile. You can find '{
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:You may need to wait a minute for your printer to finish initializing.
 
-English:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
-Translated:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
-
 English:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen
 Translated:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen
 
 English:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.
 Translated:You need to select your printer's 'Bed Surface' under the 'Bed Temperature' menu on the top right of your screen.
+
+English:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
+Translated:You need to select your printer's 'Bed Surface' under the bed setting menu on the top right of your screen
 
 English:You should have at least 3 top layers for this calibration to measure off of.
 Translated:You should have at least 3 top layers for this calibration to measure off of.
@@ -6459,12 +6423,6 @@ Translated:You should select the 'Material' your are printing with under the 'Ho
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-
-English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-
-English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
-Translated:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
 
 English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
 Translated:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.

@@ -30,12 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.VectorMath;
 using System;
 using System.Text;
-using MatterHackers.RayTracerNS;
+using MatterHackers.RayTracer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.Agg;
 using System.Collections.Generic;
-using MatterHackers.RayTracerNS.Traceable;
+using MatterHackers.RayTracer.Traceable;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
