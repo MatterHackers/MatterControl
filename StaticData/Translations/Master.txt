@@ -34,12 +34,6 @@ Translated:(Press 'Skip' to setup connection later)
 English:\"{0}\" already exists.\nDo you want to replace it?
 Translated:\"{0}\" already exists.\nDo you want to replace it?
 
-English:\nBelow you can find a list of each setting that has changed.
-Translated:\nBelow you can find a list of each setting that has changed.
-
-English:\nUpdating a default setting will not change any override that you have applied.
-Translated:\nUpdating a default setting will not change any override that you have applied.
-
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -396,9 +390,6 @@ Translated:Are you sure you want to clear your print history?
 
 English:Are you sure you want to delete printer '{0}'?
 Translated:Are you sure you want to delete printer '{0}'?
-
-English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
@@ -1591,9 +1582,6 @@ Translated:Error: Could not create file for saving. Original error
 English:Error: Could not read file from disk. Original error:
 Translated:Error: Could not read file from disk. Original error:
 
-English:Error: Could not read file from disk. Original error: 
-Translated:Error: Could not read file from disk. Original error: 
-
 English:Estimated Cost
 Translated:Estimated Cost
 
@@ -1965,9 +1953,6 @@ Translated:Forgot Password
 
 English:Forums
 Translated:Forums
-
-English:Found a line that is {0} characters long.\n{1}...
-Translated:Found a line that is {0} characters long.\n{1}...
 
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Found a line that is {0} characters long.\n{1}...
@@ -2463,9 +2448,6 @@ Translated:IP Address of printer/printer controller
 
 English:IP Finder
 Translated:IP Finder
-
-English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
 Translated:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
@@ -3232,6 +3214,9 @@ Translated:Number of Samples
 English:Number Printed
 Translated:Number Printed
 
+English:Object Actions
+Translated:Object Actions
+
 English:of
 Translated:of
 
@@ -3811,6 +3796,9 @@ Translated:Printer Options
 English:Printer Paused
 Translated:Printer Paused
 
+English:Printer Settings
+Translated:Printer Settings
+
 English:Printer Setup
 Translated:Printer Setup
 
@@ -4107,9 +4095,6 @@ Translated:Reset to Factory Defaults
 
 English:Reset View
 Translated:Reset View
-
-English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
@@ -4957,12 +4942,6 @@ Translated:Success!\n\nYour filament should now be loaded
 English:Success!\n\nYour filament should now be unloaded
 Translated:Success!\n\nYour filament should now be unloaded
 
-English:Success!\n\nYour filament should now be loaded
-Translated:Success!\n\nYour filament should now be loaded
-
-English:Success!\n\nYour filament should now be unloaded
-Translated:Success!\n\nYour filament should now be unloaded
-
 English:Support
 Translated:Support
 
@@ -5188,9 +5167,6 @@ Translated:The extra distance the raft will extend around the edge of the part.
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 
-English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-
 English:The extruder to use for support material. Default will use whichever extruder active at the time.
 Translated:The extruder to use for support material. Default will use whichever extruder active at the time.
 
@@ -5202,9 +5178,6 @@ Translated:The extruder to use to for support material interface layers. Default
 
 English:The extruder to use to print the raft. Default will use extruder 1.
 Translated:The extruder to use to print the raft. Default will use extruder 1.
-
-English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
@@ -5226,9 +5199,6 @@ Translated:The ideal resistance is when the paper first begins to bend, but can 
 
 English:The ideal resistance is when the paper first begins to bend, but can still be moved.
 Translated:The ideal resistance is when the paper first begins to bend, but can still be moved.
-
-English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
-Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 
 English:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
 Translated:The inset amount for each side of the bed.\n- As a % of the width or depth\n- Ordered: Left, Front, Right, Back\n- NOTE: The probe offset is added on top of this
@@ -5482,9 +5452,6 @@ Translated:The serial port communication speed of the printers firmware.
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
 Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
 
-English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-
 English:The serial port to use while connecting to this printer.
 Translated:The serial port to use while connecting to this printer.
 
@@ -5640,9 +5607,6 @@ Translated:The temperature to which the bed will heat (or cool) in order to remo
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
 Translated:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-
-English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
@@ -6142,6 +6106,9 @@ Translated:Velocity Paint
 English:Version
 Translated:Version
 
+English:View
+Translated:View
+
 English:View Icons
 Translated:View Icons
 
@@ -6246,12 +6213,6 @@ Translated:Warning, very short print
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-
-English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-
-English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
@@ -6406,9 +6367,6 @@ Translated:You are connected to the Emulator not an actual printer.
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 
-English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-
 English:You can also
 Translated:You can also
 
@@ -6459,12 +6417,6 @@ Translated:You should select the 'Material' your are printing with under the 'Ho
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-
-English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-
-English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
-Translated:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
 
 English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
 Translated:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
