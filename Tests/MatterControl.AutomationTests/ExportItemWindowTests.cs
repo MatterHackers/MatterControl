@@ -7,7 +7,7 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("Agg.UI.Automation")]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class ExportGcodeFromExportWindow
 	{
 		[Test, ChildProcessTest]
