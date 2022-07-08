@@ -154,8 +154,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-
-
 			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
@@ -189,8 +187,12 @@ namespace MatterHackers.MatterControl
 #if !DEBUG
 			if (!LocalService.TryStartServer())
 			{
-				if (shellFiles.Any() && LocalService.TrySendToServer(shellFiles))
-					return;
+				if (shellFiles.Any())
+				{
+					LocalService.TrySendToServer(shellFiles);
+				}
+
+				return;
 			}
 #endif
 
