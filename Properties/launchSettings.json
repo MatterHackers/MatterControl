@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MatterControl": {
+      "commandName": "Project",
+      "hotReloadEnabled": false,
+      "nativeDebugging": false
+    }
+  }
+}

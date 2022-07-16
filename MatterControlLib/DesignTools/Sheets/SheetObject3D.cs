@@ -29,11 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -375,6 +378,59 @@ namespace MatterHackers.MatterControl.DesignTools
 			return stringWithConstants;
 		}
 
+		private static string GetDisplayName(PropertyInfo prop)
+		{
+			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
+			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
+		}
+
+		private static string SearchSiblingProperties(IObject3D owner, string inExpression)
+        {
+			var parent = owner.Parent;
+			if (parent != null)
+            {
+				var matches = ConstantFinder.Matches(inExpression);
+
+				for (int i = 0; i < matches.Count; i++)
+				{
+					var constant = matches[i].Value;
+					// split inExpression on .
+					var splitExpression = constant.Split('.');
+					if (splitExpression.Length == 2)
+					{
+						foreach (var child in parent.Children)
+						{
+							// skip if owner
+							if (child != owner)
+							{
+								var itemName = splitExpression[0];
+								var propertyName = splitExpression[1];
+								// if child has the same name as itemName
+								if (child.Name == itemName)
+								{
+									// enumerate public properties on child
+									foreach (var property in child.GetType().GetProperties())
+									{
+										var displayName = GetDisplayName(property);
+										// if property name matches propertyName
+										if (displayName == propertyName)
+										{
+											// return the value
+											var expression = child.GetType().GetProperty(property.Name).GetValue(child, null).ToString();
+											var value = SheetObject3D.EvaluateExpression<double>(child, expression).ToString();
+											inExpression = inExpression.Replace("[" + constant + "]", value);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+            }
+            
+            return inExpression;
+        }
+
 		public static T EvaluateExpression<T>(IObject3D owner, string inExpression)
 		{
 			var inputExpression = inExpression;
@@ -383,6 +439,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				inputExpression = printer.Settings.ReplaceSettingsNamesWithValues(inputExpression, false);
 			}
+
+			inputExpression = SearchSiblingProperties(owner, inputExpression);
 
 			inputExpression = ReplaceConstantsWithValues(owner, inputExpression);
 

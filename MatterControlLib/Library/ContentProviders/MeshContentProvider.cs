@@ -38,7 +38,8 @@ namespace MatterHackers.MatterControl
     using System.Threading;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
-	using MatterHackers.DataConverters3D;
+    using MatterHackers.Agg.UI;
+    using MatterHackers.DataConverters3D;
     using MatterHackers.ImageProcessing;
     using MatterHackers.MatterControl.DataStorage;
     using MatterHackers.MatterControl.DesignTools.Operations;

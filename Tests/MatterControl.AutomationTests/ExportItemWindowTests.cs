@@ -3,13 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using System;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("Agg.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class ExportGcodeFromExportWindow
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ExportAsGcode()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -56,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ExportDesignTabAsSTL()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ExportStreamG92HandlingTest()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

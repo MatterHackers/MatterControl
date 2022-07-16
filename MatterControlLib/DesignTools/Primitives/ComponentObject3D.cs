@@ -295,11 +295,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-        public void AddRightClickMenuItemsItems(PopupMenu popupMenu)
+        public void AddRightClickMenuItemsItems(PopupMenu popupMenu, ThemeConfig theme)
         {
-			popupMenu.CreateSeparator();
+            popupMenu.CreateSeparator();
 
-			string componentID = this.ComponentID;
+            string componentID = this.ComponentID;
 
 			var helpItem = popupMenu.CreateMenuItem("Help".Localize());
 			var helpArticlesByID = ApplicationController.Instance.HelpArticlesByID;
@@ -316,5 +316,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			};
 		}
-	}
+
+        public void AddRightClickMenuItemsItems(PopupMenu popupMenu)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

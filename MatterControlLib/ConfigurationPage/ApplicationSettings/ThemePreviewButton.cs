@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			overlay.Click += (s, e) =>
 			{
 				// Activate the theme
-				themeColorPanel.SetThemeColor(this.ThemeSet, primaryAccentColor, this.Mode);
+				themeColorPanel.SetThemeColor(this.ThemeSet, primaryAccentColor);
 
 				// Disable further theme clicks until reload completes
 				themeColorPanel.Enabled = false;
@@ -135,8 +135,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		}
 
 		public ThemeSet ThemeSet { get; }
-
-		public string Mode { get; internal set; }
 
 		public void PreviewThemeColor(Color sourceColor)
 		{

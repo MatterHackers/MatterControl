@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardPage : DialogPage
 	{
-		public TextButton NextButton { get; }
+		public ThemedTextButton NextButton { get; }
 		protected PrinterConfig printer;
 
 		public Action<WizardPage> PageLoad { get; set; }

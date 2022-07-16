@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 	public class AddPrinterWidget : SearchableTreePanel
 	{
 		private SectionWidget nameSection;
-		private MHTextEditWidget printerNameInput;
+		private ThemedTextEditWidget printerNameInput;
 		private bool usingDefaultName = true;
 		private Action<bool> nextButtonEnabled;
 		private FlowLayoutWidget printerInfo;
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 			horizontalSplitter.Panel2.AddChild(panel2Column);
 
-			printerNameInput = new MHTextEditWidget("", theme)
+			printerNameInput = new ThemedTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
 			};

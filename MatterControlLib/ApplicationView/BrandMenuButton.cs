@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 			this.HAnchor = HAnchor.Fit;
 			this.Margin = 0;
 
-			this.DynamicPopupContent = () => BrandMenuButton.CreatePopupMenu();
+			this.DynamicPopupContent = () => BrandMenuButton.CreatePopupMenu(theme);
 
 			var row = new FlowLayoutWidget()
 			{
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static PopupMenu CreatePopupMenu()
+		private static PopupMenu CreatePopupMenu(ThemeConfig theme)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 

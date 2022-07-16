@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.Padding = theme.ToolbarPadding;
 
-			toolbar.ExtendOverflowMenu = (popupMenu) => LibraryWidget.CreateSortingMenu(popupMenu, libraryView);
+			toolbar.ExtendOverflowMenu = (popupMenu) => LibraryWidget.CreateSortingMenu(popupMenu, theme, libraryView);
 
 			allControls.AddChild(toolbar);
 
@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 	public class TextEditWithInlineCancel : GuiWidget
 	{
-		public MHTextEditWidget TextEditWidget { get; }
+		public ThemedTextEditWidget TextEditWidget { get; }
 
 		public GuiWidget ResetButton { get; }
 
@@ -433,7 +433,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			TextEditWidget = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
+			TextEditWidget = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center

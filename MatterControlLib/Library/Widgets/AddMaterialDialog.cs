@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
     {
         private readonly RadioButton createPrinterRadioButton = null;
         private readonly AddMaterialWidget materialPanel;
-        private readonly TextButton nextButton;
+        private readonly ThemedTextButton nextButton;
 
         public AddMaterialDialog(Action<PrinterSettingsLayer> addedMaterial, Action defineNewClicked)
         {

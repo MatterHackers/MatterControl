@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public abstract class ValueOrUnitsField : TextField

@@ -412,7 +412,7 @@ namespace MatterHackers.MatterControl
 			{
 				gitHubPat = "";
 			}
-			var accessToken = new MHTextEditWidget(gitHubPat, theme, pixelWidth: 350, messageWhenEmptyAndNotSelected: "Enter Person Access Token".Localize())
+			var accessToken = new ThemedTextEditWidget(gitHubPat, theme, pixelWidth: 350, messageWhenEmptyAndNotSelected: "Enter Person Access Token".Localize())
 			{
 				HAnchor = HAnchor.Absolute,
 				Margin = new BorderDouble(5),

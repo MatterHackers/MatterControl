@@ -115,6 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					popupContent.Closed += PopupContent_Closed;
 
 					systemWindow.ShowPopup(
+						theme,
 						this.AnchorMate,
 						this.PopupMate,
 						this.AltPopupBounds);

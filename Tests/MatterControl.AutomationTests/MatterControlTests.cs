@@ -36,13 +36,14 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class MatterControlTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ThumbnailGenerationMode()
 		{
 			await MatterControlUtilities.RunTest(async (testRunner) =>
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ViewGenerateSupportMenu()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task PrinterTabRemainsAfterReloadAll()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

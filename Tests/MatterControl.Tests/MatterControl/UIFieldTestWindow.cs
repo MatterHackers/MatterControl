@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
@@ -38,8 +37,8 @@ namespace MatterControl.Tests.MatterControl
 {
 	public class UIFieldTestWindow : SystemWindow
 	{
-		public MHTextEditWidget ExpectedText { get; }
-		public MHTextEditWidget InputText { get; }
+		public ThemedTextEditWidget ExpectedText { get; }
+		public ThemedTextEditWidget InputText { get; }
 
 		private UIField field;
 
@@ -77,7 +76,7 @@ namespace MatterControl.Tests.MatterControl
 				Margin = new BorderDouble(right: 10, bottom: 2),
 			});
 
-			this.InputText = new MHTextEditWidget("", theme, pixelWidth: pixelWidth)
+			this.InputText = new ThemedTextEditWidget("", theme, pixelWidth: pixelWidth)
 			{
 				Margin = new BorderDouble(right: 8)
 			};
@@ -94,7 +93,7 @@ namespace MatterControl.Tests.MatterControl
 				Margin = new BorderDouble(right: 10, bottom: 2)
 			});
 
-			this.ExpectedText = new MHTextEditWidget("", theme, pixelWidth: pixelWidth)
+			this.ExpectedText = new ThemedTextEditWidget("", theme, pixelWidth: pixelWidth)
 			{
 				Margin = new BorderDouble(right: 8)
 			};

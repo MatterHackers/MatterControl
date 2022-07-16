@@ -44,7 +44,8 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class TranslationsTests
 	{
-		[Test, Category("Translations")]
+        // Culture-sensitive DateTime strings here.
+		[Test, Category("Translations"), SetCulture("")]
 		public void RelativeFriendlyDatesTest()
 		{
 			{
@@ -52,33 +53,33 @@ namespace MatterControl.Tests.MatterControl
 				DateTime nowTime = new DateTime(2016, 05, 28, 15, 13, 37);
 
 				DateTime testTime = nowTime.AddMinutes(-63);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Today);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:10 PM");
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Today);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:10 PM");
 
-				testTime = nowTime.AddHours(-25);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Yesterday);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:13 PM");
+                testTime = nowTime.AddHours(-25);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.Yesterday);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2:13 PM");
 
-				testTime = nowTime.AddDays(-4);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Tuesday 3:13 PM");
+                testTime = nowTime.AddDays(-4);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Tuesday 3:13 PM");
 
-				testTime = nowTime.AddDays(-6);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Sunday 3:13 PM");
+                testTime = nowTime.AddDays(-6);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameWeek);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "Sunday 3:13 PM");
 
-				testTime = nowTime.AddDays(-7);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameMonth);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "May 21, 3:13 PM");
+                testTime = nowTime.AddDays(-7);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameMonth);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "May 21, 3:13 PM");
 
-				testTime = nowTime.AddDays(-37);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameYear);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "April 21, 3:13 PM");
+                testTime = nowTime.AddDays(-37);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.SameYear);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "April 21, 3:13 PM");
 
-				testTime = nowTime.AddDays(-364);
-				Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.PastYear);
-				Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2015 May 30, 3:13 PM");
-			}
+                testTime = nowTime.AddDays(-364);
+                Assert.IsTrue(RelativeTime.GetTimeBlock(nowTime, testTime) == TimeBlock.PastYear);
+                Assert.IsTrue(RelativeTime.GetDetail(nowTime, testTime) == "2015 May 30, 3:13 PM");
+            }
 
 			// make a grouped list
 			{
@@ -112,7 +113,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Translations")]
         public void EnglishLinesOnlyContainEnglishCharachters()
         {
-            string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Translations");
+            string fullPath = Path.Combine(MatterControlUtilities.StaticDataPath, "Translations");
 
             foreach (string directory in Directory.GetDirectories(fullPath))
             {

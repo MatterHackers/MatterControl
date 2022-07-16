@@ -375,4 +375,120 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
+
+    public static class MenuExtensions
+    {
+		public static MenuItem CreateButtonSelectMenuItem(this PopupMenu popuMenu, GuiWidget guiWidget, string name, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter, double minSpacerWidth = 0)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Name = name + " Menu Item",
+			};
+
+			row.AddChild(guiWidget);
+			row.AddChild(new HorizontalSpacer()
+			{
+				MinimumSize = new Vector2(minSpacerWidth, 0)
+			}); ;
+
+			foreach (var buttonKvp in buttonKvps)
+			{
+				var localKey = buttonKvp.key;
+				var button = EnumDisplayField.CreateThemedRadioButton(buttonKvp.text, buttonKvp.key, "", startingValue == buttonKvp.key, () =>
+				{
+					setter?.Invoke(localKey);
+				}, popuMenu.Theme);
+				row.AddChild(button);
+			}
+
+			MenuItem menuItem = new MenuItemHoldOpen(row);
+
+			popuMenu.AddChild(menuItem);
+
+			return menuItem;
+		}
+
+		public static MenuItem CreateButtonMenuItem(this PopupMenu popupMenu, GuiWidget guiWidget, string name, IEnumerable<(string key, string text, EventHandler<MouseEventArgs> click)> buttonKvps, double minSpacerWidth = 0)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Name = name + " Menu Item",
+			};
+
+			row.AddChild(guiWidget);
+			row.AddChild(new HorizontalSpacer()
+			{
+				MinimumSize = new Vector2(minSpacerWidth, 0)
+			});
+
+			foreach (var buttonKvp in buttonKvps)
+			{
+				var button = EnumDisplayField.CreateThemedButton(buttonKvp.text, buttonKvp.key, "", popupMenu.Theme);
+				button.Click += buttonKvp.click;
+				row.AddChild(button);
+			}
+
+			var menuItem = new MenuItemHoldOpen(row)
+			{
+			};
+
+			popupMenu.AddChild(menuItem);
+
+			return menuItem;
+		}
+
+		/// <summary>
+		/// Create and add a new menu item
+		/// </summary>
+		/// <param name="text">The text of the item</param>
+		/// <param name="items"></param>
+		/// <param name="getter"></param>
+		/// <param name="setter"></param>
+		/// <returns></returns>
+		public static MenuItem CreateButtonSelectMenuItem(this PopupMenu popupMenu, string text, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter, double minSpacerWidth = 0)
+		{
+			var textWidget = new TextWidget(text, pointSize: popupMenu.Theme.DefaultFontSize, textColor: popupMenu.Theme.TextColor)
+			{
+				Padding = PopupMenu.MenuPadding,
+				VAnchor = VAnchor.Center,
+			};
+
+			return popupMenu.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter, minSpacerWidth);
+		}
+
+		public static MenuItem CreateButtonMenuItem(this PopupMenu popupMenu,
+			string text,
+			IEnumerable<(string key, string text, EventHandler<MouseEventArgs> click)> buttonKvps,
+			double minSpacerWidth = 0,
+			bool bold = false)
+		{
+			var textWidget = new TextWidget(text, pointSize: popupMenu.Theme.DefaultFontSize, textColor: popupMenu.Theme.TextColor, bold: bold)
+			{
+				Padding = PopupMenu.MenuPadding,
+				VAnchor = VAnchor.Center,
+			};
+
+			return popupMenu.CreateButtonMenuItem(textWidget, text, buttonKvps, minSpacerWidth);
+		}
+
+		public static MenuItem CreateButtonSelectMenuItem(this PopupMenu popupMenu, string text, ImageBuffer icon, IEnumerable<(string key, string text)> buttonKvps, string startingValue, Action<string> setter)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				Selectable = false
+			};
+			row.AddChild(new ThemedIconButton(icon, popupMenu.Theme));
+
+			var textWidget = new TextWidget(text, pointSize: popupMenu.Theme.DefaultFontSize, textColor: popupMenu.Theme.TextColor)
+			{
+				Padding = PopupMenu.MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			row.AddChild(textWidget);
+
+			return popupMenu.CreateButtonSelectMenuItem(row, text, buttonKvps, startingValue, setter);
+		}
+	}
 }

@@ -43,7 +43,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using MatterHackers.RenderOpenGl;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations

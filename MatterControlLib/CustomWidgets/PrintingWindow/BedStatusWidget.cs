@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.CustomWidgets

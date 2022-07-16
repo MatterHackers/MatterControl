@@ -40,20 +40,21 @@ using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, RunInApplicationDomain, Category("GCodeStream")]
+	[TestFixture, Category("GCodeStream"), Parallelizable(ParallelScope.Children)]
 	public class GCodeStreamTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void MaxLengthStreamTests()
 		{
 			string[] lines = new string[]
@@ -84,7 +85,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, maxLengthStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void ExportStreamG30Tests()
 		{
 			string[] inputLines = new string[]
@@ -129,7 +130,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SmoothieRewriteTest()
 		{
 			string[] inputLines = new string[]
@@ -162,7 +163,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void LineCuttingOffWhenNoLevelingTest()
 		{
 			string[] inputLines = new string[]
@@ -186,7 +187,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void LineCuttingOnWhenLevelingOnWithProbeTest()
 		{
 			string[] inputLines = new string[]
@@ -235,7 +236,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void LineCuttingOnWhenLevelingOnNoProbeTest()
 		{
 			string[] inputLines = new string[]
@@ -299,7 +300,7 @@ namespace MatterControl.Tests.MatterControl
 			return totalGCodeStream;
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void RegexReplacementStreamIsLast()
 		{
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -316,7 +317,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(streamProcessors.First() is ProcessWriteRegexStream, "ProcessWriteRegexStream should be the last stream in the stack");
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CorrectEOutputPositionsG91()
 		{
 			string[] inputLines = new string[]
@@ -377,7 +378,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CorrectEOutputPositionsM83()
 		{
 			string[] inputLines = new string[]
@@ -441,7 +442,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CorrectEOutputForMiniStartupWithM83()
 		{
 			string[] inputLines = new string[]
@@ -534,7 +535,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CorrectZOutputPositions()
 		{
 			string[] inputLines = new string[]
@@ -564,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void PauseHandlingStreamTests()
 		{
 			int readX = 50;
@@ -627,7 +628,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test, Ignore("WIP")]
+		[Test, ChildProcessTest, Ignore("WIP")]
 		public void SoftwareEndstopstreamTests()
 		{
 			string[] inputLines = new string[]
@@ -675,7 +676,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void MorePauseHandlingStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -790,7 +791,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void KnownLayerLinesTest()
 		{
 			Assert.AreEqual(8, GCodeFile.GetLayerNumber("; layer 8, Z = 0.800"), "Simplify3D ~ 2019");
@@ -798,7 +799,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(7, GCodeFile.GetLayerNumber(";LAYER:7"), "Slic3r Prusa Edition 1.38.7-prusa3d on 2018-04-25");
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void WriteReplaceStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -837,7 +838,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, writeStream);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
@@ -857,7 +858,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;

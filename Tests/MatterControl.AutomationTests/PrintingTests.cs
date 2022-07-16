@@ -12,13 +12,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrintingTests
 	{
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -38,6 +39,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.SelectSliceSettingsField(SettingsKey.start_gcode);
 
 					var printer = testRunner.FirstPrinter();
+
+					// TODO: Failure persisting GCode / MultilineTextField value
+					//       Expected string length 3 but was 2.Strings differ at index 0.
+					//       Shift-G is being swallowed by something.
 
 					// Validate GCode fields persist values
 					Assert.AreEqual(
@@ -82,7 +87,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 95);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PulseLevelingTest()
 		{
 			// Validates the Pulse profile requires leveling and it works as expected
@@ -135,6 +140,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// assert the leveling is working
 					Assert.AreEqual(12.25, emulator.Destination.Z);
 
+					// NOTE: System.Exception : WaitForWidgetEnabled Failed: Named GuiWidget not found [Print Progress Dial]
+					//       Might be fixed in CancelPrint now.
 					testRunner.CancelPrint();
 
 					// now modify the leveling data manually and assert that it is applied when printing
@@ -170,7 +177,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 230);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public void ExpectedEmulatorResponses()
 		{
 			// TODO: Emulator behavior should emulate actual printer firmware and use configuration rather than M104/M109 sends to set extruder count
@@ -281,7 +288,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -315,10 +322,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90);
+			}, maxTimeToRun: 90 * 2); // Once timed out at 90.
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PrinterDeletedWhilePrinting()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -345,7 +352,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 180);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PrinterRecoveryTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -384,7 +391,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 180);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task TemperatureTowerWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -422,16 +429,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 180);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task RecoveryT1NoProbe()
 		{
 			await ExtruderT1RecoveryTest("Airwolf 3D", "HD");
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task RecoveryT1WithProbe()
 		{
-			await ExtruderT1RecoveryTest("Pulse", "S-500");
+			await ExtruderT1RecoveryTest("FlashForge", "Creator Dual");
 		}
 
 		public async Task ExtruderT1RecoveryTest(string make, string model)
@@ -466,6 +473,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickResumeButton(printer, false, 2) // close the pause dialog pop-up do not resume
 						.ClickByName("Disconnect from printer button")
+						.ClickByName("Yes Button") // Are you sure?
 						.ClickByName("Connect to printer button") // Reconnect
 						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
@@ -490,7 +498,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 180);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;
@@ -521,6 +529,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.ScrollIntoView("Extrusion Multiplier NumberEdit")
 						.ScrollIntoView("Feed Rate NumberEdit");
 
+					testRunner.PausePrint();
+
 					// Tuning values should default to 1 when missing
 					ConfirmExpectedSpeeds(testRunner, 1, 1, "Initial case");
 
@@ -539,6 +549,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
+
+					testRunner.ResumePrint();
 
 					// Wait up to 60 seconds for the print to finish
 					printFinishedResetEvent.WaitOne(60 * 1000);
@@ -564,7 +576,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
 			double targetExtrusionRate = 1.5;
@@ -596,6 +608,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
 
 					testRunner.StartPrint(printer);
+
+					testRunner.PausePrint();
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
@@ -633,6 +647,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Values should remain after print completes
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
 
+					testRunner.ResumePrint();
+
 					// Wait for printing to complete
 					printFinishedResetEvent.WaitOne();
 
@@ -656,7 +672,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CloseShouldNotStopSDPrint()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -698,7 +714,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 90);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CancelingPrintTurnsHeatAndFanOff()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

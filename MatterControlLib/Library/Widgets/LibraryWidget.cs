@@ -234,14 +234,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			viewOptionsButton.DynamicPopupContent = () =>
 			{
 				var popupMenu = new PopupMenu(theme);
-				CreateSortingMenu(popupMenu, libraryView);
+				CreateSortingMenu(popupMenu, theme, libraryView);
 				return popupMenu;
 			};
 
 			return viewOptionsButton;
 		}
 
-		public static PopupMenu CreateSortingMenu(PopupMenu popupMenu, LibraryListView libraryView)
+		public static PopupMenu CreateSortingMenu(PopupMenu popupMenu, ThemeConfig theme, LibraryListView libraryView)
 		{
 			var siblingList = new List<GuiWidget>();
 

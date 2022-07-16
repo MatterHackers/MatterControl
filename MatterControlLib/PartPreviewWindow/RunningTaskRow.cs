@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.Options?.PauseText,
 				taskDetails.Options?.PauseAction,
 				taskDetails.Options?.PauseToolTip ?? "Pause".Localize(),
-				"",
+				"Pause Task Button",
 				theme,
 				0);
 

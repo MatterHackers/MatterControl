@@ -12,20 +12,22 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("PopupAnchorTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
+	[TestFixture, Category("PopupAnchorTests"), Parallelizable(ParallelScope.Children)]
 	public class PopupAnchorTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task WindowTest()
 		{
 			var systemWindow = new PopupsTestWindow(700, 300)
@@ -54,6 +56,7 @@ namespace MatterControl.Tests.MatterControl
 				button.Click += (s, e) =>
 				{
 					systemWindow.ShowPopup(
+                        new ThemeConfig(),
 						new MatePoint()
 						{
 							Widget = button
@@ -77,7 +80,7 @@ namespace MatterControl.Tests.MatterControl
 			}, 30);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task TopBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -113,7 +116,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task TopTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -149,7 +152,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task BottomTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -185,7 +188,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task BottomBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -222,7 +225,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect down to up
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task BottomTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -264,7 +267,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task TopTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -308,7 +311,7 @@ namespace MatterControl.Tests.MatterControl
 
 
 		// Redirect up to down
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task BottomTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -350,7 +353,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task TopTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -393,7 +396,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect left to right
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task LeftRightRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -447,7 +450,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect right to left
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RightLeftRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -528,7 +531,7 @@ namespace MatterControl.Tests.MatterControl
 						BorderColor = Color.LightBlue.Blend(Color.Black, 0.4)
 					};
 
-					systemWindow.ShowPopup(anchor, popup);
+					systemWindow.ShowPopup(new ThemeConfig(), anchor, popup);
 				};
 
 				anchor.Widget = button;

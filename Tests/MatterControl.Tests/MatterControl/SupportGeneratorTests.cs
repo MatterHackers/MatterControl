@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,8 +53,8 @@ namespace MatterControl.Tests.MatterControl
 			var minimumSupportHeight = .05;
 
 			// Set the static data to point to the directory of MatterControl
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// make a single cube in the air and ensure that support is generated
 			//   _________
@@ -311,8 +312,8 @@ namespace MatterControl.Tests.MatterControl
 			var minimumSupportHeight = .05;
 
 			// Set the static data to point to the directory of MatterControl
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// make a single cube in the air and ensure that support is generated
 			//   _________
@@ -500,14 +501,14 @@ namespace MatterControl.Tests.MatterControl
 		public async Task ComplexPartNoSupport()
 		{
 			// Set the static data to point to the directory of MatterControl
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// load a complex part that should have no support required
 			var minimumSupportHeight = .05;
 			var scene = new InteractiveScene();
 
-			var meshPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "NoSupportNeeded.stl");
+			var meshPath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "NoSupportNeeded.stl");
 
 			var supportObject = new Object3D()
 			{

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 
 		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
-		private static Dictionary<string, string> themes = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> themes = new();
 
 		static AppContext()
 		{
@@ -107,9 +107,10 @@ namespace MatterHackers.MatterControl
 				{
 					_themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
 					ThemeSet.Theme.EnsureDefaults();
+                    ThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
 
-					// If the serialized format is older than the current format, null and fall back to latest default below
-					if (ThemeSet.SchemeVersion != ThemeSet.LatestSchemeVersion)
+                    // If the serialized format is older than the current format, null and fall back to latest default below
+                    if (ThemeSet.SchemeVersion != ThemeSet.LatestSchemeVersion)
 					{
 						_themeset = null;
 					}
@@ -130,18 +131,18 @@ namespace MatterHackers.MatterControl
 		{
 			var toolTipPopover = new ClickablePopover(ArrowDirection.Up, new BorderDouble(0, 0), 7, 0);
 
-			var markdownWidegt = new MarkdownWidget(Theme, false)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit,
-				Width = 350 * GuiWidget.DeviceScale,
-				BackgroundColor = Theme.BackgroundColor,
-				Border = 1,
-				BorderColor = Color.Black,
-			};
-
-			markdownWidegt.Markdown = toolTipText;
-			markdownWidegt.Width = 350 * GuiWidget.DeviceScale;
+            var markdownWidegt = new MarkdownWidget(Theme, false)
+            {
+                HAnchor = HAnchor.Absolute,
+                VAnchor = VAnchor.Fit,
+                Width = 350 * GuiWidget.DeviceScale,
+                BackgroundColor = Theme.BackgroundColor,
+                Border = 1,
+                BorderColor = Color.Black,
+                Markdown = toolTipText
+            };
+            
+            markdownWidegt.Width = 350 * GuiWidget.DeviceScale;
 			var maxLineWidth = 0.0;
 			if (markdownWidegt.Descendants<ParagraphX>().Any())
 			{
@@ -163,6 +164,7 @@ namespace MatterHackers.MatterControl
 
 					var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(json);
 					themeConfig.EnsureDefaults();
+					ThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
 
 					return themeConfig;
 				}

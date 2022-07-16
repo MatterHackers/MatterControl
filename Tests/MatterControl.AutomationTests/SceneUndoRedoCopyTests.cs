@@ -41,10 +41,11 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
@@ -52,11 +53,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task CopyRemoveUndoRedo()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -96,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task UndoRedoCopy()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -146,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoOnUnGroupSingleMesh()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -185,7 +186,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoOnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -221,7 +222,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoUnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -270,7 +271,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoMirror()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -300,7 +301,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		// NOTE: This test once failed on GLFW. Could be timing or accidental input.
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateXY()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -313,6 +315,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Initialize
 				AddCoinToBed(testRunner, scene);
 
+				// NOTE: Test failed with this once:
+				//       Should be same (6): '      "Matrix": "[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,-10.000661239027977,-19.05065578967333,-5.421010862427522E-17,1.0]",
+				//                         ' '      "Matrix": "[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,2.999338760972023,-24.00067986547947,-5.421010862427522E-17,1.0]",
+				//       Expected: True
+				//       But was: False
+				// UndoTestExtensionMethods.SceneFilesAreSame(String fileName1, String fileName2, Boolean expectedResult) line 474
+				// UndoTestExtensionMethods.AssertUndoRedo(AutomationRunner testRunner, InteractiveScene scene, String scenePath, String preOperationPath, String postOperationPath, Int32 preOperationDescendantCount, Int32 postOperationDescendantCount) line 541
+				// UndoTestExtensionMethods.RunDoUndoTest(AutomationRunner testRunner, InteractiveScene scene, Action performOperation) line 453
+
 				// test drag x y translation
 				testRunner.RunDoUndoTest(
 					scene,
@@ -324,6 +335,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						testRunner.DragDropByName(CoinName, CoinName, offsetDrag: new Point2D(-4, 0), offsetDrop: new Point2D(40, 0));
 						var end = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 
+						// NOTE: Test failed with this once: Expected: greater than 15.399987526237965d, But was:  15.399987526237965d
+						//       ClickWidget now waits for 2 redraws in case there is more deferred processing.
+
 						// Assert
 						Assert.Greater(end.X, start.X);
 						Assert.Less(end.Y, start.Y);
@@ -333,8 +347,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
+		// Parallel testing of this single test.
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
+		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
 
-		[Test]
+
+		[Test, ChildProcessTest]
 		public async Task ValidateDoUndoTranslateZ()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -370,6 +397,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private static void AddBoxABoxBToBed(AutomationRunner testRunner, InteractiveScene scene)
 		{
 			var item = "Calibration - Box.stl";
+			// NOTE: Test once failed here. Probably due to timing.
 			testRunner.AddItemToBed()
 				.Delay(.1)
 				// move the first one over
@@ -398,7 +426,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	{
 		public static void RunDoUndoTest(this AutomationRunner testRunner, InteractiveScene scene, Action performOperation)
 		{
-			string scenePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", "undo_test_scene");
+			string scenePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "temp", "undo_test_scene_" + Path.GetRandomFileName());
+
 			Directory.CreateDirectory(scenePath);
 			Object3D.AssetsPath = Path.Combine(scenePath, "Assets");
 

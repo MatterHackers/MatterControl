@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,32 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl
 {
-	public enum ArrowDirection
+    public class SplitButtonParams
 	{
-		Right,
-		Left,
-		Up,
-		Down,
-		None
+		public ImageBuffer Icon { get; set; }
+
+		public bool ButtonEnabled { get; set; } = true;
+
+		public string ButtonName { get; set; }
+
+		public Action<GuiWidget> ButtonAction { get; set; }
+
+		public string ButtonTooltip { get; set; }
+
+		public Action MenuAction { get; set; }
+
+		public Action<PopupMenu> ExtendPopupMenu { get; set; }
+
+		public string ButtonText { get; set; }
+
+		public Color BackgroundColor { get; set; }
 	}
 }

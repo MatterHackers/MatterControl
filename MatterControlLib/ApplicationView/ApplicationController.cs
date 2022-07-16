@@ -39,6 +39,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -566,8 +567,37 @@ namespace MatterHackers.MatterControl
 					targetUri += internalLink;
 				}
 
-				Process.Start(targetUri);
+				ProcessStart(targetUri);
 			});
+		}
+
+        public static void ProcessStart(string input)
+        {
+			try
+			{
+				Process.Start(input);
+			}
+			catch
+			{
+				// hack because of this: https://github.com/dotnet/corefx/issues/10361
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					input = input.Replace("&", "^&");
+					Process.Start(new ProcessStartInfo("cmd", $"/c start {input}") { CreateNoWindow = true });
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				{
+					Process.Start("xdg-open", input);
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				{
+					Process.Start("open", input);
+				}
+				else
+				{
+					throw;
+				}
+			}
 		}
 
 		internal void MakeGrayscale(ImageBuffer sourceImage)

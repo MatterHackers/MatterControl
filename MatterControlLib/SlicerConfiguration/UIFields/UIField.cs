@@ -82,12 +82,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ClearUndoHistory()
 		{
-			foreach (var widget in this.Content.DescendantsAndSelf<MHTextEditWidget>())
+			foreach (var widget in this.Content.DescendantsAndSelf<ThemedTextEditWidget>())
 			{
 				widget.ActualTextEditWidget.InternalTextEditWidget.ClearUndoHistory();
 			}
 
-			foreach (var widget in this.Content.DescendantsAndSelf<MHNumberEdit>())
+			foreach (var widget in this.Content.DescendantsAndSelf<ThemedNumberEdit>())
 			{
 				widget.ActuallNumberEdit.InternalTextEditWidget.ClearUndoHistory();
 			}

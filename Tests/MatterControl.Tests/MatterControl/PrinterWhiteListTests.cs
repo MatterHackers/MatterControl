@@ -11,7 +11,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("PrinterWhiteListTests")]
 		public void DesktopCalibrationPartsInSettings()
 		{
-			string settingsJsonPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "OEMSettings", "Settings.json");
+			string settingsJsonPath = Path.Combine(MatterControlUtilities.StaticDataPath, "OEMSettings", "Settings.json");
 
 			if (File.Exists(settingsJsonPath))
 			{
@@ -27,7 +27,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("SamplePartsTests")]
 		public void DesktopCalibrationPartsExist()
 		{
-			string samplePartsPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "OEMSettings", "SampleParts");
+			string samplePartsPath = Path.Combine(MatterControlUtilities.StaticDataPath, "OEMSettings", "SampleParts");
 			string[] files = Directory.GetFiles(samplePartsPath);
 			bool hasPhil = files.Where(l => l.Contains("Phil A Ment.stl")).Any();
 			Assert.IsTrue(hasPhil, "Expected Phil file not found");

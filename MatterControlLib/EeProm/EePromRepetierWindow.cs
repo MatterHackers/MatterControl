@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.EeProm
 					CreateSpacer(row);
 
 					double.TryParse(newSetting.Value, out double currentValue);
-					var valueEdit = new MHNumberEdit(currentValue, theme, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true)
+					var valueEdit = new ThemedNumberEdit(currentValue, theme, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true)
 					{
 						SelectAllOnFocus = true,
 						TabIndex = currentTabIndex++,

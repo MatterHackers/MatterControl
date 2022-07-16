@@ -44,11 +44,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class ThemeColorPanel : FlowLayoutWidget
 	{
-		private Color lastColor;
-		private AccentColorsWidget colorSelector;
-		private ThemeConfig theme;
+		private readonly AccentColorsWidget colorSelector;
+		private readonly ThemeConfig theme;
 		private IColorTheme _themeProvider;
-		private GuiWidget previewButtonPanel;
+		private readonly GuiWidget previewButtonPanel;
 
 		public ThemeColorPanel(ThemeConfig theme, AccentColorsWidget colorSelector)
 			: base (FlowDirection.TopToBottom)
@@ -67,8 +66,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				_themeProvider = AppContext.ThemeProviders.Values.First();
 			}
 
-			accentPanelColor = theme.ResolveColor(theme.SectionBackgroundColor, theme.SlightShade);
-
 			this.SelectionColor = theme.MinimalShade;
 
 			this.AddChild(previewButtonPanel = new FlowLayoutWidget()
@@ -82,8 +79,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		}
 
 		public ImageBuffer CheckMark { get; } = StaticData.Instance.LoadIcon("fa-check_16.png", 16, 16, invertImage: true);
-
-		private Color accentPanelColor;
 
 		public Color SelectionColor { get; private set; }
 
@@ -103,8 +98,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void CreateThemeModeButtons()
 		{
 			previewButtonPanel.CloseChildren();
-
-			var accentColor = theme.PrimaryAccentColor;
 
 			int providerIndex = 0;
 
@@ -149,7 +142,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						VAnchor = VAnchor.Absolute,
 						Width = 80 * GuiWidget.DeviceScale,
 						Height = 65 * GuiWidget.DeviceScale,
-						Mode = themeName,
 						Border = 1,
 						BorderColor = theme.BorderColor20,
 						Margin = new BorderDouble(theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding, theme.DefaultContainerPadding)
@@ -210,10 +202,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		public void SetThemeColor(ThemeSet themeSet, Color accentColor, string mode = null)
+		public void SetThemeColor(ThemeSet themeSet, Color accentColor)
 		{
-			lastColor = accentColor;
-
 			if (colorSelector != null)
 			{
 				foreach (var colorButton in colorSelector.ColorButtons)
@@ -232,10 +222,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public class AccentColorsWidget : FlowLayoutWidget
 		{
-			private int containerHeight;
-			private int buttonSpacing;
-			private List<ColorButton> colorButtons = new List<ColorButton>();
-			private ThemeSet themeSet;
+			private readonly int containerHeight;
+			private readonly int buttonSpacing;
+			private readonly List<ColorButton> colorButtons = new();
+			private readonly ThemeSet themeSet;
 
 			public AccentColorsWidget(ThemeSet themeSet, int buttonHeight = 18, int buttonSpacing = 3)
 			{

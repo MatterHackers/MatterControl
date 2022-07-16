@@ -1248,7 +1248,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(5, 0)
 			};
 
-			var searchField = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
+			var searchField = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Search Google for images")
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center

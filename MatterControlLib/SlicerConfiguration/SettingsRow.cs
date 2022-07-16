@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
@@ -40,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class SettingsRow : FlowLayoutWidget
+    public class SettingsRow : FlowLayoutWidget
 	{
 		protected GuiWidget overrideIndicator;
 		protected const bool debugLayout = false;

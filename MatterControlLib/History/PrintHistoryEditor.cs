@@ -444,7 +444,7 @@ Support and tutorials:" + articles;
 
 		public class CollectPrintDetailsPage : DialogPage
 		{
-			private readonly MHTextEditWidget textEditWidget;
+			private readonly ThemedTextEditWidget textEditWidget;
 
 			public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
 
@@ -507,7 +507,7 @@ Support and tutorials:" + articles;
 				// Adds text box and check box to the above container
 				var emptyText = "What went wrong?".Localize();
 				var initialValue = printTask.Note ?? "";
-				textEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText)
+				textEditWidget = new ThemedTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText)
 				{
 					Name = "InputBoxPage TextEditWidget",
 					HAnchor = HAnchor.Stretch,

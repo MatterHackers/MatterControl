@@ -11,13 +11,14 @@ using MatterHackers.PrinterEmulator;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class PrinterConnectionTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task PrinterDisconnectedOnTabClose()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

@@ -17,8 +17,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void StartGCodeHasHeating()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			printer.Settings.Slicer = new EngineMappingsMatterSlice();
@@ -70,8 +70,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void ExpectedPropertiesOnlyTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var expectedProperties = new HashSet<string>(
 				new[]
