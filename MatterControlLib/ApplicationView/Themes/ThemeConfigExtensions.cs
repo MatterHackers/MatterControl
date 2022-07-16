@@ -45,26 +45,26 @@ namespace MatterHackers.MatterControl
 
         private static double MicroButtonWidth => 30 * GuiWidget.DeviceScale;
 
-        public static SectionWidget ApplyBoxStyle(this ThemeConfig config, SectionWidget sectionWidget)
+        public static SectionWidget ApplyBoxStyle(this ThemeConfig theme, SectionWidget sectionWidget)
         {
-            return config.ApplyBoxStyle(
+            return theme.ApplyBoxStyle(
                 sectionWidget,
-                config.SectionBackgroundColor,
-                margin: new BorderDouble(config.DefaultContainerPadding, 0, config.DefaultContainerPadding, config.DefaultContainerPadding));
+                theme.SectionBackgroundColor,
+                margin: new BorderDouble(theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding, theme.DefaultContainerPadding));
         }
 
         // ApplySquareBoxStyle
-        public static SectionWidget ApplyBoxStyle(this ThemeConfig config, SectionWidget sectionWidget, BorderDouble margin)
+        public static SectionWidget ApplyBoxStyle(this ThemeConfig theme, SectionWidget sectionWidget, BorderDouble margin)
         {
-            sectionWidget.BackgroundColor = config.SectionBackgroundColor;
+            sectionWidget.BackgroundColor = theme.SectionBackgroundColor;
             sectionWidget.Margin = 0;
             sectionWidget.Border = new BorderDouble(bottom: 1);
-            sectionWidget.BorderColor = config.RowBorder;
+            sectionWidget.BorderColor = theme.RowBorder;
 
             return sectionWidget;
         }
 
-        public static SectionWidget ApplyBoxStyle(this ThemeConfig config, SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
+        public static SectionWidget ApplyBoxStyle(this ThemeConfig theme, SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
         {
             // Enforce panel padding
             // sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);
@@ -78,11 +78,11 @@ namespace MatterHackers.MatterControl
             return sectionWidget;
         }
 
-        public static void ApplyPrimaryActionStyle(this ThemeConfig config, GuiWidget guiWidget)
+        public static void ApplyPrimaryActionStyle(this ThemeConfig theme, GuiWidget guiWidget)
         {
-            guiWidget.BackgroundColor = new Color(config.AccentMimimalOverlay, 50);
+            guiWidget.BackgroundColor = new Color(theme.AccentMimimalOverlay, 50);
 
-            Color hoverColor = config.AccentMimimalOverlay;
+            Color hoverColor = theme.AccentMimimalOverlay;
 
             switch (guiWidget)
             {
@@ -100,28 +100,28 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static SolidSlider ApplySliderStyle(this ThemeConfig config, SolidSlider solidSlider)
+        public static SolidSlider ApplySliderStyle(this ThemeConfig theme, SolidSlider solidSlider)
         {
-            solidSlider.View.TrackColor = config.SlightShade;
+            solidSlider.View.TrackColor = theme.SlightShade;
             solidSlider.View.TrackRadius = 4;
 
             return solidSlider;
         }
 
-        public static DoubleSolidSlider ApplySliderStyle(this ThemeConfig config, DoubleSolidSlider solidSlider)
+        public static DoubleSolidSlider ApplySliderStyle(this ThemeConfig theme, DoubleSolidSlider solidSlider)
         {
-            solidSlider.View.TrackColor = config.SlightShade;
+            solidSlider.View.TrackColor = theme.SlightShade;
             solidSlider.View.TrackRadius = 4;
 
             return solidSlider;
         }
 
-        public static JogControls.ExtrudeButton CreateExtrudeButton(this ThemeConfig config, PrinterConfig printer, string label, double movementFeedRate, int extruderNumber, bool levelingButtons = false)
+        public static JogControls.ExtrudeButton CreateExtrudeButton(this ThemeConfig theme, PrinterConfig printer, string label, double movementFeedRate, int extruderNumber, bool levelingButtons = false)
         {
-            return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, config)
+            return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, theme)
             {
-                BackgroundColor = config.MinimalShade,
-                BorderColor = config.BorderColor40,
+                BackgroundColor = theme.MinimalShade,
+                BorderColor = theme.BorderColor40,
                 BackgroundOutlineWidth = 1,
                 VAnchor = VAnchor.Absolute,
                 HAnchor = HAnchor.Absolute,
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
             };
         }
 
-        public static FlowLayoutWidget CreateMenuItems(this ThemeConfig config, PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
+        public static FlowLayoutWidget CreateMenuItems(this ThemeConfig theme, PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
         {
             // Create menu items in the DropList for each element in this.menuActions
             foreach (var menuAction in menuActions)
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
                             HAnchor = HAnchor.Fit | HAnchor.Stretch
                         };
 
-                        var textWidget = new TextWidget(menuAction.Title, pointSize: config.DefaultFontSize, textColor: config.TextColor)
+                        var textWidget = new TextWidget(menuAction.Title, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
                         {
                             // Padding = MenuPadding,
                             VAnchor = VAnchor.Center
@@ -161,11 +161,11 @@ namespace MatterHackers.MatterControl
 
                         foreach (var actionButton in namedActionButtons.Group)
                         {
-                            var button = new TextButton(actionButton.Title, config)
+                            var button = new TextButton(actionButton.Title, theme)
                             {
                                 Border = new BorderDouble(1, 0, 0, 0),
-                                BorderColor = config.MinimalShade,
-                                HoverColor = config.AccentMimimalOverlay,
+                                BorderColor = theme.MinimalShade,
+                                HoverColor = theme.AccentMimimalOverlay,
                                 Enabled = actionButton.IsEnabled()
                             };
 
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
                             }
                         }
 
-                        var menuItem = new PopupMenu.MenuItem(content, config)
+                        var menuItem = new PopupMenu.MenuItem(content, theme)
                         {
                             HAnchor = HAnchor.Fit | HAnchor.Stretch,
                             VAnchor = VAnchor.Fit,
@@ -227,18 +227,18 @@ namespace MatterHackers.MatterControl
             return popupMenu;
         }
 
-        public static RadioTextButton CreateMicroRadioButton(this ThemeConfig config, string text, IList<GuiWidget> siblingRadioButtonList = null)
+        public static RadioTextButton CreateMicroRadioButton(this ThemeConfig theme, string text, IList<GuiWidget> siblingRadioButtonList = null)
         {
-            var radioButton = new RadioTextButton(text, config, config.FontSize8)
+            var radioButton = new RadioTextButton(text, theme, theme.FontSize8)
             {
                 SiblingRadioButtonList = siblingRadioButtonList,
                 Padding = new BorderDouble(5, 0),
-                SelectedBackgroundColor = config.SlightShade,
-                UnselectedBackgroundColor = config.SlightShade,
-                HoverColor = config.AccentMimimalOverlay,
+                SelectedBackgroundColor = theme.SlightShade,
+                UnselectedBackgroundColor = theme.SlightShade,
+                HoverColor = theme.AccentMimimalOverlay,
                 Margin = new BorderDouble(right: 1),
                 HAnchor = HAnchor.Absolute,
-                Height = config.MicroButtonHeight,
+                Height = theme.MicroButtonHeight,
                 Width = MicroButtonWidth
             };
 
@@ -248,12 +248,12 @@ namespace MatterHackers.MatterControl
             return radioButton;
         }
 
-        public static JogControls.MoveButton CreateMoveButton(this ThemeConfig config, PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
+        public static JogControls.MoveButton CreateMoveButton(this ThemeConfig theme, PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
         {
-            return new JogControls.MoveButton(label, printer, axis, movementFeedRate, config)
+            return new JogControls.MoveButton(label, printer, axis, movementFeedRate, theme)
             {
-                BackgroundColor = config.MinimalShade,
-                BorderColor = config.BorderColor40,
+                BackgroundColor = theme.MinimalShade,
+                BorderColor = theme.BorderColor40,
                 BackgroundOutlineWidth = 1,
                 VAnchor = VAnchor.Absolute,
                 HAnchor = HAnchor.Absolute,
@@ -264,31 +264,31 @@ namespace MatterHackers.MatterControl
             };
         }
 
-        public static GuiWidget CreateSearchButton(this ThemeConfig config)
+        public static GuiWidget CreateSearchButton(this ThemeConfig theme)
         {
-            return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(config.TextColor), config)
+            return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
             {
                 ToolTipText = "Search".Localize(),
             };
         }
 
-        public static GuiWidget CreateSmallResetButton(this ThemeConfig config)
+        public static GuiWidget CreateSmallResetButton(this ThemeConfig theme)
         {
-            return new HoverImageWidget(config.RestoreNormal, config.RestoreHover)
+            return new HoverImageWidget(theme.RestoreNormal, theme.RestoreHover)
             {
                 VAnchor = VAnchor.Center,
                 Margin = new BorderDouble(0, 0, 5, 0)
             };
         }
 
-        public static PopupMenuButton CreateSplitButton(this ThemeConfig config, SplitButtonParams buttonParams, OperationGroup operationGroup = null)
+        public static PopupMenuButton CreateSplitButton(this ThemeConfig theme, SplitButtonParams buttonParams, OperationGroup operationGroup = null)
         {
             PopupMenuButton menuButton = null;
 
             GuiWidget innerButton;
             if (buttonParams.ButtonText == null)
             {
-                innerButton = new IconButton(buttonParams.Icon, config)
+                innerButton = new IconButton(buttonParams.Icon, theme)
                 {
                     Name = buttonParams.ButtonName + " Inner SplitButton",
                     Enabled = buttonParams.ButtonEnabled,
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
             {
                 if (buttonParams.Icon == null)
                 {
-                    innerButton = new TextButton(buttonParams.ButtonText, config)
+                    innerButton = new TextButton(buttonParams.ButtonText, theme)
                     {
                         Name = buttonParams.ButtonName,
                         Enabled = buttonParams.ButtonEnabled,
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl
                 }
                 else
                 {
-                    innerButton = new TextIconButton(buttonParams.ButtonText, buttonParams.Icon, config)
+                    innerButton = new TextIconButton(buttonParams.ButtonText, buttonParams.Icon, theme)
                     {
                         Name = buttonParams.ButtonName,
                         Enabled = buttonParams.ButtonEnabled,
@@ -328,14 +328,13 @@ namespace MatterHackers.MatterControl
 
             if (operationGroup == null)
             {
-                menuButton = new PopupMenuButton(innerButton, config);
+                menuButton = new PopupMenuButton(innerButton, theme);
             }
             else
             {
-                menuButton = new OperationGroupButton(operationGroup, innerButton, config);
+                menuButton = new OperationGroupButton(operationGroup, innerButton, theme);
             }
 
-            var theme = ApplicationController.Instance.MenuTheme;
             menuButton.DynamicPopupContent = () =>
             {
                 var popupMenu = new PopupMenu(theme);
@@ -348,13 +347,13 @@ namespace MatterHackers.MatterControl
             menuButton.BackgroundColor = buttonParams.BackgroundColor;
             if (menuButton.BackgroundColor == Color.Transparent)
             {
-                menuButton.BackgroundColor = config.ToolbarButtonBackground;
+                menuButton.BackgroundColor = theme.ToolbarButtonBackground;
             }
 
-            menuButton.HoverColor = config.ToolbarButtonHover;
-            menuButton.MouseDownColor = config.ToolbarButtonDown;
+            menuButton.HoverColor = theme.ToolbarButtonHover;
+            menuButton.MouseDownColor = theme.ToolbarButtonDown;
             menuButton.DrawArrow = true;
-            menuButton.Margin = config.ButtonSpacing;
+            menuButton.Margin = theme.ButtonSpacing;
             menuButton.DistinctPopupButton = true;
             menuButton.BackgroundRadius = new RadiusCorners(theme.ButtonRadius * GuiWidget.DeviceScale, theme.ButtonRadius * GuiWidget.DeviceScale, 0, 0);
 
@@ -362,12 +361,12 @@ namespace MatterHackers.MatterControl
             return menuButton;
         }
 
-        public static void RebuildTheme(this ThemeConfig config)
+        public static void RebuildTheme(this ThemeConfig theme)
         {
-            config.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).SetToColor(config.TextColor);
+            theme.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).SetToColor(theme.TextColor);
         }
 
-        public static void RemovePrimaryActionStyle(this ThemeConfig config, GuiWidget guiWidget)
+        public static void RemovePrimaryActionStyle(this ThemeConfig theme, GuiWidget guiWidget)
         {
             guiWidget.BackgroundColor = Color.Transparent;
 
@@ -377,11 +376,11 @@ namespace MatterHackers.MatterControl
             switch (guiWidget)
             {
                 case SimpleFlowButton flowButton:
-                    flowButton.HoverColor = parentIsToolbar ? config.ToolbarButtonHover : Color.Transparent;
+                    flowButton.HoverColor = parentIsToolbar ? theme.ToolbarButtonHover : Color.Transparent;
                     break;
 
                 case SimpleButton button:
-                    button.HoverColor = parentIsToolbar ? config.ToolbarButtonHover : Color.Transparent;
+                    button.HoverColor = parentIsToolbar ? theme.ToolbarButtonHover : Color.Transparent;
                     break;
             }
         }

@@ -1282,6 +1282,9 @@ Translated:Design Apps
 English:Design Name
 Translated:Design Name
 
+English:Design Tools
+Translated:Design Tools
+
 English:Desktop
 Translated:Desktop
 

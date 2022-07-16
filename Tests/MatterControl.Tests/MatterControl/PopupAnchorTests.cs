@@ -56,6 +56,7 @@ namespace MatterControl.Tests.MatterControl
 				button.Click += (s, e) =>
 				{
 					systemWindow.ShowPopup(
+                        new ThemeConfig(),
 						new MatePoint()
 						{
 							Widget = button
@@ -530,7 +531,7 @@ namespace MatterControl.Tests.MatterControl
 						BorderColor = Color.LightBlue.Blend(Color.Black, 0.4)
 					};
 
-					systemWindow.ShowPopup(anchor, popup);
+					systemWindow.ShowPopup(new ThemeConfig(), anchor, popup);
 				};
 
 				anchor.Widget = button;

@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.Padding = theme.ToolbarPadding;
 
-			toolbar.ExtendOverflowMenu = (popupMenu) => LibraryWidget.CreateSortingMenu(popupMenu, libraryView);
+			toolbar.ExtendOverflowMenu = (popupMenu) => LibraryWidget.CreateSortingMenu(popupMenu, theme, libraryView);
 
 			allControls.AddChild(toolbar);
 

@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						VAnchor = VAnchor.Absolute,
 						Width = 80 * GuiWidget.DeviceScale,
 						Height = 65 * GuiWidget.DeviceScale,
-						Mode = themeName,
 						Border = 1,
 						BorderColor = theme.BorderColor20,
 						Margin = new BorderDouble(theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding, theme.DefaultContainerPadding)

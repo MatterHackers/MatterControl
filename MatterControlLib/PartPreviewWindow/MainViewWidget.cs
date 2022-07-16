@@ -122,6 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowRightSplitPopup(
+                            theme,
 							new MatePoint(searchButton),
 							new MatePoint(searchPanel),
 							borderWidth: 0);
@@ -700,6 +701,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 				systemWindow.ShowPopup(
+					theme,
 					new MatePoint(themePanel)
 					{
 						Mate = new MateOptions(MateEdge.Right, MateEdge.Top),

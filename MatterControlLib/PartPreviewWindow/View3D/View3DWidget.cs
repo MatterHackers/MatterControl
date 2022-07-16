@@ -2074,6 +2074,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 			systemWindow.ShowPopup(
+                theme,
 				new MatePoint(this)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
