@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private void EnableReduceWidth(RadioTextButton enumTab)
+		private void EnableReduceWidth(ThemedRadioTextButton enumTab)
 		{
 			var deviceScale = GuiWidget.DeviceScale;
 			var padingSize = enumTab.Padding.Left * deviceScale;
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var localIndex = index;
 
-				var radioButton = new RadioTextButton(item.name, theme)
+				var radioButton = new ThemedRadioTextButton(item.name, theme)
 				{
 					ToolTipText = item.description,
 				};
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				radioButton.CheckedStateChanged += (s, e) =>
 				{
-					var button = s as RadioTextButton;
+					var button = s as ThemedRadioTextButton;
 					button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
 				};
 
@@ -258,9 +258,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = menuRow;
 		}
 
-		public static RadioTextButton CreateThemedRadioButton(string text, string key, string toolTipText, bool startChecked, Action setChecked, ThemeConfig theme)
+		public static ThemedRadioTextButton CreateThemedRadioButton(string text, string key, string toolTipText, bool startChecked, Action setChecked, ThemeConfig theme)
 		{
-			var radioButton = new RadioTextButton(text, theme)
+			var radioButton = new ThemedRadioTextButton(text, theme)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				DrawUnderline = false,
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			radioButton.CheckedStateChanged += (s, e) =>
 			{
-				var button = s as RadioTextButton;
+				var button = s as ThemedRadioTextButton;
 				button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
 			};
 
@@ -294,9 +294,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return radioButton;
 		}
 
-		public static TextButton CreateThemedButton(string text, string key, string toolTipText, ThemeConfig theme)
+		public static ThemedTextButton CreateThemedButton(string text, string key, string toolTipText, ThemeConfig theme)
 		{
-			var button = new TextButton(text, theme)
+			var button = new ThemedTextButton(text, theme)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				BackgroundRadius = (theme.ButtonRadius + 4) * GuiWidget.DeviceScale,
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						iconImage = StaticData.Instance.LoadIcon(iconPath);
 					}
 
-					var radioButton = new RadioIconButton(iconImage, theme)
+					var radioButton = new ThemedRadioIconButton(iconImage, theme)
 					{
 						ToolTipText = item.description == null ? item.name : item.description,
 					};

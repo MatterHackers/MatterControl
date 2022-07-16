@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
+			checkUpdateButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Check for Update".Localize(),
 				BackgroundColor = theme.MinimalShade,
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 
 			this.MinimumSize = new Vector2(0, checkUpdateButton.Height);
 
-			downloadButton = new TextButton("Download Update".Localize(), theme)
+			downloadButton = new ThemedTextButton("Download Update".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Visible = false
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(downloadButton);
 
-			installButton = new TextButton("Install Update".Localize(), theme)
+			installButton = new ThemedTextButton("Install Update".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Visible = false

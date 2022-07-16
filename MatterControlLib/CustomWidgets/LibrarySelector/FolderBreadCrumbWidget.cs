@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.CloseChildren();
 
-			var backButton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20).SetToColor(theme.TextColor), theme)
+			var backButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "back.png"), 20, 20).SetToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,

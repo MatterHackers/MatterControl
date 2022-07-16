@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 					};
 
 					generalPanel.AddChild(buttonContainer);
-					var updateButton = new TextButton("Update Setting".Localize(), theme)
+					var updateButton = new ThemedTextButton("Update Setting".Localize(), theme)
 					{
 						Margin = new BorderDouble(0, 3, 20, 0),
 						Name = setting.key + " Update",

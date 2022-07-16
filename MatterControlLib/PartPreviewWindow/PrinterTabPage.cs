@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						var unloadFilamentButton = new TextButton("Unload Filament".Localize(), theme)
+						var unloadFilamentButton = new ThemedTextButton("Unload Filament".Localize(), theme)
 						{
 							Name = "unload Filament",
 							BackgroundColor = theme.MinimalShade,
@@ -680,7 +680,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the move up button
 			var babyStepAmount = .02;
-			var upButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Up Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
+			var upButton = babySteppingControls.AddChild(new ThemedIconButton(StaticData.Instance.LoadIcon("Up Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -719,7 +719,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// add in the move down button
-			var downButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Down Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
+			var downButton = babySteppingControls.AddChild(new ThemedIconButton(StaticData.Instance.LoadIcon("Down Arrow.png", 32, 32).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// we can only reslice on 64 bit, because in 64 bit we always have the gcode loaded
 			if (IntPtr.Size == 8 || ApplicationController.Instance.Allow32BitReSlice)
 			{
-				var resliceButton = new TextButton("Re-Slice", theme)
+				var resliceButton = new ThemedTextButton("Re-Slice", theme)
 				{
 					VAnchor = VAnchor.Center,
 					HAnchor = HAnchor.Right,
@@ -842,7 +842,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					resliceMessageRow.AddChild(switchButtonRow);
 
-					var switchButton = new TextButton("Switch", theme)
+					var switchButton = new ThemedTextButton("Switch", theme)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(5),
@@ -865,7 +865,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						resliceMessageRow.Visible = false;
 					};
 
-					var cancelButton = new TextButton("Cancel", theme)
+					var cancelButton = new ThemedTextButton("Cancel", theme)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(0, 5),

@@ -109,8 +109,8 @@ namespace MatterHackers.MatterControl
 			graphics = pulseImage.NewGraphics2D();
 			graphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
 			graphics.RenderMaxSize(pulseLogo, pulseImage.Width / 2 - logoWidth / 2, pulseImage.Height * .42, logoWidth, bounds.Height, out _, preScale: false);
-			IconButton lastButton = null;
-			buttonRow.AddChild(AddButtonText(lastButton = new IconButton(pulseImage, theme)
+			ThemedIconButton lastButton = null;
+			buttonRow.AddChild(AddButtonText(lastButton = new ThemedIconButton(pulseImage, theme)
             {
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
 				return printerImage;
 			}
 
-			buttonRow.AddChild(AddButtonText(lastButton = new IconButton(CreateButtonImage("3d_printer.png"), theme)
+			buttonRow.AddChild(AddButtonText(lastButton = new ThemedIconButton(CreateButtonImage("3d_printer.png"), theme)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 				this.DialogWindow.Close();
 			});
 
-			buttonRow.AddChild(AddButtonText(lastButton = new IconButton(CreateButtonImage("edit_design.png"), theme)
+			buttonRow.AddChild(AddButtonText(lastButton = new ThemedIconButton(CreateButtonImage("edit_design.png"), theme)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,

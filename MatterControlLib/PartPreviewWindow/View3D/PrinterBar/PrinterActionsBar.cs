@@ -57,11 +57,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget sliceButton;
 
-		private RadioIconButton layers2DButton;
-		internal RadioIconButton layers3DButton;
-		internal RadioIconButton modelViewButton;
+		private ThemedRadioIconButton layers2DButton;
+		internal ThemedRadioIconButton layers3DButton;
+		internal ThemedRadioIconButton modelViewButton;
 
-		private Dictionary<PartViewMode, RadioIconButton> viewModes = new Dictionary<PartViewMode, RadioIconButton>();
+		private Dictionary<PartViewMode, ThemedRadioIconButton> viewModes = new Dictionary<PartViewMode, ThemedRadioIconButton>();
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 			: base(null, theme, "Printer Options".Localize())
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// add the reset button first (if there is one)
 				if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
 				{
-					var resetConnectionButton = new TextIconButton(
+					var resetConnectionButton = new ThemedTextIconButton(
 						"Reset".Localize(),
 						StaticData.Instance.LoadIcon("e_stop.png", 14, 14).SetToColor(theme.TextColor),
 						theme)
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			var iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
+			modelViewButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewModes.Add(PartViewMode.Model, modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
+			layers3DButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(layers3DButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
+			layers2DButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
@@ -239,8 +239,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
 			{
-				if (viewModes[e.ViewMode] is RadioIconButton activeButton
-					&& viewModes[e.PreviousMode] is RadioIconButton previousButton
+				if (viewModes[e.ViewMode] is ThemedRadioIconButton activeButton
+					&& viewModes[e.PreviousMode] is ThemedRadioIconButton previousButton
 					&& !buttonIsBeingClicked)
 				{
 					// Show slide to animation from previous to current, on completion update view to current by setting active.Checked

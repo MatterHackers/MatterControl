@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 									MinimumSize = new Vector2(125, 0)
 								});
 
-							var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
+							var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
 							{
 								Name = "Edit Leveling Data Button",
 								ToolTipText = "Edit Leveling Data".Localize(),
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget AddRunStageButton(string title, ThemeConfig theme, ISetupWizard stage, FlowLayoutWidget leftToRight)
 		{
-			var runStage = leftToRight.AddChild(new TextButton(title, theme)
+			var runStage = leftToRight.AddChild(new ThemedTextButton(title, theme)
 			{
 				VAnchor = VAnchor.Bottom,
 				Enabled = printer.Connection.IsConnected && !printer.Connection.Printing && !printer.Connection.Paused,

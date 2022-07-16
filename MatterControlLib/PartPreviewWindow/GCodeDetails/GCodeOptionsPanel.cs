@@ -43,9 +43,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodeOptionsPanel : FlowLayoutWidget
 	{
-		private RadioIconButton speedsButton;
-		private RadioIconButton materialsButton;
-		private RadioIconButton noColorButton;
+		private ThemedRadioIconButton speedsButton;
+		private ThemedRadioIconButton materialsButton;
+		private ThemedRadioIconButton noColorButton;
 		private View3DConfig gcodeOptions;
 
 		public GCodeOptionsPanel(ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonGroup = new ObservableCollection<GuiWidget>();
 
-			speedsButton = new RadioIconButton(StaticData.Instance.LoadIcon("speeds.png", 16, 16).SetToColor(theme.TextColor), theme)
+			speedsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("speeds.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Speeds Button",
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(speedsButton);
 
-			materialsButton = new RadioIconButton(StaticData.Instance.LoadIcon("materials.png", 16, 16).SetToColor(theme.TextColor), theme)
+			materialsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("materials.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Materials Button",
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(materialsButton);
 
-			noColorButton = new RadioIconButton(StaticData.Instance.LoadIcon("no-color.png", 16, 16).SetToColor(theme.TextColor), theme)
+			noColorButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("no-color.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "No Color Button",

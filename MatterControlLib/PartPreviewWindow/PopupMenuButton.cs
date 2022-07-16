@@ -56,12 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public PopupMenuButton(ImageBuffer imageBuffer, ThemeConfig theme)
-			: this(new IconButton(imageBuffer, theme), theme)
+			: this(new ThemedIconButton(imageBuffer, theme), theme)
 		{
 		}
 
 		public PopupMenuButton(string text, ImageBuffer imageBuffer, ThemeConfig theme)
-			: this(new TextIconButton(text, imageBuffer, theme)
+			: this(new ThemedTextIconButton(text, imageBuffer, theme)
 			{
 				Padding = new BorderDouble(5, 0, 5, 0),
 			}, theme)
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)
-			: this(new TextButton(text, theme)
+			: this(new ThemedTextButton(text, theme)
 			{
 				Selectable = false,
 				Padding = theme.TextButtonPadding.Clone(right: 5)

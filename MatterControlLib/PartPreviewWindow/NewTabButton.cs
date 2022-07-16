@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Center;
 			this.theme = theme;
 
-			IconButton = new IconButton(imageBuffer, theme)
+			IconButton = new ThemedIconButton(imageBuffer, theme)
 			{
 				HAnchor = HAnchor.Left,
 				Height = theme.MicroButtonHeight,
@@ -105,6 +105,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ITab LastTab { get; set; }
 
-		public IconButton IconButton { get; }
+		public ThemedIconButton IconButton { get; }
 	}
 }

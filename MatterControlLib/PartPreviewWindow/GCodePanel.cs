@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
-				var copyButton = new TextButton("copy".Localize(), theme, 8)
+				var copyButton = new ThemedTextButton("copy".Localize(), theme, 8)
 				{
 					Padding = 5,
 					Margin = new BorderDouble(0, 0, 15, 0),

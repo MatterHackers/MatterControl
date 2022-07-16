@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
-		private class CalibrationPad : IconButton
+		private class CalibrationPad : ThemedIconButton
 		{
 			public event EventHandler<PrinterConnection.Axis> Hovered;
 

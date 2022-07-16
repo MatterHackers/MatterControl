@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private MainViewWidget mainViewWidget = null;
 		private readonly PopupMenuButton bedMenuButton;
 		private readonly UndoBuffer undoBuffer;
-		private readonly IconButton undoButton;
-		private readonly IconButton redoButton;
+		private readonly ThemedIconButton undoButton;
+		private readonly ThemedIconButton redoButton;
 
 		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 		{
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			undoButton = new IconButton(StaticData.Instance.LoadIcon("undo.png", 16, 16).SetToColor(theme.TextColor), theme)
+			undoButton = new ThemedIconButton(StaticData.Instance.LoadIcon("undo.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo".Localize(),
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			redoButton = new IconButton(StaticData.Instance.LoadIcon("redo.png", 16, 16).SetToColor(theme.TextColor), theme)
+			redoButton = new ThemedIconButton(StaticData.Instance.LoadIcon("redo.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (showPrintButton)
 			{
-				var printButton = new TextButton("Print", theme)
+				var printButton = new ThemedTextButton("Print", theme)
 				{
 					Name = "Print Button",
 					BackgroundColor = theme.AccentMimimalOverlay
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (namedAction.Icon != null)
 					{
-						button = new IconButton(namedAction.Icon(theme), theme)
+						button = new ThemedIconButton(namedAction.Icon(theme), theme)
 						{
 							Name = namedAction.Title + " Button",
 							ToolTipText = namedAction.Title,
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else
 					{
-						button = new TextButton(namedAction.Title, theme)
+						button = new ThemedTextButton(namedAction.Title, theme)
 						{
 							Name = namedAction.Title + " Button",
 							Margin = theme.ButtonSpacing,
@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonGroup.AddChild(operationButton);
 			}
 
-			var collapseButton = buttonGroup.AddChild(new IconButton(StaticData.Instance.LoadIcon("collapse_single.png", 8, 16).SetToColor(theme.TextColor), theme));
+			var collapseButton = buttonGroup.AddChild(new ThemedIconButton(StaticData.Instance.LoadIcon("collapse_single.png", 8, 16).SetToColor(theme.TextColor), theme));
 			collapseButton.Width = 16 * DeviceScale;
 			collapseButton.ToolTipText = "Collapse".Localize();
 
@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (defaultOperation != operation)
 								{
 									// Update button
-									var iconButton = actionAndDropDown.Children.OfType<IconButton>().First();
+									var iconButton = actionAndDropDown.Children.OfType<ThemedIconButton>().First();
 									iconButton.SetIcon(operation.Icon(theme));
 									iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
@@ -743,7 +743,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.DrawArrow = true;
 			openLibraryButton.Selectable = true;
 
-			if (popupMenu.Children<SimpleButton>().FirstOrDefault() is SimpleButton simpleButton)
+			if (popupMenu.Children<ThemedButton>().FirstOrDefault() is ThemedButton simpleButton)
 			{
 				simpleButton.Padding = 0;
 			};
@@ -779,7 +779,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (operation is OperationGroup operationGroup
 					&& button is PopupMenuButton splitButton
-					&& button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
+					&& button.Descendants<ThemedIconButton>().FirstOrDefault() is ThemedIconButton iconButton)
 				{
 					var defaultOperation = operationGroup.GetDefaultOperation();
 					iconButton.Enabled = defaultOperation.IsEnabled(sceneContext);

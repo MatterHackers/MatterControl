@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var widget = new MovementControls(printer, new XYZColors(theme), theme);
 
-			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme);
+			var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme);
 			editButton.Click += (s, e) => widget.EditOptions();
 
 			return new SectionWidget(
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Margin = new BorderDouble(bottom: 10)
 			};
 
-			var homeIcon = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var homeIcon = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Home X, Y and Z".Localize(),
 				BackgroundColor = theme.MinimalShade,
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			toolbar.AddChild(homeIcon);
 
-			var homeXButton = new TextButton("X", theme)
+			var homeXButton = new ThemedTextButton("X", theme)
 			{
 				ToolTipText = "Home X".Localize(),
 				BackgroundColor = theme.MinimalShade,
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
 			toolbar.AddChild(homeXButton);
 
-			var homeYButton = new TextButton("Y", theme)
+			var homeYButton = new ThemedTextButton("Y", theme)
 			{
 				ToolTipText = "Home Y".Localize(),
 				BackgroundColor = theme.MinimalShade,
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
 			toolbar.AddChild(homeYButton);
 
-			var homeZButton = new TextButton("Z", theme)
+			var homeZButton = new ThemedTextButton("Z", theme)
 			{
 				ToolTipText = "Home Z".Localize(),
 				BackgroundColor = theme.MinimalShade,
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_c_axis))
 			{
-				var homeCButton = new TextButton("C", theme)
+				var homeCButton = new ThemedTextButton("C", theme)
 				{
 					ToolTipText = "Home C".Localize(),
 					BackgroundColor = theme.MinimalShade,
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			toolbar.AddChild(new HorizontalSpacer());
 
 			// Create 'Release' button
-			var disableMotors = new TextButton("Release".Localize(), theme)
+			var disableMotors = new ThemedTextButton("Release".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 			};

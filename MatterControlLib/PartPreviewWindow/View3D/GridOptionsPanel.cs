@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var gridDistance = object3DControlLayer.SnapGridDistance;
 
-			textButton = this.AddChild(new TextButton(gridDistance.ToString(), theme)
+			textButton = this.AddChild(new ThemedTextButton(gridDistance.ToString(), theme)
 			{
 				Selectable = false,
 				HAnchor = HAnchor.Center

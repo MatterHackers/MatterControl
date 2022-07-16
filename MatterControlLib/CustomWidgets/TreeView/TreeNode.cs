@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			private readonly ImageBuffer arrowRight;
 			private readonly ImageBuffer arrowDown;
 			private readonly ImageBuffer placeholder;
-			private readonly IconButton imageButton = null;
+			private readonly ThemedIconButton imageButton = null;
 
 			public TreeExpandWidget(ThemeConfig theme)
 			{
@@ -532,7 +532,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				this.Margin = new BorderDouble(right: 4);
 
-				imageButton = new IconButton(placeholder, theme)
+				imageButton = new ThemedIconButton(placeholder, theme)
 				{
 					MinimumSize = new Vector2(16 * DeviceScale, 16 * DeviceScale),
 					VAnchor = VAnchor.Center,

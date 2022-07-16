@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			string imageFile = this.ControlIsPinned ? "Pushpin.png" : "PushpinUnpin.png";
 
-			var pinTabButton = new IconButton(StaticData.Instance.LoadIcon(imageFile, 16, 16).SetToColor(theme.TextColor), theme)
+			var pinTabButton = new ThemedIconButton(StaticData.Instance.LoadIcon(imageFile, 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Pin Settings Button",
 				ToolTipText = this.ControlIsPinned ? "Unpin".Localize() : "Pin".Localize()

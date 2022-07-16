@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingsSection.Name == "Slice Simple"
 					&& UserSettings.Instance.get(UserSettingsKey.SliceSettingsMoreClicked) != "true")
 				{
-					var button = new TextButton("More".Localize(), theme, 8)
+					var button = new ThemedTextButton("More".Localize(), theme, 8)
 					{
 						VAnchor = VAnchor.Center,
 						BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),

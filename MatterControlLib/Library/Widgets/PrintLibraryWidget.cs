@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Kevin Pope, John Lewin
+Copyright (c) 2022, Kevin Pope, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				Border = new BorderDouble(top: 1)
 			};
 
-			navBar = new OverflowBar(theme)
+			navBar = new OverflowBar(theme, "File".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DropButton : SimpleButton
+	public class DropButton : ThemedButton
 	{
 		public bool MenuVisible { get; private set; }
 

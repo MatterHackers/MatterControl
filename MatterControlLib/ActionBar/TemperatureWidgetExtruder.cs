@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				// material can be changed even when the printer is not connected
 				alwaysEnabled.Add(materialSettingsRow);
 				// add in a shop button
-				var shopButton = new TextIconButton("Shop".Localize(), StaticData.Instance.LoadIcon("cart.png", 16, 16).SetToColor(menuTheme.TextColor), theme)
+				var shopButton = new ThemedTextIconButton("Shop".Localize(), StaticData.Instance.LoadIcon("cart.png", 16, 16).SetToColor(menuTheme.TextColor), theme)
 				{
 					BackgroundColor = theme.SlightShade,
 					HoverColor = theme.SlightShade.WithAlpha(75),

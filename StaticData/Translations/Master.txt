@@ -202,6 +202,9 @@ Translated:Action Recommended
 English:Action Required
 Translated:Action Required
 
+English:Actions
+Translated:Actions
+
 English:Add
 Translated:Add
 

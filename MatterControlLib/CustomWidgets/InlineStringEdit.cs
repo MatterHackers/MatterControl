@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.VAnchor = VAnchor.Stretch;
 			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
 
-			saveButton = new IconButton(StaticData.Instance.LoadIcon("fa-save_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			saveButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-save_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Save".Localize(),
 				Visible = false,
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var icon = editable ? StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor) : new ImageBuffer(16, 16);
 
-			editButton = new IconButton(icon, theme)
+			editButton = new ThemedIconButton(icon, theme)
 			{
 				ToolTipText = "Edit".Localize(),
 				Name = automationName + " Edit",

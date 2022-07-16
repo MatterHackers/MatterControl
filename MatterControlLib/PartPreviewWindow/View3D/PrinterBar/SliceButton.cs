@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SliceButton : TextButton
+	public class SliceButton : ThemedTextButton
 	{
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;

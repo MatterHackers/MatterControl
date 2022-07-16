@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (printer.Connection.Paused)
 				{
-					var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
+					var resumePrintingButton = new ThemedTextButton("Resume Printing".Localize(), theme)
 					{
 						Name = "Resume Printing Button",
 						BackgroundColor = theme.MinimalShade,

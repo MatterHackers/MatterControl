@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			if (content.group_items.Count > maxStuff)
 			{
-				var moreButton = new TextButton("More".Localize() + "...", theme)
+				var moreButton = new ThemedTextButton("More".Localize() + "...", theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					Margin = new BorderDouble(right: leftRightMargin),

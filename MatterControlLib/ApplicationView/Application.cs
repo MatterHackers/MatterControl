@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl
 							progressPanel.AddChild(
 								new TextWidget(ex.Message, pointSize: theme.FontSize9, textColor: errorTextColor));
 
-							var closeButton = new TextButton("Close", theme)
+							var closeButton = new ThemedTextButton("Close", theme)
 							{
 								BackgroundColor = theme.SlightShade,
 								HAnchor = HAnchor.Right,

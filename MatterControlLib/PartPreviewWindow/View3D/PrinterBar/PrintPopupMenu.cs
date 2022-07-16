@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return printPanel;
 			};
 
-			this.AddChild(new TextButton("Print".Localize(), theme)
+			this.AddChild(new ThemedTextButton("Print".Localize(), theme)
 			{
 				Selectable = false,
 				Padding = theme.TextButtonPadding.Clone(right: 5)
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Enable print option when no validation Errors exists
 			printEnabled = printer.PrintButtonEnabled();
 
-			var startPrintButton = new TextButton(buttonText, theme)
+			var startPrintButton = new ThemedTextButton(buttonText, theme)
 			{
 				Name = "Start Print Button",
 				Enabled = printEnabled

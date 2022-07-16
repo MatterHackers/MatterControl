@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					{
 						// add the article group button to the button group
 						// add a content section connected to the button
-						var sectionButton = new TextButton(content.group_title, theme);
+						var sectionButton = new ThemedTextButton(content.group_title, theme);
 						sectionSelectButtons.AddChild(sectionButton);
 						var articleSection = new ArticleSection(content, theme)
 						{
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				case "product_group":
 					{
-						var sectionButton = new TextButton(content.group_title, theme);
+						var sectionButton = new ThemedTextButton(content.group_title, theme);
 						sectionSelectButtons.AddChild(sectionButton);
 						var exploreSection = new ProductSection(content, theme)
                         {

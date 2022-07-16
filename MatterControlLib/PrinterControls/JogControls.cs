@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(left: 10)
 			};
 
-			keyboardImage = new IconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).SetToColor(theme.TextColor), theme)
+			keyboardImage = new ThemedIconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).SetToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),
@@ -699,7 +699,7 @@ namespace MatterHackers.MatterControl
 			return xyGrid;
 		}
 
-		public class MoveButton : TextButton
+		public class MoveButton : ThemedTextButton
 		{
 			//Amounts in millimeters
 			public double MoveAmount { get; set; } = 10;
@@ -743,7 +743,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public class ExtrudeButton : TextButton
+		public class ExtrudeButton : ThemedTextButton
 		{
 			//Amounts in millimeters
 			public double MoveAmount = 10;

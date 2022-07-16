@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl
 
 		public void ShowWizardFinished(Action doneClicked = null)
 		{
-			var doneButton = new TextButton("Done".Localize(), theme)
+			var doneButton = new ThemedTextButton("Done".Localize(), theme)
 			{
 				Name = "Done Button",
 				BackgroundColor = theme.MinimalShade

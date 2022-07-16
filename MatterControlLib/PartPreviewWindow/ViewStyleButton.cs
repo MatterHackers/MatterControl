@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewStyleButton : DropButton
 	{
-		private IconButton iconButton;
+		private ThemedIconButton iconButton;
 		private ISceneContext sceneContext;
 
 		private Dictionary<RenderTypes, (ImageBuffer image, string toolTip)> viewData;
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var renderType = sceneContext.ViewState.RenderType;
-			this.AddChild(iconButton = new IconButton(viewData[renderType].image, theme)
+			this.AddChild(iconButton = new ThemedIconButton(viewData[renderType].image, theme)
 			{
 				Selectable = false
 			});

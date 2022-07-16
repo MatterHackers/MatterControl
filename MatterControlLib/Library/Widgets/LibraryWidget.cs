@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				DoubleClickBehavior = LibraryListView.DoubleClickBehaviors.PreviewItem
 			};
 
-			navBar = new OverflowBar(theme)
+			navBar = new OverflowBar(theme, "File".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

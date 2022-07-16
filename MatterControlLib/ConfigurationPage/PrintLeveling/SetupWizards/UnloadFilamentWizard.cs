@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			public DoneUnloadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 				: base(setupWizard, "Filament Unloaded".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
 			{
-				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+				var loadFilamentButton = new ThemedTextButton("Load Filament".Localize(), theme)
 				{
 					Name = "Load Filament",
 					BackgroundColor = theme.MinimalShade,

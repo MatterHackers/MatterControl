@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					// Show info indicator hinting that hover will reveal additional details
-					row.AddChild(new IconButton(infoImage, theme)
+					row.AddChild(new ThemedIconButton(infoImage, theme)
 					{
 						Selectable = false
 					});

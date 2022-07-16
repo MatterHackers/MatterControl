@@ -42,8 +42,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class TemperatureControls : FlowLayoutWidget
 	{
 		private PrinterConfig printer;
-		private TextButton preHeatButton;
-		private TextButton offButton;
+		private ThemedTextButton preHeatButton;
+		private ThemedTextButton offButton;
 
 		private TemperatureControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var container = new FlowLayoutWidget();
 			heatersRow.AddChild(container);
 
-			preHeatButton = new TextButton("Preheat".Localize(), theme)
+			preHeatButton = new ThemedTextButton("Preheat".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Margin = new BorderDouble(right: 10)
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
 
-			offButton = new TextButton("Off".Localize(), theme)
+			offButton = new ThemedTextButton("Off".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 			};
