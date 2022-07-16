@@ -1,0 +1,32 @@
+{
+  "DocumentVersion": 201606171,
+  "ID": null,
+  "Macros": [],
+  "MaterialLayers": [
+    {
+      "bed_temperature": "115",
+      "bed_temperature_blue_tape": "NC",
+      "bed_temperature_buildtak": "110",
+      "bed_temperature_garolite": "110",
+      "bed_temperature_glass": "110",
+      "bed_temperature_kapton": "110",
+      "bed_temperature_pei": "110",
+      "bed_temperature_pp": "NC",
+      "enable_fan": "0",
+      "filament_density": "1.08",
+      "infill_speed": "30",
+      "layer_id": "d9240109-d720-462a-9d72-4c4f53478710",
+      "layer_name": "3DXTech CarbonX ABS+CF",
+      "material_sku": "MP0ZXEV5",
+      "max_fan_speed": "0",
+      "min_fan_speed": "0",
+      "perimeter_speed": "26",
+      "temperature": "230",
+      "top_solid_infill_speed": "22"
+    }
+  ],
+  "OemLayer": null,
+  "QualityLayers": [],
+  "StagedUserSettings": {},
+  "UserLayer": {}
+}

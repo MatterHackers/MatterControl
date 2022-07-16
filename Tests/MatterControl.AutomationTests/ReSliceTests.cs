@@ -39,14 +39,15 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.VersionManagement;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class ReSliceTests
 	{
 		// [Test, Category("Emulator"), Ignore("WIP")]
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -99,6 +100,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.StartPrint(printer, pauseAtLayers: "50;60")
 						// Wait for pause
 						// the yes button is 'Resume'
+						// NOTE: ClickByName Failed: Named GuiWidget not found [No Button]
+						//       It appears that printing can just take too long.
+						//       This might be fixed by using a semaphore in MatterHackers.PrinterEmulator.Emulator.
 						.ClickByName("No Button", secondsToWait: 80)
 						// Delete the cube
 						.ClickByName("Bed Options Menu")

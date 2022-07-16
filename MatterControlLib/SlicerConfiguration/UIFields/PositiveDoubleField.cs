@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using MatterHackers.Agg.UI;
 using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration

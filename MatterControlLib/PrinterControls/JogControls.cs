@@ -62,10 +62,10 @@ namespace MatterHackers.MatterControl
 
 		private List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
 		private List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
-		private RadioTextButton movePointZeroTwoMmButton;
-		private RadioTextButton moveOneMmButton;
-		private RadioTextButton oneHundredButton;
-		private RadioTextButton tenButton;
+		private ThemedRadioTextButton movePointZeroTwoMmButton;
+		private ThemedRadioTextButton moveOneMmButton;
+		private ThemedRadioTextButton oneHundredButton;
+		private ThemedRadioTextButton tenButton;
 		private GuiWidget disableableEButtons;
 		private GuiWidget keyboardFocusBorder;
 		private GuiWidget keyboardImage;

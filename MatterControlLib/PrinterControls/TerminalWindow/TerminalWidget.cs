@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 	public class TerminalWidget : FlowLayoutWidget, ICloseableTab
 	{
 		private CheckBox autoUppercase;
-		private MHTextEditWidget manualCommandTextEdit;
+		private ThemedTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
 		private PrinterConfig printer;
 
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(inputRow);
 
-			manualCommandTextEdit = new MHTextEditWidget("", theme, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			manualCommandTextEdit = new ThemedTextEditWidget("", theme, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				Margin = new BorderDouble(right: 3),
 				HAnchor = HAnchor.Stretch,

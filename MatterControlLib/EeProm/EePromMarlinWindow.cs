@@ -41,45 +41,45 @@ namespace MatterHackers.MatterControl.EeProm
 	{
 		private EePromMarlinSettings currentEePromSettings;
 
-		private MHNumberEdit stepsPerMmX;
-		private MHNumberEdit stepsPerMmY;
-		private MHNumberEdit stepsPerMmZ;
-		private MHNumberEdit stepsPerMmE;
+		private ThemedNumberEdit stepsPerMmX;
+		private ThemedNumberEdit stepsPerMmY;
+		private ThemedNumberEdit stepsPerMmZ;
+		private ThemedNumberEdit stepsPerMmE;
 
-		private MHNumberEdit maxFeedrateMmPerSX;
-		private MHNumberEdit maxFeedrateMmPerSY;
-		private MHNumberEdit maxFeedrateMmPerSZ;
-		private MHNumberEdit maxFeedrateMmPerSE;
+		private ThemedNumberEdit maxFeedrateMmPerSX;
+		private ThemedNumberEdit maxFeedrateMmPerSY;
+		private ThemedNumberEdit maxFeedrateMmPerSZ;
+		private ThemedNumberEdit maxFeedrateMmPerSE;
 
-		private MHNumberEdit maxAccelerationMmPerSSqrdX;
-		private MHNumberEdit maxAccelerationMmPerSSqrdY;
-		private MHNumberEdit maxAccelerationMmPerSSqrdZ;
-		private MHNumberEdit maxAccelerationMmPerSSqrdE;
+		private ThemedNumberEdit maxAccelerationMmPerSSqrdX;
+		private ThemedNumberEdit maxAccelerationMmPerSSqrdY;
+		private ThemedNumberEdit maxAccelerationMmPerSSqrdZ;
+		private ThemedNumberEdit maxAccelerationMmPerSSqrdE;
 
-		private MHNumberEdit accelerationPrintingMoves;
-		private MHNumberEdit accelerationRetraction;
-		private MHNumberEdit accelerationTravelMoves;
+		private ThemedNumberEdit accelerationPrintingMoves;
+		private ThemedNumberEdit accelerationRetraction;
+		private ThemedNumberEdit accelerationTravelMoves;
 
-		private MHNumberEdit pidP;
-		private MHNumberEdit pidI;
-		private MHNumberEdit pidD;
+		private ThemedNumberEdit pidP;
+		private ThemedNumberEdit pidI;
+		private ThemedNumberEdit pidD;
 
-		private MHNumberEdit bedPidP;
-		private MHNumberEdit bedPidI;
-		private MHNumberEdit bedPidD;
+		private ThemedNumberEdit bedPidP;
+		private ThemedNumberEdit bedPidI;
+		private ThemedNumberEdit bedPidD;
 
-		private MHNumberEdit homingOffsetX;
-		private MHNumberEdit homingOffsetY;
-		private MHNumberEdit homingOffsetZ;
+		private ThemedNumberEdit homingOffsetX;
+		private ThemedNumberEdit homingOffsetY;
+		private ThemedNumberEdit homingOffsetZ;
 
-		private MHNumberEdit minFeedrate;
-		private MHNumberEdit minTravelFeedrate;
-		private MHNumberEdit minSegmentTime;
+		private ThemedNumberEdit minFeedrate;
+		private ThemedNumberEdit minTravelFeedrate;
+		private ThemedNumberEdit minSegmentTime;
 
-		private MHNumberEdit maxXYJerk;
-		private MHNumberEdit maxZJerk;
-		private MHNumberEdit maxEJerk;
-		private MHNumberEdit maxDeviation;
+		private ThemedNumberEdit maxXYJerk;
+		private ThemedNumberEdit maxZJerk;
+		private ThemedNumberEdit maxEJerk;
+		private ThemedNumberEdit maxDeviation;
 
 		private EventHandler unregisterEvents;
 
@@ -254,9 +254,9 @@ namespace MatterHackers.MatterControl.EeProm
 				});
 		}
 
-		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)
+		private GuiWidget CreateMHNumEdit(ref ThemedNumberEdit numberEditToCreate)
 		{
-			numberEditToCreate = new MHNumberEdit(0, theme, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true)
+			numberEditToCreate = new ThemedNumberEdit(0, theme, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true)
 			{
 				SelectAllOnFocus = true,
 				VAnchor = VAnchor.Center,
@@ -267,9 +267,9 @@ namespace MatterHackers.MatterControl.EeProm
 			return numberEditToCreate;
 		}
 
-		private GuiWidget CreateField(string label, ref MHNumberEdit field1)
+		private GuiWidget CreateField(string label, ref ThemedNumberEdit field1)
 		{
-			MHNumberEdit none = null;
+			ThemedNumberEdit none = null;
 
 			return Create4FieldSet(label,
 			"", ref field1,
@@ -279,11 +279,11 @@ namespace MatterHackers.MatterControl.EeProm
 		}
 
 		private GuiWidget Create3FieldSet(string label,
-			string field1Label, ref MHNumberEdit field1,
-			string field2Label, ref MHNumberEdit field2,
-			string field3Label, ref MHNumberEdit field3)
+			string field1Label, ref ThemedNumberEdit field1,
+			string field2Label, ref ThemedNumberEdit field2,
+			string field3Label, ref ThemedNumberEdit field3)
 		{
-			MHNumberEdit none = null;
+			ThemedNumberEdit none = null;
 
 			return Create4FieldSet(label,
 			field1Label, ref field1,
@@ -307,10 +307,10 @@ namespace MatterHackers.MatterControl.EeProm
 		}
 
 		private GuiWidget Create4FieldSet(string label,
-			string field1Label, ref MHNumberEdit field1,
-			string field2Label, ref MHNumberEdit field2,
-			string field3Label, ref MHNumberEdit field3,
-			string field4Label, ref MHNumberEdit field4)
+			string field1Label, ref ThemedNumberEdit field1,
+			string field2Label, ref ThemedNumberEdit field2,
+			string field3Label, ref ThemedNumberEdit field3,
+			string field4Label, ref ThemedNumberEdit field4)
 		{
 			var row = new FlowLayoutWidget
 			{

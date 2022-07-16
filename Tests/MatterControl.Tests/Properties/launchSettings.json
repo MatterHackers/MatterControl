@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MatterControl.Tests": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

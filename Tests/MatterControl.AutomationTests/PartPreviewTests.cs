@@ -44,13 +44,14 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PartPreviewTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task CopyButtonMakesCopyOfPart()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddMultiplePartsMultipleTimes()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -110,7 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task AddingImageConverterWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -129,7 +130,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test]
+		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
+		[Test, ChildProcessTest]
 		public static async Task ControlClickInDesignTreeView()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -419,7 +421,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 110);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DesignTabFileOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -504,7 +506,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task GroupAndUngroup()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -546,7 +548,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RemoveButtonRemovesParts()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -581,7 +583,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task SaveAsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -607,7 +609,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task SaveAsToLocalLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

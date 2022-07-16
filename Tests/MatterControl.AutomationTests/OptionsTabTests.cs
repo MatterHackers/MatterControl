@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("Agg.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class ShowTerminalButtonClickedOpensTerminal
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ClickingShowTerminalButtonOpensTerminal()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrinterNameChangeTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task NameChangeOnlyEffectsOnePrinter()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task NameChangePersists()
 		{
 			// Ensures that printer model changes are applied correctly and observed by the view

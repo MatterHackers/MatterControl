@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				graph.AddData(this.ActualTemperature);
 			}, 1);
 
-			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
+			var valueField = temperatureRow.Descendants<ThemedNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
 
 			valueField.ActuallNumberEdit.EditComplete += (s, e) =>

@@ -41,8 +41,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class AdjustmentControls : FlowLayoutWidget
 	{
-		private MHNumberEdit feedRateValue;
-		private MHNumberEdit extrusionValue;
+		private ThemedNumberEdit feedRateValue;
+		private ThemedNumberEdit extrusionValue;
 
 		private SolidSlider feedRateRatioSlider;
 		private SolidSlider extrusionRatioSlider;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private PrinterConfig printer;
 
 		private AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(feedRateRatioSlider);
 
-				feedRateValue = new MHNumberEdit(Math.Round(printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio), 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				feedRateValue = new ThemedNumberEdit(Math.Round(printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio), 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(extrusionRatioSlider);
 
-				extrusionValue = new MHNumberEdit(Math.Round(printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio), 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				extrusionValue = new ThemedNumberEdit(Math.Round(printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio), 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,

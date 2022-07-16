@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 			DialogWindow wizardWindow = GetWindow(typeof(PanelType));
 			var newPanel = wizardWindow.ChangeToPage<PanelType>();
 			wizardWindow.Title = newPanel.WindowTitle;
-
+			
 			SetSizeAndShow(wizardWindow, newPanel);
 		}
 

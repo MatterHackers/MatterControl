@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ExpressionField : UIField
 	{
-		protected MHTextEditWidget textEditWidget;
+		protected ThemedTextEditWidget textEditWidget;
 		private ThemeConfig theme;
 
 		public ExpressionField(ThemeConfig theme)
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Fit
 			};
 
-			aligner.AddChild(textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
+			aligner.AddChild(textEditWidget = new ThemedTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,

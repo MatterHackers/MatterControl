@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl
 		public MacroDetailPage(GCodeMacro gcodeMacro, PrinterSettings printerSettings)
 		{
 			// Form validation fields
-			MHTextEditWidget macroNameInput;
-			MHTextEditWidget macroCommandInput;
+			ThemedTextEditWidget macroNameInput;
+			ThemedTextEditWidget macroCommandInput;
 			WrappedTextWidget macroCommandError;
 			WrappedTextWidget macroNameError;
 
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
 
-			contentRow.AddChild(macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(gcodeMacro.Name), theme)
+			contentRow.AddChild(macroNameInput = new ThemedTextEditWidget(GCodeMacro.FixMacroName(gcodeMacro.Name), theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
 
-			macroCommandInput = new MHTextEditWidget(gcodeMacro.GCode, theme, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			macroCommandInput = new ThemedTextEditWidget(gcodeMacro.GCode, theme, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch

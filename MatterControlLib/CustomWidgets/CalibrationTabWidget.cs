@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 		private XyCalibrationWizard calibrationWizard;
 		private ThemeConfig theme;
 
-		public TextButton NextButton { get; }
+		public ThemedTextButton NextButton { get; }
 
 		private Color tabBaseColor;
 		private TextWidget xLabel;
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		private PrinterConnection.Axis _collectionMode = PrinterConnection.Axis.X;
 
-		public CalibrationTabWidget(XyCalibrationWizard calibrationWizard, TextButton nextButton, ThemeConfig theme)
+		public CalibrationTabWidget(XyCalibrationWizard calibrationWizard, ThemedTextButton nextButton, ThemeConfig theme)
 		{
 			this.calibrationWizard = calibrationWizard;
 			this.theme = theme;

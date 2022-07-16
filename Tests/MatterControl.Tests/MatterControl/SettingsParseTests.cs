@@ -20,8 +20,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void Check3PointLevelingPositions()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			var levelingSolution = new LevelWizard3Point(printer);
@@ -41,7 +41,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			// first_layer_extrusion_width
 			{
@@ -90,8 +91,8 @@ namespace MatterControl.Tests.MatterControl
 		// Validates that all SetSettingsOnChange linked fields exist and have their required TargetSetting and Value definitions
 		public void LinkedSettingsExist()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var settingsByName = PrinterSettings.SettingsData;
 			var allSettings = settingsByName.Values;
@@ -112,8 +113,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void PresentationNamesLackColon()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var allSettings = PrinterSettings.SettingsData.Values;
 

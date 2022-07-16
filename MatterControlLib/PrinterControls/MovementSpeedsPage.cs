@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 					movementSpeed = movementSpeed / 60.0;   // Convert from mm/min to mm/s
 				}
 
-				var valueEdit = new MHNumberEdit(movementSpeed, theme, minValue: 0, pixelWidth: 60 * GuiWidget.DeviceScale, tabIndex: tab_index++, allowDecimals: true)
+				var valueEdit = new ThemedNumberEdit(movementSpeed, theme, minValue: 0, pixelWidth: 60 * GuiWidget.DeviceScale, tabIndex: tab_index++, allowDecimals: true)
 				{
 					Margin = 3
 				};

@@ -9,13 +9,14 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SliceSetingsTests
 	{
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,9 +37,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RelativeRetractionExecutesCorrectly()
 		{
+			// NOTE: This test once timed out at 120, but took 38.4s when run on its own.
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button");
@@ -65,7 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task PauseOnLayerTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -88,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task OemSettingsChangeOfferedToUserTest()
 		{
 			await MatterControlUtilities.RunTest(async (testRunner) =>
@@ -146,7 +148,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task MenuStaysOpenOnRebuildSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -174,7 +176,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task SettingsStayOpenOnRebuildSettings()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -201,7 +203,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, Category("Emulator")]
+		[Test, ChildProcessTest, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -234,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */, ChildProcessTest]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -255,7 +257,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 900, maxTimeToRun: 600);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DualExtrusionShowsCorrectHotendData()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -272,7 +274,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Hotend 0");
 
 					// assert the temp is set when we first open (it comes from the material)
-					MHNumberEdit tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as MHNumberEdit;
+					ThemedNumberEdit tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as ThemedNumberEdit;
 					Assert.AreEqual(240, (int)tempWidget.Value);
 
 					// change material
@@ -350,9 +352,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// click the remove override and have it change to default temp
+					// NOTE: Got test failure twice: The printer should report the expected goal temp
+					//                               Expected: 220
+					//                               But was:  60
+					//       Even though WaitFor was used. Maybe the emulator is just delayed sometimes.
+					//       Adding Math.Round anyway. And more waiting.
 					testRunner.ClickByName("Restore temperature")
-						.WaitFor(() => hipsGoalTemp == emulator.CurrentExtruder.TargetTemperature);
-					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
+						.WaitFor(() => hipsGoalTemp == (int)Math.Round(emulator.CurrentExtruder.TargetTemperature), maxSeconds: 10);
+					Assert.AreEqual(hipsGoalTemp, (int)Math.Round(emulator.CurrentExtruder.TargetTemperature), "The printer should report the expected goal temp");
 
 					// type in 60 and have the heater turn on
 					testRunner.ClickByName("Temperature Input")
@@ -426,10 +433,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void SliceSettingsOrganizerSupportsKeyLookup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			var organizer = PrinterSettings.Layout;
 
@@ -446,7 +453,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsFalse(organizer.AllSliceSettings.ContainsKey("non_existing_setting"));
 		}
 
-		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test, ChildProcessTest]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -513,7 +520,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 1000);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DeleteProfileWorksForGuest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -575,7 +582,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsFalse(printer.Settings.UserLayer.ContainsKey(settingToChange));
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -591,8 +598,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.SelectSliceSettingsField(SettingsKey.temperature)
 					// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 					.SwitchToPrinterSettings()
-					.SelectSliceSettingsField(SettingsKey.has_heated_bed)
-					.Delay(.5)
+					//.SelectSliceSettingsField(SettingsKey.has_heated_bed) // NOTE: Happened once: System.Exception : ClickByName Failed: Named GuiWidget not found [Hardware SliceSettingsTab]
+					//.Delay(1.0) // Wait for reload reliably:
+					.WaitForReloadAll(() => testRunner.SelectSliceSettingsField(SettingsKey.has_heated_bed))
 					.SwitchToSliceSettings()
 					.NavigateToSliceSettingsField(SettingsKey.temperature);
 
@@ -607,7 +615,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task QualitySettingsStayAsOverrides()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -671,11 +679,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CopyFromTest()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var settings = new PrinterSettings();
 			settings.ID = "12345-print";

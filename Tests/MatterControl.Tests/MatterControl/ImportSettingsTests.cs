@@ -13,8 +13,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.cancel_gcode, "cancel gcode");
@@ -44,8 +44,8 @@ namespace MatterControl.Tests.MatterControl
 		{
 			// Validates that field are dropped during import if they are already set in a base layer
 			//
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.cancel_gcode, "cancel gcode");

@@ -1,170 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1455E5C-127C-4282-8CC5-452C300E91D0}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterControl.Tests</RootNamespace>
-    <AssemblyName>MatterControl.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <RuntimeIdentifier>win</RuntimeIdentifier>
-    <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+	<!-- AppVeyor builder wants the old paths. -->
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="MatterControl\ApplicationControllerTests.cs" />
-    <Compile Include="MatterControl\BoundDropListTests.cs" />
-    <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
-    <Compile Include="MatterControl\PopupAnchorTests.cs" />
-    <Compile Include="MatterControl\InteractiveSceneTests.cs" />
-    <Compile Include="MatterControl\ImportSettingsTests.cs" />
-    <Compile Include="MatterControl\AssetManagerTests.cs" />
-    <Compile Include="MatterControl\MeshRebuildTests.cs" />
-    <Compile Include="MatterControl\PrinterSettingsTests.cs" />
-    <Compile Include="MatterControl\SliceSettingsFieldTests.cs" />
-    <Compile Include="MatterControl\SettingsParseTests.cs" />
-    <Compile Include="MatterControl\GCodeProcessingTests.cs" />
-    <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
-    <Compile Include="MatterControl\MatterControlUtilities.cs" />
-    <Compile Include="MatterControl\OemProfileTests.cs" />
-    <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
-    <Compile Include="MatterControl\PrinterWhiteListTests.cs" />
-    <Compile Include="MatterControl\ReleaseBuildTests.cs" />
-    <Compile Include="MatterControl\Slicing\SliceLayersTests.cs" />
-    <Compile Include="MatterControl\LevelingTests.cs" />
-    <Compile Include="MatterControl\GCodeStreamTests.cs" />
-    <Compile Include="MatterControl\SupportGeneratorTests.cs" />
-    <Compile Include="MatterControl\ToolChangeTests.cs" />
-    <Compile Include="MatterControl\TranslationsTests.cs" />
-    <Compile Include="MatterControl\UIFieldTestWindow.cs" />
-    <Compile Include="MatterControl\PathTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SceneTests.cs" />
-  </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Community.CsharpSqlite\Community.CsharpSqlite.csproj">
-      <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
-      <Name>Community.CsharpSqlite</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj">
-      <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
-      <Name>MatterControl.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.csproj">
-      <Project>{b2b001ee-a142-4e20-acf8-ae4a9cb984f8}</Project>
-      <Name>MatterControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj">
-      <Project>{3ec506a5-3c23-4663-a5f3-600119361a35}</Project>
-      <Name>MatterControl.MeshOperations</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
-      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
-      <Name>MatterControl.Printing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj">
-      <Project>{d6dc2669-7b1f-40fe-89bf-45d4c94473e3}</Project>
-      <Name>MatterControl.Winforms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj">
-      <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
-      <Name>MatterControlLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
-      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
-      <Name>DataConverters3D</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{807F5686-A3EC-4BCC-AA42-B75D79E0D855}</Project>
-      <Name>GuiAutomation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
-      <Name>Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj">
-      <Project>{ca96058c-1a37-465d-a357-d6d695b13d25}</Project>
-      <Name>Localizations</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{CD8A3D1A-24D5-4184-8CF3-7B2AD5CD7A71}</Project>
-      <Name>PlatformWin32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
-      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
-      <Name>PolygonMesh</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
-      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
-      <Name>RenderOpenGl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
-      <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
-      <Name>Agg.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
-      <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSlice.csproj">
-      <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
-      <Name>MatterSlice</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
-      <Project>{D0B7E0DD-3517-4BFD-A934-95A568FEED1E}</Project>
-      <Name>MatterSliceLib</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
+    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj" />
+    <ProjectReference Include="..\..\MatterControl.csproj" />
+    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj" />
+    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj" />
+    <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj" />
+    <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSlice.csproj" />
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="C5" Version="3.0.0-rc" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit.ApplicationDomain" Version="12.0.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.330701">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <Compile Remove="MatterControl\LibraryProviderSqliteTests.cs" />
+    <Compile Remove="MatterControl\LibraryProviderTests.cs" />
+    <Compile Remove="MatterControl\Slicing\SliceMappingTests.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

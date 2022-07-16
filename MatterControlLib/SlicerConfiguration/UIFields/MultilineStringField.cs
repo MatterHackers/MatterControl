@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class MultilineStringField : UIField
 	{
-		private MHTextEditWidget editWidget;
+		private ThemedTextEditWidget editWidget;
 		private ThemeConfig theme;
 
 		public MultilineStringField(ThemeConfig theme)
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			editWidget = new MHTextEditWidget("", theme, pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			editWidget = new ThemedTextEditWidget("", theme, pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

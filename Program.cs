@@ -31,9 +31,8 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -64,17 +63,13 @@ namespace MatterHackers.MatterControl
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
-		private static EventWaitHandle waitHandle;
-
 		private const int RaygunMaxNotifications = 15;
 
 		private static int raygunNotificationCount = 0;
 
 		private static RaygunClient _raygunClient;
 
-		private static string mainServiceName = "shell";
-
-		private const string ServiceBaseUri = "net.pipe://localhost/mattercontrol";
+		
 
 		[DllImport("Shcore.dll")]
 		static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
@@ -141,6 +136,24 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
+			// If StaticData is missing, use the StaticData at the relative project root if it exists.
+			if (!StaticData.Instance.DirectoryExists("."))
+			{
+				var mainOutputDirectoryAttribute = MainOutputDirectoryAttribute.GetFromProgramAssembly();
+				var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				var buildOutputDirectory = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, mainOutputDirectoryAttribute.MainOutputDirectory);
+
+				// In case the whole project moved, determine the relative path.
+				var buildAbsStaticDataPath = Path.Combine(mainOutputDirectoryAttribute.ProjectRoot, "StaticData");
+				var relStaticDataPath = Path.GetRelativePath(buildOutputDirectory, buildAbsStaticDataPath);
+				var workingAbsStaticDataPath = Path.GetFullPath(Path.Combine(executableDirectory, relStaticDataPath));
+
+				if (Directory.Exists(workingAbsStaticDataPath))
+				{
+					StaticData.OverrideRootPath(workingAbsStaticDataPath);
+				}
+			}
+
 			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
@@ -167,42 +180,22 @@ namespace MatterHackers.MatterControl
 				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
 			};
 
+			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
+			var shellFiles = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).ToArray();
+
+			// Single instance handling.
 #if !DEBUG
-			if (AggContext.OperatingSystem == OSType.Windows)
+			if (!LocalService.TryStartServer())
 			{
-				waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
-
-				if (!created)
+				if (shellFiles.Any())
 				{
-					// If an instance is already running, create a service proxy and execute ShellOpenFile
-					var proxy = new ServiceProxy();
-
-					// and at least one argument is an acceptable shell file extension
-					var itemsToAdd = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
-					if (itemsToAdd.Any())
-					{
-						// notify the running instance of the event
-						proxy.ShellOpenFile(itemsToAdd.ToArray());
-					}
-
-					System.Threading.Thread.Sleep(1000);
-
-					// Finally, close the process spawned by Explorer.exe
-					return;
+					LocalService.TrySendToServer(shellFiles);
 				}
 
-				var serviceHost = new ServiceHost(typeof(LocalService), new[] { new Uri(ServiceBaseUri) });
-				serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
-				serviceHost.Open();
-
-				Console.Write(
-					"Service started: {0};",
-					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
+				return;
 			}
 #endif
 
-			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
-			var shellFiles = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 			if (shellFiles.Any())
 			{
 				ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
@@ -318,8 +311,6 @@ namespace MatterHackers.MatterControl
 			rootSystemWindow.ShowAsSystemWindow();
 		}
 
-		private static readonly object locker = new object();
-
 		static void KeepAwake(bool keepAwake)
 		{
 			if (keepAwake)
@@ -332,51 +323,24 @@ namespace MatterHackers.MatterControl
 				SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
 			}
 		}
-
-		public class LocalService : IMainService
-		{
-			public void ShellOpenFile(string[] files)
-			{
-				// If at least one argument is an acceptable shell file extension
-				var itemsToAdd = files.Where(f => File.Exists(f)
-					&& ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
-
-				if (itemsToAdd.Any())
-				{
-					lock (locker)
-					{
-						// Add each file
-						foreach (string file in itemsToAdd)
-						{
-							ApplicationController.Instance.ShellOpenFile(file);
-						}
-					}
-				}
-			}
-		}
-
-		public class ServiceProxy : ClientBase<IMainService>
-		{
-			public ServiceProxy()
-				: base(
-					new ServiceEndpoint(
-						ContractDescription.GetContract(typeof(IMainService)),
-						new NetNamedPipeBinding(),
-						new EndpointAddress($"{ServiceBaseUri}/{mainServiceName}")))
-			{
-			}
-
-			public void ShellOpenFile(string[] files)
-			{
-				Channel.ShellOpenFile(files);
-			}
-		}
 	}
 
-	[ServiceContract]
-	public interface IMainService
+
+	[AttributeUsage(AttributeTargets.Assembly)]
+	public class MainOutputDirectoryAttribute : Attribute
 	{
-		[OperationContract]
-		void ShellOpenFile(string[] files);
+		public readonly string MainOutputDirectory; // Relative to ProjectRoot.
+		public readonly string ProjectRoot; // Absolute
+
+		public MainOutputDirectoryAttribute(string path, string projectRoot)
+		{
+			MainOutputDirectory = path;
+			ProjectRoot = projectRoot;
+		}
+
+		public static MainOutputDirectoryAttribute GetFromProgramAssembly()
+		{
+			return typeof(MatterControl.Program).Assembly.GetCustomAttribute<MainOutputDirectoryAttribute>();
+		}
 	}
 }

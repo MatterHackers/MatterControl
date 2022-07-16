@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using NUnit.Framework;
 using static MatterControl.Tests.MatterControl.SliceSettingsFieldTests;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -62,17 +63,18 @@ namespace MatterControl.Tests.MatterControl
 		}
 	}
 
-	[TestFixture, Category("SliceSettingsTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
+	[TestFixture, Category("SliceSettingsTests"), Parallelizable(ParallelScope.Children)]
 	public class SliceSettingsFieldTests
 	{
 		[SetUp]
 		public void TestSetup()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public Task TestExistsForEachUIFieldType()
 		{
 			var testClass = this.GetType();
@@ -96,7 +98,7 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -105,7 +107,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -127,7 +129,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task PositiveDoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -136,7 +138,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -158,7 +160,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task IntFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -167,7 +169,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0" },
@@ -189,7 +191,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DoubleOrPercentFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -198,7 +200,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -235,7 +237,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task IntOrMmFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -244,7 +246,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0" },
@@ -281,7 +283,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void CorrectStyleForSettingsRow()
 		{
 			var settings = new PrinterSettings();
@@ -345,7 +347,7 @@ namespace MatterControl.Tests.MatterControl
 			settings.MaterialLayer.Remove(key);
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public void RightClickMenuWorksOnSliceSettings()
 		{
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
@@ -411,50 +413,51 @@ namespace MatterControl.Tests.MatterControl
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
 					if (selectsOnFocus)
 					{
-						testRunner.Delay(); // wait a moment for the selection
-						Assert.IsTrue(!string.IsNullOrEmpty(textWidget.Selection), "Should have selection");
+						testRunner.Assert(() => !string.IsNullOrEmpty(textWidget.Selection), "Should have selection");
 					}
 					else
 					{
-						Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
+						testRunner.Assert(() => string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
 					}
 
-					testRunner.ClickByName("Select All Menu Item")
-						.Delay();
-					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
+					testRunner
+						.ClickByName("Select All Menu Item")
+						.Assert(() => textWidget.Selection == textWidget.Text, "Everything is selected");
 
 					// make sure there is no text in the copy buffer
 					Clipboard.Instance.SetText("");
 
 					// copy text out and make sure we get it
-					testRunner.RightClickByName(GetSliceSettingsField(setting));
-					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Selection remains after right click");
-					testRunner.ClickByName("Copy Menu Item");
-					Assert.AreEqual(Clipboard.Instance.GetText(), textWidget.Text, "Copied everything");
+					testRunner
+						.RightClickByName(GetSliceSettingsField(setting))
+						.Assert(() => textWidget.Selection == textWidget.Text, "Selection remains after right click")
+						.ClickByName("Copy Menu Item")
+						.Assert(() => Clipboard.Instance.GetText() == textWidget.Text, "Copied everything");
 
 					// past in text and make sure it changed
 					Clipboard.Instance.SetText(pastText);
-					testRunner.RightClickByName(GetSliceSettingsField(setting))
-						.ClickByName("Paste Menu Item");
-					Assert.AreEqual(pastText, textWidget.Text, "Pasted everything");
+					testRunner
+						.RightClickByName(GetSliceSettingsField(setting))
+						.ClickByName("Paste Menu Item")
+						.Assert(() => pastText == textWidget.Text, "Pasted everything");
 
 					// make sure we lose selection if we click off the menu
 
 					// cut works
-					testRunner.RightClickByName(GetSliceSettingsField(setting))
+					testRunner
+						.RightClickByName(GetSliceSettingsField(setting))
 						.ClickByName("Select All Menu Item")
-						.Delay();
-					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
+						.Assert(() => textWidget.Selection == textWidget.Text, "Everything is selected");
 
-					testRunner.RightClickByName(GetSliceSettingsField(setting));
-					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Selection remains after right click");
+					testRunner
+						.RightClickByName(GetSliceSettingsField(setting))
+						.Assert(() => textWidget.Selection == textWidget.Text, "Selection remains after right click");
 					var preCutText = textWidget.Text;
-					testRunner.ClickByName("Cut Menu Item");
-					// loose the selection
-					testRunner.ClickByName("Main Window")
-						.Delay();
-					Assert.AreEqual(postCutAll, textWidget.Text, "Cut everything");
-					Assert.AreEqual(preCutText, Clipboard.Instance.GetText(), "Cut everything");
+					testRunner
+						.ClickByName("Cut Menu Item")
+						.ClickByName("Main Window") // loose the selection
+						.Assert(() => postCutAll == textWidget.Text, "Cut everything")
+						.Assert(() => preCutText == Clipboard.Instance.GetText(), "Cut everything");
 				}
 
 				// testRunner.Delay(2000);
@@ -476,7 +479,7 @@ namespace MatterControl.Tests.MatterControl
 			return $"{settingData.PresentationName} Field";
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ComPortFieldTest()
 		{
 			FrostedSerialPort.MockPortsForTest = true;
@@ -535,7 +538,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task MultilineStringFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -545,7 +548,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -567,7 +570,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task Vector2FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -579,7 +582,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -591,7 +594,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task Vector3FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -603,7 +606,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -615,7 +618,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task Vector4FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -629,7 +632,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -641,7 +644,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task BoundsFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -653,7 +656,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -671,7 +674,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task ExtruderOffsetFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -686,7 +689,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join("x", field.Content.Descendants<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join("x", field.Content.Descendants<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{

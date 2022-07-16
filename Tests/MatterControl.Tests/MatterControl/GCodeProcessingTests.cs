@@ -78,8 +78,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeProcessing")]
 		public void ReplaceMacroValuesWorking()
 		{
-			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
+			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var settings = new PrinterSettings();
 			settings.Slicer = new EngineMappingsMatterSlice();

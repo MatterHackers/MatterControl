@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MatterControl.AutomationTests": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow

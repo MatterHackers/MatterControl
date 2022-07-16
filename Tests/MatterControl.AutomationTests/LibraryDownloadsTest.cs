@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using NUnit.Framework;
+using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation")]
 	public class LibraryDownloadsTests
 	{
 		[SetUp]
@@ -22,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlUtilities.DeleteDownloadsSubFolder();
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -37,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(
 					string.Format(
-						"\"{0}\" \"{1}\"",
+						"\"{0}\";\"{1}\"",
 						MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					5);
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -70,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task DownloadsAddButtonAddsZipFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -96,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task RenameDownloadsPrintItem()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -126,7 +127,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test]
+		[Test, ChildProcessTest]
 		public async Task CreateFolder()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

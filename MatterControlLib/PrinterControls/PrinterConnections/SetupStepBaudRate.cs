@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerBaudRateError;
 		private GuiWidget baudRateWidget;
 		private RadioButton otherBaudRateRadioButton;
-		private MHTextEditWidget otherBaudRateInput;
+		private ThemedTextEditWidget otherBaudRateInput;
 		private GuiWidget nextButton;
 		private GuiWidget printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			//See if the baud rate of the current print is in the list of displayed rates,
 			//flag the 'other' option if it is not and prefill the rate.
-			otherBaudRateInput = new MHTextEditWidget("", theme);
+			otherBaudRateInput = new ThemedTextEditWidget("", theme);
 			otherBaudRateInput.Visible = false;
 			otherBaudRateInput.HAnchor = HAnchor.Stretch;
 

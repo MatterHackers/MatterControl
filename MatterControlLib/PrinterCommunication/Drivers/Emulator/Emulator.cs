@@ -21,6 +21,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Semaphore implementation might stop the rare chance of a super slow print occuring in the ReSliceHasCorrectEPositions test.
+#define USE_SEMAPHORE_FOR_RECEIVE_QUEUE
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -410,8 +413,11 @@ ok
 			if (!shuttingDown)
 			{
 				shuttingDown = true;
+#if USE_SEMAPHORE_FOR_RECEIVE_QUEUE
+				receiveResetEvent.Release();
+#endif
 
-				HeatedBed.Stop();
+					HeatedBed.Stop();
 				foreach (var extruder in Extruders)
 				{
 					extruder.Stop();
@@ -739,7 +745,12 @@ ok
 
 		private readonly object receiveLock = new object();
 		private readonly Queue<string> receiveQueue = new Queue<string>();
+
+#if !USE_SEMAPHORE_FOR_RECEIVE_QUEUE
 		private AutoResetEvent receiveResetEvent = new AutoResetEvent(false);
+#else
+		private SemaphoreSlim receiveResetEvent = new(0);
+#endif
 		private readonly object sendLock = new object();
 		private readonly Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
 
@@ -788,7 +799,11 @@ ok
 		{
 			this.IsOpen = true;
 
+#if !USE_SEMAPHORE_FOR_RECEIVE_QUEUE
 			receiveResetEvent = new AutoResetEvent(false);
+#else
+			receiveResetEvent = new(0);
+#endif
 
 			this.ReadTimeout = 500;
 			this.WriteTimeout = 500;
@@ -814,6 +829,7 @@ ok
 			{
 				Thread.CurrentThread.Name = "EmulatorPipeline";
 
+#if !USE_SEMAPHORE_FOR_RECEIVE_QUEUE
 				while (!shuttingDown || receiveQueue.Count > 0)
 				{
 					if (receiveQueue.Count == 0)
@@ -856,10 +872,38 @@ ok
 						}
 					}
 				}
+#else
+				for (; ;)
+				{
+					receiveResetEvent.Wait();
 
-				this.IsOpen = false;
+					string receivedLine;
 
-				this.Dispose();
+					lock (receiveLock)
+					{
+						if (receiveQueue.Count <= 0)
+						{
+							// End of queue. The only other thing the semaphore is signalled for is shutdown.
+							System.Diagnostics.Debug.Assert(shuttingDown);
+							break;
+						}
+
+						receivedLine = receiveQueue.Dequeue();
+					}
+
+					if (receivedLine?.Length > 0)
+					{
+						// Thread.Sleep(250);
+						string emulatedResponse = GetCorrectResponse(receivedLine);
+
+						lock (sendLock)
+						{
+							sendQueue.Enqueue(emulatedResponse);
+						}
+					}
+				}
+#endif
+
 			});
 		}
 
@@ -886,7 +930,11 @@ ok
 			}
 
 			// Release the main loop to process the received command
+#if !USE_SEMAPHORE_FOR_RECEIVE_QUEUE
 			receiveResetEvent.Set();
+#else
+			receiveResetEvent.Release();
+#endif
 		}
 
 		public void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();

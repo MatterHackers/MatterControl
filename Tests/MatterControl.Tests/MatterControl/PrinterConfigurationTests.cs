@@ -17,7 +17,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished/previously ignored")]
 		public void PrinterConfigTests()
 		{
-			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
+			string staticDataPath = MatterControlUtilities.StaticDataPath;
 
 			StaticData.RootPath = staticDataPath;
 

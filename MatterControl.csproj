@@ -1,151 +1,145 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>MatterControl</RootNamespace>
-    <AssemblyName>MatterControl</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
-    <FileAlignment>512</FileAlignment>
-    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>application.ico</ApplicationIcon>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CSharpSerialPortWrapper.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="appsettings.json" />
-    <None Include="StaticData\License\license.json" />
-    <None Include="StaticData\OEMSettings\OEMUrls.json" />
-    <None Include="StaticData\OEMSettings\Printers.json" />
-    <None Include="StaticData\OEMSettings\Settings.json" />
-    <None Include="KnownPlugins.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
-      <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
-      <Name>Community.CsharpSqlite</Name>
-    </ProjectReference>
-    <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj">
-      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
-      <Name>MatterControl.Printing</Name>
-    </ProjectReference>
-    <ProjectReference Include="MatterControl.SLA\MatterControl.SLA.csproj">
-      <Project>{e2b1af22-4143-4b33-9781-fc5527e959f6}</Project>
-      <Name>MatterControl.SLA</Name>
-    </ProjectReference>
-    <ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj">
-      <Project>{D6DC2669-7B1F-40FE-89BF-45D4C94473E3}</Project>
-      <Name>MatterControl.Winforms</Name>
-    </ProjectReference>
-    <ProjectReference Include="MatterControlLib\MatterControlLib.csproj">
-      <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
-      <Name>MatterControlLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
-      <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
-      <Name>InfInstaller</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj">
-      <Project>{4da97548-2588-4ac3-a21d-ba4fee6fe5e4}</Project>
-      <Name>GlfwProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
-      <Name>Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
-      <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
-      <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
-      <Name>MatterSlice</Name>
-    </ProjectReference>
-    <ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj">
-      <Project>{50505F12-985B-4C5F-8DAB-D5BEA734CD51}</Project>
-      <Name>MatterControl.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="application.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="StaticData\MatterControl EULA.txt" />
-    <None Include="StaticData\BuildInfo.txt" />
-    <None Include="StaticData\License\agg-sharp.txt" />
-    <None Include="StaticData\License\clipper.txt" />
-    <None Include="StaticData\License\markdig.txt" />
-    <None Include="StaticData\License\matterslice.txt" />
-    <None Include="StaticData\License\opentk.txt" />
-    <None Include="StaticData\SliceSettings\Layouts.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CsvHelper">
-      <Version>27.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client">
-      <Version>5.2.9</Version>
-    </PackageReference>
-    <PackageReference Include="Mindscape.Raygun4Net">
-      <Version>5.13.0</Version>
-    </PackageReference>
-    <PackageReference Include="SocketIoClientDotNet">
-      <Version>1.0.2-beta1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<OutputType>WinExe</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+	<PropertyGroup>
+		<StartupObject />
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationIcon>application.ico</ApplicationIcon>
+		<BaseOutputPath></BaseOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Community.CsharpSqlite\**" />
+		<Compile Remove="Launcher\**" />
+		<Compile Remove="MatterControl.Common\**" />
+		<Compile Remove="MatterControl.MeshOperations\**" />
+		<Compile Remove="MatterControl.OpenGL\**" />
+		<Compile Remove="MatterControl.Printing\**" />
+		<Compile Remove="MatterControl.SLA\**" />
+		<Compile Remove="MatterControl.Winforms\**" />
+		<Compile Remove="MatterControlLib\**" />
+		<Compile Remove="MatterHackers.gsSlicer\**" />
+		<Compile Remove="Plugins\**" />
+		<Compile Remove="PrinterDriverInstaller\**" />
+		<Compile Remove="PrusaI3-MK3\**" />
+		<Compile Remove="StaticData\**" />
+		<Compile Remove="Submodules\**" />
+		<Compile Remove="Tests\**" />
+		<Compile Remove="Tools\**" />
+		<EmbeddedResource Remove="Community.CsharpSqlite\**" />
+		<EmbeddedResource Remove="Launcher\**" />
+		<EmbeddedResource Remove="MatterControl.Common\**" />
+		<EmbeddedResource Remove="MatterControl.MeshOperations\**" />
+		<EmbeddedResource Remove="MatterControl.OpenGL\**" />
+		<EmbeddedResource Remove="MatterControl.Printing\**" />
+		<EmbeddedResource Remove="MatterControl.SLA\**" />
+		<EmbeddedResource Remove="MatterControl.Winforms\**" />
+		<EmbeddedResource Remove="MatterControlLib\**" />
+		<EmbeddedResource Remove="MatterHackers.gsSlicer\**" />
+		<EmbeddedResource Remove="Plugins\**" />
+		<EmbeddedResource Remove="PrinterDriverInstaller\**" />
+		<EmbeddedResource Remove="PrusaI3-MK3\**" />
+		<EmbeddedResource Remove="StaticData\**" />
+		<EmbeddedResource Remove="Submodules\**" />
+		<EmbeddedResource Remove="Tests\**" />
+		<EmbeddedResource Remove="Tools\**" />
+		<None Remove="Community.CsharpSqlite\**" />
+		<None Remove="Launcher\**" />
+		<None Remove="MatterControl.Common\**" />
+		<None Remove="MatterControl.MeshOperations\**" />
+		<None Remove="MatterControl.OpenGL\**" />
+		<None Remove="MatterControl.Printing\**" />
+		<None Remove="MatterControl.SLA\**" />
+		<None Remove="MatterControl.Winforms\**" />
+		<None Remove="MatterControlLib\**" />
+		<None Remove="MatterHackers.gsSlicer\**" />
+		<None Remove="Plugins\**" />
+		<None Remove="PrinterDriverInstaller\**" />
+		<None Remove="PrusaI3-MK3\**" />
+		<None Remove="StaticData\**" />
+		<None Remove="Submodules\**" />
+		<None Remove="Tests\**" />
+		<None Remove="Tools\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
+		<ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj" />
+		<ProjectReference Include="MatterControl.SLA\MatterControl.SLA.csproj" />
+		<ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj" />
+		<ProjectReference Include="MatterControlLib\MatterControlLib.csproj" />
+		<ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj" />
+		<ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />
+		<ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj" />
+		<ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj" />
+		<ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
+		<ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj" />
+		<ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="application.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<None Include="StaticData\MatterControl EULA.txt" />
+		<None Include="StaticData\BuildInfo.txt" />
+		<None Include="StaticData\License\agg-sharp.txt" />
+		<None Include="StaticData\License\clipper.txt" />
+		<None Include="StaticData\License\markdig.txt" />
+		<None Include="StaticData\License\matterslice.txt" />
+		<None Include="StaticData\License\opentk.txt" />
+		<None Include="StaticData\SliceSettings\Layouts.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CsvHelper">
+			<Version>27.2.1</Version>
+		</PackageReference>
+		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Mindscape.Raygun4Net.NetCore" Version="6.4.3" />
+		<PackageReference Include="ServiceWire" Version="5.5.0" />
+		<PackageReference Include="SocketIoClientDotNet">
+			<Version>1.0.2-beta1</Version>
+		</PackageReference>
+		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.330701">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="System.IO.Ports" Version="7.0.0-preview.5.22301.12" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="ConfigurationPage\ApplicationSettings\ThemeColorPanel.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove=".gitignore" />
+		<None Remove=".gitmodules" />
+		<None Remove=".travis.yml" />
+		<None Remove="AnalysisReport.sarif" />
+		<None Remove="application.ico" />
+		<None Remove="CONTRIBUTING.md" />
+		<None Remove="desktop.ini" />
+		<None Remove="LICENSE" />
+		<None Remove="main.cpp" />
+		<None Remove="ProductVersion.txt" />
+		<None Remove="README.md" />
+		<None Remove="upgrade-assistant.clef" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="KnownPlugins.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<Target Name="WriteToFile" BeforeTargets="PreBuildEvent">
+		<ItemGroup>
+			<AssemblyAttributes Include="MatterHackers.MatterControl.MainOutputDirectory">
+				<_Parameter1>$(OutputPath)</_Parameter1>
+				<_Parameter2>$(SolutionDir)</_Parameter2>
+			</AssemblyAttributes>
+		</ItemGroup>
+		<WriteCodeFragment Language="C#" OutputFile="MainOutputDirectory.cs" AssemblyAttributes="@(AssemblyAttributes)">
+			<Output TaskParameter="OutputFile" ItemName="Compile" />
+			<Output TaskParameter="OutputFile" ItemName="FileWrites" />
+		</WriteCodeFragment>
+	</Target>
 </Project>
