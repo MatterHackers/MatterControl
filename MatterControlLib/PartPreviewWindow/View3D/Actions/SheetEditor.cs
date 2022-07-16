@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl.DesignTools
         public UndoBuffer UndoBuffer { get; }
 
         private ThemeConfig theme;
-		private MHTextEditWidget editSelectedName;
-		public MHTextEditWidget EditSelectedExpression { get; private set; }
+		private ThemedTextEditWidget editSelectedName;
+		public ThemedTextEditWidget EditSelectedExpression { get; private set; }
 		private GridWidget gridWidget;
 
 		public SheetEditorWidget(SheetData sheetData, SheetObject3D sheetObject, UndoBuffer undoBuffer, ThemeConfig theme)
@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				VAnchor = VAnchor.Fit,
 			});
 
-			editSelectedName = new MHTextEditWidget("", theme, cellEditNameWidth, messageWhenEmptyAndNotSelected: "Name".Localize())
+			editSelectedName = new ThemedTextEditWidget("", theme, cellEditNameWidth, messageWhenEmptyAndNotSelected: "Name".Localize())
 			{
 				HAnchor = HAnchor.Absolute,
 			};
 			editSelectedName.ActualTextEditWidget.EditComplete += SelectedName_EditComplete;
 			editSelectionGroup.AddChild(editSelectedName);
-			EditSelectedExpression = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
+			EditSelectedExpression = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: "Select cell to edit".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
 			};

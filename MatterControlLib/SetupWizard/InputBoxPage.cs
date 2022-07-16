@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 {
 	public class InputBoxPage : DialogPage
 	{
-		public MHTextEditWidget TextEditWidget { get; private set; }
+		public ThemedTextEditWidget TextEditWidget { get; private set; }
 
 		public override string Text { get => TextEditWidget.Text; set => TextEditWidget.Text = value; }
 
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			});
 
 			// Adds text box and check box to the above container
-			TextEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
+			TextEditWidget = new ThemedTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
 			TextEditWidget.Name = "InputBoxPage TextEditWidget";
 			TextEditWidget.HAnchor = HAnchor.Stretch;
 			TextEditWidget.Margin = new BorderDouble(5);

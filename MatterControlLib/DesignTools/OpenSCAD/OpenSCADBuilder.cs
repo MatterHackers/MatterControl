@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.Library
 						double val;
 						double.TryParse(latest, out val);
 
-						var editor = new MHNumberEdit(val, theme, pixelWidth: 50 * GuiWidget.DeviceScale, allowDecimals: true, increment: .05)
+						var editor = new ThemedNumberEdit(val, theme, pixelWidth: 50 * GuiWidget.DeviceScale, allowDecimals: true, increment: .05)
 						{
 							SelectAllOnFocus = true,
 							VAnchor = VAnchor.Center

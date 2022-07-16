@@ -107,7 +107,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -138,7 +138,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -169,7 +169,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				(field) => (field.Content as ThemedNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0" },
@@ -200,7 +200,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -246,7 +246,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0" },
@@ -548,7 +548,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				(field) => (field.Content as ThemedTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
 					{ "0.12345", "0.12345" },
@@ -582,7 +582,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -606,7 +606,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -632,7 +632,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -656,7 +656,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join(",", field.Content.Children.OfType<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{
@@ -689,7 +689,7 @@ namespace MatterControl.Tests.MatterControl
 				theme,
 				(field) =>
 				{
-					return string.Join("x", field.Content.Descendants<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+					return string.Join("x", field.Content.Descendants<ThemedNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
 				new List<ValueMap>()
 				{

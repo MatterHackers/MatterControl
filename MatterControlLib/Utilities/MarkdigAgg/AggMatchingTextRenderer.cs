@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using Markdig.Renderers.Agg.Inlines;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers.Agg

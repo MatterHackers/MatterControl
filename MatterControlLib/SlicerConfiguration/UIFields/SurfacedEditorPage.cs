@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public event EventHandler ValueChanged;
 
-		private MHTextEditWidget editWidget;
+		private ThemedTextEditWidget editWidget;
 
 		public SurfacedEditorPage(IObject3D selectedItem)
 		{
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BackgroundColor = theme.BackgroundColor
 			};
 
-			editWidget = new MHTextEditWidget("", theme)
+			editWidget = new ThemedTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				Name = this.Name,

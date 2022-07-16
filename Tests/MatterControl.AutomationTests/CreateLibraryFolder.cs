@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("Test Text");
 				testRunner.Delay(.5);
 
-				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as MHTextEditWidget;
+				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as ThemedTextEditWidget;
 
 				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
 				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");

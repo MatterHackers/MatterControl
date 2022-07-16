@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class CharField : UIField
 	{
-		protected MHTextEditWidget textEditWidget;
+		protected ThemedTextEditWidget textEditWidget;
 		private ThemeConfig theme;
 
 		public CharField(ThemeConfig theme)
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			textEditWidget = new MHTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
+			textEditWidget = new ThemedTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,

@@ -38,9 +38,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
-		private MHNumberEdit yEditWidget;
+		private ThemedNumberEdit yEditWidget;
 
-		private MHNumberEdit xEditWidget;
+		private ThemedNumberEdit xEditWidget;
 		private ThemeConfig theme;
 
 		public Vector2Field(ThemeConfig theme)
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			xEditWidget = new ThemedNumberEdit(currentXValue, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			yEditWidget = new ThemedNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
 

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class InlineEditControl : GuiWidget
 	{
 		private TextWidget numberDisplay;
-		private MHNumberEdit numberEdit;
+		private ThemedNumberEdit numberEdit;
 		private Func<double, string> _getDisplayString = (value) => "{0:0.0}".FormatWith(value);
 		private RunningInterval runningInterval;
 		private ThemeConfig theme;
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			AddChild(numberDisplay);
 
-			numberEdit = new MHNumberEdit(0, theme, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
+			numberEdit = new ThemedNumberEdit(0, theme, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
 			{
 				Visible = false,
 				VAnchor = VAnchor.Bottom,

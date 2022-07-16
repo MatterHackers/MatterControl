@@ -107,9 +107,10 @@ namespace MatterHackers.MatterControl
 				{
 					_themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
 					ThemeSet.Theme.EnsureDefaults();
+                    MatterHackersThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
 
-					// If the serialized format is older than the current format, null and fall back to latest default below
-					if (ThemeSet.SchemeVersion != ThemeSet.LatestSchemeVersion)
+                    // If the serialized format is older than the current format, null and fall back to latest default below
+                    if (ThemeSet.SchemeVersion != ThemeSet.LatestSchemeVersion)
 					{
 						_themeset = null;
 					}
@@ -163,6 +164,7 @@ namespace MatterHackers.MatterControl
 
 					var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(json);
 					themeConfig.EnsureDefaults();
+					MatterHackersThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
 
 					return themeConfig;
 				}

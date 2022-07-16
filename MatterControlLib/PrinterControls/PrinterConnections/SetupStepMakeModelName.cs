@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	// Normally step one of the setup process
 	public class SetupStepMakeModelName : DialogPage
 	{
-		private readonly TextButton nextButton;
+		private readonly ThemedTextButton nextButton;
 		private readonly AddPrinterWidget printerPanel;
 
 		private readonly RadioButton createPrinterRadioButton = null;

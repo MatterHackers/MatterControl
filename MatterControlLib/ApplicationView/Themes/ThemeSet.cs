@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {

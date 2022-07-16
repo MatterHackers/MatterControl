@@ -37,9 +37,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static readonly int VectorXYZEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
-		private MHNumberEdit xEditWidget;
-		private MHNumberEdit yEditWidget;
-		private MHNumberEdit zEditWidget;
+		private ThemedNumberEdit xEditWidget;
+		private ThemedNumberEdit yEditWidget;
+		private ThemedNumberEdit zEditWidget;
 		private ThemeConfig theme;
 
 		public Vector3Field(ThemeConfig theme)
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			xEditWidget = new ThemedNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			yEditWidget = new ThemedNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[2], out double currentZValue);
 
-			zEditWidget = new MHNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			zEditWidget = new ThemedNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,

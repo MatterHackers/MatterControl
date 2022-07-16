@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 	public class LibraryBrowserPage : DialogPage
 	{
 		protected GuiWidget acceptButton = null;
-		protected MHTextEditWidget itemNameWidget;
+		protected ThemedTextEditWidget itemNameWidget;
 		protected ILibraryContext libraryNavContext;
 		protected LibraryListView librarySelectorWidget;
 		private FolderBreadCrumbWidget breadCrumbWidget = null;

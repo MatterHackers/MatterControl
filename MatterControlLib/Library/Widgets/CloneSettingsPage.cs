@@ -58,9 +58,9 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			};
 			contentRow.AddChild(pathRow);
 
-			TextButton importButton = null;
+			ThemedTextButton importButton = null;
 
-			var textEditWidget = new MHTextEditWidget("", theme)
+			var textEditWidget = new ThemedTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center,

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public class MarkdownEditPage : DialogPage
 	{
-		private MHTextEditWidget editWidget;
+		private ThemedTextEditWidget editWidget;
 		private MarkdownWidget markdownWidget;
 
 		public MarkdownEditPage(UIField uiField)
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.BackgroundColor
 			};
 
-			editWidget = new MHTextEditWidget("", theme, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			editWidget = new ThemedTextEditWidget("", theme, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,

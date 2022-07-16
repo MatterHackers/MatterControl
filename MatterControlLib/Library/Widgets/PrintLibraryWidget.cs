@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 	public class TextEditWithInlineCancel : GuiWidget
 	{
-		public MHTextEditWidget TextEditWidget { get; }
+		public ThemedTextEditWidget TextEditWidget { get; }
 
 		public GuiWidget ResetButton { get; }
 
@@ -433,7 +433,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			TextEditWidget = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
+			TextEditWidget = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center
