@@ -751,6 +751,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (!testRunner.NameExists(libraryRowItemName, .2))
 			{
+				while (!testRunner.NameExists("Bread Crumb Button Home", .2))
+				{
+					testRunner.ClickByName("Library Up Button")
+						.Delay();                    
+				}
+                
 				// go back to the home section
 				testRunner.ClickByName("Bread Crumb Button Home")
 					.Delay();
