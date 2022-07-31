@@ -2782,6 +2782,9 @@ Translated:Material density. Only used for estimating mass in the Layer View.
 English:Material Setting
 Translated:Material Setting
 
+English:Material Setting '{0}'
+Translated:Material Setting '{0}'
+
 English:Material Settings
 Translated:Material Settings
 
@@ -3897,6 +3900,9 @@ Translated:Quality
 
 English:Quality Setting
 Translated:Quality Setting
+
+English:Quality Setting '{0}'
+Translated:Quality Setting '{0}'
 
 English:Queue
 Translated:Queue

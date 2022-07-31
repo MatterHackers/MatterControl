@@ -521,6 +521,63 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, ChildProcessTest]
+		public async Task ValidateSaveMenuItemLabels()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+
+				// Navigate to Slice Settings Tab and make sure Layer Thickness row is visible
+				testRunner.SwitchToSliceSettings()
+					.NavigateToSliceSettingsField(SettingsKey.layer_height);
+
+				// Set Quality to "Coarse" and Material to "ABS"
+				testRunner.ClickByName("Quality")
+					.ClickByName("Coarse Menu")
+					.ClickByName("Material")
+					.ClickByName("ABS Menu")
+					.RightClickByName("Layer Thickness OverrideIndicator", offset: new Point2D(30, 0))
+					.ClickByName("Save to Menu Item")
+					.Delay(.5);
+				Assert.IsTrue(testRunner.NameExists("Quality Setting 'Coarse' Menu Item"));
+				Assert.IsTrue(testRunner.NameExists("Material Setting 'ABS' Menu Item"));
+
+				// Set Quality to "Fine" and Material to "BENDLAY"
+				testRunner.ClickByName("Quality")
+					.ClickByName("Fine Menu")
+					.ClickByName("Material")
+					.ClickByName("BENDLAY Menu")
+					.RightClickByName("Layer Thickness OverrideIndicator", offset: new Point2D(30, 0))
+					.ClickByName("Save to Menu Item")
+					.Delay(.5);
+				Assert.IsTrue(testRunner.NameExists("Quality Setting 'Fine' Menu Item"));
+				Assert.IsTrue(testRunner.NameExists("Material Setting 'BENDLAY' Menu Item"));
+
+				// Set Quality to none
+				testRunner.ClickByName("Quality")
+					.ClickByName("- none - Menu Item")
+					.RightClickByName("Layer Thickness OverrideIndicator", offset: new Point2D(30, 0))
+					.ClickByName("Save to Menu Item")
+					.Delay(.5);
+				Assert.IsTrue(testRunner.NameExists("Quality Setting Menu Item"));
+				Assert.IsTrue(testRunner.NameExists("Material Setting 'BENDLAY' Menu Item"));
+
+				// Set Quality to "Standard" and Material to none
+				testRunner.ClickByName("Quality")
+					.ClickByName("Standard Menu")
+					.ClickByName("Material")
+					.ClickByName("- none - Menu Item")
+					.RightClickByName("Layer Thickness OverrideIndicator", offset: new Point2D(30, 0))
+					.ClickByName("Save to Menu Item")
+					.Delay(.5);
+				Assert.IsTrue(testRunner.NameExists("Quality Setting 'Standard' Menu Item"));
+				Assert.IsTrue(testRunner.NameExists("Material Setting Menu Item"));
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 1000);
+		}
+
+		[Test, ChildProcessTest]
 		public async Task DeleteProfileWorksForGuest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

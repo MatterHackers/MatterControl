@@ -325,7 +325,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// add menu item to set quality
 					{
-						var setAsQualityMenuItem = subMenu.CreateMenuItem("Quality Setting".Localize());
+						var qualitySettingName = printer.Settings.QualityLayer?.Name;
+						var setAsQualityMenuItem = subMenu.CreateMenuItem(!string.IsNullOrEmpty(qualitySettingName) ?
+							"Quality Setting '{0}'".Localize().FormatWith(qualitySettingName) :
+							"Quality Setting".Localize());
 						setAsQualityMenuItem.Enabled = canSaveQuality;
 						setAsQualityMenuItem.Click += (s, e) =>
 						{
@@ -338,7 +341,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// add menu item to set material
 					{
-						var setAsMaterialMenuItem = subMenu.CreateMenuItem("Material Setting".Localize());
+						var materialSettingName = printer.Settings.MaterialLayer?.Name;
+						var setAsMaterialMenuItem = subMenu.CreateMenuItem(!string.IsNullOrEmpty(materialSettingName) ?
+							"Material Setting '{0}'".Localize().FormatWith(materialSettingName) :
+							"Material Setting".Localize());
 						setAsMaterialMenuItem.Enabled = canSaveMaterial;
 						setAsMaterialMenuItem.Click += (s, e) =>
 						{
