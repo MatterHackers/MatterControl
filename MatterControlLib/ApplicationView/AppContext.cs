@@ -164,7 +164,10 @@ namespace MatterHackers.MatterControl
 
 					var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(json);
 					themeConfig.EnsureDefaults();
-					ThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
+					if (ThemeSet?.Theme != null)
+					{
+						ThemeConfigExtensions.RebuildTheme(ThemeSet.Theme);
+					}
 
 					return themeConfig;
 				}
