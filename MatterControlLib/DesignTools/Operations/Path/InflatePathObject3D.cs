@@ -52,8 +52,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class InflatePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
 	{
-		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		public InflatePathObject3D()
 		{
 			Name = "Inflate Path".Localize();
@@ -101,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				InsetPath();
 				// set the mesh to show the path
-				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+				this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			this.CancelAllParentBuilding();
@@ -111,15 +109,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void InsetPath()
 		{
-			var path = this.Children.Where(c => c.VertexSource != null).FirstOrDefault();
+			var path = this.CombinedVisibleChildrenPaths();
 			if (path == null)
 			{
 				// clear our existing data
-				VertexSource = new VertexStorage();
+				VertexStorage = new VertexStorage();
 				return;
 			}
 
-			VertexSource = path.VertexSource.Offset(Inflate.Value(this), GetJoinType(Style));
+			VertexStorage = path.Offset(Inflate.Value(this), GetJoinType(Style));
 		}
 
 		internal static JoinType GetJoinType(ExpandStyles style)

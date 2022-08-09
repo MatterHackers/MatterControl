@@ -108,7 +108,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public NamedTypeFace Font { get; set; } = NamedTypeFace.Nunito_Bold;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		// [Icons(new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
 		public OutputDimensions Output { get; set; } = OutputDimensions.Output3D;
 
 		public override bool CanApply => true;
@@ -315,6 +314,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Alignment), () => MultiLine);
 			change.SetRowVisible(nameof(NameToWrite), () => !MultiLine);
 			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
+            if (change.Changed == nameof(Output))
+            {
+				this.RefreshToolBar();
+            }
 		}
 	}
 }

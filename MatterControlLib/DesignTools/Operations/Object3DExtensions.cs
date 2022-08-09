@@ -87,6 +87,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public static void RefreshToolBar(this IObject3D item)
+        {
+			var sceneContext = item.ContainingScene();
+			if (sceneContext != null)
+			{
+				// deselect than re-select the item
+				sceneContext.SelectedItem = null;
+				sceneContext.SelectedItem = item;
+			}
+		}
+
 		public static void ShowRenameDialog(this IObject3D item, UndoBuffer undoBuffer)
 		{
 			DialogWindow.Show(
