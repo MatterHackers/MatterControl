@@ -150,15 +150,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
+				var vertexSource = this.Descendants<IObject3D>().FirstOrDefault(i => i.VertexSource != null)?.VertexSource;
 				var hasMesh = this.Descendants<IObject3D>().Where(m => m.Mesh != null).Any();
 
-				return vertexSource?.VertexSource == null && hasMesh;
+				return vertexSource == null && hasMesh;
 			}
 		}
 
 		[JsonIgnore]
-		public IVertexSource VertexSource
+		public override IVertexSource VertexSource
 		{
 			get
 			{
@@ -176,16 +176,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					return meshVertexCache.vertexSource;
 				}
 
-				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
-				return vertexSource?.VertexSource;
+				var vertexSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.VertexSource != null)?.VertexSource;
+				return vertexSource;
 			}
 
 			set
 			{
-				var vertexSource = this.Children.OfType<IPathObject>().FirstOrDefault();
-				if (vertexSource != null)
+                var pathObject = this.Children.FirstOrDefault(i => i.VertexSource != null);
+                if (pathObject != null)
 				{
-					vertexSource.VertexSource = value;
+					pathObject.VertexSource = value;
 				}
 			}
 		}
@@ -438,8 +438,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(Centering), BaseType == BaseTypes.Circle);
 			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
 
-			var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
-			var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
+			var vertexSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.VertexSource != null)?.VertexSource;
+            var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
 
 			changeSet.Add(nameof(CalculationHeight), vertexSource == null && meshSource.Where(m => m.Mesh != null).Any());
 

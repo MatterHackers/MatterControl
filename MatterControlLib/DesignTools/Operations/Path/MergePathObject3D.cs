@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider
 	{
 		private ClipperLib.ClipType clipType;
 		private string operationName;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = name;
 		}
 
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
+		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			var first = participants.First();
-			var resultsVertexSource = (first as IPathObject).VertexSource.Transform(first.Matrix);
+			var resultsVertexSource = first.VertexSource.Transform(first.Matrix);
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
@@ -145,9 +145,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			foreach (var item in participants)
 			{
 				if (item != first
-					&& item is IPathObject pathItem)
+					&& item.VertexSource != null)
 				{
-					var itemVertexSource = pathItem.VertexSource.Transform(item.Matrix);
+					var itemVertexSource = item.VertexSource.Transform(item.Matrix);
 
 					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 

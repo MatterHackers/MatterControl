@@ -70,10 +70,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				var item = this.Descendants().Where((d) => d is IPathObject).FirstOrDefault();
-				if (item is IPathObject pathItem)
+				var item = this.Descendants().Where(c => c.VertexSource != null).FirstOrDefault();
+				if (item != null)
 				{
-					return pathItem.VertexSource;
+					return item.VertexSource;
 				}
 
 				return null;
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		(Vector3, Vector3) GetStartEnd(IPathObject pathObject)
+		(Vector3, Vector3) GetStartEnd(IObject3D pathObject)
 		{
 			// draw the line that is the rotation point
 			var aabb = this.GetAxisAlignedBoundingBox();
@@ -147,9 +147,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var child = this.Children.FirstOrDefault();
-			if (child is IPathObject pathObject)
+			if (child?.VertexSource != null)
 			{
-				var (start, end) = GetStartEnd(pathObject);
+				var (start, end) = GetStartEnd(child);
 				layer.World.Render3DLine(start, end, Color.Red, true);
 				layer.World.Render3DLine(start, end, Color.Red.WithAlpha(20), false);
 			}
@@ -158,9 +158,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
 		{
 			var child = this.Children.FirstOrDefault();
-			if (child is IPathObject pathObject)
+			if (child.VertexSource != null)
 			{
-				var (start, end) = GetStartEnd(pathObject);
+				var (start, end) = GetStartEnd(child);
 				return new AxisAlignedBoundingBox(new Vector3[] { start, end });
 			}
 

@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				new SceneOperation("Lithophane")
 				{
 					TitleGetter = () => "Lithophane".Localize(),
-					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),
 					Action = (sceneContext) =>
 					{

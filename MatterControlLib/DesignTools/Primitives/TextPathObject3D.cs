@@ -48,7 +48,7 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextPathObject3D : Object3D, IPathObject, IEditorDraw
+	public class TextPathObject3D : Object3D, IEditorDraw
 	{
 		public TextPathObject3D()
 		{
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool CanApply => true;
 
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
+		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{

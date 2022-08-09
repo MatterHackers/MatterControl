@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class BoxPathObject3D : PrimitiveObject3D, IPathObject, IObject3DControlsProvider, IEditorDraw
+	public class BoxPathObject3D : PrimitiveObject3D, IObject3DControlsProvider, IEditorDraw
 	{
 		public BoxPathObject3D()
 		{
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonIgnore]
 		private IVertexSource _vertexSource = new VertexStorage();
 
-		public IVertexSource VertexSource
+		public override IVertexSource VertexSource
 		{
 			get => _vertexSource;
 

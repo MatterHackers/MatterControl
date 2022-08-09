@@ -46,9 +46,9 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class SmoothPathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
 	{
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
+		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public SmoothPathObject3D()
 		{
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		private void DoSmoothing(long maxDist, int interations)
 		{
 			bool closedPath = true;
-			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
+			var path = this.Children.Where(c => c.VertexSource != null).FirstOrDefault();
 			if (path == null)
 			{
 				// clear our existing data

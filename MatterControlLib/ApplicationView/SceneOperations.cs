@@ -73,7 +73,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("AddBase")
 			{
-				OperationType = typeof(IObject3D),
 				TitleGetter = () => "Add Base".Localize(),
 				ResultType = typeof(BaseObject3D),
 				Action = (sceneContext) =>
@@ -100,9 +99,9 @@ namespace MatterHackers.MatterControl
 				Icon = (theme) => StaticData.Instance.LoadIcon("add_base.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				// this is for when base is working with generic meshes
-				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem.IsPathObject()),
 				// this is for when only IPathObjects are working correctly
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i is IPathObject).Any(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i.IsPathObject()).Any(),
 			};
 		}
 
@@ -220,7 +219,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("EditComponent")
 			{
-				OperationType = typeof(IObject3D),
 				TitleGetter = () => "Edit Component".Localize(),
 				ResultType = typeof(ComponentObject3D),
 				Action = (sceneContext) =>
@@ -286,7 +284,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("ImageConverter")
 			{
-				OperationType = typeof(ImageObject3D),
 				TitleGetter = () => "Image Converter".Localize(),
 				ResultType = typeof(ComponentObject3D),
 				Action = (sceneContext) =>
@@ -350,7 +347,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("ImageToPath")
 			{
-				OperationType = typeof(ImageObject3D),
 				TitleGetter = () => "Image to Path".Localize(),
 				ResultType = typeof(ImageToPathObject3D_2),
 				Action = (sceneContext) =>
@@ -385,7 +381,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("InflatePath")
 			{
-				OperationType = typeof(IPathObject),
 				TitleGetter = () => "Inflate Path".Localize(),
 				ResultType = typeof(InflatePathObject3D),
 				Action = (sceneContext) =>
@@ -407,7 +402,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
 		}
 
@@ -415,14 +410,14 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("LinearExtrude")
 			{
-				OperationType = typeof(IPathObject),
 				TitleGetter = () => "Linear Extrude".Localize(),
 				ResultType = typeof(LinearExtrudeObject3D),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is IPathObject pathObject)
+                    var pathObject = sceneItem.GetVertexSource();
+                    if (pathObject != null)
 					{
 						var extrude = new LinearExtrudeObject3D();
 
@@ -440,7 +435,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
 		}
 
@@ -448,14 +443,14 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Revolve")
 			{
-				OperationType = typeof(IPathObject),
 				TitleGetter = () => "Revolve".Localize(),
 				ResultType = typeof(RevolveObject3D),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is IPathObject pathObject)
+                    var pathObject = sceneItem.GetVertexSource();
+                    if (pathObject != null)
 					{
 						var revolve = new RevolveObject3D();
 
@@ -473,7 +468,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
 		}
 
@@ -529,7 +524,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Mirror")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(MirrorObject3D_2),
 				TitleGetter = () => "Mirror".Localize(),
 				Action = (sceneContext) =>
@@ -546,7 +540,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("OutlinePath")
 			{
-				OperationType = typeof(IPathObject),
 				TitleGetter = () => "Outline Path".Localize(),
 				ResultType = typeof(OutlinePathObject3D),
 				Action = (sceneContext) =>
@@ -567,7 +560,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
 		}
 
@@ -575,7 +568,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Rotate")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(RotateObject3D_2),
 				TitleGetter = () => "Rotate".Localize(),
 				Action = (sceneContext) =>
@@ -592,7 +584,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Scale")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(ScaleObject3D_3),
 				TitleGetter = () => "Scale".Localize(),
 				Action = (sceneContext) =>
@@ -609,7 +600,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("SmoothPath")
 			{
-				OperationType = typeof(IPathObject),
 				TitleGetter = () => "Smooth Path".Localize(),
 				ResultType = typeof(SmoothPathObject3D),
 				Action = (sceneContext) =>
@@ -630,7 +620,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
 		}
 
@@ -638,7 +628,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Translate")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(TranslateObject3D),
 				TitleGetter = () => "Translate".Localize(),
 				Action = (sceneContext) =>
@@ -655,7 +644,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Advanced Array")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayAdvancedObject3D),
 				TitleGetter = () => "Advanced Array".Localize(),
 				Action = (sceneContext) =>
@@ -676,7 +664,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Align")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(AlignObject3D_2),
 				TitleGetter = () => "Align".Localize(),
 				Action = (sceneContext) =>
@@ -939,7 +926,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Combine")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(CombineObject3D_2),
 				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
@@ -965,7 +951,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Curve")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(CurveObject3D_3),
 				TitleGetter = () => "Curve".Localize(),
 				Action = (sceneContext) =>
@@ -983,7 +968,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Dual Extrusion Align")
 			{
-				OperationType = typeof(IObject3D),
 				TitleGetter = () => "Dual Extrusion Align".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1031,7 +1015,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Fit to Bounds")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToBoundsObject3D_3),
 				TitleGetter = () => "Fit to Bounds".Localize(),
 				Action = async (sceneContext) =>
@@ -1053,7 +1036,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Fit to Cylinder")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToCylinderObject3D),
 				TitleGetter = () => "Fit to Cylinder".Localize(),
 				Action = async (sceneContext) =>
@@ -1075,7 +1057,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Group")
 			{
-				OperationType = typeof(SelectionGroupObject3D),
 				ResultType = typeof(GroupHolesAppliedObject3D),
 				TitleGetter = () => "Group".Localize(),
 				Action = (sceneContext) =>
@@ -1097,7 +1078,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Hollow Out")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(HollowOutObject3D),
 				TitleGetter = () => "Hollow Out".Localize(),
 				Action = (sceneContext) =>
@@ -1115,7 +1095,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Intersect")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(IntersectionObject3D_2),
 				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
@@ -1141,14 +1120,14 @@ namespace MatterHackers.MatterControl
 		{
 			return item != null
 				&& !(item is ImageObject3D)
-				&& !(item is IPathObject);
+				&& !(item.IsPathObject());
 		}
 
 		private static bool IsPathObject(IObject3D item)
 		{
 			return item != null
 				&& !(item is ImageObject3D)
-				&& (item is IPathObject);
+				&& (item.IsPathObject());
 		}
 
 		private static SceneOperation LayFlatOperation()
@@ -1217,7 +1196,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Linear Array")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayLinearObject3D),
 				TitleGetter = () => "Linear Array".Localize(),
 				Action = (sceneContext) =>
@@ -1238,7 +1216,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Pinch")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(PinchObject3D_3),
 				TitleGetter = () => "Pinch".Localize(),
 				Action = (sceneContext) =>
@@ -1256,7 +1233,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Plane Cut")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(PlaneCutObject3D),
 				TitleGetter = () => "Plane Cut".Localize(),
 				Action = (sceneContext) =>
@@ -1274,7 +1250,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Find Slice")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(PlaneCutObject3D),
 				TitleGetter = () => "Find Slice".Localize(),
 				Action = (sceneContext) =>
@@ -1292,7 +1267,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Radial Array")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayRadialObject3D),
 				TitleGetter = () => "Radial Array".Localize(),
 				Action = (sceneContext) =>
@@ -1313,7 +1287,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Reduce")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(DecimateObject3D),
 				TitleGetter = () => "Reduce".Localize(),
 				Action = (sceneContext) =>
@@ -1372,7 +1345,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Repair")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(RepairObject3D),
 				TitleGetter = () => "Repair".Localize(),
 				Action = (sceneContext) =>
@@ -1390,7 +1362,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Subtract & Replace")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractAndReplaceObject3D_2),
 				TitleGetter = () => "Subtract & Replace".Localize(),
 				Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
@@ -1404,7 +1375,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Subtract")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractObject3D_2),
 				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
@@ -1523,7 +1493,6 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Twist")
 			{
-				OperationType = typeof(IObject3D),
 				ResultType = typeof(TwistObject3D),
 				TitleGetter = () => "Twist".Localize(),
 				Action = (sceneContext) =>

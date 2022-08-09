@@ -66,11 +66,6 @@ namespace MatterHackers.Agg.UI
 		public string Title => this.TitleGetter?.Invoke();
 
 		/// <summary>
-		/// Gets or sets the type that this operation can be applied to
-		/// </summary>
-		public Type OperationType { get; set; }
-
-		/// <summary>
 		/// Gets or sets if this operation should be shown in right click and modify menu.
 		/// </summary>
 		public Func<ISceneContext, bool> ShowInModifyMenu { get; set; }

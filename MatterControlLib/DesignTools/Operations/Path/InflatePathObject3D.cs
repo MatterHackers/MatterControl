@@ -50,9 +50,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class InflatePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
 	{
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
+		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public InflatePathObject3D()
 		{
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void InsetPath()
 		{
-			var path = this.Children.OfType<IPathObject>()?.FirstOrDefault();
+			var path = this.Children.Where(c => c.VertexSource != null).FirstOrDefault();
 			if (path == null)
 			{
 				// clear our existing data

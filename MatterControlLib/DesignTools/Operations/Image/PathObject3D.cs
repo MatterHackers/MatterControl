@@ -39,12 +39,12 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PathObject3D : Object3D, IPathObject, IEditorDraw
+	public class PathObject3D : Object3D, IEditorDraw
 	{
 		[JsonIgnore]
 		private IVertexSource _vertexSource = new VertexStorage();
 
-		public IVertexSource VertexSource
+		public override IVertexSource VertexSource
 		{
 			get => _vertexSource;
 

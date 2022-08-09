@@ -48,6 +48,16 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+    public enum OutputDimensions
+    {
+        [EnumNameAttribute("2D")]
+        [DescriptionAttribute("Create a 2D Path")]
+        Output2D,
+        [EnumNameAttribute("3D")]
+        [DescriptionAttribute("Create a 3D Mesh")]
+		Output3D
+	}
+    
 	[HideChildrenFromTreeView]
 	public class TextObject3D : Object3D, IPropertyGridModifier
 	{
@@ -97,9 +107,23 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = NamedTypeFace.Nunito_Bold;
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		// [Icons(new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
+		public OutputDimensions Output { get; set; } = OutputDimensions.Output3D;
+
 		public override bool CanApply => true;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override IVertexSource GetVertexSource()
+		{
+			if (Output == OutputDimensions.Output2D)
+			{
+				return this.CombinedVisibleChildrenPaths();
+			}
+
+			return null;
+		}
+
+        public override void Apply(UndoBuffer undoBuffer)
 		{
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();
@@ -159,6 +183,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					else
 					{
 						Mesh = null;
+						var extrusionHeight = Output == OutputDimensions.Output2D ? Constants.PathPolygonsHeight : this.Height.Value(this);
 						this.Children.Modify(list =>
 						{
 							list.Clear();
@@ -212,10 +237,16 @@ namespace MatterHackers.MatterControl.DesignTools
 										default:
 											letterObject = new Object3D()
 											{
-												Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height.Value(this)),
+												Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, extrusionHeight),
 												Matrix = Matrix4X4.CreateTranslation(offset.X, 0, 0),
 												Name = leterNumber.ToString("000") + " - '" + letter.ToString() + "'"
 											};
+											if (Output == OutputDimensions.Output2D)
+											{
+												letterObject.VertexStorage = new VertexStorage(
+													new VertexSourceApplyTransform(
+														new VertexStorage(scaledLetterPrinter), Affine.NewTranslation(offset.X, offset.Y)));
+											}
 											offset.X += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
 											break;
 									}
@@ -283,6 +314,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(MultiLineText), () => MultiLine);
 			change.SetRowVisible(nameof(Alignment), () => MultiLine);
 			change.SetRowVisible(nameof(NameToWrite), () => !MultiLine);
+			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
 		}
 	}
 }
