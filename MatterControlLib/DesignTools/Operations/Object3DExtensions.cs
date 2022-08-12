@@ -198,14 +198,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void DrawPath(this IObject3D item)
 		{
-			if (item.VertexSource != null)
+			if (item.GetVertexSource() != null)
 			{
 				bool first = true;
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 				var firstMove = Vector2.Zero;
-				foreach (var vertex in item.VertexSource.Vertices())
+				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
 					var position = vertex.position;
 					if (first)

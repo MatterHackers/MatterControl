@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("The amount to expand the path lines.")]
-		public DoubleOrExpression Inflate { get; set; } = 1;
+		public DoubleOrExpression Inflate { get; set; } = .2;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;

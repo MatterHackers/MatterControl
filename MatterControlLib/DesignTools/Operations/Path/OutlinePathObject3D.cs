@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("The with of the outline.")]
-		public DoubleOrExpression OutlineWidth { get; set; } = 3;
+		public DoubleOrExpression OutlineWidth { get; set; } = .5;
 
 		[Description("The offset of the outside of the outline as a ratio of the width.")]
 		public DoubleOrExpression Offset { get; set; } = .5;

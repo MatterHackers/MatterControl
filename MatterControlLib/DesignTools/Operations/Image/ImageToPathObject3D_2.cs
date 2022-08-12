@@ -173,8 +173,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[MaxDecimalPlaces(2)]
 		public double MinSurfaceArea {get; set; } = 1;
 
-		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
@@ -273,7 +271,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				affine *= Affine.NewTranslation(-aabb.XSize / 2, -aabb.YSize / 2);
 
 				rawVectorShape.transform(affine);
-				this.VertexSource = rawVectorShape;
+				this.VertexStorage = rawVectorShape;
 
 				progressReporter?.Invoke(1, null);
 			}

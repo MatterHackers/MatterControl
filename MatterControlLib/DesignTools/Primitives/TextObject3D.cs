@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
@@ -59,9 +60,11 @@ namespace MatterHackers.MatterControl.DesignTools
 	}
     
 	[HideChildrenFromTreeView]
-	public class TextObject3D : Object3D, IPropertyGridModifier
+	public class TextObject3D : Object3D, IPropertyGridModifier, IEditorDraw
 	{
-		[JsonConverter(typeof(StringEnumConverter))]
+        private bool refreshToolBar;
+
+        [JsonConverter(typeof(StringEnumConverter))]
 		public enum TextAlign
 		{
 			Left,
@@ -304,6 +307,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					Invalidate(InvalidateType.DisplayValues);
 					this.CancelAllParentBuilding();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                    if (refreshToolBar)
+                    {
+						this.RefreshToolBar();
+					}
 				});
 			});
 		}
@@ -316,8 +323,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
             if (change.Changed == nameof(Output))
             {
-				this.RefreshToolBar();
+				refreshToolBar = true;
             }
+		}
+
+        public void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e)
+        {
+			this.DrawPath();
+		}
+
+		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }
