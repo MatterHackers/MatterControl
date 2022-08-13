@@ -28,9 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.UI;
@@ -48,8 +46,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class SmoothPathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
 	{
-		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		public SmoothPathObject3D()
 		{
 			Name = "Smooth Path".Localize();
@@ -105,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					DoSmoothing((long)(SmoothDistance.Value(this) * 1000), Iterations.Value(this));
 
 					// set the mesh to show the path
-					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+					this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -121,15 +117,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		private void DoSmoothing(long maxDist, int interations)
 		{
 			bool closedPath = true;
-			var path = this.Children.Where(c => c.VertexSource != null).FirstOrDefault();
+			var path = this.CombinedVisibleChildrenPaths();
 			if (path == null)
 			{
 				// clear our existing data
-				VertexSource = new VertexStorage();
+				VertexStorage = new VertexStorage();
 				return;
 			}
 
-			var sourceVertices = path.VertexSource;
+			var sourceVertices = path;
 
 			var inputPolygons = sourceVertices.CreatePolygons();
 
@@ -180,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				outputPolygons = ClipperLib.Clipper.CleanPolygons(outputPolygons, Math.Max(maxDist / 10, 1.415));
 			}
 
-			VertexSource = outputPolygons.CreateVertexStorage();
+			VertexStorage = outputPolygons.CreateVertexStorage();
 		}
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)

@@ -78,9 +78,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
 
-		public static async Task<TextObject3D> Create()
+		public static async Task<TextObject3D> Create(bool setTo2D = false)
 		{
 			var item = new TextObject3D();
+
+            if (!setTo2D)
+            {
+				item.Output = OutputDimensions.Output2D;
+            }
 
 			await item.Rebuild();
 

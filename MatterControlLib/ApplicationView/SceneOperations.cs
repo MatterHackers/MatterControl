@@ -894,7 +894,7 @@ namespace MatterHackers.MatterControl
 			{
 				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
 			});
-			PrimaryOperations.Add(typeof(TextPathObject3D), new List<SceneOperation>
+			PrimaryOperations.Add(typeof(TextObject3D), new List<SceneOperation>
 			{
 				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
 			});

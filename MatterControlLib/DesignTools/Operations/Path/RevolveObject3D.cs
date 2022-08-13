@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,21 +63,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public IntOrExpression Sides { get; set; } = 30;
 
 		public override bool CanApply => true;
-
-		[JsonIgnore]
-		private IVertexSource VertexSource
-		{
-			get
-			{
-				var item = this.Descendants().Where(c => c.VertexSource != null).FirstOrDefault();
-				if (item != null)
-				{
-					return item.VertexSource;
-				}
-
-				return null;
-			}
-		}
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
@@ -131,11 +115,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		(Vector3, Vector3) GetStartEnd(IObject3D pathObject)
+		(Vector3, Vector3) GetStartEnd(IObject3D pathObject, IVertexSource path)
 		{
 			// draw the line that is the rotation point
 			var aabb = this.GetAxisAlignedBoundingBox();
-			var vertexSource = this.VertexSource.Transform(Matrix);
+			var vertexSource = path.Transform(Matrix);
 			var bounds = vertexSource.GetBounds();
 			var lineX = bounds.Left + AxisPosition.Value(this);
 
@@ -146,10 +130,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
-			var child = this.Children.FirstOrDefault();
-			if (child?.VertexSource != null)
+			var path = this.CombinedVisibleChildrenPaths();
+			if (path == null)
 			{
-				var (start, end) = GetStartEnd(child);
+				var (start, end) = GetStartEnd(this, path);
 				layer.World.Render3DLine(start, end, Color.Red, true);
 				layer.World.Render3DLine(start, end, Color.Red.WithAlpha(20), false);
 			}
@@ -157,14 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
 		{
-			var child = this.Children.FirstOrDefault();
-			if (child.VertexSource != null)
-			{
-				var (start, end) = GetStartEnd(child);
-				return new AxisAlignedBoundingBox(new Vector3[] { start, end });
-			}
-
-			return AxisAlignedBoundingBox.Empty();
+			return this.GetWorldspaceAabbOfDrawPath();
 		}
 
 		private CancellationTokenSource cancellationToken;
@@ -209,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				(reporter, cancellationTokenSource) =>
 				{
 					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
-					var vertexSource = this.VertexSource;
+					var vertexSource = this.CombinedVisibleChildrenPaths();
 					var pathBounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
 					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,

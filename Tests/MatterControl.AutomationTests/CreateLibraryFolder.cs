@@ -27,44 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using NUnit.Framework;
+using System.Threading.Tasks;
 using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
-	public class CreateLibraryFolder
-	{
-		[Test, ChildProcessTest]
-		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
-		{
-			await MatterControlUtilities.RunTest((testRunner) =>
-			{
-				testRunner.OpenPartTab();
+    [TestFixture, Category("MatterControl.UI.Automation")]
+    public class CreateLibraryFolder
+    {
+        [Test, ChildProcessTest]
+        public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
+        {
+            await MatterControlUtilities.RunTest((testRunner) =>
+            {
+                testRunner.OpenPartTab();
 
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.InvokeLibraryCreateFolderDialog();
+                testRunner.NavigateToFolder("Local Library Row Item Collection");
+                testRunner.InvokeLibraryCreateFolderDialog();
 
-				testRunner.Delay(.5);
-				testRunner.Type("Test Text");
-				testRunner.Delay(.5);
+                testRunner.Delay(.5);
+                testRunner.Type("Test Text");
+                testRunner.Delay(.5);
 
-				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as ThemedTextEditWidget;
+                var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as ThemedTextEditWidget;
 
-				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
-				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
+                Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
+                Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
 
-				testRunner.ClickByName("Cancel Wizard Button");
-				testRunner.Delay(.5);
+                testRunner.ClickByName("Cancel Wizard Button");
+                testRunner.Delay(.5);
 
-				return Task.CompletedTask;
-			});
-		}
-	}
+                return Task.CompletedTask;
+            });
+        }
+    }
 }

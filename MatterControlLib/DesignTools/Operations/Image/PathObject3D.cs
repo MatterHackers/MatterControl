@@ -28,34 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class PathObject3D : Object3D, IEditorDraw
 	{
-		[JsonIgnore]
-		private IVertexSource _vertexSource = new VertexStorage();
-
-		public override IVertexSource VertexSource
-		{
-			get => _vertexSource;
-
-			set
-			{
-				_vertexSource = value;
-				// set the mesh to show the path
-				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
-			}
-		}
-
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();

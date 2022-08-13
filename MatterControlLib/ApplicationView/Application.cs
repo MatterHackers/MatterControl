@@ -529,58 +529,9 @@ namespace MatterHackers.MatterControl
 
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
-			AddTextWidgetRightClickMenu();
+			InternalTextEditWidget.AddTextWidgetRightClickMenu(ApplicationController.Instance.MenuTheme);
 
 			return rootSystemWindow;
-		}
-
-		public static void AddTextWidgetRightClickMenu()
-		{
-			InternalTextEditWidget.DefaultRightClick += (s, e) =>
-			{
-				var textEditWidget = s as InternalTextEditWidget;
-				var theme = ApplicationController.Instance.MenuTheme;
-				var popupMenu = new PopupMenu(theme);
-
-				var cut = popupMenu.CreateMenuItem("Cut".Localize());
-				cut.Enabled = !string.IsNullOrEmpty(s.Selection);
-				cut.Click += (s2, e2) =>
-				{
-					textEditWidget?.CopySelection();
-					textEditWidget?.DeleteSelection();
-				};
-
-				var copy = popupMenu.CreateMenuItem("Copy".Localize());
-				copy.Enabled = !string.IsNullOrEmpty(s.Selection);
-				copy.Click += (s2, e2) =>
-				{
-					textEditWidget?.CopySelection();
-				};
-
-				var paste = popupMenu.CreateMenuItem("Paste".Localize());
-				paste.Enabled = Clipboard.Instance.ContainsText;
-				paste.Click += (s2, e2) =>
-				{
-					textEditWidget?.PasteFromClipboard();
-				};
-
-				popupMenu.CreateSeparator();
-
-				var selectAll = popupMenu.CreateMenuItem("Select All".Localize());
-				selectAll.Enabled = !string.IsNullOrEmpty(textEditWidget.Text);
-				selectAll.Click += (s2, e2) =>
-				{
-					textEditWidget?.SelectAll();
-				};
-
-				textEditWidget.KeepMenuOpen = true;
-				popupMenu.Closed += (s3, e3) =>
-				{
-					textEditWidget.KeepMenuOpen = false;
-				};
-
-				popupMenu.ShowMenu(s, e);
-			};
 		}
 
 		private static void SystemWindow_KeyPressed(object sender, KeyPressEventArgs keyEvent)
