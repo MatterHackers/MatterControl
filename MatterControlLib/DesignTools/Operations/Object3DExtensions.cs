@@ -172,12 +172,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void FlattenToPathObject(this IObject3D item, UndoBuffer undoBuffer)
 		{
-			if (item.VertexSource != null)
+			if (item.GetVertexSource() != null)
 			{
 				using (item.RebuildLock())
 				{
 					var newPathObject = new PathObject3D();
-					newPathObject.VertexSource = new VertexStorage(item.VertexSource);
+					newPathObject.VertexStorage = new VertexStorage(item.GetVertexSource());
 
 					// and replace us with the children
 					var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
@@ -254,13 +254,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
 
-			if (item.VertexSource != null)
+			if (item.GetVertexSource() != null)
 			{
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 
-				foreach (var vertex in item.VertexSource.Vertices())
+				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
 					var position = vertex.position;
 

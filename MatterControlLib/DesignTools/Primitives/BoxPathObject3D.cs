@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -35,10 +34,8 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -51,21 +48,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override string ThumbnailName => "Box";
-
-		[JsonIgnore]
-		private IVertexSource _vertexSource = new VertexStorage();
-
-		public override IVertexSource VertexSource
-		{
-			get => _vertexSource;
-
-			set
-			{
-				_vertexSource = value;
-				// set the mesh to show the path
-				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
-			}
-		}
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
@@ -128,9 +110,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					var width = Width.Value(this);
-					var depth = Depth.Value(this);
-					VertexSource = new RoundedRect(-width / 2, -depth / 2, width / 2, depth / 2, 0);
+					bool valuesChanged = false;
+					var width = Width.ClampIfNotCalculated(this, .01, 10000, ref valuesChanged);
+					var depth = Depth.ClampIfNotCalculated(this, .01, 10000, ref valuesChanged);
+					VertexStorage = new VertexStorage(new RoundedRect(-width / 2, -depth / 2, width / 2, depth / 2, 0));
+
+					this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
 				}
 			}
 

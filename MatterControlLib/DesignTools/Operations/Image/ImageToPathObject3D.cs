@@ -33,8 +33,6 @@ either expressed or implied, of the FreeBSD Project.
 /*********************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
@@ -179,8 +177,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(0, 1)]
 		public DoubleOrExpression RangeEnd { get; set; } = 1;
 
-		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		private IThresholdFunction ThresholdFunction
 		{
 			get
@@ -281,7 +277,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				affine *= Affine.NewTranslation(-aabb.XSize / 2, -aabb.YSize / 2);
 
 				rawVectorShape.transform(affine);
-				this.VertexSource = rawVectorShape;
+				this.VertexStorage = rawVectorShape;
 
 				progressReporter?.Invoke(1, null);
 			}

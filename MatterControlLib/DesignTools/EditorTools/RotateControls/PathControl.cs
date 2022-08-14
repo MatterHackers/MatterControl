@@ -195,7 +195,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				if (selectedItem is PathObject3D pathObject)
 				{
-					var vertexStorage = pathObject.VertexSource as VertexStorage;
+					var vertexStorage = pathObject.VertexStorage;
 
 					activePoints = vertexStorage.Vertices();
 

@@ -55,8 +55,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = name;
 		}
 
-		public override IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			this.DrawPath();
@@ -102,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					// set the mesh to show the path
-					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+					this.Mesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -135,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			var first = participants.First();
-			var resultsVertexSource = first.VertexSource.Transform(first.Matrix);
+			var resultsVertexSource = first.GetVertexSource().Transform(first.Matrix);
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
@@ -145,9 +143,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			foreach (var item in participants)
 			{
 				if (item != first
-					&& item.VertexSource != null)
+					&& item.GetVertexSource() != null)
 				{
-					var itemVertexSource = item.VertexSource.Transform(item.Matrix);
+					var itemVertexSource = item.GetVertexSource().Transform(item.Matrix);
 
 					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 
@@ -157,7 +155,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			this.VertexSource = resultsVertexSource;
+			this.VertexStorage = new VertexStorage(resultsVertexSource);
 
 			SourceContainer.Visible = false;
 		}

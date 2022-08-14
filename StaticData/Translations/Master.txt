@@ -4258,6 +4258,9 @@ Translated:Rotate: Right Mouse Button | Ctrl + Left Mouse Button | Arrow Keys
 English:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
 Translated:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
 
+English:Rotation
+Translated:Rotation
+
 English:Rotation Distance
 Translated:Rotation Distance
 

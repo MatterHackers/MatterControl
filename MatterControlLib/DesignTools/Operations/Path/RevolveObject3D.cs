@@ -49,10 +49,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class RevolveObject3D : Object3D, IEditorDraw
 	{
 		[MaxDecimalPlaces(2)]
+		[Slider(0, 360, snapDistance: 1)]
+		public DoubleOrExpression Rotation { get; set; } = 0;
+        
+		[MaxDecimalPlaces(2)]
+		[Slider(-30, 30, snapDistance: 1)]
 		public DoubleOrExpression AxisPosition { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
-		[Slider(3, 360, snapDistance: 1)]
+		[Slider(0, 360, snapDistance: 1)]
 		public DoubleOrExpression StartingAngle { get; set; } = 0;
 
 		[MaxDecimalPlaces(2)]
@@ -131,7 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var path = this.CombinedVisibleChildrenPaths();
-			if (path == null)
+			if (path != null)
 			{
 				var (start, end) = GetStartEnd(this, path);
 				layer.World.Render3DLine(start, end, Color.Red, true);
@@ -162,7 +167,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
+            var rotation = MathHelper.DegreesToRadians(Rotation.ClampIfNotCalculated(this, 0, 360, ref valuesChanged));
+            var startingAngle = StartingAngle.ClampIfNotCalculated(this, 0, 360 - .01, ref valuesChanged);
 			var endingAngle = EndingAngle.ClampIfNotCalculated(this, startingAngle + .01, 360, ref valuesChanged);
 			var sides = Sides.Value(this);
 			var axisPosition = AxisPosition.Value(this);
@@ -187,7 +193,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 					var vertexSource = this.CombinedVisibleChildrenPaths();
-					var pathBounds = vertexSource.GetBounds();
+                    vertexSource = vertexSource.Rotate(rotation);
+                    var pathBounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
 					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
 						sides,
@@ -195,8 +202,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						MathHelper.DegreesToRadians(360 - startingAngle),
 						false);
 
+					var transform = Matrix4X4.CreateTranslation(pathBounds.Left + axisPosition, 0, 0) * Matrix4X4.CreateRotationZ(-rotation);
 					// take the axis offset out
-					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + axisPosition, 0, 0));
+					mesh.Transform(transform);
 
 					if (mesh.Vertices.Count == 0)
 					{

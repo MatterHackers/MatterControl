@@ -130,7 +130,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.Cancel(undoBuffer);
 		}
 
-		private (IVertexSource vertexSource, double height) meshVertexCache;
+		private double cacheHeight;
+
+		public override IVertexSource GetVertexSource()
+		{
+			var paths = this.CombinedVisibleChildrenPaths();
+            if (paths == null)
+            {
+				var calculationHeight = CalculationHeight.Value(this);
+				if (VertexStorage == null || cacheHeight != calculationHeight)
+				{
+					var aabb = this.GetAxisAlignedBoundingBox();
+					var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + calculationHeight));
+					VertexStorage = new VertexStorage(GetSlicePaths(this, cutPlane));
+					cacheHeight = calculationHeight;
+				}
+
+				return VertexStorage;
+			}
+
+			return paths;
+		}
 
 		public static IVertexSource GetSlicePaths(IObject3D source, Plane plane)
 		{
@@ -144,50 +164,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		
 			return totalSlice.CreateVertexStorage();
-		}
-
-		private bool OutlineIsFromMesh
-		{
-			get
-			{
-				var vertexSource = this.Descendants<IObject3D>().FirstOrDefault(i => i.VertexSource != null)?.VertexSource;
-				var hasMesh = this.Descendants<IObject3D>().Where(m => m.Mesh != null).Any();
-
-				return vertexSource == null && hasMesh;
-			}
-		}
-
-		[JsonIgnore]
-		public override IVertexSource VertexSource
-		{
-			get
-			{
-				if (OutlineIsFromMesh)
-				{
-					var calculationHeight = CalculationHeight.Value(this);
-					if (meshVertexCache.vertexSource == null || meshVertexCache.height != calculationHeight)
-					{
-						var aabb = this.GetAxisAlignedBoundingBox();
-						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + calculationHeight));
-						meshVertexCache.vertexSource = GetSlicePaths(this, cutPlane);
-						meshVertexCache.height = calculationHeight;
-					}
-
-					return meshVertexCache.vertexSource;
-				}
-
-				var vertexSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.VertexSource != null)?.VertexSource;
-				return vertexSource;
-			}
-
-			set
-			{
-                var pathObject = this.Children.FirstOrDefault(i => i.VertexSource != null);
-                if (pathObject != null)
-				{
-					pathObject.VertexSource = value;
-				}
-			}
 		}
 
 		public static async Task<BaseObject3D> Create()
@@ -207,7 +183,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !RebuildLocked)
 			{
 				// make sure we clear our cache
-				meshVertexCache.vertexSource = null;
+				VertexStorage = null;
 				await Rebuild();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
@@ -248,7 +224,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						});
 
 						// and create the base
-						var vertexSource = this.VertexSource;
+						var vertexSource = GetVertexSource();
 
 						// Convert VertexSource into expected Polygons
 						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
@@ -317,9 +293,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				var outsidePolygons = new List<List<IntPoint>>();
+				var outsidePolygons = new Polygons();
 				// remove all holes from the polygons so we only center the major outlines
-				var polygons = VertexSource.CreatePolygons();
+				var polygons = GetVertexSource().CreatePolygons();
+				polygons = polygons.GetCorrectedWinding();
 
 				foreach (var polygon in polygons)
 				{
@@ -438,7 +415,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(Centering), BaseType == BaseTypes.Circle);
 			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
 
-			var vertexSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.VertexSource != null)?.VertexSource;
+			var vertexSource = GetVertexSource();
             var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
 
 			changeSet.Add(nameof(CalculationHeight), vertexSource == null && meshSource.Where(m => m.Mesh != null).Any());
@@ -464,9 +441,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
-			if (OutlineIsFromMesh)
+			if (GetVertexSource() != null)
 			{
-				layer.World.RenderPathOutline(CalcTransform(), VertexSource, Agg.Color.Red, 5);
+				layer.World.RenderPathOutline(CalcTransform(), GetVertexSource(), Agg.Color.Red, 5);
 
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
@@ -475,10 +452,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
 		{
-			if (OutlineIsFromMesh)
+			if (GetVertexSource() != null)
 			{
 				// TODO: Untested.
-				return layer.World.GetWorldspaceAabbOfRenderPathOutline(CalcTransform(), VertexSource, 5);
+				return layer.World.GetWorldspaceAabbOfRenderPathOutline(CalcTransform(), GetVertexSource(), 5);
 			}
 			return AxisAlignedBoundingBox.Empty();
 		}
