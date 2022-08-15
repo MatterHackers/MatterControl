@@ -123,14 +123,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					// set the mesh to show the path
-					var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
-					if(extrudeMesh.Vertices.Count() > 5)
+					if (this.GetVertexSource() != null)
 					{
-						this.Mesh = extrudeMesh;
-					}
-					else
-					{
-						this.Mesh = null;
+						var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+						if (extrudeMesh.Vertices.Count() > 5)
+						{
+							this.Mesh = extrudeMesh;
+						}
+						else
+						{
+							this.Mesh = null;
+						}
 					}
 
 					UiThread.RunOnIdle(() =>

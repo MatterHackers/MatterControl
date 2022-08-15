@@ -120,16 +120,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			VertexStorage = path.Offset(Inflate.Value(this), GetJoinType(Style));
 		}
 
-		internal static JoinType GetJoinType(ExpandStyles style)
+		public static JoinType GetJoinType(ExpandStyles style)
 		{
-			ClipperLib.JoinType joinType = ClipperLib.JoinType.jtMiter;
+			ClipperLib.JoinType joinType = JoinType.jtMiter;
 			switch (style)
 			{
 				case ExpandStyles.Flat:
-					joinType = ClipperLib.JoinType.jtSquare;
+					joinType = JoinType.jtSquare;
 					break;
 				case ExpandStyles.Round:
-					joinType = ClipperLib.JoinType.jtRound;
+					joinType = JoinType.jtRound;
 					break;
 			}
 

@@ -39,6 +39,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
@@ -89,6 +90,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Slider(0, 10, Easing.EaseType.Quadratic, snapDistance: .1)]
 		public DoubleOrExpression InfillAmount { get; set; } = 3;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public ExpandStyles Style { get; set; } = ExpandStyles.Round;
 
 		[DisplayName("Height")]
 		[Slider(1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
@@ -368,18 +372,19 @@ namespace MatterHackers.MatterControl.DesignTools
 					var infillAmount = InfillAmount.Value(this);
 					var baseSize = BaseSize.Value(this);
 					var extrusionHeight = ExtrusionHeight.Value(this);
+					var joinType = InflatePathObject3D.GetJoinType(Style);
 					if (BaseType == BaseTypes.Outline
 						&& infillAmount > 0)
 					{
-						basePolygons = polysToOffset.Offset((baseSize + infillAmount) * scalingForClipper);
-						basePolygons = basePolygons.Offset(-infillAmount * scalingForClipper);
+						basePolygons = polysToOffset.Offset((baseSize + infillAmount) * scalingForClipper, joinType);
+						basePolygons = basePolygons.Offset(-infillAmount * scalingForClipper, joinType);
 					}
 					else
 					{
-						basePolygons = polysToOffset.Offset(baseSize * scalingForClipper);
+						basePolygons = polysToOffset.Offset(baseSize * scalingForClipper, joinType);
 					}
 
-					basePolygons = ClipperLib.Clipper.CleanPolygons(basePolygons, 10);
+					basePolygons = Clipper.CleanPolygons(basePolygons, 10);
 
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
@@ -414,6 +419,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(InfillAmount), BaseType == BaseTypes.Outline);
 			changeSet.Add(nameof(Centering), BaseType == BaseTypes.Circle);
 			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
+			changeSet.Add(nameof(Style), BaseType != BaseTypes.Circle);
 
 			var vertexSource = GetVertexSource();
             var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
