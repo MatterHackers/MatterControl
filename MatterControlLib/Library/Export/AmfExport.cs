@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library.Export
             var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
             if (firstItem is ILibraryAsset libraryItem)
             {
-                bool exportSuccessful = await MeshExport.ExportMesh(libraryItem, outputPath, progress);
+                bool exportSuccessful = await MeshExport.ExportMesh(libraryItem, outputPath, true, progress);
                 if (exportSuccessful)
                 {
                     return null;

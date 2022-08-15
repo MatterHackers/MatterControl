@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public static class MeshExport
 	{
-		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave, IProgress<ProgressStatus> progress)
+		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave, bool mergeMeshes, IProgress<ProgressStatus> progress)
 		{
 			try
 			{
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					// If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
 					var content = await contentItem.GetObject3D(null);
-					return Object3D.Save(content, filePathToSave, CancellationToken.None, reportProgress: (ratio, name) =>
+					return Object3D.Save(content, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
                     {
 						status.Progress0To1 = ratio;
 						progress.Report(status);
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
 								if (item != null)
 								{
-									return Object3D.Save(item, filePathToSave, CancellationToken.None, reportProgress: (ratio, name) =>
+									return Object3D.Save(item, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
                                     {
 										status.Progress0To1 = ratio;
 										progress.Report(status);

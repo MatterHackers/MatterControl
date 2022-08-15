@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
 
 				if (plugin is IExportWithOptions pluginWithOptions)
 				{
-					var optionPanel = pluginWithOptions.GetOptionsPanel();
+					var optionPanel = pluginWithOptions.GetOptionsPanel(libraryItems);
 					if (optionPanel != null)
 					{
 						optionPanel.HAnchor = HAnchor.Stretch;

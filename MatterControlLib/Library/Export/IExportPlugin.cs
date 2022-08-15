@@ -62,6 +62,6 @@ namespace MatterHackers.MatterControl
 
 	public interface IExportWithOptions : IExportPlugin
 	{
-		GuiWidget GetOptionsPanel();
+		GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems);
 	}
 }

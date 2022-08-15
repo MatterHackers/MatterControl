@@ -37,13 +37,16 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-    public class StlExport : IExportPlugin
+    public class StlExport : IExportPlugin, IExportWithOptions
 	{
-		public int Priority => 2;
+        private bool mergeMeshes = true;
+
+        public int Priority => 2;
 
 		public string ButtonText => "STL File".Localize();
 
@@ -79,7 +82,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					first = false;
 				}
 
-				if (!await MeshExport.ExportMesh(item, filename, progress))
+				if (!await MeshExport.ExportMesh(item, filename, mergeMeshes, progress))
 				{
 					badExports.Add(item.Name);
 				}
@@ -98,6 +101,45 @@ namespace MatterHackers.MatterControl.Library.Export
 					Details = String.Join("\n", badExports.ToArray())
 				}
 			};
+		}
+
+		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems)
+		{
+			var exportMeshCount = 0;
+			foreach (var item in libraryItems.OfType<ILibraryAsset>())
+			{
+				if (item is ILibraryObject3D contentItem)
+				{
+					var object3D = contentItem.GetObject3D(null).Result;
+					exportMeshCount += object3D.VisibleMeshes().Count();
+                }
+            }
+
+            if (exportMeshCount < 2)
+            {
+				return null;
+            }
+            
+            var container = new FlowLayoutWidget()
+			{
+				Margin = new BorderDouble(left: 40, bottom: 10),
+			};
+
+			var theme = AppContext.Theme;
+
+			var unionAllPartsCheckbox = new CheckBox("Merge faces into single mesh".Localize(), theme.TextColor, 10)
+			{
+				Checked = true,
+				Cursor = Cursors.Hand,
+                ToolTipText = "Disable to expart all faces without merging".Localize()
+            };
+			unionAllPartsCheckbox.CheckedStateChanged += (s, e) =>
+			{
+				mergeMeshes = unionAllPartsCheckbox.Checked;
+			};
+			container.AddChild(unionAllPartsCheckbox);
+
+			return container;
 		}
 	}
 }

@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public virtual bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public GuiWidget GetOptionsPanel()
+		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems)
 		{
 			var container = new FlowLayoutWidget()
 			{
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 				else
 				{
-					spiralVaseOverride = SpiralVaseOptions.FORCE_ON;
+					spiralVaseOverride = SpiralVaseOptions.USE_SETTINGS;
 				}
 			};
 			container.AddChild(spiralVaseCheckbox);

@@ -1327,6 +1327,9 @@ Translated:Direction
 English:Disable Fan For The First
 Translated:Disable Fan For The First
 
+English:Disable to expart all faces without merging
+Translated:Disable to expart all faces without merging
+
 English:Disabled: {0}
 Translated:Disabled: {0}
 
@@ -2886,6 +2889,9 @@ Translated:Medium Precision
 
 English:Merge
 Translated:Merge
+
+English:Merge faces into single mesh
+Translated:Merge faces into single mesh
 
 English:Merge Overlapping Lines
 Translated:Merge Overlapping Lines
