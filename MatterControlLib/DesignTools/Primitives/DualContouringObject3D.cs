@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public enum Shapes
 		{
 			Box,
-			Sphere
+			Union1,
+			Union2,
+			Sphere,
+			Cylinder,
 		}
 
 		public Shapes Shape { get; set; } = Shapes.Box;
@@ -89,21 +92,72 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (RebuildLock())
 				{
+#if true
 					using (new CenterAndHeightMaintainer(this))
 					{
-#if true
-						ISdf shape = new Sphere()
-						{
-							Radius = Size
-						};
+						ISdf shape = null;
+                        switch (Shape)
+                        {
+                            case Shapes.Box:
+								shape = new Box()
+								{
+									Size = new Vector3(Size, Size, Size)
+								};
+								break;
 
-						if (Shape == Shapes.Box)
-						{
-							shape = new Box()
-							{
-								Size = new Vector3(Size, Size, Size)
-							};
-						}
+							case Shapes.Union1:
+								shape = new Union()
+								{
+									Items = new ISdf[]
+									{
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationX(MathHelper.Tau * .2)),
+										new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										},
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2)),
+									}
+								};
+								break;
+
+                            case Shapes.Union2:
+								shape = new Union()
+								{
+									Items = new ISdf[]
+									{
+										new Transform(new Sphere()
+										{
+											Radius = Size / 2
+										}, Matrix4X4.CreateTranslation(4, 0, 0)),
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2)),
+									}
+								};
+                                break;
+                                
+                            case Shapes.Sphere:
+                                shape = new Sphere()
+								{
+									Radius = Size
+								};
+                                break;
+                                
+                            case Shapes.Cylinder:
+                                shape = new Cylinder()
+                                {
+                                    Radius = Size,
+                                    Height = Size
+                                };
+                                break;
+                        }
 
 						var bounds = shape.Bounds;
 						bounds.Expand(.1);
