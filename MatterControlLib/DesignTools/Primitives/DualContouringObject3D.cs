@@ -183,6 +183,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							Mesh = Octree.GenerateMeshFromOctree(root);
 						}
+						else
+						{
+							var min = shape.Bounds.MinXYZ;
+							var max = shape.Bounds.MaxXYZ;
+							var c = new MarchingCubes()
+							{
+								Implicit = new SdfToImplicit(shape),
+								Bounds = new AxisAlignedBox3d(min.X, min.Y, min.Z, max.X, max.Y, max.Z),
+							};
+							c.Generate();
+							MeshNormals.QuickCompute(c.Mesh); // generate normals
+							Mesh = c.Mesh.ToMesh();
+						}
 					}
 				}
 
