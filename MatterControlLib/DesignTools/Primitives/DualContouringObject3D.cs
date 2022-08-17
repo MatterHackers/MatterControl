@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			Box,
 			[EnumName("2 Boxes")]
-			Boxes2,
+			Box_And_Sphere,
 			[EnumName("3 Boxes")]
-			Boxes3,
+			Boxes_3,
 			Sphere,
 			Cylinder,
 		}
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								};
 								break;
 
-							case Shapes.Boxes3:
+							case Shapes.Boxes_3:
 								shape = new Union()
 								{
 									Items = new ISdf[]
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								};
 								break;
 
-							case Shapes.Boxes2:
+							case Shapes.Box_And_Sphere:
 								shape = new Union()
 								{
 									Items = new ISdf[]
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.DesignTools
 										new Transform(new Sphere()
 										{
 											Radius = Size / 2
-										}, Matrix4X4.CreateTranslation(4, 0, 0)),
+										}, Matrix4X4.CreateTranslation(-3, -2, 0)),
 										new Transform(new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
