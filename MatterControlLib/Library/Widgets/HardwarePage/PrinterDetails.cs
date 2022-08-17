@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 			if (showOpenButton)
 			{
-				var openButton = new TextButton("Open".Localize(), theme)
+				var openButton = new ThemedTextButton("Open".Localize(), theme)
 				{
 					BackgroundColor = theme.AccentMimimalOverlay,
 					Margin = Margin.Clone(right: 17)

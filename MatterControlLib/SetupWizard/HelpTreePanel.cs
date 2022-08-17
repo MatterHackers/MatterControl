@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 			theme.ApplyBottomBorder(toolbar);
 
-			toolbar.AddChild(new TextButton("MatterControl Help".Localize(), theme)
+			toolbar.AddChild(new ThemedTextButton("MatterControl Help".Localize(), theme)
 			{
 				Padding = new BorderDouble(6, 0),
 				Selectable = false

@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
+			var resetButton = rightContent.AddChild(new ThemedTextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
 			{
 				Margin = new BorderDouble(0, 0, 0, 3),
 				HAnchor = HAnchor.Fit | HAnchor.Left,
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (getPickedColor != null)
 			{
-				var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
+				var selectButton = rightContent.AddChild(new ThemedTextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
 					Margin = 0,
 					HAnchor = HAnchor.Fit | HAnchor.Left,

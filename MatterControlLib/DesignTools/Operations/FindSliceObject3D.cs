@@ -42,7 +42,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class FindSliceObject3D : OperationSourceContainerObject3D, IPathObject, IPropertyGridModifier
+	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public FindSliceObject3D()
 		{
@@ -51,8 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double SliceHeight { get; set; } = 10;
 
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
-
+		
 		private double cutMargin = .01;
 
 		public (Mesh mesh, Polygons polygons) Cut(IObject3D item)
@@ -84,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var newPathObject = new PathObject3D()
 			{
-				VertexSource = new VertexStorage(this.VertexSource)
+				VertexStorage = new VertexStorage(this.GetVertexSource())
 			};
 
 			base.Apply(undoBuffer, new IObject3D[] { newPathObject });
@@ -151,7 +150,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var polygons = new Polygons();
-					VertexSource = polygons.PolygonToPathStorage();
+					VertexStorage = polygons.PolygonToPathStorage();
 
 					var newChildren = new List<Object3D>();
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
@@ -169,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						newChildren.Add(newMesh);
 					}
 
-					VertexSource = polygons.PolygonToPathStorage();
+					VertexStorage = polygons.PolygonToPathStorage();
 
 					RemoveAllButSource();
 					SourceContainer.Visible = false;

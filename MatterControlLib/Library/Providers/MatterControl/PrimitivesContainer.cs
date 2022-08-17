@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					"Text".Localize(),
-					async () => await TextObject3D.Create())
+					async () => await TextObject3D.Create(true))
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					"Cylinder".Localize(),
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					"Text".Localize(),
-					async () => await TextPathObject3D.Create())
+					async () => await TextObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
 				new GeneratorItem(
 					"Oval".Localize(),

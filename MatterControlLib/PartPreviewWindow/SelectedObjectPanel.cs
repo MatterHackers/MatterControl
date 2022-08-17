@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a make permanent button
 			var icon = StaticData.Instance.LoadIcon("apply.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply();
-			applyButton = new IconButton(icon, theme)
+			applyButton = new ThemedIconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Apply".Localize(),
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(applyButton);
 
 			// put in a remove button
-			cancelButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(), theme)
+			cancelButton = new ThemedIconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Cancel".Localize(),
@@ -174,8 +174,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public GuiWidget ContentPanel { get; set; }
 
 		private readonly JsonPathContext pathGetter = new JsonPathContext();
-		private readonly IconButton applyButton;
-		private readonly IconButton cancelButton;
+		private readonly ThemedIconButton applyButton;
+		private readonly ThemedIconButton cancelButton;
 		private readonly PopupMenuButton overflowButton;
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var primaryAction in primaryActions)
 				{
 					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
-					var button = new IconButton(primaryAction.Icon(theme), theme)
+					var button = new ThemedIconButton(primaryAction.Icon(theme), theme)
 					{
 						// Name = namedAction.Title + " Button",
 						ToolTipText = primaryAction.Title,
@@ -648,7 +648,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private class OperationButton : TextButton
+        private class OperationButton : ThemedTextButton
 		{
 			private readonly SceneOperation sceneOperation;
 			private readonly ISceneContext sceneContext;

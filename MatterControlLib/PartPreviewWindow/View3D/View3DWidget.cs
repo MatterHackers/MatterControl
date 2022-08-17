@@ -100,10 +100,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterConfig Printer { get; private set; }
 
 		private readonly PrinterTabPage printerTabPage;
-		private RadioIconButton translateButton;
-		private RadioIconButton rotateButton;
-		private RadioIconButton zoomButton;
-		private RadioIconButton partSelectButton;
+		private ThemedRadioIconButton translateButton;
+		private ThemedRadioIconButton rotateButton;
+		private ThemedRadioIconButton zoomButton;
+		private ThemedRadioIconButton partSelectButton;
 
 		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewToolBarControls viewControls3D, ThemeConfig theme, DesignTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			titleAndTreeView.AddChild(treeView);
 
 			workspaceName.ActionArea.AddChild(
-				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor), theme)
+				new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor), theme)
 				{
 					Enabled = false
 				},
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			workspaceName.ActionArea.Children<TextWidget>().First().Margin = 0;
 
 			// Resize buttons
-			foreach (var iconButton in workspaceName.Descendants<IconButton>())
+			foreach (var iconButton in workspaceName.Descendants<ThemedIconButton>())
 			{
 				iconButton.Height = 26;
 				iconButton.Width = 26;
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add the view controls
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
-			partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16).SetToColor(theme.TextColor), theme)
+			partSelectButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Select Parts".Localize(),
@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 
-			rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor), theme)
+			rotateButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Rotate View".Localize(),
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
 
-			translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor), theme)
+			translateButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Move View".Localize(),
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
-			zoomButton = new RadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
+			zoomButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "scale.png"), 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroupA,
 				ToolTipText = "Zoom View".Localize(),
@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// add the home button
-			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
 				Margin = theme.ButtonSpacing
@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
-			var zoomToSelectionButton = new IconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var zoomToSelectionButton = new ThemedIconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Zoom to selection button",
 				ToolTipText = "Zoom to Selection".Localize(),
@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var turntableEnabled = UserSettings.Instance.get(UserSettingsKey.TurntableMode) != "False";
 			TrackballTumbleWidget.TurntableEnabled = turntableEnabled;
 
-			var turnTableButton = new RadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var turnTableButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Turntable Mode".Localize(),
 				Margin = theme.ButtonSpacing,
@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != false.ToString();
 			TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
-			var projectionButton = new RadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var projectionButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Projection mode button",
 				ToolTipText = "Perspective Mode".Localize(),
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			cubeCenterFromRightTop.X -= bottomButtonOffset;
 
 			// put in the bed and build volume buttons
-			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var bedButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -560,7 +560,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
 			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
-			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var printAreaButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",

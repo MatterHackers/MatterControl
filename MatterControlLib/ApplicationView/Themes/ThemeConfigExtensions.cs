@@ -90,11 +90,11 @@ namespace MatterHackers.MatterControl
                     menuButton.HoverColor = hoverColor;
                     break;
 
-                case SimpleFlowButton flowButton:
+                case ThemedFlowButton flowButton:
                     flowButton.HoverColor = hoverColor;
                     break;
 
-                case SimpleButton button:
+                case ThemedButton button:
                     button.HoverColor = hoverColor;
                     break;
             }
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 
                         foreach (var actionButton in namedActionButtons.Group)
                         {
-                            var button = new TextButton(actionButton.Title, theme)
+                            var button = new ThemedTextButton(actionButton.Title, theme)
                             {
                                 Border = new BorderDouble(1, 0, 0, 0),
                                 BorderColor = theme.MinimalShade,
@@ -227,9 +227,9 @@ namespace MatterHackers.MatterControl
             return popupMenu;
         }
 
-        public static RadioTextButton CreateMicroRadioButton(this ThemeConfig theme, string text, IList<GuiWidget> siblingRadioButtonList = null)
+        public static ThemedRadioTextButton CreateMicroRadioButton(this ThemeConfig theme, string text, IList<GuiWidget> siblingRadioButtonList = null)
         {
-            var radioButton = new RadioTextButton(text, theme, theme.FontSize8)
+            var radioButton = new ThemedRadioTextButton(text, theme, theme.FontSize8)
             {
                 SiblingRadioButtonList = siblingRadioButtonList,
                 Padding = new BorderDouble(5, 0),
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl
 
         public static GuiWidget CreateSearchButton(this ThemeConfig theme)
         {
-            return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+            return new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
             {
                 ToolTipText = "Search".Localize(),
             };
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl
             GuiWidget innerButton;
             if (buttonParams.ButtonText == null)
             {
-                innerButton = new IconButton(buttonParams.Icon, theme)
+                innerButton = new ThemedIconButton(buttonParams.Icon, theme)
                 {
                     Name = buttonParams.ButtonName + " Inner SplitButton",
                     Enabled = buttonParams.ButtonEnabled,
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
             {
                 if (buttonParams.Icon == null)
                 {
-                    innerButton = new TextButton(buttonParams.ButtonText, theme)
+                    innerButton = new ThemedTextButton(buttonParams.ButtonText, theme)
                     {
                         Name = buttonParams.ButtonName,
                         Enabled = buttonParams.ButtonEnabled,
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl
                 }
                 else
                 {
-                    innerButton = new TextIconButton(buttonParams.ButtonText, buttonParams.Icon, theme)
+                    innerButton = new ThemedTextIconButton(buttonParams.ButtonText, buttonParams.Icon, theme)
                     {
                         Name = buttonParams.ButtonName,
                         Enabled = buttonParams.ButtonEnabled,
@@ -375,11 +375,11 @@ namespace MatterHackers.MatterControl
 
             switch (guiWidget)
             {
-                case SimpleFlowButton flowButton:
+                case ThemedFlowButton flowButton:
                     flowButton.HoverColor = parentIsToolbar ? theme.ToolbarButtonHover : Color.Transparent;
                     break;
 
-                case SimpleButton button:
+                case ThemedButton button:
                     button.HoverColor = parentIsToolbar ? theme.ToolbarButtonHover : Color.Transparent;
                     break;
             }

@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(folderButtonRow);
 
 			// add a create folder button
-			var createFolderButton = new TextIconButton("Create Folder".Localize(), icon, theme)
+			var createFolderButton = new ThemedTextIconButton("Create Folder".Localize(), icon, theme)
 			{
 				Enabled = isEnabled,
 				VAnchor = VAnchor.Absolute,
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 			createFolderButton.Name = "Create Folder In Button";
 			folderButtonRow.AddChild(createFolderButton);
 
-			var refreshButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var refreshButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Refresh Folder".Localize(),
 				Enabled = isEnabled,

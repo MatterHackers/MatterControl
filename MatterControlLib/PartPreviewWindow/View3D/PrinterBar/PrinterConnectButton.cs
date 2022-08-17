@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = new TextIconButton(
+			connectButton = new ThemedTextIconButton(
 				"Connect".Localize(),
 				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			theme.ApplyPrimaryActionStyle(connectButton);
 
 			// add the cancel stop button
-			cancelConnectButton = new TextIconButton(
+			cancelConnectButton = new ThemedTextIconButton(
 				"Cancel".Localize(),
 				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			});
 			this.AddChild(cancelConnectButton);
 
-			disconnectButton = new TextIconButton(
+			disconnectButton = new ThemedTextIconButton(
 				"Disconnect".Localize(),
 				StaticData.Instance.LoadIcon("connect.png", 14, 14).SetToColor(theme.TextColor),
 				theme)

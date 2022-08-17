@@ -830,7 +830,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(textWidget);
 			var buttonSize = 24 * DeviceScale;
-			var moveLeftButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor).MirrorX(), theme)
+			var moveLeftButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor).MirrorX(), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(moveLeftButton);
 
-			var moveRightButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor), theme)
+			var moveRightButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,

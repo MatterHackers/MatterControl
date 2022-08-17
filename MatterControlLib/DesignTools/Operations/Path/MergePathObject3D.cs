@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider
 	{
 		private ClipperLib.ClipType clipType;
 		private string operationName;
@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.clipType = clipType;
 			Name = name;
 		}
-
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
@@ -102,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					// set the mesh to show the path
-					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+					this.Mesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -135,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			var first = participants.First();
-			var resultsVertexSource = (first as IPathObject).VertexSource.Transform(first.Matrix);
+			var resultsVertexSource = first.GetVertexSource().Transform(first.Matrix);
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
@@ -145,9 +143,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			foreach (var item in participants)
 			{
 				if (item != first
-					&& item is IPathObject pathItem)
+					&& item.GetVertexSource() != null)
 				{
-					var itemVertexSource = pathItem.VertexSource.Transform(item.Matrix);
+					var itemVertexSource = item.GetVertexSource().Transform(item.Matrix);
 
 					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 
@@ -157,7 +155,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			this.VertexSource = resultsVertexSource;
+			this.VertexStorage = new VertexStorage(resultsVertexSource);
 
 			SourceContainer.Visible = false;
 		}

@@ -45,19 +45,18 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class OutlinePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
 	{
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
-
 		public OutlinePathObject3D()
 		{
 			Name = "Outline Path".Localize();
 		}
 
 		[Description("The with of the outline.")]
-		public DoubleOrExpression OutlineWidth { get; set; } = 3;
+		public DoubleOrExpression OutlineWidth { get; set; } = .5;
 
-		public DoubleOrExpression Ratio { get; set; } = .5;
+		[Description("The offset of the outside of the outline as a ratio of the width.")]
+		public DoubleOrExpression Offset { get; set; } = .5;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles InnerStyle { get; set; } = ExpandStyles.Sharp;
@@ -110,7 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				InsetPath();
 				// set the mesh to show the path
-				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+				this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			Invalidate(InvalidateType.DisplayValues);
@@ -122,20 +121,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void InsetPath()
 		{
-			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
+			var path = this.CombinedVisibleChildrenPaths();
 			if (path == null)
 			{
 				// clear our existing data
-				VertexSource = new VertexStorage();
+				VertexStorage = new VertexStorage();
 				return;
 			}
 
-			var aPolys = path.VertexSource.CreatePolygons();
+			var aPolys = path.CreatePolygons();
 
 			var offseter = new ClipperOffset();
 
 			var outlineWidth = OutlineWidth.Value(this);
-			var ratio = Ratio.Value(this);
+			var ratio = Offset.Value(this);
 
 			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(OuterStyle), EndType.etClosedPolygon);
 			var outerLoops = new List<List<IntPoint>>();
@@ -150,9 +149,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var allLoops = outerLoops;
 			allLoops.AddRange(innerLoops);
 
-			VertexSource = allLoops.CreateVertexStorage();
+			VertexStorage = allLoops.CreateVertexStorage();
 
-			(VertexSource as VertexStorage).Add(0, 0, ShapePath.FlagsAndCommand.Stop);
+			VertexStorage.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 		}
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)

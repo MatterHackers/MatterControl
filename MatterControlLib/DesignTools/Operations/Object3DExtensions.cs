@@ -87,6 +87,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public static void RefreshToolBar(this IObject3D item)
+        {
+			var sceneContext = item.ContainingScene();
+			if (sceneContext != null)
+			{
+				// deselect than re-select the item
+				sceneContext.SelectedItem = null;
+				sceneContext.SelectedItem = item;
+			}
+		}
+
 		public static void ShowRenameDialog(this IObject3D item, UndoBuffer undoBuffer)
 		{
 			DialogWindow.Show(
@@ -161,12 +172,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void FlattenToPathObject(this IObject3D item, UndoBuffer undoBuffer)
 		{
-			if (item is IPathObject pathObject)
+			if (item.GetVertexSource() != null)
 			{
 				using (item.RebuildLock())
 				{
 					var newPathObject = new PathObject3D();
-					newPathObject.VertexSource = new VertexStorage(pathObject.VertexSource);
+					newPathObject.VertexStorage = new VertexStorage(item.GetVertexSource());
 
 					// and replace us with the children
 					var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
@@ -187,19 +198,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void DrawPath(this IObject3D item)
 		{
-			if (item is IPathObject pathObject)
+			if (item.GetVertexSource() != null)
 			{
-				if (pathObject.VertexSource == null)
-				{
-					return;
-				}
-
 				bool first = true;
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 				var firstMove = Vector2.Zero;
-				foreach (var vertex in pathObject.VertexSource.Vertices())
+				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
 					var position = vertex.position;
 					if (first)
@@ -248,18 +254,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
 
-			if (item is IPathObject pathObject)
+			if (item.GetVertexSource() != null)
 			{
-				if (pathObject.VertexSource == null)
-				{
-					return box;
-				}
-
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 
-				foreach (var vertex in pathObject.VertexSource.Vertices())
+				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
 					var position = vertex.position;
 

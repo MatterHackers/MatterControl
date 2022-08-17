@@ -32,7 +32,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class OperationIconButton : IconButton
+	public class OperationIconButton : ThemedIconButton
 	{
 		private SceneOperation sceneOperation;
 		private ISceneContext sceneContext;

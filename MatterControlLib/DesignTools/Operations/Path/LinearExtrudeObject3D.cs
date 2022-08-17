@@ -75,19 +75,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanApply => true;
 
-		[JsonIgnore]
-		private IVertexSource VertexSource
+        public override IVertexSource GetVertexSource()
 		{
-			get
-			{
-				var item = this.Descendants().Where((d) => d is IPathObject).FirstOrDefault();
-				if (item is IPathObject pathItem)
-				{
-					return pathItem.VertexSource;
-				}
-
-				return null;
-			}
+			return this.CombinedVisibleChildrenPaths();
 		}
 
 		public override void Apply(UndoBuffer undoBuffer)
@@ -162,7 +152,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var vertexSource = this.VertexSource;
+					var vertexSource = this.GetVertexSource();
 					List<(double height, double inset)> bevel = null;
 #if DEBUG
 					if (BevelTop)
@@ -178,12 +168,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 					}
 #endif
-
-					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, height, bevel);
-					if (Mesh.Vertices.Count == 0)
+					if (this.GetVertexSource() != null)
 					{
-						Mesh = null;
+						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel);
+						if (Mesh.Vertices.Count == 0)
+						{
+							Mesh = null;
+						}
 					}
+                    else
+                    {
+						Mesh = null;
+                    }
 
 					UiThread.RunOnIdle(() =>
 					{

@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 			else
 			{
-				var editButton = new TextButton("Edit".Localize(), theme)
+				var editButton = new ThemedTextButton("Edit".Localize(), theme)
 				{
 					Margin = 5,
 					ToolTipText = "Edit OpenSCAD script".Localize()
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Library
 				};
 				actionButtons.AddChild(editButton);
 
-				var updateButton = new TextButton("Update".Localize(), theme)
+				var updateButton = new ThemedTextButton("Update".Localize(), theme)
 				{
 					Margin = 5,
 					ToolTipText = "Compile model".Localize()

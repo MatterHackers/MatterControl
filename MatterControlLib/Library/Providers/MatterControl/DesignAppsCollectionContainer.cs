@@ -97,10 +97,6 @@ namespace MatterHackers.MatterControl.Library
                                 async () => await XyCalibrationFaceObject3D.Create())
                             { DateCreated = new System.DateTime(index++) },
                             new GeneratorItem(
-                                "Text2".Localize(),
-                                async () => await TextPathObject3D.Create())
-                            { DateCreated = new System.DateTime(index++) },
-                            new GeneratorItem(
                                 "Path".Localize(),
                                 () =>
                                 {
@@ -112,7 +108,7 @@ namespace MatterHackers.MatterControl.Library
 
                                     var path = new PathObject3D()
                                     {
-                                        VertexSource = storage
+                                        VertexStorage = storage
                                     };
 
                                     return Task.FromResult<IObject3D>(path);

@@ -47,7 +47,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractPathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider
 	{
 		public SubtractPathObject3D()
 		{
@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
-
-		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
@@ -125,14 +123,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					// set the mesh to show the path
-					var extrudeMesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
-					if(extrudeMesh.Vertices.Count() > 5)
+					if (this.GetVertexSource() != null)
 					{
-						this.Mesh = extrudeMesh;
-					}
-					else
-					{
-						this.Mesh = null;
+						var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+						if (extrudeMesh.Vertices.Count() > 5)
+						{
+							this.Mesh = extrudeMesh;
+						}
+						else
+						{
+							this.Mesh = null;
+						}
 					}
 
 					UiThread.RunOnIdle(() =>
@@ -198,11 +199,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				bool first = true;
 				foreach (var keep in keepVisibleItems)
 				{
-					var resultsVertexSource = (keep as IPathObject).VertexSource.Transform(keep.Matrix);
+					var resultsVertexSource = keep.GetVertexSource().Transform(keep.Matrix);
 
 					foreach (var remove in removeVisibleItems)
 					{
-						resultsVertexSource = resultsVertexSource.MergePaths(((IPathObject)remove).VertexSource.Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
+						resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
 
 						// report our progress
 						ratioCompleted += amountPerOperation;
@@ -212,12 +213,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					if (first)
 					{
-						this.VertexSource = resultsVertexSource;
+						this.VertexStorage = new VertexStorage(resultsVertexSource);
 						first = false;
 					}
 					else
 					{
-						this.VertexSource.MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
+						this.GetVertexSource().MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
 					}
 				}
 

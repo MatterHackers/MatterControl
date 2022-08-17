@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flashBackground.Start();
 		}
 
-		public static void SlideToNewState(this RadioIconButton widget, RadioIconButton newActiveButton, OverflowBar parent, Action animationComplete, ThemeConfig theme)
+		public static void SlideToNewState(this ThemedRadioIconButton widget, ThemedRadioIconButton newActiveButton, OverflowBar parent, Action animationComplete, ThemeConfig theme)
 		{
 			double displayTime = 600;
 			double elapsedMs = 0;

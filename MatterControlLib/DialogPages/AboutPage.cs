@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 
 			foreach (var item in data.OrderBy(i => i.Name))
 			{
-				var linkButton = new IconButton(linkIcon, theme);
+				var linkButton = new ThemedIconButton(linkIcon, theme);
 				linkButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
 					ApplicationController.LaunchBrowser(item.Url);

@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16).SetToColor(theme.TextColor);
 			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16).SetToColor(theme.TextColor);
 
-			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
+			var expandBarButton = new ThemedIconButton(expanded ? collapsedImage : expandedImage, theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,

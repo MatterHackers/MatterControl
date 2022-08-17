@@ -29,14 +29,28 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Threading.Tasks;
 using DualContouring;
+using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class DualContouringObject3D : Object3D
 	{
+		public enum Shapes
+		{
+			Box,
+			[EnumName("2 Boxes")]
+			Box_And_Sphere,
+			[EnumName("3 Boxes")]
+			Boxes_3,
+			Sphere,
+			Cylinder,
+		}
+
 		public DualContouringObject3D()
 		{
 			Name = "Dual Contouring".Localize();
@@ -50,20 +64,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		public Shapes Shape { get; set; } = Shapes.Box;
+
+		public OuptutTypes Ouptput { get; set; }
+
 		public int Iterations { get; set; } = 5;
 
 		public double Size { get; set; } = 15;
 
 		public double Threshold { get; set; } = .001;
-
-		public enum Shapes
-		{
-			Box,
-			Sphere
-		}
-
-		public Shapes Shape { get; set; } = Shapes.Box;
-
+        
+        public enum OuptutTypes
+        {
+            DualContouring,
+            MarchingCubes,
+        }
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -91,18 +106,68 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (new CenterAndHeightMaintainer(this))
 					{
-#if true
-						ISdf shape = new Sphere()
+						ISdf shape = null;
+						switch (Shape)
 						{
-							Radius = Size
-						};
+							case Shapes.Box:
+								shape = new Box()
+								{
+									Size = new Vector3(Size, Size, Size)
+								};
+								break;
 
-						if (Shape == Shapes.Box)
-						{
-							shape = new Box()
-							{
-								Size = new Vector3(Size, Size, Size)
-							};
+							case Shapes.Boxes_3:
+								shape = new Union()
+								{
+									Items = new ISdf[]
+									{
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationZ(MathHelper.Tau * .2) * Matrix4X4.CreateRotationX(MathHelper.Tau * .2)),
+										new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										},
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2) * Matrix4X4.CreateRotationX(MathHelper.Tau * .3)),
+									}
+								};
+								break;
+
+							case Shapes.Box_And_Sphere:
+								shape = new Union()
+								{
+									Items = new ISdf[]
+									{
+										new Transform(new Sphere()
+										{
+											Radius = Size / 2
+										}, Matrix4X4.CreateTranslation(-3, -2, 0)),
+										new Transform(new Box()
+										{
+											Size = new Vector3(Size, Size, Size)
+										}, Matrix4X4.CreateRotationZ(MathHelper.Tau * .2)),
+									}
+								};
+								break;
+
+							case Shapes.Sphere:
+								shape = new Sphere()
+								{
+									Radius = Size
+								};
+								break;
+
+							case Shapes.Cylinder:
+								shape = new Cylinder()
+								{
+									Radius = Size,
+									Height = Size
+								};
+								break;
 						}
 
 						var bounds = shape.Bounds;
@@ -111,15 +176,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Iterations = 7;
 						}
-						var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
 
-						Mesh = Octree.GenerateMeshFromOctree(root);
-#else
-						var c = new MarchingCubes();
-						c.Generate();
-						MeshNormals.QuickCompute(c.Mesh); // generate normals
-						Mesh = c.Mesh.ToMesh();
-#endif
+						if (Ouptput == OuptutTypes.DualContouring)
+						{
+							var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
+
+							Mesh = Octree.GenerateMeshFromOctree(root);
+						}
 					}
 				}
 
@@ -129,6 +192,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 				return Task.CompletedTask;
 			});
+		}
+        
+        public class SdfToImplicit : ImplicitFunction3d
+        {
+            public ISdf Sdf { get; set; }
+            public SdfToImplicit(ISdf sdf)
+            {
+                Sdf = sdf;
+            }
+            
+            public double Value(ref Vector3d pt)
+            {
+				return Sdf.Sdf(new Vector3(pt.x, pt.y, pt.z));
+			}
 		}
 	}
 }

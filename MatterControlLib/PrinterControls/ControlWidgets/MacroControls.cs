@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				foreach (GCodeMacro macro in printer.Settings.Macros)
 				{
-					var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
+					var macroButton = new ThemedTextButton(GCodeMacro.FixMacroName(macro.Name), theme)
 					{
 						BackgroundColor = theme.MinimalShade,
 						Margin = new BorderDouble(right: 5)
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var widget = new MacroControls(printer, theme);
 
-			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme);
+			var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme);
 			editButton.Click += (s, e) =>
 			{
 				DialogWindow.Show(new MacroListPage(printer.Settings));

@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	class IpAddessField : UIField
 	{
 		private DropDownList dropdownList;
-		private IconButton refreshButton;
+		private ThemedIconButton refreshButton;
 
 		private PrinterConfig printer;
 		private ThemeConfig theme;
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var widget = new FlowLayoutWidget();
 			widget.AddChild(dropdownList);
-			refreshButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
+			refreshButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14).SetToColor(theme.TextColor), theme)
 			{
 				Margin = new BorderDouble(left: 5)
 			};

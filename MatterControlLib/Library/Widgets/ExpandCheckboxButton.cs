@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler CheckedStateChanged;
 
-		private IconButton imageButton;
+		private ThemedIconButton imageButton;
 
 		private ImageBuffer arrowRight;
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor);
 			arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12).SetToColor(theme.TextColor);
 
-			imageButton = new IconButton(arrowRight, theme)
+			imageButton = new ThemedIconButton(arrowRight, theme)
 			{
 				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight),
 				VAnchor = VAnchor.Center,

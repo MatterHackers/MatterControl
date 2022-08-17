@@ -202,6 +202,9 @@ Translated:Action Recommended
 English:Action Required
 Translated:Action Required
 
+English:Actions
+Translated:Actions
+
 English:Add
 Translated:Add
 
@@ -1324,6 +1327,9 @@ Translated:Direction
 English:Disable Fan For The First
 Translated:Disable Fan For The First
 
+English:Disable to expart all faces without merging
+Translated:Disable to expart all faces without merging
+
 English:Disabled: {0}
 Translated:Disabled: {0}
 
@@ -1815,6 +1821,9 @@ Translated:Filament Unloaded
 
 English:Filament Volume
 Translated:Filament Volume
+
+English:File
+Translated:File
 
 English:File May Cause Problems
 Translated:File May Cause Problems
@@ -2881,6 +2890,9 @@ Translated:Medium Precision
 English:Merge
 Translated:Merge
 
+English:Merge faces into single mesh
+Translated:Merge faces into single mesh
+
 English:Merge Overlapping Lines
 Translated:Merge Overlapping Lines
 
@@ -3369,6 +3381,9 @@ Translated:Other
 
 English:Other Speeds
 Translated:Other Speeds
+
+English:Ouptput
+Translated:Ouptput
 
 English:Outer Diameter
 Translated:Outer Diameter
@@ -4251,6 +4266,9 @@ Translated:Rotate: Right Mouse Button | Ctrl + Left Mouse Button | Arrow Keys
 
 English:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
 Translated:Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys
+
+English:Rotation
+Translated:Rotation
 
 English:Rotation Distance
 Translated:Rotation Distance

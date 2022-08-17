@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static ITraceable CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, BvhCreationOptions bvhCreationOptions = BvhCreationOptions.LegacySlowConstructionFastTracing)
+		public static ITraceable CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, BvhCreationOptions bvhCreationOptions = BvhCreationOptions.BottomUpClustering)
 		{
 			var allPolys = new List<ITraceable>();
 

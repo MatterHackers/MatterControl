@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				NextButton.Visible = false;
 
-				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+				var loadFilamentButton = new ThemedTextButton("Load Filament".Localize(), theme)
 				{
 					Name = "Load Filament",
 					BackgroundColor = theme.MinimalShade,
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				NextButton.Visible = false;
 
-				var alreadyLoadedButton = new TextButton("Already Loaded".Localize(), theme)
+				var alreadyLoadedButton = new ThemedTextButton("Already Loaded".Localize(), theme)
 				{
 					Name = "Already Loaded Button",
 					BackgroundColor = theme.MinimalShade

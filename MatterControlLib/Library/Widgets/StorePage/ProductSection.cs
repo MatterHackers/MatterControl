@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private List<ProductItem> allIconViews = new List<ProductItem>();
 		private FeedSectionData content;
 		private ThemeConfig theme;
-		private TextButton moreButton;
+		private ThemedTextButton moreButton;
 
 		public ProductSection(FeedSectionData content, ThemeConfig theme)
 		{

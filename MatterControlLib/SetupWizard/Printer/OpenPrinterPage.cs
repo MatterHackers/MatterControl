@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
 
 	public abstract class SelectablePrinterPage : DialogPage
 	{
-		protected TextButton nextButton;
+		protected ThemedTextButton nextButton;
 		protected TreeNode rootPrintersNode;
 
 		public SelectablePrinterPage(string continueButtonText)
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.AddChild(treeView);
 
-			nextButton = new TextButton(continueButtonText, theme)
+			nextButton = new ThemedTextButton(continueButtonText, theme)
 			{
 				Enabled = false
 			};

@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			mainRow.AddChild(new HorizontalSpacer());
 
 			// add in the create pulse button
-			var createPulse = new IconButton(StaticData.Instance.LoadIcon("pulse_logo.png", 18, 18).SetToColor(theme.TextColor), theme)
+			var createPulse = new ThemedIconButton(StaticData.Instance.LoadIcon("pulse_logo.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Setup Pulse",
 				VAnchor = VAnchor.Center,
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			mainRow.AddChild(createPulse);
 
 			// add in the create printer button
-			var createPrinter = new IconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
+			var createPrinter = new ThemedIconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				Name = "Create Printer",
 				VAnchor = VAnchor.Center,
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			mainRow.AddChild(createPrinter);
 
 			// add in the import printer button
-			var importPrinter = new IconButton(StaticData.Instance.LoadIcon("md-import_18.png", 18, 18).SetToColor(theme.TextColor), theme)
+			var importPrinter = new ThemedIconButton(StaticData.Instance.LoadIcon("md-import_18.png", 18, 18).SetToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,

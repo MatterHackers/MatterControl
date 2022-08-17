@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Name = "Main Window",
 			};
 
-			Application.AddTextWidgetRightClickMenu();
+			InternalTextEditWidget.AddTextWidgetRightClickMenu(ApplicationController.Instance.MenuTheme);
 
 			AutomationRunner.TimeToMoveMouse = .1;
 
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Name = "Main Window",
 			};
 
-			Application.AddTextWidgetRightClickMenu();
+			InternalTextEditWidget.AddTextWidgetRightClickMenu(ApplicationController.Instance.MenuTheme);
 
 			AutomationRunner.TimeToMoveMouse = .1;
 

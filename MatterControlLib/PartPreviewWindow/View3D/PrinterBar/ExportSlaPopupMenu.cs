@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return exportPanel;
 			};
 
-			this.AddChild(new TextButton("Export".Localize(), theme)
+			this.AddChild(new ThemedTextButton("Export".Localize(), theme)
 			{
 				Selectable = false,
 				Padding = theme.TextButtonPadding.Clone(right: 5)

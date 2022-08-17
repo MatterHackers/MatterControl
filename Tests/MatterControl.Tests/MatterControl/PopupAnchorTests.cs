@@ -1,14 +1,14 @@
-﻿using System;
+﻿/*
+Copyright (c) 2022, Lars Brubaker
+All rights reserved.
+*/
+
+using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
@@ -43,7 +43,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				systemWindow.Padding = systemWindow.Padding.Clone(bottom: 180);
 
-				var button = new TextButton("Popup", systemWindow.Theme)
+				var button = new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "targetA",
 					VAnchor = VAnchor.Bottom,
@@ -102,7 +102,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -138,7 +138,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -174,7 +174,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -210,7 +210,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -249,7 +249,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -291,7 +291,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -335,7 +335,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
 					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top),
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -377,7 +377,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
 					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top),
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -424,7 +424,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -476,7 +476,7 @@ namespace MatterControl.Tests.MatterControl
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
 					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top),
 				},
-				new TextButton("Popup", systemWindow.Theme)
+				new ThemedTextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
 					VAnchor = VAnchor.Bottom,
@@ -502,7 +502,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 
-		private static async Task AnchorTests(PopupsTestWindow systemWindow, MatePoint anchor, MatePoint popup, TextButton button, Action<GuiWidget, GuiWidget> validator, Action<GuiWidget> rowAdjuster = null)
+		private static async Task AnchorTests(PopupsTestWindow systemWindow, MatePoint anchor, MatePoint popup, ThemedTextButton button, Action<GuiWidget, GuiWidget> validator, Action<GuiWidget> rowAdjuster = null)
 		{
 			await systemWindow.RunTest(testRunner =>
 			{

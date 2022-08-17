@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,9 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library.Widgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -47,8 +45,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(HorizontalLine), typeof(TextEditWithInlineCancel) };
 		protected static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(TextEditWithInlineCancel), typeof(HorizontalSpacer) };
 
-		public OverflowBar(ThemeConfig theme)
-			: this(null, theme)
+		public OverflowBar(ThemeConfig theme, string text = null)
+			: this(null, theme, text)
 		{ }
 
 		public OverflowBar(ImageBuffer icon, ThemeConfig theme, string text = null)
@@ -153,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					PopupMenu.MenuItem menuItem;
 
-					var iconButton = widget as IconButton;
+					var iconButton = widget as ThemedIconButton;
 
 					var iconImage = iconButton?.IconImage;
 

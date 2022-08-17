@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
 				if (showUpdate?.Show == true)
 				{
-					var updateButton = new TextButton("Update".Localize(), theme)
+					var updateButton = new ThemedTextButton("Update".Localize(), theme)
 					{
 						Margin = 5,
 						BackgroundColor = theme.MinimalShade,
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				foreach (var editorButtonData in editorButtonProvider.GetEditorButtonsData())
 				{
-					var editorButton = new TextButton(editorButtonData.Name, theme)
+					var editorButton = new ThemedTextButton(editorButtonData.Name, theme)
 					{
 						Margin = 5,
 						ToolTipText = editorButtonData.HelpText,
@@ -984,7 +984,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
 					// Change button
-					var changeButton = new TextButton(property.Description, theme)
+					var changeButton = new ThemedTextButton(property.Description, theme)
 					{
 						BackgroundColor = theme.MinimalShade,
 						Margin = 3
@@ -1254,7 +1254,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				VAnchor = VAnchor.Center
 			};
 			searchRow.AddChild(searchField);
-			var searchButton = new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var searchButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Search".Localize(),
 			};
@@ -1499,7 +1499,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget GetUnlockRow(ThemeConfig theme, string url)
 		{
-			var detailsLink = new TextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var detailsLink = new ThemedTextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				Margin = 5,
 				ToolTipText = "Visit MatterHackers.com to Purchase".Localize()
@@ -1517,7 +1517,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var detailsLink = new TextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).SetToColor(theme.TextColor), theme)
+				var detailsLink = new ThemedTextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).SetToColor(theme.TextColor), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					ToolTipText = unlockLink.Url,

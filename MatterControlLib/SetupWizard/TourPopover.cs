@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.Tour
 			return new RectangleDouble(0, 0, totalWidth, totalHeight);
 		}
 
-		private class ArrowButton : TextButton
+		private class ArrowButton : ThemedTextButton
 		{
 			public ArrowButton(string text, ArrowDirection arrowDirection, ThemeConfig theme, double pointSize = -1)
 				: base(text, theme, pointSize)

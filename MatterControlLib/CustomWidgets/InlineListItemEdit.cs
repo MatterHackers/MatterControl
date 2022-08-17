@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public InlineListItemEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
 			: base(title, theme, automationName, boldFont)
 		{
-			var removeButton = new IconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var removeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Delete".Localize(),
 				Visible = true,
