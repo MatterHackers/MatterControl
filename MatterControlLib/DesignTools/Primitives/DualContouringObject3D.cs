@@ -29,14 +29,28 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Threading.Tasks;
 using DualContouring;
+using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class DualContouringObject3D : Object3D
 	{
+		public enum Shapes
+		{
+			Box,
+			[EnumName("2 Boxes")]
+			Boxes2,
+			[EnumName("3 Boxes")]
+			Boxes3,
+			Sphere,
+			Cylinder,
+		}
+
 		public DualContouringObject3D()
 		{
 			Name = "Dual Contouring".Localize();
@@ -50,23 +64,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		public Shapes Shape { get; set; } = Shapes.Box;
+
+		public OuptutTypes Ouptput { get; set; }
+
 		public int Iterations { get; set; } = 5;
 
 		public double Size { get; set; } = 15;
 
 		public double Threshold { get; set; } = .001;
-
-		public enum Shapes
-		{
-			Box,
-			Union1,
-			Union2,
-			Sphere,
-			Cylinder,
-		}
-
-		public Shapes Shape { get; set; } = Shapes.Box;
-
+        
+        public enum OuptutTypes
+        {
+            DualContouring,
+            MarchingCubes,
+        }
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -92,20 +104,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (RebuildLock())
 				{
-#if true
 					using (new CenterAndHeightMaintainer(this))
 					{
 						ISdf shape = null;
-                        switch (Shape)
-                        {
-                            case Shapes.Box:
+						switch (Shape)
+						{
+							case Shapes.Box:
 								shape = new Box()
 								{
 									Size = new Vector3(Size, Size, Size)
 								};
 								break;
 
-							case Shapes.Union1:
+							case Shapes.Boxes3:
 								shape = new Union()
 								{
 									Items = new ISdf[]
@@ -113,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 										new Transform(new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
-										}, Matrix4X4.CreateRotationX(MathHelper.Tau * .2)),
+										}, Matrix4X4.CreateRotationZ(MathHelper.Tau * .2) * Matrix4X4.CreateRotationX(MathHelper.Tau * .2)),
 										new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
@@ -121,12 +132,12 @@ namespace MatterHackers.MatterControl.DesignTools
 										new Transform(new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
-										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2)),
+										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2) * Matrix4X4.CreateRotationX(MathHelper.Tau * .3)),
 									}
 								};
 								break;
 
-                            case Shapes.Union2:
+							case Shapes.Boxes2:
 								shape = new Union()
 								{
 									Items = new ISdf[]
@@ -138,26 +149,26 @@ namespace MatterHackers.MatterControl.DesignTools
 										new Transform(new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
-										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2)),
+										}, Matrix4X4.CreateRotationZ(MathHelper.Tau * .2)),
 									}
 								};
-                                break;
-                                
-                            case Shapes.Sphere:
-                                shape = new Sphere()
+								break;
+
+							case Shapes.Sphere:
+								shape = new Sphere()
 								{
 									Radius = Size
 								};
-                                break;
-                                
-                            case Shapes.Cylinder:
-                                shape = new Cylinder()
-                                {
-                                    Radius = Size,
-                                    Height = Size
-                                };
-                                break;
-                        }
+								break;
+
+							case Shapes.Cylinder:
+								shape = new Cylinder()
+								{
+									Radius = Size,
+									Height = Size
+								};
+								break;
+						}
 
 						var bounds = shape.Bounds;
 						bounds.Expand(.1);
@@ -165,15 +176,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Iterations = 7;
 						}
-						var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
 
-						Mesh = Octree.GenerateMeshFromOctree(root);
-#else
-						var c = new MarchingCubes();
-						c.Generate();
-						MeshNormals.QuickCompute(c.Mesh); // generate normals
-						Mesh = c.Mesh.ToMesh();
-#endif
+						if (Ouptput == OuptutTypes.DualContouring)
+						{
+							var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
+
+							Mesh = Octree.GenerateMeshFromOctree(root);
+						}
 					}
 				}
 
@@ -183,6 +192,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 				return Task.CompletedTask;
 			});
+		}
+        
+        public class SdfToImplicit : ImplicitFunction3d
+        {
+            public ISdf Sdf { get; set; }
+            public SdfToImplicit(ISdf sdf)
+            {
+                Sdf = sdf;
+            }
+            
+            public double Value(ref Vector3d pt)
+            {
+				return Sdf.Sdf(new Vector3(pt.x, pt.y, pt.z));
+			}
 		}
 	}
 }
