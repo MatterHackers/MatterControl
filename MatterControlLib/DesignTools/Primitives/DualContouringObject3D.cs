@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
 using DualContouring;
 using g3;
@@ -221,9 +222,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var bounds = shape.Bounds;
 							bounds.Expand(.1);
-							if (Iterations > 7)
+							if (Iterations > 8)
 							{
-								Iterations = 7;
+								Iterations = 8;
 							}
 
 							if (Ouptput == OuptutTypes.DualContouring)
@@ -236,13 +237,15 @@ namespace MatterHackers.MatterControl.DesignTools
 							{
 								var min = shape.Bounds.MinXYZ;
 								var max = shape.Bounds.MaxXYZ;
+                                var size = shape.Bounds.Size;
+                                var maxSize = Math.Max(size.X, Math.Max(size.Y, size.Z));
+
 								var c = new MarchingCubes()
 								{
 									Implicit = new SdfToImplicit(shape),
 									Bounds = new AxisAlignedBox3d(min.X, min.Y, min.Z, max.X, max.Y, max.Z),
-									RootMode = MarchingCubes.RootfindingModes.LerpSteps,
-									CubeSize = .35 / Iterations
-								};
+									CubeSize = maxSize / Math.Pow(2, Iterations)
+                                };
 								c.Generate();
 								MeshNormals.QuickCompute(c.Mesh); // generate normals
 								Mesh = c.Mesh.ToMesh();
