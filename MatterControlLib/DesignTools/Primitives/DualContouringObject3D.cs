@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Boxes_3,
 			Sphere,
 			Cylinder,
+            Subtract,
 		}
 
 		public DualContouringObject3D()
@@ -100,27 +101,37 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			return Task.Run(() =>
-			{
-				using (RebuildLock())
-				{
-					using (new CenterAndHeightMaintainer(this))
-					{
-						ISdf shape = null;
-						switch (Shape)
-						{
-							case Shapes.Box:
-								shape = new Box()
-								{
-									Size = new Vector3(Size, Size, Size)
-								};
-								break;
+			var title = "Dual Contouring";
 
-							case Shapes.Boxes_3:
-								shape = new Union()
-								{
-									Items = new ISdf[]
+			if (Ouptput != OuptutTypes.DualContouring)
+            {
+				title = "Marching Cubes";
+            }
+
+			return ApplicationController.Instance.Tasks.Execute(
+				title,
+				null,
+				(reporter, cancellationTokenSource) =>
+				{
+					using (RebuildLock())
+					{
+						using (new CenterAndHeightMaintainer(this))
+						{
+							ISdf shape = null;
+							switch (Shape)
+							{
+								case Shapes.Box:
+									shape = new Box()
 									{
+										Size = new Vector3(Size, Size, Size)
+									};
+									break;
+
+								case Shapes.Boxes_3:
+									shape = new Union()
+									{
+										Items = new ISdf[]
+										{
 										new Transform(new Box()
 										{
 											Size = new Vector3(Size, Size, Size)
@@ -133,15 +144,15 @@ namespace MatterHackers.MatterControl.DesignTools
 										{
 											Size = new Vector3(Size, Size, Size)
 										}, Matrix4X4.CreateRotationY(MathHelper.Tau * .2) * Matrix4X4.CreateRotationX(MathHelper.Tau * .3)),
-									}
-								};
-								break;
+										}
+									};
+									break;
 
-							case Shapes.Box_And_Sphere:
-								shape = new Union()
-								{
-									Items = new ISdf[]
+								case Shapes.Box_And_Sphere:
+									shape = new Union()
 									{
+										Items = new ISdf[]
+										{
 										new Transform(new Sphere()
 										{
 											Radius = Size / 2
@@ -150,61 +161,101 @@ namespace MatterHackers.MatterControl.DesignTools
 										{
 											Size = new Vector3(Size, Size, Size)
 										}, Matrix4X4.CreateRotationZ(MathHelper.Tau * .2)),
-									}
-								};
-								break;
+										}
+									};
+									break;
 
-							case Shapes.Sphere:
-								shape = new Sphere()
-								{
-									Radius = Size
-								};
-								break;
+								case Shapes.Sphere:
+									shape = new Sphere()
+									{
+										Radius = Size
+									};
+									break;
 
-							case Shapes.Cylinder:
-								shape = new Cylinder()
-								{
-									Radius = Size,
-									Height = Size
-								};
-								break;
-						}
+								case Shapes.Cylinder:
+									shape = new Cylinder()
+									{
+										Radius = Size,
+										Height = Size
+									};
+									break;
 
-						var bounds = shape.Bounds;
-						bounds.Expand(.1);
-						if (Iterations > 7)
-						{
-							Iterations = 7;
-						}
+								case Shapes.Subtract:
+									shape = new Intersection()
+									{
+										Items = new ISdf[]
+										{
+										new Subtraction()
+										{
+											Items = new ISdf[]
+											{
+												new Sphere()
+												{
+													Radius = Size
+												},
+												new Transform(new Cylinder()
+												{
+													Height = Size*2,
+													Radius = Size/2
+												}, Matrix4X4.CreateRotationX(MathHelper.Tau / 4)),
+												new Transform(new Cylinder()
+												{
+													Height = Size*2,
+													Radius = Size/2
+												}, Matrix4X4.CreateRotationY(MathHelper.Tau / 4)),
+												new Cylinder()
+												{
+													Height = Size*2,
+													Radius = Size/2
+												}
+											}
+										},
+										new Box()
+										{
+											Size = new Vector3(Size * 1.5, Size * 1.5, Size * 1.5)
+										}
+										}
+									};
+									break;
+							}
 
-						if (Ouptput == OuptutTypes.DualContouring)
-						{
-							var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
-
-							Mesh = Octree.GenerateMeshFromOctree(root);
-						}
-						else
-						{
-							var min = shape.Bounds.MinXYZ;
-							var max = shape.Bounds.MaxXYZ;
-							var c = new MarchingCubes()
+							var bounds = shape.Bounds;
+							bounds.Expand(.1);
+							if (Iterations > 7)
 							{
-								Implicit = new SdfToImplicit(shape),
-								Bounds = new AxisAlignedBox3d(min.X, min.Y, min.Z, max.X, max.Y, max.Z),
-							};
-							c.Generate();
-							MeshNormals.QuickCompute(c.Mesh); // generate normals
-							Mesh = c.Mesh.ToMesh();
+								Iterations = 7;
+							}
+
+							if (Ouptput == OuptutTypes.DualContouring)
+							{
+								var root = Octree.BuildOctree(shape.Sdf, bounds.MinXYZ, bounds.Size, Iterations, Threshold);
+
+								Mesh = Octree.GenerateMeshFromOctree(root);
+							}
+							else
+							{
+								var min = shape.Bounds.MinXYZ;
+								var max = shape.Bounds.MaxXYZ;
+								var c = new MarchingCubes()
+								{
+									Implicit = new SdfToImplicit(shape),
+									Bounds = new AxisAlignedBox3d(min.X, min.Y, min.Z, max.X, max.Y, max.Z),
+									RootMode = MarchingCubes.RootfindingModes.LerpSteps,
+									CubeSize = .35 / Iterations
+								};
+								c.Generate();
+								MeshNormals.QuickCompute(c.Mesh); // generate normals
+								Mesh = c.Mesh.ToMesh();
+							}
 						}
 					}
-				}
 
-				Invalidate(InvalidateType.DisplayValues);
+					Invalidate(InvalidateType.DisplayValues);
 
-				this.CancelAllParentBuilding();
-				Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-				return Task.CompletedTask;
-			});
+					this.CancelAllParentBuilding();
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+					return Task.CompletedTask;
+				});
 		}
         
         public class SdfToImplicit : ImplicitFunction3d
