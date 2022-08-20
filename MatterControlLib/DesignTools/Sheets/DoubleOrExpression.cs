@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,25 +36,17 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 
 	[TypeConverter(typeof(DoubleOrExpression))]
-	public class DoubleOrExpression : IDirectOrExpression
+	public class DoubleOrExpression : DirectOrExpression
 	{
-		/// <summary>
-		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
-		/// </summary>
-		public bool IsEquation { get => Expression.Length > 0 && Expression[0] == '='; }
-
-		public string Expression { get; set; }
-
-		public override string ToString() => Expression;
-
 		public double Value(IObject3D owner)
 		{
-			return SheetObject3D.EvaluateExpression<double>(owner, Expression);
-		}
+			var value = SheetObject3D.EvaluateExpression<double>(owner, GetExpression(owner.RebuildLocked));
+			if (owner.RebuildLocked)
+            {
+                ExpressionValueAtLastRebuild = value.ToString();
+            }
 
-		public string ValueString(IObject3D owner)
-		{
-			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
+			return value;
 		}
 
 		public DoubleOrExpression(double value)

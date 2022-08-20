@@ -316,10 +316,5 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			};
 		}
-
-        public void AddRightClickMenuItemsItems(PopupMenu popupMenu)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

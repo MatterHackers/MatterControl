@@ -321,7 +321,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					var newValue = field.Value;
-					var oldValue = property.Value.ToString();
+					var oldValue = "";
+					if (property.Value is DirectOrExpression directOrExpression)
+					{
+						oldValue = directOrExpression.GetExpression(false);
+					}
+					else
+					{
+						oldValue = property.Value.ToString();
+					}
 					if (newValue == oldValue)
 					{
 						return;
@@ -831,9 +839,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				if (doubleExpresion.Expression.Contains("="))
+				if (doubleExpresion.GetExpression(false).Contains("="))
 				{
-					field.SetValue(doubleExpresion.Expression, false);
+					field.SetValue(doubleExpresion.GetExpression(false), false);
 				}
 				else // make sure it is formatted
 				{
@@ -855,7 +863,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					},
 					(value) =>
 					{
-						return ((DoubleOrExpression)value).Expression;
+						return ((DoubleOrExpression)value).GetExpression(false);
 					});
 
 				rowContainer = CreateSettingsRow(property,
@@ -876,9 +884,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
-							if (newValue.Expression.StartsWith("="))
+							if (newValue.GetExpression(false).StartsWith("="))
 							{
-								field.TextValue = newValue.Expression;
+								field.TextValue = newValue.GetExpression(false);
 							}
 							else
 							{
@@ -906,9 +914,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				if (intExpresion.Expression.Contains("="))
+				if (intExpresion.GetExpression(false).Contains("="))
 				{
-					field.SetValue(intExpresion.Expression, false);
+					field.SetValue(intExpresion.GetExpression(false), false);
 				}
 				else // make sure it is formatted
 				{
@@ -930,7 +938,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					},
 					(value) =>
 					{
-						return ((IntOrExpression)value).Expression;
+						return ((IntOrExpression)value).GetExpression(false);
 					});
 
 				rowContainer = CreateSettingsRow(property,
@@ -951,9 +959,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
-							if (newValue.Expression.StartsWith("="))
+							if (newValue.GetExpression(false).StartsWith("="))
 							{
-								field.TextValue = newValue.Expression;
+								field.TextValue = newValue.GetExpression(false);
 							}
 							else
 							{
@@ -1098,7 +1106,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// create a a multi-line string editor
 					var field = new MultilineStringField(theme);
 					field.Initialize(0);
-					field.SetValue(stringOrExpression.Expression, false);
+					field.SetValue(stringOrExpression.GetExpression(false), false);
 					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
 					field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
@@ -1109,7 +1117,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
-							return ((StringOrExpression)value).Expression;
+							return ((StringOrExpression)value).GetExpression(false);
 						});
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}
@@ -1118,14 +1126,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					// create a string editor
 					var field = new TextField(theme);
 					field.Initialize(0);
-					field.SetValue(stringOrExpression.Expression, false);
+					field.SetValue(stringOrExpression.GetExpression(false), false);
 					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
 					RegisterValueChanged(field,
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
-							return ((StringOrExpression)value).Expression;
+							return ((StringOrExpression)value).GetExpression(false);
 						});
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}

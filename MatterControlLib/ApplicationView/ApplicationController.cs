@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl
 
 			if (selectedItem is IRightClickMenuProvider menuProvider)
 			{
-                menuProvider.AddRightClickMenuItemsItems(popupMenu);
+                menuProvider.AddRightClickMenuItemsItems(popupMenu, menuTheme);
             }
 
 			var parent = selectedItem.Parent;

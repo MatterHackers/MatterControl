@@ -607,6 +607,9 @@ Translated:Below you can find a list of each setting that has changed.
 English:Bend Direction
 Translated:Bend Direction
 
+English:Bend Up
+Translated:Bend Up
+
 English:Beta
 Translated:Beta
 
