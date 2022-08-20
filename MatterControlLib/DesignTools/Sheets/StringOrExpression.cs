@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,25 +33,18 @@ using MatterHackers.DataConverters3D;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[TypeConverter(typeof(StringOrExpression))]
-	public class StringOrExpression : IDirectOrExpression
+	public class StringOrExpression : DirectOrExpression
 	{
-		/// <summary>
-		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
-		/// </summary>
-		public bool IsEquation { get => Expression.Length > 0 && Expression[0] == '='; }
-
-		public string Expression { get; set; }
-
-		public override string ToString() => Expression;
-
 		public string Value(IObject3D owner)
 		{
-			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
-		}
+			var rebuilding = owner.RebuildLocked;
+			var value = SheetObject3D.EvaluateExpression<string>(owner, GetExpression(rebuilding));
+			if (rebuilding)
+			{
+				ExpressionValueAtLastRebuild = value.ToString();
+			}
 
-		public string ValueString(IObject3D owner)
-		{
-			return SheetObject3D.EvaluateExpression<string>(owner, Expression);
+			return value;
 		}
 
 		public StringOrExpression(string expression)

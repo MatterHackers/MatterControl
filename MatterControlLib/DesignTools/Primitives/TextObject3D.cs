@@ -182,7 +182,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					bool valuesChanged = false;
 					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
-					var nameToWrite = MultiLine ? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n") : NameToWrite.Value(this);
+					var nameToWrite = MultiLine
+						? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n")
+						: NameToWrite.Value(this);
 					if (string.IsNullOrWhiteSpace(nameToWrite))
 					{
 						Mesh = PlatonicSolids.CreateCube(20, 10, height);

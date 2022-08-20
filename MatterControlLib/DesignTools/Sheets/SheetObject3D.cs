@@ -253,6 +253,41 @@ namespace MatterHackers.MatterControl.DesignTools
 			return runningInterval;
 		}
 
+		private static readonly Type[] ExpressionTypes =
+		{
+			typeof(StringOrExpression),
+			typeof(DoubleOrExpression),
+			typeof(IntOrExpression),
+
+		};
+
+        
+		public static IEnumerable<EditableProperty> GetExpressionPropreties(IObject3D item)
+		{
+			return item.GetType().GetProperties(OwnedPropertiesOnly)
+				.Where(pi => ExpressionTypes.Contains(pi.PropertyType)
+					&& pi.GetGetMethod() != null
+					&& pi.GetSetMethod() != null)
+				.Select(p => new EditableProperty(p, item));
+		}
+
+		//private static bool HasValuesThatWillChange(IObject3D item)
+  //      {
+		//	// enumerate public properties on child
+		//	foreach (var property in GetExpressionPropreties(item))
+		//	{
+		//		var propertyValue = property.Value;
+
+		//		if (propertyValue is IDirectOrExpression expression)
+		//		{
+		//			// return the value
+		//			var currentValue =  item.GetType().GetProperty(property.Name).GetValue(child, null).ToString();
+		//			var newValue = EvaluateExpression<string>(item, propertyValue.ToString()).ToString();
+		//			inExpression = inExpression.Replace("[" + constant + "]", value);
+		//		}
+		//	}
+		//}
+
 		private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem,
 			Dictionary<IObject3D, UpdateItem> updatedItems,
 			int inDepth,
@@ -551,17 +586,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			return false;
 		}
 
-		public static IEnumerable<IDirectOrExpression> GetActiveExpressions(IObject3D item, string checkForString, bool startsWith)
+		public static IEnumerable<DirectOrExpression> GetActiveExpressions(IObject3D item, string checkForString, bool startsWith)
         {
 			foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
 			{
 				var propertyValue = property.Value;
 
-				if (propertyValue is IDirectOrExpression directOrExpression)
+				if (propertyValue is DirectOrExpression directOrExpression)
 				{
 					if (startsWith)
 					{
-						if (directOrExpression.Expression.StartsWith(checkForString))
+						if (directOrExpression.GetExpression(false).StartsWith(checkForString))
 						{
 							// WIP: check if the value has actually changed, this will update every object on any cell change
 							yield return directOrExpression;
@@ -569,7 +604,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else
 					{
-						if(directOrExpression.Expression.Contains(checkForString))
+						if(directOrExpression.GetExpression(false).Contains(checkForString))
                         {
 							yield return directOrExpression;
 						}

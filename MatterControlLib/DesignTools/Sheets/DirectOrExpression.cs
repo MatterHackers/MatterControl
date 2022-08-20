@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2022, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,64 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IDirectOrExpression
+	public class DirectOrExpression
 	{
-		string Expression { get; set; }
+		/// <summary>
+		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
+		/// </summary>
+		public bool IsEquation 
+		{
+			get
+			{
+				internalGet = true;
+				var value = Expression.Length > 0 && Expression[0] == '=';
+				internalGet = false;
+				return value;
+			}
+		}
 
-		string ValueString(IObject3D owner);
+		public string ExpressionValueAtLastRebuild { get; set; } = "";
+
+		private bool internalGet = false;
+		private string _expression;
+        
+		public string Expression
+		{
+			private get
+			{
+				if (!internalGet)
+				{
+					throw new Exception("All get accessing should run through GetExpression rather than direct");
+				}
+				return _expression;
+			}
+            
+			set => _expression = value;
+		}
+
+		public override string ToString() => Expression;
+
+		public string GetExpression(bool rebuilding)
+		{
+			internalGet = true;
+			var expression = "";
+			try
+			{
+				if (rebuilding)
+				{
+					ExpressionValueAtLastRebuild = Expression;
+				}
+
+				expression = Expression;
+			}
+			catch { }
+            
+			internalGet = false;
+			return expression;
+		}
 	}
 }
