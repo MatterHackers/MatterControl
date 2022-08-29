@@ -99,8 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.workspace = workspace;
 
 			this.RowPadding = 0;
-			this.RowBoarder = new BorderDouble(0, 0, 0, 1);
-			this.RowBoarderColor = theme.GetBorderColor(50);
+			this.RowBorder = new BorderDouble(0, 0, 0, 1);
+			this.RowBorderColor = theme.GetBorderColor(50);
 
 			var openLibraryButton = CreateOpenLibraryButton(sceneContext, theme);
 
