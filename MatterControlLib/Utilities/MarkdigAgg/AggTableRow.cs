@@ -10,29 +10,39 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg
 {
-	public class TableHeadingRow: FlowLayoutWidget
+	public class AggTableRow: FlowLayoutWidget
 	{
-		public TableHeadingRow()
+		public AggTableRow()
 		{
 			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Stretch;
 			this.Margin = new BorderDouble(3, 4, 0, 12);
-			// Likely needs to be implemented here as well
-			//this.RowPadding = new BorderDouble(0, 3);
+
+			// Hack to force content on-screen (seemingly not working when set late/after constructor)
+			VAnchor = VAnchor.Absolute;
+			Height = 25;
 		}
 
+        public bool IsHeadingRow { get; set; }
+
+		// Override AddChild to push styles to child elements when table rows are resolved to the tree
 		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
 				// textWidget.TextColor = new Color("#036ac3");
-				textWidget.Bold = true;
+				if (this.IsHeadingRow)
+				{
+					textWidget.Bold = true;
+				}
 			}
 			else if (childToAdd is TextLinkX textLink)
 			{
 				foreach (var childTextWidget in childToAdd.Children.OfType<TextWidget>())
 				{
-                    childTextWidget.Bold = true;
+					if (this.IsHeadingRow)
+					{
+						childTextWidget.Bold = true;
+					}
 				}
 			}
 

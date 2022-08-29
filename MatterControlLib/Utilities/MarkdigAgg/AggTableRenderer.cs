@@ -36,18 +36,16 @@ namespace Markdig.Renderers.Agg
             {
                 var row = (TableRow)rowObj;
 
-                GuiWidget aggRow = row.IsHeader ? new TableHeadingRow() : new FlowLayoutWidget()
+                var aggRow = new AggTableRow()
                 {
-                    HAnchor = HAnchor.Fit,
-                    VAnchor = VAnchor.Absolute,
-                    Height = 25,
+                    IsHeadingRow = row.IsHeader,
                 };
 
                 renderer.Push(aggRow);
 
                 if (row.IsHeader)
                 {
-                    // Update to desired header row styling
+                    // Update to desired header row styling and/or moving into AggTableRow for consistency
                     aggRow.BackgroundColor = MatterHackers.MatterControl.AppContext.Theme.TabBarBackground;
                 }
 
@@ -62,6 +60,16 @@ namespace Markdig.Renderers.Agg
                         Width = 200,
                         Height = 25,
                     };
+
+                    // TODO: Cell Width - implement next, might be easy to track and perform in AggTableRow
+                    /*  (Spec)
+                     *  If any line of the markdown source is longer than the column width (see --columns), then the
+                     *  table will take up the full text width and the cell contents will wrap, with the relative cell
+                     *  widths determined by the number of dashes in the line separating the table header from the table
+                     *  body. (For example ---|- would make the first column 3/4 and the second column 1/4 of the full
+                     *  text width.) On the other hand, if no lines are wider than column width, then cell contents will
+                     *  not be wrapped, and the cells will be sized to their contents.
+                    */
 
                     // Cell box above enforces boundaries, use flow for layout
                     var aggCellFlow = new FlowLayoutWidget()
@@ -80,21 +88,22 @@ namespace Markdig.Renderers.Agg
                             : cell.ColumnIndex;
                         columnIndex = columnIndex >= table.ColumnDefinitions.Count ? table.ColumnDefinitions.Count - 1 : columnIndex;
 
-                        // TODO: implement alignment into Agg types that won't throw when set
-                        var alignment = table.ColumnDefinitions[columnIndex].Alignment;
+                        // TODO: revise alignment via Agg types that produce aligned text
+                        var columnDefinition = table.ColumnDefinitions[columnIndex];
+                        var alignment = columnDefinition.Alignment;
                         if (alignment.HasValue)
                         {
                             switch (alignment)
                             {
-                                //case TableColumnAlign.Center:
-                                //    aggCell.HAnchor |= HAnchor.Center;
-                                //    break;
-                                //case TableColumnAlign.Right:
-                                //    aggCell.HAnchor |= HAnchor.Right;
-                                //    break;
-                                //case TableColumnAlign.Left:
-                                //    aggCell.HAnchor |= HAnchor.Left;
-                                //    break;
+                                case TableColumnAlign.Center:
+                                    aggCellFlow.HAnchor |= HAnchor.Center;
+                                    break;
+                                case TableColumnAlign.Right:
+                                    aggCellFlow.HAnchor |= HAnchor.Right;
+                                    break;
+                                case TableColumnAlign.Left:
+                                    aggCellFlow.HAnchor |= HAnchor.Left;
+                                    break;
                             }
                         }
                     }
