@@ -329,14 +329,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
-			testRunner.WaitforDraw(systemWindow)
+            testRunner.WaitFor(() => testRunner.NameExists("Start New Design"), 5)
 				// close the welcome message
 				.ClickByName("Start New Design")
-				.Delay(.5)
+				.Delay(1.5)
 				// and close the product tour offer
 				.ClickByName("Cancel Wizard Button");
 
-			//testRunner.Delay(1);
+			testRunner.Delay(1);
 			// If testing is to be reliable, that dialog really shouldn't be showing now.
 			// NOTE: This may fail rarely still. Happened once with OrthographicZoomToSelectionWide.
 			Assert.IsFalse(testRunner.NamedWidgetExists("Cancel Wizard Button"));
@@ -822,8 +822,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static AutomationRunner NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
-			return testRunner.EnsureContentMenuOpen()
-				.ClickByName("Bread Crumb Button Home")
+			testRunner.EnsureContentMenuOpen();
+            while (!testRunner.NameExists("Bread Crumb Button Home", .2))
+            {
+                testRunner.ClickByName("Library Up Button")
+                    .Delay();
+            }
+
+			return testRunner.ClickByName("Bread Crumb Button Home")
 				.Delay(.5);
 		}
 
