@@ -72,6 +72,7 @@
 		<ProjectReference Include="MatterControlLib\MatterControlLib.csproj" />
 		<ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />
+		<ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
 		<ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj" />
