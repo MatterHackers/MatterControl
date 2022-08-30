@@ -90,7 +90,7 @@ namespace Markdig.Renderers
 			ObjectRenderers.Add(new AggMatchingTextRenderer(theme));
 
 			// Extension renderers
-			//ObjectRenderers.Add(new AggTableRenderer());
+			ObjectRenderers.Add(new AggTableRenderer());
 			//ObjectRenderers.Add(new AggTaskListRenderer());
 		}
 
