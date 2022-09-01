@@ -20,12 +20,17 @@ namespace Markdig.Renderers.Agg
 	public class ParagraphX : FlowLeftRightWithWrapping, IHardBreak
 	{
 		public ParagraphX(bool bottomMargin)
-        {
+		{
+			// Adding HAnchor and initial fixed width properties to resolve excess vertical whitespace added during collapse to width 0
+			//
+			// TODO: Revise impact to FlowLeftRightWithWrapping
+			this.HAnchor = HAnchor.Stretch;
+			this.Width = 5000;
 			if (bottomMargin)
 			{
 				Margin = new BorderDouble(0, 0, 0, 12);
 			}
-        }
+		}
 	}
 
 	//public class ParagraphRenderer : 
