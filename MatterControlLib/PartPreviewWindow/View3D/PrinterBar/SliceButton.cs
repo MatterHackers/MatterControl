@@ -63,12 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_Loaded(object sender, EventArgs e)
 		{
-			// Slicing disabled when loaded content is stand-alone GCODE file
-			if (printer.Bed.EditContext.IsGGCodeSource)
-			{
-				this.Enabled = false;
-				return;
-			}
+			this.SetButtonStates();
 		}
 
 		protected override async void OnClick(MouseEventArgs mouseEvent)
