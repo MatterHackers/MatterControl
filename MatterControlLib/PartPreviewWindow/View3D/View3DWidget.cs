@@ -1332,21 +1332,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnLoad(args);
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+        public override void OnDraw(Graphics2D graphics2D)
 		{
-			var selectedItem = Scene.SelectedItem;
-
-			if (selectedItem != null)
+			using (new QuickTimerReport("View3DWidget.OnDraw"))
 			{
-				foreach (var volume in this.Object3DControlLayer.Object3DControls)
+				var selectedItem = Scene.SelectedItem;
+
+				if (selectedItem != null)
 				{
-					volume.SetPosition(selectedItem, CurrentSelectInfo);
+					foreach (var volume in this.Object3DControlLayer.Object3DControls)
+					{
+						volume.SetPosition(selectedItem, CurrentSelectInfo);
+					}
 				}
+
+				TrackballTumbleWidget.RecalculateProjection();
+
+				base.OnDraw(graphics2D);
 			}
-
-			TrackballTumbleWidget.RecalculateProjection();
-
-			base.OnDraw(graphics2D);
 		}
 
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)

@@ -528,12 +528,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 		}
 
-        public override void OnDraw(Graphics2D graphics2D)
+		bool showQuickTiming = false;
+		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			base.OnDraw(graphics2D);
+#if DEBUG
+			if (keyEvent.KeyCode == Keys.F3)
+			{
+				showQuickTiming = !showQuickTiming;
+				Invalidate();
+			}
+#endif
 
-			// AggContext.DefaultFont.ShowDebugInfo(graphics2D);
+			base.OnKeyDown(keyEvent);
 		}
+		
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			using (new QuickTimerReport("MainViewWidget.OnDraw"))
+			{
+				base.OnDraw(graphics2D);
+			}
+
+			if (showQuickTiming)
+			{
+				QuickTimerReport.ReportAndRestart(graphics2D, 10, Height - 26);
+			}
+        }
 
 		private void ShowUpdateAvailableAnimation()
 		{
