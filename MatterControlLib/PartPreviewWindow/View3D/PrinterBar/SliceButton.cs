@@ -56,8 +56,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			printer.Bed.SceneLoaded += Scene_Loaded;
 
 			SetButtonStates();
+		}
+
+		private void Scene_Loaded(object sender, EventArgs e)
+		{
+			this.SetButtonStates();
 		}
 
 		protected override async void OnClick(MouseEventArgs mouseEvent)
@@ -70,6 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Unregister listeners
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			printer.Bed.SceneLoaded -= Scene_Loaded;
 
 			base.OnClosed(e);
 		}
@@ -81,6 +88,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetButtonStates()
 		{
+			// Slicing disabled when loaded content is stand-alone GCODE file
+			if (printer.Bed.EditContext.IsGGCodeSource)
+			{
+				this.Enabled = false;
+				return;
+			}
+
 			switch (printer.Connection.CommunicationState)
 			{
 				case CommunicationStates.PreparingToPrint:

@@ -3,6 +3,8 @@
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Markdig.Renderers.Agg.Inlines;
 using MatterHackers.Agg;
@@ -10,19 +12,19 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg
 {
-	public class AggTableRow: FlowLayoutWidget
+	public class AggTableRow : FlowLayoutWidget
 	{
 		public AggTableRow()
 		{
-			this.VAnchor = VAnchor.Fit;
-			this.Margin = new BorderDouble(3, 4, 0, 12);
-
-			// Hack to force content on-screen (seemingly not working when set late/after constructor)
-			VAnchor = VAnchor.Absolute;
-			Height = 25;
+			this.Margin = new BorderDouble(10, 4);
+			this.VAnchor = VAnchor.Absolute;
+			this.Height = 25;
 		}
 
-        public bool IsHeadingRow { get; set; }
+		public bool IsHeadingRow { get; set; }
+
+		public List<AggTableCell> Cells { get; } = new List<AggTableCell>();
+		public double RowHeight { get; private set; }
 
 		// Override AddChild to push styles to child elements when table rows are resolved to the tree
 		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -47,6 +49,30 @@ namespace Markdig.Renderers.Agg
 			}
 
 			return base.AddChild(childToAdd, indexInChildrenList);
+		}
+
+		internal void CellHeightChanged(double newHeight)
+		{
+			double cellPadding = 2;
+			double height = newHeight + 2 * cellPadding;
+
+			//double maxChildHeight = this.Cells.Select(c => c.Height).Max();
+
+			if (this.RowHeight != height)
+			{
+				foreach (var cell in this.Cells)
+				{
+					using (cell.LayoutLock())
+					{
+						cell.Height = height;
+					}
+				}
+
+				using (this.LayoutLock())
+				{
+					this.Height = this.RowHeight = height;
+				}
+			}
 		}
 	}
 }
