@@ -763,7 +763,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bottomRow.AddChild(timeContainer);
 
 			// we can only reslice on 64 bit, because in 64 bit we always have the gcode loaded
-			if (IntPtr.Size == 8 || ApplicationController.Instance.Allow32BitReSlice)
+			if ((IntPtr.Size == 8 || ApplicationController.Instance.Allow32BitReSlice)
+					// Reslice is not applicable on standalone gcode files
+					&& !printer.Bed.EditContext.FreezeGCode)
 			{
 				var resliceButton = new ThemedTextButton("Re-Slice", theme)
 				{

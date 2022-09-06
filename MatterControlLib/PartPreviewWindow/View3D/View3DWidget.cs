@@ -2166,7 +2166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sceneContext.Scene.UndoBuffer.ClearHistory();
 			}
 			else
-            {
+			{
 				this.SelectAll();
 				SceneActions.DeleteSelection(Scene);
 			}

@@ -335,8 +335,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UiThread.RunOnIdle(async () =>
 				{
-					// Save any pending changes before starting print operation
-					await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
+					// For non-gcode files, save pending changes before starting print operation
+					if (!printer.Bed.EditContext.IsGGCodeSource)
+					{
+						await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
+					}
 
 					await ApplicationController.Instance.PrintPart(
 						printer.Bed.EditContext,
