@@ -4,3 +4,6 @@
 [submodule "Submodules/agg-sharp"]
 	path = Submodules/agg-sharp
 	url = https://github.com/MatterHackers/agg-sharp.git
+[submodule "Submodules/agg-sharp/glfw-net"]
+	path = Submodules/agg-sharp/glfw-net
+	url = https://github.com/MatterHackers/glfw-net.git
