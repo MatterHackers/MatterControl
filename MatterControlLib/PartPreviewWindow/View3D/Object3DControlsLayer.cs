@@ -1141,13 +1141,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			var renderBedTransparent = !floorDrawable.LookingDownOnBed || floorDrawable.SelectedObjectUnderBed;
-
-			if (renderBedTransparent)
-			{
-				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
-			}
-
 			var wireColor = Color.Transparent;
 			switch (modelRenderStyle)
 			{
@@ -1170,30 +1163,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			// Draw transparent objects
-			foreach (var item in transparentMeshes)
+            void DrawTransparentMeshes(bool aboveBed)
 			{
-				GL.Enable(EnableCap.Lighting);
+				foreach (var item in transparentMeshes)
+				{
+					if (aboveBed && item.Object3D.GetAxisAlignedBoundingBox().Center.Z <= 0
+						|| (!aboveBed && item.Object3D.GetAxisAlignedBoundingBox().Center.Z > 0))
+					{
+						continue;
+					}
 
-				var object3D = item.Object3D;
-				GLHelper.Render(
-					object3D.Mesh,
-					item.Color,
-					object3D.WorldMatrix(),
-					RenderTypes.Outlines,
-					object3D.WorldMatrix() * World.ModelviewMatrix,
-					wireColor,
-					allowBspRendering: transparentMeshes.Count < 1000,
-					forceCullBackFaces: false);
+					GL.Enable(EnableCap.Lighting);
+
+					var object3D = item.Object3D;
+					GLHelper.Render(
+						object3D.Mesh,
+						item.Color,
+						object3D.WorldMatrix(),
+						RenderTypes.Outlines,
+						object3D.WorldMatrix() * World.ModelviewMatrix,
+						wireColor,
+						allowBspRendering: transparentMeshes.Count < 1000,
+						forceCullBackFaces: false);
+				}
 			}
 
-			if (!renderBedTransparent)
+            // Draw transparent objects
+            if (floorDrawable.LookingDownOnBed)
 			{
-				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
-			}
+				DrawTransparentMeshes(false);
+                floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
+				DrawTransparentMeshes(true);
+            }
+            else
+			{
+                DrawTransparentMeshes(true);
+                floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
+                DrawTransparentMeshes(false);
+            }
 
-			// Draw the editor items in the same scope as the 3D Controls
-			foreach (var item in editorDrawItems)
+            // Draw the editor items in the same scope as the 3D Controls
+            foreach (var item in editorDrawItems)
 			{
 				// Invoke existing IEditorDraw when iterating items
 				if (item is IEditorDraw editorDraw)
@@ -1203,16 +1213,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			DrawObject3DControlVolumes(e);
+            
+            // draw everything 
+            foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent))
+            {
+                if (drawable.Enabled)
+                {
+                    drawable.Draw(this, e, Matrix4X4.Identity, this.World);
+                }
+            }
 
-			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent))
-			{
-				if (drawable.Enabled)
-				{
-					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
-				}
-			}
-
-			GLHelper.UnsetGlContext();
+            GLHelper.UnsetGlContext();
 
 			// Invoke DrawStage.Last item drawables
 			foreach (var item in scene.Children)
