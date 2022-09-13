@@ -249,21 +249,21 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				"Date Created".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.CreatedDate),
 				(v) => libraryView.ActiveSort = SortKey.CreatedDate,
-				useRadioStyle: true,
+				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Date Modified".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.ModifiedDate),
 				(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
-				useRadioStyle: true,
+				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Name".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.Name),
 				(v) => libraryView.ActiveSort = SortKey.Name,
-				useRadioStyle: true,
+				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateSeparator();
@@ -274,14 +274,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				"Ascending".Localize(),
 				() => libraryView.Ascending,
 				(v) => libraryView.Ascending = true,
-				useRadioStyle: true,
+				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Descending".Localize(),
 				() => !libraryView.Ascending,
 				(v) => libraryView.Ascending = false,
-				useRadioStyle: true,
+				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			return popupMenu;
@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 						listView.ListContentView = new RowListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
-					useRadioStyle: true,
+					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
 #if DEBUG
 				popupMenu.CreateBoolMenuItem(
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 						listView.ListContentView = new IconListView(theme, 18);
 						listView.Reload().ConfigureAwait(false);
 					},
-					useRadioStyle: true,
+					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 						listView.ListContentView = new IconListView(theme, 70);
 						listView.Reload().ConfigureAwait(false);
 					},
-					useRadioStyle: true,
+					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
 #endif
 				popupMenu.CreateBoolMenuItem(
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 						listView.ListContentView = new IconListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
-					useRadioStyle: true,
+					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 						listView.ListContentView = new IconListView(theme, 256);
 						listView.Reload().ConfigureAwait(false);
 					},
-					useRadioStyle: true,
+					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
 
 				return popupMenu;
@@ -881,7 +881,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			});
 
 			menuActions.Add(new MenuSeparator("Rename"));
-	
+
 			// rename menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
@@ -1072,7 +1072,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
             {
 				return true;
             }
-		
+
 			return false;
 		}
 
