@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string CollectionKeyName { get; set; }
 
-		public Type DefaultView { get; protected set; }
+		public Type ViewOverride { get; protected set; }
 
 		public SafeList<ILibraryContainerLink> ChildContainers { get; set; } = new SafeList<ILibraryContainerLink>();
 

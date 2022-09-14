@@ -30,8 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Markdig.Agg;
 using MatterHackers.Agg;
@@ -39,9 +41,12 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
+using static MatterHackers.MatterControl.CustomWidgets.LibraryListView;
+using static MatterHackers.MatterControl.Library.Widgets.PrintLibraryWidget;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -126,12 +131,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var activeContainer = e.ActiveContainer;
 
-			// Anytime the container changes,
-			Type targetType = activeContainer?.DefaultView;
-			if (targetType != null
+			if (activeContainer.DefaultSort != null)
+			{
+				this.ActiveSort = activeContainer.DefaultSort.SortKey;
+				this.Ascending = activeContainer.DefaultSort.Ascending;
+			}
+
+			// If a container level view override is active, but the container is not, restore the original view
+			if (stashedContentView != null
+				&& activeContainer.ViewOverride == null)
+			{
+				// Switch back to the original view
+				stashedContentView.ClearRemovedFlag();
+				this.ListContentView = stashedContentView;
+				stashedContentView = null;
+			}
+
+			if (activeContainer?.ViewOverride is Type targetType
 				&& targetType != this.ListContentView.GetType())
 			{
-				// If no original view is stored in stashedContentView then store a reference before the switch
+				// Stash the active view while the container level override is in place
 				if (stashedContentView == null)
 				{
 					stashedContentView = this.ListContentView;
@@ -143,35 +162,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.ListContentView = targetView;
 				}
 			}
-			else if (stashedContentView != null)
+			else if (activeContainer.GetUserView() is LibraryViewState userView)
 			{
-				// Switch back to the original view
-				stashedContentView.ClearRemovedFlag();
-				this.ListContentView = stashedContentView;
-				stashedContentView = null;
-			}
-
-			if (activeContainer.DefaultSort != null)
-			{
-				if (stashedSortOrder == null)
+				if (userView.ViewMode != ApplicationController.Instance.ViewState.LibraryViewMode)
 				{
-					stashedSortOrder = new LibrarySortBehavior()
-					{
-						SortKey = this.ActiveSort,
-						Ascending = this.Ascending
-					};
+					this.SetContentView(userView.ViewMode, userDriven: false);
 				}
 
-				this.ActiveSort = activeContainer.DefaultSort.SortKey;
-				this.Ascending = activeContainer.DefaultSort.Ascending;
-			}
-			else if (stashedSortOrder != null
-				&& (stashedSortOrder.SortKey != this.ActiveSort
-				|| stashedSortOrder.Ascending != this.Ascending))
-			{
-				this.ActiveSort = stashedSortOrder.SortKey;
-				this.Ascending = stashedSortOrder.Ascending;
-				stashedSortOrder = null;
+				this.ActiveSort = userView.SortBehavior.SortKey;
+				this.Ascending = userView.SortBehavior.Ascending;
 			}
 
 			await DisplayContainerContent(activeContainer);
@@ -192,7 +191,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public IEnumerable<ListViewItem> Items => items;
 
 		private SortKey _activeSort = SortKey.Name;
-		private LibrarySortBehavior stashedSortOrder;
 
 		public SortKey ActiveSort
 		{
@@ -223,6 +221,71 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.ApplySort();
 				}
 			}
+		}
+
+		public void SetUserSort(SortKey sortKey)
+		{
+			this.ActiveSort = sortKey;
+			this.PersistUserView();
+		}
+
+		public void SetUserSort(bool ascending)
+		{
+			this.Ascending = true;
+			this.PersistUserView();
+		}
+
+		public void SetContentView(PrintLibraryWidget.ListViewModes viewMode, bool userDriven = true)
+		{
+			ApplicationController.Instance.ViewState.LibraryViewMode = viewMode;
+
+			switch (viewMode)
+			{
+				case PrintLibraryWidget.ListViewModes.RowListView:
+					this.ListContentView = new RowListView(theme);
+					break;
+
+				case PrintLibraryWidget.ListViewModes.IconListView18:
+					this.ListContentView = new IconListView(theme, 18);
+					break;
+
+				case PrintLibraryWidget.ListViewModes.IconListView70:
+					this.ListContentView = new IconListView(theme, 70);
+					break;
+
+				case PrintLibraryWidget.ListViewModes.IconListView256:
+					this.ListContentView = new IconListView(theme, 256);
+					break;
+
+				case PrintLibraryWidget.ListViewModes.IconListView:
+				default:
+					if (viewMode != PrintLibraryWidget.ListViewModes.IconListView)
+					{
+						Debugger.Break(); // Unknown/unexpected value
+					}
+
+					this.ListContentView = new IconListView(theme);
+					break;
+			}
+
+			if (userDriven)
+			{
+				this.PersistUserView();
+				this.Reload().ConfigureAwait(false);
+			}
+		}
+
+		public void PersistUserView()
+		{
+			this.ActiveContainer.PersistUserView(new LibraryViewState()
+			{
+				ViewMode = ApplicationController.Instance.ViewState.LibraryViewMode,
+				SortBehavior = new LibrarySortBehavior()
+				{
+					SortKey = _activeSort,
+					Ascending = _ascending,
+				}
+			});
 		}
 
 		private void ApplySort()
