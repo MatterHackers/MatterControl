@@ -41,6 +41,7 @@ using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
@@ -72,7 +73,13 @@ namespace MatterHackers.MatterControl
 
 		private RunningInterval checkForSceneLayer;
 		private object locker = new object();
-		private ulong undoBufferHashCode = 0;
+        private ulong undoBufferHashCode = ulong.MaxValue;
+        private int sceneChildrenCount = 0;
+
+        public void StartingNewPrint()
+		{
+			undoBufferHashCode = ulong.MaxValue;
+        }
 
 		private PrinterSettingsLayer GetSceneLayer()
 		{
@@ -83,7 +90,8 @@ namespace MatterHackers.MatterControl
 
                 if (sceneOverrides != null
                     && undoBuffer != null
-                    && undoBufferHashCode == undoBuffer.GetLongHashCode())
+                    && undoBufferHashCode == undoBuffer.GetLongHashCode()
+                    && sceneChildrenCount == scene.Children.Count)
                 {
 					return sceneOverrides;
                 }
@@ -168,8 +176,10 @@ namespace MatterHackers.MatterControl
 				if (undoBuffer != null)
 				{
 					undoBufferHashCode = undoBuffer.GetLongHashCode();
-				}
-				return sceneOverrides;
+                }
+                
+                sceneChildrenCount = scene.Children.Count;
+                return sceneOverrides;
 			}
 
 			return null;
