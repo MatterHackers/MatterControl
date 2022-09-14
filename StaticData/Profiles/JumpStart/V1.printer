@@ -175,7 +175,7 @@
     "z_offset": "0",
     "make": "JumpStart",
     "model": "V1",
-    "created_date": "7/19/2016 7:54:58 PM",
+    "created_date": "2021-02-17T22:35:40.341Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -183,11 +183,10 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "a9cf9cf2-53f9-4f8c-aec1-ad8796b4fc67",
       "first_layer_temperature": "205",
       "temperature": "205"
