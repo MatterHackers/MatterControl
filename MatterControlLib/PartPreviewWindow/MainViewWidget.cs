@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Store tab
 			tabControl.AddTab(
-				tab = new ChromeTab("Store", "Resources".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
+				tab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Store Tab",
