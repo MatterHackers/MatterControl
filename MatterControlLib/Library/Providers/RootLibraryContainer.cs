@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer Parent { get; set; } = null;
 
-		public Type DefaultView { get; } = null;
+		public Type ViewOverride { get; } = null;
 
 		public string ID { get; } = "rootLibraryProvider";
 

@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl.Library
 
 		LibrarySortBehavior DefaultSort { get; }
 
-		Type DefaultView { get; }
+		/// <summary>
+		/// Allows a container to override defaults and user preferences, to display a custom view type when constructed
+		/// </summary>
+		Type ViewOverride { get; }
 
 		string ID { get; }
 

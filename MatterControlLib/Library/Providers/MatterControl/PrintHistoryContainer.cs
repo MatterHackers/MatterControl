@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Items = new SafeList<ILibraryItem>();
 			this.Name = "Print History".Localize();
-			this.DefaultView = typeof(HistoryListView);
+			this.ViewOverride = typeof(HistoryListView);
 
 			PrintHistoryData.Instance.HistoryCleared.RegisterEvent(HistoryChanged, ref unregisterEvents);
 			ApplicationController.Instance.AnyPrintStarted += HistoryChanged;

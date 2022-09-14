@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 
 		public bool IsProtected => _libraryContainer.IsProtected;
 
-		public Type DefaultView => _libraryContainer.DefaultView;
+		public Type ViewOverride => _libraryContainer.ViewOverride;
 
 		public SafeList<ILibraryContainerLink> ChildContainers => new SafeList<ILibraryContainerLink>(this.ExtraContainers.Concat(_libraryContainer.ChildContainers));
 
