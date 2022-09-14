@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
@@ -50,8 +51,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private GuiWidget sectionSelectButtons;
 		private GuiWidget contentSection;
         private bool loaded;
+		private int buttonPressedAlpha => 40;
+		private int buttonBackgroundAlpha => 5;
 
-        public ExplorePanel(ThemeConfig theme, string relativeUrl)
+		public ExplorePanel(ThemeConfig theme, string relativeUrl, bool addUnderline = false)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.relativeUrl = relativeUrl;
@@ -70,6 +73,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Proportional = true,
 				Name = "Select Buttons"
 			});
+			
+			if (addUnderline)
+			{
+				this.AddChild(new HorizontalLine());
+			}
+            
 			contentSection = this.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch, VAnchor = VAnchor.Fit });
 		}
 
@@ -121,8 +130,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			});
 		}
 
+		private void ButtonSelected(object s, EventArgs e)
+		{
+			foreach (var button in sectionSelectButtons.Descendants<ThemedButton>())
+			{
+				if (button == s)
+				{
+					button.BackgroundColor = button.HoverColor.WithAlpha(buttonPressedAlpha);
+				}
+				else
+				{
+					button.BackgroundColor = button.HoverColor.WithAlpha(buttonBackgroundAlpha);
+				}
+			}
+		}
 
-		private void AddContentItem(ThemeConfig theme, FeedSectionData content)
+
+        private void AddContentItem(ThemeConfig theme, FeedSectionData content)
 		{
 			switch (content.content_type)
 			{
@@ -223,7 +247,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						// add the article group button to the button group
 						// add a content section connected to the button
 						var sectionButton = new ThemedTextButton(content.group_title, theme);
-						sectionSelectButtons.AddChild(sectionButton);
+						sectionButton.BackgroundColor = sectionButton.HoverColor.WithAlpha(buttonBackgroundAlpha);
+						sectionButton.Click += ButtonSelected;
+                        sectionSelectButtons.AddChild(sectionButton);
 						var articleSection = new ArticleSection(content, theme)
 						{
 							Visible = false,
@@ -244,7 +270,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					{
 						var sectionButton = new ThemedTextButton(content.group_title, theme);
 						sectionSelectButtons.AddChild(sectionButton);
-						var exploreSection = new ProductSection(content, theme)
+                        sectionButton.BackgroundColor = sectionButton.HoverColor.WithAlpha(buttonPressedAlpha);
+                        sectionButton.Click += ButtonSelected;
+                        var exploreSection = new ProductSection(content, theme)
                         {
 							Name = content.group_title
 						};

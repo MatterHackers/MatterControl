@@ -4939,6 +4939,9 @@ Translated:Stop
 English:Stop trying to connect to the printer.
 Translated:Stop trying to connect to the printer.
 
+English:Store
+Translated:Store
+
 English:Stretch X
 Translated:Stretch X
 

@@ -34,22 +34,28 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-    public class ArticleSection : FlowLeftRightWithWrapping
+    public class ArticleSection : FlowLayoutWidget
 	{
 		private List<ArticleItem> allIconViews = new List<ArticleItem>();
 		private FeedSectionData content;
 		private ThemeConfig theme;
 		int maxStuff = 20;
+		private FlowLeftRightWithWrapping wrappingContent;
 
-		public ArticleSection(FeedSectionData content, ThemeConfig theme)
-		{
-			Proportional = true;
-			VAnchor = VAnchor.Fit | VAnchor.Top;
-			this.content = content;
+        public ArticleSection(FeedSectionData content, ThemeConfig theme)
+            : base(FlowDirection.TopToBottom)
+        {
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			wrappingContent = new FlowLeftRightWithWrapping();
+            wrappingContent.Proportional = true;
+            wrappingContent.VAnchor = VAnchor.Fit;
+			wrappingContent.HAnchor = HAnchor.Stretch;
+            this.AddChild(wrappingContent);
+            this.content = content;
 			this.theme = theme;
 
 			var cultureInfo = new CultureInfo("en-US");
@@ -74,12 +80,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			// Remove items and Children (this happens if the feed is different than the inital cach after being retrieved)
 			foreach (var iconView in allIconViews)
 			{
-				if (this.Children.Contains(iconView))
+				if (wrappingContent.Children.Contains(iconView))
 				{
-					this.RemoveChild(iconView);
+                    wrappingContent.RemoveChild(iconView);
 				}
 			}
-			this.CloseChildren();
+
+            wrappingContent.CloseChildren();
 
 			int i = 0;
 			foreach (var iconView in allIconViews)
@@ -88,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					iconView.ClearRemovedFlag();
 					iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
-					this.AddChild(iconView);
+                    wrappingContent.AddChild(iconView);
 				}
 				i++;
 			}
@@ -99,6 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					BackgroundColor = theme.MinimalShade,
 					Margin = new BorderDouble(right: leftRightMargin),
+                    HAnchor = HAnchor.Left
 				};
 				moreButton.Click += (s, e1) =>
 				{
@@ -119,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					}
 				};
 
-				this.AddChild(moreButton);
+                this.AddChild(moreButton);
 			}
 		}
 	}
