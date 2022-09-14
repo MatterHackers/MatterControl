@@ -2014,37 +2014,39 @@ namespace MatterHackers.MatterControl
 			leftChild.Padding = new BorderDouble(padding.Left, padding.Bottom, sourceExentionArea.Width, padding.Height);
 		}
 
-		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, PrinterConnection.PrintingModes printingMode)
+		public async Task PrintPart(EditContext editContext, PrinterConfig printerConfig, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, PrinterConnection.PrintingModes printingMode)
 		{
 			var partFilePath = editContext.SourceFilePath;
-			var gcodeFilePath = await editContext.GCodeFilePath(printer);
+			var gcodeFilePath = await editContext.GCodeFilePath(printerConfig);
 			var printItemName = editContext.SourceItem.Name;
 
-			// Exit if called in a non-applicable state
-			if (printer.Connection.CommunicationState != CommunicationStates.Connected
-				&& printer.Connection.CommunicationState != CommunicationStates.FinishedPrint)
+			printerConfig.StartingNewPrint();
+
+            // Exit if called in a non-applicable state
+            if (printerConfig.Connection.CommunicationState != CommunicationStates.Connected
+				&& printerConfig.Connection.CommunicationState != CommunicationStates.FinishedPrint)
 			{
 				return;
 			}
 
 			try
 			{
-				if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
+				if (PrinterCalibrationWizard.SetupRequired(printerConfig, requiresLoadedFilament: true))
 				{
 					UiThread.RunOnIdle(() =>
 					{
 						DialogWindow.Show(
-							new PrinterCalibrationWizard(printer, AppContext.Theme),
+							new PrinterCalibrationWizard(printerConfig, AppContext.Theme),
 							advanceToIncompleteStage: true);
 					});
 
 					return;
 				}
 
-				printer.Connection.PrintingItemName = printItemName;
+				printerConfig.Connection.PrintingItemName = printItemName;
 
 				var errors = new List<ValidationError>();
-				printer.ValidateSettings(errors, validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
+				printerConfig.ValidateSettings(errors, validatePrintBed: !printerConfig.Bed.EditContext.IsGGCodeSource);
 				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
 					this.ShowValidationErrors("Validation Error".Localize(), errors);
@@ -2052,7 +2054,7 @@ namespace MatterHackers.MatterControl
 				else // there are no errors continue printing
 				{
 					// clear the output cache prior to starting a print
-					printer.Connection.TerminalLog.Clear();
+					printerConfig.Connection.TerminalLog.Clear();
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
@@ -2085,8 +2087,8 @@ namespace MatterHackers.MatterControl
 									{
 										if (messageBoxResponse)
 										{
-											printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer, printingMode);
+											printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printerConfig, printingMode);
 										}
 									},
 									"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
@@ -2100,28 +2102,28 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer, printingMode);
+							printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printerConfig, printingMode);
 						}
 					}
 					else
 					{
-						printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+						printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 
 						(bool slicingSucceeded, string finalPath) = await this.SliceItemLoadOutput(
-							printer,
-							printer.Bed.Scene,
+							printerConfig,
+							printerConfig.Bed.Scene,
 							gcodeFilePath);
 
 						// Only start print if slicing completed
 						if (slicingSucceeded)
 						{
-							this.ArchiveAndStartPrint(partFilePath, finalPath, printer, printingMode);
+							this.ArchiveAndStartPrint(partFilePath, finalPath, printerConfig, printingMode);
 						}
 						else
 						{
 							// TODO: Need to reset printing state? This seems like I shouldn't own this indicator
-							printer.Connection.CommunicationState = CommunicationStates.Connected;
+							printerConfig.Connection.CommunicationState = CommunicationStates.Connected;
 						}
 					}
 				}
