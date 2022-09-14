@@ -248,21 +248,21 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			popupMenu.CreateBoolMenuItem(
 				"Date Created".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.CreatedDate),
-				(v) => libraryView.ActiveSort = SortKey.CreatedDate,
+				(v) => libraryView.SetUserSort(SortKey.CreatedDate),
 				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Date Modified".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.ModifiedDate),
-				(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
+				(v) => libraryView.SetUserSort(SortKey.ModifiedDate),
 				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Name".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.Name),
-				(v) => libraryView.ActiveSort = SortKey.Name,
+				(v) => libraryView.SetUserSort(SortKey.Name),
 				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
@@ -273,14 +273,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			popupMenu.CreateBoolMenuItem(
 				"Ascending".Localize(),
 				() => libraryView.Ascending,
-				(v) => libraryView.Ascending = true,
+				(v) => libraryView.SetUserSort(ascending: true),
 				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Descending".Localize(),
 				() => !libraryView.Ascending,
-				(v) => libraryView.Ascending = false,
+				(v) => libraryView.SetUserSort(ascending: false),
 				useRadioStyle: false,
 				siblingRadioButtonList: siblingList);
 
@@ -325,11 +325,8 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				popupMenu.CreateBoolMenuItem(
 					"View List".Localize(),
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.RowListView,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.RowListView;
-						listView.ListContentView = new RowListView(theme);
-						listView.Reload().ConfigureAwait(false);
+					(isChecked) => {
+						listView.SetContentView(ListViewModes.RowListView);
 					},
 					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
@@ -339,9 +336,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView18,
 					(isChecked) =>
 					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView18;
-						listView.ListContentView = new IconListView(theme, 18);
-						listView.Reload().ConfigureAwait(false);
+						listView.SetContentView(ListViewModes.IconListView18);
 					},
 					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
@@ -351,9 +346,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView70,
 					(isChecked) =>
 					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView70;
-						listView.ListContentView = new IconListView(theme, 70);
-						listView.Reload().ConfigureAwait(false);
+						listView.SetContentView(ListViewModes.IconListView70);
 					},
 					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
@@ -363,9 +356,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView,
 					(isChecked) =>
 					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView;
-						listView.ListContentView = new IconListView(theme);
-						listView.Reload().ConfigureAwait(false);
+						listView.SetContentView(ListViewModes.IconListView);
 					},
 					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);
@@ -375,9 +366,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView256,
 					(isChecked) =>
 					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView256;
-						listView.ListContentView = new IconListView(theme, 256);
-						listView.Reload().ConfigureAwait(false);
+						listView.SetContentView(ListViewModes.IconListView256);
 					},
 					useRadioStyle: false,
 					siblingRadioButtonList: siblingList);

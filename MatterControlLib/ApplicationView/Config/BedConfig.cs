@@ -682,7 +682,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					// we need to ask for a destination			
+					// we need to ask for a destination
 					DialogWindow.Show(
 						new SaveAsPage(
 							(container, newName) =>

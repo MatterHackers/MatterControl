@@ -30,13 +30,18 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
 {
-    public static class LibraryExtensionMethods
+	public static class LibraryExtensionMethods
 	{
 		public static async Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{
@@ -124,6 +129,52 @@ namespace MatterHackers.MatterControl.Library
 				yield return container;
 				container = container.Parent;
 			}
+		}
+
+		public static string GetPath(this ILibraryContainer currentContainer)
+		{
+			return string.Join("/", currentContainer.AncestorsAndSelf().Reverse().Select(c => c.Name));
+		}
+
+		private static string GetDBKey(ILibraryContainer activeContainer)
+		{
+			var idFromPath = activeContainer.GetPath();
+
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(idFromPath)))
+			{
+				var sha1 = HashGenerator.ComputeSHA1(stream);
+				return $"library-{sha1}";
+			}
+		}
+
+		public static LibraryViewState GetUserView(this ILibraryContainer currentContainer)
+		{
+			string dbKey = GetDBKey(currentContainer);
+
+			try
+			{
+				string storedJson = UserSettings.Instance.get(dbKey);
+				if (!string.IsNullOrWhiteSpace(storedJson))
+				{
+					return JsonConvert.DeserializeObject<LibraryViewState>(storedJson);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error loading view {currentContainer.Name}: {ex.Message}");
+			}
+
+			return null;
+		}
+
+		public static void PersistUserView(this ILibraryContainer currentContainer, LibraryViewState userView)
+		{
+			string dbKey = GetDBKey(currentContainer);
+
+			// Store
+			string json = JsonConvert.SerializeObject(userView);
+
+			UserSettings.Instance.set(dbKey, json);
 		}
 
 		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
