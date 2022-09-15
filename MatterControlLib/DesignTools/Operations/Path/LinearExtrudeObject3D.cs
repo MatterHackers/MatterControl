@@ -158,13 +158,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					if (BevelTop)
 					{
 						bevel = new List<(double height, double inset)>();
-						for (int i = 0; i < bevelSteps; i++)
+                        for (int i = 0; i < bevelSteps; i++)
 						{
 							var heightRatio = i / (double)bevelSteps;
-							height = heightRatio * (height - bevelStart) + bevelStart;
+                            var height2 = heightRatio * (height - bevelStart) + bevelStart;
 							var insetRatio = (i + 1) / (double)bevelSteps;
 							var inset = Easing.Sinusoidal.In(insetRatio) * -bevelInset;
-							bevel.Add((height, inset));
+							bevel.Add((height2, inset));
 						}
 					}
 #endif

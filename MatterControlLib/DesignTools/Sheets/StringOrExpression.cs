@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string Value(IObject3D owner)
 		{
 			var rebuilding = owner.RebuildLocked;
-			var value = SheetObject3D.EvaluateExpression<string>(owner, GetExpression(rebuilding));
+			var value = SheetObject3D.EvaluateExpression<string>(owner, Expression);
 			if (rebuilding)
 			{
 				ExpressionValueAtLastRebuild = value.ToString();

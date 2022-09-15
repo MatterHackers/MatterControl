@@ -41,51 +41,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				internalGet = true;
 				var value = Expression.Length > 0 && Expression[0] == '=';
-				internalGet = false;
 				return value;
 			}
 		}
 
 		public string ExpressionValueAtLastRebuild { get; set; } = "";
 
-		private bool internalGet = false;
-		private string _expression;
-        
-		public string Expression
-		{
-			private get
-			{
-				if (!internalGet)
-				{
-					throw new Exception("All get accessing should run through GetExpression rather than direct");
-				}
-				return _expression;
-			}
-            
-			set => _expression = value;
-		}
+		public string Expression { get; set; }
 
 		public override string ToString() => Expression;
-
-		public string GetExpression(bool rebuilding)
-		{
-			internalGet = true;
-			var expression = "";
-			try
-			{
-				if (rebuilding)
-				{
-					ExpressionValueAtLastRebuild = Expression;
-				}
-
-				expression = Expression;
-			}
-			catch { }
-            
-			internalGet = false;
-			return expression;
-		}
 	}
 }
