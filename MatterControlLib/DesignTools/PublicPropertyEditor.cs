@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var oldValue = "";
 					if (property.Value is DirectOrExpression directOrExpression)
 					{
-						oldValue = directOrExpression.GetExpression(false);
+						oldValue = directOrExpression.Expression;
 					}
 					else
 					{
@@ -839,9 +839,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				if (doubleExpresion.GetExpression(false).Contains("="))
+				if (doubleExpresion.Expression.Contains("="))
 				{
-					field.SetValue(doubleExpresion.GetExpression(false), false);
+					field.SetValue(doubleExpresion.Expression, false);
 				}
 				else // make sure it is formatted
 				{
@@ -863,7 +863,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					},
 					(value) =>
 					{
-						return ((DoubleOrExpression)value).GetExpression(false);
+						return ((DoubleOrExpression)value).Expression;
 					});
 
 				rowContainer = CreateSettingsRow(property,
@@ -884,9 +884,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
-							if (newValue.GetExpression(false).StartsWith("="))
+							if (newValue.Expression.StartsWith("="))
 							{
-								field.TextValue = newValue.GetExpression(false);
+								field.TextValue = newValue.Expression;
 							}
 							else
 							{
@@ -914,9 +914,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					Name = property.DisplayName + " Field"
 				};
 				field.Initialize(0);
-				if (intExpresion.GetExpression(false).Contains("="))
+				if (intExpresion.Expression.Contains("="))
 				{
-					field.SetValue(intExpresion.GetExpression(false), false);
+					field.SetValue(intExpresion.Expression, false);
 				}
 				else // make sure it is formatted
 				{
@@ -938,7 +938,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					},
 					(value) =>
 					{
-						return ((IntOrExpression)value).GetExpression(false);
+						return ((IntOrExpression)value).Expression;
 					});
 
 				rowContainer = CreateSettingsRow(property,
@@ -959,9 +959,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if (newValue.Expression != field.Value)
 						{
 							// we should never be in the situation where there is an '=' as the in scene controls should be disabled
-							if (newValue.GetExpression(false).StartsWith("="))
+							if (newValue.Expression.StartsWith("="))
 							{
-								field.TextValue = newValue.GetExpression(false);
+								field.TextValue = newValue.Expression;
 							}
 							else
 							{
@@ -1106,7 +1106,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// create a a multi-line string editor
 					var field = new MultilineStringField(theme);
 					field.Initialize(0);
-					field.SetValue(stringOrExpression.GetExpression(false), false);
+					field.SetValue(stringOrExpression.Expression, false);
 					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
 					field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
@@ -1117,7 +1117,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
-							return ((StringOrExpression)value).GetExpression(false);
+							return ((StringOrExpression)value).Expression;
 						});
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}
@@ -1126,14 +1126,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					// create a string editor
 					var field = new TextField(theme);
 					field.Initialize(0);
-					field.SetValue(stringOrExpression.GetExpression(false), false);
+					field.SetValue(stringOrExpression.Expression, false);
 					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
 					RegisterValueChanged(field,
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
-							return ((StringOrExpression)value).GetExpression(false);
+							return ((StringOrExpression)value).Expression;
 						});
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}

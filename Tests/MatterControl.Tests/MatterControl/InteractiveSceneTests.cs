@@ -40,6 +40,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -381,6 +382,22 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
+        [Test, Category("InteractiveScene")]
+        public async Task CopyObjectTests()
+        {
+            StartupMC();
+
+            // Copying an object copies the internal state correctly
+            {
+                var cubeA1 = await CubeObject3D.Create(10, 20, 20);
+
+				var copy = cubeA1.Clone() as CubeObject3D;
+
+                Assert.AreEqual(10, copy.Width.Expression, "10");
+                Assert.AreEqual(10, copy.GetAxisAlignedBoundingBox().XSize, .001);
+            }
+        }
+        
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{

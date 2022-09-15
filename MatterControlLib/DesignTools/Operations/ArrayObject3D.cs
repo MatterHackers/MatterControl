@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					foreach (var expression in SheetObject3D.GetActiveExpressions(item, expansion.key, false))
 					{
-						var expressionValue = expression.GetExpression(this.RebuildLocked);
+						var expressionValue = expression.Expression;
 						expression.Expression = expressionValue.Replace(expansion.key, SheetObject3D.RetrieveArrayIndex(item, expansion.index).ToString());
 					}
 

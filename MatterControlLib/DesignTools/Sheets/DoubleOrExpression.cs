@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public double Value(IObject3D owner)
 		{
-			var value = SheetObject3D.EvaluateExpression<double>(owner, GetExpression(owner.RebuildLocked));
+			var value = SheetObject3D.EvaluateExpression<double>(owner, Expression);
 			if (owner.RebuildLocked)
             {
                 ExpressionValueAtLastRebuild = value.ToString();

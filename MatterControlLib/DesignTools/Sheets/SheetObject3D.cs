@@ -596,7 +596,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (startsWith)
 					{
-						if (directOrExpression.GetExpression(false).StartsWith(checkForString))
+						if (directOrExpression.Expression.StartsWith(checkForString))
 						{
 							// WIP: check if the value has actually changed, this will update every object on any cell change
 							yield return directOrExpression;
@@ -604,7 +604,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else
 					{
-						if(directOrExpression.GetExpression(false).Contains(checkForString))
+						if(directOrExpression.Expression.Contains(checkForString))
                         {
 							yield return directOrExpression;
 						}
