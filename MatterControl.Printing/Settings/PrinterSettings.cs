@@ -1317,6 +1317,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				layerCascade = DefaultLayerCascade;
 			}
 
+			if (settingsKey == "external_perimeters_first")
+			{
+				var a = 0;
+			}
+
 			string settingsValue = null;
 
 			foreach (PrinterSettingsLayer layer in layerCascade)

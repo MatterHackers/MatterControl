@@ -57,10 +57,10 @@ namespace MatterHackers.MatterControl
 		private double heatDistance = 0;
 		private double heatStart = 0;
 
-		private PrinterConfig()
+        // Hide the default constructor
+        private PrinterConfig()
 		{
-			this.Connection = new PrinterConnection(this);
-		}
+        }
 
 		public bool PrintButtonEnabled()
 		{
@@ -71,37 +71,39 @@ namespace MatterHackers.MatterControl
 
 		private PrinterSettingsLayer sceneOverrides = new PrinterSettingsLayer();
 
-		private RunningInterval checkForSceneLayer;
 		private object locker = new object();
         private ulong undoBufferHashCode = ulong.MaxValue;
         private int sceneChildrenCount = 0;
+		private RunningInterval sceneLayerUpdateInterval;
 
-        public void StartingNewPrint()
+		/// <summary>
+		/// Make sure any settings object that has been added to the scene is processed right away
+		/// </summary>
+		public void ForceSceneSettingsUpdate()
 		{
-			undoBufferHashCode = ulong.MaxValue;
+            undoBufferHashCode = ulong.MaxValue;
+            UpdateSceneLayer();
         }
 
-		private PrinterSettingsLayer GetSceneLayer()
-		{
+        private void UpdateSceneLayer()
+        {
 			var scene = Bed?.Scene;
 			if (scene != null)
 			{
                 var undoBuffer = scene.UndoBuffer;
 
-                if (sceneOverrides != null
-                    && undoBuffer != null
+                if (scene.Children.Count == 0
+					|| (undoBuffer != null
                     && undoBufferHashCode == undoBuffer.GetLongHashCode()
-                    && sceneChildrenCount == scene.Children.Count)
+                    && sceneChildrenCount == scene.Children.Count))
                 {
-					return sceneOverrides;
+					return;
                 }
 
-                var foundPartSettings = false;
 				var newSceneOverrides = new PrinterSettingsLayer();
 				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
 				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D && c.Parent?.WorldPrintable() == true).OrderBy(i => i.Name))
 				{
-					foundPartSettings = true;
 					var settings = ((PartSettingsObject3D)partSettingsObject).Overrides;
 					foreach (var setting in settings)
 					{
@@ -110,7 +112,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				var same = newSceneOverrides.Count == sceneOverrides.Count && !newSceneOverrides.Except(sceneOverrides).Any();
-				// if settings count and keys the same, check the value of the settings
+				// if settings count and keys are the same, check the value of the settings
 				if (same && sceneOverrides.Count > 0)
 				{
 					// check each setting if it is the same
@@ -126,66 +128,54 @@ namespace MatterHackers.MatterControl
 				// if they are different 
 				if (!same)
                 {
-					var settingsToUpdate = new HashSet<string>();
+                    var settingsToRevert = new PrinterSettingsLayer();
+                    var settingsToSet = new PrinterSettingsLayer();
+
 					foreach (var kvp in sceneOverrides)
 					{
-						settingsToUpdate.Add(kvp.Key);
-					}
+                        if (!newSceneOverrides.ContainsKey(kvp.Key))
+                        {
+                            settingsToRevert[kvp.Key] = kvp.Value;
+                        }
+                    }
+                    
 					foreach (var kvp in newSceneOverrides)
 					{
-						settingsToUpdate.Add(kvp.Key);
-					}
+                        if (newSceneOverrides[kvp.Key] != kvp.Value)
+                        {
+                            settingsToSet[kvp.Key] = newSceneOverrides[kvp.Key];
+                        }
+                    }
 
-					// store that current set
-					sceneOverrides = newSceneOverrides;
+                    // store that current set
+                    sceneOverrides = newSceneOverrides;
 
-					// we are about to update settings but they are stored in the scene not the profile so we don't have to save anything
-					var updateList = settingsToUpdate.ToList();
 					ProfileManager.SaveOnSingleSettingChange = false;
-					for (int i = 0; i < updateList.Count; i++)
-					{
-						Settings.OnSettingChanged(updateList[i]);
-					}
-					ProfileManager.SaveOnSingleSettingChange = true;
-				}
-
-				if (foundPartSettings)
-                {
-					lock (locker)
-					{
-						if (checkForSceneLayer == null)
-						{
-							checkForSceneLayer = UiThread.SetInterval(() =>
-							{
-								GetSceneLayer();
-							}, .5);
-						}
-					}
+					Settings.RestoreConflictingUserOverrides(settingsToRevert);
+                    foreach(var setting in newSceneOverrides)
+                    {
+                        Settings.SetValue(setting.Key, setting.Value, sceneOverrides);
+                    }
+                    ProfileManager.SaveOnSingleSettingChange = true;
+                    ApplicationController.Instance.UpdateAllSettingsStyles(this);
                 }
-				else if (checkForSceneLayer != null)
-                {
-					lock (locker)
-					{
-						// we don't have a scene layer so remove the interval
-						UiThread.ClearInterval(checkForSceneLayer);
-						checkForSceneLayer = null;
-					}
-				}
 
-				// return the current set
-				if (undoBuffer != null)
+                // return the current set
+                if (undoBuffer != null)
 				{
 					undoBufferHashCode = undoBuffer.GetLongHashCode();
                 }
                 
                 sceneChildrenCount = scene.Children.Count;
-                return sceneOverrides;
 			}
-
-			return null;
 		}
 
-		public PrinterConfig(PrinterSettings settings)
+        private PrinterSettingsLayer GetSceneLayer()
+        {
+            return sceneOverrides;
+        }
+
+        public PrinterConfig(PrinterSettings settings)
 		{
 			this.Settings = settings;
 
@@ -211,6 +201,11 @@ namespace MatterHackers.MatterControl
 			this.Bed.InvalidateBedMesh();
 
 			this.Settings.SettingChanged += Printer_SettingChanged;
+
+            sceneLayerUpdateInterval = UiThread.SetInterval(() =>
+            {
+                UpdateSceneLayer();
+            }, .5);
 		}
 
 
@@ -478,8 +473,11 @@ namespace MatterHackers.MatterControl
 
 		public void Dispose()
 		{
-			// Unregister listeners
-			this.Settings.SettingChanged -= Printer_SettingChanged;
+			UiThread.ClearInterval(sceneLayerUpdateInterval);
+			sceneLayerUpdateInterval = null;
+            
+            // Unregister listeners
+            this.Settings.SettingChanged -= Printer_SettingChanged;
 			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.DetailedPrintingStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.PrintFinished -= Connection_PrintFinished;
