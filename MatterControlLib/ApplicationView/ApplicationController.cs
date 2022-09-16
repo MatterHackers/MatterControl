@@ -449,12 +449,25 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler ReloadSettingsTriggered;
 
-		public void ReloadSettings(PrinterConfig printer)
+		public void UpdateAllSettingsStyles(PrinterConfig printer)
 		{
 			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
 			if (printerTabPage != null)
 			{
-				ApplicationController.Instance.IsReloading = true;
+                var sliceSettingsWidget = printerTabPage.Descendants<SliceSettingsWidget>().FirstOrDefault();
+                if (sliceSettingsWidget != null)
+                {
+                    sliceSettingsWidget.UpdateAllStyles();
+                }
+            }
+		}
+
+        public void ReloadSettings(PrinterConfig printer)
+		{
+			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
+			if (printerTabPage != null)
+			{
+				Instance.IsReloading = true;
 				var settingsContext = new SettingsContext(
 						printer,
 						null,
@@ -475,7 +488,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				sideBar.ReplacePage("Slice Settings", new SliceSettingsWidget(printer, settingsContext, Theme));
-				ApplicationController.Instance.IsReloading = false;
+				Instance.IsReloading = false;
 			}
 
 			ReloadSettingsTriggered?.Invoke(null, null);
@@ -1069,13 +1082,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (printer != null || this.ActivePrinters.Count() == 1)
 				{
-					// If unspecified but count is one, select the one active printer
-					if (printer == null)
+                    // If unspecified but count is one, select the one active printer
+                    if (printer == null)
 					{
 						printer = this.ActivePrinters.First();
 					}
 
-					DialogWindow.Show(
+                    printer.ForceSceneSettingsUpdate();
+
+                    DialogWindow.Show(
 						new ExportPrintItemPage(libraryItems, centerOnBed, printer));
 				}
 				else
@@ -2020,7 +2035,7 @@ namespace MatterHackers.MatterControl
 			var gcodeFilePath = await editContext.GCodeFilePath(printerConfig);
 			var printItemName = editContext.SourceItem.Name;
 
-			printerConfig.StartingNewPrint();
+			printerConfig.ForceSceneSettingsUpdate();
 
             // Exit if called in a non-applicable state
             if (printerConfig.Connection.CommunicationState != CommunicationStates.Connected
