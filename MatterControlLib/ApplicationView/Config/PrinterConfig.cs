@@ -92,10 +92,9 @@ namespace MatterHackers.MatterControl
 			{
                 var undoBuffer = scene.UndoBuffer;
 
-                if (scene.Children.Count == 0
-					|| (undoBuffer != null
+                if (undoBuffer != null
                     && undoBufferHashCode == undoBuffer.GetLongHashCode()
-                    && sceneChildrenCount == scene.Children.Count))
+                    && sceneChildrenCount == scene.Children.Count)
                 {
 					return;
                 }
@@ -128,7 +127,8 @@ namespace MatterHackers.MatterControl
 				// if they are different 
 				if (!same)
                 {
-                    var settingsToRevert = new PrinterSettingsLayer();
+                    var settingsToUpdate = new HashSet<string>();
+					var settingsToRevert = new PrinterSettingsLayer();
                     var settingsToSet = new PrinterSettingsLayer();
 
 					foreach (var kvp in sceneOverrides)
@@ -137,6 +137,7 @@ namespace MatterHackers.MatterControl
                         {
                             settingsToRevert[kvp.Key] = kvp.Value;
                         }
+                        settingsToUpdate.Add(kvp.Key);
                     }
                     
 					foreach (var kvp in newSceneOverrides)
@@ -145,16 +146,21 @@ namespace MatterHackers.MatterControl
                         {
                             settingsToSet[kvp.Key] = newSceneOverrides[kvp.Key];
                         }
+                        settingsToUpdate.Add(kvp.Key);
                     }
 
                     // store that current set
-                    sceneOverrides = newSceneOverrides;
-
-					ProfileManager.SaveOnSingleSettingChange = false;
+                    var storeSceneOverrides = new PrinterSettingsLayer();
+                    ProfileManager.SaveOnSingleSettingChange = false;
 					Settings.RestoreConflictingUserOverrides(settingsToRevert);
                     foreach(var setting in newSceneOverrides)
                     {
-                        Settings.SetValue(setting.Key, setting.Value, sceneOverrides);
+                        Settings.SetValue(setting.Key, setting.Value, storeSceneOverrides);
+                    }
+                    sceneOverrides = storeSceneOverrides;
+                    foreach (var setting in settingsToUpdate)
+                    {
+                        Settings.OnSettingChanged(setting);
                     }
                     ProfileManager.SaveOnSingleSettingChange = true;
                     ApplicationController.Instance.UpdateAllSettingsStyles(this);
