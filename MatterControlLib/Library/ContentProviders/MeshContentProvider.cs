@@ -176,9 +176,9 @@ namespace MatterHackers.MatterControl
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
 				object3D = await contentModel.CreateContent();
 			}
-			else if (libraryItem is ILibraryObject3D)
+			else if (libraryItem is ILibraryObject3D libraryObject3D)
 			{
-				object3D = await (libraryItem as ILibraryObject3D)?.GetObject3D(null);
+				object3D = await libraryObject3D.GetObject3D(null);
 			}
 
 			if (object3D == null)
