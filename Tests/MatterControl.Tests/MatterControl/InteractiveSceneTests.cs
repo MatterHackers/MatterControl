@@ -44,6 +44,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -393,7 +394,7 @@ namespace MatterControl.Tests.MatterControl
 
 				var copy = cubeA1.Clone() as CubeObject3D;
 
-                Assert.AreEqual(10, copy.Width.Expression, "10");
+                Assert.AreEqual("10", copy.Width.Expression, "10");
                 Assert.AreEqual(10, copy.GetAxisAlignedBoundingBox().XSize, .001);
             }
         }

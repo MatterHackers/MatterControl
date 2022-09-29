@@ -882,6 +882,9 @@ namespace MatterHackers.MatterControl
 				Icons.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
+			// register legacy types so they still show, they don't have ui to create so they don't have icons set dynamically
+			Icons.Add(typeof(AlignObject3D), (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
+
 			// image operations
 			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
 
@@ -919,7 +922,6 @@ namespace MatterHackers.MatterControl
 			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
 
 			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
-			// Icons.Add(typeof(CubeObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
 		}
 
 		private static SceneOperation CombineOperation()

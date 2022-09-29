@@ -518,13 +518,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					var printer = testRunner.FirstPrinter();
 
-					// Wait for printing to complete
-					var printFinishedResetEvent = new AutoResetEvent(false);
-					printer.Connection.PrintFinished += (s, e) =>
-					{
-						printFinishedResetEvent.Set();
-					};
-
 					testRunner.StartPrint(printer)
 						.ScrollIntoView("Extrusion Multiplier NumberEdit")
 						.ScrollIntoView("Feed Rate NumberEdit");
@@ -552,14 +545,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ResumePrint();
 
-					// Wait up to 60 seconds for the print to finish
-					printFinishedResetEvent.WaitOne(60 * 1000);
+                    // Wait up to 60 seconds for the print to finish
+                    testRunner.WaitForPrintFinished(printer, 60);
 
-					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
+                    // Values should match entered values
+                    ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
-					testRunner.WaitForPrintFinished(printer)
-						.StartPrint(printer) // Restart the print
+					testRunner.StartPrint(printer) // Restart the print
 						.Delay(1);
 
 					// Values should match entered values
