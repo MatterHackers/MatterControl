@@ -588,9 +588,14 @@ namespace MatterHackers.MatterControl
         {
 			try
 			{
-				Process.Start(input);
-			}
-			catch
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(input)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+            catch
 			{
 				// hack because of this: https://github.com/dotnet/corefx/issues/10361
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
