@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl
 
 					if (!string.IsNullOrWhiteSpace(article.Path))
 					{
-						markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path), sourceArticle: article);
+						markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path));
 					}
 					else
 					{
