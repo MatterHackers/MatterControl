@@ -79,6 +79,7 @@
     <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\MarkdigAgg\MarkdigAgg.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
@@ -92,11 +93,11 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.17.1" />
-    <PackageReference Include="CsvHelper" Version="28.0.1" />
+    <PackageReference Include="CsvHelper" Version="29.0.0" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
-    <PackageReference Include="Markdig" Version="0.30.3" />
+    <PackageReference Include="Markdig" Version="0.30.4" />
     <PackageReference Include="MathParser.org-mXparser" Version="5.0.7" />
     <PackageReference Include="MIConvexHull" Version="1.1.19.1019" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />

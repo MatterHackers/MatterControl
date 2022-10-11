@@ -47,7 +47,10 @@ namespace MatterHackers.MatterControl
 		private TypeFacePrinter typeFacePrinter = null;
 		private PrinterConfig printer = null;
 
-		private int forceStartLine = -1;
+        /// <summary>
+        /// The first line to show from the existing visible lines. If -1 then show to the bottom of the list.
+        /// </summary>
+        private int forceStartLine = -1;
 
 		private Func<TerminalLine, string> _lineFilterFunction;
 

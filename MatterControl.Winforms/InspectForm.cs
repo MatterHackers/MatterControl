@@ -40,15 +40,17 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public partial class InspectForm : WinformsSystemWindow.FormInspector
+	using WinTreeNode = System.Windows.Forms.TreeNode;
+
+    public partial class InspectForm : WinformsSystemWindow.FormInspector
 	{
-		private TreeNode activeTreeNode;
+		private WinTreeNode activeTreeNode;
 		private GuiWidget inspectedSystemWindow;
 
 		private Vector2 mousePosition;
 
-		private Dictionary<GuiWidget, TreeNode> aggTreeNodes = new Dictionary<GuiWidget, TreeNode>();
-		private Dictionary<IObject3D, TreeNode> sceneTreeNodes = new Dictionary<IObject3D, TreeNode>();
+		private Dictionary<GuiWidget, WinTreeNode> aggTreeNodes = new Dictionary<GuiWidget, WinTreeNode>();
+		private Dictionary<IObject3D, WinTreeNode> sceneTreeNodes = new Dictionary<IObject3D, WinTreeNode>();
 
 		private InteractiveScene scene;
 		private View3DWidget view3DWidget;
@@ -145,7 +147,7 @@ namespace MatterHackers.MatterControl
 					activeTreeNode.Checked = false;
 				}
 
-				if (aggTreeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
+				if (aggTreeNodes.TryGetValue(_inspectedWidget, out WinTreeNode treeNode))
 				{
 					aggTreeView.SelectedNode = treeNode;
 
@@ -182,14 +184,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddItemEnsureAncestors(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
+		private void AddItemEnsureAncestors(GuiWidget widget, string text = null, WinTreeNode childNode = null, bool showAllParents = true)
 		{
 			if (text == null)
 			{
 				text = BuildDefaultName(widget);
 			}
 
-			if (aggTreeNodes.TryGetValue(widget, out TreeNode existingNode))
+			if (aggTreeNodes.TryGetValue(widget, out WinTreeNode existingNode))
 			{
 				if (childNode != null)
 				{
@@ -199,7 +201,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				var node = new TreeNode(text)
+				var node = new WinTreeNode(text)
 				{
 					Tag = widget
 				};
@@ -230,9 +232,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode)
+		private WinTreeNode AddItem(GuiWidget widget, WinTreeNode parentNode)
 		{
-			var node = new TreeNode(BuildDefaultName(widget))
+			var node = new WinTreeNode(BuildDefaultName(widget))
 			{
 				Tag = widget
 			};
@@ -252,9 +254,9 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
+		private WinTreeNode AddItem(IObject3D item, WinTreeNode parentNode)
 		{
-			var node = new TreeNode(BuildDefaultName(item))
+			var node = new WinTreeNode(BuildDefaultName(item))
 			{
 				Tag = item
 			};
@@ -275,7 +277,7 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private void AddTree(GuiWidget widget, TreeNode parent)
+		private void AddTree(GuiWidget widget, WinTreeNode parent)
 		{
 			var node = AddItem(widget, parent);
 
@@ -285,7 +287,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddTree(IObject3D item, TreeNode parent)
+		private void AddTree(IObject3D item, WinTreeNode parent)
 		{
 			var node = AddItem(item, parent);
 
@@ -348,7 +350,7 @@ namespace MatterHackers.MatterControl
 
 		public void MoveUpTree()
 		{
-			if (activeTreeNode?.Parent is TreeNode parent)
+			if (activeTreeNode?.Parent is WinTreeNode parent)
 			{
 				this.InspectedWidget = parent.Tag as GuiWidget;
 			}
@@ -356,7 +358,7 @@ namespace MatterHackers.MatterControl
 
 		public void MoveDownTree()
 		{
-			if (activeTreeNode?.Nodes.Cast<TreeNode>().FirstOrDefault() is TreeNode firstChild)
+			if (activeTreeNode?.Nodes.Cast<WinTreeNode>().FirstOrDefault() is WinTreeNode firstChild)
 			{
 				this.InspectedWidget = firstChild.Tag as GuiWidget;
 			}
@@ -502,11 +504,11 @@ namespace MatterHackers.MatterControl
 
 		private void InspectForm_Load(object sender, EventArgs e1)
 		{
-			var rootNode = new TreeNode("Theme");
+			var rootNode = new WinTreeNode("Theme");
 
-			var themeNode = new TreeNode("Theme");
+			var themeNode = new WinTreeNode("Theme");
 
-			var menuThemeNode = new TreeNode("MenuTheme");
+			var menuThemeNode = new WinTreeNode("MenuTheme");
 
 			rootNode.Nodes.Add(themeNode);
 			rootNode.Nodes.Add(menuThemeNode);

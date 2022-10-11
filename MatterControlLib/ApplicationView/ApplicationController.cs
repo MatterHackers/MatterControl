@@ -45,6 +45,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using global::MatterControl.Printing;
+using Markdig.Agg;
+using Markdig.Syntax.Inlines;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
@@ -588,9 +590,14 @@ namespace MatterHackers.MatterControl
         {
 			try
 			{
-				Process.Start(input);
-			}
-			catch
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(input)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+            catch
 			{
 				// hack because of this: https://github.com/dotnet/corefx/issues/10361
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -1132,7 +1139,12 @@ namespace MatterHackers.MatterControl
 		{
 			Workspaces = new ObservableCollection<PartWorkspace>();
 
-			Workspaces.CollectionChanged += (s, e) =>
+            // get markdown working correctly
+			MarkdownWidget.LaunchBrowser = ApplicationController.LaunchBrowser;
+			MarkdownWidget.RetrieveText = WebCache.RetrieveText;
+            MarkdownWidget.RetrieveImageSquenceAsync = WebCache.RetrieveImageSquenceAsync;
+
+            Workspaces.CollectionChanged += (s, e) =>
 			{
 				if (!restoringWorkspaces)
 				{
