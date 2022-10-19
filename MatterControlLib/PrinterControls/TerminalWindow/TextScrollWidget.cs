@@ -52,6 +52,12 @@ namespace MatterHackers.MatterControl
         /// </summary>
         private int forceStartLine = -1;
 
+		// Text selection
+		private bool dragActive = false;
+		private int selectionStartLine;
+		private int selectionEndLine = -1;
+		private double selectionMouseDown;
+
 		private Func<TerminalLine, string> _lineFilterFunction;
 
 		public TextScrollWidget(PrinterConfig printer, TerminalLog terminalLog)
@@ -66,6 +72,8 @@ namespace MatterHackers.MatterControl
 			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
 			printer.Connection.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
 		}
+
+		private double documentHeight => visibleLines.Count * typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
 
 		public double Position0To1
 		{
@@ -89,6 +97,7 @@ namespace MatterHackers.MatterControl
 
 				// If the start would be less than one screen worth of content, allow
 				// the whole screen to have content and scroll with new material.
+				// Note: alternatively, if scrolled and sticking to bottom
 				if (forceStartLine > visibleLines.Count - NumVisibleLines)
 				{
 					forceStartLine = -1;
@@ -173,6 +182,9 @@ namespace MatterHackers.MatterControl
 
 			int numLinesToDraw = NumVisibleLines;
 
+			int selectionStart = Math.Min(selectionStartLine, selectionEndLine);
+			int selectionEnd = Math.Max(selectionStartLine, selectionEndLine);
+
 			double y = LocalBounds.Bottom + typeFacePrinter.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
 			lock (locker)
 			{
@@ -201,7 +213,13 @@ namespace MatterHackers.MatterControl
 						{
 							typeFacePrinter.Text = visibleLines[lineIndex];
 							typeFacePrinter.Origin = new Vector2(bounds.Left + 2, y);
-							typeFacePrinter.Render(graphics2D, TextColor);
+
+							// Account for text selection
+							var textSelected = selectionEndLine != -1
+								&& lineIndex >= selectionStart
+								&& lineIndex <= selectionEnd;
+
+							typeFacePrinter.Render(graphics2D, textSelected ? AppContext.Theme.PrimaryAccentColor : TextColor);
 						}
 					}
 
@@ -214,6 +232,57 @@ namespace MatterHackers.MatterControl
 			}
 
 			base.OnDraw(graphics2D);
+		}
+
+		private int GetLineIndexFromMouse(Vector2 mousePosition)
+		{
+			var yPosFromTop = LocalBounds.Height - mousePosition.Y;
+			var lineIndex = (int)Math.Ceiling(yPosFromTop / typeFacePrinter.TypeFaceStyle.EmSizeInPixels);
+
+			// After the view fills up and/or when not pinned bottom, scroll offset is simply forceStartLine
+			// Otherwise it's the offset from the bottom
+			int scrollOffset = forceStartLine >= 0 ? forceStartLine : visibleLines.Count - NumVisibleLines;
+
+			// Account for scroll
+			return lineIndex + scrollOffset;
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			dragActive = mouseEvent.Button == MouseButtons.Left;
+			selectionMouseDown = mouseEvent.Y;
+
+			if (dragActive)
+			{
+				// Account for scroll
+				selectionStartLine = GetLineIndexFromMouse(mouseEvent.Position);
+
+				// Reset end index on start drag
+				selectionEndLine = -1;
+
+				this.Invalidate();
+			}
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			dragActive = false;
+			base.OnMouseUp(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			if (dragActive)
+			{
+				// Recompute line index from mouse position into doc, rather than the more
+				// typical start/current delta, to ensure range stay in sync with scrolling text
+				selectionEndLine = GetLineIndexFromMouse(mouseEvent.Position);
+				this.Invalidate();
+			}
+
+			base.OnMouseMove(mouseEvent);
 		}
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
@@ -293,6 +362,31 @@ namespace MatterHackers.MatterControl
 					keyEvent.Handled = true;
 				}
 			}
+		}
+
+		public override void OnKeyUp(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.C
+				&& keyEvent.Control
+				&& Math.Abs(selectionStartLine - selectionEndLine) > 0)
+			{
+				int selectionStart = Math.Min(selectionStartLine, selectionEndLine);
+				int selectionEnd = Math.Max(selectionStartLine, selectionEndLine);
+
+				// Filter visiblelines to selection range
+				var filteredLines = visibleLines.Where((l, i) => i >= selectionStart && i <= selectionEnd);
+
+				if (UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true))
+				{
+					// Drop leading communication/direction indicators
+					filteredLines = filteredLines.Select(l => l.Substring(l.IndexOf(' ') + 1));
+				}
+
+				// Push selected text to clipboard
+				Clipboard.Instance.SetText(string.Join("\r\n", filteredLines));
+			}
+
+			base.OnKeyUp(keyEvent);
 		}
 	}
 }
