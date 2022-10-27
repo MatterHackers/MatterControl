@@ -1073,7 +1073,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
 						{
 							// create a a multi-line string editor
-							var field = new MultilineStringField(theme);
+							var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
 							field.Initialize(0);
 							field.SetValue(stringValue, false);
 							field.ClearUndoHistory();

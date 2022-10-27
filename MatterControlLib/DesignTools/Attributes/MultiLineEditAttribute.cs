@@ -36,4 +36,9 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class MultiLineEditAttribute : Attribute
 	{
 	}
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class UpdateOnEveryKeystrokeAttribute : Attribute
+	{
+	}
 }
