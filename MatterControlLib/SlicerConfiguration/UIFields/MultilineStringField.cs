@@ -35,11 +35,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class MultilineStringField : UIField
 	{
 		private ThemedTextEditWidget editWidget;
+
+		public bool SetValueOnEveryEdit { get; }
+
 		private ThemeConfig theme;
 
-		public MultilineStringField(ThemeConfig theme)
+		/// <summary>
+		/// The constructor of a Multiline String Field
+		/// </summary>
+		/// <param name="theme">The theme to use</param>
+		/// <param name="setValueOnEveryEdit">Sets if SetValue gets called with every keystroke or only after EditComplete.</param>
+		public MultilineStringField(ThemeConfig theme, bool setValueOnEveryEdit = false)
 		{
-			this.theme = theme;
+            this.SetValueOnEveryEdit = setValueOnEveryEdit;
+            this.theme = theme;
 		}
 
 		public override void Initialize(int tabIndex)
@@ -51,15 +60,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = this.Name
 			};
 			editWidget.DrawFromHintedCache();
-			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
+			if (SetValueOnEveryEdit)
 			{
-				if (sender is TextEditWidget textEditWidget)
+                editWidget.ActualTextEditWidget.TextChanged += (sender, e) =>
+                {
+                    if (sender is TextEditWidget textEditWidget)
+                    {
+                        this.SetValue(
+                            textEditWidget.Text.Replace("\n", "\\n"),
+                            userInitiated: true);
+                    }
+                };
+            }
+            else
+			{
+				editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
 				{
-					this.SetValue(
-						textEditWidget.Text.Replace("\n", "\\n"),
-						userInitiated: true);
-				}
-			};
+					if (sender is TextEditWidget textEditWidget)
+					{
+						this.SetValue(
+							textEditWidget.Text.Replace("\n", "\\n"),
+							userInitiated: true);
+					}
+				};
+			}
 
 			editWidget.ActualTextEditWidget.TextChanged += (s, e) =>
 			{

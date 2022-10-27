@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("Description - Markdown Text")]
 		[MultiLineEdit]
+		[UpdateOnEveryKeystroke]
 		public string Description { get; set; } = "You can edit this description in the properties panel";
 
 		public enum Placements
@@ -352,7 +353,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				FixSelectableBasedOnLinks(markdownWidget);
 
-				controlLayer.GuiSurface.AddChild(markdownWidget);
+                controlLayer.GuiSurface.AddChild(markdownWidget);
 				controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
 				markdownWidget.MouseDown += MarkdownWidget_MouseDown;
 				markdownWidget.MouseMove += MarkdownWidget_MouseMove;
