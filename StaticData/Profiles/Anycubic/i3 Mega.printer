@@ -27,6 +27,7 @@
     "skirt_distance": "5",
     "skirts": "5",
     "nozzle_diameter": "0.25",
+    "first_layer_height": "0.25",
     "extrusion_multiplier": "0.96",
     "retract_length": "5.1",
     "coast_at_end_distance": "0.2",

@@ -249,21 +249,21 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				"Date Created".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.CreatedDate),
 				(v) => libraryView.SetUserSort(SortKey.CreatedDate),
-				useRadioStyle: false,
+				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Date Modified".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.ModifiedDate),
 				(v) => libraryView.SetUserSort(SortKey.ModifiedDate),
-				useRadioStyle: false,
+                useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Name".Localize(),
 				() => libraryView.ActiveSort.HasFlag(SortKey.Name),
 				(v) => libraryView.SetUserSort(SortKey.Name),
-				useRadioStyle: false,
+                useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateSeparator();
@@ -274,14 +274,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 				"Ascending".Localize(),
 				() => libraryView.Ascending,
 				(v) => libraryView.SetUserSort(ascending: true),
-				useRadioStyle: false,
+                useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Descending".Localize(),
 				() => !libraryView.Ascending,
 				(v) => libraryView.SetUserSort(ascending: false),
-				useRadioStyle: false,
+                useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
 			return popupMenu;
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					(isChecked) => {
 						listView.SetContentView(ListViewModes.RowListView);
 					},
-					useRadioStyle: false,
+                    useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 #if DEBUG
 				popupMenu.CreateBoolMenuItem(
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					{
 						listView.SetContentView(ListViewModes.IconListView18);
 					},
-					useRadioStyle: false,
+                    useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					{
 						listView.SetContentView(ListViewModes.IconListView70);
 					},
-					useRadioStyle: false,
+                    useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 #endif
 				popupMenu.CreateBoolMenuItem(
@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					{
 						listView.SetContentView(ListViewModes.IconListView);
 					},
-					useRadioStyle: false,
+                    useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					{
 						listView.SetContentView(ListViewModes.IconListView256);
 					},
-					useRadioStyle: false,
+                    useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				return popupMenu;
