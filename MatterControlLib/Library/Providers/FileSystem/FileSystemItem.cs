@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Localizations;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -88,7 +89,20 @@ namespace MatterHackers.MatterControl.Library
 		{
 			get
 			{
-				return Path.GetFileName(this.FilePath);
+				var finalDirectory = Path.GetFileName(this.FilePath);
+				if (string.IsNullOrEmpty(finalDirectory))
+				{
+					if (FilePath.Length > 0)
+					{
+						return $"{FilePath[0]} " + "Drive".Localize();
+					}
+					else
+					{
+						return "Unknown".Localize();
+					}
+				}
+
+				return finalDirectory;
 			}
 
 			set
