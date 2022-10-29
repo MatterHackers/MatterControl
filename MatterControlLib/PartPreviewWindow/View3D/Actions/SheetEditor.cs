@@ -164,14 +164,22 @@ namespace MatterHackers.MatterControl.DesignTools
 						var currentName = SheetData[x, y].Name;
 						if (!string.IsNullOrEmpty(currentName))
 						{
-							existingNames.Add(currentName);
+							existingNames.Add(currentName.ToLower());
 						}
 					}
 				}
 			}
 
-			// first replace spaces with '_'
-			var name = editSelectedName.Text.Replace(' ', '_');
+            var reservedWords = new string[] { "pi", "e", "true", "false", "round" };
+
+            // add all the reserved words to the existing names
+            foreach (var reservedWord in reservedWords)
+            {
+                existingNames.Add(reservedWord);
+            }
+
+            // first replace spaces with '_'
+            var name = editSelectedName.Text.Replace(' ', '_');
 			// next make sure we don't have the exact name already
 			name = agg_basics.GetNonCollidingName(name, existingNames, false);
 			editSelectedName.Text = name;
