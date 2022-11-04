@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center,
-				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
+				MenuItemsPadding = new BorderDouble(10, 3, 7, 3),
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";
