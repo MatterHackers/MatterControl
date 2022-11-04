@@ -2225,9 +2225,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
 					{
-						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
-						CurrentSelectInfo.LastMoveDelta = default(Vector3);
-						return object3D;
+						// run the same hit on this object only and see if is still the same position
+						var singleObjectIntersection = object3D.GetBVHData().GetClosestIntersection(ray);
+						if (singleObjectIntersection != null
+							&& singleObjectIntersection.HitPosition == intersectionInfo.HitPosition)
+						{
+							CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
+							CurrentSelectInfo.LastMoveDelta = default(Vector3);
+							return object3D;
+						}
 					}
 				}
 			}
