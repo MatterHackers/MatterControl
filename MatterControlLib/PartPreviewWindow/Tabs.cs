@@ -504,9 +504,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"Cancel Print".Localize(),
 						"Continue Printing".Localize());
 				}
-				else if (this.TabContent is DesignTabPage partTab
-					&& partTab?.Workspace?.SceneContext?.Scene is InteractiveScene scene
-					&& scene.HasUnsavedChanges)
+				else if (this.TabContent is DesignTabPage partTab // we are a part tap
+					&& partTab?.Workspace?.SceneContext is ISceneContext sceneContext // we have a context
+                    && sceneContext.Scene is InteractiveScene scene // we have a scene
+                    && scene.HasUnsavedChanges // we have unsaved changes
+                    && (sceneContext.EditContext.ContentStore != null || scene.Descendants().Count() > 0)) // we are not an unsaved empty tab (new with only deleting phil)
 				{
 					StyledMessageBox.ShowYNCMessageBox(
 						(response) =>
@@ -516,7 +518,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								case StyledMessageBox.ResponseType.YES:
 									UiThread.RunOnIdle(async () =>
 									{
-										var sceneContext = partTab.Workspace.SceneContext;
 										if (sceneContext.EditContext.ContentStore == null)
 										{
 											// If we are about to close a tab that has never been saved it will need a name before it can actually save
