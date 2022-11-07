@@ -30,21 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -61,6 +57,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 #if DEBUG
 		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
 
 		[Description("The amount to inset the bevel")]
 		public DoubleOrExpression BevelInset { get; set; } = 2;
@@ -157,20 +156,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 #if DEBUG
 					if (BevelTop)
 					{
+						var curve4 = new Curve4Increment();
+						curve4.Init(0, 0,
+							0, (height - bevelStart)/2,
+							bevelInset / 2, height - bevelStart,
+							bevelInset, height - bevelStart,
+							bevelSteps);
 						bevel = new List<(double height, double inset)>();
-                        for (int i = 0; i < bevelSteps; i++)
+						curve4.Vertex(out double x, out double y);
+						for (int i = 1; i < bevelSteps; i++)
 						{
-							var heightRatio = i / (double)bevelSteps;
-                            var height2 = heightRatio * (height - bevelStart) + bevelStart;
-							var insetRatio = (i + 1) / (double)bevelSteps;
-							var inset = Easing.Sinusoidal.In(insetRatio) * -bevelInset;
-							bevel.Add((height2, inset));
+							curve4.Vertex(out x, out y);
+							bevel.Add((bevelStart + y, -x));
 						}
+				
+						//bevel.Add((height, -bevelInset));
 					}
 #endif
 					if (this.GetVertexSource() != null)
 					{
-						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel);
+						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, InflatePathObject3D.GetJoinType(Style));
 						if (Mesh.Vertices.Count == 0)
 						{
 							Mesh = null;
@@ -199,6 +204,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(BevelStart), () => BevelTop);
 			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
 			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
+			change.SetRowVisible(nameof(Style), () => BevelTop);
 		}
 #endif
 	}
