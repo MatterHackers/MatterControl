@@ -4420,6 +4420,9 @@ Translated:seconds
 English:Sections
 Translated:Sections
 
+English:Segments
+Translated:Segments
+
 English:Select
 Translated:Select
 
