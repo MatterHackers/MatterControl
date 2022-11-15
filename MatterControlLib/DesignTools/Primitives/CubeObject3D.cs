@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Round { get; set; }
 
-		[Slider(0, 30, Easing.EaseType.Quadratic, snapDistance: .1)]
+		[Slider(0, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
 		public DoubleOrExpression Radius { get; set; } = 3;
 
 		[Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: 1)]
