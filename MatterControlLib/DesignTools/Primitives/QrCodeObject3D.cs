@@ -47,7 +47,7 @@ using QRCoder;
 namespace MatterHackers.MatterControl.DesignTools
 {
     [HideMeterialAndColor]
-	public class QrCodeObject3D : Object3D, IImageProvider, IObject3DControlsProvider
+	public class QrCodeObject3D : Object3D, IImageProvider, IObject3DControlsProvider, IPropertyGridModifier
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -68,6 +68,33 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override bool CanApply => false;
+
+        public enum QrCodeTypes
+		{
+            Text,
+            WiFi
+		}
+
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public QrCodeTypes OutputOption { get; set; } = QrCodeTypes.Text;
+
+
+		// WIFI:S:<SSID>;T:<WEP|WPA|blank>;P:<PASSWORD>;H:<true|false|blank>;;
+		[Description("The name of the WiFi network")]
+        public StringOrExpression SSID { get; set; } = "";
+
+        [Description("The password of the WiFi network")]
+        public StringOrExpression Password { get; set; } = "";
+
+        public enum SecurityTypes
+		{
+            WEP,
+            WPA,
+            None
+        }
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public SecurityTypes Security { get; set; } = SecurityTypes.WPA;
 
         public StringOrExpression Text { get; set; } = "https://www.matterhackers.com";
 
@@ -247,8 +274,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private ImageBuffer BuildImage()
 		{
-			QRCodeGenerator qrGenerator = new QRCodeGenerator();
-			QRCodeData qrCodeData = qrGenerator.CreateQrCode(Text.Value(this), QRCodeGenerator.ECCLevel.Q);
+			var text = Text.Value(this);
+
+			if (OutputOption == QrCodeTypes.WiFi)
+			{
+				var ssid = SSID.Value(this).Replace(":", "\\:");
+				var security = "";
+				switch(Security)
+				{
+					case SecurityTypes.WPA:
+						security = "WPA";
+						break;
+					case SecurityTypes.WEP:
+						security = "WEP";
+						break;
+				}
+				var password = Password.Value(this).Replace(":", "\\:");
+
+				text = $"WIFI:S:{ssid};T:{security};P:{password};H:;;";
+			}
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+			QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
 			QRCode qrCode = new QRCode(qrCodeData);
             System.Drawing.Bitmap qrCodeImage = qrCode.GetGraphic(16);
 
@@ -471,5 +518,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						});
 			});
 		}
-	}
+
+        public void UpdateControls(PublicPropertyChange change)
+        {
+            change.SetRowVisible(nameof(Text), () => OutputOption == QrCodeTypes.Text);
+            change.SetRowVisible(nameof(SSID), () => OutputOption == QrCodeTypes.WiFi);
+            change.SetRowVisible(nameof(Password), () => OutputOption == QrCodeTypes.WiFi);
+            change.SetRowVisible(nameof(Security), () => OutputOption == QrCodeTypes.WiFi);
+        }
+    }
 }

@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (firtSheet != null)
 					{
 						// We don't have any cache of the cell content, get the current content
-						double.TryParse(firtSheet.SheetData.EvaluateExpression(cellId2), out double value);
+						double.TryParse(firtSheet.SheetData.GetCellValue(cellId2), out double value);
 						cellData2 = value.ToString();
 					}
 				}
