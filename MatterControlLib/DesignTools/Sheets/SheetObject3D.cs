@@ -479,15 +479,34 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			inputExpression = ReplaceConstantsWithValues(owner, inputExpression);
 
-			// check if the expression is not an equation (does not start with "=")
-			if (inputExpression.Length > 0 && inputExpression[0] != '=')
+			// check if the expression is an equation (starts with "=")
+			if (inputExpression.Length > 0 && inputExpression[0] == '=')
+			{
+				// look through all the parents
+				var sheet = FindFirstSheet(owner);
+				if (sheet != null)
+				{
+					// try to manage the cell into the correct data type
+					string value = sheet.SheetData.EvaluateExpression(inputExpression);
+					return CastResult<T>(value, inputExpression);
+				}
+
+				// could not find a sheet, try to evaluate the expression directly
+				var evaluator = new Expression(inputExpression.ToLower());
+				if (evaluator.checkSyntax())
+				{
+					Debug.WriteLine(evaluator.getErrorMessage());
+				}
+
+				return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
+			}
+			else // not an equation so try to parse it directly
 			{
 				if (typeof(T) == typeof(string))
 				{
 					return (T)(object)inputExpression;
 				}
 
-				// not an equation so try to parse it directly
 				if (double.TryParse(inputExpression, out var result))
 				{
 					if (typeof(T) == typeof(double))
@@ -499,41 +518,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						return (T)(object)(int)Math.Round(result);
 					}
 				}
-				else
-				{
-					if (typeof(T) == typeof(double))
-					{
-						return (T)(object)0.0;
-					}
-					if (typeof(T) == typeof(int))
-					{
-						return (T)(object)0;
-					}
-				}
-			}
-			
-			if (inputExpression.Length > 0 && inputExpression[0] == '=')
-			{
-				inputExpression = inputExpression.Substring(1);
-			}
 
-			// look through all the parents
-			var sheet = FindFirstSheet(owner);
-			if (sheet != null)
-			{
-				// try to manage the cell into the correct data type
-				string value = sheet.SheetData.EvaluateExpression(inputExpression);
-				return CastResult<T>(value, inputExpression);
+				return (T)(object)0;
 			}
-
-			// could not find a sheet, try to evaluate the expression directly
-			var evaluator = new Expression(inputExpression.ToLower());
-			if(evaluator.checkSyntax())
-			{
-				Debug.WriteLine(evaluator.getErrorMessage());
-			}
-
-			return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
 		}
 
 		/// <summary>

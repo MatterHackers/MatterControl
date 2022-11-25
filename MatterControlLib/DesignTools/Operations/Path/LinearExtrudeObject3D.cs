@@ -30,21 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -62,18 +58,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
 
-		[Description("The amount to inset the bevel")]
-		public DoubleOrExpression BevelInset { get; set; } = 2;
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
 
-		/// <summary>
-		[Description("The height the bevel will start")]
-		/// </summary>
-		public DoubleOrExpression BevelStart { get; set; } = 4;
+        [Slider(0, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
+        public DoubleOrExpression Radius { get; set; } = 3;
 
-		public IntOrExpression BevelSteps { get; set; } = 1;
+        [Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: 1)]
+        public IntOrExpression Segments { get; set; } = 9;
 #endif
 
-		public override bool CanApply => true;
+        public override bool CanApply => true;
 
         public override IVertexSource GetVertexSource()
 		{
@@ -131,6 +126,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+        private (double x, double y) GetOffset(double radius, double xRatio, double yRatio)
+		{
+            return (radius * Math.Cos(xRatio * MathHelper.Tau / 4), radius * Math.Sin(yRatio * MathHelper.Tau / 4));
+        }
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -140,10 +140,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			var height = Height.Value(this);
 #if DEBUG
-			var bevelSteps = BevelSteps.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
-			var bevelStart = BevelStart.ClampIfNotCalculated(this, 0, height, ref valuesChanged);
-			var aabb = this.GetAxisAlignedBoundingBox();
-			var bevelInset = BevelInset.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
+			var segments = Segments.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
+            var aabb = this.GetAxisAlignedBoundingBox();
+            var radius = Radius.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize)) / 2, ref valuesChanged);
+            var bevelStart = height - radius;
 #endif
 
 			// now create a long running task to do the extrusion
@@ -157,20 +157,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 #if DEBUG
 					if (BevelTop)
 					{
-						bevel = new List<(double height, double inset)>();
-                        for (int i = 0; i < bevelSteps; i++)
+                        bevel = new List<(double, double)>();
+                        for (int i = 0; i < segments; i++)
 						{
-							var heightRatio = i / (double)bevelSteps;
-                            var height2 = heightRatio * (height - bevelStart) + bevelStart;
-							var insetRatio = (i + 1) / (double)bevelSteps;
-							var inset = Easing.Sinusoidal.In(insetRatio) * -bevelInset;
-							bevel.Add((height2, inset));
+                            (double x, double y) = GetOffset(radius, (i + 1) / (double)segments, i / (double)segments);
+							bevel.Add((bevelStart + y, -radius+x));
 						}
-					}
+                    }
 #endif
-					if (this.GetVertexSource() != null)
+                    if (this.GetVertexSource() != null)
 					{
-						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel);
+						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, InflatePathObject3D.GetJoinType(Style));
 						if (Mesh.Vertices.Count == 0)
 						{
 							Mesh = null;
@@ -196,9 +193,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 #if DEBUG
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(BevelStart), () => BevelTop);
-			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
-			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
+			change.SetRowVisible(nameof(Radius), () => BevelTop);
+			change.SetRowVisible(nameof(Segments), () => BevelTop);
+			change.SetRowVisible(nameof(Style), () => BevelTop);
 		}
 #endif
 	}

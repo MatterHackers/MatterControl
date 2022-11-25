@@ -80,15 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void UpdateContents()
 		{
-			var expression = SheetData[x, y].Expression;
-			if (expression.StartsWith("="))
-			{
-				content.Text = SheetData.EvaluateExpression(expression);
-			}
-			else
-			{
-				content.Text = expression;
-			}
+            content.Text = SheetData.GetCellValue(SheetData.CellId(x, y));
 		}
 
 		public override void OnKeyPress(KeyPressEventArgs keyPressEvent)

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		}
 
 		[JsonIgnore]
-		public ImageObject3D ImageChild => this.Children.OfType<ImageObject3D>().FirstOrDefault();
+		public IImageProvider ImageChild => this.Children.OfType<IImageProvider>().FirstOrDefault();
 
 		[DisplayName("Pixels Per mm"), Range(0.5, 3, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double PixelsPerMM { get; set; } = 1.5;

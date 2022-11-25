@@ -32,6 +32,7 @@ using org.mariuszgromada.math.mxparser;
 using Newtonsoft.Json;
 using System.Linq;
 using System;
+using g3;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -54,7 +55,37 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public string EvaluateExpression(string expression)
+		public string GetCellValue(string cellId)
+		{
+            lock (locker)
+            {
+                if (!tabelCalculated)
+                {
+                    BuildTableConstants();
+                }
+
+                var cell = this[cellId];
+
+				var expression = cell.Expression;
+
+                if (expression.StartsWith("="))
+				{
+                    expression = expression.Substring(1);
+                    var evaluator = new Expression(expression.ToLower());
+                    AddConstants(evaluator);
+                    var value = evaluator.calculate();
+
+                    return value.ToString();
+                }
+                else
+				{
+					// return the expression without evaluation
+					return expression;
+				}
+            }
+        }
+
+        public string EvaluateExpression(string expression)
 		{
 			lock (locker)
 			{
@@ -65,9 +96,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if(expression.StartsWith("="))
 				{
-					expression = expression.Substring(1);
-				}
-				var evaluator = new Expression(expression.ToLower());
+					expression = expression.Substring(1).Trim();
+
+                    // if it is a direct cell reference than return that cells value
+                    if (expression.Length == 2)
+                    {
+						var column = (uint)expression.Substring(0, 1).ToUpper()[0] - 'A';
+						var row = (uint)expression.Substring(1, 1)[0] - '1';
+						if (column < Width && row < Height)
+						{
+							return GetCellValue(CellId((int)column, (int)row));
+						}
+                    }
+                }
+
+                var evaluator = new Expression(expression.ToLower());
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
 
@@ -83,6 +126,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+        /// <summary>
+		/// Return the cell at the given position
+		/// </summary>
+		/// <param name="x">The x index</param>
+		/// <param name="y">The y index</param>
+		/// <returns>The TableCell</returns>
 		public TableCell this[int x, int y]
 		{
 			get
@@ -102,6 +151,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+        /// <summary>
+		/// Get the Table cell for the given cellId
+		/// </summary>
+		/// <param name="cellId"></param>
+		/// <returns>The table cell for the id</returns>
 		public TableCell this[string cellId]
 		{
 			get

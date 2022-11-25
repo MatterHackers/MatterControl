@@ -80,14 +80,14 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					{
 						var scene = sceneContext.Scene;
 						var sceneItem = scene.SelectedItem;
-						if (sceneItem is IObject3D imageObject)
+						if (sceneItem is IImageProvider imageObject)
 						{
 							WrapWith(sceneItem, new LithophaneObject3D(), scene);
 						}
 					},
-					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
+					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is IImageProvider,
 					HelpTextGetter = () => "An image must be selected".Localize().Stars(),
-					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
+					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is IImageProvider,
 					Icon = (theme) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16).SetToColor(theme.TextColor)
 				},
 				"Image");

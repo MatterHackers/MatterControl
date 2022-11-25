@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is IObject3D imageObject)
+					if (sceneItem is IImageProvider imageObject)
 					{
 						// TODO: make it look like this (and get rid of all the other stuff)
 						// scene.Replace(sceneItem, new ImageToPathObject3D_2(sceneItem.Clone()));
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("image_to_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "An image must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IImageProvider,
 			};
 		}
 

@@ -3415,6 +3415,9 @@ Translated:Output
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
+English:Output Option
+Translated:Output Option
+
 English:Output Resolution
 Translated:Output Resolution
 
@@ -3915,6 +3918,9 @@ Translated:px
 
 English:Pyramid
 Translated:Pyramid
+
+English:QR Code
+Translated:QR Code
 
 English:Quality
 Translated:Quality
@@ -4420,6 +4426,12 @@ Translated:seconds
 English:Sections
 Translated:Sections
 
+English:Security
+Translated:Security
+
+English:Segments
+Translated:Segments
+
 English:Select
 Translated:Select
 
@@ -4854,6 +4866,9 @@ Translated:Split
 
 English:Split Mesh
 Translated:Split Mesh
+
+English:SSID
+Translated:SSID
 
 English:Stable
 Translated:Stable

@@ -16,6 +16,45 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
+    [TestFixture]
+	public class SheetDataTests
+    {
+        [Test]
+		public void Calculations()
+        {
+			var sheetData = new SheetData(4, 4);
+
+            void Test(string cell, string expression, string expected)
+            {
+                sheetData[cell].Expression = expression;
+                sheetData.Recalculate();
+                Assert.AreEqual(expected, sheetData.GetCellValue(cell));
+            }
+
+            // simple multiply retrived upper and lower case
+            Test("A1", "=4*2", "8");
+            Test("a1", "=4*2", "8");
+
+            // make sure functions are working, max in this case
+            Test("a2", "=max(4, 5)", "5");
+
+            // make sure cell references are working
+            Test("a3", "=a1+a2", "13");
+
+            // complex formulas are working
+            Test("a4", "=((4+5)/3+7)/5", "2");
+
+            // complex formulas with references are working
+            Test("b1", "=(a4+a3)*.5", "7.5");
+
+            // constants work, like pi
+            Test("b2", "=pi", "3.141592653589793");
+
+            // check that we get string data back unmodified
+            Test("b3", "hello", "hello");
+        }
+    }
+
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrimitiveAndSheetsTests
 	{
