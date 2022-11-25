@@ -453,7 +453,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Padding = PopupMenu.MenuPadding,
 				VAnchor = VAnchor.Center,
-			};
+                Margin = new BorderDouble(8, 1),
+            };
 
 			return popupMenu.CreateButtonSelectMenuItem(textWidget, text, buttonKvps, startingValue, setter, minSpacerWidth);
 		}
@@ -468,7 +469,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Padding = PopupMenu.MenuPadding,
 				VAnchor = VAnchor.Center,
-			};
+                Margin = new BorderDouble(8, 1),
+            };
 
 			return popupMenu.CreateButtonMenuItem(textWidget, text, buttonKvps, minSpacerWidth);
 		}
