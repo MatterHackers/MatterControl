@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
+using static g3.SVGWriter;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -167,8 +168,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 #endif
                     if (this.GetVertexSource() != null)
 					{
+#if DEBUG
 						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, InflatePathObject3D.GetJoinType(Style));
-						if (Mesh.Vertices.Count == 0)
+#else
+                        Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, ClipperLib.JoinType.jtRound);
+#endif
+                        if (Mesh.Vertices.Count == 0)
 						{
 							Mesh = null;
 						}
