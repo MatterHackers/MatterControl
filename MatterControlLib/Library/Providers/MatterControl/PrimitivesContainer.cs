@@ -120,6 +120,10 @@ namespace MatterHackers.MatterControl.Library
 					"Dual Contouring".Localize(),
 					async () => await DualContouringObject3D.Create())
 					{ DateCreated = new DateTime(index++) },
+				new GeneratorItem(
+					"QR Code".Localize(),
+					async () => await QrCodeObject3D.Create())
+					{ DateCreated = new DateTime(index++) },
 #endif
 				new GeneratorItem(
 					"Image Converter".Localize(),

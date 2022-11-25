@@ -16,6 +16,34 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
+    [TestFixture]
+	public class SheetDataTests
+    {
+        [Test]
+		public void Calculations()
+        {
+			var sheetData = new SheetData(4, 4);
+
+			sheetData[0, 0].Expression = "=4*2";
+
+			Assert.AreEqual("8", sheetData.EvaluateExpression("A1"));
+			Assert.AreEqual("8", sheetData.EvaluateExpression("a1"));
+
+			sheetData["a2"].Expression = "=max(4, 5)";
+			sheetData.Recalculate();
+			Assert.AreEqual("5", sheetData.EvaluateExpression("a2"));
+
+			sheetData["a3"].Expression = "=a1+a2";
+			sheetData.Recalculate();
+			Assert.AreEqual("13", sheetData.EvaluateExpression("a3"));
+
+			sheetData["a4"].Expression = "=((4+5)/3+7)/5";
+			sheetData.Recalculate();
+			Assert.AreEqual("2", sheetData.EvaluateExpression("a4"));
+
+		}
+	}
+
 	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrimitiveAndSheetsTests
 	{

@@ -46,17 +46,8 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IEditorWidgetModifier
-	{
-		void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate);
-	}
 
-	public interface IImageProvider
-	{
-		ImageBuffer Image { get; }
-	}
-
-	[HideMeterialAndColor]
+    [HideMeterialAndColor]
 	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider, IEditorWidgetModifier
 	{
 		private const double DefaultSizeMm = 60;

@@ -3916,6 +3916,9 @@ Translated:px
 English:Pyramid
 Translated:Pyramid
 
+English:QR Code
+Translated:QR Code
+
 English:Quality
 Translated:Quality
 
