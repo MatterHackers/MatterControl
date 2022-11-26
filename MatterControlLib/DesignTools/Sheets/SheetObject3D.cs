@@ -492,7 +492,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// could not find a sheet, try to evaluate the expression directly
-				var evaluator = new Expression(inputExpression.ToLower());
+				var evaluator = new Expression(inputExpression.Substring(1).ToLower());
 				if (evaluator.checkSyntax())
 				{
 					Debug.WriteLine(evaluator.getErrorMessage());
