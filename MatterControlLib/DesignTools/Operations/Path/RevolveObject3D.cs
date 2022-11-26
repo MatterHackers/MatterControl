@@ -100,23 +100,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Revolve".Localize();
 		}
 
-		public override async void OnInvalidate(InvalidateArgs eventArgs)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((eventArgs.InvalidateType.HasFlag(InvalidateType.Path)
-					|| eventArgs.InvalidateType.HasFlag(InvalidateType.Children))
-				&& eventArgs.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path)
+					|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if (eventArgs.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& eventArgs.Source == this)
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateArgs.Source == this)
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(eventArgs);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

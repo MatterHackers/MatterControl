@@ -66,22 +66,27 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 var cell = this[cellId];
 
-				var expression = cell.Expression;
-
-                if (expression.StartsWith("="))
+				if (cell != null)
 				{
-                    expression = expression.Substring(1);
-                    var evaluator = new Expression(expression.ToLower());
-                    AddConstants(evaluator);
-                    var value = evaluator.calculate();
+					var expression = cell.Expression;
 
-                    return value.ToString();
-                }
-                else
-				{
-					// return the expression without evaluation
-					return expression;
+					if (expression.StartsWith("="))
+					{
+						expression = expression.Substring(1);
+						var evaluator = new Expression(expression.ToLower());
+						AddConstants(evaluator);
+						var value = evaluator.calculate();
+
+						return value.ToString();
+					}
+					else
+					{
+						// return the expression without evaluation
+						return expression;
+					}
 				}
+
+				return "0";
             }
         }
 
