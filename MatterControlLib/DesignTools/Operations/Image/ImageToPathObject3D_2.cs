@@ -348,16 +348,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Histogram.RangeEnd = .9;
 				}
 
-				if (AnalysisType != AnalysisTypes.Transparency)
-				{
-					Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
-					var _ = Image; // call this to make sure it is built
-					Histogram.RebuildAlphaImage(SourceImage, alphaImage, Image, AnalysisType);
-				}
-				else
-				{
-					Image?.CopyFrom(SourceImage);
-				}
+				CopyNewImageData();
 				await Rebuild();
 
 				this.ReloadEditorPannel();
@@ -368,10 +359,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
 			{
-				await Rebuild();
+                CopyNewImageData();
+                await Rebuild();
 			}
 
 			base.OnInvalidate(invalidateArgs);
+		}
+
+		private void CopyNewImageData()
+		{
+			if (AnalysisType != AnalysisTypes.Transparency)
+			{
+				Histogram.BuildHistogramFromImage(SourceImage, AnalysisType);
+				var _ = Image; // call this to make sure it is built
+				Histogram.RebuildAlphaImage(SourceImage, alphaImage, Image, AnalysisType);
+			}
+			else
+			{
+				Image?.CopyFrom(SourceImage);
+			}
 		}
 
 		public override Task Rebuild()

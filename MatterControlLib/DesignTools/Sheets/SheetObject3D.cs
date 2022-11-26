@@ -519,9 +519,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				return (T)(object)0;
-			}
-		}
+                if (typeof(T) == typeof(double))
+                {
+                    return (T)(object)0;
+                }
+
+				return (T)(object)(int)0;
+            }
+        }
 
 		/// <summary>
 		/// Find the sheet that the given item will reference
