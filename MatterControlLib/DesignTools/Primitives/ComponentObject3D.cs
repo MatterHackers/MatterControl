@@ -149,12 +149,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
-					if (firtSheet != null)
+					var controledSheet = ControledSheet;
+					if (controledSheet != null)
 					{
 						// We don't have any cache of the cell content, get the current content
-						double.TryParse(firtSheet.SheetData.GetCellValue(cellId2), out double value);
-						cellData2 = value.ToString();
+						cellData2 = controledSheet.SheetData.GetCellValue(cellId2);
 					}
 				}
 
@@ -164,6 +163,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			return (null, null);
 		}
 
+		private SheetObject3D ControledSheet => this.Descendants<SheetObject3D>().ToArray()[0];//.FirstOrDefault();
+			// this.Children.Where(s => s is SheetObject3D).FirstOrDefault() as SheetObject3D;
 
 		private void RecalculateSheet()
 		{
@@ -174,10 +175,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (cellData.StartsWith("="))
 				{
 					var expression = new DoubleOrExpression(cellData);
-					var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
-					if (firtSheet != null)
+					var controledSheet = ControledSheet;
+					if (controledSheet != null)
 					{
-						var cell = firtSheet.SheetData[cellId];
+						var cell = controledSheet.SheetData[cellId];
 						if (cell != null)
 						{
 							cell.Expression = expression.Value(this).ToString();
@@ -189,16 +190,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (SurfacedEditors.Any(se => se.StartsWith("!"))
 				&& !this.RebuildLocked)
 			{
-				var firtSheet = this.Descendants<SheetObject3D>().FirstOrDefault();
+				var controledSheet = ControledSheet;
 
 				var componentLock = this.RebuildLock();
-				firtSheet.SheetData.Recalculate();
+				controledSheet.SheetData.Recalculate();
 
 				UiThread.RunOnIdle(() =>
 				{
 					// wait until the sheet is done rebuilding (or 30 seconds)
 					var startTime = UiThread.CurrentTimerMs;
-					while (firtSheet.RebuildLocked
+					while (controledSheet.RebuildLocked
 						&& startTime + 30000 < UiThread.CurrentTimerMs)
 					{
 						Thread.Sleep(1);
