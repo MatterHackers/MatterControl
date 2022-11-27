@@ -65,6 +65,18 @@ namespace MatterHackers.MatterControl.Library
 			{
 				Category = this.Name
 			});
+
+			Items.Add(new GeneratorItem(
+				"Pause".Localize(),
+				async () =>
+				{
+					var gcodeObject = await SendGCodeObject3D.Create();
+					gcodeObject.GCodeToSend = "M226";
+					return gcodeObject;
+				})
+			{
+				Category = this.Name
+			});
 		}
 
 		private class StaticDataItem : ILibraryAssetStream

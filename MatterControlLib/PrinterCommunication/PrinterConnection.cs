@@ -2442,8 +2442,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				{
 					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, Printer);
 				}
-
-				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, accumulatedStream);
 			}
 			else
 			{
@@ -2494,8 +2492,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
-			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+			accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, accumulatedStream);
 			accumulatedStream = new RunSceneGCodeProcesorsStream(Printer, accumulatedStream, queuedCommandStream);
+			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
 
 			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
