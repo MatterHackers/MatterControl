@@ -59,38 +59,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
             lock (locker)
             {
-                if (!tabelCalculated)
-                {
-                    BuildTableConstants();
-                }
-
                 var cell = this[cellId];
 
 				if (cell != null)
-				{
-					var expression = cell.Expression;
+                {
+                    return GetCellValue(cell);
+                }
 
-					if (expression.StartsWith("="))
-					{
-						expression = expression.Substring(1);
-						var evaluator = new Expression(expression.ToLower());
-						AddConstants(evaluator);
-						var value = evaluator.calculate();
-
-						return value.ToString();
-					}
-					else
-					{
-						// return the expression without evaluation
-						return expression;
-					}
-				}
-
-				return "0";
+                return "0";
             }
         }
 
-        public string EvaluateExpression(string expression)
+		public string GetCellValue(TableCell cell)
 		{
 			lock (locker)
 			{
@@ -99,11 +79,42 @@ namespace MatterHackers.MatterControl.DesignTools
 					BuildTableConstants();
 				}
 
-				if(expression.StartsWith("="))
+				var expression = cell.Expression;
+
+				if (expression.StartsWith("="))
 				{
+					expression = expression.Substring(1);
+					var evaluator = new Expression(expression.ToLower());
+					AddConstants(evaluator);
+					var value = evaluator.calculate();
+
+					return value.ToString();
+				}
+				else
+				{
+					// return the expression without evaluation
+					return expression;
+				}
+			}
+		}
+
+        public string EvaluateExpression(string inExpression)
+		{
+			lock (locker)
+			{
+				if (!tabelCalculated)
+				{
+					BuildTableConstants();
+				}
+
+				var expression = inExpression;
+
+                if (expression.StartsWith("="))
+				{
+					// to handle string values we first check if the expression is a cell reference
 					expression = expression.Substring(1).Trim();
 
-                    // if it is a direct cell reference than return that cells value
+                    // if it might be a direct cell reference check for column row data
                     if (expression.Length == 2)
                     {
 						var column = (uint)expression.Substring(0, 1).ToUpper()[0] - 'A';
@@ -113,9 +124,24 @@ namespace MatterHackers.MatterControl.DesignTools
 							return GetCellValue(CellId((int)column, (int)row));
 						}
                     }
-                }
 
-                var evaluator = new Expression(expression.ToLower());
+					// check if it is the exact name of a cell
+					foreach (var row in Rows)
+					{
+						foreach (var cell in row.Cells)
+						{
+							if (expression.Equals(cell.Name, StringComparison.OrdinalIgnoreCase))
+							{
+								return GetCellValue(cell);
+							}
+						}
+					}
+
+
+					// fall through to evaluate the expression
+				}
+
+				var evaluator = new Expression(expression.ToLower());
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
 

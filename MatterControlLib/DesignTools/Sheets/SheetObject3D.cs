@@ -507,26 +507,20 @@ namespace MatterHackers.MatterControl.DesignTools
 					return (T)(object)inputExpression;
 				}
 
-				if (double.TryParse(inputExpression, out var result))
+				double.TryParse(inputExpression, out var result);
+
+				if (typeof(T) == typeof(double))
 				{
-					if (typeof(T) == typeof(double))
-					{
-						return (T)(object)result;
-					}
-					if (typeof(T) == typeof(int))
-					{
-						return (T)(object)(int)Math.Round(result);
-					}
+					return (T)(object)result;
+				}
+				if (typeof(T) == typeof(int))
+				{
+					return (T)(object)(int)Math.Round(result);
 				}
 
-                if (typeof(T) == typeof(double))
-                {
-                    return (T)(object)0;
-                }
-
 				return (T)(object)(int)0;
-            }
-        }
+			}
+		}
 
 		/// <summary>
 		/// Find the sheet that the given item will reference

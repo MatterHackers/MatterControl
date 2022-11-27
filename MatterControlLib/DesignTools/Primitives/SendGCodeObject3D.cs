@@ -118,14 +118,17 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& lineToWrite.StartsWith("; LAYER_HEIGHT:"))
 			{
 				double layerHeight = 0;
+				// this gives us the layer height we will be at AFTER this layer is done printing
 				if (GCodeFile.GetFirstNumberAfter("; LAYER_HEIGHT", lineToWrite, ref layerHeight, out _, stopCheckingString: ":"))
 				{
-					accumulatedLayerHeight += layerHeight;
+					// check if we are above the accumulated at the start of the layer but before adding in this layer height
 					if (accumulatedLayerHeight > WorldZ)
 					{
 						hasBeenReached = true;
 						yield return $"{GCodeToSend} ; G-Code from Scene Object";
 					}
+
+					accumulatedLayerHeight += layerHeight;
 				}
 			}
 		}

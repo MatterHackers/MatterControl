@@ -595,23 +595,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 if (cell != null)
                 {
                     // create an expresion editor
-                    var field = new ExpressionField(theme)
+                    var field = new TextField(theme)
                     {
-                        Name = cellId + " Field"
+                        Name = cellId + " Field",
                     };
                     field.Initialize(0);
-                    if (cellData.Contains("="))
-                    {
-                        field.SetValue(cellData, false);
-                    }
-                    else // make sure it is formatted
-                    {
-                        double.TryParse(cellData, out double value);
-                        var format = "0." + new string('#', 5);
-                        field.SetValue(value.ToString(format), false);
-                    }
-
-                    field.ClearUndoHistory();
+                    field.SetValue(cellData, false);
+					field.ClearUndoHistory();
+					field.Content.HAnchor = HAnchor.Stretch;
 
                     var doOrUndoing = false;
                     field.ValueChanged += (s, e) =>
@@ -624,7 +615,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 doOrUndoing = true;
 								editorList[editorIndex] = "!" + cellId + "," + oldValue;
-								var expression = new DoubleOrExpression(oldValue);
+								var expression = new StringOrExpression(oldValue);
 								cell.Expression = expression.Value(componentObject).ToString();
 								componentObject.Invalidate(InvalidateType.SheetUpdated);
                                 doOrUndoing = false;
@@ -633,7 +624,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 doOrUndoing = true;
 								editorList[editorIndex] = "!" + cellId + "," + newValue;
-								var expression = new DoubleOrExpression(newValue);
+								var expression = new StringOrExpression(newValue);
 								cell.Expression = expression.Value(componentObject).ToString();
 								componentObject.Invalidate(InvalidateType.SheetUpdated);
 								doOrUndoing = false;
