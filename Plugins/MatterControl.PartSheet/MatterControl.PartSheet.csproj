@@ -16,7 +16,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="PDFsharpNetStandard2" Version="1.51.4845" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
