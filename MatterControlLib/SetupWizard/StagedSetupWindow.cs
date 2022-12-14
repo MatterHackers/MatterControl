@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosing(ClosingEventArgs eventArgs)
+		public override void OnShouldClose(ShouldCloseEventArgs eventArgs)
 		{
 			if (this.ActiveStage != null
 				&& !closeConfirmed)
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			base.OnClosing(eventArgs);
+			base.OnShouldClose(eventArgs);
 		}
 
 		private void ConditionalAbort(string message, Action exitConfirmedAction)

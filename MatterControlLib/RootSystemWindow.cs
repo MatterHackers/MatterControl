@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 			// msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
-		public override void OnClosing(ClosingEventArgs eventArgs)
+		public override void OnShouldClose(ShouldCloseEventArgs eventArgs)
 		{
 			if (this.HasBeenClosed)
 			{
