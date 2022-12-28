@@ -551,22 +551,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Using fake values for near/far.
 				// ComputeOrthographicCameraFit may move the camera to wherever as long as the scene is centered, then
 				// GetNearFar will figure out the near/far planes in the next projection update.
-				CameraFittingUtil.Result result = CameraFittingUtil.ComputeOrthographicCameraFit(world, CenterOffsetX, 0, 1, box);
+				CameraFittingUtil.FitResult fitResult = CameraFittingUtil.ComputeOrthographicCameraFit(world, CenterOffsetX, 0, 1, box);
 
 				WorldView tempWorld = new WorldView(world.Width, world.Height);
-				tempWorld.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(world.Width, world.Height, CenterOffsetX, result.OrthographicViewspaceHeight, 0, 1);
+				tempWorld.CalculateOrthogrphicMatrixOffCenterWithViewspaceHeight(world.Width, world.Height, CenterOffsetX, fitResult.OrthographicViewspaceHeight, 0, 1);
 				double endViewspaceHeight = tempWorld.NearPlaneHeightInViewspace;
 				double startViewspaceHeight = world.NearPlaneHeightInViewspace;
 
 				AnimateOrthographicTranslationAndHeight(
 					world.EyePosition, startViewspaceHeight,
-					result.CameraPosition, endViewspaceHeight
+					fitResult.CameraPosition, endViewspaceHeight
 					);
 			}
 			else
 			{
-				CameraFittingUtil.Result result = CameraFittingUtil.ComputePerspectiveCameraFit(world, CenterOffsetX, box);
-				AnimateTranslation(result.CameraPosition, world.EyePosition);
+				CameraFittingUtil.FitResult fitResult = CameraFittingUtil.ComputePerspectiveCameraFit(world, CenterOffsetX, box);
+				AnimateTranslation(fitResult.CameraPosition, world.EyePosition);
 			}
 		}
 
