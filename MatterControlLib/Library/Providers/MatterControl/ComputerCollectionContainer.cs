@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -95,7 +96,24 @@ namespace MatterHackers.MatterControl.Library
 						}));
 			}
 
-			if (ProfileManager.Instance != null)
+            foreach (var drive in DriveInfo.GetDrives())
+            {
+                this.ChildContainers.Add(
+                    new DynamicContainerLink(
+                        drive.Name,
+                        StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                        StaticData.Instance.LoadIcon(Path.Combine("Library", "hard-drive.png")),
+                        () => new FileSystemContainer(drive.RootDirectory.FullName)
+                        {
+                            UseIncrementedNameDuringTypeChange = true,
+                            DefaultSort = new LibrarySortBehavior()
+                            {
+                                SortKey = SortKey.ModifiedDate,
+                            }
+                        }));
+            }
+
+            if (ProfileManager.Instance != null)
 			{
 				var userDirectory = ProfileManager.Instance.UserProfilesDirectory;
 				var libraryFiles = Directory.GetFiles(userDirectory, "*.library");
