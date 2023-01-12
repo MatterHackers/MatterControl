@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl.DesignTools
 	/// </summary>
 	public class ImageContentProvider : ISceneContentProvider
 	{
-		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
+		public async Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{
-			return Task.Run<IObject3D>(async () =>
+			return await Task.Run<IObject3D>(async () =>
 			{
 				var imageBuffer = await this.LoadImage(item);
 				if (imageBuffer != null)
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						using (var streamAndLength = await streamInterface.GetStream(null))
 						{
-							assetPath = AssetObject3D.AssetManager.StoreStream(streamAndLength.Stream, Path.GetExtension(streamInterface.FileName), false, CancellationToken.None, null).Result;
+							assetPath = await AssetObject3D.AssetManager.StoreStream(streamAndLength.Stream, Path.GetExtension(streamInterface.FileName), false, CancellationToken.None, null);
 						}
 					}
 

@@ -1103,7 +1103,7 @@ namespace MatterHackers.MatterControl
 				else
 				{
 					// If there are no printers setup show the export dialog but have the gcode option disabled
-					if (ProfileManager.Instance.ActiveProfiles.Count() == 0
+					if (!ProfileManager.Instance.ActiveProfiles.Any()
 						|| ProfileManager.Instance.ActiveProfiles.Count() > 1)
 					{
 						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));

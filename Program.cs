@@ -69,8 +69,6 @@ namespace MatterHackers.MatterControl
 
 		private static RaygunClient _raygunClient;
 
-		
-
 		[DllImport("Shcore.dll")]
 		static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
 

@@ -79,13 +79,13 @@ namespace MatterHackers
 		const double OrthographicLargeZRangeScaledDistanceBetweenNearAndObject = 1.0;
 #endif
 
-		public struct Result
+		public struct FitResult
 		{
 			public Vector3 CameraPosition;
 			public double OrthographicViewspaceHeight;
 		}
 
-		public static Result ComputeOrthographicCameraFit(WorldView world, double centerOffsetX, double zNear, double zFar, AxisAlignedBoundingBox worldspaceAABB)
+		public static FitResult ComputeOrthographicCameraFit(WorldView world, double centerOffsetX, double zNear, double zFar, AxisAlignedBoundingBox worldspaceAABB)
 		{
 			Vector3[] worldspacePoints = worldspaceAABB.GetCorners();
 			Vector3[] viewspacePoints = worldspacePoints.Select(x => x.TransformPosition(world.ModelviewMatrix)).ToArray();
@@ -138,10 +138,10 @@ namespace MatterHackers
 #endif
 
 			Vector3 worldspaceCameraPosition = viewspaceCameraPosition.TransformPosition(world.InverseModelviewMatrix);
-			return new Result { CameraPosition = worldspaceCameraPosition, OrthographicViewspaceHeight = targetViewspaceSize.Y };
+			return new FitResult { CameraPosition = worldspaceCameraPosition, OrthographicViewspaceHeight = targetViewspaceSize.Y };
 		}
 
-		public static Result ComputePerspectiveCameraFit(WorldView world, double centerOffsetX, AxisAlignedBoundingBox worldspaceAABB)
+		public static FitResult ComputePerspectiveCameraFit(WorldView world, double centerOffsetX, AxisAlignedBoundingBox worldspaceAABB)
 		{
 			System.Diagnostics.Debug.Assert(!world.IsOrthographic);
 
@@ -169,7 +169,7 @@ namespace MatterHackers
 			switch (PerspectiveFittingAlgorithm)
 			{
 			case EPerspectiveFittingAlgorithm.TrialAndError:
-				return new Result { CameraPosition = TryPerspectiveCameraFitByIterativeAdjust(world, centerOffsetX, worldspaceAABB) };
+				return new FitResult { CameraPosition = TryPerspectiveCameraFitByIterativeAdjust(world, centerOffsetX, worldspaceAABB) };
 			case EPerspectiveFittingAlgorithm.Sphere:
 			default:
 				viewspaceCameraPosition = PerspectiveCameraFitToSphere(reducedWorld, viewspaceCenter, viewspacePoints);
@@ -188,7 +188,7 @@ namespace MatterHackers
 				break;
 			}
 
-			return new Result { CameraPosition = viewspaceCameraPosition.TransformPosition(world.InverseModelviewMatrix) };
+			return new FitResult { CameraPosition = viewspaceCameraPosition.TransformPosition(world.InverseModelviewMatrix) };
 		}
 
 		static bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
