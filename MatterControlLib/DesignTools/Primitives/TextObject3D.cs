@@ -92,7 +92,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		[EnumDisplay(IconPaths = new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
+        public bool MultiLine { get; set; }
+
+        [EnumDisplay(IconPaths = new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
 		public TextAlign Alignment { get; set; } = TextAlign.Left;
 
 		[DisplayName("Text")]
@@ -102,9 +104,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Text")]
 		public StringOrExpression MultiLineText { get; set; } = "MultiLine\nText";
 
-		public bool MultiLine { get; set; }
+		[Description("Leave 0 for no wrapping")]
+		public DoubleOrExpression WrappingWidth { get; set; } = 0;
 
-		[Slider(1, 48, snapDistance: 1)]
+		[Description("The number of spaces to add after wrapping a line. Very useful for bullet points.")]
+		public IntOrExpression WrappingIndent { get; set; } = 0;
+
+        [Slider(1, 48, snapDistance: 1)]
 		public DoubleOrExpression PointSize { get; set; } = 24;
 
 		[MaxDecimalPlaces(2)]
@@ -182,10 +188,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					bool valuesChanged = false;
 					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
-					var nameToWrite = MultiLine
-						? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n").Replace("\n\n", "\n")
+					var wrappingWidth = WrappingWidth.Value(this);
+					var wrappingIndent = WrappingIndent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
+
+                    if (wrappingWidth < 10)
+					{
+						wrappingWidth = 0;
+					}
+
+					var textToWrite = MultiLine
+						? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n")
 						: NameToWrite.Value(this);
-					if (string.IsNullOrWhiteSpace(nameToWrite))
+
+                    var pointSize = PointSize.Value(this);
+
+					if (MultiLine && wrappingWidth > 0)
+					{
+						var wrapper = new EnglishTextWrapping(pointSize);
+						textToWrite = wrapper.InsertCRs(textToWrite, wrappingWidth, wrappingIndent);
+					}
+
+                    if (string.IsNullOrWhiteSpace(textToWrite))
 					{
 						Mesh = PlatonicSolids.CreateCube(20, 10, height);
 					}
@@ -199,7 +222,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var offset = Vector2.Zero;
 							double pointsToMm = 0.352778;
-							var pointSize = PointSize.Value(this);
 							var lineNumber = 1;
 							var leterNumber = 1;
 							var lineObject = new Object3D()
@@ -208,7 +230,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							};
 							list.Add(lineObject);
 
-							foreach (var letter in nameToWrite.ToCharArray())
+							foreach (var letter in textToWrite.ToCharArray())
 							{
 								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize);
 								var letterPrinter = new TypeFacePrinter(letter.ToString(), style)
@@ -328,6 +350,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Alignment), () => MultiLine);
 			change.SetRowVisible(nameof(NameToWrite), () => !MultiLine);
 			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
+			change.SetRowVisible(nameof(WrappingWidth), () => MultiLine);
+            change.SetRowVisible(nameof(WrappingIndent), () => MultiLine);
             if (change.Changed == nameof(Output))
             {
 				refreshToolBar = true;

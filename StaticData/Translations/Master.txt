@@ -6379,6 +6379,12 @@ Translated:Would you like to setup Wifi?
 English:Wouldn’t Slice Correctly
 Translated:Wouldn’t Slice Correctly
 
+English:Wrapping Indent
+Translated:Wrapping Indent
+
+English:Wrapping Width
+Translated:Wrapping Width
+
 English:Write Filter
 Translated:Write Filter
 
