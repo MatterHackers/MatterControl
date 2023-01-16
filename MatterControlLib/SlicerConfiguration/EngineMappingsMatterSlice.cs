@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (!firstExtruder)
 					{
-						mergeRules += ",";
+						mergeRules += "E";
 					}
 					mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], holes, outputOptions, ref savedStlCount);
 					firstExtruder = false;
