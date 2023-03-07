@@ -44,6 +44,7 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -522,9 +523,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ShowObjectEditor((editor, item, item.Name), selectedItem);
 				}
 			}
-        }
 
-        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
+			// My best/quick world position technique that accounts for centered local coords
+			Vector3 GetPostion(IObject3D item3D)
+			{
+				if (item3D?.Mesh == null)
+				{
+					return Vector3.Zero;
+				}
+
+				var worldPos = item3D.WorldMatrix().Position;
+				var itemBounds = item3D.Mesh.GetAxisAlignedBoundingBox();
+				var meshCenter = itemBounds.Size / 2;
+
+				return worldPos - meshCenter;
+			}
+
+			// Put in a Position edit field
+			var positionField = new Vector3Field(theme);
+			positionField.Initialize(0);
+			positionField.Vector3 = GetPostion(item);
+			positionField.ValueChanged += (s, e) =>
+			{
+				// When the controls change, compute the needed translation to position as requested and
+				// apply the change via an undo operation
+				var currentPosition = GetPostion(item);
+				var differenceVector = positionField.Vector3 - currentPosition;
+				var translated = item.Matrix * Matrix4X4.CreateTranslation(differenceVector);
+				var transformData = new TransformData()
+				{
+					TransformedObject = item,
+					UndoTransform = item.Matrix,
+					RedoTransform = translated
+				};
+
+				scene.UndoBuffer.AddAndDo(new TransformCommand(new List<TransformData>() { transformData }));
+			};
+
+			// This leaks memory and isn't intended as the final solution, but I'm forgetting how to wire up the pattern
+			// to release, and this approach captures the context and works.
+			scene.Invalidated += (o, e) =>
+			{
+				positionField.Vector3 = GetPostion(item);
+			};
+
+			// Add the Position controls
+			editorPanel.AddChild(new SettingsRow("Postition".Localize(), null, positionField.Content, theme));
+		}
+
+		private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
         {
             var context = new PPEContext();
             PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
