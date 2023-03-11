@@ -27,10 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Image;
+using Lucene.Net.Support;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Library.Export;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -40,27 +45,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.Library.Export
+namespace MatterControlLib.Library.OpenInto
 {
-    public class ExportToBambuStudio : ExportStlToExecutable, IExportPlugin
-    {
-        public ExportToBambuStudio()
-        {
-            
-        }
-
-        protected override string regExKeyName => @" Bambu.Studio.1\Shell\Open\Command";
-
-        public override string ButtonText => "Bambu Studio".Localize();
-
-        public override string DisabledReason => "Bambu Studio not installed";
-
-        public void Initialize(PrinterConfig printer)
-        {
-        }
-    }
-
-    public abstract class ExportStlToExecutable
+    public abstract class OpenIntoExecutable
     {
         private string pathToExe;
 
@@ -70,11 +57,63 @@ namespace MatterHackers.MatterControl.Library.Export
 
         abstract public string ButtonText { get; }
 
-        public string FileExtension => ".stl";
+        abstract public string Icon { get; }
 
-        public string ExtensionFilter => "Save as STL|*.stl";
+        public static IEnumerable<OpenIntoExecutable> GetAvailableOpenWith()
+        {
+            yield return new OpenIntoBambuStudio();
+        }
 
-        public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "stl.png"));
+        public static bool FoundInstalledExecutable
+        {
+            get
+            {
+                foreach (var openWith in GetAvailableOpenWith())
+                {
+                    if (openWith.Enabled)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static void AddOption(PopupMenu popupMenu, ThemeConfig theme, ISceneContext sceneContext)
+        {
+            foreach (var openWith in GetAvailableOpenWith())
+            {
+                if (!openWith.Enabled)
+                {
+                    continue;
+                }
+
+                var menuItem = popupMenu.CreateMenuItem(openWith.ButtonText, StaticData.Instance.LoadIcon(openWith.Icon, 16, 16));
+                var selectedItem = sceneContext.Scene.SelectedItem;
+                if (selectedItem == null)
+                {
+                    selectedItem = sceneContext.Scene;
+                }
+
+                menuItem.Click += (s, e) =>
+                {
+                    if (selectedItem == null
+                    || !selectedItem.VisibleMeshes().Any())
+                    {
+                        return;
+                    }
+
+                    ApplicationController.Instance.Tasks.Execute(
+                        "Twist".Localize(),
+                        null,
+                        async (reporter, cancellationToken) =>
+                        {
+                            await openWith.Generate(new[] { new InMemoryLibraryItem(selectedItem) }, reporter);
+                        });
+                };
+            }
+        }
 
         public bool Enabled
         {
@@ -86,7 +125,7 @@ namespace MatterHackers.MatterControl.Library.Export
                 if (key != null)
                 {
                     pathToExe = key.GetValue("").ToString();
-                    
+
                     var regex = "C:.+.exe";
                     var match = System.Text.RegularExpressions.Regex.Match(pathToExe, regex);
                     pathToExe = match.Value;
@@ -99,14 +138,7 @@ namespace MatterHackers.MatterControl.Library.Export
             }
         }
 
-        public abstract string DisabledReason { get; }
-
-        public bool ExportPossible(ILibraryAsset libraryItem) => true;
-
-        public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems,
-            string noPath,
-            Action<double, string> progress,
-            CancellationToken cancellationToken)
+        public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, Action<double, string> progress)
         {
             string exportTempFileFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "ExportToExe");
             Directory.CreateDirectory(exportTempFileFolder);
@@ -138,7 +170,7 @@ namespace MatterHackers.MatterControl.Library.Export
                 new ValidationError(ValidationErrors.ItemToSTLExportInvalid)
                 {
                     Error = "One or more items cannot be exported as STL".Localize(),
-                    Details = String.Join("\n", bedExports.ToArray())
+                    Details = string.Join("\n", bedExports.ToArray())
                 }
             };
         }

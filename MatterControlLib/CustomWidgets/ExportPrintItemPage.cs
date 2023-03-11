@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -42,7 +43,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExportPrintItemPage : DialogPage
+    public class ExportPrintItemPage : DialogPage
 	{
 		private CheckBox showInFolderAfterSave;
 
@@ -245,7 +246,7 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-            if (exportPlugin is ExportStlToExecutable)
+            if (exportPlugin is OpenIntoExecutable)
             {
                 ApplicationController.Instance.Tasks.Execute(
                     "Saving".Localize() + "...",

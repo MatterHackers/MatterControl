@@ -47,6 +47,7 @@ using System.Threading.Tasks;
 using global::MatterControl.Printing;
 using Markdig.Agg;
 using Markdig.Syntax.Inlines;
+using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
@@ -328,7 +329,14 @@ namespace MatterHackers.MatterControl
 				popupMenu.CreateSubMenu("Modify".Localize(),
 					menuTheme,
 					(modifyMenu) => SceneOperations.AddModifyItems(modifyMenu, menuTheme, sceneContext));
-			}
+
+				if (OpenIntoExecutable.FoundInstalledExecutable)
+				{
+                    popupMenu.CreateSubMenu("Open With".Localize(),
+                        menuTheme,
+                        (modifyMenu) => OpenIntoExecutable.AddOption(modifyMenu, menuTheme, sceneContext));
+                }
+            }
 			else
 			{
 				// Create items directly in the referenced menu
