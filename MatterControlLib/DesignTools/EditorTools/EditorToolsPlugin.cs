@@ -40,7 +40,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			var applicationController = ApplicationController.Instance;
 
-			var primitives = new PrimitivesContainer();
+			var primitives = new Primitives3DContainer();
 			primitives.Load();
 
 			foreach (var item in primitives.Items.OfType<ILibraryObject3D>())

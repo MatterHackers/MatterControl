@@ -135,12 +135,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			// check if we have be initialized
 			if (Mode == ReductionMode.Polygon_Count)
 			{
-				TargetCount = agg_basics.Clamp(TargetCount, 4, SourcePolygonCount, ref valuesChanged);
+                TargetCount = Agg.Util.Clamp(TargetCount, 4, SourcePolygonCount, ref valuesChanged);
 				TargetPercent = TargetCount / (double)SourcePolygonCount * 100;
 			}
 			else
 			{
-				TargetPercent = agg_basics.Clamp(TargetPercent, 0, 100, ref valuesChanged);
+                TargetPercent = Agg.Util.Clamp(TargetPercent, 0, 100, ref valuesChanged);
 				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100);
 			}
 

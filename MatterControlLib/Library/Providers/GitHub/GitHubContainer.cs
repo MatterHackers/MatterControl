@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public long FileSize { get; } = -1;
 
-			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
+			public string ID => Util.GetLongHashCode(AssetPath).ToString();
 
 			public bool IsProtected => true;
 

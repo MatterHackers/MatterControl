@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,29 +32,29 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(StringOrExpression))]
-	public class StringOrExpression : DirectOrExpression
-	{
-		public string Value(IObject3D owner)
-		{
-			var rebuilding = owner.RebuildLocked;
-			var value = SheetObject3D.EvaluateExpression<string>(owner, Expression);
-			if (rebuilding)
-			{
-				ExpressionValueAtLastRebuild = value.ToString();
-			}
+    [TypeConverter(typeof(StringOrExpression))]
+    public class StringOrExpression : DirectOrExpression
+    {
+        public string Value(IObject3D owner)
+        {
+            var rebuilding = owner.RebuildLocked;
+            var value = Expressions.EvaluateExpression<string>(owner, Expression);
+            if (rebuilding)
+            {
+                ExpressionValueAtLastRebuild = value.ToString();
+            }
 
-			return value;
-		}
+            return value;
+        }
 
-		public StringOrExpression(string expression)
-		{
-			Expression = expression;
-		}
+        public StringOrExpression(string expression)
+        {
+            Expression = expression;
+        }
 
-		public static implicit operator StringOrExpression(string expression)
-		{
-			return new StringOrExpression(expression);
-		}
-	}
+        public static implicit operator StringOrExpression(string expression)
+        {
+            return new StringOrExpression(expression);
+        }
+    }
 }

@@ -48,179 +48,175 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[Obsolete("Use SubtractAndReplaceObject3D_2 instead", false)]
-	[ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
-	public class SubtractAndReplaceObject3D : MeshWrapperObject3D, ISelectableChildContainer
-	{
-		public SubtractAndReplaceObject3D()
-		{
-			Name = "Subtract and Replace";
-		}
+    [Obsolete("Use SubtractAndReplaceObject3D_2 instead", false)]
+    [ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
+    public class SubtractAndReplaceObject3D : MeshWrapperObject3D, ISelectableChildContainer
+    {
+        public SubtractAndReplaceObject3D()
+        {
+            Name = "Subtract and Replace";
+        }
 
-		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
+        public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
 
-		public SelectedChildren SelectedChildren => ItemsToSubtract;
+        public SelectedChildren SelectedChildren => ItemsToSubtract;
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-			}
-			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
+        public override async void OnInvalidate(InvalidateArgs invalidateType)
+        {
+            if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+                || invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+                || invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+                && invalidateType.Source != this
+                && !RebuildLocked)
+            {
+                await Rebuild();
+            }
+            else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+                && invalidateType.Source == this)
+            {
+                await Rebuild();
+            }
+            else
+            {
+                base.OnInvalidate(invalidateType);
+            }
+        }
 
-		public void SubtractAndReplace()
-		{
-			SubtractAndReplace(CancellationToken.None, null);
-		}
+        public void SubtractAndReplace()
+        {
+            SubtractAndReplace(CancellationToken.None, null);
+        }
 
-		public void SubtractAndReplace(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+        public void SubtractAndReplace(CancellationToken cancellationToken, Action<double, string> reporter)
+        {
+            ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
 
-			var paintObjects = this.Children
-				.Where((i) => ItemsToSubtract.Contains(i.ID))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
-			var keepObjects = this.Children
-				.Where((i) => !ItemsToSubtract.Contains(i.ID))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
+            var paintObjects = this.Children
+                .Where((i) => ItemsToSubtract.Contains(i.ID))
+                .SelectMany((h) => h.DescendantsAndSelf())
+                .Where((c) => c.OwnerID == this.ID).ToList();
+            var keepObjects = this.Children
+                .Where((i) => !ItemsToSubtract.Contains(i.ID))
+                .SelectMany((h) => h.DescendantsAndSelf())
+                .Where((c) => c.OwnerID == this.ID).ToList();
 
-			if (paintObjects.Any()
-				&& keepObjects.Any())
-			{
-				var totalOperations = paintObjects.Count * keepObjects.Count;
-				double amountPerOperation = 1.0 / totalOperations;
-				double ratioCompleted = 0;
+            if (paintObjects.Any()
+                && keepObjects.Any())
+            {
+                var totalOperations = paintObjects.Count * keepObjects.Count;
+                double amountPerOperation = 1.0 / totalOperations;
+                double ratioCompleted = 0;
 
-				foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
-				{
-					var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
-					transformedPaint.Transform(paint.matrix);
-					var inverseRemove = paint.matrix.Inverted;
-					Mesh paintMesh = null;
+                foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+                {
+                    var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
+                    transformedPaint.Transform(paint.matrix);
+                    var inverseRemove = paint.matrix.Inverted;
+                    Mesh paintMesh = null;
 
-					var progressStatus = new ProgressStatus();
-					foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
-					{
-						var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
-						transformedKeep.Transform(keep.matrix);
+                    foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+                    {
+                        var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
+                        transformedKeep.Transform(keep.matrix);
 
-						// remove the paint from the original
-						var subtract = BooleanProcessing.Do(keep.obj3D.Mesh,
-							keep.matrix,
-							paint.obj3D.Mesh,
-							paint.matrix,
-							CsgModes.Subtract,
-							ProcessingModes.Polygons,
-							ProcessingResolution._64,
-							ProcessingResolution._64,
-							reporter,
-							amountPerOperation,
-							ratioCompleted,
-							progressStatus,
-							cancellationToken);
-						
-						var intersect = BooleanProcessing.Do(keep.obj3D.Mesh,
-							keep.matrix,
-							paint.obj3D.Mesh,
-							paint.matrix,
-							CsgModes.Intersect,
-							ProcessingModes.Polygons,
-							ProcessingResolution._64,
-							ProcessingResolution._64,
-							reporter,
-							amountPerOperation,
-							ratioCompleted,
-							progressStatus,
-							cancellationToken);
+                        // remove the paint from the original
+                        var subtract = BooleanProcessing.Do(keep.obj3D.Mesh,
+                            keep.matrix,
+                            paint.obj3D.Mesh,
+                            paint.matrix,
+                            CsgModes.Subtract,
+                            ProcessingModes.Polygons,
+                            ProcessingResolution._64,
+                            ProcessingResolution._64,
+                            reporter,
+                            amountPerOperation,
+                            ratioCompleted,
+                            cancellationToken);
 
-						var inverseKeep = keep.matrix.Inverted;
-						subtract.Transform(inverseKeep);
-						using (keep.obj3D.RebuildLock())
-						{
-							keep.obj3D.Mesh = subtract;
-						}
+                        var intersect = BooleanProcessing.Do(keep.obj3D.Mesh,
+                            keep.matrix,
+                            paint.obj3D.Mesh,
+                            paint.matrix,
+                            CsgModes.Intersect,
+                            ProcessingModes.Polygons,
+                            ProcessingResolution._64,
+                            ProcessingResolution._64,
+                            reporter,
+                            amountPerOperation,
+                            ratioCompleted,
+                            cancellationToken);
 
-						// keep all the intersections together
-						if (paintMesh == null)
-						{
-							paintMesh = intersect;
-						}
-						else // union into the current paint
-						{
-							paintMesh = BooleanProcessing.Do(paintMesh,
-								Matrix4X4.Identity,
-								intersect,
-								Matrix4X4.Identity,
-								CsgModes.Subtract,
-								ProcessingModes.Polygons,
-								ProcessingResolution._64,
-								ProcessingResolution._64,
-								reporter,
-								amountPerOperation,
-								ratioCompleted,
-								progressStatus,
-								cancellationToken);
-						}
+                        var inverseKeep = keep.matrix.Inverted;
+                        subtract.Transform(inverseKeep);
+                        using (keep.obj3D.RebuildLock())
+                        {
+                            keep.obj3D.Mesh = subtract;
+                        }
 
-						if (cancellationToken.IsCancellationRequested)
-						{
-							break;
-						}
-					}
+                        // keep all the intersections together
+                        if (paintMesh == null)
+                        {
+                            paintMesh = intersect;
+                        }
+                        else // union into the current paint
+                        {
+                            paintMesh = BooleanProcessing.Do(paintMesh,
+                                Matrix4X4.Identity,
+                                intersect,
+                                Matrix4X4.Identity,
+                                CsgModes.Subtract,
+                                ProcessingModes.Polygons,
+                                ProcessingResolution._64,
+                                ProcessingResolution._64,
+                                reporter,
+                                amountPerOperation,
+                                ratioCompleted,
+                                cancellationToken);
+                        }
 
-					// move the paint mesh back to its original coordinates
-					paintMesh.Transform(inverseRemove);
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    }
 
-					using (paint.obj3D.RebuildLock())
-					{
-						paint.obj3D.Mesh = paintMesh;
-					}
+                    // move the paint mesh back to its original coordinates
+                    paintMesh.Transform(inverseRemove);
 
-					paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
-				}
-			}
-		}
+                    using (paint.obj3D.RebuildLock())
+                    {
+                        paint.obj3D.Mesh = paintMesh;
+                    }
 
-		public override Task Rebuild()
-		{
-			var rebuildLocks = this.RebuilLockAll();
+                    paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
+                }
+            }
+        }
 
-			// spin up a task to calculate the paint
-			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationTokenSource) =>
-			{
-				try
-				{
-					SubtractAndReplace(cancellationTokenSource.Token, reporter);
-				}
-				catch
-				{
-				}
+        public override Task Rebuild()
+        {
+            var rebuildLocks = this.RebuilLockAll();
 
-				UiThread.RunOnIdle(() =>
-				{
-					rebuildLocks.Dispose();
-					this.CancelAllParentBuilding();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-				});
+            // spin up a task to calculate the paint
+            return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationTokenSource) =>
+            {
+                try
+                {
+                    SubtractAndReplace(cancellationTokenSource.Token, reporter);
+                }
+                catch
+                {
+                }
 
-				return Task.CompletedTask;
-			});
-		}
-	}
+                UiThread.RunOnIdle(() =>
+                {
+                    rebuildLocks.Dispose();
+                    this.CancelAllParentBuilding();
+                    Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                });
+
+                return Task.CompletedTask;
+            });
+        }
+    }
 }

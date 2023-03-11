@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
         public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-        public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+        public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, Action<double, string> progress, CancellationToken cancellationToken)
         {
             var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
             if (firstItem is ILibraryAsset libraryItem)

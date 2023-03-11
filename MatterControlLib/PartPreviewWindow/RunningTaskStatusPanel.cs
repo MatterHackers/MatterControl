@@ -88,24 +88,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			taskDetails.ProgressChanged -= TaskDetails_ProgressChanged;
 		}
 
-		private void TaskDetails_ProgressChanged(object sender, ProgressStatus e)
-		{
-			if (e.Target == "terminal"
-				&& sender is RunningTaskDetails details
-				&& details.Owner is PrinterConfig printer)
+        private void TaskDetails_ProgressChanged(object sender, (double progress0To1, string status) e)
+        {
+			if (e.status.StartsWith("[[send to terminal]]"))
 			{
-				printer.Connection.TerminalLog.WriteLine(e.Status);
-				return;
+                // strip of the prefix
+                e.status = e.status.Substring("[[send to terminal]]".Length);
+                if (sender is RunningTaskDetails details
+					&& details.Owner is PrinterConfig printer)
+				{
+                    // only write it to the terminal
+					printer.Connection.TerminalLog.WriteLine(e.status);
+					return;
+				}
 			}
 
-			if (textWidget.Text != e.Status
-				&& !string.IsNullOrEmpty(e.Status)
-				&& !textWidget.Text.Contains(e.Status, StringComparison.OrdinalIgnoreCase))
+			if (textWidget.Text != e.status
+				&& !string.IsNullOrEmpty(e.status)
+				&& !textWidget.Text.Contains(e.status, StringComparison.OrdinalIgnoreCase))
 			{
-				textWidget.Text = e.Status.Contains(taskDetails.Title, StringComparison.OrdinalIgnoreCase) ? e.Status : $"{taskDetails.Title} - {e.Status}";
+				textWidget.Text = e.status.Contains(taskDetails.Title, StringComparison.OrdinalIgnoreCase) ? e.status : $"{taskDetails.Title} - {e.status}";
 			}
 
-			double ratio = ((int)(e.Progress0To1 * Width)) / this.Width;
+			double ratio = ((int)(e.progress0To1 * Width)) / this.Width;
 			if (progressBar.RatioComplete != ratio)
 			{
 				progressBar.RatioComplete = ratio;

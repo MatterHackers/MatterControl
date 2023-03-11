@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
                 CopyNewImageData();
                 await Rebuild();
@@ -391,16 +391,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var progressStatus = new ProgressStatus();
 					switch (AnalysisType)
 					{
 						case AnalysisTypes.Transparency:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
-									progressStatus.Progress0To1 = progress0to1;
-									progressStatus.Status = status;
-									reporter.Report(progressStatus);
+									reporter?.Invoke(progress0to1, status);
 								},
 								SourceImage,
 								new AlphaFunction());
@@ -411,10 +408,8 @@ namespace MatterHackers.MatterControl.DesignTools
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
-									progressStatus.Progress0To1 = progress0to1;
-									progressStatus.Status = status;
-									reporter.Report(progressStatus);
-								},
+                                    reporter?.Invoke(progress0to1, status);
+                                },
 								alphaImage,
 								new AlphaFunction());
 							break;

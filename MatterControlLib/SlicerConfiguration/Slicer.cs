@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return itemsThisExtruder;
 		}
 
-		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, Action<double, string> progressReporter, CancellationToken cancellationToken)
 		{
 			return printer.Settings.Slicer.Slice(printer.PrintableItems(object3D), printer.Settings, gcodeFilePath, progressReporter, cancellationToken);
 		}

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.url = url;
 			this.Name = name ?? "Unknown".Localize();
-			this.ID = agg_basics.GetLongHashCode(url).ToString();
+			this.ID = Util.GetLongHashCode(url).ToString();
 		}
 
 		public string ID { get; set; }

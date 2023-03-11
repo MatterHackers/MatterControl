@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -1171,7 +1172,7 @@ namespace MatterHackers.MatterControl
 					{
 						try
 						{
-							var updateItems = SheetObject3D.SortAndLockUpdateItems(selectedItem.Parent, (item) =>
+							var updateItems = Expressions.SortAndLockUpdateItems(selectedItem.Parent, (item) =>
 							{
 								if (item == selectedItem || item.Parent == selectedItem)
 								{
@@ -1181,7 +1182,7 @@ namespace MatterHackers.MatterControl
 								return true;
 							}, false);
 
-							SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
+							Expressions.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
 						}
 						catch
 						{
@@ -1533,4 +1534,10 @@ namespace MatterHackers.MatterControl
 			};
 		}
 	}
+
+    public interface IPrimaryOperationsSpecifier
+    {
+        IEnumerable<SceneOperation> GetOperations();
+    }
+
 }

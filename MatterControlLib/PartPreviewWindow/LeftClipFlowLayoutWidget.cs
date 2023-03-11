@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (this.GradientDistance > 0)
 			{
-				gradientBackground = agg_basics.TrasparentToColorGradientX(
+				gradientBackground = Util.TrasparentToColorGradientX(
 						(int)this.LocalBounds.Width + this.GradientDistance,
 						(int)this.LocalBounds.Height,
 						this.BackgroundColor,

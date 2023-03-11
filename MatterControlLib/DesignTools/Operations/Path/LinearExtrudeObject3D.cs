@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
@@ -42,26 +40,25 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using static g3.SVGWriter;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class LinearExtrudeObject3D : Object3D
+    public class LinearExtrudeObject3D : Object3D, IPrimaryOperationsSpecifier
 #if DEBUG
 , IPropertyGridModifier
 #endif
-	{
-		[Description("The height of the extrusion")]
-		[Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
-		[MaxDecimalPlaces(2)]
-		public DoubleOrExpression Height { get; set; } = 5;
+    {
+        [Description("The height of the extrusion")]
+        [Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
+        [MaxDecimalPlaces(2)]
+        public DoubleOrExpression Height { get; set; } = 5;
 
 #if DEBUG
-		[Description("Bevel the top of the extrusion")]
-		public bool BevelTop { get; set; } = false;
+        [Description("Bevel the top of the extrusion")]
+        public bool BevelTop { get; set; } = false;
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
 
         [Slider(0, 20, Easing.EaseType.Quadratic, snapDistance: .1)]
         public DoubleOrExpression Radius { get; set; } = 3;
@@ -72,141 +69,140 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public override bool CanApply => true;
 
-        public override IVertexSource GetVertexSource()
-		{
-			return this.CombinedVisibleChildrenPaths();
-		}
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+            if (Mesh == null)
+            {
+                Cancel(undoBuffer);
+            }
+            else
+            {
+                // only keep the mesh and get rid of everything else
+                using (RebuildLock())
+                {
+                    var meshOnlyItem = new Object3D()
+                    {
+                        Mesh = this.Mesh.Copy(CancellationToken.None)
+                    };
 
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			if (Mesh == null)
-			{
-				Cancel(undoBuffer);
-			}
-			else
-			{
-				// only keep the mesh and get rid of everything else
-				using (RebuildLock())
-				{
-					var meshOnlyItem = new Object3D()
-					{
-						Mesh = this.Mesh.Copy(CancellationToken.None)
-					};
+                    meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
 
-					meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
+                    // and replace us with the children
+                    undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
+                }
 
-					// and replace us with the children
-					undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
-				}
+                Invalidate(InvalidateType.Children);
+            }
+        }
 
-				Invalidate(InvalidateType.Children);
-			}
-		}
+        public LinearExtrudeObject3D()
+        {
+            Name = "Linear Extrude".Localize();
+        }
 
-		public LinearExtrudeObject3D()
-		{
-			Name = "Linear Extrude".Localize();
-		}
-
-		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
-		{
-			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path)
-					|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children))
-				&& invalidateArgs.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-			}
-			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateArgs.Source == this)
-			{
-				await Rebuild();
-			}
-            else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+        public override async void OnInvalidate(InvalidateArgs invalidateArgs)
+        {
+            if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path)
+                    || invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children))
+                && invalidateArgs.Source != this
+                && !RebuildLocked)
+            {
+                await Rebuild();
+            }
+            else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
+                && invalidateArgs.Source == this)
+            {
+                await Rebuild();
+            }
+            else if (Expressions.NeedRebuild(this, invalidateArgs))
             {
                 await Rebuild();
             }
             else
             {
-				base.OnInvalidate(invalidateArgs);
-			}
-		}
+                base.OnInvalidate(invalidateArgs);
+            }
+        }
 
         private (double x, double y) GetOffset(double radius, double xRatio, double yRatio)
-		{
+        {
             return (radius * Math.Cos(xRatio * MathHelper.Tau / 4), radius * Math.Sin(yRatio * MathHelper.Tau / 4));
         }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-			var rebuildLock = RebuildLock();
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
+            var rebuildLock = RebuildLock();
 
-			bool valuesChanged = false;
+            bool valuesChanged = false;
 
-			var height = Height.Value(this);
+            var height = Height.Value(this);
 #if DEBUG
-			var segments = Segments.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
+            var segments = Segments.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
             var aabb = this.GetAxisAlignedBoundingBox();
             var radius = Radius.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize)) / 2, ref valuesChanged);
             var bevelStart = height - radius;
 #endif
 
-			// now create a long running task to do the extrusion
-			return ApplicationController.Instance.Tasks.Execute(
-				"Linear Extrude".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					var vertexSource = this.GetVertexSource();
-					List<(double height, double inset)> bevel = null;
+            // now create a long running task to do the extrusion
+            return ApplicationController.Instance.Tasks.Execute(
+                "Linear Extrude".Localize(),
+                null,
+                (reporter, cancellationToken) =>
+                {
+                    var childPaths = this.CombinedVisibleChildrenPaths();
+                    List<(double height, double inset)> bevel = null;
 #if DEBUG
-					if (BevelTop)
-					{
+                    if (BevelTop)
+                    {
                         bevel = new List<(double, double)>();
                         for (int i = 0; i < segments; i++)
-						{
+                        {
                             (double x, double y) = GetOffset(radius, (i + 1) / (double)segments, i / (double)segments);
-							bevel.Add((bevelStart + y, -radius+x));
-						}
+                            bevel.Add((bevelStart + y, -radius + x));
+                        }
                     }
 #endif
-                    if (this.GetVertexSource() != null)
-					{
+                    if (childPaths != null)
+                    {
 #if DEBUG
-						Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, InflatePathObject3D.GetJoinType(Style));
+                        Mesh = VertexSourceToMesh.Extrude(childPaths, height, bevel, InflatePathObject3D.GetJoinType(Style));
 #else
-                        Mesh = VertexSourceToMesh.Extrude(this.GetVertexSource(), height, bevel, ClipperLib.JoinType.jtRound);
+                        Mesh = VertexSourceToMesh.Extrude(childPaths, height, bevel, ClipperLib.JoinType.jtRound);
 #endif
                         if (Mesh.Vertices.Count == 0)
-						{
-							Mesh = null;
-						}
-					}
+                        {
+                            Mesh = null;
+                        }
+                    }
                     else
                     {
-						Mesh = null;
+                        Mesh = null;
                     }
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLock.Dispose();
-						Invalidate(InvalidateType.DisplayValues);
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-					});
+                    UiThread.RunOnIdle(() =>
+                    {
+                        rebuildLock.Dispose();
+                        Invalidate(InvalidateType.DisplayValues);
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+                    });
 
-					return Task.CompletedTask;
-				});
-		}
+                    return Task.CompletedTask;
+                });
+        }
 
 #if DEBUG
-		public void UpdateControls(PublicPropertyChange change)
-		{
-			change.SetRowVisible(nameof(Radius), () => BevelTop);
-			change.SetRowVisible(nameof(Segments), () => BevelTop);
-			change.SetRowVisible(nameof(Style), () => BevelTop);
-		}
+        public void UpdateControls(PublicPropertyChange change)
+        {
+            change.SetRowVisible(nameof(Radius), () => BevelTop);
+            change.SetRowVisible(nameof(Segments), () => BevelTop);
+            change.SetRowVisible(nameof(Style), () => BevelTop);
+        }
 #endif
-	}
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            yield return SceneOperations.ById("AddBase");
+        }
+    }
 }

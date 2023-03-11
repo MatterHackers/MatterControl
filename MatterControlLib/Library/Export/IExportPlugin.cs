@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 
 		void Initialize(PrinterConfig printer);
 
-		Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
+		Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, Action<double, string> progress, CancellationToken cancellationToken);
 
 		bool Enabled { get; }
 

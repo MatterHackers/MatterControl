@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					{
 						string printerName = treeView.SelectedNode.Tag.ToString();
 
-						printerNameInput.Text = agg_basics.GetNonCollidingName(printerName, this.ExistingPrinterNames);
+						printerNameInput.Text = Util.GetNonCollidingName(printerName, this.ExistingPrinterNames);
 
 						this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
 

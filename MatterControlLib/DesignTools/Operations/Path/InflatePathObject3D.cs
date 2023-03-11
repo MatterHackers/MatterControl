@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}

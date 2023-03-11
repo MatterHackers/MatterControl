@@ -2083,6 +2083,9 @@ Translated:Generate Supports
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Generates an outline around the support material to improve strength and hold up interface layers.
 
+English:Generating Config
+Translated:Generating Config
+
 English:Generating Lithophane
 Translated:Generating Lithophane
 
@@ -4932,6 +4935,9 @@ Translated:Starting Angle
 
 English:Starting firmware update...
 Translated:Starting firmware update...
+
+English:Starting slicer
+Translated:Starting slicer
 
 English:Starting Sync
 Translated:Starting Sync

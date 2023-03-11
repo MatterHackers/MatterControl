@@ -42,7 +42,7 @@ namespace MatterHackers.gsBundle
 {
 	public class SlaSlicer : IObjectSlicer
 	{
-		public async Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public async Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, Action<double, string> progressReporter, CancellationToken cancellationToken)
 		{
 			using (var outputStream = File.OpenWrite(filePath))
 			{

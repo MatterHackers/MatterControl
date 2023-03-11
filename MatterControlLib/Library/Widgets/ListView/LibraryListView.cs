@@ -611,7 +611,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										null,
 										async (reporter, cancellationTokenSource) =>
 										{
-											var progressStatus = new ProgressStatus();
 											var editContext = new EditContext()
 											{
 												ContentStore = writableContainer,
@@ -619,9 +618,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 											};
 											await workspace.SceneContext.LoadContent(editContext, (progress, message) =>
 											{
-												progressStatus.Progress0To1 = progress;
-												progressStatus.Status = message;
-												reporter.Report(progressStatus);
+												reporter?.Invoke(progress, message);
 											});
 										});
 								}

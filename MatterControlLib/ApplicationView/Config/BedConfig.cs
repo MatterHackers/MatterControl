@@ -162,14 +162,9 @@ namespace MatterHackers.MatterControl
 		{
 			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), Printer, (reporter, cancellationTokenSource) =>
 			{
-				var progressStatus = new ProgressStatus();
-				reporter.Report(progressStatus);
-
 				this.LoadGCode(stream, cancellationTokenSource.Token, (progress0To1, status) =>
 				{
-					progressStatus.Status = status;
-					progressStatus.Progress0To1 = progress0To1;
-					reporter.Report(progressStatus);
+					reporter?.Invoke(progress0To1, status);
 				});
 
 				this.Scene.Children.Modify(children => children.Clear());
@@ -676,7 +671,7 @@ namespace MatterHackers.MatterControl
 		/// <param name="progress">Allows for progress reporting</param>
 		/// <param name="cancellationTokenSource">Allows for cancellation during processing</param>
 		/// <returns>A task representing success</returns>
-		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
+		public async Task SaveChanges(Action<double, string> progress, CancellationTokenSource cancellationTokenSource)
 		{
 			if (this.EditContext.ContentStore == null)
 			{
@@ -693,13 +688,10 @@ namespace MatterHackers.MatterControl
 
 				return;
 			}
+			
+			var status = "Saving Changes".Localize();
 
-			var progressStatus = new ProgressStatus()
-			{
-				Status = "Saving Changes"
-			};
-
-			progress?.Report(progressStatus);
+			progress?.Invoke(0, status);
 
 			if (this.Scene.Persistable)
 			{
@@ -721,12 +713,7 @@ namespace MatterHackers.MatterControl
 
 				await this.Scene.PersistAssets((progress0to1, status) =>
 				{
-					if (progress != null)
-					{
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = progress0to1;
-						progress.Report(progressStatus);
-					}
+					progress?.Invoke(progress0to1, status);
 				});
 
 				await this.EditContext?.Save(this.Scene);

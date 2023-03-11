@@ -282,9 +282,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			taskDetails.ProgressChanged -= TaskDetails_ProgressChanged;
 		}
 
-		private void TaskDetails_ProgressChanged(object sender, ProgressStatus e)
-		{
-			if (expandButton.Text != e.Status
+        private void TaskDetails_ProgressChanged(object sender, (double Progress0To1, string Status) e)
+        {
+            if (expandButton.Text != e.Status
 				&& !string.IsNullOrEmpty(e.Status)
 				&& !expandButton.Text.Contains(e.Status, StringComparison.OrdinalIgnoreCase))
 			{

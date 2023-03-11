@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				Rebuild();
 			}

@@ -38,6 +38,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -269,8 +270,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(ref string mergeRules, IEnumerable<IObject3D> printableItems, PrinterSettings settings)
 		{
-			var progressStatus = new ProgressStatus();
-
 			Slicer.GetExtrudersUsed(Slicer.ExtrudersUsed, printableItems, settings, true);
 
 			// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
@@ -349,7 +348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new List<(Matrix4X4 matrix, string fileName)>();
 		}
 
-		public Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings settings, string gcodeFilePath, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		public Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings settings, string gcodeFilePath, Action<double, string> reporter, CancellationToken cancellationToken)
 		{
 			string mergeRules = "";
 
@@ -367,18 +366,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (stlFileLocations.Count > 0)
 			{
-				var progressStatus = new ProgressStatus()
-				{
-					Status = "Generating Config"
-				};
-				sliceProgressReporter.Report(progressStatus);
+				sliceProgressReporter.Report("Generating Config".Localize());
 
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					string.Format("config_{0}.ini", settings.GetGCodeCacheKey().ToString()));
 
-				progressStatus.Status = "Starting slicer";
-				sliceProgressReporter.Report(progressStatus);
+				sliceProgressReporter.Report("Starting slicer".Localize());
 
 				if (!File.Exists(gcodeFilePath)
 					|| !HasCompletedSuccessfully(gcodeFilePath))
@@ -435,10 +429,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							if (s is string stringValue)
 							{
-								sliceProgressReporter?.Report(new ProgressStatus()
-								{
-									Status = stringValue
-								});
+								sliceProgressReporter?.Report(stringValue);
 							}
 						}
 
@@ -493,10 +484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								message += "...";
 
-								sliceProgressReporter?.Report(new ProgressStatus()
-								{
-									Status = message
-								});
+								sliceProgressReporter?.Report(message);
 							}
 						};
 

@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 		Task LoadLibraryContent(ILibraryItem libraryItem, Action<double, string> progressReporter);
 
-		Task SaveChanges(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationToken);
+		Task SaveChanges(Action<double, string> progress, CancellationTokenSource cancellationToken);
 
 		bool HadSaveError { get; }
 

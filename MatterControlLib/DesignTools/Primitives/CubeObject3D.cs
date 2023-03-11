@@ -54,15 +54,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// This is the actual serialized with that can use expressions
 		/// </summary>
 		[MaxDecimalPlaces(2)]
-		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Width { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Depth { get; set; } = 20;
 
 		[MaxDecimalPlaces(2)]
-		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
+		[Slider(1, 400, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 20;
 
 		public bool Round { get; set; }
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}

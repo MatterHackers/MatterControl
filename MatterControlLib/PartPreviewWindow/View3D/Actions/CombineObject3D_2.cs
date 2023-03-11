@@ -44,141 +44,140 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButton]
-	public class CombineObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier, IBuildsOnThread
-	{
+    [ShowUpdateButton]
+    public class CombineObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier, IBuildsOnThread
+    {
         private CancellationTokenSource cancellationToken;
 
         public CombineObject3D_2()
-		{
-			Name = "Combine";
-		}
+        {
+            Name = "Combine";
+        }
 
 #if DEBUG
-		public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
+        public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public IplicitSurfaceMethod MeshAnalysis { get; set; }
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public IplicitSurfaceMethod MeshAnalysis { get; set; }
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #else
 		private ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
 		private ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
 		private IplicitSurfaceMethod MeshAnalysis { get; set; }
 		private ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #endif
-		public bool IsBuilding => this.cancellationToken != null;
+        public bool IsBuilding => this.cancellationToken != null;
 
-		public static void CheckManifoldData(CombineObject3D_2 item, IObject3D result)
-		{
-			bool IsManifold(Mesh mesh)
-			{
-				var meshEdgeList = mesh.NewMeshEdges();
+        public static void CheckManifoldData(CombineObject3D_2 item, IObject3D result)
+        {
+            bool IsManifold(Mesh mesh)
+            {
+                var meshEdgeList = mesh.NewMeshEdges();
 
-				foreach (var meshEdge in meshEdgeList)
-				{
-					if (meshEdge.Faces.Count() != 2)
-					{
-						return false;
-					}
-				}
+                foreach (var meshEdge in meshEdgeList)
+                {
+                    if (meshEdge.Faces.Count() != 2)
+                    {
+                        return false;
+                    }
+                }
 
-				return true;
-			}
+                return true;
+            }
 
-			if (!IsManifold(result.Mesh))
-			{
-				// create a new combine of a and b and add it to the root
-				var combine = new CombineObject3D_2();
+            if (!IsManifold(result.Mesh))
+            {
+                // create a new combine of a and b and add it to the root
+                var combine = new CombineObject3D_2();
 
-				var participants = item.SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(item.SourceContainer) != PrintOutputTypes.Hole);
-				// all participants are manifold
-				foreach (var participant in participants)
-				{
-					combine.SourceContainer.Children.Add(new Object3D() 
-					{ 
-						Mesh = participant.Mesh.Copy(new CancellationToken()),
-						Matrix = participant.Matrix
-					});
-				}
+                var participants = item.SourceContainer.VisibleMeshes().Where(m => m.WorldOutputType(item.SourceContainer) != PrintOutputTypes.Hole);
+                // all participants are manifold
+                foreach (var participant in participants)
+                {
+                    combine.SourceContainer.Children.Add(new Object3D()
+                    {
+                        Mesh = participant.Mesh.Copy(new CancellationToken()),
+                        Matrix = participant.Matrix
+                    });
+                }
 
-				var scene = result.Parents().Last();
-				scene.Children.Add(combine);
-			}
-		}
+                var scene = result.Parents().Last();
+                scene.Children.Add(combine);
+            }
+        }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
 
-			var rebuildLocks = this.RebuilLockAll();
+            var rebuildLocks = this.RebuilLockAll();
 
             return ApplicationController.Instance.Tasks.Execute(
-				"Combine".Localize(),
-				null,
-				(reporter, cancellationTokenSource) =>
-				{
-					this.cancellationToken = cancellationTokenSource;
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+                "Combine".Localize(),
+                null,
+                (reporter, cancellationTokenSource) =>
+                {
+                    this.cancellationToken = cancellationTokenSource;
+                    reporter?.Invoke(0, null);
 
-					try
-					{
-						Combine(cancellationTokenSource.Token, reporter);
+                    try
+                    {
+                        Combine(cancellationTokenSource.Token, reporter);
 
-						if (cancellationToken.IsCancellationRequested)
+                        if (cancellationToken.IsCancellationRequested)
                         {
-							// the combine was canceled set our children to the source object children
-							SourceContainer.Visible = true;
-							RemoveAllButSource();
-							Children.Modify((list) =>
-							{
-								foreach (var child in SourceContainer.Children)
-								{
-									list.Add(child);
-								}
-							});
+                            // the combine was canceled set our children to the source object children
+                            SourceContainer.Visible = true;
+                            RemoveAllButSource();
+                            Children.Modify((list) =>
+                            {
+                                foreach (var child in SourceContainer.Children)
+                                {
+                                    list.Add(child);
+                                }
+                            });
 
-							SourceContainer.Visible = false;
-						}
-					}
-					catch
-					{
-					}
+                            SourceContainer.Visible = false;
+                        }
+                    }
+                    catch
+                    {
+                    }
 
-					if (!NameOverriden)
-					{
-						Name = NameFromChildren();
-						NameOverriden = false;
-					}
+                    if (!NameOverriden)
+                    {
+                        Name = NameFromChildren();
+                        NameOverriden = false;
+                    }
 
-					this.cancellationToken = null;
-					UiThread.RunOnIdle(() =>
-					{
+                    this.cancellationToken = null;
+                    UiThread.RunOnIdle(() =>
+                    {
                         rebuildLocks.Dispose();
                         this.CancelAllParentBuilding();
                         Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					});
+                    });
 
-					return Task.CompletedTask;
-				});
-		}
+                    return Task.CompletedTask;
+                });
+        }
 
-		public void Combine()
-		{
-			Combine(CancellationToken.None, null);
-		}
+        public void Combine()
+        {
+            Combine(CancellationToken.None, null);
+        }
 
         public override string NameFromChildren()
         {
-			return CalculateName(SourceContainer.Children, " + ");
-		}
+            return CalculateName(SourceContainer.Children, " + ");
+        }
 
-		private void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+        private void Combine(CancellationToken cancellationToken, Action<double, string> reporter)
         {
             SourceContainer.Visible = true;
             RemoveAllButSource();
@@ -238,27 +237,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
             this.Children.Add(resultsItem);
 #if DEBUG
-			//resultsItem.Mesh.MergeVertices(.01);
-			//resultsItem.Mesh.CleanAndMerge();
-			//CheckManifoldData(this, resultsItem);
+            //resultsItem.Mesh.MergeVertices(.01);
+            //resultsItem.Mesh.CleanAndMerge();
+            //CheckManifoldData(this, resultsItem);
 #endif
-			SourceContainer.Visible = false;
+            SourceContainer.Visible = false;
         }
 
         public void UpdateControls(PublicPropertyChange change)
-		{
-			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
-		}
+        {
+            change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
+        }
 
         public void CancelBuild()
         {
-			var threadSafe = this.cancellationToken;
-			if(threadSafe != null)
+            var threadSafe = this.cancellationToken;
+            if (threadSafe != null)
             {
-				threadSafe.Cancel();
+                threadSafe.Cancel();
             }
         }
     }

@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var printerInfo = new PrinterInfo
 			{
-				Name = agg_basics.GetNonCollidingName(fileName, existingPrinterNames),
+				Name = Util.GetNonCollidingName(fileName, existingPrinterNames),
 				ID = Guid.NewGuid().ToString(),
 				Make = "Other",
 				Model = "Other",

@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public string Category { get; } = "";
 
-			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
+			public string ID => Util.GetLongHashCode(AssetPath).ToString();
 
 			public event EventHandler NameChanged;
 

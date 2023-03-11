@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems,
 			string outputPath,
-			IProgress<ProgressStatus> progress,
+			Action<double, string> progress,
 			CancellationToken cancellationToken)
 		{
 			var first = true;

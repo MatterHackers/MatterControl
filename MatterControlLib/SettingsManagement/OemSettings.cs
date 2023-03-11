@@ -242,7 +242,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		private async Task DownloadMissingProfiles()
 		{
-			var reportValue = new ProgressStatus();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{

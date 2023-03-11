@@ -411,21 +411,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				printer,
 				(reporter, cancellationToken) =>
 				{
-					var progressStatus = new ProgressStatus();
-
+					var status = "";
 					while (validationRunning)
 					{
 						if (activeProbeIndex == 0)
 						{
-							progressStatus.Status = "Validating";
+							status = "Validating";
 						}
 						else
 						{
-							progressStatus.Status = $"Probing point {activeProbeIndex} of {sampledPositions.Count}";
+							status = $"Probing point {activeProbeIndex} of {sampledPositions.Count}";
 						}
 
-						progressStatus.Progress0To1 = (activeProbeIndex + 1) / (double)sampledPositions.Count;
-						reporter.Report(progressStatus);
+						var progress0To1 = (activeProbeIndex + 1) / (double)sampledPositions.Count;
+						reporter?.Invoke(progress0To1, status);
 						Thread.Sleep(100);
 					}
 

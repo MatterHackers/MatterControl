@@ -714,20 +714,14 @@ namespace MatterHackers.MatterControl
 						null,
 						(progress, cancellationToken) =>
 						{
-							var status = new ProgressStatus();
-
 							int itemCount = ApplicationController.StartupActions.Count;
 
 							double i = 1;
 
 							foreach (var action in ApplicationController.StartupActions.OrderByDescending(t => t.Priority))
 							{
-								status.Status = action.Title;
-								progress.Report(status);
-
 								action.Action?.Invoke();
-								status.Progress0To1 = i++ / itemCount;
-								progress.Report(status);
+								progress?.Invoke(i++ / (double)itemCount, action.Title);
 							}
 
 							return Task.CompletedTask;

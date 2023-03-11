@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new TextObject3D();
 
-            if (!setTo2D)
+            if (setTo2D)
             {
 				item.Output = OutputDimensions.Output2D;
             }
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}

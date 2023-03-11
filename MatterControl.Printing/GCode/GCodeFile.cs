@@ -227,7 +227,7 @@ namespace MatterControl.Printing
 				&& (stopPos == -1 || stringPos < stopPos || string.IsNullOrEmpty(stopCheckingString)))
 			{
 				stringPos += stringToCheckAfter.Length;
-				readValue = agg_basics.ParseDouble(stringWithNumber, ref stringPos, true);
+				readValue = Util.ParseDouble(stringWithNumber, ref stringPos, true);
 				numberEnd = stringPos;
 
 				return true;

@@ -120,9 +120,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				MaxTemperature = agg_basics.Clamp(MaxTemperature, 140, 400, ref valuesChanged);
-				Sections = agg_basics.Clamp(Sections, 2, 20, ref valuesChanged);
-				ChangeAmount = agg_basics.Clamp(ChangeAmount, 1, 30, ref valuesChanged);
+				MaxTemperature = Util.Clamp(MaxTemperature, 140, 400, ref valuesChanged);
+				Sections = Util.Clamp(Sections, 2, 20, ref valuesChanged);
+				ChangeAmount = Util.Clamp(ChangeAmount, 1, 30, ref valuesChanged);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
