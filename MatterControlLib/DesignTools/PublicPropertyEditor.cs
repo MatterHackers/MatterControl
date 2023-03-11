@@ -1101,9 +1101,9 @@ namespace MatterHackers.MatterControl.DesignTools
                             if (directoryPathAttribute != null)
                             {
                                 // add a browse button
-                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).SetToColor(theme.TextColor), theme)
                                 {
-                                    ToolTipText = "Search".Localize(),
+                                    ToolTipText = "Select Folder".Localize(),
                                 };
                                 browseButton.Click += (s, e) =>
                                 {
