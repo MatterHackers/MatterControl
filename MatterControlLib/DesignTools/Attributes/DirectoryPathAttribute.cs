@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.Library.Widgets;
+using MatterHackers.Localizations;
+using System;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl.DesignTools
 {
-    public class LibraryViewState
-	{
-		public PopupLibraryWidget.ListViewModes ViewMode { get; set; }
-
-		public LibrarySortBehavior SortBehavior { get; set; }
-	}
+    [AttributeUsage(AttributeTargets.Property)]
+    public class DirectoryPathAttribute : Attribute
+    {
+        public string Message { get; set; } = "Selecte a directory".Localize();
+        public string ActionLabel { get; set; } = "Select".Localize();
+    }
 }

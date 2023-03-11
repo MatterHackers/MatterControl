@@ -1095,7 +1095,38 @@ namespace MatterHackers.MatterControl.DesignTools
 							field.Content.HAnchor = HAnchor.Stretch;
 							RegisterValueChanged(field, (valueString) => valueString);
 							rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
-						}
+
+                            // check for DirectoryPathAttribute
+                            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
+                            if (directoryPathAttribute != null)
+                            {
+                                // add a browse button
+                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+                                {
+                                    ToolTipText = "Search".Localize(),
+                                };
+                                browseButton.Click += (s, e) =>
+                                {
+                                    UiThread.RunOnIdle(() =>
+                                    {
+                                        AggContext.FileDialogs.SelectFolderDialog(
+                                            new SelectFolderDialogParams(directoryPathAttribute.Message)
+                                            {
+                                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
+                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
+                                            },
+                                            (openParams) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(openParams.FolderPath))
+                                                {
+                                                    field.SetValue(openParams.FolderPath, true);
+                                                }
+                                            });
+                                    });
+                                };
+                                rowContainer.AddChild(browseButton);
+                            }
+                        }
 					}
 				}
 			}

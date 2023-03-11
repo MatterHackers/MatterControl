@@ -43,7 +43,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using static MatterHackers.MatterControl.Library.Widgets.PrintLibraryWidget;
+using static MatterHackers.MatterControl.Library.Widgets.PopupLibraryWidget;
 
 namespace MatterHackers.MatterControl.Library.Widgets
 {

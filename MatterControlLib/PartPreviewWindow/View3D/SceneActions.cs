@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         transformData.Add(new TransformData() { TransformedObject = child, UndoTransform = child.Matrix });
                     }
 
-                    PlatingHelper.ArrangeOnBed(children, bedCenter);
+                    PlatingHelper.ArrangeOnBed(children, bedCenter, PlatingHelper.PositionType.Center);
                     int i = 0;
                     foreach (var child in children)
                     {

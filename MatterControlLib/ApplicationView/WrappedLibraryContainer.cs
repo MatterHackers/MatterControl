@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
 		public ICustomSearch CustomSearch => _libraryContainer.CustomSearch;
 
-		public LibrarySortBehavior DefaultSort => null;
+		public LibrarySortBehavior DefaultSort => _libraryContainer?.DefaultSort;
 
 		public event EventHandler ContentChanged;
 

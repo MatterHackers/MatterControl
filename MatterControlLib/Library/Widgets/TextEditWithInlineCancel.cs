@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2022, Kevin Pope, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,54 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.Library.Widgets;
+using System;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl.Library.Widgets
 {
-    public class LibraryViewState
+    public class TextEditWithInlineCancel : GuiWidget
 	{
-		public PopupLibraryWidget.ListViewModes ViewMode { get; set; }
+		public ThemedTextEditWidget TextEditWidget { get; }
 
-		public LibrarySortBehavior SortBehavior { get; set; }
+		public GuiWidget ResetButton { get; }
+
+		public TextEditWithInlineCancel(ThemeConfig theme, string emptyText = null)
+		{
+			if (emptyText == null)
+			{
+				emptyText = "Search".Localize();
+			}
+
+			this.VAnchor = VAnchor.Center | VAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch;
+
+			TextEditWidget = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			this.AddChild(TextEditWidget);
+
+			this.ResetButton = theme.CreateSmallResetButton();
+			ResetButton.HAnchor |= HAnchor.Right;
+			ResetButton.VAnchor |= VAnchor.Center;
+			ResetButton.Name = "Close Search";
+			ResetButton.ToolTipText = "Clear".Localize();
+
+			this.AddChild(ResetButton);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			TextEditWidget.Focus();
+			base.OnLoad(args);
+		}
+
+		public override string Text
+		{
+			get => TextEditWidget.ActualTextEditWidget.Text;
+			set => TextEditWidget.ActualTextEditWidget.Text = value;
+		}
 	}
 }

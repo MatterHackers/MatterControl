@@ -153,15 +153,5 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			VertexStorage.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 		}
-
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
-
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
-		}
 	}
 }
