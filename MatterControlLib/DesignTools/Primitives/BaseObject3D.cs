@@ -310,6 +310,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+                if (outsidePolygons.Count == 0)
+                {
+                    // add them all
+                    outsidePolygons.AddRange(polygons);
+                }
+                
 				IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
 
 				var polyCenter = outsideSource.GetWeightedCenter();

@@ -245,6 +245,19 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
+            if (exportPlugin is ExportStlToExecutable)
+            {
+                ApplicationController.Instance.Tasks.Execute(
+                    "Saving".Localize() + "...",
+                    printer,
+                    async (reporter, cancellationTokenSource) =>
+                    {
+                        await exportPlugin.Generate(libraryItems, null, reporter, cancellationTokenSource.Token);
+                    });
+
+                return;
+            }
+            
 			UiThread.RunOnIdle(() =>
 			{
 				string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();

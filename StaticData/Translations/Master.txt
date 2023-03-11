@@ -502,6 +502,9 @@ Translated:Bad
 English:Bad Thermistor
 Translated:Bad Thermistor
 
+English:Bambu Studio
+Translated:Bambu Studio
+
 English:Base
 Translated:Base
 
@@ -1953,6 +1956,9 @@ Translated:Flooded Hot End
 
 English:Folder Name
 Translated:Folder Name
+
+English:Folder Plater
+Translated:Folder Plater
 
 English:Font
 Translated:Font
@@ -6228,6 +6234,9 @@ Translated:View XSmall Icons
 
 English:Visit MatterHackers.com to Purchase
 Translated:Visit MatterHackers.com to Purchase
+
+English:Voron Parts Plater
+Translated:Voron Parts Plater
 
 English:Wait For Running Clean
 Translated:Wait For Running Clean
