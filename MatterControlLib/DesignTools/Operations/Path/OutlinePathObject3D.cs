@@ -45,8 +45,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OutlinePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
-	{
+    public class OutlinePathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
+    {
 		public OutlinePathObject3D()
 		{
 			Name = "Outline Path".Localize();

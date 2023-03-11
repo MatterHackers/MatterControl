@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,8 +61,8 @@ namespace MatterHackers.MatterControl.DesignTools
 	}
     
 	[HideChildrenFromTreeView]
-	public class TextObject3D : Object3D, IPropertyGridModifier, IEditorDraw
-	{
+    public class TextObject3D : Object3D, IPropertyGridModifier, IEditorDraw, IPrimaryOperationsSpecifier
+    {
         private bool refreshToolBar;
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -367,5 +368,16 @@ namespace MatterHackers.MatterControl.DesignTools
         {
 			return this.GetWorldspaceAabbOfDrawPath();
 		}
-	}
+
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            if (Output == OutputDimensions.Output2D)
+            {
+                return PathObject3D.GetOperations(this.GetType());
+            }
+
+            // return no enumerations
+            return Enumerable.Empty<SceneOperation>();
+        }
+    }
 }

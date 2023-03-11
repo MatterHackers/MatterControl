@@ -46,7 +46,9 @@ namespace MatterHackers.MatterControl.Library.Export
 	{
         private bool mergeMeshes = true;
 
-        public int Priority => 2;
+        private bool saveMultipleStls = false;
+		
+		public int Priority => 2;
 
 		public string ButtonText => "STL File".Localize();
 
@@ -82,8 +84,8 @@ namespace MatterHackers.MatterControl.Library.Export
 					first = false;
 				}
 
-				if (!await MeshExport.ExportMesh(item, filename, mergeMeshes, progress))
-				{
+                if (!await MeshExport.ExportMesh(item, filename, mergeMeshes, progress, saveMultipleStls))
+                {
 					badExports.Add(item.Name);
 				}
 			}
@@ -103,8 +105,8 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 		}
 
-		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems)
-		{
+        public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems, RadioButton radioButton)
+        {
 			var exportMeshCount = 0;
 			foreach (var item in libraryItems.OfType<ILibraryAsset>())
 			{
@@ -119,19 +121,21 @@ namespace MatterHackers.MatterControl.Library.Export
             {
 				return null;
             }
-            
-            var container = new FlowLayoutWidget()
-			{
+
+            var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+            {
 				Margin = new BorderDouble(left: 40, bottom: 10),
 			};
 
 			var theme = AppContext.Theme;
 
-			var unionAllPartsCheckbox = new CheckBox("Merge faces into single mesh".Localize(), theme.TextColor, 10)
-			{
+            // add union checkbox
+            var unionAllPartsCheckbox = new CheckBox("Performe Union".Localize(), theme.TextColor, 10)
+            {
 				Checked = true,
 				Cursor = Cursors.Hand,
-                ToolTipText = "Disable to expart all faces without merging".Localize()
+                ToolTipText = "Performe a union before exporting. Might be slower but can clean up some models.".Localize(),
+                Margin = new BorderDouble(0, 3)
             };
 			unionAllPartsCheckbox.CheckedStateChanged += (s, e) =>
 			{
@@ -139,7 +143,22 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 			container.AddChild(unionAllPartsCheckbox);
 
-			return container;
-		}
+            // add separate checkbox
+            var saveAsSeparateSTLsCheckbox = new CheckBox("Save Each Separately".Localize(), theme.TextColor, 10)
+            {
+                Checked = false,
+                Cursor = Cursors.Hand,
+                ToolTipText = "Save every object as a separate STL using its name. The save filename will be used if no name can be found.".Localize(),
+                Margin = new BorderDouble(0, 3)
+            };
+            saveAsSeparateSTLsCheckbox.CheckedStateChanged += (s, e) =>
+            {
+                radioButton.InvokeClick();
+                saveMultipleStls = saveAsSeparateSTLsCheckbox.Checked;
+            };
+            container.AddChild(saveAsSeparateSTLsCheckbox);
+
+            return container;
+        }
 	}
 }

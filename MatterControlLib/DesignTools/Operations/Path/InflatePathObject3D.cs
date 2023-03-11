@@ -50,8 +50,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-	public class InflatePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
-	{
+    public class InflatePathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
+    {
 		public InflatePathObject3D()
 		{
 			Name = "Inflate Path".Localize();
@@ -134,16 +134,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			return joinType;
-		}
-
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
-
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }

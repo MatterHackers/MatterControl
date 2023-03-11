@@ -90,7 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void TaskDetails_ProgressChanged(object sender, (double progress0To1, string status) e)
         {
-			if (e.status.StartsWith("[[send to terminal]]"))
+			if (e.status != null
+				&& e.status.StartsWith("[[send to terminal]]"))
 			{
                 // strip of the prefix
                 e.status = e.status.Substring("[[send to terminal]]".Length);

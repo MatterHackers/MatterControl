@@ -44,7 +44,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SmoothPathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
+	public class SmoothPathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
 	{
 		public SmoothPathObject3D()
 		{
@@ -177,16 +177,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			VertexStorage = outputPolygons.CreateVertexStorage();
-		}
-
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
-
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }

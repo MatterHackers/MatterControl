@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public virtual bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems)
+		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems, RadioButton radioButton)
 		{
 			var container = new FlowLayoutWidget()
 			{

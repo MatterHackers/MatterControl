@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools.Primitives
         public BoxPathObject3D()
         {
             Name = "Box".Localize();
-            Color = MatterHackers.MatterControl.DesignTools.Operations.Object3DExtensions.PrimitiveColors["Cube"];
+            Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
         }
 
         public static double MinEdgeSize = .001;

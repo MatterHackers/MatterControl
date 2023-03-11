@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -48,8 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 
     [HideMeterialAndColor]
-	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider, IEditorWidgetModifier
-	{
+	public class ImageObject3D : AssetObject3D, IImageProvider, IObject3DControlsProvider, IEditorWidgetModifier, IPrimaryOperationsSpecifier
+    {
 		private const double DefaultSizeMm = 60;
 
 		private string _assetPath;
@@ -400,5 +401,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						});
 			});
 		}
-	}
+
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            yield return SceneOperations.ById("ImageConverter");
+            yield return SceneOperations.ById("ImageToPath");
+        }
+    }
 }

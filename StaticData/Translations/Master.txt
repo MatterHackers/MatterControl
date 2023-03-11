@@ -3514,6 +3514,12 @@ Translated:PEI Bed Temperature
 English:Percentage of
 Translated:Percentage of
 
+English:Performe a union before exporting. Might be slower but can clean up some models.
+Translated:Performe a union before exporting. Might be slower but can clean up some models.
+
+English:Performe Union
+Translated:Performe Union
+
 English:Perimeter Acceleration
 Translated:Perimeter Acceleration
 
@@ -4362,6 +4368,12 @@ Translated:Save changes ?
 
 English:Save Changes?
 Translated:Save Changes?
+
+English:Save Each Separately
+Translated:Save Each Separately
+
+English:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
+Translated:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
 
 English:Save file:
 Translated:Save file:
