@@ -1113,7 +1113,9 @@ namespace MatterHackers.MatterControl.DesignTools
                                             new SelectFolderDialogParams(directoryPathAttribute.Message)
                                             {
                                                 ActionButtonLabel = directoryPathAttribute.ActionLabel,
-                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
+                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
+												RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
+                                                FolderPath = stringValue
                                             },
                                             (openParams) =>
                                             {
