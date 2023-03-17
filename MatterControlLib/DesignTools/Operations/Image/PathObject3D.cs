@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,19 +32,43 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PathObject3D : Object3D, IEditorDraw
-	{
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
+    public class PathObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier
+    {
+        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        {
+            this.DrawPath();
+        }
 
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
-		}
-	}
+        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+            return this.GetWorldspaceAabbOfDrawPath();
+        }
+
+        public static IEnumerable<SceneOperation> GetOperations(Type type)
+        {
+            // path Ids
+            var pathIds = new List<string>(new string[] {
+                "LinearExtrude",
+                "Revolve",
+                "InflatePath",
+                "OutlinePath",
+                "SmoothPath"
+            });
+
+            foreach (var pathId in pathIds)
+            {
+                yield return SceneOperations.ById(pathId);
+            }
+        }
+
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            return GetOperations(this.GetType());
+        }
+    }
 }

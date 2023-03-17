@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
@@ -40,298 +34,309 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins
 {
-	public class PartsSheet
-	{
-		internal class PartImage
-		{
-			internal double xOffset = 0;
-			internal bool wasDrawn = false;
-			internal ImageBuffer image;
+    public class PartsSheet
+    {
+        private const double inchesPerMm = 0.0393701;
 
-			public PartImage(ImageBuffer imageOfPart)
-			{
-				this.image = imageOfPart;
-			}
-		}
+        private static bool currentlySaving = false;
 
-		private string pathAndFileToSaveTo;
+        private List<ILibraryAssetStream> itemSource;
 
-		public class FileNameAndPresentationName
-		{
-			public string fileName;
-			public string presentationName;
+        private List<PartImage> partImagesToPrint = new List<PartImage>();
 
-			public FileNameAndPresentationName(string fileName, string presentationName)
-			{
-				this.fileName = fileName;
-				this.presentationName = presentationName;
-			}
-		}
+        private string pathAndFileToSaveTo;
+        private bool openAfterSave;
 
-		private List<ILibraryAssetStream> itemSource;
-		private List<PartImage> partImagesToPrint = new List<PartImage>();
-		private const double inchesPerMm = 0.0393701;
+        public PartsSheet(IEnumerable<ILibraryAssetStream> itemSource, string pathAndFileToSaveTo, bool openAfterSave = true)
+        {
+            this.pathAndFileToSaveTo = pathAndFileToSaveTo;
+            this.openAfterSave = openAfterSave;
+            SheetDpi = 300;
+            SheetSizeInches = new Vector2(8.5, 11);
 
-		private static bool currentlySaving = false;
+            this.itemSource = itemSource.ToList();
+        }
 
-		public Vector2 SheetSizeMM { get; set; }
+        public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 25, 10, 5);
 
-		public Vector2 SheetSizeInches
-		{
-			get { return SheetSizeMM * inchesPerMm; }
-			set { SheetSizeMM = value / inchesPerMm; }
-		}
+        public BorderDouble PageMarginPixels => PageMarginMM * PixelsPerMM;
 
-		public Vector2 SheetSizePixels => SheetSizeMM * PixelsPerMM;
+        public double PartMarginMM { get; } = 2;
 
-		public double PixelsPerMM => inchesPerMm * SheetDpi;
+        public double PartMarginPixels => PartMarginMM * PixelsPerMM;
 
-		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 25, 10, 5);
+        public double PartPaddingMM { get; } = 2;
 
-		public BorderDouble PageMarginPixels => PageMarginMM * PixelsPerMM;
+        public double PartPaddingPixels => PartPaddingMM * PixelsPerMM;
 
-		public double PartMarginMM { get; } = 2;
+        public double PixelsPerMM => inchesPerMm * SheetDpi;
 
-		public double PartMarginPixels =>  PartMarginMM * PixelsPerMM;
+        public int SheetDpi { get; set; }
 
-		public double PartPaddingMM { get; } = 2;
+        public Vector2 SheetSizeInches
+        {
+            get { return SheetSizeMM * inchesPerMm; }
+            set { SheetSizeMM = value / inchesPerMm; }
+        }
 
-		public double PartPaddingPixels => PartPaddingMM * PixelsPerMM;
+        public Vector2 SheetSizeMM { get; set; }
 
-		public int SheetDpi { get; set; }
+        public Vector2 SheetSizePixels => SheetSizeMM * PixelsPerMM;
 
-		public PartsSheet(IEnumerable<ILibraryAssetStream> itemSource, string pathAndFileToSaveTo)
-		{
-			this.pathAndFileToSaveTo = pathAndFileToSaveTo;
-			SheetDpi = 300;
-			SheetSizeInches = new Vector2(8.5, 11);
+        public static bool IsSaving()
+        {
+            return currentlySaving;
+        }
 
-			this.itemSource = itemSource.ToList();
-		}
+        private async Task ExportTask(Action<double, string> reporter, CancellationTokenSource cancellationToken)
+        {
+            var processCount = 0.0;
+            currentlySaving = true;
+            // first create images for all the parts
+            foreach (var item in itemSource)
+            {
+                reporter?.Invoke(0, item.Name);
 
-		public Task SaveSheets()
-		{
-			return ApplicationController.Instance.Tasks.Execute(
-				"Export Part Sheet".Localize(),
-				null,
-				async (reporter, cancelationToken) =>
-				{
-					var progressStatus = new ProgressStatus();
+                var xxx = itemSource.Count();
+                var yyy = itemSource.FirstOrDefault()?.Name;
 
-					var processCount = 0.0;
-					currentlySaving = true;
-					// first create images for all the parts
-					foreach (var item in itemSource)
-					{
-						progressStatus.Status = item.Name;
-						reporter.Report(progressStatus);
+                var object3D = await item.CreateContent();
 
-						var xxx = itemSource.Count();
-						var yyy = itemSource.FirstOrDefault()?.Name;
+                var loadedMeshGroups = object3D.VisibleMeshes().ToList();
+                if (loadedMeshGroups?.Count > 0)
+                {
+                    AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].WorldMatrix());
 
-						var object3D = await item.CreateContent();
+                    for (int i = 1; i < loadedMeshGroups.Count; i++)
+                    {
+                        aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
+                    }
 
-						var loadedMeshGroups = object3D.VisibleMeshes().ToList();
-						if (loadedMeshGroups?.Count > 0)
-						{
-							AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].WorldMatrix());
+                    RectangleDouble bounds2D = new RectangleDouble(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.X, aabb.MaxXYZ.Y);
+                    double widthInMM = bounds2D.Width + PartMarginMM * 2;
+                    double textSpaceMM = 5;
+                    double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
 
-							for (int i = 1; i < loadedMeshGroups.Count; i++)
-							{
-								aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
-							}
+                    TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
+                    double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
+                    Vector2 sizeOfRender = new Vector2(widthInMM * PixelsPerMM, heightMM * PixelsPerMM);
 
-							RectangleDouble bounds2D = new RectangleDouble(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.X, aabb.MaxXYZ.Y);
-							double widthInMM = bounds2D.Width + PartMarginMM * 2;
-							double textSpaceMM = 5;
-							double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
+                    ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
+                    typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelsPerMM);
 
-							TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
-							double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
-							Vector2 sizeOfRender = new Vector2(widthInMM * PixelsPerMM, heightMM * PixelsPerMM);
+                    Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
 
-							ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
-							typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelsPerMM);
+                    RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
+                    double strokeWidth = .5 * PixelsPerMM;
+                    rectBounds.Inflate(-strokeWidth / 2);
+                    RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelsPerMM);
+                    partGraphics2D.Render(rect, Color.LightGray);
+                    Stroke rectOutline = new Stroke(rect, strokeWidth);
+                    partGraphics2D.Render(rectOutline, Color.DarkGray);
 
-							Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
+                    foreach (var meshGroup in loadedMeshGroups)
+                    {
+                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelsPerMM, Color.Black);
+                    }
+                    partGraphics2D.Render(typeFacePrinter, Color.Black);
 
-							RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
-							double strokeWidth = .5 * PixelsPerMM;
-							rectBounds.Inflate(-strokeWidth / 2);
-							RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelsPerMM);
-							partGraphics2D.Render(rect, Color.LightGray);
-							Stroke rectOutline = new Stroke(rect, strokeWidth);
-							partGraphics2D.Render(rectOutline, Color.DarkGray);
+                    partImagesToPrint.Add(new PartImage(imageOfPart));
+                }
 
-							foreach (var meshGroup in loadedMeshGroups)
-							{
-								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelsPerMM, Color.Black);
-							}
-							partGraphics2D.Render(typeFacePrinter, Color.Black);
+                reporter?.Invoke(Math.Min(processCount / itemSource.Count, .95), null);
+                processCount++;
+            }
 
-							partImagesToPrint.Add(new PartImage(imageOfPart));
-						}
+            reporter?.Invoke(0, "Saving".Localize());
 
-						progressStatus.Progress0To1 = Math.Min(processCount / itemSource.Count, .95);
-						reporter.Report(progressStatus);
-						processCount++;
-					}
+            partImagesToPrint.Sort(BiggestToLittlestImages);
 
-					progressStatus.Status = "Saving".Localize();
-					reporter.Report(progressStatus);
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "MatterHackers Parts Sheet";
+            document.Info.Author = "MatterHackers Inc.";
+            document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
+            document.Info.Keywords = "MatterControl, STL, 3D Printing";
 
-					partImagesToPrint.Sort(BiggestToLittlestImages);
+            int nextPartToPrintIndex = 0;
+            int plateNumber = 1;
 
-					PdfDocument document = new PdfDocument();
-					document.Info.Title = "MatterHackers Parts Sheet";
-					document.Info.Author = "MatterHackers Inc.";
-					document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
-					document.Info.Keywords = "MatterControl, STL, 3D Printing";
+            while (nextPartToPrintIndex < partImagesToPrint.Count)
+            {
+                PdfPage pdfPage = document.AddPage();
+                CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
+            }
 
-					int nextPartToPrintIndex = 0;
-					int plateNumber = 1;
-					bool done = false;
+            try
+            {
+                // save the final document
+                document.Save(pathAndFileToSaveTo);
 
-					while (!done && nextPartToPrintIndex < partImagesToPrint.Count)
-					{
-						PdfPage pdfPage = document.AddPage();
-						CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
-					}
+                if (openAfterSave)
+                {
+                    // Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
+                    // to show the file (at least on Windows).
+                    ApplicationController.ProcessStart(pathAndFileToSaveTo);
+                }
+            }
+            catch (Exception)
+            {
+            }
 
-					try
-					{
-						// save the final document
-						document.Save(pathAndFileToSaveTo);
+            currentlySaving = false;
 
-						// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
-						// to show the file (at least on Windows).
-						ApplicationController.ProcessStart(pathAndFileToSaveTo);
-					}
-					catch (Exception)
-					{
-					}
+            reporter?.Invoke(1, null);
+        }
 
-					currentlySaving = false;
+        public async Task SaveSheets(Action<double, string> reporter = null)
+        {
+            if (reporter == null)
+            {
+                await ApplicationController.Instance.Tasks.Execute("Export Part Sheet".Localize(), null, ExportTask);
+            }
+            else
+            {
+                await ExportTask(reporter, new CancellationTokenSource());
+            }
+        }
 
-					progressStatus.Progress0To1 = 1;
-					reporter.Report(progressStatus);
-				});
-		}
+        private static int BiggestToLittlestImages(PartImage one, PartImage two)
+        {
+            return two.image.Height.CompareTo(one.image.Height);
+        }
 
-		private static int BiggestToLittlestImages(PartImage one, PartImage two)
-		{
-			return two.image.Height.CompareTo(one.image.Height);
-		}
+        private void CreateOnePage(int plateNumber, ref int nextPartToPrintIndex, PdfPage pdfPage)
+        {
+            ImageBuffer plateInventoryImage = new ImageBuffer((int)(SheetSizePixels.X), (int)(SheetSizePixels.Y));
+            Graphics2D plateGraphics = plateInventoryImage.NewGraphics2D();
+            double currentlyPrintingHeightPixels = PrintTopOfPage(plateInventoryImage, plateGraphics);
 
-		private void CreateOnePage(int plateNumber, ref int nextPartToPrintIndex, PdfPage pdfPage)
-		{
-			ImageBuffer plateInventoryImage = new ImageBuffer((int)(SheetSizePixels.X), (int)(SheetSizePixels.Y));
-			Graphics2D plateGraphics = plateInventoryImage.NewGraphics2D();
-			double currentlyPrintingHeightPixels = PrintTopOfPage(plateInventoryImage, plateGraphics);
+            Vector2 offset = new Vector2(PageMarginPixels.Left, currentlyPrintingHeightPixels);
+            double tallestHeight = 0;
+            List<PartImage> partsOnLine = new List<PartImage>();
+            while (nextPartToPrintIndex < partImagesToPrint.Count)
+            {
+                ImageBuffer image = partImagesToPrint[nextPartToPrintIndex].image;
+                tallestHeight = Math.Max(tallestHeight, image.Height);
 
-			Vector2 offset = new Vector2(PageMarginPixels.Left, currentlyPrintingHeightPixels);
-			double tallestHeight = 0;
-			List<PartImage> partsOnLine = new List<PartImage>();
-			while (nextPartToPrintIndex < partImagesToPrint.Count)
-			{
-				ImageBuffer image = partImagesToPrint[nextPartToPrintIndex].image;
-				tallestHeight = Math.Max(tallestHeight, image.Height);
+                if (partsOnLine.Count > 0 && offset.X + image.Width > plateInventoryImage.Width - PageMarginPixels.Right)
+                {
+                    if (partsOnLine.Count == 1)
+                    {
+                        plateGraphics.Render(partsOnLine[0].image, plateInventoryImage.Width / 2 - partsOnLine[0].image.Width / 2, offset.Y - tallestHeight);
+                    }
+                    else
+                    {
+                        foreach (PartImage partToDraw in partsOnLine)
+                        {
+                            plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
+                        }
+                    }
 
-				if (partsOnLine.Count > 0 && offset.X + image.Width > plateInventoryImage.Width - PageMarginPixels.Right)
-				{
-					if (partsOnLine.Count == 1)
-					{
-						plateGraphics.Render(partsOnLine[0].image, plateInventoryImage.Width / 2 - partsOnLine[0].image.Width / 2, offset.Y - tallestHeight);
-					}
-					else
-					{
-						foreach (PartImage partToDraw in partsOnLine)
-						{
-							plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
-						}
-					}
+                    offset.X = PageMarginPixels.Left;
+                    offset.Y -= (tallestHeight + PartPaddingPixels * 2);
+                    tallestHeight = 0;
+                    partsOnLine.Clear();
+                    if (offset.Y - image.Height < PageMarginPixels.Bottom)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    partImagesToPrint[nextPartToPrintIndex].xOffset = offset.X;
+                    partsOnLine.Add(partImagesToPrint[nextPartToPrintIndex]);
+                    //plateGraphics.Render(image, offset.x, offset.y - image.Height);
+                    offset.X += image.Width + PartPaddingPixels * 2;
+                    nextPartToPrintIndex++;
+                }
+            }
 
-					offset.X = PageMarginPixels.Left;
-					offset.Y -= (tallestHeight + PartPaddingPixels * 2);
-					tallestHeight = 0;
-					partsOnLine.Clear();
-					if (offset.Y - image.Height < PageMarginPixels.Bottom)
-					{
-						break;
-					}
-				}
-				else
-				{
-					partImagesToPrint[nextPartToPrintIndex].xOffset = offset.X;
-					partsOnLine.Add(partImagesToPrint[nextPartToPrintIndex]);
-					//plateGraphics.Render(image, offset.x, offset.y - image.Height);
-					offset.X += image.Width + PartPaddingPixels * 2;
-					nextPartToPrintIndex++;
-				}
-			}
+            // print the last line of parts
+            foreach (PartImage partToDraw in partsOnLine)
+            {
+                plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
+            }
 
-			// print the last line of parts
-			foreach (PartImage partToDraw in partsOnLine)
-			{
-				plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
-			}
+            TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);
+            printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 110);
+            plateGraphics.Render(printer, Color.Black);
 
-			TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);
-			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 110);
-			plateGraphics.Render(printer, Color.Black);
+            printer = new TypeFacePrinter(string.Format("Page {0}", plateNumber), 28, justification: Justification.Center);
+            printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
+            plateGraphics.Render(printer, Color.Black);
 
-			printer = new TypeFacePrinter(string.Format("Page {0}", plateNumber), 28, justification: Justification.Center);
-			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
-			plateGraphics.Render(printer, Color.Black);
+            MemoryStream jpegStream = new MemoryStream();
+            ImageIO.SaveImageData(jpegStream, ".jpeg", plateInventoryImage);
 
-			MemoryStream jpegStream = new MemoryStream();
-			ImageIO.SaveImageData(jpegStream, ".jpeg", plateInventoryImage);
+            XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
+            jpegStream.Seek(0, SeekOrigin.Begin);
+            XImage jpegImage = XImage.FromStream(jpegStream);
+            //double width = jpegImage.PixelWidth * 72 / jpegImage.HorizontalResolution;
+            //double height = jpegImage.PixelHeight * 72 / jpegImage. .HorizontalResolution;
 
-			XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
-			jpegStream.Seek(0, SeekOrigin.Begin);
-			XImage jpegImage = XImage.FromStream(jpegStream);
-			//double width = jpegImage.PixelWidth * 72 / jpegImage.HorizontalResolution;
-			//double height = jpegImage.PixelHeight * 72 / jpegImage. .HorizontalResolution;
+            gfx.DrawImage(jpegImage, 0, 0, pdfPage.Width, pdfPage.Height);
+        }
 
-			gfx.DrawImage(jpegImage, 0, 0, pdfPage.Width, pdfPage.Height);
-		}
+        private double PrintTopOfPage(ImageBuffer plateInventoryImage, Graphics2D plateGraphics)
+        {
+            plateGraphics.Clear(Color.White);
 
-		private double PrintTopOfPage(ImageBuffer plateInventoryImage, Graphics2D plateGraphics)
-		{
-			plateGraphics.Clear(Color.White);
+            double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginPixels.Top;
 
-			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginPixels.Top;
+            string logoPathAndFile = Path.Combine("Images", "PartSheetLogo.png");
+            if (StaticData.Instance.FileExists(logoPathAndFile))
+            {
+                ImageBuffer logoImage = StaticData.Instance.LoadImage(logoPathAndFile);
+                currentlyPrintingHeightPixels -= logoImage.Height;
+                plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
+            }
 
-			string logoPathAndFile = Path.Combine("Images", "PartSheetLogo.png");
-			if (StaticData.Instance.FileExists(logoPathAndFile))
-			{
-				ImageBuffer logoImage = StaticData.Instance.LoadImage(logoPathAndFile);
-				currentlyPrintingHeightPixels -= logoImage.Height;
-				plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
-			}
+            currentlyPrintingHeightPixels -= PartPaddingPixels;
 
-			currentlyPrintingHeightPixels -= PartPaddingPixels;
+            double underlineHeightMM = 1;
 
-			double underlineHeightMM = 1;
+            var lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelsPerMM);
+            lineBounds.Offset(PageMarginPixels.Left, currentlyPrintingHeightPixels - lineBounds.Height);
+            plateGraphics.FillRectangle(lineBounds, Color.Black);
 
-			var lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelsPerMM);
-			lineBounds.Offset(PageMarginPixels.Left, currentlyPrintingHeightPixels - lineBounds.Height);
-			plateGraphics.FillRectangle(lineBounds, Color.Black);
+            return currentlyPrintingHeightPixels - (lineBounds.Height + PartPaddingPixels);
+        }
 
-			return currentlyPrintingHeightPixels - (lineBounds.Height + PartPaddingPixels);
-		}
+        public class FileNameAndPresentationName
+        {
+            public string fileName;
+            public string presentationName;
 
-		public static bool IsSaving()
-		{
-			return currentlySaving;
-		}
-	}
+            public FileNameAndPresentationName(string fileName, string presentationName)
+            {
+                this.fileName = fileName;
+                this.presentationName = presentationName;
+            }
+        }
+
+        internal class PartImage
+        {
+            internal ImageBuffer image;
+            internal bool wasDrawn = false;
+            internal double xOffset = 0;
+
+            public PartImage(ImageBuffer imageOfPart)
+            {
+                this.image = imageOfPart;
+            }
+        }
+    }
 }

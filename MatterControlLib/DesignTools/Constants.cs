@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,18 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public static class Constants
-	{
-		/// <summary>
-		/// Gets the height of the geometry that shows the shape of a path object (it cannot be used in mesh operations).
-		/// </summary>
-		public static double PathPolygonsHeight => .2;
+    public static class Constants
+    {
+        /// <summary>
+        /// Gets the height of the geometry that shows the shape of a path object (it cannot be used in mesh operations).
+        /// </summary>
+        public static double PathPolygonsHeight => .2;
 
-		/// <summary>
-		/// Gets the alpha of the non z-buffered lines in the editor
-		/// </summary>
-		public static int LineAlpha => 80;
+        /// <summary>
+        /// Gets the alpha of the non z-buffered lines in the editor
+        /// </summary>
+        public static int LineAlpha => 80;
 
-		public static int Controls3DAlpha => 80;
-	}
+        public static int Controls3DAlpha => 80;
+    }
 }

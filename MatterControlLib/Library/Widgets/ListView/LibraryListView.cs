@@ -46,7 +46,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.CustomWidgets.LibraryListView;
-using static MatterHackers.MatterControl.Library.Widgets.PrintLibraryWidget;
+using static MatterHackers.MatterControl.Library.Widgets.PopupLibraryWidget;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -100,7 +100,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContentChanged += ActiveContainer_ContentChanged;
-		}
+
+            if (ActiveContainer != null)
+            {
+                ActiveContainer_Changed(this, new ContainerChangedEventArgs(ActiveContainer, null));
+            }
+        }
 
 		private void ContentView_Click(object sender, MouseEventArgs e)
 		{
@@ -231,35 +236,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetUserSort(bool ascending)
 		{
-			this.Ascending = true;
+			this.Ascending = ascending;
 			this.PersistUserView();
 		}
 
-		public void SetContentView(PrintLibraryWidget.ListViewModes viewMode, bool userDriven = true)
+		public void SetContentView(PopupLibraryWidget.ListViewModes viewMode, bool userDriven = true)
 		{
 			ApplicationController.Instance.ViewState.LibraryViewMode = viewMode;
 
 			switch (viewMode)
 			{
-				case PrintLibraryWidget.ListViewModes.RowListView:
+				case PopupLibraryWidget.ListViewModes.RowListView:
 					this.ListContentView = new RowListView(theme);
 					break;
 
-				case PrintLibraryWidget.ListViewModes.IconListView18:
+				case PopupLibraryWidget.ListViewModes.IconListView18:
 					this.ListContentView = new IconListView(theme, 18);
 					break;
 
-				case PrintLibraryWidget.ListViewModes.IconListView70:
+				case PopupLibraryWidget.ListViewModes.IconListView70:
 					this.ListContentView = new IconListView(theme, 70);
 					break;
 
-				case PrintLibraryWidget.ListViewModes.IconListView256:
+				case PopupLibraryWidget.ListViewModes.IconListView256:
 					this.ListContentView = new IconListView(theme, 256);
 					break;
 
-				case PrintLibraryWidget.ListViewModes.IconListView:
+				case PopupLibraryWidget.ListViewModes.IconListView:
 				default:
-					if (viewMode != PrintLibraryWidget.ListViewModes.IconListView)
+					if (viewMode != PopupLibraryWidget.ListViewModes.IconListView)
 					{
 						Debugger.Break(); // Unknown/unexpected value
 					}
@@ -611,7 +616,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 										null,
 										async (reporter, cancellationTokenSource) =>
 										{
-											var progressStatus = new ProgressStatus();
 											var editContext = new EditContext()
 											{
 												ContentStore = writableContainer,
@@ -619,9 +623,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 											};
 											await workspace.SceneContext.LoadContent(editContext, (progress, message) =>
 											{
-												progressStatus.Progress0To1 = progress;
-												progressStatus.Status = message;
-												reporter.Report(progressStatus);
+												reporter?.Invoke(progress, message);
 											});
 										});
 								}

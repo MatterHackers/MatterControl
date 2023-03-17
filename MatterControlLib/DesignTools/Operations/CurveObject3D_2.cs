@@ -51,215 +51,209 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[Obsolete("Use CurveObject3D_3 instead", false)]
-	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
-	{
-		public CurveObject3D_2()
-		{
-			Name = "Curve".Localize();
-		}
+    [Obsolete("Use CurveObject3D_3 instead", false)]
+    public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
+    {
+        public CurveObject3D_2()
+        {
+            Name = "Curve".Localize();
+        }
 
-		[DisplayName("Bend Up")]
-		public bool BendCcw { get; set; } = true;
+        [DisplayName("Bend Up")]
+        public bool BendCcw { get; set; } = true;
 
-		public double Diameter { get; set; } = double.MaxValue;
+        public double Diameter { get; set; } = double.MaxValue;
 
-		[Slider(3, 360)]
-		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinSidesPerRotation { get; set; } = 30;
+        [Slider(3, 360)]
+        [Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
+        public double MinSidesPerRotation { get; set; } = 30;
 
-		[Slider(0, 100)]
-		[Description("Where to start the bend as a percent of the width of the part")]
-		public double StartPercent { get; set; } = 50;
+        [Description("Split the mesh so it has enough geometry to create a smooth curve")]
+        public bool SplitMesh { get; set; } = true;
 
-		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
-		public bool SplitMesh { get; set; } = true;
+        [Slider(0, 100)]
+        [Description("Where to start the bend as a percent of the width of the part")]
+        public double StartPercent { get; set; } = 50;
+        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        {
+            var drawInfo = GetDrawInfo();
 
-		struct DrawInfo
-		{
-			public AxisAlignedBoundingBox sourceAabb;
-			public double distance;
-			public Vector3 center;
-		}
+            // render the top and bottom rings
+            layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
 
-		DrawInfo GetDrawInfo()
-		{
-			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var distance = Diameter / 2 + sourceAabb.YSize / 2;
-			var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
-			center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
+            // render the split lines
+            var radius = Diameter / 2;
+            var circumference = MathHelper.Tau * radius;
+            var xxx = drawInfo.sourceAabb.XSize * (StartPercent / 100.0);
+            var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
+            layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
-			return new DrawInfo
-			{
-				sourceAabb = sourceAabb,
-				distance = distance,
-				center = center,
-			};
-		}
+            // turn the lighting back on
+            GL.Enable(EnableCap.Lighting);
+        }
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			var drawInfo = GetDrawInfo();
+        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+            var drawInfo = GetDrawInfo();
+            var radius = Diameter / 2;
+            var halfHeight = drawInfo.sourceAabb.ZSize / 2;
+            return AxisAlignedBoundingBox.CenteredBox(new Vector3(radius, radius, halfHeight), drawInfo.center).NewTransformed(this.WorldMatrix());
+        }
 
-			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
 
-			// render the split lines
-			var radius = Diameter / 2;
-			var circumference = MathHelper.Tau * radius;
-			var xxx = drawInfo.sourceAabb.XSize * (StartPercent / 100.0);
-			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), drawInfo.center, Diameter, drawInfo.sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
+            bool valuesChanged = false;
 
-			// turn the lighting back on
-			GL.Enable(EnableCap.Lighting);
-		}
+            // ensure we have good values
+            StartPercent = Util.Clamp(StartPercent, 0, 100, ref valuesChanged);
 
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			var drawInfo = GetDrawInfo();
-			var radius = Diameter / 2;
-			var halfHeight = drawInfo.sourceAabb.ZSize / 2;
-			return AxisAlignedBoundingBox.CenteredBox(new Vector3(radius, radius, halfHeight), drawInfo.center).NewTransformed(this.WorldMatrix());
-		}
+            if (Diameter < 1 || Diameter > 100000)
+            {
+                if (Diameter == double.MaxValue)
+                {
+                    var aabb = this.GetAxisAlignedBoundingBox();
+                    // uninitialized set to a reasonable value
+                    Diameter = (int)aabb.XSize;
+                }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
+                Diameter = Math.Min(100000, Math.Max(1, Diameter));
+                valuesChanged = true;
+            }
 
-			bool valuesChanged = false;
+            MinSidesPerRotation = Util.Clamp(MinSidesPerRotation, 3, 360, ref valuesChanged);
 
-			// ensure we have good values
-			StartPercent = agg_basics.Clamp(StartPercent, 0, 100, ref valuesChanged);
+            var rebuildLocks = this.RebuilLockAll();
 
-			if (Diameter < 1 || Diameter > 100000)
-			{
-				if (Diameter == double.MaxValue)
-				{
-					var aabb = this.GetAxisAlignedBoundingBox();
-					// uninitialized set to a reasonable value
-					Diameter = (int)aabb.XSize;
-				}
+            return ApplicationController.Instance.Tasks.Execute(
+                "Curve".Localize(),
+                null,
+                (reporter, cancellationToken) =>
+                {
+                    var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
-				Diameter = Math.Min(100000, Math.Max(1, Diameter));
-				valuesChanged = true;
-			}
+                    var radius = Diameter / 2;
+                    var circumference = MathHelper.Tau * radius;
+                    double numRotations = sourceAabb.XSize / circumference;
+                    double numberOfCuts = numRotations * MinSidesPerRotation;
+                    double cutSize = sourceAabb.XSize / numberOfCuts;
+                    double cutPosition = sourceAabb.MinXYZ.X + cutSize;
+                    var cuts = new List<double>();
+                    for (int i = 0; i < numberOfCuts; i++)
+                    {
+                        cuts.Add(cutPosition);
+                        cutPosition += cutSize;
+                    }
 
-			MinSidesPerRotation = agg_basics.Clamp(MinSidesPerRotation, 3, 360, ref valuesChanged);
+                    var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (StartPercent / 100),
+                        BendCcw ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
+                        sourceAabb.Center.Z);
 
-			var rebuildLocks = this.RebuilLockAll();
+                    var curvedChildren = new List<IObject3D>();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Curve".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+                    foreach (var sourceItem in SourceContainer.VisibleMeshes())
+                    {
+                        var originalMesh = sourceItem.Mesh;
+                        reporter?.Invoke(0, "Copy Mesh".Localize());
+                        var transformedMesh = originalMesh.Copy(CancellationToken.None);
+                        var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
-					var radius = Diameter / 2;
-					var circumference = MathHelper.Tau * radius;
-					double numRotations = sourceAabb.XSize / circumference;
-					double numberOfCuts = numRotations * MinSidesPerRotation;
-					double cutSize = sourceAabb.XSize / numberOfCuts;
-					double cutPosition = sourceAabb.MinXYZ.X + cutSize;
-					var cuts = new List<double>();
-					for (int i = 0; i < numberOfCuts; i++)
-					{
-						cuts.Add(cutPosition);
-						cutPosition += cutSize;
-					}
+                        // transform into this space
+                        transformedMesh.Transform(itemMatrix);
 
-					var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (StartPercent / 100),
-						BendCcw ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
-						sourceAabb.Center.Z);
+                        if (SplitMesh)
+                        {
+                            reporter?.Invoke(0, "Split Mesh".Localize());
 
-					var curvedChildren = new List<IObject3D>();
+                            // split the mesh along the x axis
+                            transformedMesh.SplitOnPlanes(Vector3.UnitX, cuts, cutSize / 8);
+                        }
 
-					var status = new ProgressStatus();
+                        for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+                        {
+                            var position = transformedMesh.Vertices[i];
 
-					foreach (var sourceItem in SourceContainer.VisibleMeshes())
-					{
-						var originalMesh = sourceItem.Mesh;
-						status.Status = "Copy Mesh".Localize();
-						reporter.Report(status);
-						var transformedMesh = originalMesh.Copy(CancellationToken.None);
-						var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
+                            var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+                            var distanceFromCenter = rotationCenter.Y - position.Y;
+                            if (!BendCcw)
+                            {
+                                angleToRotate = -angleToRotate;
+                                distanceFromCenter = -distanceFromCenter;
+                            }
 
-						// transform into this space
-						transformedMesh.Transform(itemMatrix);
+                            var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+                            rotatePosition.Z = position.Z;
+                            transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + sourceAabb.MaxXYZ.Y, 0);
+                        }
 
-						if (SplitMesh)
-						{
-							status.Status = "Split Mesh".Localize();
-							reporter.Report(status);
+                        // transform back into item local space
+                        transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
 
-							// split the mesh along the x axis
-							transformedMesh.SplitOnPlanes(Vector3.UnitX, cuts, cutSize / 8);
-						}
+                        if (SplitMesh)
+                        {
+                            reporter?.Invoke(0, "Merge Vertices".Localize());
 
-						for (int i = 0; i < transformedMesh.Vertices.Count; i++)
-						{
-							var position = transformedMesh.Vertices[i];
+                            transformedMesh.MergeVertices(.1);
+                        }
 
-							var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-							var distanceFromCenter = rotationCenter.Y - position.Y;
-							if (!BendCcw)
-							{
-								angleToRotate = -angleToRotate;
-								distanceFromCenter = -distanceFromCenter;
-							}
+                        transformedMesh.CalculateNormals();
 
-							var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-							rotatePosition.Z = position.Z;
-							transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + sourceAabb.MaxXYZ.Y, 0);
-						}
+                        var curvedChild = new Object3D()
+                        {
+                            Mesh = transformedMesh
+                        };
+                        curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
+                        curvedChild.Visible = true;
+                        curvedChild.Translate(new Vector3(rotationCenter));
+                        if (!BendCcw)
+                        {
+                            curvedChild.Translate(0, -sourceAabb.YSize - Diameter, 0);
+                        }
 
-						// transform back into item local space
-						transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
+                        curvedChildren.Add(curvedChild);
+                    }
 
-						if (SplitMesh)
-						{
-							status.Status = "Merge Vertices".Localize();
-							reporter.Report(status);
+                    RemoveAllButSource();
+                    this.SourceContainer.Visible = false;
 
-							transformedMesh.MergeVertices(.1);
-						}
+                    this.Children.Modify((list) =>
+                    {
+                        list.AddRange(curvedChildren);
+                    });
 
-						transformedMesh.CalculateNormals();
+                    UiThread.RunOnIdle(() =>
+                    {
+                        rebuildLocks.Dispose();
+                        Invalidate(InvalidateType.DisplayValues);
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                    });
 
-						var curvedChild = new Object3D()
-						{
-							Mesh = transformedMesh
-						};
-						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
-						curvedChild.Visible = true;
-						curvedChild.Translate(new Vector3(rotationCenter));
-						if (!BendCcw)
-						{
-							curvedChild.Translate(0, -sourceAabb.YSize - Diameter, 0);
-						}
+                    return Task.CompletedTask;
+                });
+        }
 
-						curvedChildren.Add(curvedChild);
-					}
+        DrawInfo GetDrawInfo()
+        {
+            var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+            var distance = Diameter / 2 + sourceAabb.YSize / 2;
+            var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
+            center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
 
-					RemoveAllButSource();
-					this.SourceContainer.Visible = false;
+            return new DrawInfo
+            {
+                sourceAabb = sourceAabb,
+                distance = distance,
+                center = center,
+            };
+        }
 
-					this.Children.Modify((list) =>
-					{
-						list.AddRange(curvedChildren);
-					});
-
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						Invalidate(InvalidateType.DisplayValues);
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					});
-
-					return Task.CompletedTask;
-				});
-		}
-	}
+        struct DrawInfo
+        {
+            public Vector3 center;
+            public double distance;
+            public AxisAlignedBoundingBox sourceAabb;
+        }
+    }
 }

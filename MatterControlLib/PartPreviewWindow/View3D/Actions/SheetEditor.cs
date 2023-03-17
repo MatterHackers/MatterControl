@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.DesignTools
             // first replace spaces with '_'
             var name = editSelectedName.Text.Replace(' ', '_');
 			// next make sure we don't have the exact name already
-			name = agg_basics.GetNonCollidingName(name, (name) =>
+			name = Util.GetNonCollidingName(name, (name) =>
 			{
 				return !existingNames.Contains(name.ToLower());
 			}, false);

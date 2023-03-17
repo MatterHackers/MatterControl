@@ -33,21 +33,22 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SliceProgressReporter : IProgress<ProgressStatus>
+	public class SliceProgressReporter
 	{
-		private IProgress<ProgressStatus> reporter;
+		private Action<double, string> reporter;
 
-		public SliceProgressReporter(IProgress<ProgressStatus> reporter)
+		public SliceProgressReporter(Action<double, string> reporter)
 		{
 			this.reporter = reporter;
 		}
 
-		public void Report(ProgressStatus progressStatus)
+        public void Report(string status)
 		{
 			double currentValue = 0;
 			double destValue = 10;
 
-			string statusText = progressStatus.Status = progressStatus.Status.Trim().TrimEnd('.');
+			string statusText = status.Trim().TrimEnd('.');
+			var progress = 0.0;
 
 			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
 				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
@@ -57,16 +58,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					destValue = 1;
 				}
 
-				progressStatus.Progress0To1 = currentValue / destValue;
-				progressStatus.Target = null;
+				progress = currentValue / destValue;
 			}
 			else
 			{
-				progressStatus.Status = statusText;
-				progressStatus.Target = "terminal";
+				status = "[[send to terminal]]" + statusText;
 			}
 
-			reporter.Report(progressStatus);
+			reporter?.Invoke(progress, status);
 		}
 	}
 }

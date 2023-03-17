@@ -66,9 +66,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public ICustomSearch CustomSearch { get; } = null;
 
-		public LibrarySortBehavior DefaultSort => null;
+        public LibrarySortBehavior DefaultSort => new LibrarySortBehavior()
+        {
+            SortKey = SortKey.ModifiedDate,
+            Ascending = true
+        };
 
-		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+        public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			return Task.FromResult<ImageBuffer>(null);
 		}

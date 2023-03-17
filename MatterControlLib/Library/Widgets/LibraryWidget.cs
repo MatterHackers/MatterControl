@@ -43,7 +43,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using static MatterHackers.MatterControl.Library.Widgets.PrintLibraryWidget;
+using static MatterHackers.MatterControl.Library.Widgets.PopupLibraryWidget;
 
 namespace MatterHackers.MatterControl.Library.Widgets
 {
@@ -786,8 +786,6 @@ namespace MatterHackers.MatterControl.Library.Widgets
 							null,
 							async (reporter, cancellationTokenSource) =>
 							{
-								var progressStatus = new ProgressStatus();
-
 								// Change loaded scene to new context
 								await printer.Bed.LoadContent(
 									new EditContext()
@@ -796,12 +794,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 										// No content store for GCode
 										ContentStore = null
 									},
-									(progress, message) =>
-									{
-										progressStatus.Progress0To1 = progress;
-										progressStatus.Status = message;
-										reporter.Report(progressStatus);
-									}).ConfigureAwait(false);
+                                    reporter).ConfigureAwait(false);
 							});
 					}
 					else

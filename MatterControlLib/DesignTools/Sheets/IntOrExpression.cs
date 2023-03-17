@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,70 +33,70 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[TypeConverter(typeof(IntOrExpression))]
-	public class IntOrExpression : DirectOrExpression
-	{
-		public int Value(IObject3D owner)
-		{
-			var rebuilding = owner.RebuildLocked;
-			var value = SheetObject3D.EvaluateExpression<int>(owner, Expression);
-			if (rebuilding)
-			{
-				ExpressionValueAtLastRebuild = value.ToString();
-			}
+    [TypeConverter(typeof(IntOrExpression))]
+    public class IntOrExpression : DirectOrExpression
+    {
+        public int Value(IObject3D owner)
+        {
+            var rebuilding = owner.RebuildLocked;
+            var value = Expressions.EvaluateExpression<int>(owner, Expression);
+            if (rebuilding)
+            {
+                ExpressionValueAtLastRebuild = value.ToString();
+            }
 
-			return value;
-		}
+            return value;
+        }
 
-		public IntOrExpression(int value)
-		{
-			Expression = value.ToString();
-		}
+        public IntOrExpression(int value)
+        {
+            Expression = value.ToString();
+        }
 
-		public IntOrExpression(double value)
-		{
-			Expression = ((int)value).ToString();
-		}
+        public IntOrExpression(double value)
+        {
+            Expression = ((int)value).ToString();
+        }
 
-		public IntOrExpression(string expression)
-		{
-			Expression = expression;
-		}
+        public IntOrExpression(string expression)
+        {
+            Expression = expression;
+        }
 
-		public static implicit operator IntOrExpression(int value)
-		{
-			return new IntOrExpression(value);
-		}
+        public static implicit operator IntOrExpression(int value)
+        {
+            return new IntOrExpression(value);
+        }
 
-		public static implicit operator IntOrExpression(double value)
-		{
-			return new IntOrExpression(value);
-		}
+        public static implicit operator IntOrExpression(double value)
+        {
+            return new IntOrExpression(value);
+        }
 
-		public static implicit operator IntOrExpression(string expression)
-		{
-			return new IntOrExpression(expression);
-		}
+        public static implicit operator IntOrExpression(string expression)
+        {
+            return new IntOrExpression(expression);
+        }
 
-		/// <summary>
-		/// Evaluate the expression clap the result and return the clamped value.
-		/// If the expression as not an equation, modify it to be the clamped value.
-		/// </summary>
-		/// <param name="item">The Object to find the table relative to</param>
-		/// <param name="min">The min value to clamp to</param>
-		/// <param name="max">The max value to clamp to</param>
-		/// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
-		/// <returns></returns>
-		public int ClampIfNotCalculated(IObject3D item, int min, int max, ref bool valuesChanged)
-		{
-			var value = agg_basics.Clamp(this.Value(item), min, max, ref valuesChanged);
-			if (!this.IsEquation)
-			{
-				// clamp the actual expression as it is not an equation
-				Expression = value.ToString();
-			}
+        /// <summary>
+        /// Evaluate the expression clap the result and return the clamped value.
+        /// If the expression as not an equation, modify it to be the clamped value.
+        /// </summary>
+        /// <param name="item">The Object to find the table relative to</param>
+        /// <param name="min">The min value to clamp to</param>
+        /// <param name="max">The max value to clamp to</param>
+        /// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
+        /// <returns></returns>
+        public int ClampIfNotCalculated(IObject3D item, int min, int max, ref bool valuesChanged)
+        {
+            var value = Util.Clamp(this.Value(item), min, max, ref valuesChanged);
+            if (!this.IsEquation)
+            {
+                // clamp the actual expression as it is not an equation
+                Expression = value.ToString();
+            }
 
-			return value;
-		}
-	}
+            return value;
+        }
+    }
 }

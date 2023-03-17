@@ -338,7 +338,6 @@ namespace MatterHackers.MatterControl
 							{
 								waitingForHeat = HeatingStatus.Bed;
 
-								var progressStatus = new ProgressStatus();
 								heatStart = printerConnection.ActualBedTemperature;
 								heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
 
@@ -346,9 +345,8 @@ namespace MatterHackers.MatterControl
 									&& waitingForHeat == HeatingStatus.Bed)
 								{
 									var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
-									progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
-									progressStatus.Progress0To1 = (heatDistance - remainingDistance) / heatDistance;
-									reporter.Report(progressStatus);
+									var status = $"Heating Bed ({0:0}/{1:0})".Localize().FormatWith(printerConnection.ActualBedTemperature, printerConnection.TargetBedTemperature);
+									reporter?.Invoke((heatDistance - remainingDistance) / heatDistance, status);
 									Thread.Sleep(10);
 								}
 
@@ -368,8 +366,6 @@ namespace MatterHackers.MatterControl
 							{
 								waitingForHeat = HeatingStatus.T0;
 
-								var progressStatus = new ProgressStatus();
-
 								heatStart = printerConnection.GetActualHotendTemperature(0);
 								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
 
@@ -377,9 +373,9 @@ namespace MatterHackers.MatterControl
 									&& waitingForHeat == HeatingStatus.T0)
 								{
 									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
-									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-									progressStatus.Status = $"Heating Nozzle ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
-									reporter.Report(progressStatus);
+									var progress0To1 = (heatDistance - currentDistance) / heatDistance;
+									var status = $"Heating Nozzle ({0}/{1})".Localize().FormatWith(printerConnection.GetActualHotendTemperature(0), printerConnection.GetTargetHotendTemperature(0));
+									reporter?.Invoke(progress0To1, status);
 									Thread.Sleep(1000);
 								}
 
@@ -399,8 +395,6 @@ namespace MatterHackers.MatterControl
 							{
 								waitingForHeat = HeatingStatus.T1;
 
-								var progressStatus = new ProgressStatus();
-
 								heatStart = printerConnection.GetActualHotendTemperature(1);
 								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(1) - heatStart);
 
@@ -408,9 +402,9 @@ namespace MatterHackers.MatterControl
 									&& waitingForHeat == HeatingStatus.T1)
 								{
 									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(1) - printerConnection.GetActualHotendTemperature(1));
-									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-									progressStatus.Status = $"Heating Nozzle ({printerConnection.GetActualHotendTemperature(1):0}/{printerConnection.GetTargetHotendTemperature(1):0})";
-									reporter.Report(progressStatus);
+									var progress0To1 = (heatDistance - currentDistance) / heatDistance;
+									var status = $"Heating Nozzle ({printerConnection.GetActualHotendTemperature(1):0}/{printerConnection.GetTargetHotendTemperature(1):0})";
+									reporter?.Invoke(progress0To1, status);
 									Thread.Sleep(1000);
 								}
 

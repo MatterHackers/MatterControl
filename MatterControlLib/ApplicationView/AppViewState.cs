@@ -34,6 +34,6 @@ namespace MatterHackers.MatterControl
 {
 	public class AppViewState
 	{
-		public PrintLibraryWidget.ListViewModes LibraryViewMode { get; set; } = PrintLibraryWidget.ListViewModes.IconListView;
+		public PopupLibraryWidget.ListViewModes LibraryViewMode { get; set; } = PopupLibraryWidget.ListViewModes.IconListView;
 	}
 }

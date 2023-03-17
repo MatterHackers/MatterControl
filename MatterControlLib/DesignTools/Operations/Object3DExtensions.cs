@@ -87,6 +87,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+        public static void RebuildAll(this IObject3D item)
+        {
+            var updateItems = Expressions.SortAndLockUpdateItems(item, (item) =>
+            {
+                return true;
+            }, false);
+
+            Expressions.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
+        }
+        
 		public static void RefreshToolBar(this IObject3D item)
         {
 			var sceneContext = item.ContainingScene();

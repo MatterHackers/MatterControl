@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2023, John Lewin, Lars Brubaker
 
 All rights reserved.
 
@@ -152,7 +152,7 @@ namespace MatterHackers.Agg.UI
 				activeButtonID = InitialSelectionIndex;
 			}
 
-			activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
+			activeButtonID = Util.Clamp(activeButtonID, 0, this.Operations.Count - 1);
 
 			return this.Operations[activeButtonID];
 		}

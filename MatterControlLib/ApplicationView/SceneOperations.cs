@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -66,8 +67,6 @@ namespace MatterHackers.MatterControl
 		private static Dictionary<Type, Func<ThemeConfig, ImageBuffer>> Icons { get; set; }
 
 		private static Dictionary<string, SceneOperation> OperationsById { get; } = new Dictionary<string, SceneOperation>();
-
-		private static Dictionary<Type, List<SceneOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<SceneOperation>>();
 
 		public static SceneOperation AddBaseOperation()
 		{
@@ -258,16 +257,6 @@ namespace MatterHackers.MatterControl
 			if (Icons.ContainsKey(type))
 			{
 				return Icons[type].Invoke(theme);
-			}
-
-			return null;
-		}
-
-		public static IEnumerable<SceneOperation> GetPrimaryOperations(Type type)
-		{
-			if (PrimaryOperations.ContainsKey(type))
-			{
-				return PrimaryOperations[type];
 			}
 
 			return null;
@@ -711,7 +700,6 @@ namespace MatterHackers.MatterControl
 					return true;
 				}
 
-#if DEBUG
 				// path items
 				if (includePaths
 					&& selectedItem.VisiblePaths().Count() > 1
@@ -719,7 +707,6 @@ namespace MatterHackers.MatterControl
 				{
 					return true;
 				}
-#endif
 			}
 
 			return false;
@@ -741,9 +728,7 @@ namespace MatterHackers.MatterControl
 				ArrangeAllPartsOperation(),
 				new SceneSelectionSeparator(),
 				LayFlatOperation(),
-#if DEBUG
 				RebuildOperation(),
-#endif
 				GroupOperation(),
 				UngroupOperation(),
 				new SceneSelectionSeparator(),
@@ -885,42 +870,6 @@ namespace MatterHackers.MatterControl
 			// register legacy types so they still show, they don't have ui to create so they don't have icons set dynamically
 			Icons.Add(typeof(AlignObject3D), (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
 
-			// image operations
-			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
-
-			// path operations
-			PrimaryOperations.Add(typeof(ImageToPathObject3D_2), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("SmoothPath")
-			});
-			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
-			});
-			PrimaryOperations.Add(typeof(TextObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
-			});
-			PrimaryOperations.Add(typeof(BoxPathObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
-			});
-			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("OutlinePath")
-			});
-			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath")
-			});
-			PrimaryOperations.Add(typeof(LinearExtrudeObject3D), new List<SceneOperation>
-			{
-				SceneOperations.ById("AddBase")
-			});
-
-			// default operations
-			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
-
 			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
 		}
 
@@ -932,13 +881,11 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
-#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
-#endif
 					{
 						new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1101,13 +1048,11 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
-#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
-#endif
 					{
 						new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1171,7 +1116,7 @@ namespace MatterHackers.MatterControl
 					{
 						try
 						{
-							var updateItems = SheetObject3D.SortAndLockUpdateItems(selectedItem.Parent, (item) =>
+							var updateItems = Expressions.SortAndLockUpdateItems(selectedItem.Parent, (item) =>
 							{
 								if (item == selectedItem || item.Parent == selectedItem)
 								{
@@ -1181,7 +1126,7 @@ namespace MatterHackers.MatterControl
 								return true;
 							}, false);
 
-							SheetObject3D.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
+							Expressions.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, null);
 						}
 						catch
 						{
@@ -1381,13 +1326,11 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
-#if DEBUG
 					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
 					{
 						new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
-#endif
 					{
 						var subtractItem = new SubtractObject3D_2();
 						subtractItem.WrapSelectedItemAndSelect(sceneContext.Scene);
@@ -1533,4 +1476,9 @@ namespace MatterHackers.MatterControl
 			};
 		}
 	}
+
+    public interface IPrimaryOperationsSpecifier
+    {
+        IEnumerable<SceneOperation> GetOperations();
+    }
 }

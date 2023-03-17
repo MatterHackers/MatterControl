@@ -70,7 +70,6 @@
 		<ProjectReference Include="MatterControl.SLA\MatterControl.SLA.csproj" />
 		<ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj" />
 		<ProjectReference Include="MatterControlLib\MatterControlLib.csproj" />
-		<ProjectReference Include="Plugins\MatterControl.PartSheet\MatterControl.PartSheet.csproj" />
 		<ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj" />
@@ -99,12 +98,12 @@
 		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Mindscape.Raygun4Net.NetCore" Version="6.4.3" />
-		<PackageReference Include="ServiceWire" Version="5.5.2" />
+		<PackageReference Include="ServiceWire" Version="5.5.4" />
 		<PackageReference Include="SocketIoClientDotNet">
 			<Version>1.0.2-beta1</Version>
 		</PackageReference>
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
+		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.410601">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="System.IO.Ports" Version="7.0.0" />

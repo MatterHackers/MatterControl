@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public long FileSize { get; private set; }
 
-		public string ID => agg_basics.GetLongHashCode(Url).ToString();
+		public string ID => Util.GetLongHashCode(Url).ToString();
 
 		public bool IsLocked { get; internal set; }
 

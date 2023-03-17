@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         transformData.Add(new TransformData() { TransformedObject = child, UndoTransform = child.Matrix });
                     }
 
-                    PlatingHelper.ArrangeOnBed(children, bedCenter);
+                    PlatingHelper.ArrangeOnBed(children, bedCenter, PlatingHelper.PositionType.Center);
                     int i = 0;
                     foreach (var child in children)
                     {
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 var clonedItem = item.Clone();
                                 clonedItem.Translate(xOffset);
                                 // make the name unique
-                                var newName = agg_basics.GetNonCollidingName(item.Name, namedItems);
+                                var newName = Util.GetNonCollidingName(item.Name, namedItems);
                                 clonedItem.Name = newName;
                                 // add it to the scene
                                 scene.Children.Add(clonedItem);
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             if (!string.IsNullOrWhiteSpace(sourceItem.Name))
                             {
                                 // make the name unique
-                                var newName = agg_basics.GetNonCollidingName(sourceItem.Name, namedItems);
+                                var newName = Util.GetNonCollidingName(sourceItem.Name, namedItems);
                                 clonedItem.Name = newName;
                             }
 
@@ -499,24 +499,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         null,
                         (reporter, cancellationTokenSource) =>
                         {
-                            var progressStatus = new ProgressStatus();
-                            reporter.Report(progressStatus);
                             // clear the selection
                             scene.SelectedItem = null;
-                            progressStatus.Status = "Copy".Localize();
-                            reporter.Report(progressStatus);
+                            var status = "Copy".Localize();
+                            reporter?.Invoke(0, status);
 
                             // try to cut it up into multiple meshes
-                            progressStatus.Status = "Split".Localize();
+                            status = "Split".Localize();
 
                             var cleanMesh = selectedItem.Mesh.Copy(cancellationTokenSource.Token);
                             cleanMesh.MergeVertices(.01);
 
                             var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(cleanMesh, cancellationTokenSource.Token, (double progress0To1, string processingState) =>
                             {
-                                progressStatus.Progress0To1 = .5 + progress0To1 * .5;
-                                progressStatus.Status = processingState;
-                                reporter.Report(progressStatus);
+                                status = processingState;
+                                reporter?.Invoke(.5 + progress0To1 * .5, status);
                             });
                             if (cancellationTokenSource.IsCancellationRequested)
                             {

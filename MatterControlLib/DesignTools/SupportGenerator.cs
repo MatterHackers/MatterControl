@@ -34,6 +34,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
@@ -143,22 +144,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, bvhCreationOptions);
 		}
 
-		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public Task Create(Action<double, string> progress, CancellationToken cancellationToken)
 		{
 			return Create(progress, null);
 		}
 
-		public Task Create(IProgress<ProgressStatus> progress, CancellationTokenSource cancellationTokenSource)
+		public Task Create(Action<double, string> progress, CancellationTokenSource cancellationTokenSource)
 		{
 			var selectedItem = scene.SelectedItem;
 
 			using (new DataConverters3D.SelectionMaintainer(scene))
 			{
-				var status = new ProgressStatus
-                {
-					Status = "Enter"
-				};
-				progress?.Report(status);
+				var status = "Enter".Localize();
+				progress?.Invoke(0, status);
 
 				// Get visible meshes for each of them
 				var allBedItems = scene.Children.SelectMany(i => i.VisibleMeshes());
@@ -204,12 +202,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// get all the support plane intersections
-				status.Status = "Trace";
-				progress?.Report(status);
+				status = "Trace".Localize();
+				progress?.Invoke(0, status);
 				var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, allBedItems);
 
-				status.Status = "Columns";
-				progress?.Report(status);
+				status = "Columns".Localize();
+				progress?.Invoke(0, status);
 
                 // minimum height requiring support is 1/2 the layer height
                 AddSupportColumns(gridBounds, detectedPlanes);

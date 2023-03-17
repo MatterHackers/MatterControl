@@ -226,21 +226,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var twistedChildren = new List<IObject3D>();
 
-					var status = new ProgressStatus();
-
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
-						status.Status = "Copy Mesh".Localize();
-						reporter.Report(status);
+						var status = "Copy Mesh".Localize();
+						reporter?.Invoke(0, status);
 						var transformedMesh = originalMesh.Copy(CancellationToken.None);
 						var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
 						// transform into this space
 						transformedMesh.Transform(itemMatrix);
 
-						status.Status = "Split Mesh".Localize();
-						reporter.Report(status);
+						status = "Split Mesh".Localize();
+						reporter?.Invoke(0, status);
 
 						// split the mesh along the z axis
 						transformedMesh.SplitOnPlanes(Vector3.UnitZ, cuts, cutSize / 8);

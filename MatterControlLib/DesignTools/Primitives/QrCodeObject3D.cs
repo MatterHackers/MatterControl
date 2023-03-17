@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				RebuildImage();
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				RebuildImage();
 				await Rebuild();

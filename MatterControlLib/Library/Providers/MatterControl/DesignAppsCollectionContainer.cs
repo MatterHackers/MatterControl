@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, John Lewin, Lars Brubaker
+Copyright (c) 2023, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,33 +48,25 @@ namespace MatterHackers.MatterControl.Library
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
-                    "Calibration Parts".Localize(),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
-                    () => new CalibrationPartsContainer())
-                {
-                    IsReadOnly = true
-                });
-
-            this.ChildContainers.Add(
-                new DynamicContainerLink(
-                    "Scripting".Localize(),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "scripting_icon.png")),
-                    () => new ScriptingPartsContainer())
-                {
-                    IsReadOnly = true
-                });
-
-            this.ChildContainers.Add(
-                new DynamicContainerLink(
-                    "Primitives".Localize(),
+                    "Primitives 3D".Localize(),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
-                    () => new PrimitivesContainer())
+                    () => new Primitives3DContainer())
                 {
                     IsReadOnly = true
                 });
+
+#if DEBUG
+            this.ChildContainers.Add(
+                new DynamicContainerLink(
+                    "Primitives 2D".Localize(),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
+                    () => new Primitives2DContainer())
+                {
+                    IsReadOnly = true
+                });
+#endif
 
 #if DEBUG
             int index = 0;
@@ -114,10 +106,11 @@ namespace MatterHackers.MatterControl.Library
                                     return Task.FromResult<IObject3D>(path);
                                 })
                                 { DateCreated = new System.DateTime(index++) },
-                        }
+                        },
+                        Name = "Experimental".Localize()
                     })
                 {
-                    IsReadOnly = true
+                    IsReadOnly = true,
                 });
 #endif
         }

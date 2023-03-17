@@ -52,8 +52,8 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideMeterialAndColor]
-	public class ImageToPathObject3D_2 : Object3D, IImageProvider, IEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
-	{
+    public class ImageToPathObject3D_2 : PathObject3D, IImageProvider, IEditorDraw, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
+    {
 		public ImageToPathObject3D_2()
 		{
 			Name = "Image to Path".Localize();
@@ -176,16 +176,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
-		}
-
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
-
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
 		}
 
 		public override bool CanApply => true;
@@ -357,7 +347,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
                 CopyNewImageData();
                 await Rebuild();
@@ -391,16 +381,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var progressStatus = new ProgressStatus();
 					switch (AnalysisType)
 					{
 						case AnalysisTypes.Transparency:
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
-									progressStatus.Progress0To1 = progress0to1;
-									progressStatus.Status = status;
-									reporter.Report(progressStatus);
+									reporter?.Invoke(progress0to1, status);
 								},
 								SourceImage,
 								new AlphaFunction());
@@ -411,10 +398,8 @@ namespace MatterHackers.MatterControl.DesignTools
 							this.GenerateMarchingSquaresAndLines(
 								(progress0to1, status) =>
 								{
-									progressStatus.Progress0To1 = progress0to1;
-									progressStatus.Status = status;
-									reporter.Report(progressStatus);
-								},
+                                    reporter?.Invoke(progress0to1, status);
+                                },
 								alphaImage,
 								new AlphaFunction());
 							break;

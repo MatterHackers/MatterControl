@@ -45,8 +45,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OutlinePathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
-	{
+    public class OutlinePathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
+    {
 		public OutlinePathObject3D()
 		{
 			Name = "Outline Path".Localize();
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
@@ -152,16 +152,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			VertexStorage = allLoops.CreateVertexStorage();
 
 			VertexStorage.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
-		}
-
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
-
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
 		}
 	}
 }

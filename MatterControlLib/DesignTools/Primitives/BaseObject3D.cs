@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
@@ -310,6 +310,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+                if (outsidePolygons.Count == 0)
+                {
+                    // add them all
+                    outsidePolygons.AddRange(polygons);
+                }
+                
 				IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
 
 				var polyCenter = outsideSource.GetWeightedCenter();

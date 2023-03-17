@@ -100,7 +100,7 @@ namespace MatterControlLib
 			}
 		}
 
-		private static void IndexZipFile(string filePath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		private static void IndexZipFile(string filePath, Action<double, string> progress, CancellationToken cancellationToken)
 		{
 			Dictionary<string, HelpArticle> helpArticles;
 
@@ -126,19 +126,13 @@ namespace MatterControlLib
 					ProcessHelpTree(rootHelpArticle, helpArticles);
 				}
 
-				var progressStatus = new ProgressStatus()
-				{
-					//Status = "",
-					Progress0To1 = 0
-				};
-
 				var count = zip.Entries.Count;
 				double i = 0;
 
 				foreach (var entry in zip.Entries)
 				{
-					progressStatus.Progress0To1 = i++ / count;
-					progress.Report(progressStatus);
+					var progress0To1 = i++ / (double)count;
+					progress?.Invoke(progress0To1, null);
 
 					// Observe and abort on cancellationToken signal
 					if (cancellationToken.IsCancellationRequested)

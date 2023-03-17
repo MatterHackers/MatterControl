@@ -837,7 +837,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Compute slight highlight of openColor for use as listView background color
 					var slightHighlight = theme.ResolveColor(openColor, Color.White.WithAlpha(theme.IsDarkTheme ? 10 : 50));
 
-					var printLibraryWidget = new PrintLibraryWidget(mainViewWidget, workspace, theme, slightHighlight, libraryPopup)
+					var popupLibraryWidget = new PopupLibraryWidget(mainViewWidget, workspace, theme, slightHighlight, libraryPopup)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Absolute,
@@ -847,10 +847,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					systemWindow.SizeChanged += (s, e) =>
 					{
-						printLibraryWidget.Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y;
+						popupLibraryWidget.Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y;
 					};
 
-					verticalResizeContainer.AddChild(printLibraryWidget);
+					verticalResizeContainer.AddChild(popupLibraryWidget);
 
 					systemWindow.MouseDown += SystemWindownMouseDown;
 

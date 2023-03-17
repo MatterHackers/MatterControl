@@ -43,7 +43,7 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library.Widgets
 {
-	public class PrintLibraryWidget : GuiWidget, IIgnoredPopupChild
+    public class PopupLibraryWidget : GuiWidget, IIgnoredPopupChild
 	{
 		private FlowLayoutWidget buttonPanel;
 		private ILibraryContext libraryContext;
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 		public bool ShowContainers { get; private set; } = true;
 
-		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace,  ThemeConfig theme, Color libraryBackground, PopupMenuButton popupMenuButton)
+		public PopupLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace,  ThemeConfig theme, Color libraryBackground, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
 			this.mainViewWidget = mainViewWidget;
@@ -414,51 +414,6 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			IconListView18,
 			IconListView70,
 			IconListView256
-		}
-	}
-
-	public class TextEditWithInlineCancel : GuiWidget
-	{
-		public ThemedTextEditWidget TextEditWidget { get; }
-
-		public GuiWidget ResetButton { get; }
-
-		public TextEditWithInlineCancel(ThemeConfig theme, string emptyText = null)
-		{
-			if (emptyText == null)
-			{
-				emptyText = "Search".Localize();
-			}
-
-			this.VAnchor = VAnchor.Center | VAnchor.Fit;
-			this.HAnchor = HAnchor.Stretch;
-
-			TextEditWidget = new ThemedTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Center
-			};
-			this.AddChild(TextEditWidget);
-
-			this.ResetButton = theme.CreateSmallResetButton();
-			ResetButton.HAnchor |= HAnchor.Right;
-			ResetButton.VAnchor |= VAnchor.Center;
-			ResetButton.Name = "Close Search";
-			ResetButton.ToolTipText = "Clear".Localize();
-
-			this.AddChild(ResetButton);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			TextEditWidget.Focus();
-			base.OnLoad(args);
-		}
-
-		public override string Text
-		{
-			get => TextEditWidget.ActualTextEditWidget.Text;
-			set => TextEditWidget.ActualTextEditWidget.Text = value;
 		}
 	}
 }

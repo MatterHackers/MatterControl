@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -43,121 +42,121 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider
-	{
-		private ClipperLib.ClipType clipType;
-		private string operationName;
+    public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier
+    {
+        private ClipperLib.ClipType clipType;
+        private string operationName;
 
-		public MergePathObject3D(string name, ClipperLib.ClipType clipType)
-		{
-			this.operationName = name;
-			this.clipType = clipType;
-			Name = name;
-		}
+        public MergePathObject3D(string name, ClipperLib.ClipType clipType)
+        {
+            this.operationName = name;
+            this.clipType = clipType;
+            Name = name;
+        }
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
+        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        {
+            this.DrawPath();
+        }
 
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
-		}
+        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+            return this.GetWorldspaceAabbOfDrawPath();
+        }
 
-		public override bool CanApply => true;
+        public override bool CanApply => true;
 
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			this.FlattenToPathObject(undoBuffer);
-		}
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+            this.FlattenToPathObject(undoBuffer);
+        }
 
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
-		}
+        public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+        {
+            object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+        }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
 
-			var rebuildLocks = this.RebuilLockAll();
+            var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				operationName,
-				null,
-				(reporter, cancellationTokenSource) =>
-				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+            return ApplicationController.Instance.Tasks.Execute(
+                operationName,
+                null,
+                (reporter, cancellationTokenSource) =>
+                {
+                    try
+                    {
+                        Merge(reporter, cancellationTokenSource.Token);
+                    }
+                    catch
+                    {
+                    }
 
-					try
-					{
-						Merge(reporter, cancellationTokenSource.Token);
-					}
-					catch
-					{
-					}
+                    // set the mesh to show the path
+                    this.Mesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
 
-					// set the mesh to show the path
-					this.Mesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+                    UiThread.RunOnIdle(() =>
+                    {
+                        rebuildLocks.Dispose();
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                    });
+                    return Task.CompletedTask;
+                });
+        }
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					});
-					return Task.CompletedTask;
-				});
-		}
+        private void Merge(Action<double, string> reporter, CancellationToken cancellationToken)
+        {
+            SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-		private void Merge(IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
-		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
+            var participants = SourceContainer.VisiblePaths();
+            if (participants.Count() < 2)
+            {
+                if (participants.Count() == 1)
+                {
+                    var newMesh = new Object3D();
+                    newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+                    newMesh.Mesh = participants.First().Mesh;
+                    this.Children.Add(newMesh);
+                    SourceContainer.Visible = false;
+                }
 
-			var participants = SourceContainer.VisiblePaths();
-			if (participants.Count() < 2)
-			{
-				if (participants.Count() == 1)
-				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
-					this.Children.Add(newMesh);
-					SourceContainer.Visible = false;
-				}
+                return;
+            }
 
-				return;
-			}
+            var first = participants.First();
+            var resultsVertexSource = first.GetVertexSource().Transform(first.Matrix);
 
-			var first = participants.First();
-			var resultsVertexSource = first.GetVertexSource().Transform(first.Matrix);
+            var totalOperations = participants.Count() - 1;
+            double amountPerOperation = 1.0 / totalOperations;
+            double ratioCompleted = 0;
 
-			var totalOperations = participants.Count() - 1;
-			double amountPerOperation = 1.0 / totalOperations;
-			double ratioCompleted = 0;
+            foreach (var item in participants)
+            {
+                if (item != first
+                    && item.GetVertexSource() != null)
+                {
+                    var itemVertexSource = item.GetVertexSource().Transform(item.Matrix);
 
-			var progressStatus = new ProgressStatus();
-			foreach (var item in participants)
-			{
-				if (item != first
-					&& item.GetVertexSource() != null)
-				{
-					var itemVertexSource = item.GetVertexSource().Transform(item.Matrix);
+                    resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 
-					resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
+                    ratioCompleted += amountPerOperation;
+                    reporter?.Invoke(ratioCompleted, null);
+                }
+            }
 
-					ratioCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = ratioCompleted;
-					reporter?.Report(progressStatus);
-				}
-			}
+            this.VertexStorage = new VertexStorage(resultsVertexSource);
 
-			this.VertexStorage = new VertexStorage(resultsVertexSource);
+            SourceContainer.Visible = false;
+        }
 
-			SourceContainer.Visible = false;
-		}
-	}
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            return PathObject3D.GetOperations(this.GetType());
+        }
+    }
 }

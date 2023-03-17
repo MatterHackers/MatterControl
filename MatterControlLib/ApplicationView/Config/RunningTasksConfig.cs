@@ -44,49 +44,52 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl
 {
     public class RunningTasksConfig
-	{
-		public event EventHandler TasksChanged;
+    {
+        public event EventHandler TasksChanged;
 
-		private ObservableCollection<RunningTaskDetails> executingTasks = new ObservableCollection<RunningTaskDetails>();
+        private ObservableCollection<RunningTaskDetails> executingTasks = new ObservableCollection<RunningTaskDetails>();
 
-		public IEnumerable<RunningTaskDetails> RunningTasks => executingTasks.ToList();
+        public IEnumerable<RunningTaskDetails> RunningTasks => executingTasks.ToList();
 
-		public RunningTasksConfig()
-		{
-			executingTasks.CollectionChanged += (s, e) =>
-			{
-				UiThread.RunOnIdle(() => this.TasksChanged?.Invoke(this, null));
-			};
-		}
+        public RunningTasksConfig()
+        {
+            executingTasks.CollectionChanged += (s, e) =>
+            {
+                UiThread.RunOnIdle(() => this.TasksChanged?.Invoke(this, null));
+            };
+        }
 
-		public Task Execute(string taskTitle, object owner, Func<IProgress<ProgressStatus>, CancellationTokenSource, Task> func, RunningTaskOptions taskActions = null)
-		{
-			var tokenSource = new CancellationTokenSource();
+        public Task Execute(string taskTitle, object owner, Func<Action<double, string>, CancellationTokenSource, Task> func, RunningTaskOptions taskActions = null)
+        {
+            var tokenSource = new CancellationTokenSource();
 
-			var taskDetails = new RunningTaskDetails(tokenSource)
-			{
-				Options = taskActions,
-				Title = taskTitle,
-				Owner = owner,
-			};
+            var taskDetails = new RunningTaskDetails(tokenSource)
+            {
+                Options = taskActions,
+                Title = taskTitle,
+                Owner = owner,
+            };
 
-			executingTasks.Add(taskDetails);
+            executingTasks.Add(taskDetails);
 
-			return Task.Run(async () =>
-			{
-				try
-				{
-					await func?.Invoke(taskDetails, tokenSource);
-				}
-				catch
-				{
-				}
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    await func?.Invoke((ratio, message) =>
+                    {
+                        taskDetails.Report(ratio, message);
+                    }, tokenSource);
+                }
+                catch
+                {
+                }
 
-				UiThread.RunOnIdle(() =>
-				{
-					executingTasks.Remove(taskDetails);
-				});
-			});
-		}
-	}
+                UiThread.RunOnIdle(() =>
+                {
+                    executingTasks.Remove(taskDetails);
+                });
+            });
+        }
+    }
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,85 +35,85 @@ using MatterHackers.DataConverters3D;
 namespace MatterHackers.MatterControl.DesignTools
 {
 
-	[TypeConverter(typeof(DoubleOrExpression))]
-	public class DoubleOrExpression : DirectOrExpression
-	{
-		public double Value(IObject3D owner)
-		{
-			var value = SheetObject3D.EvaluateExpression<double>(owner, Expression);
-			if (owner.RebuildLocked)
+    [TypeConverter(typeof(DoubleOrExpression))]
+    public class DoubleOrExpression : DirectOrExpression
+    {
+        public double Value(IObject3D owner)
+        {
+            var value = Expressions.EvaluateExpression<double>(owner, Expression);
+            if (owner.RebuildLocked)
             {
                 ExpressionValueAtLastRebuild = value.ToString();
             }
 
-			return value;
-		}
+            return value;
+        }
 
-		public DoubleOrExpression(double value)
-		{
-			Expression = value.ToString();
-		}
+        public DoubleOrExpression(double value)
+        {
+            Expression = value.ToString();
+        }
 
-		public DoubleOrExpression(string expression)
-		{
-			Expression = expression;
-		}
+        public DoubleOrExpression(string expression)
+        {
+            Expression = expression;
+        }
 
-		public static implicit operator DoubleOrExpression(double value)
-		{
-			return new DoubleOrExpression(value);
-		}
+        public static implicit operator DoubleOrExpression(double value)
+        {
+            return new DoubleOrExpression(value);
+        }
 
-		public static implicit operator DoubleOrExpression(string expression)
-		{
-			return new DoubleOrExpression(expression);
-		}
+        public static implicit operator DoubleOrExpression(string expression)
+        {
+            return new DoubleOrExpression(expression);
+        }
 
-		/// <summary>
-		/// Evaluate the expression clap the result and return the clamped value.
-		/// If the expression as not an equation, modify it to be the clamped value.
-		/// </summary>
-		/// <param name="item">The Object to find the table relative to</param>
-		/// <param name="min">The min value to clamp to</param>
-		/// <param name="max">The max value to clamp to</param>
-		/// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
-		/// <returns></returns>
-		public double ClampIfNotCalculated(IObject3D item, double min, double max, ref bool valuesChanged)
-		{
-			var value = agg_basics.Clamp(this.Value(item), min, max, ref valuesChanged);
-			if (!this.IsEquation)
-			{
-				// clamp the actual expression as it is not an equation
-				Expression = value.ToString();
-			}
+        /// <summary>
+        /// Evaluate the expression clap the result and return the clamped value.
+        /// If the expression as not an equation, modify it to be the clamped value.
+        /// </summary>
+        /// <param name="item">The Object to find the table relative to</param>
+        /// <param name="min">The min value to clamp to</param>
+        /// <param name="max">The max value to clamp to</param>
+        /// <param name="valuesChanged">Did the value actual get changed (clamped).</param>
+        /// <returns></returns>
+        public double ClampIfNotCalculated(IObject3D item, double min, double max, ref bool valuesChanged)
+        {
+            var value = Util.Clamp(this.Value(item), min, max, ref valuesChanged);
+            if (!this.IsEquation)
+            {
+                // clamp the actual expression as it is not an equation
+                Expression = value.ToString();
+            }
 
-			return value;
-		}
+            return value;
+        }
 
-		public double DefaultAndClampIfNotCalculated(IObject3D item,
-			double min,
-			double max,
-			string keyName,
-			double defaultValue,
-			ref bool changed)
-		{
-			var currentValue = this.Value(item);
-			if (!this.IsEquation)
-			{
-				double databaseValue = UserSettings.Instance.Fields.GetDouble(keyName, defaultValue);
+        public double DefaultAndClampIfNotCalculated(IObject3D item,
+            double min,
+            double max,
+            string keyName,
+            double defaultValue,
+            ref bool changed)
+        {
+            var currentValue = this.Value(item);
+            if (!this.IsEquation)
+            {
+                double databaseValue = UserSettings.Instance.Fields.GetDouble(keyName, defaultValue);
 
-				if (currentValue == 0)
-				{
-					currentValue = databaseValue;
-					changed = true;
-				}
+                if (currentValue == 0)
+                {
+                    currentValue = databaseValue;
+                    changed = true;
+                }
 
-				currentValue = agg_basics.Clamp(currentValue, min, max, ref changed);
+                currentValue = Util.Clamp(currentValue, min, max, ref changed);
 
-				Expression = currentValue.ToString();
-			}
+                Expression = currentValue.ToString();
+            }
 
-			return currentValue;
-		}
-	}
+            return currentValue;
+        }
+    }
 }

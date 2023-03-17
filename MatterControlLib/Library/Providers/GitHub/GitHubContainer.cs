@@ -71,12 +71,12 @@ namespace MatterHackers.MatterControl.Library
 
 		private object locker = new object();
 
-		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
+		public GitHubContainer(string containerName, string account, string repository, string repoDirectory)
 		{
 			this.ChildContainers = new SafeList<ILibraryContainerLink>();
 			this.Name = containerName;
 			this.Account = account;
-			this.Repository = repositor;
+			this.Repository = repository;
 			this.RepoDirectory = repoDirectory;
 
 			// Initialize a default CollectionData with a "Loading..." entry
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public long FileSize { get; } = -1;
 
-			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
+			public string ID => Util.GetLongHashCode(AssetPath).ToString();
 
 			public bool IsProtected => true;
 

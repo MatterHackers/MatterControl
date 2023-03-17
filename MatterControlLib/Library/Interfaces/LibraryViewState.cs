@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.Library
 {
     public class LibraryViewState
 	{
-		public PrintLibraryWidget.ListViewModes ViewMode { get; set; }
+		public PopupLibraryWidget.ListViewModes ViewMode { get; set; }
 
 		public LibrarySortBehavior SortBehavior { get; set; }
 	}

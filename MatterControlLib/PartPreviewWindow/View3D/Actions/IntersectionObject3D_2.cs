@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,25 +42,25 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButton]
-	public class IntersectionObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
-	{
-		public IntersectionObject3D_2()
-		{
-			Name = "Intersection";
-		}
+    [ShowUpdateButton]
+    public class IntersectionObject3D_2 : OperationSourceContainerObject3D, IPropertyGridModifier
+    {
+        public IntersectionObject3D_2()
+        {
+            Name = "Intersection";
+        }
 
 #if DEBUG
-		public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
+        public ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public IplicitSurfaceMethod MeshAnalysis { get; set; }
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public IplicitSurfaceMethod MeshAnalysis { get; set; }
 
-		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #else
 		private ProcessingModes Processing { get; set; } = ProcessingModes.Polygons;
 		private ProcessingResolution OutputResolution { get; set; } = ProcessingResolution._64;
@@ -68,90 +68,88 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private ProcessingResolution InputResolution { get; set; } = ProcessingResolution._64;
 #endif
 
-		private CancellationTokenSource cancellationToken;
+        private CancellationTokenSource cancellationToken;
 
-		public bool IsBuilding => this.cancellationToken != null;
+        public bool IsBuilding => this.cancellationToken != null;
 
-		public void CancelBuild()
-		{
-			var threadSafe = this.cancellationToken;
-			if (threadSafe != null)
-			{
-				threadSafe.Cancel();
-			}
-		}
+        public void CancelBuild()
+        {
+            var threadSafe = this.cancellationToken;
+            if (threadSafe != null)
+            {
+                threadSafe.Cancel();
+            }
+        }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
 
-			var rebuildLocks = this.RebuilLockAll();
+            var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Intersection".Localize(),
-				null,
-				(reporter, cancellationTokenSource) =>
-				{
-					this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+            return ApplicationController.Instance.Tasks.Execute(
+                "Intersection".Localize(),
+                null,
+                (reporter, cancellationTokenSource) =>
+                {
+                    this.cancellationToken = cancellationTokenSource as CancellationTokenSource;
 
-					try
-					{
-						Intersect(cancellationTokenSource.Token, reporter);
-					}
-					catch
-					{
-					}
+                    try
+                    {
+                        Intersect(cancellationTokenSource.Token, reporter);
+                    }
+                    catch
+                    {
+                    }
 
-					if (!NameOverriden)
-					{
-						Name = NameFromChildren();
-						NameOverriden = false;
-					}
+                    if (!NameOverriden)
+                    {
+                        Name = NameFromChildren();
+                        NameOverriden = false;
+                    }
 
-					this.cancellationToken = null;
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					});
+                    this.cancellationToken = null;
+                    UiThread.RunOnIdle(() =>
+                    {
+                        rebuildLocks.Dispose();
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                    });
 
-					return Task.CompletedTask;
-				});
-		}
+                    return Task.CompletedTask;
+                });
+        }
 
-		public override string NameFromChildren()
-		{
-			return CalculateName(SourceContainer.Children, " & ");
-		}
+        public override string NameFromChildren()
+        {
+            return CalculateName(SourceContainer.Children, " & ");
+        }
 
-		public void Intersect()
-		{
-			Intersect(CancellationToken.None, null);
-		}
+        public void Intersect()
+        {
+            Intersect(CancellationToken.None, null);
+        }
 
-		private void Intersect(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
+        private void Intersect(CancellationToken cancellationToken, Action<double, string> reporter)
+        {
+            SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-			var participants = SourceContainer.VisibleMeshes();
-			if (participants.Count() < 2)
-			{
-				if (participants.Count() == 1)
-				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
-					this.Children.Add(newMesh);
-					SourceContainer.Visible = false;
-				}
-				return;
-			}
+            var participants = SourceContainer.VisibleMeshes();
+            if (participants.Count() < 2)
+            {
+                if (participants.Count() == 1)
+                {
+                    var newMesh = new Object3D();
+                    newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+                    newMesh.Mesh = participants.First().Mesh;
+                    this.Children.Add(newMesh);
+                    SourceContainer.Visible = false;
+                }
+                return;
+            }
 
-			var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
+            var items = participants.Select(i => (i.Mesh, i.WorldMatrix(SourceContainer)));
 #if false
 			var resultsMesh = BooleanProcessing.DoArray(items,
 				CsgModes.Intersect,
@@ -161,69 +159,65 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				reporter,
 				cancellationToken);
 #else
-			var totalOperations = items.Count() - 1;
-			double amountPerOperation = 1.0 / totalOperations;
-			double ratioCompleted = 0;
+            var totalOperations = items.Count() - 1;
+            double amountPerOperation = 1.0 / totalOperations;
+            double ratioCompleted = 0;
 
-			var progressStatus = new ProgressStatus();
+            var resultsMesh = items.First().Item1;
+            var keepWorldMatrix = items.First().Item2;
 
-			var resultsMesh = items.First().Item1;
-			var keepWorldMatrix = items.First().Item2;
+            bool first = true;
+            foreach (var next in items)
+            {
+                if (first)
+                {
+                    first = false;
+                    continue;
+                }
 
-			bool first = true;
-			foreach (var next in items)
-			{
-				if (first)
-				{
-					first = false;
-					continue;
-				}
+                resultsMesh = BooleanProcessing.Do(resultsMesh,
+                    keepWorldMatrix,
+                    // other mesh
+                    next.Item1,
+                    next.Item2,
+                    // operation type
+                    CsgModes.Intersect,
+                    Processing,
+                    InputResolution,
+                    OutputResolution,
+                    // reporting
+                    reporter,
+                    amountPerOperation,
+                    ratioCompleted,
+                    cancellationToken);
 
-				resultsMesh = BooleanProcessing.Do(resultsMesh,
-					keepWorldMatrix,
-					// other mesh
-					next.Item1,
-					next.Item2,
-					// operation type
-					CsgModes.Intersect,
-					Processing,
-					InputResolution,
-					OutputResolution,
-					// reporting
-					reporter,
-					amountPerOperation,
-					ratioCompleted,
-					progressStatus,
-					cancellationToken);
+                // after the first time we get a result the results mesh is in the right coordinate space
+                keepWorldMatrix = Matrix4X4.Identity;
 
-				// after the first time we get a result the results mesh is in the right coordinate space
-				keepWorldMatrix = Matrix4X4.Identity;
-
-				// report our progress
-				ratioCompleted += amountPerOperation;
-				progressStatus.Progress0To1 = ratioCompleted;
-				reporter?.Report(progressStatus);
-			}
+                // report our progress
+                ratioCompleted += amountPerOperation;
+                reporter?.Invoke(ratioCompleted, null);
+            }
 #endif
 
-			if (resultsMesh != null)
-			{
-				var resultsItem = new Object3D()
-				{
-					Mesh = resultsMesh
-				};
-				resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-				this.Children.Add(resultsItem);
-				SourceContainer.Visible = false;
-			}
-		}
+            if (resultsMesh != null)
+            {
+                var resultsItem = new Object3D()
+                {
+                    Mesh = resultsMesh
+                };
+                resultsItem.CopyProperties(participants.First(), Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+                this.Children.Add(resultsItem);
+                SourceContainer.Visible = false;
+            }
+        }
 
-		public void UpdateControls(PublicPropertyChange change)
-		{
-			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
-			change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
-		}
-	}
+        public void UpdateControls(PublicPropertyChange change)
+        {
+            change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(OutputResolution), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(MeshAnalysis), () => Processing != ProcessingModes.Polygons);
+            change.SetRowVisible(nameof(InputResolution), () => Processing != ProcessingModes.Polygons && MeshAnalysis == IplicitSurfaceMethod.Grid);
+        }
+    }
 }

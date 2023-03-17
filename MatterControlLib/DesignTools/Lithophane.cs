@@ -1,199 +1,215 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
- */
+Copyright (c) 2023, Lars Brubaker, John Lewin
+All rights reserved.
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using MatterHackers.Agg;
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
 using MatterHackers.Agg.Image;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
-	public static class Lithophane
-	{
-		class PixelInfo
-		{
-			public Vector3 Top { get; set; }
-			public Vector3 Bottom { get; set; }
-		}
+    public static class Lithophane
+    {
+        public interface IImageData
+        {
+            int Height { get; }
+            byte[] Pixels { get; }
 
-		public static Mesh Generate(IImageData resizedImage, double maxZ, double nozzleWidth, double pixelsPerMM, bool invert, IProgress<ProgressStatus> reporter)
-		{
-			// TODO: Move this to a user supplied value
-			double baseThickness = nozzleWidth;     // base thickness (in mm)
-			double zRange = maxZ - baseThickness;
+            int Width { get; }
+        }
 
-			// Dimensions of image
-			var width = resizedImage.Width;
-			var height = resizedImage.Height;
+        public static Mesh Generate(IImageData resizedImage, double maxZ, double nozzleWidth, double pixelsPerMM, bool invert, Action<double, string> reporter)
+        {
+            // TODO: Move this to a user supplied value
+            double baseThickness = nozzleWidth;     // base thickness (in mm)
+            double zRange = maxZ - baseThickness;
 
-			var zScale = zRange / 255;
+            // Dimensions of image
+            var width = resizedImage.Width;
+            var height = resizedImage.Height;
 
-			var pixelData = resizedImage.Pixels;
+            var zScale = zRange / 255;
 
-			Stopwatch stopwatch = Stopwatch.StartNew();
+            var pixelData = resizedImage.Pixels;
 
-			var mesh = new Mesh();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-			//var rescale = (double)onPlateWidth / imageData.Width;
-			var rescale = 1;
+            var mesh = new Mesh();
 
-			var progressStatus = new ProgressStatus();
+            //var rescale = (double)onPlateWidth / imageData.Width;
+            var rescale = 1;
 
+            // Build an array of PixelInfo objects from each pixel
+            // Collapse from 4 bytes per pixel to one - makes subsequent processing more logical and has minimal cost
+            var pixels = pixelData.Where((x, i) => i % 4 == 0)
 
+                // Interpolate the pixel color to zheight
+                .Select(b => baseThickness + (invert ? 255 - b : b) * zScale)
 
-			// Build an array of PixelInfo objects from each pixel
-			// Collapse from 4 bytes per pixel to one - makes subsequent processing more logical and has minimal cost
-			var pixels = pixelData.Where((x, i) => i % 4 == 0)
+                // Project to Vector3 for each pixel at the computed x/y/z
+                .Select((z, i) => new Vector3(
+                        i % width * rescale,
+                        (i - i % width) / width * rescale * -1,
+                        z))
+                // Project to PixelInfo, creating a mirrored Vector3 at z0, paired together and added to the mesh
+                .Select(vec =>
+                {
+                    var pixelInfo = new PixelInfo()
+                    {
+                        Top = vec,
+                        Bottom = new Vector3(vec.X, vec.Y, 0)
+                    };
 
-				// Interpolate the pixel color to zheight
-				.Select(b => baseThickness + (invert ? 255 - b : b) * zScale)
+                    mesh.Vertices.Add(pixelInfo.Top);
+                    mesh.Vertices.Add(pixelInfo.Bottom);
 
-				// Project to Vector3 for each pixel at the computed x/y/z
-				.Select((z, i) => new Vector3(
-						i % width * rescale,
-						(i - i % width) / width * rescale * -1,
-						z))
-				// Project to PixelInfo, creating a mirrored Vector3 at z0, paired together and added to the mesh
-				.Select(vec =>
-				{
-					var pixelInfo = new PixelInfo()
-					{
-						Top = vec,
-						Bottom = new Vector3(vec.X, vec.Y, 0)
-					};
+                    return pixelInfo;
+                }).ToArray();
 
-					mesh.Vertices.Add(pixelInfo.Top);
-					mesh.Vertices.Add(pixelInfo.Bottom);
+            Console.WriteLine("ElapsedTime - PixelInfo Linq Generation: {0}", stopwatch.ElapsedMilliseconds);
+            stopwatch.Restart();
 
-					return pixelInfo;
-				}).ToArray();
+            // Select pixels along image edges
+            var backRow = pixels.Take(width).Reverse().ToArray();
+            var frontRow = pixels.Skip((height - 1) * width).Take(width).ToArray();
+            var leftRow = pixels.Where((x, i) => i % width == 0).ToArray();
+            var rightRow = pixels.Where((x, i) => (i + 1) % width == 0).Reverse().ToArray();
 
-			Console.WriteLine("ElapsedTime - PixelInfo Linq Generation: {0}", stopwatch.ElapsedMilliseconds);
-			stopwatch.Restart();
+            int k,
+                nextJ,
+                nextK;
 
-			// Select pixels along image edges
-			var backRow = pixels.Take(width).Reverse().ToArray();
-			var frontRow = pixels.Skip((height - 1) * width).Take(width).ToArray();
-			var leftRow = pixels.Where((x, i) => i % width == 0).ToArray();
-			var rightRow = pixels.Where((x, i) => (i + 1) % width == 0).Reverse().ToArray();
+            var notificationInterval = 100;
 
-			int k,
-				nextJ,
-				nextK;
+            var workCount = (resizedImage.Width - 1) * (resizedImage.Height - 1) +
+                            (height - 1) +
+                            (width - 1);
 
-			var notificationInterval = 100;
+            double workIndex = 0;
 
-			var workCount = (resizedImage.Width - 1) * (resizedImage.Height - 1) +
-							(height - 1) +
-							(width - 1);
+            // Vertical faces: process each row and column, creating the top and bottom faces as appropriate
+            for (int i = 0; i < resizedImage.Height - 1; ++i)
+            {
+                var startAt = i * width;
 
-			double workIndex = 0;
+                // Process each column
+                for (int j = startAt; j < startAt + resizedImage.Width - 1; ++j)
+                {
+                    k = j + 1;
+                    nextJ = j + resizedImage.Width;
+                    nextK = nextJ + 1;
 
-			// Vertical faces: process each row and column, creating the top and bottom faces as appropriate
-			for (int i = 0; i < resizedImage.Height - 1; ++i)
-			{
-				var startAt = i * width;
+                    // Create north, then south face
+                    mesh.CreateFace(new[] { pixels[k].Top, pixels[j].Top, pixels[nextJ].Top, pixels[nextK].Top });
+                    mesh.CreateFace(new[] { pixels[j].Bottom, pixels[k].Bottom, pixels[nextK].Bottom, pixels[nextJ].Bottom });
+                    workIndex++;
 
-				// Process each column
-				for (int j = startAt; j < startAt + resizedImage.Width - 1; ++j)
-				{
-					k = j + 1;
-					nextJ = j + resizedImage.Width;
-					nextK = nextJ + 1;
+                    if (workIndex % notificationInterval == 0)
+                    {
+                        reporter?.Invoke(workIndex / workCount, null);
+                    }
+                }
+            }
 
-					// Create north, then south face
-					mesh.CreateFace(new [] { pixels[k].Top, pixels[j].Top, pixels[nextJ].Top, pixels[nextK].Top });
-					mesh.CreateFace(new [] { pixels[j].Bottom, pixels[k].Bottom, pixels[nextK].Bottom, pixels[nextJ].Bottom });
-					workIndex++;
+            // Side faces: East/West
+            for (int j = 0; j < height - 1; ++j)
+            {
+                //Next row
+                k = j + 1;
 
-					if (workIndex % notificationInterval == 0)
-					{
-						progressStatus.Progress0To1 = workIndex / workCount;
-						reporter.Report(progressStatus);
-					}
-				}
-			}
+                // Create east, then west face
+                mesh.CreateFace(new[] { leftRow[k].Top, leftRow[j].Top, leftRow[j].Bottom, leftRow[k].Bottom });
+                mesh.CreateFace(new[] { rightRow[k].Top, rightRow[j].Top, rightRow[j].Bottom, rightRow[k].Bottom });
+                workIndex++;
 
-			// Side faces: East/West
-			for (int j = 0; j < height - 1; ++j)
-			{
-				//Next row
-				k = j + 1;
+                if (workIndex % notificationInterval == 0)
+                {
+                    reporter?.Invoke(workIndex / workCount, null);
+                }
+            }
 
-				// Create east, then west face
-				mesh.CreateFace(new [] { leftRow[k].Top, leftRow[j].Top, leftRow[j].Bottom, leftRow[k].Bottom });
-				mesh.CreateFace(new [] { rightRow[k].Top, rightRow[j].Top, rightRow[j].Bottom, rightRow[k].Bottom });
-				workIndex++;
+            // Side faces: North/South
+            for (int j = 0; j < width - 1; ++j)
+            {
+                // Next row
+                k = j + 1;
 
-				if (workIndex % notificationInterval == 0)
-				{
-					progressStatus.Progress0To1 = workIndex / workCount;
-					reporter.Report(progressStatus);
-				}
-			}
+                // Create north, then south face
+                mesh.CreateFace(new[] { frontRow[k].Top, frontRow[j].Top, frontRow[j].Bottom, frontRow[k].Bottom });
+                mesh.CreateFace(new[] { backRow[k].Top, backRow[j].Top, backRow[j].Bottom, backRow[k].Bottom });
+                workIndex++;
 
-			// Side faces: North/South
-			for (int j = 0; j < width - 1; ++j)
-			{
-				// Next row
-				k = j + 1;
+                if (workIndex % notificationInterval == 0)
+                {
+                    reporter?.Invoke(workIndex / workCount, null);
+                }
+            }
 
-				// Create north, then south face
-				mesh.CreateFace(new [] { frontRow[k].Top, frontRow[j].Top, frontRow[j].Bottom, frontRow[k].Bottom });
-				mesh.CreateFace(new [] { backRow[k].Top, backRow[j].Top, backRow[j].Bottom, backRow[k].Bottom });
-				workIndex++;
+            Console.WriteLine("ElapsedTime - Face Generation: {0}", stopwatch.ElapsedMilliseconds);
 
-				if (workIndex % notificationInterval == 0)
-				{
-					progressStatus.Progress0To1 = workIndex / workCount;
-					reporter.Report(progressStatus);
-				}
-			}
+            return mesh;
+        }
 
-			Console.WriteLine("ElapsedTime - Face Generation: {0}", stopwatch.ElapsedMilliseconds);
+        public class ImageBufferImageData : IImageData
+        {
+            private ImageBuffer resizedImage;
 
-			return mesh;
-		}
+            public ImageBufferImageData(ImageBuffer image, double pixelWidth)
+            {
+                resizedImage = this.ToResizedGrayscale(image, pixelWidth).MirrorY();
+            }
 
-		public interface IImageData
-		{
-			byte[] Pixels { get; }
+            public int Height => resizedImage.Height;
+            public byte[] Pixels => resizedImage.GetBuffer();
+            public int Width => resizedImage.Width;
 
-			int Width { get; }
-			int Height { get; }
-		}
+            private ImageBuffer ToResizedGrayscale(ImageBuffer image, double onPlateWidth = 0)
+            {
+                var ratio = onPlateWidth / image.Width;
 
-		public class ImageBufferImageData : IImageData
-		{
-			ImageBuffer resizedImage;
+                var resizedImage = image.CreateScaledImage(ratio);
 
-			public ImageBufferImageData(ImageBuffer image, double pixelWidth)
-			{
-				resizedImage = this.ToResizedGrayscale(image, pixelWidth).MirrorY();
-			}
+                var grayImage = resizedImage.ToGrayscale();
 
-			public int Width => resizedImage.Width;
-			public int Height => resizedImage.Height;
+                // Render grayscale pixels onto resized image with larger pixel format needed by caller
+                resizedImage.NewGraphics2D().Render(grayImage, 0, 0);
 
-			private ImageBuffer ToResizedGrayscale(ImageBuffer image, double onPlateWidth = 0)
-			{
-				var ratio = onPlateWidth / image.Width;
+                return resizedImage;
+            }
+        }
 
-				var resizedImage = image.CreateScaledImage(ratio);
-
-				var grayImage = resizedImage.ToGrayscale();
-
-				// Render grayscale pixels onto resized image with larger pixel format needed by caller
-				resizedImage.NewGraphics2D().Render(grayImage, 0, 0);
-
-				return resizedImage;
-			}
-
-			public byte[] Pixels => resizedImage.GetBuffer();
-		}
-	}
+        private class PixelInfo
+        {
+            public Vector3 Bottom { get; set; }
+            public Vector3 Top { get; set; }
+        }
+    }
 }

@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class OperationSourceContainerObject3D : Object3D
 	{
-		public static Func<string, Func<IProgress<ProgressStatus>, CancellationTokenSource, Task>, Task> TaskBuilder { get; set; } =
+		public static Func<string, Func<Action<double, string>, CancellationTokenSource, Task>, Task> TaskBuilder { get; set; } =
 			(name, func) => Task.Run(() => func(null, null));
 
 		public override Mesh Mesh
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-			else if (SheetObject3D.NeedsRebuild(this, invalidateArgs))
+			else if (Expressions.NeedRebuild(this, invalidateArgs))
 			{
 				await Rebuild();
 			}
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		/// <param name="reporter">Show progress</param>
 		/// <param name="cancellationToken">Can check if the operation has been canceled</param>
 		/// <returns>Did any holes get subtracted</returns>
-        public bool ApplyHoles(IProgress<ProgressStatus> reporter,
+        public bool ApplyHoles(Action<double, string> reporter,
 			CancellationToken cancellationToken)
         {
 			var removeItems = Children.Where(c => c.WorldOutputType(SourceContainer) == PrintOutputTypes.Hole && c.Visible);

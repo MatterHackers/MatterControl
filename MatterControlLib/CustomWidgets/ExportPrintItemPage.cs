@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -42,7 +43,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExportPrintItemPage : DialogPage
+    public class ExportPrintItemPage : DialogPage
 	{
 		private CheckBox showInFolderAfterSave;
 
@@ -156,7 +157,7 @@ namespace MatterHackers.MatterControl
 
 				if (plugin is IExportWithOptions pluginWithOptions)
 				{
-					var optionPanel = pluginWithOptions.GetOptionsPanel(libraryItems);
+                    var optionPanel = pluginWithOptions.GetOptionsPanel(libraryItems, pluginButton);
 					if (optionPanel != null)
 					{
 						optionPanel.HAnchor = HAnchor.Stretch;
@@ -245,6 +246,19 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
+            if (exportPlugin is OpenIntoExecutable)
+            {
+                ApplicationController.Instance.Tasks.Execute(
+                    "Saving".Localize() + "...",
+                    printer,
+                    async (reporter, cancellationTokenSource) =>
+                    {
+                        await exportPlugin.Generate(libraryItems, null, reporter, cancellationTokenSource.Token);
+                    });
+
+                return;
+            }
+            
 			UiThread.RunOnIdle(() =>
 			{
 				string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();

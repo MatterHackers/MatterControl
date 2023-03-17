@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var offset = e.Position.X - leftX;
 					var newStart = RangeStart + offset / histogramBackground.Width;
-					newStart = agg_basics.Clamp(newStart, 0, RangeEnd);
+					newStart = Util.Clamp(newStart, 0, RangeEnd);
 					if (RangeStart != newStart)
 					{
 						RangeStart = newStart;
@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var offset = e.Position.X - rightX;
 					var newEnd = RangeEnd + offset / histogramBackground.Width;
-					newEnd = agg_basics.Clamp(newEnd, RangeStart, 1);
+					newEnd = Util.Clamp(newEnd, RangeStart, 1);
 					if (RangeEnd != newEnd)
 					{
 						RangeEnd = newEnd;

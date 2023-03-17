@@ -175,11 +175,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			if (startingAngle > 0 || endingAngle < 360)
 			{
-				Sides = agg_basics.Clamp(sides, 1, 360, ref valuesChanged);
+				Sides = Util.Clamp(sides, 1, 360, ref valuesChanged);
 			}
 			else
 			{
-				Sides = agg_basics.Clamp(sides, 3, 360, ref valuesChanged);
+				Sides = Util.Clamp(sides, 3, 360, ref valuesChanged);
 			}
 
 			Invalidate(InvalidateType.DisplayValues);

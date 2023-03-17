@@ -38,67 +38,69 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-	public static class MeshExport
-	{
-		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave, bool mergeMeshes, IProgress<ProgressStatus> progress)
-		{
-			try
-			{
-				var status = new ProgressStatus()
-				{
-					Status = "Exporting".Localize()
-				};
-
-				if (source is ILibraryObject3D contentItem)
-				{
-					// If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
-					var content = await contentItem.GetObject3D(null);
-					return Object3D.Save(content, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
+    public static class MeshExport
+    {
+        /// <summary>
+		/// Export the source item(s) to a single or multiple STL files
+		/// </summary>
+		/// <param name="source">The source item(s)</param>
+		/// <param name="filePathToSave">The destination to save to (only the folder will be used in saveMultipleStls</param>
+		/// <param name="mergeMeshes">Do a Combine on the individual meshes to ensure they are a single item</param>
+		/// <param name="saveMultipleStls">Save multiple stls using the name of the objects in the scene</param>
+		/// <param name="progress">Update the save progress</param>
+		/// <returns>If the function succeded</returns>
+		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave, bool mergeMeshes, Action<double, string> progress, bool saveMultipleStls = false)
+        {
+            try
+            {
+                if (source is ILibraryObject3D contentItem)
+                {
+                    // If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
+                    var content = await contentItem.GetObject3D(null);
+                    return Object3D.Save(content, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
                     {
-						status.Progress0To1 = ratio;
-						progress.Report(status);
-                    });
-				}
-				else if (source is ILibraryAssetStream streamContent)
-				{
-					if (!string.IsNullOrEmpty(filePathToSave))
-					{
-						// If the file is already the target type, it just needs copied to the target path
-						if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-						{
-							using (var result = await streamContent.GetStream(null))
-							using (var fileStream = File.Create(filePathToSave))
-							{
-								result.Stream.CopyTo(fileStream);
-							}
+                        progress?.Invoke(ratio, "Exporting".Localize());
+                    }, saveMultipleStls: saveMultipleStls);
+                }
+                else if (source is ILibraryAssetStream streamContent)
+                {
+                    if (!string.IsNullOrEmpty(filePathToSave))
+                    {
+                        // If the file is already the target type, it just needs copied to the target path
+                        if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+                        {
+                            using (var result = await streamContent.GetStream(null))
+                            using (var fileStream = File.Create(filePathToSave))
+                            {
+                                result.Stream.CopyTo(fileStream);
+                            }
 
-							return true;
-						}
-						else
-						{
-							// Otherwise we need to load the content and MeshFileIO save to the target path
-							using (var result = await streamContent.GetStream(null))
-							{
-								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
-								if (item != null)
-								{
-									return Object3D.Save(item, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
+                            return true;
+                        }
+                        else
+                        {
+                            // Otherwise we need to load the content and MeshFileIO save to the target path
+                            using (var result = await streamContent.GetStream(null))
+                            {
+                                IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
+                                if (item != null)
+                                {
+                                    return Object3D.Save(item, filePathToSave, mergeMeshes, CancellationToken.None, reportProgress: (ratio, name) =>
                                     {
-										status.Progress0To1 = ratio;
-										progress.Report(status);
-									});
-								}
-							}
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error exporting file: " + ex.Message);
-			}
+                                        progress?.Invoke(ratio, null);
+                                    }, saveMultipleStls: saveMultipleStls);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Error exporting file: " + ex.Message);
+            }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

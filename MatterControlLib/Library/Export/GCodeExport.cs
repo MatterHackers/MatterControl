@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public virtual bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems)
+		public GuiWidget GetOptionsPanel(IEnumerable<ILibraryItem> libraryItems, RadioButton radioButton)
 		{
 			var container = new FlowLayoutWidget()
 			{
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public virtual async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public virtual async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, Action<double, string> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -185,16 +185,12 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 				else if (firstItem is ILibraryObject3D object3DItem)
 				{
-					var status = new ProgressStatus()
-					{
-						Status = "Saving Asset".Localize()
-					};
+					var status = "Saving Asset".Localize();
 
 					loadedItem = await object3DItem.CreateContent(null);
-					await loadedItem.PersistAssets((percentComplete, text) =>
+					await loadedItem.PersistAssets((progress2, text) =>
 					{
-						status.Progress0To1 = percentComplete;
-						progress.Report(status);
+						progress?.Invoke(progress2, status);
 					});
 				}
 				else if (assetStream != null)
@@ -340,7 +336,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return accumulatedStream;
 		}
 
-		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath, IProgress<ProgressStatus> progress)
+		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath, Action<double, string> progress)
 		{
 			try
 			{
@@ -349,10 +345,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				var totalLines = gCodeFileStream.GCodeFile.LineCount;
 				var currentLine = 0;
 
-				var status = new ProgressStatus()
-				{
-					Status = "Writing G-Code".Localize()
-				};
+				var status = "Writing G-Code".Localize();
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
@@ -387,8 +380,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						if (currentLine % 1024 == 0)
 						{
-							status.Progress0To1 = currentLine / (double)totalLines;
-							progress.Report(status);
+							progress?.Invoke(currentLine / (double)totalLines, status);
 						}
 						currentLine++;
 					}
@@ -403,7 +395,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 		}
 
-		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath, IProgress<ProgressStatus> progress)
+		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath, Action<double, string> progress)
 		{
 			try
 			{

@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public override async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public override async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, Action<double, string> progress, CancellationToken cancellationToken)
 		{
 			string gcodePath = Path.ChangeExtension(outputPath, "_gcode");
 

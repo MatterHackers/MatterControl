@@ -166,12 +166,14 @@ namespace MatterHackers.MatterControl
 
 			// Set default Agg providers
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.GlfwProvider.GlfwWindowProvider, MatterHackers.GlfwProvider";
+            AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
+            
 			// for now we will ship release with the old renderer
 #if !DEBUG
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 #endif
 
-			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 			_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==") // this is the PC key
 			{
@@ -221,8 +223,12 @@ namespace MatterHackers.MatterControl
 			config.Bind("Agg:ProviderTypes", AggContext.Config.ProviderTypes);
 			config.Bind("Agg:GraphicsMode", AggContext.Config.GraphicsMode);
 
+#if DEBUG
+			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug", true);
+#else
 			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
-			Application.EnableF5Collect = config.GetValue<bool>("MatterControl:Application:EnableF5Collect");
+#endif
+            Application.EnableF5Collect = config.GetValue<bool>("MatterControl:Application:EnableF5Collect");
 			Application.EnableNetworkTraffic = config.GetValue("MatterControl:Application:EnableNetworkTraffic", true);
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.

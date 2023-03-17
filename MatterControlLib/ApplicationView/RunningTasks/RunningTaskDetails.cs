@@ -85,11 +85,11 @@ using Newtonsoft.Json.Linq;
 namespace MatterHackers.MatterControl
 {
 
-	public class RunningTaskDetails : IProgress<ProgressStatus>
+	public class RunningTaskDetails
 	{
-		public event EventHandler<ProgressStatus> ProgressChanged;
+        public event EventHandler<(double ratio, string message)> ProgressChanged;
 
-		public Func<GuiWidget> DetailsItemAction { get; set; }
+        public Func<GuiWidget> DetailsItemAction { get; set; }
 
 		private CancellationTokenSource tokenSource;
 
@@ -139,12 +139,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void Report(ProgressStatus progressStatus)
+		public void Report(double ratio, string message)
 		{
-			this.ProgressChanged?.Invoke(this, progressStatus);
-		}
+            this.ProgressChanged?.Invoke(this, (ratio, message));
+        }
 
-		public void CancelTask()
+        public void CancelTask()
 		{
 			this.tokenSource.Cancel();
 		}

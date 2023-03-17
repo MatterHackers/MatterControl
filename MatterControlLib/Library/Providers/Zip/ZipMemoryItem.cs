@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public long FileSize { get; private set; }
 
-		public override string ID => agg_basics.GetLongHashCode($"{this.FilePath}/{this.RelativePath}").ToString();
+		public override string ID => Util.GetLongHashCode($"{this.FilePath}/{this.RelativePath}").ToString();
 
 		public ZipMemoryContainer ContainingZip { get; }
 		public string RelativePath { get; set; }

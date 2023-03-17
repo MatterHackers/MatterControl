@@ -1095,7 +1095,40 @@ namespace MatterHackers.MatterControl.DesignTools
 							field.Content.HAnchor = HAnchor.Stretch;
 							RegisterValueChanged(field, (valueString) => valueString);
 							rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
-						}
+
+                            // check for DirectoryPathAttribute
+                            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
+                            if (directoryPathAttribute != null)
+                            {
+                                // add a browse button
+                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).SetToColor(theme.TextColor), theme)
+                                {
+                                    ToolTipText = "Select Folder".Localize(),
+                                };
+                                browseButton.Click += (s, e) =>
+                                {
+                                    UiThread.RunOnIdle(() =>
+                                    {
+                                        AggContext.FileDialogs.SelectFolderDialog(
+                                            new SelectFolderDialogParams(directoryPathAttribute.Message)
+                                            {
+                                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
+                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
+												RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
+                                                FolderPath = stringValue
+                                            },
+                                            (openParams) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(openParams.FolderPath))
+                                                {
+                                                    field.SetValue(openParams.FolderPath, true);
+                                                }
+                                            });
+                                    });
+                                };
+                                rowContainer.AddChild(browseButton);
+                            }
+                        }
 					}
 				}
 			}

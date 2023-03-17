@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -41,221 +35,221 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RenderOpenGl;
-
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider
-	{
-		public SubtractPathObject3D()
-		{
-			Name = "Subtract";
-		}
+    public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier
+    {
+        public SubtractPathObject3D()
+        {
+            Name = "Subtract";
+        }
 
-		[DisplayName("Part(s) to Subtract")]
-		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
+        [DisplayName("Part(s) to Subtract")]
+        public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
-		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-		{
-			this.DrawPath();
-		}
+        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        {
+            this.DrawPath();
+        }
 
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-		{
-			return this.GetWorldspaceAabbOfDrawPath();
-		}
+        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+            return this.GetWorldspaceAabbOfDrawPath();
+        }
 
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
-		}
+        public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+        {
+            object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+        }
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-			}
-			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
+        public override async void OnInvalidate(InvalidateArgs invalidateType)
+        {
+            if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+                || invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+                || invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+                && invalidateType.Source != this
+                && !RebuildLocked)
+            {
+                await Rebuild();
+            }
+            else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+                && invalidateType.Source == this)
+            {
+                await Rebuild();
+            }
+            else
+            {
+                base.OnInvalidate(invalidateType);
+            }
+        }
 
-		public override bool CanApply => true;
+        public override bool CanApply => true;
 
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			this.FlattenToPathObject(undoBuffer);
-		}
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+            this.FlattenToPathObject(undoBuffer);
+        }
 
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
+        public override Task Rebuild()
+        {
+            this.DebugDepth("Rebuild");
 
-			var rebuildLocks = this.RebuilLockAll();
+            var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Subtract".Localize(),
-				null,
-				(reporter, cancellationTokenSource) =>
-				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+            return ApplicationController.Instance.Tasks.Execute(
+                "Subtract".Localize(),
+                null,
+                (reporter, cancellationTokenSource) =>
+                {
+                    try
+                    {
+                        Subtract(cancellationTokenSource.Token, reporter);
+                    }
+                    catch
+                    {
+                    }
 
-					try
-					{
-						Subtract(cancellationTokenSource.Token, reporter);
-					}
-					catch
-					{
-					}
+                    // set the mesh to show the path
+                    if (this.GetVertexSource() != null)
+                    {
+                        var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+                        if (extrudeMesh.Vertices.Count() > 5)
+                        {
+                            this.Mesh = extrudeMesh;
+                        }
+                        else
+                        {
+                            this.Mesh = null;
+                        }
+                    }
 
-					// set the mesh to show the path
-					if (this.GetVertexSource() != null)
-					{
-						var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
-						if (extrudeMesh.Vertices.Count() > 5)
-						{
-							this.Mesh = extrudeMesh;
-						}
-						else
-						{
-							this.Mesh = null;
-						}
-					}
+                    UiThread.RunOnIdle(() =>
+                    {
+                        rebuildLocks.Dispose();
+                        this.CancelAllParentBuilding();
+                        Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                    });
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						this.CancelAllParentBuilding();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					});
+                    return Task.CompletedTask;
+                });
+        }
 
-					return Task.CompletedTask;
-				});
-		}
+        public void Subtract()
+        {
+            Subtract(CancellationToken.None, null);
+        }
 
-		public void Subtract()
-		{
-			Subtract(CancellationToken.None, null);
-		}
+        private void Subtract(CancellationToken cancellationToken, Action<double, string> reporter)
+        {
+            SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-		private void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
+            var parentOfSubtractTargets = SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
 
-			var parentOfSubtractTargets = SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
+            if (parentOfSubtractTargets.Children.Count() < 2)
+            {
+                if (parentOfSubtractTargets.Children.Count() == 1)
+                {
+                    this.Children.Add(SourceContainer.Clone());
+                    SourceContainer.Visible = false;
+                }
 
-			if (parentOfSubtractTargets.Children.Count() < 2)
-			{
-				if (parentOfSubtractTargets.Children.Count() == 1)
-				{
-					this.Children.Add(SourceContainer.Clone());
-					SourceContainer.Visible = false;
-				}
+                return;
+            }
 
-				return;
-			}
+            CleanUpSelectedChildrenNames(this);
 
-			CleanUpSelectedChildrenNames(this);
+            var removeVisibleItems = parentOfSubtractTargets.Children
+                .Where((i) => SelectedChildren
+                .Contains(i.ID))
+                .SelectMany(c => c.VisiblePaths())
+                .ToList();
 
-			var removeVisibleItems = parentOfSubtractTargets.Children
-				.Where((i) => SelectedChildren
-				.Contains(i.ID))
-				.SelectMany(c => c.VisiblePaths())
-				.ToList();
+            var keepItems = parentOfSubtractTargets.Children
+                .Where((i) => !SelectedChildren
+                .Contains(i.ID));
 
-			var keepItems = parentOfSubtractTargets.Children
-				.Where((i) => !SelectedChildren
-				.Contains(i.ID));
+            var keepVisibleItems = keepItems.SelectMany(c => c.VisiblePaths()).ToList();
 
-			var keepVisibleItems = keepItems.SelectMany(c => c.VisiblePaths()).ToList();
+            if (removeVisibleItems.Any()
+                && keepVisibleItems.Any())
+            {
+                var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
+                double amountPerOperation = 1.0 / totalOperations;
+                double ratioCompleted = 0;
 
-			if (removeVisibleItems.Any()
-				&& keepVisibleItems.Any())
-			{
-				var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
-				double amountPerOperation = 1.0 / totalOperations;
-				double ratioCompleted = 0;
+                bool first = true;
+                foreach (var keep in keepVisibleItems)
+                {
+                    var resultsVertexSource = keep.GetVertexSource().Transform(keep.Matrix);
 
-				var progressStatus = new ProgressStatus
-				{
-					Status = "Do Subtract"
-				};
+                    foreach (var remove in removeVisibleItems)
+                    {
+                        resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
 
-				bool first = true;
-				foreach (var keep in keepVisibleItems)
-				{
-					var resultsVertexSource = keep.GetVertexSource().Transform(keep.Matrix);
+                        // report our progress
+                        ratioCompleted += amountPerOperation;
+                        reporter?.Invoke(ratioCompleted, "Do Subtract".Localize());
+                    }
 
-					foreach (var remove in removeVisibleItems)
-					{
-						resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
+                    if (first)
+                    {
+                        this.VertexStorage = new VertexStorage(resultsVertexSource);
+                        first = false;
+                    }
+                    else
+                    {
+                        this.GetVertexSource().MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
+                    }
+                }
 
-						// report our progress
-						ratioCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = ratioCompleted;
-						reporter?.Report(progressStatus);
-					}
+                // this.VertexSource = this.VertexSource.Transform(Matrix.Inverted);
+                first = true;
+                foreach (var child in Children)
+                {
+                    if (first)
+                    {
+                        // hide the source item
+                        child.Visible = false;
+                        first = false;
+                    }
+                    else
+                    {
+                        child.Visible = true;
+                    }
+                }
+            }
+        }
 
-					if (first)
-					{
-						this.VertexStorage = new VertexStorage(resultsVertexSource);
-						first = false;
-					}
-					else
-					{
-						this.GetVertexSource().MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
-					}
-				}
+        public static void CleanUpSelectedChildrenNames(OperationSourceContainerObject3D item)
+        {
+            if (item is ISelectableChildContainer selectableChildContainer)
+            {
+                var parentOfSubtractTargets = item.FirstWithMultipleChildrenDescendantsAndSelf();
 
-				// this.VertexSource = this.VertexSource.Transform(Matrix.Inverted);
-				first = true;
-				foreach (var child in Children)
-				{
-					if (first)
-					{
-						// hide the source item
-						child.Visible = false;
-						first = false;
-					}
-					else
-					{
-						child.Visible = true;
-					}
-				}
-			}
-		}
+                var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.ID);
+                // remove any names from SelectedChildren that are not a child we can select
+                foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
+                {
+                    if (!allVisibleNames.Contains(name))
+                    {
+                        selectableChildContainer.SelectedChildren.Remove(name);
+                    }
+                }
+            }
+        }
 
-		public static void CleanUpSelectedChildrenNames(OperationSourceContainerObject3D item)
-		{
-			if (item is ISelectableChildContainer selectableChildContainer)
-			{
-				var parentOfSubtractTargets = item.FirstWithMultipleChildrenDescendantsAndSelf();
-
-				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.ID);
-				// remove any names from SelectedChildren that are not a child we can select
-				foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
-				{
-					if (!allVisibleNames.Contains(name))
-					{
-						selectableChildContainer.SelectedChildren.Remove(name);
-					}
-				}
-			}
-		}
-	}
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            return PathObject3D.GetOperations(this.GetType());
+        }
+    }
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2023, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,202 +41,242 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl
 {
-	public static class PlatingHelper
-	{
-		public static VertexStorage PolygonToPathStorage(this Polygons polygons)
-		{
-			var output = new VertexStorage();
+    public static class PlatingHelper
+    {
+        public static VertexStorage PolygonToPathStorage(this Polygons polygons)
+        {
+            var output = new VertexStorage();
 
-			foreach (Polygon polygon in polygons)
-			{
-				bool first = true;
-				foreach (IntPoint point in polygon)
-				{
-					if (first)
-					{
-						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.MoveTo);
-						first = false;
-					}
-					else
-					{
-						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.LineTo);
-					}
-				}
+            foreach (Polygon polygon in polygons)
+            {
+                bool first = true;
+                foreach (IntPoint point in polygon)
+                {
+                    if (first)
+                    {
+                        output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.MoveTo);
+                        first = false;
+                    }
+                    else
+                    {
+                        output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.LineTo);
+                    }
+                }
 
-				output.ClosePolygon();
-			}
+                output.ClosePolygon();
+            }
 
-			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
+            output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
-			return output;
-		}
+            return output;
+        }
 
-		public static void ArrangeOnBed(List<IObject3D> object3DList, Vector3 bedCenter)
-		{
-			if (object3DList.Count == 0)
-			{
-				return;
-			}
+        public enum PositionType
+        {
+            Center,
+            LowerLeft,
+            None,
+        }
 
-			// move them all out of the way
-			for (int i = 0; i < object3DList.Count; i++)
-			{
-				object3DList[i].Matrix *= Matrix4X4.CreateTranslation(10000, 10000, 0);
-			}
+        /// <summary>
+        /// Arrange the given parts on the bed and return a list of the parts that were arranged
+        /// </summary>
+        /// <param name="object3DList">The parts to arrange</param>
+        /// <param name="arangePosition">A position to arrange around</param>
+        /// <param name="positionType">The way to consider the possition</param>
+        /// <param name="bedBounds">Optional bounds to arrange into</param>
+        /// <param name="progressReporter">The current progress of arranging</param>
+        /// <returns>A list of the parts that were arranged</returns>
+        public static List<IObject3D> ArrangeOnBed(List<IObject3D> object3DList,
+            Vector3 arangePosition,
+            PositionType positionType,
+            RectangleDouble? bedBounds = null,
+            Action<double, string> progressReporter = null)
+        {
+            if (object3DList.Count == 0)
+            {
+                return null;
+            }
 
-			// sort them by size
-			object3DList.Sort(SortOnBigToLittle);
+            var objectsThatWereArrange = new List<IObject3D>();
+            var objectsThatHaveBeenPlaced = new List<IObject3D>();
 
-			double ratioPerMeshGroup = 1.0 / object3DList.Count;
-			double currentRatioDone = 0;
-			// put them onto the plate (try the center) starting with the biggest and moving down
-			for (int meshGroupIndex = 0; meshGroupIndex < object3DList.Count; meshGroupIndex++)
-			{
-				var object3D = object3DList[meshGroupIndex];
-				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox().MinXYZ;
-				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
+            // sort them by size
+            object3DList.Sort(SortOnBigToLittle);
 
-				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, object3DList);
+            double ratioPerMeshGroup = 1.0 / object3DList.Count;
+            double currentRatioDone = 0;
+            // put them onto the plate (try the center) starting with the biggest and moving down
+            for (int meshGroupIndex = 0; meshGroupIndex < object3DList.Count; meshGroupIndex++)
+            {
+                var object3D = object3DList[meshGroupIndex];
+                Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox().MinXYZ;
+                object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				currentRatioDone += ratioPerMeshGroup;
+                if (MoveToOpenPositionRelativeGroup(object3D, objectsThatHaveBeenPlaced, bedBounds))
+                {
+                    objectsThatHaveBeenPlaced.Add(object3D);
+                    objectsThatWereArrange.Add(object3D);
+                }
 
-				// and put it on the bed
-				PlatingHelper.PlaceOnBed(object3D);
-			}
+                progressReporter?.Invoke(Util.GetRatio(0, 1, meshGroupIndex, object3DList.Count), null);
 
-			// and finally center whatever we have as a group
-			{
-				AxisAlignedBoundingBox bounds = object3DList[0].GetAxisAlignedBoundingBox();
-				for (int i = 1; i < object3DList.Count; i++)
-				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox());
-				}
+                currentRatioDone += ratioPerMeshGroup;
 
-				Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
-				for (int i = 0; i < object3DList.Count; i++)
-				{
-					object3DList[i].Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + bedCenter);
-				}
-			}
-		}
+                // and put it on the bed (set the bottom to z = 0)
+                PlaceOnBed(object3D);
+            }
 
-		private static int SortOnBigToLittle(IObject3D a, IObject3D b)
-		{
-			AxisAlignedBoundingBox xAABB = b.GetAxisAlignedBoundingBox();
-			AxisAlignedBoundingBox yAABB = a.GetAxisAlignedBoundingBox();
-			return Math.Max(xAABB.XSize, xAABB.YSize).CompareTo(Math.Max(yAABB.XSize, yAABB.YSize));
-		}
+            // and finally center whatever we have as a group
+            if (positionType != PositionType.None)
+            {
+                AxisAlignedBoundingBox bounds = object3DList[0].GetAxisAlignedBoundingBox();
+                for (int i = 1; i < object3DList.Count; i++)
+                {
+                    bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox());
+                }
 
-		public static void PlaceOnBed(IObject3D object3D)
-		{
-			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox();
-			Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
+                Vector3 offset = bounds.MinXYZ;
+                if (positionType == PositionType.Center)
+                {
+                    offset = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
+                    offset.Z = 0;
+                }
 
-			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
-		}
+                for (int i = 0; i < object3DList.Count; i++)
+                {
+                    object3DList[i].Matrix *= Matrix4X4.CreateTranslation(arangePosition - offset);
+                }
+            }
 
-		/// <summary>
-		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
-		/// </summary>
-		/// <param name="objectToAdd">The object to position</param>
-		/// <param name="itemsToAvoid">The objects to hit test against</param>
-		public static void MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> itemsToAvoid)
-		{
-			if (objectToAdd == null || !itemsToAvoid.Any())
-			{
-				return;
-			}
+            return objectsThatWereArrange;
+        }
 
-			// find the bounds of all items in the scene
-			AxisAlignedBoundingBox allPlacedMeshBounds = itemsToAvoid.GetUnionedAxisAlignedBoundingBox();
+        private static int SortOnBigToLittle(IObject3D a, IObject3D b)
+        {
+            AxisAlignedBoundingBox xAABB = b.GetAxisAlignedBoundingBox();
+            AxisAlignedBoundingBox yAABB = a.GetAxisAlignedBoundingBox();
+            return Math.Max(xAABB.XSize, xAABB.YSize).CompareTo(Math.Max(yAABB.XSize, yAABB.YSize));
+        }
 
-			// move the part to the total bounds lower left side
-			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox().MinXYZ;
-			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.MinXYZ);
+        public static void PlaceOnBed(IObject3D object3D)
+        {
+            AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox();
+            object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -bounds.MinXYZ.Z));
+        }
 
-			// make sure it is on the 0 plane
-			var aabb = objectToAdd.GetAxisAlignedBoundingBox();
-			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z);
+        /// <summary>
+        /// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
+        /// </summary>
+        /// <param name="objectToAdd">The object to position</param>
+        /// <param name="itemsToAvoid">The objects to hit test against</param>
+        public static bool MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> itemsToAvoid, RectangleDouble? bedBounds = null)
+        {
+            if (objectToAdd == null)
+            {
+                return false;
+            }
 
-			// keep moving the item until its in an open slot
-			MoveToOpenPosition(objectToAdd, itemsToAvoid);
-		}
+            // move the part to the total bounds lower left side
+            Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox().MinXYZ;
+            objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-		/// <summary>
-		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
-		/// </summary>
-		/// <param name="itemToMove">The object to position</param>
-		/// <param name="itemsToAvoid">The objects to hit test against</param>
-		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
-		{
-			if (itemToMove == null)
-			{
-				return;
-			}
+            // keep moving the item until its in an open slot
+            return MoveToOpenPosition(objectToAdd, itemsToAvoid, bedBounds);
+        }
 
-			// find a place to put it that doesn't hit anything
-			var currentBounds = itemToMove.GetAxisAlignedBoundingBox();
-			var itemToMoveBounds = new AxisAlignedBoundingBox(currentBounds.MinXYZ, currentBounds.MaxXYZ);
+        /// <summary>
+        /// Moves the target object to the first non-colliding position, starting at the initial position of the target object
+        /// </summary>
+        /// <param name="itemToMove">The object to position</param>
+        /// <param name="itemsToAvoid">The objects to hit test against</param>
+        public static bool MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid, RectangleDouble? bedBounds = null)
+        {
+            if (itemToMove == null)
+            {
+                return false;
+            }
 
-			// add in a few mm so that it will not be touching
-			itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
-			itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
+            // find a place to put it that doesn't hit anything
+            var currentBounds = itemToMove.GetAxisAlignedBoundingBox();
+            var itemToMoveBounds = new AxisAlignedBoundingBox(currentBounds.MinXYZ, currentBounds.MaxXYZ);
 
-			while (true)
-			{
-				int distance = 0;
-				while (true)
-				{
-					for (int i = 0; i <= distance; i++)
-					{
-						var transform = Matrix4X4.Identity;
+            // add in a few mm so that it will not be touching
+            itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
+            itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
 
-						if (CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, i, distance, out transform))
-						{
-							itemToMove.Matrix *= transform;
-							return;
-						}
+            while (true)
+            {
+                int distance = 0;
+                while (true)
+                {
+                    for (int i = 0; i <= distance; i++)
+                    {
+                        Matrix4X4 transform;
+                        if (CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, i, distance, out transform))
+                        {
+                            AxisAlignedBoundingBox testBounds = itemToMoveBounds.NewTransformed(transform);
 
-						// don't check if the position is the same the one we just checked
-						if (distance != i
-							&& CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, distance, i, out transform))
-						{
-							itemToMove.Matrix *= transform;
-							return;
-						}
-					}
+                            if (bedBounds != null
+                                && (distance + testBounds.MaxXYZ.X > bedBounds.Value.Width
+                                || distance + testBounds.MaxXYZ.Y > bedBounds.Value.Height))
+                            {
+                                return false;
+                            }
 
-					distance++;
-				}
-			}
-		}
+                            itemToMove.Matrix *= transform;
+                            return true;
+                        }
 
-		private static bool CheckPosition(IEnumerable<IObject3D> itemsToAvoid, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, out Matrix4X4 transform)
-		{
-			double xStepAmount = 5;
-			double yStepAmount = 5;
+                        // don't check if the position is the same as the one we just checked
+                        if (distance != i
+                            && CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, distance, i, out transform))
+                        {
+                            AxisAlignedBoundingBox testBounds = itemToMoveBounds.NewTransformed(transform);
 
-			var positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
-			Vector3 newPosition = Vector3Ex.Transform(Vector3.Zero, positionTransform);
+                            if (bedBounds != null
+                                && (distance + testBounds.MaxXYZ.X > bedBounds.Value.Width
+                                || distance + testBounds.MaxXYZ.Y > bedBounds.Value.Height))
+                            {
+                                return false;
+                            }
 
-			transform = Matrix4X4.CreateTranslation(newPosition);
+                            itemToMove.Matrix *= transform;
+                            return true;
+                        }
+                    }
 
-			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
+                    distance++;
+                }
+            }
+        }
 
-			foreach (IObject3D meshToTest in itemsToAvoid)
-			{
-				if (meshToTest != itemToMove)
-				{
-					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
-					var intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
-					if (intersection.XSize > 0 && intersection.YSize > 0)
-					{
-						return false;
-					}
-				}
-			}
+        private static bool CheckPosition(IEnumerable<IObject3D> itemsToAvoid, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, out Matrix4X4 transform)
+        {
+            double xStepAmount = 5;
+            double yStepAmount = 5;
 
-			return true;
-		}
-	}
+            var positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
+            Vector3 newPosition = Vector3Ex.Transform(Vector3.Zero, positionTransform);
+
+            transform = Matrix4X4.CreateTranslation(newPosition);
+
+            AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
+
+            foreach (IObject3D meshToTest in itemsToAvoid)
+            {
+                if (meshToTest != itemToMove)
+                {
+                    AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
+                    var intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
+                    if (intersection.XSize > 0 && intersection.YSize > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+    }
 }

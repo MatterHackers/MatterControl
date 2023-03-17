@@ -47,6 +47,7 @@ using System.Threading.Tasks;
 using global::MatterControl.Printing;
 using Markdig.Agg;
 using Markdig.Syntax.Inlines;
+using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
@@ -328,7 +329,14 @@ namespace MatterHackers.MatterControl
 				popupMenu.CreateSubMenu("Modify".Localize(),
 					menuTheme,
 					(modifyMenu) => SceneOperations.AddModifyItems(modifyMenu, menuTheme, sceneContext));
-			}
+
+				if (OpenIntoExecutable.FoundInstalledExecutable)
+				{
+                    popupMenu.CreateSubMenu("Open With".Localize(),
+                        menuTheme,
+                        (modifyMenu) => OpenIntoExecutable.AddOption(modifyMenu, menuTheme, sceneContext));
+                }
+            }
 			else
 			{
 				// Create items directly in the referenced menu
@@ -650,7 +658,7 @@ namespace MatterHackers.MatterControl
 		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
 
 		// Executes the user printer profile sync logic in the webservices plugin
-		public static Func<string, IProgress<ProgressStatus>, Task> SyncCloudProfiles;
+		public static Func<string, Action<double, string>, Task> SyncCloudProfiles;
 
 		public static Action<string> QueueCloudProfileSync;
 
@@ -1223,12 +1231,10 @@ namespace MatterHackers.MatterControl
 				(progress, cancellationToken) =>
 				{
 					var time = UiThread.CurrentTimerMs;
-					var status = new ProgressStatus();
 					while (UiThread.CurrentTimerMs < time + durationSeconds * 1000)
 					{
 						Thread.Sleep(30);
-						status.Progress0To1 = (UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds;
-						progress.Report(status);
+						progress?.Invoke((UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds, null);
 					}
 
 					return Task.CompletedTask;
@@ -1289,21 +1295,20 @@ namespace MatterHackers.MatterControl
 					var paused = false;
 					Tasks.Execute("", printerConnection.Printer, (reporter, cancellationToken) =>
 					{
-						var progressStatus = new ProgressStatus();
-
 						while (printerConnection.SecondsToHoldTemperature > 0
 							&& !cancellationToken.IsCancellationRequested
 							&& printerConnection.ContinueHoldingTemperature)
 						{
+							var status = "";
 							if (paused)
 							{
-								progressStatus.Status = "Holding Temperature".Localize();
+                                status = "Holding Temperature".Localize();
 							}
 							else
 							{
 								if (printerConnection.SecondsToHoldTemperature > 60)
 								{
-									progressStatus.Status = string.Format(
+                                    status = string.Format(
 										"{0} {1:0}m {2:0}s",
 										"Automatic Heater Shutdown in".Localize(),
 										(int)printerConnection.SecondsToHoldTemperature / 60,
@@ -1311,15 +1316,15 @@ namespace MatterHackers.MatterControl
 								}
 								else
 								{
-									progressStatus.Status = string.Format(
+                                    status = string.Format(
 										"{0} {1:0}s",
 										"Automatic Heater Shutdown in".Localize(),
 										printerConnection.SecondsToHoldTemperature);
 								}
 							}
 
-							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
-							reporter.Report(progressStatus);
+							var progress = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
+							reporter?.Invoke(progress, status);
 							Thread.Sleep(20);
 						}
 
@@ -1869,7 +1874,6 @@ namespace MatterHackers.MatterControl
 						null,
 						async (reporter, cancellationTokenSource) =>
 						{
-							var progressStatus = new ProgressStatus();
 							for (int i=0; i<persistedWorkspaces.Count; i++)
 							{
 								var persistedWorkspace = persistedWorkspaces[i];
@@ -1915,9 +1919,9 @@ namespace MatterHackers.MatterControl
 										{
 											var ratioPerWorkspace = 1.0 / persistedWorkspaces.Count;
 											var completed = ratioPerWorkspace * i;
-											progressStatus.Progress0To1 = completed + progress * ratioPerWorkspace;
-											progressStatus.Status = message;
-											reporter.Report(progressStatus);
+											var progress2 = completed + progress * ratioPerWorkspace;
+											var status = message;
+											reporter?.Invoke(progress2, status);
 										});
 
 										this.RestoreWorkspace(workspace);
@@ -2041,7 +2045,7 @@ namespace MatterHackers.MatterControl
 			leftChild.Padding = new BorderDouble(padding.Left, padding.Bottom, sourceExentionArea.Width, padding.Height);
 		}
 
-		public async Task PrintPart(EditContext editContext, PrinterConfig printerConfig, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, PrinterConnection.PrintingModes printingMode)
+		public async Task PrintPart(EditContext editContext, PrinterConfig printerConfig, Action<double, string> reporter, CancellationToken cancellationToken, PrinterConnection.PrintingModes printingMode)
 		{
 			var partFilePath = editContext.SourceFilePath;
 			var gcodeFilePath = await editContext.GCodeFilePath(printerConfig);
@@ -2248,9 +2252,6 @@ namespace MatterHackers.MatterControl
 				printer,
 				(reporterB, cancellationTokenB) =>
 				{
-					var progressStatus = new ProgressStatus();
-					reporterB.Report(progressStatus);
-
 					return Task.Run(() =>
 					{
 						string printing = "Printing".Localize();
@@ -2267,10 +2268,10 @@ namespace MatterHackers.MatterControl
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
 							var layerCount = printer.Bed.LoadedGCode == null ? "?" : printer.Bed.LoadedGCode.LayerCount.ToString();
-							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1} of {layerCount}) - {printer.Connection.PercentComplete:0}%";
+							var status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1} of {layerCount}) - {printer.Connection.PercentComplete:0}%";
 
-							progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
-							reporterB.Report(progressStatus);
+							var progress0To1 = printer.Connection.PercentComplete / 100;
+							reporterB?.Invoke(progress0To1, status);
 							Thread.Sleep(200);
 						}
 					});
@@ -2448,18 +2449,14 @@ namespace MatterHackers.MatterControl
 
 			await this.Tasks.Execute("Loading GCode".Localize(), printer, (innerProgress, concelationTokenSource) =>
 			{
-				var status = new ProgressStatus();
-
-				innerProgress.Report(status);
-
 				printer.Bed.LoadActiveSceneGCode(gcodeFilePath, concelationTokenSource.Token, (progress0to1, statusText) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						status.Progress0To1 = progress0to1;
-						status.Status = statusText;
+						var progress0To1 = progress0to1;
+						var status = statusText;
 
-						innerProgress.Report(status);
+						innerProgress?.Invoke(progress0To1, status);
 					});
 				});
 
@@ -2667,7 +2664,7 @@ namespace MatterHackers.MatterControl
 
 			public int Priority { get; set; }
 
-			public Func<IProgress<ProgressStatus>, CancellationTokenSource, Task> Action { get; set; }
+			public Func<Action<double, string>, CancellationTokenSource, Task> Action { get; set; }
 		}
 
 		public class StartupAction
