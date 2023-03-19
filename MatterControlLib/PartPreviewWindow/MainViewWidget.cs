@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -312,8 +313,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			EnableReduceWidth(tab, theme);
 
-			// Hardware tab
-			tabControl.AddTab(
+			if (!OemSettings.Instance.DesignToolsOnly)
+			{
+				// Hardware tab
+				tabControl.AddTab(
 				tab = new ChromeTab(
 					"Hardware",
 					"Printers".Localize(),
@@ -329,6 +332,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "Hardware Tab",
 					Padding = new BorderDouble(15, 0),
 				});
+			}
+
 			EnableReduceWidth(tab, theme);
 
 			SetInitialTab();

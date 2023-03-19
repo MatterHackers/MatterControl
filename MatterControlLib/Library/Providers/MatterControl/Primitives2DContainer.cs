@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2023, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,74 +27,74 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Primitives;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.Library
 {
     public class Primitives2DContainer : LibraryContainer
-	{
-		public Primitives2DContainer()
-		{
-			Name = "Primitives 2D".Localize();
-			DefaultSort = new LibrarySortBehavior()
-			{
-				SortKey = SortKey.ModifiedDate,
-				Ascending = true,
-			};
-		}
+    {
+        public Primitives2DContainer()
+        {
+            Name = "Primitives 2D".Localize();
+            DefaultSort = new LibrarySortBehavior()
+            {
+                SortKey = SortKey.ModifiedDate,
+                Ascending = true,
+            };
+        }
 
-		public override void Load()
-		{
-			var library = ApplicationController.Instance.Library;
+        public override void Load()
+        {
+            var library = ApplicationController.Instance.Library;
 
-			long index = DateTime.Now.Ticks;
-			var libraryItems = new List<GeneratorItem>()
-			{
-				new GeneratorItem(
-					"Box".Localize(),
-					async () => await BoxPathObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Triangle".Localize(),
-					async () => await PyramidObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Trapezoid".Localize(),
-					async () => await WedgeObject3D_2.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Text".Localize(),
-					async () => await TextObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Oval".Localize(),
-					async () => await CylinderObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Star".Localize(),
-					async () => await ConeObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Ring".Localize(),
-					async () => await RingObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-				new GeneratorItem(
-					"Circle".Localize(),
-					async () => await SphereObject3D.Create())
-					{ DateCreated = new DateTime(index++) },
-			};
+            long index = DateTime.Now.Ticks;
+            var libraryItems = new List<GeneratorItem>()
+            {
+                new GeneratorItem(
+                    "Box".Localize(),
+                    async () => await BoxPathObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Triangle".Localize(),
+                    async () => await PyramidObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Trapezoid".Localize(),
+                    async () => await WedgeObject3D_2.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Text".Localize(),
+                    async () => await TextObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Oval".Localize(),
+                    async () => await CylinderObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Star".Localize(),
+                    async () => await ConeObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Ring".Localize(),
+                    async () => await RingObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Circle".Localize(),
+                    async () => await SphereObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
+            };
 
-			string title = "2D Shapes".Localize();
+            string title = "2D Shapes".Localize();
 
-			foreach (var item in libraryItems)
-			{
-				item.Category = title;
-				Items.Add(item);
-			}
-		}
-	}
+            foreach (var item in libraryItems)
+            {
+                item.Category = title;
+                Items.Add(item);
+            }
+        }
+    }
 }

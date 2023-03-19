@@ -837,9 +837,9 @@ namespace MatterHackers.MatterControl
 						ToggleFuzzyOperation(),
 					}
 				},
-				new OperationGroup("Design Apps")
+				new OperationGroup("Constraints")
 				{
-					TitleGetter = () => "Design Apps".Localize(),
+					TitleGetter = () => "Constraints".Localize(),
 					Visible = OperationGroup.GetVisible("Path", false),
 					Operations = new List<SceneOperation>()
 					{

@@ -27,264 +27,267 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.ImageProcessing;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
-	public class OemSettings
-	{
-		private static OemSettings instance = null;
+    public class OemSettings
+    {
+        private static OemSettings instance = null;
 
-		public static OemSettings Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
-					instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
-				}
-
-				return instance;
-			}
-		}
-
-		public bool UseSimpleModeByDefault = false;
-
-		public string ThemeColor = "";
-
-		public string AffiliateCode = "";
-
-		public string WindowTitleExtra = "";
-
-		public bool ShowShopButton = true;
-
-		public bool CheckForUpdatesOnFirstRun = false;
-
-		public List<string> PrinterWhiteList { get; private set; } = new List<string>();
-
-		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
-
-		public ImageBuffer GetIcon(string oemName, ThemeConfig theme)
-		{
-			var size = (int)(16 * GuiWidget.DeviceScale);
-			var imageBuffer = new ImageBuffer(size, size);
-
-			string oemUrl = ApplicationController.Instance.GetFavIconUrl(oemName);
-
-			if (!string.IsNullOrWhiteSpace(oemUrl))
-			{
-				WebCache.RetrieveImageAsync(imageBuffer, oemUrl, scaleToImageX: true);
-			}
-			else
-			{
-				var graphics = imageBuffer.NewGraphics2D();
-				graphics.Clear(AppContext.Theme.SlightShade);
-			}
-
-			if (theme.IsDarkTheme)
+        public static OemSettings Instance
+        {
+            get
             {
-				// put the icon on a light background
-				var background = new ImageBuffer(size, size);
-				background.NewGraphics2D().Render(new RoundedRect(background.GetBoundingRect(), 1), theme.TextColor);
-				background.NewGraphics2D().Render(imageBuffer, 0, 0);
-				imageBuffer.CopyFrom(background);
-			}
+                if (instance == null)
+                {
+                    string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+                    instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
+                }
 
-			return imageBuffer;
-		}
+                return instance;
+            }
+        }
 
-		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
-		{
-			// Sort manufacturers by name
-			var manufacturers = new List<KeyValuePair<string, string>>();
-			var otherInfo = new KeyValuePair<string, string>(null, null);
+        public bool UseSimpleModeByDefault = false;
 
-			foreach (var printer in unorderedManufacturers.OrderBy(k => k.Value))
-			{
-				if (printer.Value == "Other")
-				{
-					otherInfo = printer;
-				}
-				else
-				{
-					manufacturers.Add(printer);
-				}
-			}
+        public string ThemeColor = "";
 
-			if (otherInfo.Key != null)
-			{
-				// add it at the end
-				manufacturers.Add(otherInfo);
-			}
+        public string AffiliateCode = "";
 
-			if (whitelist != null)
-			{
-				this.PrinterWhiteList = whitelist;
-			}
+        public string WindowTitleExtra = "";
 
-			// Apply whitelist
-			var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
+        public bool ShowShopButton = true;
 
-			if (whiteListedItems == null
-				|| whiteListedItems.Count() == 0)
-			{
-				// No whitelist means all items
-				whiteListedItems = manufacturers;
-			}
+        public bool DesignToolsOnly = true;
 
-			var newItems = new List<KeyValuePair<string, string>>();
+        public bool CheckForUpdatesOnFirstRun = false;
 
-			// Apply manufacturer name mappings
-			foreach (var keyValue in whiteListedItems)
-			{
-				string labelText = keyValue.Value;
+        public string UnregisteredProductName { get; set; } = "MatterControl";
+        public string RegisteredProductName { get; set; } = "MatterControl Pro";
 
-				// Override the manufacturer name if a manufacturerNameMappings exists
-				string mappedName = ManufacturerNameMappings.Where(m => m.NameOnDisk == keyValue.Key).FirstOrDefault()?.NameOnDisk;
-				if (!string.IsNullOrEmpty(mappedName))
-				{
-					labelText = mappedName;
-				}
+        public List<string> PrinterWhiteList { get; private set; } = new List<string>();
 
-				newItems.Add(new KeyValuePair<string, string>(keyValue.Key, labelText));
-			}
+        public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
 
-			AllOems = newItems;
-		}
+        public ImageBuffer GetIcon(string oemName, ThemeConfig theme)
+        {
+            var size = (int)(16 * GuiWidget.DeviceScale);
+            var imageBuffer = new ImageBuffer(size, size);
 
-		public List<KeyValuePair<string, string>> AllOems { get; private set; }
+            string oemUrl = ApplicationController.Instance.GetFavIconUrl(oemName);
 
-		public OemProfileDictionary OemProfiles { get; set; }
+            if (!string.IsNullOrWhiteSpace(oemUrl))
+            {
+                WebCache.RetrieveImageAsync(imageBuffer, oemUrl, scaleToImageX: true);
+            }
+            else
+            {
+                var graphics = imageBuffer.NewGraphics2D();
+                graphics.Clear(AppContext.Theme.SlightShade);
+            }
 
-		public Dictionary<string, string> OemUrls { get; }
+            if (theme.IsDarkTheme)
+            {
+                // put the icon on a light background
+                var background = new ImageBuffer(size, size);
+                background.NewGraphics2D().Render(new RoundedRect(background.GetBoundingRect(), 1), theme.TextColor);
+                background.NewGraphics2D().Render(imageBuffer, 0, 0);
+                imageBuffer.CopyFrom(background);
+            }
 
-		public Dictionary<string, StorePrinterID> OemPrinters { get; }
+            return imageBuffer;
+        }
 
-		[OnDeserialized]
-		private void Deserialized(StreamingContext context)
-		{
-			// Load local OemProfile content during initial startup
-			OemProfiles = this.LoadOemProfiles();
+        internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
+        {
+            // Sort manufacturers by name
+            var manufacturers = new List<KeyValuePair<string, string>>();
+            var otherInfo = new KeyValuePair<string, string>(null, null);
 
-			var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem);
-			SetManufacturers(manufacturesList);
-		}
+            foreach (var printer in unorderedManufacturers.OrderBy(k => k.Value))
+            {
+                if (printer.Value == "Other")
+                {
+                    otherInfo = printer;
+                }
+                else
+                {
+                    manufacturers.Add(printer);
+                }
+            }
 
-		private OemProfileDictionary LoadOemProfiles()
-		{
-			string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
+            if (otherInfo.Key != null)
+            {
+                // add it at the end
+                manufacturers.Add(otherInfo);
+            }
 
-			// Load data from cache or fall back to stale StaticData content
-			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : null;
+            if (whitelist != null)
+            {
+                this.PrinterWhiteList = whitelist;
+            }
 
-			if (string.IsNullOrWhiteSpace(json))
-			{
-				// If empty, purge the cache file and fall back to StaticData
-				File.Delete(cachePath);
+            // Apply whitelist
+            var whiteListedItems = manufacturers?.Where(keyValue => PrinterWhiteList.Contains(keyValue.Key));
 
-				json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
-			}
+            if (whiteListedItems == null
+                || whiteListedItems.Count() == 0)
+            {
+                // No whitelist means all items
+                whiteListedItems = manufacturers;
+            }
 
-			try
-			{
-				return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
-			}
-			catch
-			{
-				// If json parse fails, purge the cache file and fall back to StaticData
-				File.Delete(cachePath);
+            var newItems = new List<KeyValuePair<string, string>>();
 
-				json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
-				return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
-			}
-		}
+            // Apply manufacturer name mappings
+            foreach (var keyValue in whiteListedItems)
+            {
+                string labelText = keyValue.Value;
 
-		public async Task ReloadOemProfiles()
-		{
-			// In public builds this won't be assigned to and we should exit
-			if (ApplicationController.GetPublicProfileList == null)
-			{
-				return;
-			}
+                // Override the manufacturer name if a manufacturerNameMappings exists
+                string mappedName = ManufacturerNameMappings.Where(m => m.NameOnDisk == keyValue.Key).FirstOrDefault()?.NameOnDisk;
+                if (!string.IsNullOrEmpty(mappedName))
+                {
+                    labelText = mappedName;
+                }
 
-			await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
-				"oemprofiles.json",
-				"public-profiles",
-				async () =>
-				{
-					var result = await ApplicationController.GetPublicProfileList();
-					if (result != null)
-					{
-						// Refresh the in memory instance any time the server responds with updated content - caller will serialize
-						OemProfiles = result;
+                newItems.Add(new KeyValuePair<string, string>(keyValue.Key, labelText));
+            }
 
-						SetManufacturers(result.Keys.ToDictionary(oem => oem));
-					}
+            AllOems = newItems;
+        }
 
-					return result;
-				});
+        public List<KeyValuePair<string, string>> AllOems { get; private set; }
 
-			await DownloadMissingProfiles();
-		}
+        public OemProfileDictionary OemProfiles { get; set; }
 
-		private async Task DownloadMissingProfiles()
-		{
-			int index = 0;
-			foreach (string oem in OemProfiles.Keys)
-			{
-				string cacheScope = Path.Combine("public-profiles", oem);
+        public Dictionary<string, string> OemUrls { get; }
 
-				index++;
-				foreach (var model in OemProfiles[oem].Keys)
-				{
-					var publicDevice = OemProfiles[oem][model];
-					string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
-					if (!File.Exists(cachePath))
-					{
-						await Task.Delay(20000);
-						await ProfileManager.LoadOemSettingsAsync(publicDevice, oem, model);
+        public Dictionary<string, StorePrinterID> OemPrinters { get; }
 
-						if (ApplicationController.Instance.ApplicationExiting)
-						{
-							return;
-						}
-					}
-				}
-			}
-		}
+        [OnDeserialized]
+        private void Deserialized(StreamingContext context)
+        {
+            // Load local OemProfile content during initial startup
+            OemProfiles = this.LoadOemProfiles();
 
-		private OemSettings()
-		{
-			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
-			this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
-			this.OemPrinters = JsonConvert.DeserializeObject<Dictionary<string, StorePrinterID>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Printers.json")));
-		}
-	}
+            var manufacturesList = OemProfiles.Keys.ToDictionary(oem => oem);
+            SetManufacturers(manufacturesList);
+        }
 
-	public class StorePrinterID
-	{
-		public string SID { get; set; }
+        private OemProfileDictionary LoadOemProfiles()
+        {
+            string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
 
-		public string AltInfoUrl { get; set; }
-	}
+            // Load data from cache or fall back to stale StaticData content
+            string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : null;
 
-	public class ManufacturerNameMapping
-	{
-		public string NameOnDisk { get; set; }
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                // If empty, purge the cache file and fall back to StaticData
+                File.Delete(cachePath);
 
-		public string NameToDisplay { get; set; }
-	}
+                json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
+            }
+            catch
+            {
+                // If json parse fails, purge the cache file and fall back to StaticData
+                File.Delete(cachePath);
+
+                json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+                return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
+            }
+        }
+
+        public async Task ReloadOemProfiles()
+        {
+            // In public builds this won't be assigned to and we should exit
+            if (ApplicationController.GetPublicProfileList == null)
+            {
+                return;
+            }
+
+            await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
+                "oemprofiles.json",
+                "public-profiles",
+                async () =>
+                {
+                    var result = await ApplicationController.GetPublicProfileList();
+                    if (result != null)
+                    {
+                        // Refresh the in memory instance any time the server responds with updated content - caller will serialize
+                        OemProfiles = result;
+
+                        SetManufacturers(result.Keys.ToDictionary(oem => oem));
+                    }
+
+                    return result;
+                });
+
+            await DownloadMissingProfiles();
+        }
+
+        private async Task DownloadMissingProfiles()
+        {
+            int index = 0;
+            foreach (string oem in OemProfiles.Keys)
+            {
+                string cacheScope = Path.Combine("public-profiles", oem);
+
+                index++;
+                foreach (var model in OemProfiles[oem].Keys)
+                {
+                    var publicDevice = OemProfiles[oem][model];
+                    string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
+                    if (!File.Exists(cachePath))
+                    {
+                        await Task.Delay(20000);
+                        await ProfileManager.LoadOemSettingsAsync(publicDevice, oem, model);
+
+                        if (ApplicationController.Instance.ApplicationExiting)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private OemSettings()
+        {
+            this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
+            this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
+            this.OemPrinters = JsonConvert.DeserializeObject<Dictionary<string, StorePrinterID>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Printers.json")));
+        }
+    }
+
+    public class StorePrinterID
+    {
+        public string SID { get; set; }
+
+        public string AltInfoUrl { get; set; }
+    }
+
+    public class ManufacturerNameMapping
+    {
+        public string NameOnDisk { get; set; }
+
+        public string NameToDisplay { get; set; }
+    }
 }
