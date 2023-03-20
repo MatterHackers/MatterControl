@@ -563,11 +563,25 @@ namespace MatterHackers.MatterControl
 			printer.Dispose();
 		}
 
-		public static void LaunchBrowser(string targetUri)
+        public static void LaunchBrowser(string targetUri)
 		{
+            string AddQueryPram(string url, string key, string value)
+            {
+                if (url.Contains("?"))
+                {
+                    return url + "&" + key + "=" + value;
+                }
+                else
+                {
+                    return url + "?" + key + "=" + value;
+                }
+            }
+            
 			UiThread.RunOnIdle(() =>
 			{
-				if (!string.IsNullOrEmpty(OemSettings.Instance.AffiliateCode)
+                var affiliateCode = OemSettings.Instance.AffiliateCode;
+
+                if (!string.IsNullOrEmpty(affiliateCode)
 					&& targetUri.Contains("matterhackers.com"))
 				{
 					string internalLink = "";
@@ -578,14 +592,15 @@ namespace MatterHackers.MatterControl
 						targetUri = targetUri.Substring(0, targetUri.Length - internalLink.Length);
 					}
 
-					if (targetUri.Contains("?"))
+					// if the affiliateCode is only numbers, we assume it is a tracking code
+					if (affiliateCode.All(char.IsDigit))
 					{
-						targetUri += $"&aff={OemSettings.Instance.AffiliateCode}";
+                        targetUri = AddQueryPram(targetUri, "aff", affiliateCode);
 					}
-					else
+                    else // it is an RCODE
 					{
-						targetUri += $"?aff={OemSettings.Instance.AffiliateCode}";
-					}
+                        targetUri = AddQueryPram(targetUri, "rcode", affiliateCode);
+                    }
 
 					targetUri += internalLink;
 				}
