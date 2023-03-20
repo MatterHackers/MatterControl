@@ -38,13 +38,33 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-    public class DesignAppsCollectionContainer : LibraryContainer
+    public class BundledPartsCollectionContainer : LibraryContainer
     {
-        public DesignAppsCollectionContainer()
+        public BundledPartsCollectionContainer()
         {
             this.ChildContainers = new SafeList<ILibraryContainerLink>();
             this.Items = new SafeList<ILibraryItem>();
-            this.Name = "Design Apps".Localize();
+            this.Name = "Bundled".Localize();
+
+            this.ChildContainers.Add(
+                new DynamicContainerLink(
+                    "Calibration Parts".Localize(),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
+                    () => new CalibrationPartsContainer())
+                {
+                    IsReadOnly = true
+                });
+
+            this.ChildContainers.Add(
+                new DynamicContainerLink(
+                    "Scripting".Localize(),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "scripting_icon.png")),
+                    () => new ScriptingPartsContainer())
+                {
+                    IsReadOnly = true
+                });
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(

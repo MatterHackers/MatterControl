@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2022, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -1033,18 +1033,18 @@ namespace MatterHackers.MatterControl
 						}));
 			}
 
-			this.Library.DesignAppsCollectionContainer = new DesignAppsCollectionContainer();
+			this.Library.BundledPartsCollectionContainer = new BundledPartsCollectionContainer();
 			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					"Design Apps".Localize(),
+					"Bundled".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "design_apps_icon.png")),
-					() => this.Library.DesignAppsCollectionContainer)
-                {
+					() => this.Library.BundledPartsCollectionContainer)
+				{
 					IsReadOnly = true
-                });
+				});
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{
@@ -1654,30 +1654,17 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler UiHintChanged;
 
-		public string ShortProductName
-		{
-			get
-			{
-				if (this.IsMatterControlPro())
-				{
-					return "MatterControl Pro";
-				}
-
-				return "MatterControl";
-			}
-		}
-
 		public string ProductName
 		{
 			get
 			{
 				if (this.IsMatterControlPro())
 				{
-					return "MatterControl Pro Edition";
+					return OemSettings.Instance.RegisteredProductName;
 				}
 
-				return "MatterHackers: MatterControl";
-			}
+				return OemSettings.Instance.UnregisteredProductName;
+            }
 		}
 
 		public void SwitchToPurchasedLibrary()

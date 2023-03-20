@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -314,7 +315,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				}
 				else // upsell MatterControl Pro
 				{
-					string text = "Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize();
+					string text = "Exporting print history is a {0} feature. Upgrade to Pro to unlock MatterControl Pro.".Localize().FormatWith(OemSettings.Instance.RegisteredProductName);
 					WebCache.RetrieveText(
 						"https://matterhackers.github.io/MatterControl-Docs/ProContent/Unlock_Export_Print_History.md",
 						(markDown) =>

@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Tour
@@ -40,10 +41,10 @@ namespace MatterHackers.MatterControl.Tour
 		public WelcomePage()
 			: base("Done".Localize())
 		{
-			this.WindowTitle = "MatterControl".Localize();
+			this.WindowTitle = ApplicationController.Instance.ProductName;
 			this.WindowSize = new Vector2(400 * GuiWidget.DeviceScale, 250 * GuiWidget.DeviceScale);
 
-			this.HeaderText = "Welcome to MatterControl".Localize();
+			this.HeaderText = "Welcome to {0}".Localize().FormatWith(ApplicationController.Instance.ProductName);
 
 			var welcome = "Let's show you around before you get started.".Localize();
 

@@ -82,13 +82,13 @@ namespace MatterHackers.MatterControl
         /// Arrange the given parts on the bed and return a list of the parts that were arranged
         /// </summary>
         /// <param name="object3DList">The parts to arrange</param>
-        /// <param name="arangePosition">A position to arrange around</param>
+        /// <param name="arrangePosition">A position to arrange around</param>
         /// <param name="positionType">The way to consider the possition</param>
         /// <param name="bedBounds">Optional bounds to arrange into</param>
         /// <param name="progressReporter">The current progress of arranging</param>
         /// <returns>A list of the parts that were arranged</returns>
         public static List<IObject3D> ArrangeOnBed(List<IObject3D> object3DList,
-            Vector3 arangePosition,
+            Vector3 arrangePosition,
             PositionType positionType,
             RectangleDouble? bedBounds = null,
             Action<double, string> progressReporter = null)
@@ -117,14 +117,14 @@ namespace MatterHackers.MatterControl
                 {
                     objectsThatHaveBeenPlaced.Add(object3D);
                     objectsThatWereArrange.Add(object3D);
+
+                    // and put it on the bed (set the bottom to z = 0)
+                    PlaceOnBed(object3D);
                 }
 
                 progressReporter?.Invoke(Util.GetRatio(0, 1, meshGroupIndex, object3DList.Count), null);
 
                 currentRatioDone += ratioPerMeshGroup;
-
-                // and put it on the bed (set the bottom to z = 0)
-                PlaceOnBed(object3D);
             }
 
             // and finally center whatever we have as a group
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 
                 for (int i = 0; i < object3DList.Count; i++)
                 {
-                    object3DList[i].Matrix *= Matrix4X4.CreateTranslation(arangePosition - offset);
+                    object3DList[i].Matrix *= Matrix4X4.CreateTranslation(arrangePosition - offset);
                 }
             }
 
@@ -263,11 +263,11 @@ namespace MatterHackers.MatterControl
 
             AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
 
-            foreach (IObject3D meshToTest in itemsToAvoid)
+            foreach (IObject3D itemToTest in itemsToAvoid)
             {
-                if (meshToTest != itemToMove)
+                if (itemToTest != itemToMove)
                 {
-                    AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
+                    AxisAlignedBoundingBox existingMeshBounds = itemToTest.GetAxisAlignedBoundingBox();
                     var intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
                     if (intersection.XSize > 0 && intersection.YSize > 0)
                     {

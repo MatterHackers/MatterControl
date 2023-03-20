@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
@@ -53,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 
-			markdownWidget.Markdown = "# Upgrade to [MatterControl Pro](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)";
+			markdownWidget.Markdown = "# Upgrade to [{0}](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)".Localize().FormatWith(OemSettings.Instance.RegisteredProductName);
 
 			this.AddChild(markdownWidget);
 

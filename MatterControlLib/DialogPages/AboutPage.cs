@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit
 			};
-			productTitle.AddChild(new TextWidget("MatterControl".Localize(), textColor: theme.TextColor, pointSize: 20) { Margin = new BorderDouble(right: 3) });
+			productTitle.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: theme.TextColor, pointSize: 20) { Margin = new BorderDouble(right: 3) });
 			productTitle.AddChild(new TextWidget("TM".Localize(), textColor: theme.TextColor, pointSize: 7) { VAnchor = VAnchor.Top });
 
 			altHeadingRow.AddChild(productInfo);
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(
 				new WrappedTextWidget(
-					"MatterControl is made possible by the team at MatterHackers and other open source software".Localize() + ":",
+					"{0} is made possible by the team at MatterHackers and other open source software".Localize().FormatWith(ApplicationController.Instance.ProductName) + ":",
 					pointSize: theme.DefaultFontSize,
 					textColor: theme.TextColor)
 				{

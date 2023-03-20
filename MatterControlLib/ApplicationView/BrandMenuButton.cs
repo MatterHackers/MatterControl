@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 				Selectable = false
 			});
 
-			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: theme.TextColor)
+			row.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center
 			});
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl
 				graphics.DrawString("64", imageBuffer.Width / 2, imageBuffer.Height / 2, 8, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: menuTheme.PrimaryAccentColor);
 			}
 
-			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", imageBuffer);
+			menuItem = popupMenu.CreateMenuItem("About".Localize() + " " + ApplicationController.Instance.ProductName, imageBuffer);
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowAboutPage();
 			return popupMenu;
 		}
