@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public bool ShowShopButton = true;
 
-        public bool DesignToolsOnly = true;
+        public bool DesignToolsOnly = false;
 
         public bool CheckForUpdatesOnFirstRun = false;
 
