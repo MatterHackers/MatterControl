@@ -415,6 +415,9 @@ Translated:Are you sure you want to sign out? You will not have access to your p
 English:Arrange All Parts
 Translated:Arrange All Parts
 
+English:Arranging
+Translated:Arranging
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 
@@ -535,6 +538,9 @@ Translated:Be sure you are not pressing down on the bed while moving the paper.
 English:Bed
 Translated:Bed
 
+English:Bed Depth
+Translated:Bed Depth
+
 English:Bed Dislodged
 Translated:Bed Dislodged
 
@@ -579,6 +585,9 @@ Translated:Bed Temperature Set to 0
 
 English:Bed Temperature:
 Translated:Bed Temperature:
+
+English:Bed Width
+Translated:Bed Width
 
 English:Bed Wipe Temperature
 Translated:Bed Wipe Temperature
@@ -822,6 +831,9 @@ Translated:Clear Bed
 
 English:Clear Bed G-Code
 Translated:Clear Bed G-Code
+
+English:Clear Bed When Done
+Translated:Clear Bed When Done
 
 English:Clear Cache
 Translated:Clear Cache
@@ -1138,6 +1150,9 @@ Translated:Create Part Sheet
 English:Create Perimeter
 Translated:Create Perimeter
 
+English:Create Plates
+Translated:Create Plates
+
 English:Create Printer
 Translated:Create Printer
 
@@ -1155,6 +1170,9 @@ Translated:Create Support
 
 English:Create Supports
 Translated:Create Supports
+
+English:Create the plates for all the selected STLs.
+Translated:Create the plates for all the selected STLs.
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
@@ -2512,6 +2530,12 @@ Translated:Iterations
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Job Manager
+Translated:Job Manager
+
+English:Jobs Folder
+Translated:Jobs Folder
+
 English:Junction Deviation [mm/s]
 Translated:Junction Deviation [mm/s]
 
@@ -2694,6 +2718,9 @@ Translated:Loading GCode
 
 English:Loading Help
 Translated:Loading Help
+
+English:Loading Stls
+Translated:Loading Stls
 
 English:Local Library
 Translated:Local Library
@@ -3421,6 +3448,9 @@ Translated:Outlines (default)
 English:Output
 Translated:Output
 
+English:Output Folder
+Translated:Output Folder
+
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
@@ -3474,6 +3504,9 @@ Translated:Part(s) to Subtract and Replace
 
 English:Parts
 Translated:Parts
+
+English:Parts Folder
+Translated:Parts Folder
 
 English:Password
 Translated:Password
@@ -4399,6 +4432,9 @@ Translated:Saving changes
 English:Saving Changes
 Translated:Saving Changes
 
+English:Saving PDF
+Translated:Saving PDF
+
 English:SCAD Script
 Translated:SCAD Script
 
@@ -4471,6 +4507,9 @@ Translated:Select an object to copy its color
 English:Select cell to edit
 Translated:Select cell to edit
 
+English:Select Folder
+Translated:Select Folder
+
 English:Select Parts
 Translated:Select Parts
 
@@ -4491,6 +4530,9 @@ Translated:Select this option only if your printer does not appear in the list
 
 English:Select What to Import
 Translated:Select What to Import
+
+English:Selecte a directory
+Translated:Selecte a directory
 
 English:Selected Children
 Translated:Selected Children

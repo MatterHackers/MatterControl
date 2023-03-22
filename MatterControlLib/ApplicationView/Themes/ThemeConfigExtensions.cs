@@ -272,15 +272,6 @@ namespace MatterHackers.MatterControl
             };
         }
 
-        public static GuiWidget CreateSmallResetButton(this ThemeConfig theme)
-        {
-            return new HoverImageWidget(theme.RestoreNormal, theme.RestoreHover)
-            {
-                VAnchor = VAnchor.Center,
-                Margin = new BorderDouble(0, 0, 5, 0)
-            };
-        }
-
         public static PopupMenuButton CreateSplitButton(this ThemeConfig theme, SplitButtonParams buttonParams, OperationGroup operationGroup = null)
         {
             PopupMenuButton menuButton = null;
