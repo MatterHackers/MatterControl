@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 this.controlLayer = controlLayer;
                 this.item = item;
                 var theme = ApplicationController.Instance.Theme;
-                WindowWidget = new WindowWidget(theme, new RectangleDouble(10, 10, 400, 200))
+                WindowWidget = new WindowWidget(theme, new RectangleDouble(10, 10, 650, 600))
                 {
                     BackgroundColor = theme.BackgroundColor.WithAlpha(200),
                 };

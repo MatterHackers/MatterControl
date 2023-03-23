@@ -511,6 +511,9 @@ Translated:Bad
 English:Bad Thermistor
 Translated:Bad Thermistor
 
+English:Bambu Studio
+Translated:Bambu Studio
+
 English:Base
 Translated:Base
 
@@ -2401,6 +2404,9 @@ Translated:Infill Angle
 English:Infill Overlap
 Translated:Infill Overlap
 
+English:Infill Percent
+Translated:Infill Percent
+
 English:Infill Speeds
 Translated:Infill Speeds
 
@@ -2568,6 +2574,9 @@ Translated:Layer
 
 English:Layer Change G-Code
 Translated:Layer Change G-Code
+
+English:Layer Height
+Translated:Layer Height
 
 English:Layer Shift
 Translated:Layer Shift
@@ -3405,6 +3414,9 @@ Translated:Open Recent
 
 English:Open Settings View Options
 Translated:Open Settings View Options
+
+English:Open With
+Translated:Open With
 
 English:OpenSCAD not installed
 Translated:OpenSCAD not installed

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class PPEContext
 	{
-		public IObject3D item { get; set; }
+		public object item { get; set; }
 		public Dictionary<string, GuiWidget> editRows { get; private set; } = new Dictionary<string, GuiWidget>();
 
 		public GuiWidget GetEditRow(string propertyName)

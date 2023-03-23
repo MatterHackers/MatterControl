@@ -47,7 +47,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class OpenSCADBuilder : IObject3DEditor
+	public class OpenSCADBuilder : IObjectEditor
 	{
 		private OpenScadObject3D item;
 
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Library
 			return dictionary;
 		}
 
-		public GuiWidget Create(IObject3D object3D, UndoBuffer undoBuffer, ThemeConfig theme)
+		public GuiWidget Create(object object3D, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			this.item = object3D as OpenScadObject3D;
 

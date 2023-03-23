@@ -237,13 +237,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
-	public class SheetEditor : IObject3DEditor
+	public class SheetEditor : IObjectEditor
 	{
-		string IObject3DEditor.Name => "Sheet Editor";
+		string IObjectEditor.Name => "Sheet Editor";
 
-		IEnumerable<Type> IObject3DEditor.SupportedTypes() => new[] { typeof(SheetObject3D) };
+		IEnumerable<Type> IObjectEditor.SupportedTypes() => new[] { typeof(SheetObject3D) };
 
-		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
+		public GuiWidget Create(object item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			if (item is SheetObject3D sheetObject)
 			{
