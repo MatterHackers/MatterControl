@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
         {
         }
 
-        public void CreateWidgetIfRequired(IObject3D item, Object3DControlsLayer controlLayer, string title)
+        public bool CreateWidgetIfRequired(IObject3D item, Object3DControlsLayer controlLayer, string title)
         {
             if (WindowWidget == null
                 || WindowWidget.Parents<SystemWindow>().Count() == 0)
@@ -68,7 +68,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 controlLayer.GuiSurface.AddChild(WindowWidget);
                 controlLayer.GuiSurface.AfterDraw += GuiSurface_AfterDraw;
+
+                return true;
             }
+
+            return false;
         }
 
         private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
