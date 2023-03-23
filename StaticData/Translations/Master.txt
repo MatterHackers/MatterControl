@@ -424,6 +424,9 @@ Translated:As the time to print a layer decreases to this, the fan speed will be
 English:Ascending
 Translated:Ascending
 
+English:Assets Folder
+Translated:Assets Folder
+
 English:At least 1 part must be selected
 Translated:At least 1 part must be selected
 
@@ -3493,6 +3496,9 @@ Translated:Part Cooling Fan
 English:Part Cooling Fan {i}
 Translated:Part Cooling Fan {i}
 
+English:Part Plater
+Translated:Part Plater
+
 English:Part Settings
 Translated:Part Settings
 
@@ -3798,6 +3804,9 @@ Translated:Print History
 
 English:Print History Note
 Translated:Print History Note
+
+English:Print Job Manager
+Translated:Print Job Manager
 
 English:Print Leveling
 Translated:Print Leveling

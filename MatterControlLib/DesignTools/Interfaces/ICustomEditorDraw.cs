@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2023, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,17 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public interface IEditorDraw
+    public interface ICustomEditorDraw : IEditorDrawControled
 	{
-		void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e);
-
-		/// <returns>The worldspace AABB of any 3D editing geometry drawn by DrawEditor.</returns>
-		AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer);
+		void AddEditorTransparents(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e);
 	}
 }
