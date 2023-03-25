@@ -661,6 +661,9 @@ Translated:Bottom Solid Infill
 English:Bottom Solid Layers
 Translated:Bottom Solid Layers
 
+English:Bottom Top Layers
+Translated:Bottom Top Layers
+
 English:Bowden Tube Popped Out
 Translated:Bowden Tube Popped Out
 
