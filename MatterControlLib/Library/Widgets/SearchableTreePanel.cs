@@ -27,177 +27,213 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
-using MatterHackers.MatterControl.CustomWidgets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.Library.Widgets
 {
-	public abstract class SearchableTreePanel : FlowLayoutWidget
-	{
-		protected TextEditWithInlineCancel searchBox;
-		protected TreeView treeView;
-		protected Splitter horizontalSplitter;
-		protected ThemeConfig theme;
-		protected FlowLayoutWidget contentPanel;
+    public abstract class SearchableTreePanel : FlowLayoutWidget
+    {
+        protected FlowLayoutWidget contentPanel;
+        protected Splitter horizontalSplitter;
+        protected TextEditWithInlineCancel searchBox;
+        protected ThemeConfig theme;
 
-		public SearchableTreePanel(ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
-		{
-			this.theme = theme;
-			this.TreeLoaded = false;
+        public SearchableTreePanel(ThemeConfig theme)
+            : base(FlowDirection.TopToBottom)
+        {
+            this.theme = theme;
+            this.TreeLoaded = false;
 
-			var searchIcon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor).AjustAlpha(0.3);
+            var searchIcon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor).AjustAlpha(0.3);
 
-			searchBox = new TextEditWithInlineCancel(theme)
-			{
-				Name = "Search",
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(6),
-			};
+            searchBox = new TextEditWithInlineCancel(theme)
+            {
+                Name = "Search",
+                HAnchor = HAnchor.Stretch,
+                Margin = new BorderDouble(6),
+            };
 
-			searchBox.ResetButton.Visible = false;
+            searchBox.ResetButton.Visible = false;
 
-			var searchInput = searchBox.TextEditWidget;
+            var searchInput = searchBox.TextEditWidget;
 
-			searchInput.BeforeDraw += (s, e) =>
-			{
-				if (!searchBox.ResetButton.Visible)
-				{
-					e.Graphics2D.Render(
-						searchIcon,
-						searchInput.Width - searchIcon.Width - 5,
-						searchInput.LocalBounds.Bottom + searchInput.Height / 2 - searchIcon.Height / 2);
-				}
-			};
+            searchInput.BeforeDraw += (s, e) =>
+            {
+                if (!searchBox.ResetButton.Visible)
+                {
+                    e.Graphics2D.Render(
+                        searchIcon,
+                        searchInput.Width - searchIcon.Width - 5,
+                        searchInput.LocalBounds.Bottom + searchInput.Height / 2 - searchIcon.Height / 2);
+                }
+            };
 
-			searchBox.ResetButton.Click += (s, e) =>
-			{
-				this.ClearSearch();
-			};
+            searchBox.ResetButton.Click += (s, e) =>
+            {
+                this.ClearSearch();
+            };
 
-			searchBox.KeyDown += (s, e) =>
-			{
-				if (e.KeyCode == Keys.Escape)
-				{
-					this.ClearSearch();
-					e.Handled = true;
-				}
-			};
+            searchBox.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Escape)
+                {
+                    this.ClearSearch();
+                    e.Handled = true;
+                }
+            };
 
-			searchBox.TextEditWidget.ActualTextEditWidget.TextChanged += (s, e) =>
-			{
-				if (string.IsNullOrWhiteSpace(searchBox.Text))
-				{
-					this.ClearSearch();
-				}
-				else
-				{
-					this.PerformSearch(searchBox.Text);
-				}
-			};
+            searchBox.TextEditWidget.ActualTextEditWidget.TextChanged += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchBox.Text))
+                {
+                    this.ClearSearch();
+                }
+                else
+                {
+                    this.PerformSearch(searchBox.Text);
+                }
+            };
 
-			horizontalSplitter = new Splitter()
-			{
-				SplitterDistance = Math.Max(UserSettings.Instance.LibraryViewWidth, 20),
-				SplitterSize = theme.SplitterWidth,
-				SplitterBackground = theme.SplitterBackground
-			};
-			horizontalSplitter.AnchorAll();
+            horizontalSplitter = new Splitter()
+            {
+                SplitterDistance = Math.Max(UserSettings.Instance.LibraryViewWidth, 20),
+                SplitterSize = theme.SplitterWidth,
+                SplitterBackground = theme.SplitterBackground
+            };
+            horizontalSplitter.AnchorAll();
 
-			horizontalSplitter.DistanceChanged += (s, e) =>
-			{
-				UserSettings.Instance.LibraryViewWidth = Math.Max(horizontalSplitter.SplitterDistance, 20);
-			};
+            horizontalSplitter.DistanceChanged += (s, e) =>
+            {
+                UserSettings.Instance.LibraryViewWidth = Math.Max(horizontalSplitter.SplitterDistance, 20);
+            };
 
-			this.AddChild(horizontalSplitter);
+            this.AddChild(horizontalSplitter);
 
-			var leftPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
+            var leftPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+            {
+                HAnchor = HAnchor.Stretch,
+                VAnchor = VAnchor.Stretch
+            };
 
-			leftPanel.AddChild(searchBox);
+            leftPanel.AddChild(searchBox);
 
-			treeView = new TreeView(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-			leftPanel.AddChild(treeView);
+            TreeView = new TreeView(theme)
+            {
+                HAnchor = HAnchor.Stretch,
+                VAnchor = VAnchor.Stretch,
+            };
+            leftPanel.AddChild(TreeView);
 
-			horizontalSplitter.Panel1.AddChild(leftPanel);
+            horizontalSplitter.Panel1.AddChild(leftPanel);
 
-			contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				Margin = new BorderDouble(left: 2)
-			};
-			treeView.AddChild(contentPanel);
-		}
+            contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+            {
+                HAnchor = HAnchor.Fit,
+                VAnchor = VAnchor.Fit,
+                Margin = new BorderDouble(left: 2)
+            };
+            TreeView.AddChild(contentPanel);
+        }
 
-		protected virtual void PerformSearch(string filter)
-		{
-			var matches = new List<TreeNode>();
+        public bool TreeLoaded { get; protected set; }
+        
+        public TreeView TreeView { get; set; }
 
-			Console.WriteLine("Filter for: " + filter);
+        protected abstract bool NodeMatchesFilter(TreeNode context, string filter);
 
-			foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
-			{
-				FilterTree(rootNode, filter, false, matches);
-			}
+        protected virtual void OnClearSearch()
+        {
+        }
 
-			if (matches.Count == 1)
-			{
-				treeView.SelectedNode = matches.First();
-			}
-			else
-			{
-				treeView.SelectedNode = null;
-			}
+        protected virtual void PerformSearch(string filter)
+        {
+            var matches = new List<TreeNode>();
 
-			searchBox.ResetButton.Visible = true;
-		}
+            Console.WriteLine("Filter for: " + filter);
 
-		private void ClearSearch()
-		{
-			foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
-			{
-				ResetTree(rootNode);
-			}
+            foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
+            {
+                FilterTree(rootNode, filter, false, matches);
+            }
 
-			searchBox.Text = "";
-			searchBox.ResetButton.Visible = false;
-			treeView.SelectedNode = null;
+            if (matches.Count == 1)
+            {
+                TreeView.SelectedNode = matches.First();
+            }
+            else
+            {
+                TreeView.SelectedNode = null;
+            }
 
-			this.OnClearSearch();
-		}
+            searchBox.ResetButton.Visible = true;
+        }
 
-		protected abstract bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches);
+        private void ClearSearch()
+        {
+            foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
+            {
+                ResetTree(rootNode);
+            }
 
-		private void ResetTree(TreeNode context)
-		{
-			context.Visible = true;
-			context.Expanded = false;
+            searchBox.Text = "";
+            searchBox.ResetButton.Visible = false;
+            TreeView.SelectedNode = null;
 
-			foreach (var child in context.Nodes)
-			{
-				ResetTree(child);
-			}
-		}
+            this.OnClearSearch();
+        }
 
-		protected virtual void OnClearSearch()
-		{
-		}
+        private bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
+        {
+            var hasFilterText = NodeMatchesFilter(context, filter);
 
-		public bool TreeLoaded { get; protected set; }
-	}
+            context.Visible = hasFilterText || parentVisible;
+
+            if (context.Visible
+                && context.NodeParent != null)
+            {
+                context.NodeParent.Visible = true;
+                context.NodeParent.Expanded = true;
+                context.Expanded = true;
+            }
+
+            if (context.NodeParent != null
+                && hasFilterText)
+            {
+                matches.Add(context);
+            }
+
+            bool childMatched = false;
+
+            foreach (var child in context.Nodes)
+            {
+                childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
+            }
+
+            bool hasMatch = childMatched || hasFilterText;
+
+            if (hasMatch)
+            {
+                context.Visible = context.Expanded = true;
+            }
+
+            return hasMatch;
+        }
+
+        private void ResetTree(TreeNode context)
+        {
+            context.Visible = true;
+            context.Expanded = false;
+
+            foreach (var child in context.Nodes)
+            {
+                ResetTree(child);
+            }
+        }
+    }
 }

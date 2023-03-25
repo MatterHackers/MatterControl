@@ -691,6 +691,9 @@ Translated:Brim Extruder
 English:Build Height
 Translated:Build Height
 
+English:Build Plates
+Translated:Build Plates
+
 English:BuildTak
 Translated:BuildTak
 

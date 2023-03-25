@@ -59,14 +59,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
 
-			treeView.AfterSelect += this.TreeView_AfterSelect;
+			TreeView.AfterSelect += this.TreeView_AfterSelect;
 
-			treeView.NodeMouseDoubleClick += (s, e) =>
+			TreeView.NodeMouseDoubleClick += (s, e) =>
 			{
 				if (e is MouseEventArgs mouseEvent
 					&& mouseEvent.Button == MouseButtons.Left
 						&& mouseEvent.Clicks == 2
-						&& treeView?.SelectedNode is TreeNode treeNode)
+						&& TreeView?.SelectedNode is TreeNode treeNode)
 				{
 					nextButton.InvokeClick();
 				}
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 					var rootNode = this.CreateTreeNode(oem);
 					rootNode.Expandable = true;
-					rootNode.TreeView = treeView;
+					rootNode.TreeView = TreeView;
 					rootNode.Load += (s, e) =>
 					{
 						var image = OemSettings.Instance.GetIcon(oem.Key, theme);
@@ -226,45 +226,13 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			this.PrinterNameError.Visible = true;
 		}
 
-		protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
-		{
-			// Filter against make/model for printers or make for top level nodes
-			string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
+        protected override bool NodeMatchesFilter(TreeNode context, string filter)
+        {
+            // Filter against make/model for printers or make for top level nodes
+            string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
 
-			bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
-			context.Visible = hasFilterText || parentVisible;
-
-			if (context.Visible
-				&& context.NodeParent != null)
-			{
-				context.NodeParent.Visible = true;
-				context.NodeParent.Expanded = true;
-				context.Expanded = true;
-			}
-
-			if (context.NodeParent != null
-				&& hasFilterText)
-			{
-				matches.Add(context);
-			}
-
-			bool childMatched = false;
-
-			foreach (var child in context.Nodes)
-			{
-				childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
-			}
-
-			bool hasMatch = childMatched || hasFilterText;
-
-			if (hasMatch)
-			{
-				context.Visible = context.Expanded = true;
-			}
-
-			return hasMatch;
-		}
-
+            return itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
+        }
 
 		private void ClearError()
 		{
@@ -314,24 +282,24 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 		private void TreeView_AfterSelect(object sender, TreeNode e)
 		{
-			nameSection.Enabled = treeView.SelectedNode != null;
+			nameSection.Enabled = TreeView.SelectedNode != null;
 			this.ClearError();
 
 			this.PrinterNameError.Visible = false;
 
 			if (nameSection.Enabled
-				&& treeView.SelectedNode.Tag != null)
+				&& TreeView.SelectedNode.Tag != null)
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					if (usingDefaultName
-						&& treeView.SelectedNode != null)
+						&& TreeView.SelectedNode != null)
 					{
-						string printerName = treeView.SelectedNode.Tag.ToString();
+						string printerName = TreeView.SelectedNode.Tag.ToString();
 
 						printerNameInput.Text = Util.GetNonCollidingName(printerName, this.ExistingPrinterNames);
 
-						this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
+						this.SelectedPrinter = TreeView.SelectedNode.Tag as MakeModelInfo;
 
 						printerInfo.CloseChildren();
 
@@ -356,7 +324,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 								});
 						}
 
-						nextButtonEnabled(treeView.SelectedNode != null
+						nextButtonEnabled(TreeView.SelectedNode != null
 							&& !string.IsNullOrWhiteSpace(printerNameInput.Text));
 					}
 				});

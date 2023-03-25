@@ -44,7 +44,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library.Widgets;
