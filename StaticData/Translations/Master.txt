@@ -925,6 +925,9 @@ Translated:Color 3
 English:Color 4
 Translated:Color 4
 
+English:Color Name
+Translated:Color Name
+
 English:Color View
 Translated:Color View
 
@@ -1410,6 +1413,9 @@ Translated:Distance From Object
 
 English:Distance or Loops
 Translated:Distance or Loops
+
+English:Do CSG
+Translated:Do CSG
 
 English:Documents
 Translated:Documents
@@ -3577,6 +3583,12 @@ Translated:PEI Bed Temperature
 English:Percentage of
 Translated:Percentage of
 
+English:Performe a union before exporting. Might be slower but can clean up some models.
+Translated:Performe a union before exporting. Might be slower but can clean up some models.
+
+English:Performe Union
+Translated:Performe Union
+
 English:Perimeter Acceleration
 Translated:Perimeter Acceleration
 
@@ -4431,6 +4443,12 @@ Translated:Save changes ?
 
 English:Save Changes?
 Translated:Save Changes?
+
+English:Save Each Separately
+Translated:Save Each Separately
+
+English:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
+Translated:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
 
 English:Save file:
 Translated:Save file:

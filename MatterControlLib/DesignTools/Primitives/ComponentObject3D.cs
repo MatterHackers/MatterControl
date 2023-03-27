@@ -172,7 +172,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			for (int i=0; i<SurfacedEditors.Count; i++)
             {
 				var (cellId, cellData) = this.DecodeContent(i);
-				if (cellData.StartsWith("="))
+				if (cellData != null 
+					&& cellData.StartsWith("="))
 				{
 					var expression = new DoubleOrExpression(cellData);
 					var controledSheet = ControledSheet;

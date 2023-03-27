@@ -1077,9 +1077,12 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 
-						propertyObject3D.Invalidated += RefreshField;
-						wrappedTextWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
-					}
+						if (propertyObject3D != null)
+						{
+							propertyObject3D.Invalidated += RefreshField;
+                            wrappedTextWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+                        }
+                    }
 					else // normal edit row
 					{
 						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
