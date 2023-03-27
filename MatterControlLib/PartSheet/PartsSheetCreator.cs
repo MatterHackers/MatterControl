@@ -115,6 +115,11 @@ namespace MatterHackers.MatterControl
 
                 var object3D = await item.CreateContent();
 
+                if (object3D == null)
+                {
+                    continue;
+                }
+
                 var loadedMeshGroups = object3D.VisibleMeshes().ToList();
                 if (loadedMeshGroups?.Count > 0)
                 {

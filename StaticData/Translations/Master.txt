@@ -1534,6 +1534,9 @@ Translated:Emulate Endstops
 English:Enable Auto Cooling
 Translated:Enable Auto Cooling
 
+English:Enable Editing
+Translated:Enable Editing
+
 English:Enable Extruder Lift
 Translated:Enable Extruder Lift
 
@@ -2331,6 +2334,9 @@ Translated:Hotend Temperature
 
 English:Hotend Temperature:
 Translated:Hotend Temperature:
+
+English:ID
+Translated:ID
 
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal for cloning settings across different physical printers
@@ -3255,6 +3261,9 @@ Translated:Note: Slice Settings are applied before the print actually starts. Ch
 
 English:NOTE: Standard messaging rates may apply.
 Translated:NOTE: Standard messaging rates may apply.
+
+English:Notes
+Translated:Notes
 
 English:Notifications
 Translated:Notifications
