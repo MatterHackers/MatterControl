@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using Lucene.Net.Support;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -42,14 +41,37 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterControlLib.Library.OpenInto
 {
     public abstract class OpenIntoExecutable
     {
-        private string pathToExe;
+        private string _pathToExe;
+        private string PathToExe
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_pathToExe))
+                {
+                    // get data from the registry for: Computer\HKEY_CLASSES_ROOT\ Bambu.Studio.1\Shell\Open\Command
+                    RegistryKey key = Registry.ClassesRoot.OpenSubKey(regExKeyName);
+
+                    if (key != null)
+                    {
+                        _pathToExe = key.GetValue("").ToString();
+
+                        var regex = "C:.+.exe";
+                        var match = System.Text.RegularExpressions.Regex.Match(_pathToExe, regex);
+                        _pathToExe = match.Value;
+
+                        key.Close();
+                    }
+                }
+
+                return _pathToExe;
+            }
+        }
 
         public int Priority => 2;
 
@@ -119,22 +141,7 @@ namespace MatterControlLib.Library.OpenInto
         {
             get
             {
-                // get data from the registry for: Computer\HKEY_CLASSES_ROOT\ Bambu.Studio.1\Shell\Open\Command
-                RegistryKey key = Registry.ClassesRoot.OpenSubKey(regExKeyName);
-
-                if (key != null)
-                {
-                    pathToExe = key.GetValue("").ToString();
-
-                    var regex = "C:.+.exe";
-                    var match = System.Text.RegularExpressions.Regex.Match(pathToExe, regex);
-                    pathToExe = match.Value;
-
-                    key.Close();
-                    return true;
-                }
-
-                return false;
+                return !string.IsNullOrEmpty(PathToExe);
             }
         }
 
@@ -155,12 +162,7 @@ namespace MatterControlLib.Library.OpenInto
 
             if (bedExports.Count == 0)
             {
-                // open the file with the specified exe
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = $"\"{pathToExe}\"";
-                startInfo.Arguments = $"\"{exportFilename}\"";
-
-                Process.Start(startInfo);
+                ExportToExe(exportFilename);
 
                 return null;
             }
@@ -173,6 +175,23 @@ namespace MatterControlLib.Library.OpenInto
                     Details = string.Join("\n", bedExports.ToArray())
                 }
             };
+        }
+
+        public bool ExportToExe(string exportFilename)
+        {
+            if (File.Exists(exportFilename)
+                && !string.IsNullOrEmpty(PathToExe))
+            {
+                // open the file with the specified exe
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = $"\"{PathToExe}\"";
+                startInfo.Arguments = $"\"{exportFilename}\"";
+
+                Process.Start(startInfo);
+                return true;
+            }
+
+            return false;
         }
     }
 }
