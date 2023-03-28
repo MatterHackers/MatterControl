@@ -56,16 +56,16 @@ namespace MatterHackers.MatterControl
 		{
 			this.libraryConfig = libraryConfig;
 
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+			objectEditorsByType = new Dictionary<Type, HashSet<IObjectEditor>>();
 		}
 
-		private void MapTypesToEditor(IObject3DEditor editor)
+		private void MapTypesToEditor(IObjectEditor editor)
 		{
 			foreach (Type type in editor.SupportedTypes())
 			{
-				if (!objectEditorsByType.TryGetValue(type, out HashSet<IObject3DEditor> mappedEditors))
+				if (!objectEditorsByType.TryGetValue(type, out HashSet<IObjectEditor> mappedEditors))
 				{
-					mappedEditors = new HashSet<IObject3DEditor>();
+					mappedEditors = new HashSet<IObjectEditor>();
 					objectEditorsByType.Add(type, mappedEditors);
 				}
 
@@ -73,16 +73,16 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void Register(IObject3DEditor object3DEditor)
+		public void Register(IObjectEditor object3DEditor)
 		{
 			this.MapTypesToEditor(object3DEditor);
 		}
 
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+		private Dictionary<Type, HashSet<IObjectEditor>> objectEditorsByType;
 
-		public HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
+		public HashSet<IObjectEditor> GetEditorsForType(Type selectedItemType)
 		{
-			HashSet<IObject3DEditor> mappedEditors;
+			HashSet<IObjectEditor> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
 
 			if (mappedEditors == null)

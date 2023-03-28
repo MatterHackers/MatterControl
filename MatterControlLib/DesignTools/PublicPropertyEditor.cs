@@ -44,7 +44,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library.Widgets;
@@ -55,7 +54,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PublicPropertyEditor : IObject3DEditor
+	public class PublicPropertyEditor : IObjectEditor
 	{
 		public string Name => "Property Editor";
 
@@ -81,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private SafeList<SettingsRow> rows = new SafeList<SettingsRow>();
 
-		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
+		public GuiWidget Create(object item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -96,7 +95,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// CreateEditor
-				AddUnlockLinkIfRequired(context.item, mainContainer, theme);
+				if (context.item is IObject3D itemAsIObject3D)
+				{
+					AddUnlockLinkIfRequired(itemAsIObject3D, mainContainer, theme);
+				}
 				
 				AddMarkDownDescription(context.item, mainContainer, theme);
 
@@ -171,7 +173,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 					updateButton.Click += (s, e) =>
 					{
-						context.item.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+                        if (context.item is IObject3D itemAsIObject3D)
+                        {
+                            itemAsIObject3D.Invalidate(new InvalidateArgs(itemAsIObject3D, InvalidateType.Properties));
+                        }
 					};
 					mainContainer.AddChild(updateButton);
 				}
@@ -186,7 +191,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		private void AddFunctionButtons(IObject3D item, FlowLayoutWidget mainContainer, ThemeConfig theme)
+		private void AddFunctionButtons(object item, FlowLayoutWidget mainContainer, ThemeConfig theme)
 		{
 			if (item is IEditorButtonProvider editorButtonProvider)
 			{
@@ -279,7 +284,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return column;
 		}
 
-		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
+		public static IEnumerable<EditableProperty> GetEditablePropreties(object item)
 		{
 			return item.GetType().GetProperties(OwnedPropertiesOnly)
 				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
@@ -307,9 +312,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				return null;
             }
 
-			var localItem = context.item;
-			var object3D = property.Item;
-			var propertyGridModifier = property.Item as IPropertyGridModifier;
+			var contextItem = context.item;
+            var contextObject3D = contextItem as IObject3D;
+            var propertyObject3D = property.Item as IObject3D;
+            var propertyGridModifier = property.Item as IPropertyGridModifier;
 
 			GuiWidget rowContainer = null;
 
@@ -346,20 +352,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
 						{
 							property.SetValue(valueFromString(oldValue));
-							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+							propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						},
 						() =>
 						{
 							property.SetValue(valueFromString(newValue));
-							object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+							propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 						}));
 					}
 					else
 					{
 						property.SetValue(valueFromString(newValue));
-						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+						propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
@@ -391,8 +397,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					object3D.Invalidated += RefreshField;
-					valueField.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+					propertyObject3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -414,11 +420,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					object3D.Invalidated += RefreshField;
-					field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
-					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+                    field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
+                    if (propertyObject3D != null)
+					{
+						propertyObject3D.Invalidated += RefreshField;
+                        field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+                    }
 
-					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+                    if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
 					{
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
@@ -430,12 +439,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is Color color)
 			{
-				var field = new ColorField(theme, object3D.Color, null, false);
+				var field = new ColorField(theme, color, null, false);
 				field.Initialize(0);
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Color);
-					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -509,7 +518,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
-					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -560,7 +569,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 				field2.ValueChanged += (s, e) =>
@@ -570,7 +579,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Normal = field1.DirectionVector.Normal,
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -618,13 +627,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
 						Action selected = null;
-						var showUpdate = localItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+						var showUpdate = contextItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
 						if (showUpdate == null
 							|| !showUpdate.SuppressPropertyChangeUpdates)
 						{
 							selected = () =>
 							{
-								object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+								propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 							};
 						}
 
@@ -666,7 +675,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				ImageBuffer GetImageCheckingForErrors()
 				{
 					var image = imageBuffer;
-					if (object3D is ImageObject3D imageObject2)
+					if (propertyObject3D is ImageObject3D imageObject2)
 					{
 						image = imageObject2.Image;
 					}
@@ -705,10 +714,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				object3D.Invalidated += RefreshField;
-				imageWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				propertyObject3D.Invalidated += RefreshField;
+				imageWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 
-				if (object3D is IEditorWidgetModifier editorWidgetModifier)
+				if (propertyObject3D is IEditorWidgetModifier editorWidgetModifier)
 				{
 					editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, UpdateEditorImage);
 				}
@@ -724,15 +733,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						if (object3D is IImageProvider imageProvider)
+						if (propertyObject3D is IImageProvider imageProvider)
 						{
 							var _ = imageProvider.Image;
 						}
 					}
 				}
 
-				object3D.Invalidated += RefreshField;
-				rowContainer.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				propertyObject3D.Invalidated += RefreshField;
+				rowContainer.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is List<string> stringList)
 			{
@@ -789,8 +798,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					object3D.Invalidated += RefreshField;
-					valueField.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+					propertyObject3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -813,8 +822,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					object3D.Invalidated += RefreshField;
-					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+					if (propertyObject3D != null)
+					{
+						propertyObject3D.Invalidated += RefreshField;
+						field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+					}
 
 					rowContainer = CreateSettingsRow(property, field.Content, theme);
 				}
@@ -851,7 +863,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 					}
 
-					field.SetValue(doubleExpresion.Value(object3D).ToString(format), false);
+					field.SetValue(doubleExpresion.Value(propertyObject3D).ToString(format), false);
 				}
 
 				field.ClearUndoHistory();
@@ -896,15 +908,15 @@ namespace MatterHackers.MatterControl.DesignTools
 									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 								}
 
-								var rawValue = newValue.Value(object3D);
+								var rawValue = newValue.Value(propertyObject3D);
 								field.TextValue = rawValue.ToString(format);
 							}
 						}
 					}
 				}
 
-				object3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				propertyObject3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is IntOrExpression intExpresion)
 			{
@@ -926,7 +938,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 					}
 
-					field.SetValue(intExpresion.Value(object3D).ToString(format), false);
+					field.SetValue(intExpresion.Value(propertyObject3D).ToString(format), false);
 				}
 
 				field.ClearUndoHistory();
@@ -971,15 +983,15 @@ namespace MatterHackers.MatterControl.DesignTools
 									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 								}
 
-								var rawValue = newValue.Value(object3D);
+								var rawValue = newValue.Value(propertyObject3D);
 								field.TextValue = rawValue.ToString(format);
 							}
 						}
 					}
 				}
 
-				object3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+				propertyObject3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is string stringValue)
 			{
@@ -987,7 +999,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rowContainer = NewImageSearchWidget(theme);
 				}
-				else if (object3D is AssetObject3D assetObject
+				else if (propertyObject3D is AssetObject3D assetObject
 					&& property.PropertyInfo.Name == "AssetPath")
 				{
 					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
@@ -1065,9 +1077,12 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 
-						object3D.Invalidated += RefreshField;
-						wrappedTextWidget.Closed += (s, e) => object3D.Invalidated -= RefreshField;
-					}
+						if (propertyObject3D != null)
+						{
+							propertyObject3D.Invalidated += RefreshField;
+                            wrappedTextWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+                        }
+                    }
 					else // normal edit row
 					{
 						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
@@ -1181,7 +1196,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
-					object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -1229,7 +1244,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Value.ToString() != field.Value)
 					{
 						property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-						object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+						propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
@@ -1261,15 +1276,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				if (object3D != null)
+				if (propertyObject3D != null)
 				{
-					object3D.Invalidated += RefreshField;
-					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+					propertyObject3D.Invalidated += RefreshField;
+					field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
 				}
 
 			}
 			else if (propertyValue is IObject3D item
-				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
+				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObjectEditor iObject3DEditor)
 			{
 				// Use known IObject3D editors
 				rowContainer = iObject3DEditor.Create(item, undoBuffer, theme);
@@ -1523,7 +1538,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static void AddMarkDownDescription(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)
+		public static void AddMarkDownDescription(object item, GuiWidget editControlsContainer, ThemeConfig theme)
 		{
 			if (item.GetType().GetCustomAttributes(typeof(MarkDownDescriptionAttribute), true).FirstOrDefault() is MarkDownDescriptionAttribute markdownDescription)
 			{
@@ -1554,7 +1569,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new SettingsRow("Demo Mode".Localize(), null, detailsLink, theme);
 		}
 
-		public static void AddWebPageLinkIfRequired(IObject3D item, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		public static void AddWebPageLinkIfRequired(object item, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			if (item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{

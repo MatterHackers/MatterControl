@@ -228,14 +228,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static void SetValue(EditableProperty property, PPEContext context, Func<string, object> valueFromString, double sliderDownValue)
 		{
 			var localItem = context.item;
-			var object3D = property.Item;
+            var localObject3D = localItem as Object3D;
+            var object3D = property.Item;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
 			property.SetValue(valueFromString(sliderDownValue.ToString()));
-			object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.Properties));
+			object3D?.Invalidate(new InvalidateArgs(localObject3D, InvalidateType.Properties));
 			propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 
-			object3D?.Invalidate(new InvalidateArgs(localItem, InvalidateType.DisplayValues));
+			object3D?.Invalidate(new InvalidateArgs(localObject3D, InvalidateType.DisplayValues));
 		}
 	}
 }

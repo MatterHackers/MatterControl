@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,41 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HoverImageWidget : ImageWidget
-	{
-		private ImageBuffer hoverImage;
-
-		private bool mouseInBounds = false;
-
-		public HoverImageWidget(ImageBuffer normalImage, ImageBuffer hoverImage)
-			: base(normalImage, listenForImageChanged: false)
-		{
-			this.hoverImage = hoverImage;
-		}
-
-		public override ImageBuffer Image
-		{
-			get => mouseInBounds ? hoverImage : base.Image;
-			set => base.Image = value;
-		}
-
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = true;
-			base.OnMouseEnterBounds(mouseEvent);
-			this.Invalidate();
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = false;
-			base.OnMouseLeaveBounds(mouseEvent);
-			this.Invalidate();
-		}
-	}
+    public interface IEditorDrawControled : IEditorDraw
+    {
+        bool DoEditorDraw(bool isSelected);
+    }
 }

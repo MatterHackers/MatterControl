@@ -82,45 +82,12 @@ namespace MatterHackers.MatterControl
 			base.PerformSearch(filter);
 		}
 
-		protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
-		{
-			// Filter against make/model for printers or make for top level nodes
-			string path = (context as HelpArticleTreeNode)?.HelpArticle.Path;
+        protected override bool NodeMatchesFilter(TreeNode context, string filter)
+        {
+            string path = (context as HelpArticleTreeNode)?.HelpArticle.Path;
 
-			bool isSearchMatch = searchHits.Contains(path);
-
-			context.Visible = isSearchMatch || parentVisible;
-
-			if (context.Visible
-				&& context.NodeParent != null)
-			{
-				context.NodeParent.Visible = true;
-				context.NodeParent.Expanded = true;
-				context.Expanded = true;
-			}
-
-			if (context.NodeParent != null
-				&& isSearchMatch)
-			{
-				matches.Add(context);
-			}
-
-			bool childMatched = false;
-
-			foreach (var child in context.Nodes)
-			{
-				childMatched |= FilterTree(child, filter, isSearchMatch || parentVisible, matches);
-			}
-
-			bool hasMatch = childMatched || isSearchMatch;
-
-			if (hasMatch)
-			{
-				context.Visible = context.Expanded = true;
-			}
-
-			return hasMatch;
-		}
+            return searchHits.Contains(path);
+        }
 
 		protected override void OnClearSearch()
 		{
@@ -268,7 +235,7 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 
-			treeView.AfterSelect += (s, e) =>
+			TreeView.AfterSelect += (s, e) =>
 			{
 				// Hide all sibling content controls
 				foreach (var child in horizontalSplitter.Panel2.Children)
@@ -276,7 +243,7 @@ namespace MatterHackers.MatterControl
 					child.Visible = false;
 				}
 
-				if (treeView.SelectedNode?.Tag is HelpArticle article)
+				if (TreeView.SelectedNode?.Tag is HelpArticle article)
 				{
 					markdownWidget.MatchingText = this.MatchingText;
 
@@ -296,34 +263,34 @@ namespace MatterHackers.MatterControl
 					// Show Markdown help page
 					markdownWidget.Visible = true;
 				}
-				else if (treeView.SelectedNode?.Tag is GuiWidget widget)
+				else if (TreeView.SelectedNode?.Tag is GuiWidget widget)
 				{
 					// Show non-markdown page
 					widget.Visible = true;
 				}
 			};
 
-			treeView.Load += (s, e) =>
+			TreeView.Load += (s, e) =>
 			{
 				rootNode.Expanded = true;
 
-				if (treeView.SelectedNode == null)
+				if (TreeView.SelectedNode == null)
 				{
 					if (string.IsNullOrEmpty(guideKey))
 					{
-						treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+						TreeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
 					}
 					else
 					{
 						if (initialSelection != null)
 						{
-							treeView.SelectedNode = initialSelection;
+							TreeView.SelectedNode = initialSelection;
 						}
 
 						// TODO: Implement or revise .Expanded
-						if (treeView.SelectedNode != null)
+						if (TreeView.SelectedNode != null)
 						{
-							foreach (var ancestor in treeView.SelectedNode.Parents<TreeNode>())
+							foreach (var ancestor in TreeView.SelectedNode.Parents<TreeNode>())
 							{
 								ancestor.Expanded = true;
 							}
@@ -331,9 +298,9 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (treeView.SelectedNode == null)
+				if (TreeView.SelectedNode == null)
 				{
-					treeView.SelectedNode = rootNode;
+					TreeView.SelectedNode = rootNode;
 				}
 			};
 
@@ -348,7 +315,7 @@ namespace MatterHackers.MatterControl
 
 			rootNode = ProcessTree(ApplicationController.Instance.HelpArticles);
 			rootNode.Text = "Help";
-			rootNode.TreeView = treeView;
+			rootNode.TreeView = TreeView;
 
 			contentPanel.AddChild(rootNode);
 
@@ -402,12 +369,12 @@ namespace MatterHackers.MatterControl
 
 		public string ActiveNodePath
 		{
-			get => treeView.SelectedNode?.Tag as string;
+			get => TreeView.SelectedNode?.Tag as string;
 			set
 			{
 				if (nodesByPath.TryGetValue(value, out HelpArticleTreeNode treeNode))
 				{
-					treeView.SelectedNode = treeNode;
+					TreeView.SelectedNode = treeNode;
 				}
 			}
 		}

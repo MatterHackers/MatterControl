@@ -35,10 +35,10 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IObject3DEditor
+	public interface IObjectEditor
 	{
 		string Name { get; }
 		IEnumerable<Type> SupportedTypes();
-		GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme);
+		GuiWidget Create(object item, UndoBuffer undoBuffer, ThemeConfig theme);
 	}
 }

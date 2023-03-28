@@ -415,11 +415,17 @@ Translated:Are you sure you want to sign out? You will not have access to your p
 English:Arrange All Parts
 Translated:Arrange All Parts
 
+English:Arranging
+Translated:Arranging
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 
 English:Ascending
 Translated:Ascending
+
+English:Assets Folder
+Translated:Assets Folder
 
 English:At least 1 part must be selected
 Translated:At least 1 part must be selected
@@ -505,6 +511,9 @@ Translated:Bad
 English:Bad Thermistor
 Translated:Bad Thermistor
 
+English:Bambu Studio
+Translated:Bambu Studio
+
 English:Base
 Translated:Base
 
@@ -534,6 +543,9 @@ Translated:Be sure you are not pressing down on the bed while moving the paper.
 
 English:Bed
 Translated:Bed
+
+English:Bed Depth
+Translated:Bed Depth
 
 English:Bed Dislodged
 Translated:Bed Dislodged
@@ -579,6 +591,9 @@ Translated:Bed Temperature Set to 0
 
 English:Bed Temperature:
 Translated:Bed Temperature:
+
+English:Bed Width
+Translated:Bed Width
 
 English:Bed Wipe Temperature
 Translated:Bed Wipe Temperature
@@ -646,6 +661,9 @@ Translated:Bottom Solid Infill
 English:Bottom Solid Layers
 Translated:Bottom Solid Layers
 
+English:Bottom Top Layers
+Translated:Bottom Top Layers
+
 English:Bowden Tube Popped Out
 Translated:Bowden Tube Popped Out
 
@@ -675,6 +693,9 @@ Translated:Brim Extruder
 
 English:Build Height
 Translated:Build Height
+
+English:Build Plates
+Translated:Build Plates
 
 English:BuildTak
 Translated:BuildTak
@@ -823,6 +844,9 @@ Translated:Clear Bed
 English:Clear Bed G-Code
 Translated:Clear Bed G-Code
 
+English:Clear Bed When Done
+Translated:Clear Bed When Done
+
 English:Clear Cache
 Translated:Clear Cache
 
@@ -900,6 +924,9 @@ Translated:Color 3
 
 English:Color 4
 Translated:Color 4
+
+English:Color Name
+Translated:Color Name
 
 English:Color View
 Translated:Color View
@@ -1138,6 +1165,9 @@ Translated:Create Part Sheet
 English:Create Perimeter
 Translated:Create Perimeter
 
+English:Create Plates
+Translated:Create Plates
+
 English:Create Printer
 Translated:Create Printer
 
@@ -1155,6 +1185,9 @@ Translated:Create Support
 
 English:Create Supports
 Translated:Create Supports
+
+English:Create the plates for all the selected STLs.
+Translated:Create the plates for all the selected STLs.
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
@@ -1381,6 +1414,9 @@ Translated:Distance From Object
 English:Distance or Loops
 Translated:Distance or Loops
 
+English:Do CSG
+Translated:Do CSG
+
 English:Documents
 Translated:Documents
 
@@ -1497,6 +1533,9 @@ Translated:Emulate Endstops
 
 English:Enable Auto Cooling
 Translated:Enable Auto Cooling
+
+English:Enable Editing
+Translated:Enable Editing
 
 English:Enable Extruder Lift
 Translated:Enable Extruder Lift
@@ -2296,6 +2335,9 @@ Translated:Hotend Temperature
 English:Hotend Temperature:
 Translated:Hotend Temperature:
 
+English:ID
+Translated:ID
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal for cloning settings across different physical printers
 
@@ -2379,6 +2421,9 @@ Translated:Infill Angle
 
 English:Infill Overlap
 Translated:Infill Overlap
+
+English:Infill Percent
+Translated:Infill Percent
 
 English:Infill Speeds
 Translated:Infill Speeds
@@ -2512,6 +2557,12 @@ Translated:Iterations
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Job Manager
+Translated:Job Manager
+
+English:Jobs Folder
+Translated:Jobs Folder
+
 English:Junction Deviation [mm/s]
 Translated:Junction Deviation [mm/s]
 
@@ -2541,6 +2592,9 @@ Translated:Layer
 
 English:Layer Change G-Code
 Translated:Layer Change G-Code
+
+English:Layer Height
+Translated:Layer Height
 
 English:Layer Shift
 Translated:Layer Shift
@@ -2694,6 +2748,9 @@ Translated:Loading GCode
 
 English:Loading Help
 Translated:Loading Help
+
+English:Loading Stls
+Translated:Loading Stls
 
 English:Local Library
 Translated:Local Library
@@ -3205,6 +3262,9 @@ Translated:Note: Slice Settings are applied before the print actually starts. Ch
 English:NOTE: Standard messaging rates may apply.
 Translated:NOTE: Standard messaging rates may apply.
 
+English:Notes
+Translated:Notes
+
 English:Notifications
 Translated:Notifications
 
@@ -3376,6 +3436,9 @@ Translated:Open Recent
 English:Open Settings View Options
 Translated:Open Settings View Options
 
+English:Open With
+Translated:Open With
+
 English:OpenSCAD not installed
 Translated:OpenSCAD not installed
 
@@ -3421,6 +3484,9 @@ Translated:Outlines (default)
 English:Output
 Translated:Output
 
+English:Output Folder
+Translated:Output Folder
+
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 
@@ -3463,6 +3529,9 @@ Translated:Part Cooling Fan
 English:Part Cooling Fan {i}
 Translated:Part Cooling Fan {i}
 
+English:Part Plater
+Translated:Part Plater
+
 English:Part Settings
 Translated:Part Settings
 
@@ -3474,6 +3543,9 @@ Translated:Part(s) to Subtract and Replace
 
 English:Parts
 Translated:Parts
+
+English:Parts Folder
+Translated:Parts Folder
 
 English:Password
 Translated:Password
@@ -3519,6 +3591,12 @@ Translated:PEI Bed Temperature
 
 English:Percentage of
 Translated:Percentage of
+
+English:Performe a union before exporting. Might be slower but can clean up some models.
+Translated:Performe a union before exporting. Might be slower but can clean up some models.
+
+English:Performe Union
+Translated:Performe Union
 
 English:Perimeter Acceleration
 Translated:Perimeter Acceleration
@@ -3765,6 +3843,9 @@ Translated:Print History
 
 English:Print History Note
 Translated:Print History Note
+
+English:Print Job Manager
+Translated:Print Job Manager
 
 English:Print Leveling
 Translated:Print Leveling
@@ -4372,6 +4453,12 @@ Translated:Save changes ?
 English:Save Changes?
 Translated:Save Changes?
 
+English:Save Each Separately
+Translated:Save Each Separately
+
+English:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
+Translated:Save every object as a separate STL using its name. The save filename will be used if no name can be found.
+
 English:Save file:
 Translated:Save file:
 
@@ -4398,6 +4485,9 @@ Translated:Saving changes
 
 English:Saving Changes
 Translated:Saving Changes
+
+English:Saving PDF
+Translated:Saving PDF
 
 English:SCAD Script
 Translated:SCAD Script
@@ -4471,6 +4561,9 @@ Translated:Select an object to copy its color
 English:Select cell to edit
 Translated:Select cell to edit
 
+English:Select Folder
+Translated:Select Folder
+
 English:Select Parts
 Translated:Select Parts
 
@@ -4491,6 +4584,9 @@ Translated:Select this option only if your printer does not appear in the list
 
 English:Select What to Import
 Translated:Select What to Import
+
+English:Selecte a directory
+Translated:Selecte a directory
 
 English:Selected Children
 Translated:Selected Children

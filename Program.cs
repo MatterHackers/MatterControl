@@ -300,12 +300,7 @@ namespace MatterHackers.MatterControl
 			var rootSystemWindow = Application.LoadRootWindow(width, height);
 
 			var theme = ApplicationController.Instance.Theme;
-			SingleWindowProvider.SetWindowTheme(theme.TextColor,
-				theme.DefaultFontSize - 1,
-				() => theme.CreateSmallResetButton(),
-				theme.ToolbarPadding,
-				theme.TabBarBackground,
-				new Color(theme.PrimaryAccentColor, 175));
+			SingleWindowProvider.SetWindowTheme(theme);
 
 			ApplicationController.Instance.KeepAwake = KeepAwake;
 

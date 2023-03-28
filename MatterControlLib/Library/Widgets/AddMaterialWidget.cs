@@ -66,14 +66,14 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
             horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
 
-            treeView.AfterSelect += this.TreeView_AfterSelect;
+            TreeView.AfterSelect += this.TreeView_AfterSelect;
 
-            treeView.NodeMouseDoubleClick += (s, e) =>
+            TreeView.NodeMouseDoubleClick += (s, e) =>
             {
                 if (e is MouseEventArgs mouseEvent
                     && mouseEvent.Button == MouseButtons.Left
                         && mouseEvent.Clicks == 2
-                        && treeView?.SelectedNode is TreeNode treeNode)
+                        && TreeView?.SelectedNode is TreeNode treeNode)
                 {
                     nextButton.InvokeClick();
                 }
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
                 {
                     var rootNode = this.CreateTreeNode(rootDirectory);
                     rootNode.Expandable = true;
-                    rootNode.TreeView = treeView;
+                    rootNode.TreeView = TreeView;
                     contentPanel.AddChild(rootNode);
                 }
 
@@ -120,43 +120,10 @@ namespace MatterHackers.MatterControl.Library.Widgets
             horizontalSplitter.Panel2.AddChild(panel2Column);
         }
 
-        protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
+        protected override bool NodeMatchesFilter(TreeNode context, string filter)
         {
-            // Filter against make/model for printers or make for top level nodes
-            string itemText = context.Text;
-
-            bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
-            context.Visible = hasFilterText || parentVisible;
-
-            if (context.Visible
-                && context.NodeParent != null)
-            {
-                context.NodeParent.Visible = true;
-                context.NodeParent.Expanded = true;
-                context.Expanded = true;
-            }
-
-            if (context.NodeParent != null
-                && hasFilterText)
-            {
-                matches.Add(context);
-            }
-
-            bool childMatched = false;
-
-            foreach (var child in context.Nodes)
-            {
-                childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
-            }
-
-            bool hasMatch = childMatched || hasFilterText;
-
-            if (hasMatch)
-            {
-                context.Visible = context.Expanded = true;
-            }
-
-            return hasMatch;
+            // check if the node matches the filter
+            return context.Text.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
         }
 
         private static void SetImage(TreeNode node, ImageBuffer image)
@@ -216,15 +183,15 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
         private void TreeView_AfterSelect(object sender, TreeNode e)
         {
-            if (treeView.SelectedNode?.Tag != null)
+            if (TreeView.SelectedNode?.Tag != null)
             {
                 UiThread.RunOnIdle(() =>
                 {
-                    if (treeView.SelectedNode != null)
+                    if (TreeView.SelectedNode != null)
                     {
-                        string printerName = treeView.SelectedNode.Tag.ToString();
+                        string printerName = TreeView.SelectedNode.Tag.ToString();
 
-                        this.SelectedMaterial = treeView.SelectedNode.Tag as MaterialInfo;
+                        this.SelectedMaterial = TreeView.SelectedNode.Tag as MaterialInfo;
                         materialInfo.CloseChildren();
 
                         var printerDetails = new PrinterDetails(
@@ -266,7 +233,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
                             printerDetails.ProductDataContainer.AddChild(settingsBackground);
                         };
 
-                        nextButtonEnabled(treeView.SelectedNode != null);
+                        nextButtonEnabled(TreeView.SelectedNode != null);
                     }
                 });
             }

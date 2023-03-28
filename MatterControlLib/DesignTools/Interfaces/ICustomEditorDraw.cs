@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,65 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PPEContext
+    public interface ICustomEditorDraw : IEditorDrawControled
 	{
-		public object item { get; set; }
-		public Dictionary<string, GuiWidget> editRows { get; private set; } = new Dictionary<string, GuiWidget>();
-
-		public GuiWidget GetEditRow(string propertyName)
-		{
-			GuiWidget value;
-			if (editRows.TryGetValue(propertyName, out value))
-			{
-				return value;
-			}
-
-			return null;
-		}
-	}
-
-	public class PublicPropertyChange
-	{
-		public PPEContext Context { get; }
-		public string Changed { get; }
-
-		public PublicPropertyChange(PPEContext pPEContext, string propertyChanged)
-		{
-			this.Context = pPEContext;
-			this.Changed = propertyChanged;
-		}
-
-
-		/// <summary>
-		/// Set the visibility of a property line item in the property editor
-		/// </summary>
-		/// <param name="editRowName"></param>
-		/// <param name="change"></param>
-		/// <param name="visible"></param>
-		public void SetRowVisible(string editRowName, Func<bool> visible)
-		{
-			var editRow = this.Context.GetEditRow(editRowName);
-			if (editRow != null)
-			{
-				editRow.Visible = visible.Invoke();
-			}
-		}
-	}
-
-	public interface ITransformWarpperObject3D
-	{
-		IObject3D TransformWarpper { get; }
-	}
-
-	public interface IPropertyGridModifier
-	{
-		void UpdateControls(PublicPropertyChange change);
+		void AddEditorTransparents(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e);
 	}
 }

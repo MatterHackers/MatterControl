@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
 
-            HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.Extensions.GetEditorsForType(selectedItemType);
+            HashSet<IObjectEditor> mappedEditors = ApplicationController.Instance.Extensions.GetEditorsForType(selectedItemType);
 
             var undoBuffer = sceneContext.Scene.UndoBuffer;
 
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             else
             {
                 if (item != null
-                    && ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+                    && ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObjectEditor editor)
                 {
                     ShowObjectEditor((editor, item, item.Name), selectedItem);
                 }
@@ -559,7 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         if (instance is IObject3D object3D)
                         {
-                            if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+                            if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObjectEditor editor)
                             {
                                 ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
                             }
@@ -668,7 +668,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void ShowObjectEditor((IObject3DEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection)
+        private void ShowObjectEditor((IObjectEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection)
         {
             var selectedItem = scopeItem.item;
 
