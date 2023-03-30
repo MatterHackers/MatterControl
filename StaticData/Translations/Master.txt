@@ -4492,6 +4492,9 @@ Translated:Saving Changes
 English:Saving PDF
 Translated:Saving PDF
 
+English:Saving Plates to SD Card
+Translated:Saving Plates to SD Card
+
 English:SCAD Script
 Translated:SCAD Script
 
