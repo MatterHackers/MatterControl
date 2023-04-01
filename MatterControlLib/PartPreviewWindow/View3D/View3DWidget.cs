@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using g3;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -506,8 +507,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Checked = turntableEnabled,
 				//DoubleBuffer = true,
 			};
+            turnTableButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Switch between turn table and trackball modes".Localize();
+            turnTableButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
 
-			AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
+            AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
 			turnTableButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
@@ -531,7 +534,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = TrackballTumbleWidget.PerspectiveMode,
 			};
-			AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
+            projectionButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Turn on and off perspective rendering".Localize();
+            projectionButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
 			projectionButton.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
@@ -559,6 +564,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
+            bedButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Hide and show the bed".Localize();
+            bedButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            
 			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
 			var printAreaButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
 			{
@@ -615,7 +623,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
-			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+            modelViewStyleButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Change the current rendering mode".Localize();
+            modelViewStyleButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+
+            modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
 			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
@@ -649,7 +660,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
-			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+            gridSnapButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Adjust the grid that objects will snap to when moved".Localize();
+            gridSnapButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+
+            gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
 			gridSnapButton.BackgroundColor = hudBackgroundColor;

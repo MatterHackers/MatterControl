@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -45,7 +47,69 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+        public static void SetupUpAndDownArrows(GuiWidget guiWidget)
+        {
+            guiWidget.KeyDown += InternalTextEditWidget_KeyDown;
+
+            guiWidget.MouseEnterBounds += (s, e) =>
+            {
+                var textEditWidget = s as TextEditWidget;
+                var internalTextEditWidget = textEditWidget.InternalTextEditWidget;
+
+                if (internalTextEditWidget != null
+                    && double.TryParse(internalTextEditWidget.Text, out double value))
+                {
+                    ApplicationController.Instance.UiHint = "Up Arrow = +1, Down Arrow = -1, (Shift * 10, Control / 10)".Localize();
+                }
+            };
+            guiWidget.MouseLeaveBounds += (s, e) =>
+            {
+                ApplicationController.Instance.UiHint = "";
+            };
+        }
+
+        private static void InternalTextEditWidget_KeyDown(object sender, KeyEventArgs e)
+        {
+            var textEditWidget = sender as TextEditWidget;
+            var internalTextEditWidget = textEditWidget.InternalTextEditWidget;
+
+            if (internalTextEditWidget != null)
+            {
+                var amount = 1.0;
+                if (e.Shift)
+                {
+                    amount = 10;
+                }
+                else if (e.Control)
+                {
+                    amount = .1;
+                }
+
+                // if the up arrow is pressed and the text is a number
+                if (e.KeyCode == Keys.Up)
+                {
+                    if (double.TryParse(internalTextEditWidget.Text, out double value))
+                    {
+                        value += amount;
+                        internalTextEditWidget.Text = value.ToString();
+                        e.Handled = true;
+                        internalTextEditWidget.OnEditComplete(e);
+                    }
+                }
+                else if (e.KeyCode == Keys.Down)
+                {
+                    if (double.TryParse(internalTextEditWidget.Text, out double value))
+                    {
+                        value -= amount;
+                        internalTextEditWidget.Text = value.ToString();
+                        e.Handled = true;
+                        internalTextEditWidget.OnEditComplete(e);
+                    }
+                }
+            }
+        }
+        
+        public override void Initialize(int tabIndex)
 		{
 			numberEdit = new ThemedNumberEdit(0, theme, pixelWidth: ControlWidth, allowDecimals: this.AllowDecimals, allowNegatives: this.AllowNegatives, tabIndex: tabIndex)
 			{
@@ -62,8 +126,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						userInitiated: true);
 				}
 			};
+            SetupUpAndDownArrows(numberEdit.ActuallNumberEdit);
 
-			this.Content = numberEdit;
+            this.Content = numberEdit;
 		}
 	}
 }

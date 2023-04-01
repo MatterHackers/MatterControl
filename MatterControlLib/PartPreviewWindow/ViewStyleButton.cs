@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Selectable = false
 			});
-			
-			ToolTipText = viewData[renderType].toolTip;
+
+            ToolTipText = viewData[renderType].toolTip;
 
 			UserSettings.Instance.SettingChanged += UserSettings_SettingChanged;
 		}

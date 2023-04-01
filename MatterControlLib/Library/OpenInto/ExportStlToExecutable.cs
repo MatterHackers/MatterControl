@@ -127,7 +127,7 @@ namespace MatterControlLib.Library.OpenInto
                     }
 
                     ApplicationController.Instance.Tasks.Execute(
-                        "Twist".Localize(),
+                        "Open".Localize(),
                         null,
                         async (reporter, cancellationToken) =>
                         {

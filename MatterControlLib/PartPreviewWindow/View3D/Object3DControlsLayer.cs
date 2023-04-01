@@ -471,14 +471,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& hitObject3DControl is Object3DControl object3DControl2
 					&& object3DControl2.RootSelection != null)
 				{
-					ApplicationController.Instance.UiHint = "Click to edit values".Localize();
-				}
-				else if (ApplicationController.Instance.UiHint == "Click to edit values".Localize())
+					if (!string.IsNullOrEmpty(object3DControl2.UiHint))
+					{
+                        lastControlMessage = "Click and drag".Localize() + " : " + object3DControl2.UiHint + " : " + "Click once to edit values".Localize(); ;
+					}
+					else
+					{
+                        lastControlMessage = "Click to edit values".Localize();
+					}
+
+					ApplicationController.Instance.UiHint = lastControlMessage;
+                }
+				else if (ApplicationController.Instance.UiHint == lastControlMessage)
 				{
 					ApplicationController.Instance.UiHint = "";
 				}
 			}
 		}
+
+		string lastControlMessage = "";
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
