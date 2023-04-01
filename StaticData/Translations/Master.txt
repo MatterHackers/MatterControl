@@ -1618,6 +1618,9 @@ Translated:Enter your password
 English:Enter your username or email address
 Translated:Enter your username or email address
 
+English:Erase SD Card On Insert
+Translated:Erase SD Card On Insert
+
 English:Error
 Translated:Error
 
@@ -3433,11 +3436,17 @@ Translated:Open Folder
 English:Open Package
 Translated:Open Package
 
+English:Open PDF
+Translated:Open PDF
+
 English:Open Recent
 Translated:Open Recent
 
 English:Open Settings View Options
 Translated:Open Settings View Options
+
+English:Open the PDF file for this ID.
+Translated:Open the PDF file for this ID.
 
 English:Open With
 Translated:Open With
@@ -3850,6 +3859,12 @@ Translated:Print History Note
 English:Print Job Manager
 Translated:Print Job Manager
 
+English:Print Labels
+Translated:Print Labels
+
+English:Print Lables
+Translated:Print Lables
+
 English:Print Leveling
 Translated:Print Leveling
 
@@ -3879,6 +3894,9 @@ Translated:Print Queue
 
 English:Print Recovery
 Translated:Print Recovery
+
+English:Print the inventory labels for this ID.
+Translated:Print the inventory labels for this ID.
 
 English:Print Time
 Translated:Print Time
