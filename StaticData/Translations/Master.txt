@@ -886,6 +886,12 @@ Translated:Click 'Done'
 English:Click 'Next' to continue.
 Translated:Click 'Next' to continue.
 
+English:Click and drag
+Translated:Click and drag
+
+English:Click once to edit values
+Translated:Click once to edit values
+
 English:Click the 'Connect' button to retry the original connection attempt
 Translated:Click the 'Connect' button to retry the original connection attempt
 
@@ -3433,6 +3439,12 @@ Translated:Open File
 English:Open Folder
 Translated:Open Folder
 
+English:Open Output
+Translated:Open Output
+
+English:Open Output Folder
+Translated:Open Output Folder
+
 English:Open Package
 Translated:Open Package
 
@@ -3445,8 +3457,14 @@ Translated:Open Recent
 English:Open Settings View Options
 Translated:Open Settings View Options
 
+English:Open the Output folder for this ID.
+Translated:Open the Output folder for this ID.
+
 English:Open the PDF file for this ID.
 Translated:Open the PDF file for this ID.
+
+English:Open the source folder for this ID.
+Translated:Open the source folder for this ID.
 
 English:Open With
 Translated:Open With
@@ -5158,6 +5176,9 @@ Translated:Surfaced Editors
 English:Switch
 Translated:Switch
 
+English:Switch between turn table and trackball modes
+Translated:Switch between turn table and trackball modes
+
 English:Switch to new G-Code on next layer?
 Translated:Switch to new G-Code on next layer?
 
@@ -6070,6 +6091,9 @@ Translated:Tuning Adjustment
 English:Turn off motor current at end of print or after cancel print.
 Translated:Turn off motor current at end of print or after cancel print.
 
+English:Turn on and off perspective rendering
+Translated:Turn on and off perspective rendering
+
 English:Turn on if Below
 Translated:Turn on if Below
 
@@ -6165,6 +6189,9 @@ Translated:Up
 
 English:Up Arrow
 Translated:Up Arrow
+
+English:Up Arrow = +1, Down Arrow = -1, (Shift * 10, Control / 10)
+Translated:Up Arrow = +1, Down Arrow = -1, (Shift * 10, Control / 10)
 
 English:Update
 Translated:Update
