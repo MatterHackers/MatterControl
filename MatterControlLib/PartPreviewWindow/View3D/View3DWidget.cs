@@ -363,8 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 			};
 
-			partSelectButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag".Localize();
-			partSelectButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			partSelectButton.MouseEnterBounds += (s, e) => partSelectButton.SetActiveUiHint("Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag".Localize());
 			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
@@ -375,8 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Rotate View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			rotateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys".Localize();
-			rotateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			rotateButton.MouseEnterBounds += (s, e) => rotateButton.SetActiveUiHint("Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys".Localize());
 			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
@@ -387,8 +385,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Move View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			translateButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys".Localize();
-			translateButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			translateButton.MouseEnterBounds += (s, e) => translateButton.SetActiveUiHint("Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys".Localize());
 			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
@@ -399,8 +396,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Zoom View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			zoomButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'".Localize();
-			zoomButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			zoomButton.MouseEnterBounds += (s, e) => zoomButton.SetActiveUiHint("Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'".Localize());
 			AddRoundButton(zoomButton, RotatedMargin(zoomButton, - MathHelper.Tau * .15));
 			zoomButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
 			buttonGroupA.Add(zoomButton);
@@ -471,8 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Reset View".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			homeButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = "W Key";
-			homeButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+			homeButton.MouseEnterBounds += (s1, e1) => homeButton.SetActiveUiHint("W Key");
 			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
 			var zoomToSelectionButton = new ThemedIconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).SetToColor(theme.TextColor), theme)
@@ -481,8 +476,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "Zoom to Selection".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			zoomToSelectionButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = "Z Key";
-			zoomToSelectionButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+			zoomToSelectionButton.MouseEnterBounds += (s1, e1) => zoomToSelectionButton.SetActiveUiHint("Z Key");
 			void SetZoomEnabled(object s, EventArgs e)
 			{
 				zoomToSelectionButton.Enabled = this.Scene.SelectedItem != null
@@ -507,8 +501,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Checked = turntableEnabled,
 				//DoubleBuffer = true,
 			};
-            turnTableButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Switch between turn table and trackball modes".Localize();
-            turnTableButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            turnTableButton.MouseEnterBounds += (s, e) => turnTableButton.SetActiveUiHint("Switch between turn table and trackball modes".Localize());
 
             AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
 			turnTableButton.CheckedStateChanged += (s, e) =>
@@ -534,8 +527,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = new List<GuiWidget>(),
 				Checked = TrackballTumbleWidget.PerspectiveMode,
 			};
-            projectionButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Turn on and off perspective rendering".Localize();
-            projectionButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            projectionButton.MouseEnterBounds += (s, e) => projectionButton.SetActiveUiHint("Turn on and off perspective rendering".Localize());
             AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
 			projectionButton.CheckedStateChanged += (s, e) =>
 			{
@@ -564,8 +556,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToggleButton = true,
 				SiblingRadioButtonList = new List<GuiWidget>(),
 			};
-            bedButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Hide and show the bed".Localize();
-            bedButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            bedButton.MouseEnterBounds += (s, e) => bedButton.SetActiveUiHint("Hide and show the bed".Localize());
             
 			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
 			var printAreaButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).SetToColor(theme.TextColor), theme)
@@ -623,8 +614,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
-            modelViewStyleButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Change the current rendering mode".Localize();
-            modelViewStyleButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            modelViewStyleButton.MouseEnterBounds += (s, e) => modelViewStyleButton.SetActiveUiHint("Change the current rendering mode".Localize());
 
             modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
@@ -660,8 +650,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				}
 			};
-            gridSnapButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Adjust the grid that objects will snap to when moved".Localize();
-            gridSnapButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+            gridSnapButton.MouseEnterBounds += (s, e) => gridSnapButton.SetActiveUiHint("Adjust the grid that objects will snap to when moved".Localize());
 
             gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;

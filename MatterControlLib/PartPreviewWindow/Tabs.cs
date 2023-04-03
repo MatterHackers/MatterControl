@@ -283,12 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			TabBar.MouseEnterBounds += (s, e) =>
 			{
-				ApplicationController.Instance.UiHint = "You can drag and drop .mcx files here to open them";
-			};
-
-			TabBar.MouseLeaveBounds += (s, e) =>
-			{
-				ApplicationController.Instance.UiHint = "";
+                TabBar.SetActiveUiHint("You can drag and drop .mcx files here to open them");
 			};
 
 			this.TabBar.MouseUp += (s, e) =>

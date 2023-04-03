@@ -171,8 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var errors = printer.Validate();
 
 				var startPrintButton = CreateStartPrintButton("Start Print".Localize(), printer, menuTheme, out bool printEnabled);
-				startPrintButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + P".Localize();
-				startPrintButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+				startPrintButton.MouseEnterBounds += (s, e) => startPrintButton.SetActiveUiHint("Ctrl + P".Localize());
 				startPrintButton.Click += (s, e) => this.CloseMenu();
 
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);

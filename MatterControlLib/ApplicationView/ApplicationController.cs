@@ -30,13 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -46,7 +44,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using global::MatterControl.Printing;
 using Markdig.Agg;
-using Markdig.Syntax.Inlines;
 using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -71,7 +68,6 @@ using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.Tour;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
@@ -1648,17 +1644,17 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Set or get the current ui hint for the thing the mouse is over
 		/// </summary>
-		public string UiHint
+		public string GetUiHint()
 		{
-			get => _uiHint;
-			
-			set
+			return _uiHint;
+		}
+
+        public void SetUiHint(string value)
+		{
+			if (_uiHint != value)
 			{
-				if (_uiHint != value)
-				{
-					_uiHint = value;
-					UiHintChanged?.Invoke(this, null);
-				}
+				_uiHint = value;
+				UiHintChanged?.Invoke(this, null);
 			}
 		}
 
@@ -2673,4 +2669,24 @@ namespace MatterHackers.MatterControl
 			public Action Action { get; set; }
 		}
 	}
+
+	public static class SetUiHintExtensions
+	{
+		// GuiWidget extension
+		public static void SetActiveUiHint(this GuiWidget widget, string value)
+		{
+            if (ApplicationController.Instance.GetUiHint() != value)
+			{
+                void MouseHasLeftBounds(object s, EventArgs e)
+                {
+					ApplicationController.Instance.SetUiHint("");
+                    widget.MouseLeaveBounds -= MouseHasLeftBounds;
+                }
+
+                widget.MouseLeaveBounds += MouseHasLeftBounds;
+
+                ApplicationController.Instance.SetUiHint(value);
+            }
+        }
+    }
 }

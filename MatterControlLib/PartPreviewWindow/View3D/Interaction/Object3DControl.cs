@@ -120,9 +120,9 @@ namespace MatterHackers.MeshVisualizer
 		{
 			if (!string.IsNullOrEmpty(UiHint))
 			{
-				ApplicationController.Instance.UiHint = "";
-			}
-		}
+                ApplicationController.Instance.SetUiHint("");
+            }
+        }
 
 		public virtual void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
@@ -132,7 +132,7 @@ namespace MatterHackers.MeshVisualizer
 				this.Object3DControlContext.GuiSurface.Invalidate();
 				if (!string.IsNullOrEmpty(UiHint))
 				{
-					ApplicationController.Instance.UiHint = UiHint;
+					ApplicationController.Instance.SetUiHint(UiHint);
 				}
 			}
 		}
@@ -148,7 +148,7 @@ namespace MatterHackers.MeshVisualizer
 
 			if (!string.IsNullOrEmpty(UiHint))
 			{
-				ApplicationController.Instance.UiHint = "";
+				ApplicationController.Instance.SetUiHint("");
 			}
 		}
 

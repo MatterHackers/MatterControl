@@ -96,12 +96,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (DownOnControl)
 			{
-				ApplicationController.Instance.UiHint = "";
+				ApplicationController.Instance.SetUiHint("");
 				DownOnControl = false;
 				setPosition(mouseDownPosition);
-				ApplicationController.Instance.UiHint = "";
-			}
-		}
+                ApplicationController.Instance.SetUiHint("");
+            }
+        }
 
 		public void Draw(DrawGlContentEventArgs e)
 		{
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			DownOnControl = true;
-			ApplicationController.Instance.UiHint = UiHint;
+			ApplicationController.Instance.SetUiHint(UiHint);
 			mouseDownPosition = getPosition();
 			// Make sure we always get a new hit plane
 			ResetHitPlane();
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				DownOnControl = false;
 				editComplete(mouseDownPosition);
-				ApplicationController.Instance.UiHint = "";
+				ApplicationController.Instance.SetUiHint("");
 			}
 		}
 

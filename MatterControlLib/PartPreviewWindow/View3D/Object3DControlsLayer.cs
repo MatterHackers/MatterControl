@@ -480,11 +480,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         lastControlMessage = "Click to edit values".Localize();
 					}
 
-					ApplicationController.Instance.UiHint = lastControlMessage;
+					ApplicationController.Instance.SetUiHint(lastControlMessage);
                 }
-				else if (ApplicationController.Instance.UiHint == lastControlMessage)
+				else if (ApplicationController.Instance.GetUiHint() == lastControlMessage)
 				{
-					ApplicationController.Instance.UiHint = "";
+					ApplicationController.Instance.SetUiHint("");
 				}
 			}
 		}

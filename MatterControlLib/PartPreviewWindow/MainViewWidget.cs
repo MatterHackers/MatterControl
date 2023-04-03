@@ -1149,9 +1149,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tasksContainer.AddChild(runningTaskPanel);
 			}
 
-			if (!string.IsNullOrEmpty(ApplicationController.Instance.UiHint))
+			if (!string.IsNullOrEmpty(ApplicationController.Instance.GetUiHint()))
 			{
-				statusMessage.Text = ApplicationController.Instance.UiHint;
+				statusMessage.Text = ApplicationController.Instance.GetUiHint();
 				statusMessage.Visible = true;
 				var parent = statusMessage.Parent;
 				if (parent.Children.IndexOf(statusMessage) != parent.Children.Count - 1)

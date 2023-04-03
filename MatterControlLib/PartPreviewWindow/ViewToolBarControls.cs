@@ -131,8 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
 			};
-			undoButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + z".Localize();
-			undoButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			undoButton.MouseEnterBounds += (s, e) => undoButton.SetActiveUiHint("Ctrl + z".Localize());
 			undoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Undo();
@@ -148,8 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Enabled = false,
 				VAnchor = VAnchor.Center
 			};
-			redoButton.MouseEnterBounds += (s, e) => ApplicationController.Instance.UiHint = "Ctrl + Y, Ctrl + Shift + Z".Localize();
-			redoButton.MouseLeaveBounds += (s, e) => ApplicationController.Instance.UiHint = "";
+			redoButton.MouseEnterBounds += (s, e) => redoButton.SetActiveUiHint("Ctrl + Y, Ctrl + Shift + Z".Localize());
 			redoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Redo();
@@ -265,8 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (!string.IsNullOrEmpty(namedAction.UiHint))
 						{
-							button.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = namedAction.UiHint;
-							button.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+							button.MouseEnterBounds += (s1, e1) => button.SetActiveUiHint(namedAction.UiHint);
 						}
 					}
 					else
@@ -476,8 +473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var operationButton = new OperationIconButton(operation, sceneContext, theme);
 				if (!string.IsNullOrEmpty(operation.UiHint))
 				{
-					operationButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = operation.UiHint;
-					operationButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+					operationButton.MouseEnterBounds += (s1, e1) => operationButton.SetActiveUiHint(operation.UiHint);
 				}
 				operationButtons.Add(operationButton, operation);
 
@@ -542,8 +538,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 									if (!string.IsNullOrEmpty(operation.UiHint))
 									{
-										iconButton.MouseEnterBounds += (s1, e1) => ApplicationController.Instance.UiHint = operation.UiHint;
-										iconButton.MouseLeaveBounds += (s1, e1) => ApplicationController.Instance.UiHint = "";
+										iconButton.MouseEnterBounds += (s1, e1) => iconButton.SetActiveUiHint(operation.UiHint);
 									}
 
 									UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
@@ -770,6 +765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
 			{
 				button.Enabled = operation.IsEnabled?.Invoke(sceneContext) ?? false;
+                button.MouseEnterBounds += (s, e) => button.SetActiveUiHint(operation.Title);
 				button.ToolTipText = operation.Title;
 				if (!button.Enabled
 					&& !string.IsNullOrEmpty(operation.HelpText))
