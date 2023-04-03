@@ -274,6 +274,9 @@ Translated:Additional Printing Errors
 English:Adhesion
 Translated:Adhesion
 
+English:Adjust the grid that objects will snap to when moved
+Translated:Adjust the grid that objects will snap to when moved
+
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
 Translated:Adjust this to correct differences between expected printing speeds and actual printing speeds.
 
@@ -792,6 +795,9 @@ Translated:Change Amount
 
 English:Change Password
 Translated:Change Password
+
+English:Change the current rendering mode
+Translated:Change the current rendering mode
 
 English:Changing Height
 Translated:Changing Height
@@ -2274,6 +2280,9 @@ Translated:Hide
 
 English:Hide All
 Translated:Hide All
+
+English:Hide and show the bed
+Translated:Hide and show the bed
 
 English:High Precision
 Translated:High Precision
