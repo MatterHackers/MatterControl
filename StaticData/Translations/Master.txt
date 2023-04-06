@@ -3922,8 +3922,14 @@ Translated:Print Queue
 English:Print Recovery
 Translated:Print Recovery
 
+English:Print Sku
+Translated:Print Sku
+
 English:Print the inventory labels for this ID.
 Translated:Print the inventory labels for this ID.
+
+English:Print the SKU label for this ID.
+Translated:Print the SKU label for this ID.
 
 English:Print Time
 Translated:Print Time
