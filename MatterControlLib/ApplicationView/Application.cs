@@ -698,8 +698,10 @@ namespace MatterHackers.MatterControl
 			reporter?.Invoke(0.91, (loading != null) ? loading : "OnLoadActions");
 			applicationController.OnLoadActions();
 
-			// Wired up to MainView.Load with the intent to fire startup actions and tasks in order with reporting
-			async void InitialWindowLoad(object s, EventArgs e)
+            SingleWindowProvider.SetWindowTheme(applicationController.Theme);
+
+            // Wired up to MainView.Load with the intent to fire startup actions and tasks in order with reporting
+            async void InitialWindowLoad(object s, EventArgs e)
 			{
 				try
 				{

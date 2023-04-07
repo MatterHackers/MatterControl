@@ -228,7 +228,14 @@ namespace MatterHackers.MatterControl
 						{
 							if (moveToOpenPosition)
 							{
-								PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
+								if (itemsToAvoid.Count() == 0)
+								{
+									PlatingHelper.PlaceOnBed(item);
+								}
+								else
+								{
+									PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
+								}
 							}
 						},
 						addUndoCheckPoint: addUndoCheckPoint));

@@ -39,6 +39,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -776,7 +777,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					case "Scripting Row Item Collection":
 					case "Primitives Row Item Collection":
 						// If visible, navigate into Libraries container before opening target
-						testRunner.DoubleClickByName("Design Apps Row Item Collection")
+						testRunner.DoubleClickByName("Bundled Row Item Collection")
 							.Delay();
 						break;
 
@@ -983,11 +984,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			int overrideHeight = -1,
 			string defaultTestImages = null)
 		{
-			// Walk back a step in the stack and output the callers name
-			// StackTrace st = new StackTrace(false);
-			// Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
+            Clipboard.SetSystemClipboard(new SimulatedClipboard());
 
-			if (staticDataPathOverride == null)
+            // Walk back a step in the stack and output the callers name
+            // StackTrace st = new StackTrace(false);
+            // Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
+
+            if (staticDataPathOverride == null)
 			{
 				// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
 				staticDataPathOverride = StaticDataPath;

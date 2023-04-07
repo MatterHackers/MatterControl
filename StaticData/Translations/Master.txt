@@ -946,6 +946,9 @@ Translated:Color Name
 English:Color View
 Translated:Color View
 
+English:Columns
+Translated:Columns
+
 English:Combine
 Translated:Combine
 
@@ -1597,6 +1600,9 @@ Translated:Ending Angle
 English:Ensure the nozzle is clear of any debri or filament
 Translated:Ensure the nozzle is clear of any debri or filament
 
+English:Enter
+Translated:Enter
+
 English:Enter a Design Name Here
 Translated:Enter a Design Name Here
 
@@ -2148,6 +2154,9 @@ Translated:Generate Supports
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Generates an outline around the support material to improve strength and hold up interface layers.
+
+English:Generating Config
+Translated:Generating Config
 
 English:Generating Lithophane
 Translated:Generating Lithophane
@@ -5098,6 +5107,9 @@ Translated:Starting Angle
 English:Starting firmware update...
 Translated:Starting firmware update...
 
+English:Starting slicer
+Translated:Starting slicer
+
 English:Starting Sync
 Translated:Starting Sync
 
@@ -6058,6 +6070,9 @@ Translated:Total Time Printed
 English:Touch Screen Mode
 Translated:Touch Screen Mode
 
+English:Trace
+Translated:Trace
+
 English:Transform
 Translated:Transform
 
@@ -6474,6 +6489,9 @@ Translated:We will use this paper to measure the distance between the nozzle and
 
 English:Wedge
 Translated:Wedge
+
+English:Welcome to {0}
+Translated:Welcome to {0}
 
 English:Welcome to MatterControl
 Translated:Welcome to MatterControl
