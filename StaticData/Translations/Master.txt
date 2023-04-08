@@ -2263,8 +2263,14 @@ Translated:Heating
 English:Heating Bed
 Translated:Heating Bed
 
+English:Heating Bed (0/1)
+Translated:Heating Bed (0/1)
+
 English:Heating Nozzle
 Translated:Heating Nozzle
+
+English:Heating Nozzle (0/1)
+Translated:Heating Nozzle (0/1)
 
 English:Heating the printer
 Translated:Heating the printer
