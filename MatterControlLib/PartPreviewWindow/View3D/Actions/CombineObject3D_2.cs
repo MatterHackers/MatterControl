@@ -75,22 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
         public static void CheckManifoldData(CombineObject3D_2 item, IObject3D result)
         {
-            bool IsManifold(Mesh mesh)
-            {
-                var meshEdgeList = mesh.NewMeshEdges();
-
-                foreach (var meshEdge in meshEdgeList)
-                {
-                    if (meshEdge.Faces.Count() != 2)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            if (!IsManifold(result.Mesh))
+            if (!result.Mesh.IsManifold())
             {
                 // create a new combine of a and b and add it to the root
                 var combine = new CombineObject3D_2();

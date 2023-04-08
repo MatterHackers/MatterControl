@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 
 			var totalBounds = meshToSplit.GetAxisAlignedBoundingBox();
 
-			var facesSharingVertex = meshToSplit.NewVertexFaceLists();
+			var facesSharingVertex = meshToSplit.GetVertexFaceLists();
 
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
 			{
