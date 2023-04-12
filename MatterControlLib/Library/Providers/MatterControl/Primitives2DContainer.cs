@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.Library
                     "Box".Localize(),
                     async () => await BoxPathObject3D.Create())
                     { DateCreated = new DateTime(index++) },
+#if DEBUG
                 new GeneratorItem(
                     "Triangle".Localize(),
                     async () => await PyramidObject3D.Create())
@@ -86,6 +87,7 @@ namespace MatterHackers.MatterControl.Library
                     "Circle".Localize(),
                     async () => await SphereObject3D.Create())
                     { DateCreated = new DateTime(index++) },
+#endif
             };
 
             string title = "2D Shapes".Localize();

@@ -96,13 +96,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool valuesChanged = false;
 
 			var outlineWidth = OutlineWidth.Value(this);
 			if (outlineWidth < .01 || outlineWidth > 1000)
 			{
 				OutlineWidth = Math.Min(1000, Math.Max(.01, outlineWidth));
-				valuesChanged = true;
 			}
 
 			using (RebuildLock())
@@ -130,6 +128,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			var aPolys = path.CreatePolygons();
+
+            aPolys = aPolys.GetCorrectedWinding();
 
 			var offseter = new ClipperOffset();
 

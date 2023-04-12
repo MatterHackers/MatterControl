@@ -76,7 +76,6 @@ namespace MatterHackers.MatterControl.Library
                     IsReadOnly = true
                 });
 
-#if DEBUG
             this.ChildContainers.Add(
                 new DynamicContainerLink(
                     "Primitives 2D".Localize(),
@@ -86,7 +85,6 @@ namespace MatterHackers.MatterControl.Library
                 {
                     IsReadOnly = true
                 });
-#endif
 
 #if DEBUG
             int index = 0;
