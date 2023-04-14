@@ -561,18 +561,6 @@ namespace MatterHackers.MatterControl
 
         public static void LaunchBrowser(string targetUri)
 		{
-            string AddQueryPram(string url, string key, string value)
-            {
-                if (url.Contains("?"))
-                {
-                    return url + "&" + key + "=" + value;
-                }
-                else
-                {
-                    return url + "?" + key + "=" + value;
-                }
-            }
-            
 			UiThread.RunOnIdle(() =>
 			{
                 var affiliateCode = OemSettings.Instance.AffiliateCode;
@@ -591,11 +579,11 @@ namespace MatterHackers.MatterControl
 					// if the affiliateCode is only numbers, we assume it is a tracking code
 					if (affiliateCode.All(char.IsDigit))
 					{
-                        targetUri = AddQueryPram(targetUri, "aff", affiliateCode);
+                        targetUri = Util.AddQueryPram(targetUri, "aff", affiliateCode);
 					}
                     else // it is an RCODE
 					{
-                        targetUri = AddQueryPram(targetUri, "rcode", affiliateCode);
+                        targetUri = Util.AddQueryPram(targetUri, "rcode", affiliateCode);
                     }
 
 					targetUri += internalLink;
