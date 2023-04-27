@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
                 if (containingPrinter.Bed.Scene.SelectedItem == this)
                 {
-                    // refresh the properties pannel by unselecting and selecting
+                    // refresh the properties panel by unselecting and selecting
                     containingPrinter.Bed.Scene.SelectedItem = null;
                     containingPrinter.Bed.Scene.SelectedItem = this;
                 }

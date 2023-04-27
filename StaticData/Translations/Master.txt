@@ -1447,6 +1447,9 @@ Translated:Done
 English:Down Arrow
 Translated:Down Arrow
 
+English:Download current parts data
+Translated:Download current parts data
+
 English:Download Now
 Translated:Download Now
 
@@ -4210,6 +4213,9 @@ Translated:Reloading
 English:Remind Me Later
 Translated:Remind Me Later
 
+English:Remote Server
+Translated:Remote Server
+
 English:remove
 Translated:remove
 
@@ -5223,6 +5229,21 @@ Translated:Sync Complete
 
 English:Sync Dashboard
 Translated:Sync Dashboard
+
+English:Sync data
+Translated:Sync data
+
+English:Sync Data
+Translated:Sync Data
+
+English:Sync farm data
+Translated:Sync farm data
+
+English:Sync From Remote Server
+Translated:Sync From Remote Server
+
+English:Sync in progress
+Translated:Sync in progress
 
 English:Sync Printers
 Translated:Sync Printers

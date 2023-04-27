@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return null;
 		}
 
-		public static void ReloadEditorPannel(this IObject3D object3D)
+		public static void ReloadEditorPanel(this IObject3D object3D)
 		{
 			// de-select and select this object
 			var scene = object3D.ContainingScene();

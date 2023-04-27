@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 editorSectionWidget.Text = editorTitle;
                 // show any variables that are on the scene
 
-                // and return before showing a properties pannel for the selected part (no selection)
+                // and return before showing a properties panel for the selected part (no selection)
                 return;
             }
 

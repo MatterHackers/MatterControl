@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				CopyNewImageData();
 				await Rebuild();
 
-				this.ReloadEditorPannel();
+				this.ReloadEditorPanel();
 			}
 			else if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties) && invalidateArgs.Source == this))
 			{

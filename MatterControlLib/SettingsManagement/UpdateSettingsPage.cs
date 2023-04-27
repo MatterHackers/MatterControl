@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
 
 			if (ProfileManager.GetOemSettingsNeedingUpdate(printer).Any())
 			{
-				AddUpgradeInfoPannel(settingsColumn);
+				AddUpgradeInfoPanel(settingsColumn);
 			}
 			else
 			{
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private async void AddUpgradeInfoPannel(GuiWidget generalPanel)
+		private async void AddUpgradeInfoPanel(GuiWidget generalPanel)
 		{
 			var make = printer.Settings.GetValue(SettingsKey.make);
 			var model = printer.Settings.GetValue(SettingsKey.model);

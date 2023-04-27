@@ -72,11 +72,11 @@ namespace MatterHackers.MatterControl
 				settingsAreaScrollBox.AddChild(settingsColumn);
 			}
 
-			AddGeneralPannel(settingsColumn);
+			AddGeneralPanel(settingsColumn);
 
-			AddUsserOptionsPannel(settingsColumn);
+			AddUsserOptionsPanel(settingsColumn);
 
-			AddAdvancedPannel(settingsColumn);
+			AddAdvancedPanel(settingsColumn);
 
 			// Enforce consistent SectionWidget spacing and last child borders
 			foreach (var section in settingsColumn.Children<SectionWidget>())
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddGeneralPannel(GuiWidget settingsColumn)
+		private void AddGeneralPanel(GuiWidget settingsColumn)
 		{
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl
 			theme.ApplyBoxStyle(themeSection);
 		}
 
-		private void AddAdvancedPannel(GuiWidget settingsColumn)
+		private void AddAdvancedPanel(GuiWidget settingsColumn)
 		{
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 		}
 
-		private void AddUsserOptionsPannel(GuiWidget settingsColumn)
+		private void AddUsserOptionsPanel(GuiWidget settingsColumn)
 		{
 			var optionsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
