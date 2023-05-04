@@ -42,7 +42,6 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
-using Mindscape.Raygun4Net;
 using SQLiteWin32;
 
 namespace MatterHackers.MatterControl
@@ -63,11 +62,11 @@ namespace MatterHackers.MatterControl
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
-		private const int RaygunMaxNotifications = 15;
+		//private const int RaygunMaxNotifications = 15;
 
-		private static int raygunNotificationCount = 0;
+		//private static int raygunNotificationCount = 0;
 
-		private static RaygunClient _raygunClient;
+		//private static RaygunClient _raygunClient;
 
 		[DllImport("Shcore.dll")]
 		static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
@@ -175,10 +174,10 @@ namespace MatterHackers.MatterControl
 
             string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-			_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==") // this is the PC key
-			{
-				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
-			};
+			//_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==") // this is the PC key
+			//{
+			//	ApplicationVersion = VersionInfo.Instance.ReleaseVersion
+			//};
 
 			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
 			var shellFiles = args.Where(f => File.Exists(f) && ApplicationController.ShellFileExtensions.Contains(Path.GetExtension(f).ToLower())).ToArray();
@@ -241,39 +240,37 @@ namespace MatterHackers.MatterControl
 				SetProcessDpiAwareness((int)DpiAwareness.PerMonitorAware);
 			}
 
-			var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
-#if !DEBUG
-			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel)
-				|| channel != "release"
-				|| isExperimental)
-#endif
-			{
-				System.Windows.Forms.Application.ThreadException += (s, e) =>
-				{
-					if (raygunNotificationCount++ < RaygunMaxNotifications)
-					{
-						_raygunClient.Send(e.Exception);
-					}
+			//var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
+			//// Conditionally spin up error reporting if not on the Stable channel
+			//string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
+			//if (string.IsNullOrEmpty(channel)
+			//	|| channel != "release"
+			//	|| isExperimental)
+			//{
+			//	System.Windows.Forms.Application.ThreadException += (s, e) =>
+			//	{
+			//		if (raygunNotificationCount++ < RaygunMaxNotifications)
+			//		{
+			//			_raygunClient.Send(e.Exception);
+			//		}
 
-					if (System.Windows.Forms.Application.OpenForms.Count > 0
-						&& !System.Windows.Forms.Application.OpenForms[0].InvokeRequired)
-					{
-						System.Windows.Forms.Application.Exit();
-					}
-				};
+			//		if (System.Windows.Forms.Application.OpenForms.Count > 0
+			//			&& !System.Windows.Forms.Application.OpenForms[0].InvokeRequired)
+			//		{
+			//			System.Windows.Forms.Application.Exit();
+			//		}
+			//	};
 
-				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-				{
-					if (raygunNotificationCount++ < RaygunMaxNotifications)
-					{
-						_raygunClient.Send(e.ExceptionObject as Exception);
-					}
+			//	AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+			//	{
+			//		if (raygunNotificationCount++ < RaygunMaxNotifications)
+			//		{
+			//			_raygunClient.Send(e.ExceptionObject as Exception);
+			//		}
 
-					System.Windows.Forms.Application.Exit();
-				};
-			}
+			//		System.Windows.Forms.Application.Exit();
+			//	};
+			//}
 
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";

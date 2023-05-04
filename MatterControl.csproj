@@ -97,7 +97,6 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Mindscape.Raygun4Net.NetCore" Version="6.4.3" />
 		<PackageReference Include="ServiceWire" Version="5.5.4" />
 		<PackageReference Include="SocketIoClientDotNet">
 			<Version>1.0.2-beta1</Version>

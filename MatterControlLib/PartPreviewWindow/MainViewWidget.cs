@@ -1029,7 +1029,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static void EnableReduceWidth(ChromeTab partTab, ThemeConfig theme)
 		{
 			var scale = GuiWidget.DeviceScale;
-			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight);
+			partTab.MinimumSize = new Vector2(40 * scale, theme.TabButtonHeight);
 
 			var textWidget = partTab.Descendants<TextWidget>().First();
 			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
