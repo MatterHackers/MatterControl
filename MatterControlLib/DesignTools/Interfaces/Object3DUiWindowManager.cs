@@ -77,23 +77,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)
         {
-            if (!controlLayer.Scene.Contains(item))
+            if (WindowWidget != null
+                && (!controlLayer.Scene.Contains(item)
+                    || controlLayer.Scene.SelectedItem != item))
             {
                 WindowWidget.Close();
+                WindowWidget = null;
                 if (sender is GuiWidget guiWidget)
                 {
                     guiWidget.AfterDraw -= GuiSurface_AfterDraw;
-                }
-            }
-            else
-            {
-                if (controlLayer.Scene.SelectedItem == item)
-                {
-                    WindowWidget.Visible = true;
-                }
-                else
-                {
-                    WindowWidget.Visible = false;
                 }
             }
         }
