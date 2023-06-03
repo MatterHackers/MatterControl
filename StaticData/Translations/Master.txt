@@ -424,6 +424,9 @@ Translated:Arrange All Parts
 English:Arranging
 Translated:Arranging
 
+English:Array Single Items
+Translated:Array Single Items
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 
@@ -4893,6 +4896,9 @@ Translated:Simple
 
 English:Simple Arduino
 Translated:Simple Arduino
+
+English:Single Item Array Count
+Translated:Single Item Array Count
 
 English:Size
 Translated:Size
