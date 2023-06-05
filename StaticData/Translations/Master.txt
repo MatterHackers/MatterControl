@@ -2617,6 +2617,9 @@ Translated:Kapton Bed Temperature
 English:Keys
 Translated:Keys
 
+English:Label Printer Name
+Translated:Label Printer Name
+
 English:Language
 Translated:Language
 
