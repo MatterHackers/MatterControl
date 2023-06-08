@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using g3;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -142,13 +145,13 @@ namespace MatterHackers.MatterControl
 		/// <typeparam name="T">The type of value being gotten</typeparam>
 		/// <param name="settingsKey">The name of the value to get</param>
 		/// <returns>The typed value</returns>
-		public T GetValue<T>(string settingsKey, string defaultValue = null) where T : IConvertible
+		public T GetValue<T>(string settingsKey, T defaultValue)
 		{
 			var settingValue = this.get(settingsKey);
 
 			if (settingValue == null)
 			{
-				settingValue = defaultValue;
+				return defaultValue;
 			}
 
 			if (typeof(T) == typeof(string))
@@ -171,11 +174,41 @@ namespace MatterHackers.MatterControl
 				double.TryParse(settingValue, out double result);
 				return (T)(object)result;
 			}
+            else if (typeof(T) == typeof(Vector2))
+            {
+                var parts = settingValue.Split(new[] { 'X', ':', ',', 'Y', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && double.TryParse(parts[0].Trim(), out double x) && double.TryParse(parts[1].Trim(), out double y))
+                {
+                    Vector2 result = new Vector2(x, y);
+                    return (T)(object)result;
+                }
+                // Else, handle the case when the parsing fails...
+            }
 
-			return (T)default(T);
+            return (T)default(T);
 		}
 
-		public string get(string key)
+        public void SetValue<T>(string key, T value)
+        {
+            if (typeof(T) == typeof(bool))
+            {
+                set(key, ((bool)(object)value) ? "1" : "0");
+            }
+            else if (value is Vector2 vector)
+            {
+                set(key, $"X:{vector.X},Y:{vector.Y}");
+            }
+            else if (value is IConvertible convertible)
+            {
+                set(key, convertible.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                set(key, value.ToString());
+            }
+        }
+
+        public string get(string key)
 		{
 			UserSetting userSetting;
 			if (settingsDictionary.TryGetValue(key, out userSetting))

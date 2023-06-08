@@ -69,12 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				if (UserSettings.Instance.get(UserSettingsKey.SupportMaxOverHangAngle) == null)
-				{
-					return 45;
-				}
-
-				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportMaxOverHangAngle);
+				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportMaxOverHangAngle, 45);
 				if (value < 0)
 				{
 					return 0;
@@ -98,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			get
 			{
-				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportPillarSize, "4");
+				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportPillarSize, 4);
 				if (value < 1.5)
 				{
 					return 1.5;

@@ -633,12 +633,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.SnapGridDistance)))
-				{
-					return 1;
-				}
-
-				return UserSettings.Instance.GetValue<double>(UserSettingsKey.SnapGridDistance);
+				return UserSettings.Instance.GetValue<double>(UserSettingsKey.SnapGridDistance, 1);
 			}
 
 			set

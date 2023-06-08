@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), theme.TextColor, 10)
 				{
-					Checked = UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, "1"),
+					Checked = UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, true),
 					Cursor = Cursors.Hand,
 					Margin = new BorderDouble(left: 10)
 				};
@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var finalStream = GetExportStream(Printer, gCodeFileStream, UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, "1"));
+				var finalStream = GetExportStream(Printer, gCodeFileStream, UserSettings.Instance.GetValue<bool>(UserSettingsKey.ApplyLevelingDurringExport, true));
 
 				var totalLines = gCodeFileStream.GCodeFile.LineCount;
 				var currentLine = 0;
