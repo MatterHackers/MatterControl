@@ -760,6 +760,9 @@ Translated:Can't sign in while printing
 English:Cancel
 Translated:Cancel
 
+English:Cancel Check In
+Translated:Cancel Check In
+
 English:Cancel command
 Translated:Cancel command
 
