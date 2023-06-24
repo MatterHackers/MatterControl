@@ -139,9 +139,10 @@ namespace MatterHackers.MatterControl.Library.Export
             };
 			unionAllPartsCheckbox.CheckedStateChanged += (s, e) =>
 			{
-				mergeMeshes = unionAllPartsCheckbox.Checked;
+                radioButton.InvokeClick();
+                mergeMeshes = unionAllPartsCheckbox.Checked;
 			};
-			container.AddChild(unionAllPartsCheckbox);
+            container.AddChild(unionAllPartsCheckbox);
 
             // add separate checkbox
             var saveAsSeparateSTLsCheckbox = new CheckBox("Save Each Separately".Localize(), theme.TextColor, 10)
