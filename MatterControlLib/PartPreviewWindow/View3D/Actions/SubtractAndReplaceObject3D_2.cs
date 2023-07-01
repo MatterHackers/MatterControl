@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             if (paintObjects.Any()
                 && keepVisibleItems.Any())
             {
-                var totalOperations = paintObjects.Count * keepVisibleItems.Count;
+                var totalOperations = paintObjects.Count * keepVisibleItems.Count * 2;
                 double amountPerOperation = 1.0 / totalOperations;
                 double ratioCompleted = 0;
 
@@ -258,6 +258,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                             amountPerOperation,
                             ratioCompleted,
                             cancellationToken);
+
+                        ratioCompleted += amountPerOperation;
 
                         keepResultsMesh = BooleanProcessing.Do(keepResultsMesh,
                             keepWorldMatrix,
