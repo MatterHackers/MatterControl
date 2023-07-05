@@ -2797,6 +2797,12 @@ Translated:Loading GCode
 English:Loading Help
 Translated:Loading Help
 
+English:Loading Part Files
+Translated:Loading Part Files
+
+English:Loading Parts
+Translated:Loading Parts
+
 English:Loading Stls
 Translated:Loading Stls
 
