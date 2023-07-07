@@ -127,6 +127,14 @@ namespace MatterHackers.MatterControl
                 currentRatioDone += ratioPerMeshGroup;
             }
 
+            if (objectsThatHaveBeenPlaced.Count == 0)
+            {
+                // We did not place any object. Make sure we place at least 1 no matter what
+                var object3D = object3DList[0];
+                objectsThatHaveBeenPlaced.Add(object3D);
+                objectsThatWereArrange.Add(object3D);
+            }
+
             // and finally center whatever we have as a group
             if (positionType != PositionType.None)
             {
