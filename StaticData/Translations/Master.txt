@@ -4072,6 +4072,9 @@ Translated:Probe on conductive pad
 English:Processing
 Translated:Processing
 
+English:Production Ready
+Translated:Production Ready
+
 English:Progress Reporting
 Translated:Progress Reporting
 
