@@ -151,16 +151,35 @@ namespace MatterHackers.MatterControl.Library.Widgets
         {
         }
 
+        public TreeNode RootNode
+        {
+            get
+            {
+                return contentPanel.Children.OfType<TreeNode>().FirstOrDefault();
+            }
+        }
+
+        // A dictionary to store the initial expanded states of nodes
+        private Dictionary<TreeNode, bool> searchInitialExpandedStates = new Dictionary<TreeNode, bool>();
+
+        public bool SearchRunning => searchInitialExpandedStates.Count > 0;
+
         protected virtual void PerformSearch(string filter)
         {
+            // Store the initial expanded state of each node before the search
+            if (searchInitialExpandedStates.Count == 0)
+            {
+                foreach (var node in RootNode.DescendantsAndSelf())
+                {
+                    searchInitialExpandedStates[node] = node.Expanded;
+                }
+            }
+
             var matches = new List<TreeNode>();
 
             Console.WriteLine("Filter for: " + filter);
 
-            foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
-            {
-                FilterTree(rootNode, filter, false, matches);
-            }
+            FilterTree(RootNode, filter, false, matches);
 
             if (matches.Count == 1)
             {
@@ -176,14 +195,30 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
         private void ClearSearch()
         {
-            foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
+            if (searchInitialExpandedStates.Count > 0)
             {
-                ResetTree(rootNode);
+                // Reset the expanded state of each node to its initial state before the search
+                foreach (var node in RootNode.DescendantsAndSelf())
+                {
+                    if (searchInitialExpandedStates.TryGetValue(node, out bool wasExpanded))
+                    {
+                        node.Expanded = wasExpanded;
+                        node.Visible = true;
+                    }
+                }
+
+                // Clear the stored initial expanded states
+                searchInitialExpandedStates.Clear();
             }
 
             searchBox.Text = "";
             searchBox.ResetButton.Visible = false;
-            TreeView.SelectedNode = null;
+            var parent = TreeView.SelectedNode;
+            while(parent != null)
+            {
+                parent.Expanded = true;
+                parent = parent.NodeParent;
+            }
 
             this.OnClearSearch();
         }
