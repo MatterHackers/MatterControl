@@ -74,4 +74,15 @@ namespace MatterHackers.MatterControl.Library
 			return Task.FromResult<StreamAndLength>(null);
 		}
 	}
+
+	/// <summary>
+	/// This class is specifically used for drag drop of scene replacement files
+	/// </summary>
+    public class SceneReplacementFileItem : FileSystemFileItem
+    {
+        public SceneReplacementFileItem(string filePath)
+            : base(filePath)
+        {
+        }
+    }
 }
