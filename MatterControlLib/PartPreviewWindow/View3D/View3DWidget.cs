@@ -1233,7 +1233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if ((firstItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
-				|| firstItem is SceneReplacementFileItem)
+				|| firstItem is FileSystemFileItem)
 			{
 				DragDropObject = null;
 				this.SceneReplacement = firstItem as ILibraryAssetStream;

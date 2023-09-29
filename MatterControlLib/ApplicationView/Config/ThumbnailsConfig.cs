@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 				CacheFilename(libraryItem, width, height));
 		}
 
-		internal void QueueForGeneration(Func<Task> func)
+		public void QueueForGeneration(Func<Task> func)
 		{
 			lock (ThumbsLock)
 			{

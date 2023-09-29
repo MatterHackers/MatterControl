@@ -610,7 +610,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					int maxItemWidth = 0;
 
 					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-					foreach (var item in recentFiles.Where(f => f.Length > 215).Select(f => new SceneReplacementFileItem(f.FullName)).Take(12))
+					foreach (var item in recentFiles.Where(f => f.Length > 215).Select(f => new FileSystemFileItem(f.FullName)).Take(12))
 					{
 						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
 

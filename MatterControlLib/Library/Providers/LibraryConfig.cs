@@ -207,11 +207,13 @@ namespace MatterHackers.MatterControl.Library
 				&& ApplicationSettings.ValidFileExtensions.Contains(fileExtensionLower);
 		}
 
-		public async Task LoadItemThumbnail(Action<ImageBuffer> thumbnailListener, Action<MeshContentProvider> buildThumbnail, ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThemeConfig theme)
+		public async Task LoadItemThumbnail(Action<ImageBuffer> thumbnailListenerIn, Action<MeshContentProvider> buildThumbnail, ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThemeConfig theme)
 		{
 			async void setItemThumbnail(ImageBuffer icon)
 			{
-				if (icon != null)
+				var thumbnailListener = thumbnailListenerIn;
+
+                if (icon != null)
 				{
 					if (icon.Width == 0)
 					{
