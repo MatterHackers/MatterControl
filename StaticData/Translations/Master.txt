@@ -4534,6 +4534,9 @@ Translated:Sampling the conductive pad position to determine the probe distance 
 English:Save
 Translated:Save
 
+English:Save any changes to the settings.
+Translated:Save any changes to the settings.
+
 English:Save As
 Translated:Save As
 
@@ -4560,6 +4563,9 @@ Translated:Save New Design
 
 English:Save Parts Sheet
 Translated:Save Parts Sheet
+
+English:Save Settings
+Translated:Save Settings
 
 English:Save to EEProm
 Translated:Save to EEProm
@@ -5307,6 +5313,9 @@ Translated:Terrible
 
 English:Test Print
 Translated:Test Print
+
+English:Testing Request Time
+Translated:Testing Request Time
 
 English:Text
 Translated:Text

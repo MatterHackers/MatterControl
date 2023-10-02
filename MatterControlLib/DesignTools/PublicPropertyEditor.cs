@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
 			typeof(Histogram),
+			typeof(DateTime),
 			typeof(List<string>),
 			typeof(PrinterSettingsLayer),
 
@@ -1186,7 +1187,23 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}
 			}
-			else if (propertyValue is char charValue)
+            else if (propertyValue is DateTime dateTime)
+            {
+                // create a string editor
+                var field = new TextField(theme);
+                field.Initialize(0);
+                field.SetValue(dateTime.ToString("MM/dd/yyyy HH:mm"), false);
+                field.ClearUndoHistory();
+                field.Content.HAnchor = HAnchor.Stretch;
+                RegisterValueChanged(field,
+                    (valueString) => DateTime.Parse(valueString),
+                    (value) =>
+                    {
+                        return ((DateTime)value).ToString("MM/dd/yyyy HH:mm");
+                    });
+                rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+            }
+            else if (propertyValue is char charValue)
 			{
 				// create a char editor
 				var field = new CharField(theme);
