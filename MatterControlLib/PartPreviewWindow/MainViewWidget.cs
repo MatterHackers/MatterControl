@@ -855,7 +855,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(textWidget);
 			var buttonSize = 24 * DeviceScale;
-			var moveLeftButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor).MirrorX(), theme)
+			var moveLeftButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).GrayToColor(theme.TextColor).MirrorX(), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
@@ -871,7 +871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(moveLeftButton);
 
-			var moveRightButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).SetToColor(theme.TextColor), theme)
+			var moveRightButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14).GrayToColor(theme.TextColor), theme)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
@@ -989,7 +989,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl,
 				new DesignTabPage(workspace, theme, ""),
 				theme,
-				StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor))
+				StaticData.Instance.LoadIcon("cube.png", 16, 16).GrayToColor(theme.TextColor))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 			};

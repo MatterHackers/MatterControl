@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public ImageBuffer DefaultThumbnail() => StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(Theme.TextColor);
+		public ImageBuffer DefaultThumbnail() => StaticData.Instance.LoadIcon("cube.png", 16, 16).GrayToColor(Theme.TextColor);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{

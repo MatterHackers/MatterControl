@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (string.IsNullOrEmpty(buttonText))
 			{
-				return new ThemedIconButton(StaticData.Instance.LoadIcon(iconFilename, 12, 12).SetToColor(theme.TextColor), theme)
+				return new ThemedIconButton(StaticData.Instance.LoadIcon(iconFilename, 12, 12).GrayToColor(theme.TextColor), theme)
 				{
 					Margin = theme.ButtonSpacing,
 					Enabled = clickAction != null,
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var oldSize = theme.DefaultFontSize;
 				theme.DefaultFontSize = 8;
-				var pauseButton = new ThemedTextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12).SetToColor(theme.TextColor), theme)
+				var pauseButton = new ThemedTextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12).GrayToColor(theme.TextColor), theme)
 				{
 					Margin = new BorderDouble(marginX, 0),
 					Padding = new BorderDouble(7, 3),

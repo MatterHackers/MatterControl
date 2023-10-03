@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.taskDetails = taskDetails;
 			this.Padding = new BorderDouble(3, 0);
 
-			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14).SetToColor(theme.TextColor))
+			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14).GrayToColor(theme.TextColor))
 			{
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Left

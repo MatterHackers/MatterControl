@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (ShowPortWizardButton)
 			{
-				var configureIcon = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+				var configureIcon = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,

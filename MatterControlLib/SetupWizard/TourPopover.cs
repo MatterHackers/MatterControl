@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.Tour
 			public ArrowButton(string text, ArrowDirection arrowDirection, ThemeConfig theme, double pointSize = -1)
 				: base(text, theme, pointSize)
 			{
-				var rightArrow = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 10, 10).SetToColor(theme.TextColor);
+				var rightArrow = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 10, 10).GrayToColor(theme.TextColor);
 
 				if (arrowDirection == ArrowDirection.Right)
 				{

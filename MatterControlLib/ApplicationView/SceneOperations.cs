@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 
 					scene.SelectedItem = baseMesh;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("add_base.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("add_base.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				// this is for when base is working with generic meshes
 				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem.IsPathObject()),
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl
 						&& componentObject.Finalized
 						&& !componentObject.ProOnly;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A component must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && (sceneContext.Scene.SelectedItem is ComponentObject3D),
 			};
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl
 					// Invalidate image to kick off rebuild of ImageConverter stack
 					imageObject.Invalidate(InvalidateType.Image);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
 			};
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl
 						path.Invalidate(InvalidateType.Properties);
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("image_to_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("image_to_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IImageProvider,
 			};
@@ -389,7 +389,7 @@ namespace MatterHackers.MatterControl
 
 					inflatePath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl
 						extrude.Invalidate(InvalidateType.Properties);
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
@@ -455,7 +455,7 @@ namespace MatterHackers.MatterControl
 						revolve.Invalidate(InvalidateType.Properties);
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
@@ -498,7 +498,7 @@ namespace MatterHackers.MatterControl
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
 					scene.SelectedItem = component;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("component.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("component.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) =>
 				{
@@ -519,7 +519,7 @@ namespace MatterHackers.MatterControl
 				{
 					new MirrorObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("mirror_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("mirror_32x32.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -547,7 +547,7 @@ namespace MatterHackers.MatterControl
 
 					outlinePath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl
 				{
 					new RotateObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -579,7 +579,7 @@ namespace MatterHackers.MatterControl
 				{
 					new ScaleObject3D_3().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -607,7 +607,7 @@ namespace MatterHackers.MatterControl
 
 					smoothPath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
 			};
@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl
 				{
 					new TranslateObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -664,7 +664,7 @@ namespace MatterHackers.MatterControl
 					align.Name = align.NameFromChildren();
 					align.NameOverriden = false;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 			};
@@ -684,7 +684,7 @@ namespace MatterHackers.MatterControl
 				{
 					return sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any();
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("arrange_all.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("arrange_all.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				ShowInModifyMenu = (sceneContext) => false,
 			};
 		}
@@ -868,9 +868,9 @@ namespace MatterHackers.MatterControl
 			}
 
 			// register legacy types so they still show, they don't have ui to create so they don't have icons set dynamically
-			Icons.Add(typeof(AlignObject3D), (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
+			Icons.Add(typeof(AlignObject3D), (theme) => StaticData.Instance.LoadIcon("align_left_dark.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply());
 
-			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply());
+			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply());
 		}
 
 		private static SceneOperation CombineOperation()
@@ -890,7 +890,7 @@ namespace MatterHackers.MatterControl
 						new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("combine.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("combine.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
 			};
@@ -907,7 +907,7 @@ namespace MatterHackers.MatterControl
 					var curve = new CurveObject3D_3();
 					curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("curve.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("curve.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -942,7 +942,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new TransformCommand(transformData));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("dual_align.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("dual_align.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 			};
@@ -976,7 +976,7 @@ namespace MatterHackers.MatterControl
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 					scene.SelectedItem = fit;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("fit.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("fit.png", 16, 16).GrayToColor(theme.TextColor),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 			};
 		}
@@ -997,7 +997,7 @@ namespace MatterHackers.MatterControl
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 					scene.SelectedItem = fit;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("fit.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("fit.png", 16, 16).GrayToColor(theme.TextColor),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 			};
 		}
@@ -1034,7 +1034,7 @@ namespace MatterHackers.MatterControl
 					var hollowOut = new HollowOutObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("hollow.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("hollow.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1099,7 +1099,7 @@ namespace MatterHackers.MatterControl
 				},
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-				Icon = (theme) => StaticData.Instance.LoadIcon("lay_flat.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("lay_flat.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 			};
 		}
 
@@ -1135,7 +1135,7 @@ namespace MatterHackers.MatterControl
 				},
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-				Icon = (theme) => StaticData.Instance.LoadIcon("update.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("update.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 			};
 		}
 
@@ -1170,7 +1170,7 @@ namespace MatterHackers.MatterControl
 					var pinch = new PinchObject3D_3();
 					pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("pinch.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("pinch.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1187,7 +1187,7 @@ namespace MatterHackers.MatterControl
 					var cut = new PlaneCutObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1204,7 +1204,7 @@ namespace MatterHackers.MatterControl
 					var cut = new FindSliceObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1241,7 +1241,7 @@ namespace MatterHackers.MatterControl
 					var hollowOut = new DecimateObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("reduce.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("reduce.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1280,7 +1280,7 @@ namespace MatterHackers.MatterControl
 			{
 				Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-				Icon = (theme) => StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("remove.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 				ShowInModifyMenu = (sceneContext) => false,
 				TitleGetter = () => "Remove".Localize(),
@@ -1299,7 +1299,7 @@ namespace MatterHackers.MatterControl
 					var hollowOut = new RepairObject3D();
 					hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("repair.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("repair.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1366,7 +1366,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1397,7 +1397,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("wipe_tower.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("wipe_tower.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1428,7 +1428,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreFuzzy ? PrintOutputTypes.Default : PrintOutputTypes.Fuzzy));
 					}
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("fuzzy_region.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("fuzzy_region.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1445,7 +1445,7 @@ namespace MatterHackers.MatterControl
 					var twist = new TwistObject3D();
 					twist.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("twist.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("twist.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
@@ -1471,7 +1471,7 @@ namespace MatterHackers.MatterControl
 
 					return false;
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("ungroup.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+				Icon = (theme) => StaticData.Instance.LoadIcon("ungroup.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				UiHint = "Shift + G".Localize(),
 			};
 		}

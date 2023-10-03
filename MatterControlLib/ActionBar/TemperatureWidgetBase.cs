@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.MakeScrollable = false;
 			this.AlignToRightEdge = true;
 
-			ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png", 14, 14).SetToColor(theme.TextColor))
+			ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png", 14, 14).GrayToColor(theme.TextColor))
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 5)

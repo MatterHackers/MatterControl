@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (getPickedColor != null)
 			{
-				var selectButton = rightContent.AddChild(new ThemedTextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).SetToColor(theme.TextColor), theme)
+				var selectButton = rightContent.AddChild(new ThemedTextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).GrayToColor(theme.TextColor), theme)
 				{
 					Margin = 0,
 					HAnchor = HAnchor.Fit | HAnchor.Left,

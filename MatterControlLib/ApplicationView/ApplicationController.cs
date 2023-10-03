@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(MenuTheme.TextColor),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).GrayToColor(MenuTheme.TextColor),
 					Action = () =>
 					{
 						Instance.ExportLibraryItems(
@@ -767,7 +767,7 @@ namespace MatterHackers.MatterControl
 				new NamedAction()
 				{
 					ID = "Delete",
-					Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor).SetPreMultiply(),
+					Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 					Title = "Remove".Localize(),
 					Action = sceneContext.Scene.DeleteSelection,
 					IsEnabled = () => sceneContext.Scene.SelectedItem != null
@@ -776,7 +776,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).GrayToColor(theme.TextColor),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -823,7 +823,7 @@ namespace MatterHackers.MatterControl
 						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 					},
 					IsEnabled = () => sceneContext.EditableScene,
-					Icon = StaticData.Instance.LoadIcon("arrange_all.png", 16, 16).SetToColor(theme.TextColor),
+					Icon = StaticData.Instance.LoadIcon("arrange_all.png", 16, 16).GrayToColor(theme.TextColor),
 				},
 				new NamedAction()
 				{
@@ -2614,7 +2614,7 @@ namespace MatterHackers.MatterControl
 					VAnchor = VAnchor.Stretch
 				};
 
-				var icon = StaticData.Instance.LoadIcon("help_page.png", 16, 16).SetToColor(theme.TextColor);
+				var icon = StaticData.Instance.LoadIcon("help_page.png", 16, 16).GrayToColor(theme.TextColor);
 
 				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, icon)
 				{

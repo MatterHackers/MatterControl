@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 			};
 
-			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor);
+			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).GrayToColor(theme.TextColor);
 
 			var generalSection = new SectionWidget("General".Localize(), generalPanel, theme, expandingContent: false)
 			{
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					configureNotificationsButton,
-					StaticData.Instance.LoadIcon("notify-24x24.png", 16, 16).SetToColor(theme.TextColor)),
+					StaticData.Instance.LoadIcon("notify-24x24.png", 16, 16).GrayToColor(theme.TextColor)),
 				generalPanel);
 
 			// LanguageControl
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl
 				true,
 				false);
 
-			var openCacheButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var openCacheButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Open Folder".Localize(),
 			};
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl
 					theme),
 				advancedPanel);
 
-			var clearCacheButton = new ThemedHoverIconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var clearCacheButton = new ThemedHoverIconButton(StaticData.Instance.LoadIcon("remove.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Clear Cache".Localize(),
 			};
@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 #if DEBUG
-			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(theme.TextColor);
+			var configureIcon = StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).GrayToColor(theme.TextColor);
 
 			var configurePluginsButton = new ThemedIconButton(configureIcon, theme)
 			{

@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbWidth = width;
 			this.thumbHeight = height;
 
-			overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).SetToColor(theme.TextColor);
+			overflowIcon = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32).GrayToColor(theme.TextColor);
 		}
 
 		public bool HasMenu { get; set; } = false;

@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 
 			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(StaticData.Instance.ReadAllText(Path.Combine("License", "license.json")));
 
-			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).SetToColor(theme.TextColor);
+			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).GrayToColor(theme.TextColor);
 
 			SectionWidget section = null;
 

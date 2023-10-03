@@ -55,8 +55,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ExpandCheckboxButton(string text, ThemeConfig theme, int pointSize = 11, bool expandable = true)
 		{
-			arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).SetToColor(theme.TextColor);
-			arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12).SetToColor(theme.TextColor);
+			arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).GrayToColor(theme.TextColor);
+			arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12).GrayToColor(theme.TextColor);
 
 			imageButton = new ThemedIconButton(arrowRight, theme)
 			{

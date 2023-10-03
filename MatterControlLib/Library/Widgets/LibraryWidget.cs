@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 		public static GuiWidget CreateSortingMenuButton(ThemeConfig theme, LibraryListView libraryView)
 		{
 			var viewOptionsButton = new PopupMenuButton(
-				new ImageWidget(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32).SetToColor(theme.TextColor)), theme)
+				new ImageWidget(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32).GrayToColor(theme.TextColor)), theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Print Library View Options",
@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			Func<bool> containersShown)
 		{
 			var viewMenuButton = new PopupMenuButton(
-				new ImageWidget(StaticData.Instance.LoadIcon("mi-view-list_10.png", 32, 32).SetToColor(theme.TextColor))
+				new ImageWidget(StaticData.Instance.LoadIcon("mi-view-list_10.png", 32, 32).GrayToColor(theme.TextColor))
 				{
 					// VAnchor = VAnchor.Center
 				},
@@ -574,7 +574,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
-				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).GrayToColor(theme.TextColor),
 				Title = "Add".Localize(),
 				ToolTipText = "Add an.stl, .obj, .3mf, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Create Folder".Localize() + "...",
-				Icon = StaticData.Instance.LoadIcon("fa-folder-new_16.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("fa-folder-new_16.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					DialogWindow.Show(
@@ -634,7 +634,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Enter Share Code".Localize() + "...",
-				Icon = StaticData.Instance.LoadIcon("enter-code.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("enter-code.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -712,7 +712,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open".Localize(),
-				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.SelectedItems.FirstOrDefault()?.OnDoubleClick(null);
@@ -746,7 +746,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open a copy".Localize(),
-				Icon = StaticData.Instance.LoadIcon("cube_add.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("cube_add.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
@@ -771,7 +771,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Add to Bed".Localize(),
-				Icon = StaticData.Instance.LoadIcon("bed_add.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("bed_add.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = async (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
@@ -827,7 +827,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Export".Localize(),
-				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
@@ -844,7 +844,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Share".Localize() + "...",
-				Icon = StaticData.Instance.LoadIcon("share.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("share.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - shareFromLibraryButton_Click
@@ -868,7 +868,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Rename".Localize(),
-				Icon = StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					if (libraryView.SelectedItems.Count == 1)
@@ -972,7 +972,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Remove".Localize(),
-				Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).SetToColor(theme.TextColor),
+				Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).GrayToColor(theme.TextColor),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - deleteFromLibraryButton_Click

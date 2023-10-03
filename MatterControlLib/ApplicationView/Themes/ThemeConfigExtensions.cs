@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl
 
         public static GuiWidget CreateSearchButton(this ThemeConfig theme)
         {
-            return new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+            return new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).GrayToColor(theme.TextColor), theme)
             {
                 ToolTipText = "Search".Localize(),
             };
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl
 
         public static void RebuildTheme(this ThemeConfig theme)
         {
-            theme.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).SetToColor(theme.TextColor);
+            theme.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40).GrayToColor(theme.TextColor);
         }
 
         public static void RemovePrimaryActionStyle(this ThemeConfig theme, GuiWidget guiWidget)

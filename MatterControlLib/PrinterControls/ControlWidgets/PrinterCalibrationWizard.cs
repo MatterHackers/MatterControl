@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 									MinimumSize = new Vector2(125, 0)
 								});
 
-							var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
+							var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).GrayToColor(theme.TextColor), theme)
 							{
 								Name = "Edit Leveling Data Button",
 								ToolTipText = "Edit Leveling Data".Localize(),

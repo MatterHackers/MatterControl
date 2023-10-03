@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								this.CloseMenu();
 							};
 						},
-						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).SetToColor(theme.TextColor),
+						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16).GrayToColor(theme.TextColor),
 						ButtonEnabled = exportPlugin.Enabled,
 						ButtonName = "Export GCode Button",
 						ButtonAction = (widget) =>

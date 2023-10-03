@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.Content.AddChild(inlineEdit);
 			}
 
-			var addItem = new ThemedIconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).SetToColor(theme.TextColor), theme)
+			var addItem = new ThemedIconButton(StaticData.Instance.LoadIcon("md-add-circle_18.png", 18, 18).GrayToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Right | HAnchor.Absolute,
 				Width = theme.ButtonHeight,

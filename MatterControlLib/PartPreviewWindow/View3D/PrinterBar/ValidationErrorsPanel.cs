@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Fit | VAnchor;
 			this.BackgroundColor = theme.ResolveColor(theme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30));
 
-			var errorImage = StaticData.Instance.LoadIcon("SettingsGroupError_16x.png", 16, 16).SetToColor(theme.TextColor);
-			var warningImage = StaticData.Instance.LoadIcon("SettingsGroupWarning_16x.png", 16, 16).SetToColor(theme.TextColor);
+			var errorImage = StaticData.Instance.LoadIcon("SettingsGroupError_16x.png", 16, 16).GrayToColor(theme.TextColor);
+			var warningImage = StaticData.Instance.LoadIcon("SettingsGroupWarning_16x.png", 16, 16).GrayToColor(theme.TextColor);
 			var infoImage = StaticData.Instance.LoadIcon("StatusInfoTip_16x.png", 16, 16);
 
 			foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))

@@ -115,9 +115,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			var size = (int)(buttonFontSize * GuiWidget.DeviceScale);
 
-			var star = StaticData.Instance.LoadIcon("star.png", size, size).SetToColor(theme.TextColor);
-			var openStar = StaticData.Instance.LoadIcon("open_star.png", size, size).SetToColor(theme.TextColor);
-			var failure = StaticData.Instance.LoadIcon("failure.png", size, size).SetToColor(theme.TextColor);
+			var star = StaticData.Instance.LoadIcon("star.png", size, size).GrayToColor(theme.TextColor);
+			var openStar = StaticData.Instance.LoadIcon("open_star.png", size, size).GrayToColor(theme.TextColor);
+			var failure = StaticData.Instance.LoadIcon("failure.png", size, size).GrayToColor(theme.TextColor);
 
 			content.AddChild(new GuiWidget(size, 1));
 

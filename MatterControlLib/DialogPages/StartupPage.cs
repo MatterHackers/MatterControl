@@ -99,12 +99,12 @@ namespace MatterHackers.MatterControl
             }
 
 			var pulseImage = new ImageBuffer(borderImage);
-			var pulseWord = StaticData.Instance.LoadIcon("pulse_word.png").SetToColor(theme.TextColor);
+			var pulseWord = StaticData.Instance.LoadIcon("pulse_word.png").GrayToColor(theme.TextColor);
 			var wordWidth = bounds.Width * .8;
 			graphics = pulseImage.NewGraphics2D();
 			graphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
 			graphics.RenderMaxSize(pulseWord, new Vector2(pulseImage.Width / 2 - wordWidth / 2, margin), new Vector2(wordWidth, bounds.Height));
-			var pulseLogo = StaticData.Instance.LoadIcon("pulse_logo.png").SetToColor(theme.TextColor);
+			var pulseLogo = StaticData.Instance.LoadIcon("pulse_logo.png").GrayToColor(theme.TextColor);
 			var logoWidth = bounds.Width * .5;
 			graphics = pulseImage.NewGraphics2D();
 			graphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 				graphics = printerImage.NewGraphics2D();
 				graphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
 				var imageWidth = bounds.Width * .8;
-				var printerIcon = StaticData.Instance.LoadIcon(iconFile).CropToVisible().SetToColor(theme.TextColor);
+				var printerIcon = StaticData.Instance.LoadIcon(iconFile).CropToVisible().GrayToColor(theme.TextColor);
 				var offset = pulseImage.Width / 2 - imageWidth / 2;
 				graphics.RenderMaxSize(printerIcon, new Vector2(offset, offset), new Vector2(imageWidth, bounds.Height));
 

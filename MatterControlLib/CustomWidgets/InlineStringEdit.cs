@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.VAnchor = VAnchor.Stretch;
 			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
 
-			saveButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-save_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			saveButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-save_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Save".Localize(),
 				Visible = false,
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			rightPanel = new FlowLayoutWidget();
 
-			var icon = editable ? StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor) : new ImageBuffer(16, 16);
+			var icon = editable ? StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).GrayToColor(theme.TextColor) : new ImageBuffer(16, 16);
 
 			editButton = new ThemedIconButton(icon, theme)
 			{

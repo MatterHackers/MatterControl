@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is IImageProvider,
 					HelpTextGetter = () => "An image must be selected".Localize().Stars(),
 					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is IImageProvider,
-					Icon = (theme) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16).SetToColor(theme.TextColor)
+					Icon = (theme) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16).GrayToColor(theme.TextColor)
 				},
 				"Image");
 		}

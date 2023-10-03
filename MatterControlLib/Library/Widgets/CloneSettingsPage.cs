@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			// Must come before pathButton.Click definition
 			RadioButton copyAndCalibrateOption = null;
 
-			var openButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var openButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Margin = new BorderDouble(left: 8),

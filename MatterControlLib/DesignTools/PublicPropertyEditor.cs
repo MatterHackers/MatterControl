@@ -1117,7 +1117,7 @@ namespace MatterHackers.MatterControl.DesignTools
                             if (directoryPathAttribute != null)
                             {
                                 // add a browse button
-                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).SetToColor(theme.TextColor), theme)
+                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
                                 {
                                     ToolTipText = "Select Folder".Localize(),
                                 };
@@ -1327,7 +1327,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				VAnchor = VAnchor.Center
 			};
 			searchRow.AddChild(searchField);
-			var searchButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var searchButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Search".Localize(),
 			};
@@ -1572,7 +1572,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget GetUnlockRow(ThemeConfig theme, string url)
 		{
-			var detailsLink = new ThemedTextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16).SetToColor(theme.TextColor), theme)
+			var detailsLink = new ThemedTextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				Margin = 5,
 				ToolTipText = "Visit MatterHackers.com to Purchase".Localize()
@@ -1590,7 +1590,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var detailsLink = new ThemedTextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).SetToColor(theme.TextColor), theme)
+				var detailsLink = new ThemedTextIconButton(unlockLink.ButtonName.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16).GrayToColor(theme.TextColor), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					ToolTipText = unlockLink.Url,

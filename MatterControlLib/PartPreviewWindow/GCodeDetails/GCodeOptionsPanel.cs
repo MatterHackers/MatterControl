@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonGroup = new ObservableCollection<GuiWidget>();
 
-			speedsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("speeds.png", 16, 16).SetToColor(theme.TextColor), theme)
+			speedsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("speeds.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Speeds Button",
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(speedsButton);
 
-			materialsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("materials.png", 16, 16).SetToColor(theme.TextColor), theme)
+			materialsButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("materials.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Materials Button",
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(materialsButton);
 
-			noColorButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("no-color.png", 16, 16).SetToColor(theme.TextColor), theme)
+			noColorButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("no-color.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "No Color Button",

@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return Task.FromResult(
 				StaticData.Instance.LoadIcon(
-					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png")).SetToColor(ApplicationController.Instance.Theme.TextColor));
+					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png")).GrayToColor(ApplicationController.Instance.Theme.TextColor));
 		}
 
 		public override void Load()

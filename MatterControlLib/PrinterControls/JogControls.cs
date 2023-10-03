@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(left: 10)
 			};
 
-			keyboardImage = new ThemedIconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).SetToColor(theme.TextColor), theme)
+			keyboardImage = new ThemedIconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12).GrayToColor(theme.TextColor), theme)
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),

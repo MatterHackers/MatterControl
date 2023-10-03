@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "Preset Pulldown Container"
 			};
 
-			editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).SetToColor(theme.TextColor), theme)
+			editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				ToolTipText = "Edit Selected Setting".Localize(),
 				Enabled = dropDownList.SelectedIndex != -1,
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var addString = layerType == NamedSettingsLayers.Material ? "New Material".Localize() : "New Quality Setting".Localize();
 			
 			MenuItem addNewPreset = dropDownList.AddItem(
-				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16).SetToColor(theme.TextColor),
+				StaticData.Instance.LoadIcon("icon_plus.png", 16, 16).GrayToColor(theme.TextColor),
 				addString + "...",
 				"new",
 				pointSize: theme.DefaultFontSize);

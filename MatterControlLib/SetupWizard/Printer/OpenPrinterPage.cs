@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 				Text = "Printers".Localize(),
 				HAnchor = HAnchor.Stretch,
 				AlwaysExpandable = true,
-				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16).SetToColor(theme.TextColor)
+				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16).GrayToColor(theme.TextColor)
 			};
 			rootPrintersNode.TreeView = treeView;
 			treeView.AddChild(rootPrintersNode);

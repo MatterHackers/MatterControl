@@ -187,8 +187,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			favoritesBar.VerticalScrollBar.Show = ScrollBar.ShowState.Never;
 
-			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16).SetToColor(theme.TextColor);
-			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16).SetToColor(theme.TextColor);
+			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16).GrayToColor(theme.TextColor);
+			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16).GrayToColor(theme.TextColor);
 
 			var expandBarButton = new ThemedIconButton(expanded ? collapsedImage : expandedImage, theme)
 			{

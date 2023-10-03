@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(row);
 
-			row.AddChild(new ThemedIconButton(StaticData.Instance.LoadIcon("mh-app-logo.png", 16, 16).SetToColor(theme.TextColor), theme)
+			row.AddChild(new ThemedIconButton(StaticData.Instance.LoadIcon("mh-app-logo.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,
@@ -89,11 +89,11 @@ namespace MatterHackers.MatterControl
 				MinimumSize = new Vector2(300, 0)
 			};
 
-			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).SetToColor(menuTheme.TextColor);
+			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16).GrayToColor(menuTheme.TextColor);
 
 			PopupMenu.MenuItem menuItem;
 
-			menuItem = popupMenu.CreateMenuItem("Open System File", StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem = popupMenu.CreateMenuItem("Open System File", StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16).GrayToColor(menuTheme.TextColor));
 			menuItem.Click += (s, e) => ApplicationController.OpenFileWithSystemDialog((fileNames) =>
 			{
 				if (fileNames != null && fileNames.Any())
@@ -104,10 +104,10 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateSeparator();
 	
-			menuItem = popupMenu.CreateMenuItem("Help".Localize(), StaticData.Instance.LoadIcon("help_page.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem = popupMenu.CreateMenuItem("Help".Localize(), StaticData.Instance.LoadIcon("help_page.png", 16, 16).GrayToColor(menuTheme.TextColor));
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowApplicationHelp("Docs");
 
-			menuItem = popupMenu.CreateMenuItem("Interface Tour".Localize(), StaticData.Instance.LoadIcon("tour.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem = popupMenu.CreateMenuItem("Interface Tour".Localize(), StaticData.Instance.LoadIcon("tour.png", 16, 16).GrayToColor(menuTheme.TextColor));
 			menuItem.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 			{
 				popupMenu.CreateSeparator();
 
-				menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), StaticData.Instance.LoadIcon("update.png", 16, 16).SetToColor(menuTheme.TextColor));
+				menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), StaticData.Instance.LoadIcon("update.png", 16, 16).GrayToColor(menuTheme.TextColor));
 				menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
 					UpdateControlData.Instance.CheckForUpdate();
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateSeparator();
 
-			menuItem = popupMenu.CreateMenuItem("Settings".Localize(), StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).SetToColor(menuTheme.TextColor));
+			menuItem = popupMenu.CreateMenuItem("Settings".Localize(), StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16).GrayToColor(menuTheme.TextColor));
 			menuItem.Click += (s, e) => DialogWindow.Show<ApplicationSettingsPage>();
 			menuItem.Name = "Settings MenuItem";
 
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
 
 			if (IntPtr.Size == 8)
 			{
-				indicatorIcon = StaticData.Instance.LoadIcon("x64.png", 16, 16).SetToColor(menuTheme.TextColor);
+				indicatorIcon = StaticData.Instance.LoadIcon("x64.png", 16, 16).GrayToColor(menuTheme.TextColor);
 			}
 
 			popupMenu.CreateSubMenu("Community".Localize(), menuTheme, (modifyMenu) =>
@@ -159,9 +159,9 @@ namespace MatterHackers.MatterControl
 
 				modifyMenu.CreateSeparator();
 
-				menuItem = modifyMenu.CreateMenuItem("Report a Bug".Localize(), StaticData.Instance.LoadIcon("feedback.png", 16, 16).SetToColor(menuTheme.TextColor));
+				menuItem = modifyMenu.CreateMenuItem("Report a Bug".Localize(), StaticData.Instance.LoadIcon("feedback.png", 16, 16).GrayToColor(menuTheme.TextColor));
 				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
-			}, StaticData.Instance.LoadIcon("feedback.png", 16, 16).SetToColor(menuTheme.TextColor));
+			}, StaticData.Instance.LoadIcon("feedback.png", 16, 16).GrayToColor(menuTheme.TextColor));
 
 			popupMenu.CreateSeparator();
 

@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (enumDisplayAttibute.IconWidth > 0)
 					{
 						// If the attribute allows invert, use the theme.InvertIcons state
-						iconImage = StaticData.Instance.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight).SetToColor(theme.TextColor);
+						iconImage = StaticData.Instance.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight).GrayToColor(theme.TextColor);
 					}
 					else
 					{
