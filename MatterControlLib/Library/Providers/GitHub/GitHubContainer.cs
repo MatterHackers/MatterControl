@@ -99,6 +99,13 @@ namespace MatterHackers.MatterControl.Library
 							OnContentChanged();
 							return;
 						}
+						else if (content.Contains("Bad credentials"))
+                        {
+                            HeaderMarkdown = content;
+                            OnContentChanged();
+                            return;
+                        }
+
 						ParseJson(content);
 					}
 				},

@@ -43,17 +43,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class LinearExtrudeObject3D : Object3D, IPrimaryOperationsSpecifier
-#if DEBUG
-, IPropertyGridModifier
-#endif
+    public class LinearExtrudeObject3D : Object3D, IPrimaryOperationsSpecifier, IPropertyGridModifier
     {
         [Description("The height of the extrusion")]
         [Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
         [MaxDecimalPlaces(2)]
         public DoubleOrExpression Height { get; set; } = 5;
 
-#if DEBUG
         [Description("Bevel the top of the extrusion")]
         public bool BevelTop { get; set; } = false;
 
@@ -65,7 +61,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         [Slider(1, 20, Easing.EaseType.Quadratic, snapDistance: 1)]
         public IntOrExpression Segments { get; set; } = 9;
-#endif
 
         public override bool CanApply => true;
 
@@ -137,12 +132,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             bool valuesChanged = false;
 
             var height = Height.Value(this);
-#if DEBUG
             var segments = Segments.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
             var aabb = this.GetAxisAlignedBoundingBox();
             var radius = Radius.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize)) / 2, ref valuesChanged);
             var bevelStart = height - radius;
-#endif
 
             // now create a long running task to do the extrusion
             return ApplicationController.Instance.Tasks.Execute(
@@ -152,7 +145,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 {
                     var childPaths = this.CombinedVisibleChildrenPaths();
                     List<(double height, double inset)> bevel = null;
-#if DEBUG
                     if (BevelTop)
                     {
                         bevel = new List<(double, double)>();
@@ -162,14 +154,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                             bevel.Add((bevelStart + y, -radius + x));
                         }
                     }
-#endif
+
                     if (childPaths != null)
                     {
-#if DEBUG
                         Mesh = VertexSourceToMesh.Extrude(childPaths, height, bevel, InflatePathObject3D.GetJoinType(Style));
-#else
-                        Mesh = VertexSourceToMesh.Extrude(childPaths, height, bevel, ClipperLib.JoinType.jtRound);
-#endif
                         if (Mesh.Vertices.Count == 0)
                         {
                             Mesh = null;
@@ -192,14 +180,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 });
         }
 
-#if DEBUG
         public void UpdateControls(PublicPropertyChange change)
         {
             change.SetRowVisible(nameof(Radius), () => BevelTop);
             change.SetRowVisible(nameof(Segments), () => BevelTop);
             change.SetRowVisible(nameof(Style), () => BevelTop);
         }
-#endif
+
         public IEnumerable<SceneOperation> GetOperations()
         {
             yield return SceneOperations.ById("AddBase");

@@ -308,7 +308,10 @@ namespace MatterHackers.MatterControl
 						fileText = File.ReadAllText(appDataFileName);
 					}
 
-					updateResult?.Invoke(fileText);
+					if (!fileText.Contains("Bad credentials"))
+					{
+						updateResult?.Invoke(fileText);
+					}
 				}
 				catch
 				{
