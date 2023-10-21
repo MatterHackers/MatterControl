@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             var height = Height.Value(this);
             var segments = Segments.ClampIfNotCalculated(this, 1, 32, ref valuesChanged);
             var aabb = this.GetAxisAlignedBoundingBox();
-            var radius = Radius.ClampIfNotCalculated(this, 0, Math.Min(aabb.XSize, Math.Min(aabb.YSize, aabb.ZSize)) / 2, ref valuesChanged);
+            var radius = Radius.ClampIfNotCalculated(this, 0, Math.Min(Math.Min(aabb.XSize, aabb.YSize) / 2, aabb.ZSize), ref valuesChanged);
             var bevelStart = height - radius;
 
             // now create a long running task to do the extrusion
