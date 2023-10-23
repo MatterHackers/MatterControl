@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             }
 
             var first = participants.First();
-            var resultsVertexSource = first.GetVertexSource().Transform(first.Matrix);
+            var resultsVertexSource = first.GetVertexSource().Transform(first.WorldMatrix(this));
 
             var totalOperations = participants.Count() - 1;
             double amountPerOperation = 1.0 / totalOperations;
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 if (item != first
                     && item.GetVertexSource() != null)
                 {
-                    var itemVertexSource = item.GetVertexSource().Transform(item.Matrix);
+                    var itemVertexSource = item.GetVertexSource().Transform(item.WorldMatrix(this));
 
                     resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 

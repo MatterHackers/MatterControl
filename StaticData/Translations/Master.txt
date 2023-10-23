@@ -1441,6 +1441,9 @@ Translated:Distance or Loops
 English:Do CSG
 Translated:Do CSG
 
+English:Do Subtract
+Translated:Do Subtract
+
 English:Documents
 Translated:Documents
 
