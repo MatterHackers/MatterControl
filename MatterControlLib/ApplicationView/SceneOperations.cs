@@ -763,7 +763,8 @@ namespace MatterHackers.MatterControl
 					{
 						CurveOperation(),
 						PinchOperation(),
-						TwistOperation(),
+                        RadialPinchOperation(),
+                        TwistOperation(),
 						PlaneCutOperation(),
 #if DEBUG
 						FindSliceOperation(),
@@ -1451,7 +1452,25 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static SceneOperation UngroupOperation()
+        private static SceneOperation RadialPinchOperation()
+        {
+            return new SceneOperation("Radial Pinch")
+            {
+                ResultType = typeof(RadialPinchObject3D),
+                TitleGetter = () => "Radial Pinch".Localize(),
+                Action = (sceneContext) =>
+                {
+                    var radialPinch = new RadialPinchObject3D();
+                    radialPinch.WrapSelectedItemAndSelect(sceneContext.Scene);
+                },
+                Icon = (theme) => StaticData.Instance.LoadIcon("radial-pinch.png", 16, 16).GrayToColor(theme.TextColor),
+                HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+                IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
+            };
+        }
+
+
+        private static SceneOperation UngroupOperation()
 		{
 			return new SceneOperation("Ungroup")
 			{

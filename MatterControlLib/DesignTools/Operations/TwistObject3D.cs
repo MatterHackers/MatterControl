@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
+    public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public TwistObject3D()
 		{
@@ -372,36 +372,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				change.SetRowVisible(kvp.Key, () => kvp.Value);
 			}
-		}
-	}
-
-	public interface IRadiusProvider
-	{
-		double Radius { get; }
-	}
-
-	public static class ObjectCircleExtensions
-	{
-		public static Circle GetSmallestEnclosingCircleAlongZ(this IObject3D object3D)
-		{
-			var visibleMeshes = object3D.VisibleMeshes().Select(vm => (source: vm, convexHull: vm.Mesh.GetConvexHull(false))).ToList();
-
-			IEnumerable<Vector2> GetVertices()
-			{
-				foreach (var visibleMesh in visibleMeshes)
-				{
-					var matrix = visibleMesh.source.WorldMatrix(object3D);
-					foreach (var positon in visibleMesh.convexHull.Vertices)
-					{
-						var transformed = positon.Transform(matrix);
-						yield return new Vector2(transformed.X, transformed.Y);
-					}
-				}
-			}
-
-			var circle = SmallestEnclosingCircle.MakeCircle(GetVertices());
-
-			return circle;
 		}
 	}
 }

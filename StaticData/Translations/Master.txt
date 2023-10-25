@@ -3712,6 +3712,9 @@ Translated:Pin
 English:Pinch
 Translated:Pinch
 
+English:Pinch Slices
+Translated:Pinch Slices
+
 English:Pipe Works
 Translated:Pipe Works
 
@@ -4122,6 +4125,9 @@ Translated:Queue
 
 English:Radial Array
 Translated:Radial Array
+
+English:Radial Pinch
+Translated:Radial Pinch
 
 English:Radius
 Translated:Radius
