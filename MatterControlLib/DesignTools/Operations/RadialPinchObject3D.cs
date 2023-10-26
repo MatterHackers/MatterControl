@@ -199,7 +199,10 @@ namespace MatterHackers.MatterControl.DesignTools
                     var enclosingCircle = SourceContainer.GetSmallestEnclosingCircleAlongZ();
                     var rotationCenter = enclosingCircle.Center + RotationOffset;
 
-                    var horizontalOffest = LinearHorizontalOffset.GetOffsetPath(enclosingCircle.Radius + RotationOffset.Length, size);
+                    var maxRadius = enclosingCircle.Radius + RotationOffset.Length;
+                    var horizontalOffset = new FlattenCurves(LinearHorizontalOffset.GetOffsetPath(maxRadius, size));
+
+                    var xAtYInterpolator = new XAtYInterpolator(horizontalOffset);
 
                     var pinchedChildren = new List<IObject3D>();
 
@@ -233,13 +236,15 @@ namespace MatterHackers.MatterControl.DesignTools
                             }
 
                             var positionXy = new Vector2(position) - rotationCenter;
-                            if (true)
+                            var fromLine = true;
+                            if (fromLine)
                             {
-                                positionXy *= Easing.Quadratic.InOut(ratio);
+                                //positionXy *= horizontalOffset.GetXAtY(position.Z) / maxRadius;
+                                positionXy *= xAtYInterpolator.Get(position.Z) / maxRadius;
                             }
                             else
                             {
-                                //positionXy *= horizontalOffest.GetXAtY(positionXy.Y - bottom);
+                                positionXy *= Easing.Quadratic.InOut(ratio);
                             }
                             positionXy += rotationCenter;
                             transformedMesh.Vertices[i] = new Vector3Float(positionXy.X, positionXy.Y, position.Z);
@@ -304,6 +309,52 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 change.SetRowVisible(kvp.Key, () => kvp.Value);
             }
+        }
+    }
+
+    internal class XAtYInterpolator
+    {
+        private double bottom;
+        private double top;
+
+        private int numberOfSegments;
+        private double[] offsetAtY;
+
+        public XAtYInterpolator(IVertexSource inputCurveIn)
+        {
+            var inputCurve = new VertexStorage(inputCurveIn);
+
+            var bounds = inputCurve.GetBounds();
+            bottom = bounds.Bottom;
+            top = bounds.Top;
+            numberOfSegments = 100;
+            offsetAtY = new double[numberOfSegments + 1];
+            for (int i = 0; i < numberOfSegments + 1; i++)
+            {
+                var y = bottom + (top - bottom) * i / numberOfSegments;
+                offsetAtY[i] = inputCurve.GetXAtY(y);
+            }
+        }
+
+        internal double Get(double y)
+        {
+            // check if we are bellow the bottom 
+            if (y <= bottom)
+            {
+                return offsetAtY[0];
+            }
+
+            // check if we are above the top
+            if (y >= top)
+            {
+                return offsetAtY[numberOfSegments];
+            }
+
+            // find the segment we are in
+            var segment = (int)((y - bottom) / (top - bottom) * numberOfSegments);
+            // lerp between the two points
+            var ratio = (y - bottom) / (top - bottom) * numberOfSegments - segment;
+            return offsetAtY[segment] * (1 - ratio) + offsetAtY[segment + 1] * ratio;
         }
     }
 }
