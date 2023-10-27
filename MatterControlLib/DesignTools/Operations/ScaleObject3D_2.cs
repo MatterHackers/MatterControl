@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(LockProportions), () => ScaleType == ScaleTypes.Custom);
 			change.SetRowVisible(nameof(ScaleMethod), () => ScaleType == ScaleTypes.Custom);
 
-			if (change.Changed == nameof(ScaleType))
+			if (change.PropertyChanged == nameof(ScaleType))
 			{
 				// recalculate the scaling
 				double scale = 1;
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				Rebuild();
 				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
-			else if (change.Changed == nameof(LockProportions))
+			else if (change.PropertyChanged == nameof(LockProportions))
 			{
 				if (LockProportions)
 				{

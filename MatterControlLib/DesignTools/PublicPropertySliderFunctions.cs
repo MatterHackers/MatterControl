@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public static class PublicPropertySliderFunctions
 	{
-		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, PPEContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString, ThemeConfig theme)
+		public static GuiWidget GetFieldContentWithSlider(EditableProperty property, EditorContext context, UIField field, UndoBuffer undoBuffer, Func<string, object> valueFromString, ThemeConfig theme)
 		{
 			var sliderAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SliderAttribute>().FirstOrDefault();
 			if (sliderAttribute != null)
@@ -225,12 +225,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return field.Content;
 		}
 
-		private static void SetValue(EditableProperty property, PPEContext context, Func<string, object> valueFromString, double sliderDownValue)
+		private static void SetValue(EditableProperty property, EditorContext context, Func<string, object> valueFromString, double sliderDownValue)
 		{
-			var localItem = context.item;
+			var localItem = context.Item;
             var localObject3D = localItem as Object3D;
-            var object3D = property.Item;
-			var propertyGridModifier = property.Item as IPropertyGridModifier;
+            var object3D = property.Source as IObject3D;
+			var propertyGridModifier = property.Source as IPropertyGridModifier;
 
 			property.SetValue(valueFromString(sliderDownValue.ToString()));
 			object3D?.Invalidate(new InvalidateArgs(localObject3D, InvalidateType.Properties));

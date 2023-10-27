@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (sheetObject != null)
 			{
-				PublicPropertyEditor.AddWebPageLinkIfRequired(sheetObject, this, theme);
+				PropertyEditor.AddWebPageLinkIfRequired(sheetObject, this, theme);
 			}
 		}
 

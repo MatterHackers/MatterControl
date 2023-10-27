@@ -214,17 +214,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			if (change.Context.GetEditRow(nameof(DiameterTop)) is GuiWidget diameterWidget)
+			if (change.EditorContext.GetEditRow(nameof(DiameterTop)) is GuiWidget diameterWidget)
 			{
 				diameterWidget.Visible = Advanced;
 			}
 
-			if (change.Context.GetEditRow(nameof(StartingAngle)) is GuiWidget startingAngleWidget)
+			if (change.EditorContext.GetEditRow(nameof(StartingAngle)) is GuiWidget startingAngleWidget)
 			{
 				startingAngleWidget.Visible = Advanced;
 			}
 
-			if (change.Context.GetEditRow(nameof(EndingAngle)) is GuiWidget endingAngleWidget)
+			if (change.EditorContext.GetEditRow(nameof(EndingAngle)) is GuiWidget endingAngleWidget)
 			{
 				endingAngleWidget.Visible = Advanced;
 			}

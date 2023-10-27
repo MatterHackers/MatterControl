@@ -60,11 +60,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var rows = new SafeList<SettingsRow>();
 
-			var editor = PublicPropertyEditor.CreatePropertyEditor(
+			var editor = PropertyEditor.CreatePropertyEditor(
 				rows,
 				new EditableProperty(propertyInfo, supportGenerator),
 				null,
-				new PPEContext(),
+				new EditorContext(),
 				theme);
 
 			if (editor != null)

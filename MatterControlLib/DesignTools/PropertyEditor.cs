@@ -33,7 +33,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Web;
 using Markdig.Agg;
 using MatterHackers.Agg;
@@ -45,38 +44,57 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PublicPropertyEditor : IObjectEditor
+    public class PropertyEditor : IObjectEditor
 	{
-		public string Name => "Property Editor";
+		static PropertyEditor()
+		{
+            SelectedChildrenEditor.Register();
+        }
+
+        public string Name => "Property Editor";
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IObject3D) };
 
-		private static readonly Type[] AllowedTypes =
+        private static readonly Dictionary<Type, CreateEditorDelegate> AllowedTypes = new Dictionary<Type, CreateEditorDelegate>()
 		{
-			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
-			typeof(StringOrExpression),
-			typeof(DoubleOrExpression),
-			typeof(IntOrExpression),
-			typeof(Color),
-			typeof(Vector2), typeof(Vector3), typeof(Vector4),
-			typeof(DirectionVector), typeof(DirectionAxis),
-			typeof(SelectedChildren),
-			typeof(ImageBuffer),
-			typeof(Histogram),
-			typeof(DateTime),
-			typeof(List<string>),
-			typeof(PrinterSettingsLayer),
-
+			{ typeof(double), null },
+			{ typeof(int), null },
+			{ typeof(char), null },
+			{ typeof(string), null },
+			{ typeof(bool), null },
+			{ typeof(StringOrExpression), null },
+			{ typeof(DoubleOrExpression), null },
+			{ typeof(IntOrExpression), null },
+			{ typeof(Color), null },
+			{ typeof(Vector2), null },
+			{ typeof(Vector3), null },
+			{ typeof(Vector4), null },
+			{ typeof(DirectionVector), null },
+			{ typeof(DirectionAxis), null },
+			{ typeof(ImageBuffer), null },
+			{ typeof(Histogram), null },
+			{ typeof(DateTime), null },
+			{ typeof(List<string>), null },
+			{ typeof(PrinterSettingsLayer), null }
 		};
+
+        public delegate GuiWidget CreateEditorDelegate(EditableProperty property, EditorContext context, UndoBuffer undoBuffer, ThemeConfig theme);
+
+        public static void RegisterEditor(Type type, CreateEditorDelegate createEditorDelegate)
+		{
+			if (!AllowedTypes.ContainsKey(type))
+			{
+                AllowedTypes.Add(type, createEditorDelegate);
+            }
+		}
+
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 		private SafeList<SettingsRow> rows = new SafeList<SettingsRow>();
@@ -90,25 +108,25 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (item != null)
 			{
-				var context = new PPEContext()
+				var context = new EditorContext()
 				{
-					item = item
+					Item = item
 				};
 
 				// CreateEditor
-				if (context.item is IObject3D itemAsIObject3D)
+				if (context.Item is IObject3D itemAsIObject3D)
 				{
 					AddUnlockLinkIfRequired(itemAsIObject3D, mainContainer, theme);
 				}
 				
-				AddMarkDownDescription(context.item, mainContainer, theme);
+				AddMarkDownDescription(context.Item, mainContainer, theme);
 
 				GuiWidget scope = mainContainer;
 
 				rows.Clear();
 
 				// Create a field editor for each editable property detected via reflection
-				foreach (var property in GetEditablePropreties(context.item))
+				foreach (var property in GetEditablePropreties(context.Item))
 				{
 					if (property.PropertyInfo.GetCustomAttributes(true).OfType<HideFromEditorAttribute>().Any())
 					{
@@ -159,10 +177,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				AddWebPageLinkIfRequired(context.item, mainContainer, theme);
+				AddWebPageLinkIfRequired(context.Item, mainContainer, theme);
 
 				// add in an Update button if applicable
-				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+				var showUpdate = context.Item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
 				if (showUpdate?.Show == true)
 				{
 					var updateButton = new ThemedTextButton("Update".Localize(), theme)
@@ -174,7 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 					updateButton.Click += (s, e) =>
 					{
-                        if (context.item is IObject3D itemAsIObject3D)
+                        if (context.Item is IObject3D itemAsIObject3D)
                         {
                             itemAsIObject3D.Invalidate(new InvalidateArgs(itemAsIObject3D, InvalidateType.Properties));
                         }
@@ -186,7 +204,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				AddFunctionButtons(item, mainContainer, theme);
 
 				// Init with custom 'UpdateControls' hooks
-				(context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
+				(context.Item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
 			}
 
 			return mainContainer;
@@ -221,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static SettingsRow CreateSettingsRow(EditableProperty property, GuiWidget content, ThemeConfig theme, SafeList<SettingsRow> rows = null)
+		public static SettingsRow CreateSettingsRow(EditableProperty property, GuiWidget content, ThemeConfig theme, SafeList<SettingsRow> rows = null)
 		{
 			var row = new SettingsRow(property.DisplayName.Localize(), property.Description, content, theme);
 			if (rows != null)
@@ -232,12 +250,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return row;
 		}
 
-		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field, bool fullWidth = false)
+		public static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field, bool fullWidth = false)
 		{
 			return CreateSettingsColumn(property.DisplayName.Localize(), field, property.Description, fullWidth: fullWidth);
 		}
 
-		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
+		public static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
 		{
 			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description);
 		}
@@ -288,7 +306,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static IEnumerable<EditableProperty> GetEditablePropreties(object item)
 		{
 			return item.GetType().GetProperties(OwnedPropertiesOnly)
-				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
+				.Where(pi => (AllowedTypes.ContainsKey(pi.PropertyType) || pi.PropertyType.IsEnum)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
 				.Select(p => new EditableProperty(p, item));
@@ -299,13 +317,67 @@ namespace MatterHackers.MatterControl.DesignTools
 			BindingFlags buttonFunctionsOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			return item.GetType().GetProperties(buttonFunctionsOnly)
-				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
+				.Where(pi => (AllowedTypes.ContainsKey(pi.PropertyType) || pi.PropertyType.IsEnum)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
+        public static void RegisterValueChanged(EditableProperty property, UndoBuffer undoBuffer, EditorContext context, UIField field, Func<string, object> valueFromString, Func<object, string> valueToString = null)
+        {
+            field.ValueChanged += (s, e) =>
+            {
+                var contextItem = context.Item;
+                var contextObject3D = contextItem as IObject3D;
+                var propertyObject3D = property.Source as IObject3D;
+                var propertyGridModifier = property.Source as IPropertyGridModifier;
+
+                var newValue = field.Value;
+                var oldValue = "";
+                if (property.Value is DirectOrExpression directOrExpression)
+                {
+                    oldValue = directOrExpression.Expression;
+                }
+                else
+                {
+                    oldValue = property.Value.ToString();
+                }
+                if (newValue == oldValue)
+                {
+                    return;
+                }
+                if (valueToString != null)
+                {
+                    oldValue = valueToString(property.Value);
+                }
+
+                // field.Content
+                if (undoBuffer != null
+                    && e.UserInitiated)
+                {
+                    undoBuffer.AddAndDo(new UndoRedoActions(() =>
+                    {
+                        property.SetValue(valueFromString(oldValue));
+                        propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                        propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+                    },
+                    () =>
+                    {
+                        property.SetValue(valueFromString(newValue));
+                        propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                        propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+                    }));
+                }
+                else
+                {
+                    property.SetValue(valueFromString(newValue));
+                    propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                    propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+                }
+            };
+        }
+        
+		public static GuiWidget CreatePropertyEditor(SafeList<SettingsRow> rows, EditableProperty property, UndoBuffer undoBuffer, EditorContext context, ThemeConfig theme)
 		{
 			if (property == null
 				|| context == null)
@@ -313,69 +385,25 @@ namespace MatterHackers.MatterControl.DesignTools
 				return null;
             }
 
-			var contextItem = context.item;
+			var contextItem = context.Item;
             var contextObject3D = contextItem as IObject3D;
-            var propertyObject3D = property.Item as IObject3D;
-            var propertyGridModifier = property.Item as IPropertyGridModifier;
+            var propertyIObject3D = property.Source as IObject3D;
+            var propertyGridModifier = property.Source as IPropertyGridModifier;
 
 			GuiWidget rowContainer = null;
 
 			// Get reflected property value once, then test for each case below
 			var propertyValue = property.Value;
 
-			void RegisterValueChanged(UIField field, Func<string, object> valueFromString, Func<object, string> valueToString = null)
-			{
-				field.ValueChanged += (s, e) =>
-				{
-					var newValue = field.Value;
-					var oldValue = "";
-					if (property.Value is DirectOrExpression directOrExpression)
-					{
-						oldValue = directOrExpression.Expression;
-					}
-					else
-					{
-						oldValue = property.Value.ToString();
-					}
-					if (newValue == oldValue)
-					{
-						return;
-					}
-					if (valueToString != null)
-					{
-						oldValue = valueToString(property.Value);
-					}
-
-					// field.Content
-					if (undoBuffer != null
-						&& e.UserInitiated)
-					{
-						undoBuffer.AddAndDo(new UndoRedoActions(() =>
-						{
-							property.SetValue(valueFromString(oldValue));
-							propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
-							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-						},
-						() =>
-						{
-							property.SetValue(valueFromString(newValue));
-							propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
-							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-						}));
-					}
-					else
-					{
-						property.SetValue(valueFromString(newValue));
-						propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}
-				};
-			}
-
 			var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 
 			// create a double editor
-			if (propertyValue is double doubleValue)
+			if (AllowedTypes.ContainsKey(propertyValue.GetType())
+				&& AllowedTypes[propertyValue.GetType()] != null)
+			{
+                rowContainer = AllowedTypes[propertyValue.GetType()](property, context, undoBuffer, theme);
+            }
+			else if (propertyValue is double doubleValue)
 			{
 				if (readOnly)
 				{
@@ -398,8 +426,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					propertyObject3D.Invalidated += RefreshField;
-					valueField.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+					propertyIObject3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -407,7 +435,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.Initialize(0);
 					field.DoubleValue = doubleValue;
 					field.ClearUndoHistory();
-					RegisterValueChanged(field, (valueString) => { return double.Parse(valueString); });
+					RegisterValueChanged(property, undoBuffer, context, field, (valueString) => { return double.Parse(valueString); });
 
 					void RefreshField(object s, InvalidateArgs e)
 					{
@@ -421,14 +449,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-                    field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
-                    if (propertyObject3D != null)
+					field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
+					if (propertyIObject3D != null)
 					{
-						propertyObject3D.Invalidated += RefreshField;
-                        field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
-                    }
+						propertyIObject3D.Invalidated += RefreshField;
+						field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
+					}
 
-                    if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
 					{
 						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
 					}
@@ -445,7 +473,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Color);
-					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+					propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -458,7 +486,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Vector2 = vector2;
 				field.ClearUndoHistory();
 
-				RegisterValueChanged(field,
+				RegisterValueChanged(property, 
+					undoBuffer, 
+					context, 
+					field,
 					(valueString) => Vector2.Parse(valueString),
 					(value) =>
 					{
@@ -476,7 +507,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ClearUndoHistory();
 
 				RegisterValueChanged(
-					field,
+                    property, undoBuffer, context,
+                    field,
 					(valueString) => Vector3.Parse(valueString),
 					(value) =>
 					{
@@ -499,7 +531,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ClearUndoHistory();
 
 				RegisterValueChanged(
-					field,
+                    property, undoBuffer, context,
+                    field,
 					(valueString) => Vector4.Parse(valueString),
 					(value) =>
 					{
@@ -519,7 +552,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
-					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+					propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -545,7 +578,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// create a double editor
 				var field2 = new Vector3Field(theme);
 				field2.Initialize(0);
-				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
+				field2.Vector3 = directionAxis.Origin - propertyIObject3D.Children.First().GetAxisAlignedBoundingBox().Center;
 				field2.ClearUndoHistory();
 
 				var row2 = CreateSettingsColumn("Offset".Localize(), field2);
@@ -553,13 +586,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				// update this when changed
 				void UpdateData(object s, InvalidateArgs e)
 				{
-					field2.Vector3 = ((DirectionAxis)property.Value).Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
+					field2.Vector3 = ((DirectionAxis)property.Value).Origin - propertyIObject3D.Children.First().GetAxisAlignedBoundingBox().Center;
 				}
 
-				property.Item.Invalidated += UpdateData;
+                propertyIObject3D.Invalidated += UpdateData;
 				field2.Content.Closed += (s, e) =>
 				{
-					property.Item.Invalidated -= UpdateData;
+                    propertyIObject3D.Invalidated -= UpdateData;
 				};
 
 				// update functions
@@ -568,9 +601,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					property.SetValue(new DirectionAxis()
 					{
 						Normal = field1.DirectionVector.Normal,
-						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
+						Origin = propertyIObject3D.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+					propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 				field2.ValueChanged += (s, e) =>
@@ -578,9 +611,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					property.SetValue(new DirectionAxis()
 					{
 						Normal = field1.DirectionVector.Normal,
-						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
+						Origin = propertyIObject3D.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
-					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+					propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -592,59 +625,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = AddMaterialWidget.CreateSetingsList(printerProfile, printerSettingsLayer, theme);
 
 				rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
-                {
+				{
 					Height = 4 * GuiWidget.DeviceScale
-                }, 0);
+				}, 0);
 
 				rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
 				{
 					Height = 4 * GuiWidget.DeviceScale
 				});
-			}
-			else if (propertyValue is SelectedChildren childSelector)
-			{
-				if (property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() is ShowAsListAttribute showAsList)
-				{
-					UIField field = new ChildrenSelectorListField(property, theme);
-
-					field.Initialize(0);
-					RegisterValueChanged(field,
-						(valueString) =>
-						{
-							var childrenSelector = new SelectedChildren();
-							foreach (var child in valueString.Split(','))
-							{
-								childrenSelector.Add(child);
-							}
-
-							return childrenSelector;
-						});
-
-					rowContainer = CreateSettingsRow(property, field.Content, theme);
-				}
-				else // show the subtract editor for boolean subtract and subtract and replace
-				{
-					rowContainer = CreateSettingsColumn(property);
-					if (property.Item is OperationSourceContainerObject3D sourceContainer)
-					{
-						Action selected = null;
-						var showUpdate = contextItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
-						if (showUpdate == null
-							|| !showUpdate.SuppressPropertyChangeUpdates)
-						{
-							selected = () =>
-							{
-								propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
-							};
-						}
-
-						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme, selected));
-					}
-					else
-					{
-						rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
-					}
-				}
 			}
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
@@ -676,7 +664,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				ImageBuffer GetImageCheckingForErrors()
 				{
 					var image = imageBuffer;
-					if (propertyObject3D is ImageObject3D imageObject2)
+					if (propertyIObject3D is ImageObject3D imageObject2)
 					{
 						image = imageObject2.Image;
 					}
@@ -715,10 +703,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				propertyObject3D.Invalidated += RefreshField;
-				imageWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+				propertyIObject3D.Invalidated += RefreshField;
+				imageWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 
-				if (propertyObject3D is IEditorWidgetModifier editorWidgetModifier)
+				if (propertyIObject3D is IEditorWidgetModifier editorWidgetModifier)
 				{
 					editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, UpdateEditorImage);
 				}
@@ -734,19 +722,19 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
-						if (propertyObject3D is IImageProvider imageProvider)
+						if (propertyIObject3D is IImageProvider imageProvider)
 						{
 							var _ = imageProvider.Image;
 						}
 					}
 				}
 
-				propertyObject3D.Invalidated += RefreshField;
-				rowContainer.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+				propertyIObject3D.Invalidated += RefreshField;
+				rowContainer.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is List<string> stringList)
 			{
-				var field = new SurfacedEditorsField(theme, property.Item);
+				var field = new SurfacedEditorsField(theme, propertyIObject3D);
 				field.Initialize(0);
 				field.ListValue = stringList;
 				field.ValueChanged += (s, e) =>
@@ -799,8 +787,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					propertyObject3D.Invalidated += RefreshField;
-					valueField.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+					propertyIObject3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -809,7 +797,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.IntValue = intValue;
 					field.ClearUndoHistory();
 
-					RegisterValueChanged(field, (valueString) => { return int.Parse(valueString); });
+					RegisterValueChanged(property, undoBuffer, context, field, (valueString) => { return int.Parse(valueString); });
 
 					void RefreshField(object s, InvalidateArgs e)
 					{
@@ -823,10 +811,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}
 
-					if (propertyObject3D != null)
+					if (propertyIObject3D != null)
 					{
-						propertyObject3D.Invalidated += RefreshField;
-						field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+						propertyIObject3D.Invalidated += RefreshField;
+						field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 					}
 
 					rowContainer = CreateSettingsRow(property, field.Content, theme);
@@ -839,7 +827,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.Checked = boolValue;
 
-				RegisterValueChanged(field,
+				RegisterValueChanged(property, undoBuffer, context, 
+					field,
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field.Content, theme);
@@ -864,11 +853,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 					}
 
-					field.SetValue(doubleExpresion.Value(propertyObject3D).ToString(format), false);
+					field.SetValue(doubleExpresion.Value(propertyIObject3D).ToString(format), false);
 				}
 
 				field.ClearUndoHistory();
-				RegisterValueChanged(field,
+				RegisterValueChanged(property, undoBuffer, context, 
+					field,
 					(valueString) =>
 					{
 						doubleExpresion.Expression = valueString;
@@ -909,15 +899,15 @@ namespace MatterHackers.MatterControl.DesignTools
 									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 								}
 
-								var rawValue = newValue.Value(propertyObject3D);
+								var rawValue = newValue.Value(propertyIObject3D);
 								field.TextValue = rawValue.ToString(format);
 							}
 						}
 					}
 				}
 
-				propertyObject3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+				propertyIObject3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is IntOrExpression intExpresion)
 			{
@@ -939,11 +929,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 					}
 
-					field.SetValue(intExpresion.Value(propertyObject3D).ToString(format), false);
+					field.SetValue(intExpresion.Value(propertyIObject3D).ToString(format), false);
 				}
 
 				field.ClearUndoHistory();
-				RegisterValueChanged(field,
+				RegisterValueChanged(property, undoBuffer, context, 
+					field,
 					(valueString) =>
 					{
 						intExpresion.Expression = valueString;
@@ -984,15 +975,15 @@ namespace MatterHackers.MatterControl.DesignTools
 									format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
 								}
 
-								var rawValue = newValue.Value(propertyObject3D);
+								var rawValue = newValue.Value(propertyIObject3D);
 								field.TextValue = rawValue.ToString(format);
 							}
 						}
 					}
 				}
 
-				propertyObject3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+				propertyIObject3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 			}
 			else if (propertyValue is string stringValue)
 			{
@@ -1000,7 +991,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rowContainer = NewImageSearchWidget(theme);
 				}
-				else if (propertyObject3D is AssetObject3D assetObject
+				else if (propertyIObject3D is AssetObject3D assetObject
 					&& property.PropertyInfo.Name == "AssetPath")
 				{
 					// This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
@@ -1078,12 +1069,12 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 
-						if (propertyObject3D != null)
+						if (propertyIObject3D != null)
 						{
-							propertyObject3D.Invalidated += RefreshField;
-                            wrappedTextWidget.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
-                        }
-                    }
+							propertyIObject3D.Invalidated += RefreshField;
+							wrappedTextWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
+						}
+					}
 					else // normal edit row
 					{
 						if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
@@ -1098,7 +1089,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
 							field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
 							field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-							RegisterValueChanged(field, (valueString) => valueString);
+							RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
 							rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 						}
 						else
@@ -1109,42 +1100,42 @@ namespace MatterHackers.MatterControl.DesignTools
 							field.SetValue(stringValue, false);
 							field.ClearUndoHistory();
 							field.Content.HAnchor = HAnchor.Stretch;
-							RegisterValueChanged(field, (valueString) => valueString);
+							RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
 							rowContainer = CreateSettingsRow(property, field.Content, theme, rows);
 
-                            // check for DirectoryPathAttribute
-                            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
-                            if (directoryPathAttribute != null)
-                            {
-                                // add a browse button
-                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
-                                {
-                                    ToolTipText = "Select Folder".Localize(),
-                                };
-                                browseButton.Click += (s, e) =>
-                                {
-                                    UiThread.RunOnIdle(() =>
-                                    {
-                                        AggContext.FileDialogs.SelectFolderDialog(
-                                            new SelectFolderDialogParams(directoryPathAttribute.Message)
-                                            {
-                                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
-                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
+							// check for DirectoryPathAttribute
+							var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
+							if (directoryPathAttribute != null)
+							{
+								// add a browse button
+								var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
+								{
+									ToolTipText = "Select Folder".Localize(),
+								};
+								browseButton.Click += (s, e) =>
+								{
+									UiThread.RunOnIdle(() =>
+									{
+										AggContext.FileDialogs.SelectFolderDialog(
+											new SelectFolderDialogParams(directoryPathAttribute.Message)
+											{
+												ActionButtonLabel = directoryPathAttribute.ActionLabel,
+												Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
 												RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
-                                                FolderPath = stringValue
-                                            },
-                                            (openParams) =>
-                                            {
-                                                if (!string.IsNullOrEmpty(openParams.FolderPath))
-                                                {
-                                                    field.SetValue(openParams.FolderPath, true);
-                                                }
-                                            });
-                                    });
-                                };
-                                rowContainer.AddChild(browseButton);
-                            }
-                        }
+												FolderPath = stringValue
+											},
+											(openParams) =>
+											{
+												if (!string.IsNullOrEmpty(openParams.FolderPath))
+												{
+													field.SetValue(openParams.FolderPath, true);
+												}
+											});
+									});
+								};
+								rowContainer.AddChild(browseButton);
+							}
+						}
 					}
 				}
 			}
@@ -1162,7 +1153,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
 					field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
 					field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-					RegisterValueChanged(field,
+					RegisterValueChanged(property, undoBuffer, context, 
+						field,
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
@@ -1178,7 +1170,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.SetValue(stringOrExpression.Expression, false);
 					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
-					RegisterValueChanged(field,
+					RegisterValueChanged(property, undoBuffer, context, 
+						field,
 						(valueString) => new StringOrExpression(valueString),
 						(value) =>
 						{
@@ -1187,23 +1180,24 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
 				}
 			}
-            else if (propertyValue is DateTime dateTime)
-            {
-                // create a string editor
-                var field = new TextField(theme);
-                field.Initialize(0);
-                field.SetValue(dateTime.ToString("MM/dd/yyyy HH:mm"), false);
-                field.ClearUndoHistory();
-                field.Content.HAnchor = HAnchor.Stretch;
-                RegisterValueChanged(field,
-                    (valueString) => DateTime.Parse(valueString),
-                    (value) =>
-                    {
-                        return ((DateTime)value).ToString("MM/dd/yyyy HH:mm");
-                    });
-                rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
-            }
-            else if (propertyValue is char charValue)
+			else if (propertyValue is DateTime dateTime)
+			{
+				// create a string editor
+				var field = new TextField(theme);
+				field.Initialize(0);
+				field.SetValue(dateTime.ToString("MM/dd/yyyy HH:mm"), false);
+				field.ClearUndoHistory();
+				field.Content.HAnchor = HAnchor.Stretch;
+				RegisterValueChanged(property, undoBuffer, context, 
+					field,
+					(valueString) => DateTime.Parse(valueString),
+					(value) =>
+					{
+						return ((DateTime)value).ToString("MM/dd/yyyy HH:mm");
+					});
+				rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+			}
+			else if (propertyValue is char charValue)
 			{
 				// create a char editor
 				var field = new CharField(theme);
@@ -1213,7 +1207,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
-					propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+					propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
@@ -1250,7 +1244,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				field.Initialize(0);
-				RegisterValueChanged(field,
+				RegisterValueChanged(property, undoBuffer, context, 
+					field,
 					(valueString) =>
 					{
 						return Enum.Parse(property.PropertyType, valueString);
@@ -1261,7 +1256,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (property.Value.ToString() != field.Value)
 					{
 						property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-						propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+						propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 					}
 				};
@@ -1293,10 +1288,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				if (propertyObject3D != null)
+				if (propertyIObject3D != null)
 				{
-					propertyObject3D.Invalidated += RefreshField;
-					field.Content.Closed += (s, e) => propertyObject3D.Invalidated -= RefreshField;
+					propertyIObject3D.Invalidated += RefreshField;
+					field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
 				}
 
 			}
@@ -1307,11 +1302,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = iObject3DEditor.Create(item, undoBuffer, theme);
 			}
 
-			// remember the row name and widget
-			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
+            // remember the row name and widget
+            context.EditRows.Add(property.PropertyInfo.Name, rowContainer);
 
 			return rowContainer;
-		}
+        }
 
 		public static GuiWidget NewImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
 		{
@@ -1345,180 +1340,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			searchField.ActualTextEditWidget.EditComplete += DoSearch;
 			searchButton.Click += DoSearch;
 			return searchRow;
-		}
-
-		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)
-		{
-			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(0, 3, 0, 0),
-			};
-
-			var parentOfSubtractTargets = sourceContainer.SourceContainer.FirstWithMultipleChildrenDescendantsAndSelf();
-
-			var sourceChildren = parentOfSubtractTargets.Children.ToList();
-
-			var objectChecks = new Dictionary<ICheckbox, IObject3D>();
-
-			var radioSiblings = new List<GuiWidget>();
-			for (int i = 0; i < sourceChildren.Count; i++)
-			{
-				var itemIndex = i;
-				var child = sourceChildren[itemIndex];
-				var rowContainer = new FlowLayoutWidget()
-				{
-					Padding = new BorderDouble(15, 0, 0, 3)
-				};
-
-				GuiWidget selectWidget;
-				if (sourceChildren.Count == 2)
-				{
-					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
-					{
-						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor,
-						Margin = 0,
-					};
-					radioSiblings.Add(radioButton);
-					radioButton.SiblingRadioButtonList = radioSiblings;
-					selectWidget = radioButton;
-				}
-				else
-				{
-					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
-					{
-						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor,
-					};
-				}
-
-				objectChecks.Add((ICheckbox)selectWidget, child);
-
-				rowContainer.AddChild(selectWidget);
-				var checkBox = selectWidget as ICheckbox;
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					if (s is ICheckbox checkbox)
-					{
-						if (checkBox.Checked)
-						{
-							if (!childSelector.Contains(objectChecks[checkbox].ID))
-							{
-								childSelector.Add(objectChecks[checkbox].ID);
-							}
-						}
-						else
-						{
-							if (childSelector.Contains(objectChecks[checkbox].ID))
-							{
-								childSelector.Remove(objectChecks[checkbox].ID);
-							}
-						}
-
-						selectionChanged?.Invoke();
-					}
-				};
-
-				tabContainer.AddChild(rowContainer);
-			}
-
-			return tabContainer;
-		}
-
-		private static GuiWidget CreateSelector(SelectedChildren childSelector, IObject3D parent, ThemeConfig theme)
-		{
-			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			void UpdateSelectColors(bool selectionChanged = false)
-			{
-				foreach (var child in parent.Children.ToList())
-				{
-					using (child.RebuildLock())
-					{
-						if (selectionChanged)
-						{
-							child.Visible = true;
-						}
-					}
-				}
-			}
-
-			tabContainer.Closed += (s, e) => UpdateSelectColors();
-
-			var children = parent.Children.ToList();
-
-			var objectChecks = new Dictionary<ICheckbox, IObject3D>();
-
-			var radioSiblings = new List<GuiWidget>();
-			for (int i = 0; i < children.Count; i++)
-			{
-				var itemIndex = i;
-				var child = children[itemIndex];
-				var rowContainer = new FlowLayoutWidget();
-
-				GuiWidget selectWidget;
-				if (children.Count == 2)
-				{
-					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
-					{
-						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor
-					};
-					radioSiblings.Add(radioButton);
-					radioButton.SiblingRadioButtonList = radioSiblings;
-					selectWidget = radioButton;
-				}
-				else
-				{
-					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
-					{
-						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor
-					};
-				}
-
-				objectChecks.Add((ICheckbox)selectWidget, child);
-
-				rowContainer.AddChild(selectWidget);
-				var checkBox = selectWidget as ICheckbox;
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					if (s is ICheckbox checkbox)
-					{
-						if (checkBox.Checked)
-						{
-							if (!childSelector.Contains(objectChecks[checkbox].ID))
-							{
-								childSelector.Add(objectChecks[checkbox].ID);
-							}
-						}
-						else
-						{
-							if (childSelector.Contains(objectChecks[checkbox].ID))
-							{
-								childSelector.Remove(objectChecks[checkbox].ID);
-							}
-						}
-
-						if (parent is MeshWrapperObject3D meshWrapper)
-						{
-							using (meshWrapper.RebuildLock())
-							{
-								meshWrapper.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
-							}
-						}
-
-						UpdateSelectColors(true);
-					}
-				};
-
-				tabContainer.AddChild(rowContainer);
-				UpdateSelectColors();
-			}
-
-			return tabContainer;
 		}
 
 		public static void AddUnlockLinkIfRequired(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)

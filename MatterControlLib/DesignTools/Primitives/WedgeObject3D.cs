@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			if (change.Context.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
+			if (change.EditorContext.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
 			{
 				segmentsWidget.Visible = Round;
 			}

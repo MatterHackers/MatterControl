@@ -44,11 +44,10 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using static MatterHackers.MatterControl.DesignTools.LinearHorizontalOffset2D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class LinearHorizontalOffset2D
+    public class HorizontalOffset2D
     {
         public class ControlPoint
         {
@@ -96,7 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
             Name = "Radial Pinch".Localize();
         }
 
-        public LinearHorizontalOffset2D LinearHorizontalOffset { get; set; } = new LinearHorizontalOffset2D();
+        public HorizontalOffset2D LinearHorizontalOffset { get; set; } = new HorizontalOffset2D();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
         [Slider(0, 50, snapDistance: 1)]

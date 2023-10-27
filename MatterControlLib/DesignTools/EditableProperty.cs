@@ -38,17 +38,17 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class EditableProperty
 	{
-		public IObject3D Item { get; private set; }
-
+		/// <summary>
+		/// The object that contains the property. If this were an Object3D, this would be the Object3D that has the property.
+		/// </summary>
 		public object Source { get; private set; }
 
 		public PropertyInfo PropertyInfo { get; private set; }
 
-		public EditableProperty(PropertyInfo p, object source)
+		public EditableProperty(PropertyInfo propertyInfo, object source)
 		{
 			this.Source = source;
-			this.Item = source as IObject3D;
-			this.PropertyInfo = p;
+			this.PropertyInfo = propertyInfo;
 		}
 
 		private string GetDescription(PropertyInfo prop)

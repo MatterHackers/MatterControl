@@ -182,17 +182,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			if (change.Context.GetEditRow(nameof(TargetPercent)) is GuiWidget percentWidget)
+			if (change.EditorContext.GetEditRow(nameof(TargetPercent)) is GuiWidget percentWidget)
 			{
 				percentWidget.Visible = Mode == ReductionMode.Polygon_Percent;
 			}
 
-			if (change.Context.GetEditRow(nameof(CountAfterPercentReduction)) is GuiWidget roTargetCountWidget)
+			if (change.EditorContext.GetEditRow(nameof(CountAfterPercentReduction)) is GuiWidget roTargetCountWidget)
 			{
 				roTargetCountWidget.Visible = Mode == ReductionMode.Polygon_Percent;
 			}
 
-			if (change.Context.GetEditRow(nameof(TargetCount)) is GuiWidget countWidget)
+			if (change.EditorContext.GetEditRow(nameof(TargetCount)) is GuiWidget countWidget)
 			{
 				countWidget.Visible = Mode == ReductionMode.Polygon_Count;
 			}

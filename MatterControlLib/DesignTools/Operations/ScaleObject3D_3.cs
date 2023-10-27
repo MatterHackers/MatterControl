@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(DepthPercentDisplay), () => ScaleType != ScaleTypes.Custom);
 			change.SetRowVisible(nameof(HeightPercentDisplay), () => ScaleType != ScaleTypes.Custom);
 
-			if (change.Changed == nameof(ScaleType))
+			if (change.PropertyChanged == nameof(ScaleType))
 			{
 				// recalculate the scaling
 				double scale = 1;
@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				Rebuild();
 				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
-			else if (change.Changed == nameof(LockProportion))
+			else if (change.PropertyChanged == nameof(LockProportion))
 			{
 				if (LockProportion == LockProportions.X_Y_Z)
 				{
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			if (ScaleType != ScaleTypes.Custom)
 			{
 				ScaleType = ScaleTypes.Custom;
-				this.UpdateControls(new PublicPropertyChange(change.Context, "Rebuild_On_Scale"));
+				this.UpdateControls(new PublicPropertyChange(change.EditorContext, "Rebuild_On_Scale"));
 			}
 		}
 

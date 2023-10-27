@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
 			change.SetRowVisible(nameof(WrappingWidth), () => MultiLine);
             change.SetRowVisible(nameof(WrappingIndent), () => MultiLine);
-            if (change.Changed == nameof(Output))
+            if (change.PropertyChanged == nameof(Output))
             {
 				refreshToolBar = true;
             }

@@ -1168,7 +1168,7 @@ namespace MatterHackers.MatterControl
 
 			this.Extensions = new ExtensionsConfig(this.Library);
 			this.Extensions.Register(new SheetEditor());
-			this.Extensions.Register(new PublicPropertyEditor());
+			this.Extensions.Register(new PropertyEditor());
 
 			HelpArticle helpArticle = null;
 

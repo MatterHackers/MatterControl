@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Specify);
 			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Specify);
 
-			if (change.Changed == nameof(Operation))
+			if (change.PropertyChanged == nameof(Operation))
 			{
 				// recalculate the scaling
 				double scale = 1;
@@ -294,12 +294,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				ScaleRatio = new Vector3(scale, scale, scale);
 				Rebuild();
 			}
-			else if (change.Changed == nameof(UsePercentage))
+			else if (change.PropertyChanged == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
 				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
-			else if (change.Changed == nameof(MaitainProportions))
+			else if (change.PropertyChanged == nameof(MaitainProportions))
 			{
 				if (MaitainProportions)
 				{
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeX))
+			else if (change.PropertyChanged == nameof(SizeX))
 			{
 				if (MaitainProportions)
 				{
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeY))
+			else if (change.PropertyChanged == nameof(SizeY))
 			{
 				if (MaitainProportions)
 				{
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
-			else if (change.Changed == nameof(SizeZ))
+			else if (change.PropertyChanged == nameof(SizeZ))
 			{
 				if (MaitainProportions)
 				{

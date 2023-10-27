@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static IEnumerable<DirectOrExpression> GetActiveExpression(IObject3D item, string checkForString, bool startsWith)
         {
-            foreach (var property in PublicPropertyEditor.GetEditablePropreties(item))
+            foreach (var property in PropertyEditor.GetEditablePropreties(item))
             {
                 var propertyValue = property.Value;
 

@@ -538,8 +538,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
         {
-            var context = new PPEContext();
-            PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
+            var context = new EditorContext();
+            PropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
             var editorList = componentObject.SurfacedEditors;
             for (var editorIndex = 0; editorIndex < editorList.Count; editorIndex++)
             {
@@ -568,23 +568,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             if (reflectionTarget.Source is IObject3D editedChild)
                             {
-                                context.item = editedChild;
+                                context.Item = editedChild;
                             }
                             else
                             {
-                                context.item = item;
+                                context.Item = item;
                             }
 
                             var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
 
-                            var editor = PublicPropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
+                            var editor = PropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
                             if (editor != null)
                             {
                                 editorPanel.AddChild(editor);
                             }
 
                             // Init with custom 'UpdateControls' hooks
-                            (context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
+                            (context.Item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
                         }
                     }
                 }
@@ -677,7 +677,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             editorWidget.VAnchor = VAnchor.Fit;
 
             if (scopeItem.item != rootSelection
-                && scopeItem.editor is PublicPropertyEditor)
+                && scopeItem.editor is PropertyEditor)
             {
                 editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
 

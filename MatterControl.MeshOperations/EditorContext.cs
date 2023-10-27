@@ -27,51 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.DataConverters3D;
+using System.Collections.Generic;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-
-    public class PublicPropertyChange
+    public class EditorContext
 	{
-		public EditorContext EditorContext { get; }
+		/// <summary>
+		/// This is the object that is being edited (It could be a Object3D or any other class that has public properties)
+		/// </summary>
+		public object Item { get; set; }
+		
+		/// <summary>
+		/// All of the rows that have been added to the property editor (the public properties of the Item)
+		/// </summary>
+		public Dictionary<string, GuiWidget> EditRows { get; private set; } = new Dictionary<string, GuiWidget>();
 
 		/// <summary>
-		/// The name of the property that changed
+		/// An easy way to get the widget for a property by name (if it exists)
 		/// </summary>
-		public string PropertyChanged { get; }
-
-		public PublicPropertyChange(EditorContext editorContext, string propertyChanged)
+		/// <param name="propertyName">The actual text of the property</param>
+		/// <returns>The widget that was created for this property</returns>
+		public GuiWidget GetEditRow(string propertyName)
 		{
-			this.EditorContext = editorContext;
-			this.PropertyChanged = propertyChanged;
-		}
-
-
-		/// <summary>
-		/// Set the visibility of a property line item in the property editor
-		/// </summary>
-		/// <param name="editRowName"></param>
-		/// <param name="change"></param>
-		/// <param name="visible"></param>
-		public void SetRowVisible(string editRowName, Func<bool> visible)
-		{
-			var editRow = this.EditorContext.GetEditRow(editRowName);
-			if (editRow != null)
+			GuiWidget value;
+			if (EditRows.TryGetValue(propertyName, out value))
 			{
-				editRow.Visible = visible.Invoke();
+				return value;
 			}
+
+			return null;
 		}
-	}
-
-	public interface ITransformWarpperObject3D
-	{
-		IObject3D TransformWarpper { get; }
-	}
-
-	public interface IPropertyGridModifier
-	{
-		void UpdateControls(PublicPropertyChange change);
 	}
 }
