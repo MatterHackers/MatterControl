@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
 
-            HashSet<IObjectEditor> mappedEditors = ApplicationController.Instance.Extensions.GetEditorsForType(selectedItemType);
+            HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> mappedEditors = ApplicationController.Instance.EditorExtensions.GetEditorsForType(selectedItemType);
 
             var undoBuffer = sceneContext.Scene.UndoBuffer;
 
@@ -310,9 +310,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             else
             {
                 if (item != null
-                    && ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObjectEditor editor)
+                    && ApplicationController.Instance.EditorExtensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is Func<ThemeConfig, UndoBuffer, IObjectEditor> editorFactory)
                 {
-                    ShowObjectEditor((editor, item, item.Name), selectedItem);
+                    ShowObjectEditor((editorFactory.Invoke(theme, undoBuffer), item, item.Name), selectedItem);
                 }
             }
 
@@ -559,9 +559,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         if (instance is IObject3D object3D)
                         {
-                            if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObjectEditor editor)
+                            if (ApplicationController.Instance.EditorExtensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is Func<ThemeConfig, UndoBuffer, IObjectEditor> editorFactory)
                             {
-                                ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
+                                ShowObjectEditor((editorFactory.Invoke(theme, undoBuffer), object3D, object3D.Name), selectedItem);
                             }
                         }
                         else if (JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
@@ -577,7 +577,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                             var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
 
-                            var editor = PropertyEditor.CreatePropertyEditor(rows, editableProperty, undoBuffer, context, theme);
+                            var propertyEditor = new PropertyEditor(theme, undoBuffer);
+                            var editor = propertyEditor.CreatePropertyEditor(editableProperty, undoBuffer, context, theme);
                             if (editor != null)
                             {
                                 editorPanel.AddChild(editor);

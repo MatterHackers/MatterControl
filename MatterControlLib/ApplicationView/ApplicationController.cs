@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 
 		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
 
-		public ExtensionsConfig Extensions { get; }
+		public EditorExtensionsConfig EditorExtensions { get; }
 
 		public PopupMenu GetActionMenuForSceneItem(bool addInSubmenu, View3DWidget view3DWidget)
 		{
@@ -1166,9 +1166,9 @@ namespace MatterHackers.MatterControl
 				// _activePrinters = new List<PrinterConfig>();
 			};
 
-			this.Extensions = new ExtensionsConfig(this.Library);
-			this.Extensions.Register(new SheetEditor());
-			this.Extensions.Register(new PropertyEditor());
+			this.EditorExtensions = new EditorExtensionsConfig(this.Library);
+			this.EditorExtensions.RegisterFactory((theme, undoBuffer) => new SheetEditor());
+			this.EditorExtensions.RegisterFactory((theme, undoBuffer) => new PropertyEditor(theme, undoBuffer));
 
 			HelpArticle helpArticle = null;
 

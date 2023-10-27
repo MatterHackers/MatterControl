@@ -37,12 +37,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using static MatterHackers.Agg.UI.OnScreenKeyboard;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public static class SelectedChildrenEditor
+    public class SelectedChildrenPropertyEditor : IPropertyEditorFactory
     {
-        public static GuiWidget CreateEditor(EditableProperty property, EditorContext context, UndoBuffer undoBuffer, ThemeConfig theme)
+        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
         {
             var childSelector = property.Source as SelectedChildren;
             if (childSelector != null)
@@ -51,6 +52,8 @@ namespace MatterHackers.MatterControl.DesignTools
                 throw new Exception("Passed the wrong type to the SelectedChildrenEditor");
             }
 
+            var theme = propertyEditor.Theme;
+            var undoBuffer = propertyEditor.UndoBuffer;
             var contextItem = context.Item;
             var contextObject3D = contextItem as IObject3D;
             var propertyIObject3D = property.Source as IObject3D;
@@ -76,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools
                             return childrenSelector;
                         });
 
-                    rowContainer = PropertyEditor.CreateSettingsRow(property, field.Content, theme);
+                    rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme);
                 }
                 else // show the subtract editor for boolean subtract and subtract and replace
                 {
@@ -187,7 +190,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static void Register()
         {
-            PropertyEditor.RegisterEditor(typeof(SelectedChildren), CreateEditor);
+            PropertyEditor.RegisterEditor(typeof(SelectedChildren), new SelectedChildrenPropertyEditor());
         }
 
         private static GuiWidget CreateSelector(SelectedChildren childSelector, IObject3D parent, ThemeConfig theme)

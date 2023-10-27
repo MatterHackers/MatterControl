@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -41,7 +42,7 @@ using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExtensionsConfig
+	public class EditorExtensionsConfig
 	{
 		private LibraryConfig libraryConfig;
 
@@ -52,37 +53,39 @@ namespace MatterHackers.MatterControl
 		// 	new SubtractAndReplace()
 		// };
 
-		public ExtensionsConfig(LibraryConfig libraryConfig)
+		public EditorExtensionsConfig(LibraryConfig libraryConfig)
 		{
 			this.libraryConfig = libraryConfig;
 
-			objectEditorsByType = new Dictionary<Type, HashSet<IObjectEditor>>();
+			objectEditorsByType = new Dictionary<Type, HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>>>();
 		}
 
-		private void MapTypesToEditor(IObjectEditor editor)
+		private void MapTypesToEditorFactory(Func<ThemeConfig, UndoBuffer, IObjectEditor> object3DEditorFactory)
 		{
-			foreach (Type type in editor.SupportedTypes())
+			var editor = object3DEditorFactory.Invoke(null, null);
+
+            foreach (Type type in editor.SupportedTypes())
 			{
-				if (!objectEditorsByType.TryGetValue(type, out HashSet<IObjectEditor> mappedEditors))
+				if (!objectEditorsByType.TryGetValue(type, out HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> mappedEditorsFactories))
 				{
-					mappedEditors = new HashSet<IObjectEditor>();
-					objectEditorsByType.Add(type, mappedEditors);
+					mappedEditorsFactories = new HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>>();
+					objectEditorsByType.Add(type, mappedEditorsFactories);
 				}
 
-				mappedEditors.Add(editor);
+				mappedEditorsFactories.Add(object3DEditorFactory);
 			}
 		}
 
-		public void Register(IObjectEditor object3DEditor)
+		public void RegisterFactory(Func<ThemeConfig, UndoBuffer, IObjectEditor> object3DEditorFactory)
 		{
-			this.MapTypesToEditor(object3DEditor);
+			this.MapTypesToEditorFactory(object3DEditorFactory);
 		}
 
-		private Dictionary<Type, HashSet<IObjectEditor>> objectEditorsByType;
+		private Dictionary<Type, HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>>> objectEditorsByType;
 
-		public HashSet<IObjectEditor> GetEditorsForType(Type selectedItemType)
+		public HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> GetEditorsForType(Type selectedItemType)
 		{
-			HashSet<IObjectEditor> mappedEditors;
+			HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
 
 			if (mappedEditors == null)
