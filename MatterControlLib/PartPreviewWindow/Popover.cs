@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int notchX = (int)(p2 - notchSize);
 
 			tabShape.MoveTo(x2, y4); // A
-			tabShape.curve3(x1, y4, x1, y3); // A -> B
+			tabShape.Curve3(x1, y4, x1, y3); // A -> B
 
 			if (arrowDirection != ArrowDirection.Left)
 			{
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabShape.LineTo(x1, y2); // P3 -> P4
 			}
 
-			tabShape.curve3(x1, y1, x2, y1); // C -> D
+			tabShape.Curve3(x1, y1, x2, y1); // C -> D
 
 			if (arrowDirection != ArrowDirection.Up)
 			{
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabShape.LineTo(x3, y1); // P3 -> E
 			}
 
-			tabShape.curve3(x4, y1, x4, y2); // E -> F
+			tabShape.Curve3(x4, y1, x4, y2); // E -> F
 
 			if (arrowDirection != ArrowDirection.Right)
 			{
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabShape.LineTo(x4, y3); // P3 -> G
 			}
 
-			tabShape.curve3(x4, y4, x3, y4); // G -> H
+			tabShape.Curve3(x4, y4, x3, y4); // G -> H
 
 			if (arrowDirection != ArrowDirection.Down)
 			{

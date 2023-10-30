@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl
 			tabShape2.Add(a.X, a.Y, FlagsAndCommand.MoveTo); // A
 			tabShape2.LineTo(b); // A - B
 
-			tabShape2.curve3(r.X, r.Y, m.X, m.Y); // B -> C
-			tabShape2.curve3(c.X, c.Y);
+			tabShape2.Curve3(r.X, r.Y, m.X, m.Y); // B -> C
+			tabShape2.Curve3(c.X, c.Y);
 
 			tabShape2.LineTo(d); // C -> D
 			tabShape2.LineTo(e); // D -> E

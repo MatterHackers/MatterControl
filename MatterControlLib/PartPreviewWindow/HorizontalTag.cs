@@ -54,9 +54,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var radius = 3.0;
 			var tabShape2 = new VertexStorage();
 			tabShape2.MoveTo(rect.Left + radius, rect.Bottom);
-			tabShape2.curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
+			tabShape2.Curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
 			tabShape2.LineTo(rect.Left, rect.Top - radius);
-			tabShape2.curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
+			tabShape2.Curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
 			tabShape2.LineTo(rect.Right - 8, rect.Top);
 			tabShape2.LineTo(rect.Right, centerY);
 			tabShape2.LineTo(rect.Right - 8, rect.Bottom);

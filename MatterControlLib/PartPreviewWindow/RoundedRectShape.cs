@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabShape2.MoveTo(rect.Left + radius, rect.Bottom);
 			if (radius > 0)
 			{
-				tabShape2.curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
+				tabShape2.Curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
 			}
 
 			// C -> D
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabShape2.LineTo(rect.Left, rect.Top - radius);
 			if (radius > 0)
 			{
-				tabShape2.curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
+				tabShape2.Curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
 			}
 
 			// E -> F
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabShape2.LineTo(rect.Right - radius, rect.Top);
 			if (radius > 0)
 			{
-				tabShape2.curve3(rect.Right, rect.Top, rect.Right, rect.Top - radius);
+				tabShape2.Curve3(rect.Right, rect.Top, rect.Right, rect.Top - radius);
 			}
 
 			// G -> H
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabShape2.LineTo(rect.Right, rect.Bottom + radius);
 			if (radius > 0)
 			{
-				tabShape2.curve3(rect.Right, rect.Bottom, rect.Right - radius, rect.Bottom);
+				tabShape2.Curve3(rect.Right, rect.Bottom, rect.Right - radius, rect.Bottom);
 			}
 
 			// H -> A

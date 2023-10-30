@@ -208,9 +208,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 					for (var i = 0; i < vertexStorage.Count; i++)
 					{
-						var command = vertexStorage.vertex(i, out double x, out double y);
+						var command = vertexStorage.Vertex(i, out double x, out double y);
 
-						if (ShapePath.is_vertex(command))
+						if (ShapePath.IsVertex(command))
 						{
 							if (command == ShapePath.FlagsAndCommand.Curve4)
 							{
@@ -224,12 +224,12 @@ namespace MatterHackers.Plugins.EditorTools
 								context.GuiSurface.AddChild(controlPoint1);
 								targets.Add(controlPoint1);
 
-								command = vertexStorage.vertex(i + 1, out x, out y);
+								command = vertexStorage.Vertex(i + 1, out x, out y);
 								var controlPoint2 = new CurveControlPoint(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 1);
 								context.GuiSurface.AddChild(controlPoint2);
 								targets.Add(controlPoint2);
 
-								command = vertexStorage.vertex(i + 2, out x, out y);
+								command = vertexStorage.Vertex(i + 2, out x, out y);
 								var curveWidget = new Curve4AnchorWidget(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 2)
 								{
 									ControlPoint = controlPoint2,
@@ -395,7 +395,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 						if (vertexStorage?.Count >= index)
 						{
-							vertexStorage.modify_vertex(index, _point.X, _point.Y);
+							vertexStorage.ModifyVertex(index, _point.X, _point.Y);
 						}
 
 						this.Invalidate();

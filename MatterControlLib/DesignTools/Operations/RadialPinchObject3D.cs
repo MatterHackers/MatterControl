@@ -34,6 +34,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -47,44 +49,51 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class HorizontalOffset2D
+    public class PathEditor : IPropertyEditorFactory
     {
-        public class ControlPoint
+        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
         {
-            public double WidthRatio { get; set; } = 1.0;
-
-            public double TopControlRatio { get; set; }
-
-            public double BottomControlRatio { get; set; }
-        }
-
-        public List<ControlPoint> ControlPoints { get; set; } = new List<ControlPoint>()
-        {
-            new ControlPoint() { WidthRatio = 1.0, TopControlRatio = .5, BottomControlRatio = 0 },
-            new ControlPoint() { WidthRatio = 1.5, TopControlRatio = .5, BottomControlRatio = .5 },
-            new ControlPoint() { WidthRatio = 1.0, TopControlRatio = 0, BottomControlRatio = .5 },
-        };
-
-        public VertexStorage GetOffsetPath(double radius, double totalHeight)
-        {
-            double segmentHeight = totalHeight / (ControlPoints.Count - 1);
-            var vertexStorage = new VertexStorage();
-            for (int i = 0; i < ControlPoints.Count; i++)
+            if (property.Value is VertexStorage vertexStorage)
             {
-                if (i == 0)
+                var container = new GuiWidget()
                 {
-                    vertexStorage.MoveTo(radius * ControlPoints[0].WidthRatio, 0);
-                }
-                else
+                    HAnchor = HAnchor.Stretch,
+                    VAnchor = VAnchor.Stretch,
+                    BackgroundOutlineWidth = 1,
+                    BackgroundColor = Color.White,
+                    BorderColor = Color.Black,
+                    Margin = 1,
+                };
+
+                var imageWidget = new ImageWidget(100, 200)
                 {
-                    var curPoint = ControlPoints[i];
-                    var x = radius * curPoint.WidthRatio;
-                    var y = i * segmentHeight;
-                    vertexStorage.curve4(x, y - curPoint.BottomControlRatio * segmentHeight, x, y - curPoint.TopControlRatio * segmentHeight, x, y);
+                    AutoResize = true,
+                    HAnchor = HAnchor.Center,
+                    VAnchor = VAnchor.Center,
+                };
+                container.AddChild(imageWidget);
+
+                void RebuildImage(object item, EventArgs e)
+                {
+                    imageWidget.Width = container.Width;
+                    imageWidget.Height = container.Height;
+                    imageWidget.Image.Allocate((int)container.Width, (int)container.Height, 32, new BlenderBGRA());
+
+                    var graphics2D = imageWidget.Image.NewGraphics2D();
+
+                    var bounds = imageWidget.Image.GetBounds();
+                    bounds.Inflate(-1);
+                    graphics2D.Rectangle(bounds, Color.Red);
+
+                    vertexStorage.RenderCurve(graphics2D, Color.Black, 2, true);
                 }
+
+                container.SizeChanged += RebuildImage;
+
+                return container;
             }
 
-            return vertexStorage;
+            return null;
         }
     }
 
@@ -92,10 +101,12 @@ namespace MatterHackers.MatterControl.DesignTools
     {
         public RadialPinchObject3D()
         {
+            PropertyEditor.RegisterEditor(typeof(VertexStorage), new PathEditor());
+
             Name = "Radial Pinch".Localize();
         }
 
-        public HorizontalOffset2D LinearHorizontalOffset { get; set; } = new HorizontalOffset2D();
+        public VertexStorage PathForHorizontalOffsets { get; set; } = new VertexStorage();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
         [Slider(0, 50, snapDistance: 1)]
@@ -179,8 +190,8 @@ namespace MatterHackers.MatterControl.DesignTools
                     var size = sourceAabb.ZSize;
                     if (Advanced)
                     {
-                        top -= sourceAabb.ZSize * endHeightPercent / 100.0;
-                        bottom += sourceAabb.ZSize * startHeightPercent / 100.0;
+                        top = sourceAabb.ZSize * endHeightPercent / 100.0;
+                        bottom = sourceAabb.ZSize * startHeightPercent / 100.0;
                         size = top - bottom;
                     }
 
@@ -199,7 +210,22 @@ namespace MatterHackers.MatterControl.DesignTools
                     var rotationCenter = enclosingCircle.Center + RotationOffset;
 
                     var maxRadius = enclosingCircle.Radius + RotationOffset.Length;
-                    var horizontalOffset = new FlattenCurves(LinearHorizontalOffset.GetOffsetPath(maxRadius, size));
+
+                    //if (PathForHorizontalOffsets.Count == 0)
+                    {
+                        var bottomPoint = new Vector2(maxRadius, bottom * 10);
+                        var topPoint = new Vector2(maxRadius, top * 10);
+                        var middlePoint = (bottomPoint + topPoint) / 2;
+                        middlePoint.X *= 2;
+
+                        PathForHorizontalOffsets.Clear();
+                        PathForHorizontalOffsets.MoveTo(bottomPoint);
+                        PathForHorizontalOffsets.Curve4(bottomPoint, bottomPoint + new Vector2(.5, .5), middlePoint);
+                        PathForHorizontalOffsets.Curve4(middlePoint - new Vector2(0, -1), middlePoint + new Vector2(0, 1), topPoint);
+                        PathForHorizontalOffsets.Curve4(topPoint - new Vector2(.5, .5), topPoint, topPoint);
+                    }
+
+                    var horizontalOffset = new FlattenCurves(new VertexSourceApplyTransform(PathForHorizontalOffsets, Affine.NewScaling(10)));
 
                     var xAtYInterpolator = new XAtYInterpolator(horizontalOffset);
 
@@ -238,8 +264,8 @@ namespace MatterHackers.MatterControl.DesignTools
                             var fromLine = true;
                             if (fromLine)
                             {
-                                //positionXy *= horizontalOffset.GetXAtY(position.Z) / maxRadius;
-                                positionXy *= xAtYInterpolator.Get(position.Z) / maxRadius;
+                                positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxRadius * 10);
+                                //positionXy *= xAtYInterpolator.Get(position.Z * 10) / maxRadius;
                             }
                             else
                             {

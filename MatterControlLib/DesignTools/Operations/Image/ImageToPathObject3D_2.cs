@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var affine = Affine.NewScaling(1.0 / pixelsToIntPointsScale * xScale);
 				affine *= Affine.NewTranslation(-aabb.XSize / 2, -aabb.YSize / 2);
 
-				rawVectorShape.transform(affine);
+				rawVectorShape.Transform(affine);
 				this.VertexStorage = rawVectorShape;
 
 				progressReporter?.Invoke(1, null);

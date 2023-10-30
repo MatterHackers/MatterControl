@@ -387,11 +387,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				g.Line(w * e, 0, w * e, h, theme.TextColor);
 				var leftEdge = new VertexStorage();
 				leftEdge.MoveTo(w * e, h * .80);
-				leftEdge.curve3(w * e, h * .70, w * .5, h * .70);
-				leftEdge.curve3(w * s, h * .60);
+				leftEdge.Curve3(w * e, h * .70, w * .5, h * .70);
+				leftEdge.Curve3(w * s, h * .60);
 				leftEdge.LineTo(w * s, h * .40);
-				leftEdge.curve3(w * s, h * .30, w * .5, h * .30);
-				leftEdge.curve3(w * e, h * .20);
+				leftEdge.Curve3(w * s, h * .30, w * .5, h * .30);
+				leftEdge.Curve3(w * e, h * .20);
 				g.Render(new FlattenCurves(leftEdge), theme.PrimaryAccentColor);
 				g.Line(w * .35, h * .6, w * .35, h * .4, theme.BackgroundColor);
 				g.Line(w * .65, h * .6, w * .65, h * .4, theme.BackgroundColor);
