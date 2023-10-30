@@ -45,68 +45,66 @@ namespace MatterHackers.MatterControl.DesignTools
     {
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
         {
-            var childSelector = property.Source as SelectedChildren;
-            if (childSelector != null)
+            if (property.Value is SelectedChildren childSelector)
             {
-                // we passed the wrong type
-                throw new Exception("Passed the wrong type to the SelectedChildrenEditor");
-            }
+                var theme = propertyEditor.Theme;
+                var undoBuffer = propertyEditor.UndoBuffer;
+                var contextItem = context.Item;
+                var contextObject3D = contextItem as IObject3D;
+                var propertyIObject3D = property.Source as IObject3D;
+                var propertyGridModifier = property.Source as IPropertyGridModifier;
 
-            var theme = propertyEditor.Theme;
-            var undoBuffer = propertyEditor.UndoBuffer;
-            var contextItem = context.Item;
-            var contextObject3D = contextItem as IObject3D;
-            var propertyIObject3D = property.Source as IObject3D;
-            var propertyGridModifier = property.Source as IPropertyGridModifier;
-
-            GuiWidget rowContainer;
-            {
-                if (property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() is ShowAsListAttribute showAsList)
+                GuiWidget rowContainer;
                 {
-                    UIField field = new ChildrenSelectorListField(property, theme);
+                    if (property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() is ShowAsListAttribute showAsList)
+                    {
+                        UIField field = new ChildrenSelectorListField(property, theme);
 
-                    field.Initialize(0);
-                    PropertyEditor.RegisterValueChanged(property, undoBuffer, context,
-                        field,
-                        (valueString) =>
-                        {
-                            var childrenSelector = new SelectedChildren();
-                            foreach (var child in valueString.Split(','))
+                        field.Initialize(0);
+                        PropertyEditor.RegisterValueChanged(property, undoBuffer, context,
+                            field,
+                            (valueString) =>
                             {
-                                childrenSelector.Add(child);
+                                var childrenSelector = new SelectedChildren();
+                                foreach (var child in valueString.Split(','))
+                                {
+                                    childrenSelector.Add(child);
+                                }
+
+                                return childrenSelector;
+                            });
+
+                        rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme);
+                    }
+                    else // show the subtract editor for boolean subtract and subtract and replace
+                    {
+                        rowContainer = PropertyEditor.CreateSettingsColumn(property);
+                        if (property.Source is OperationSourceContainerObject3D sourceContainer)
+                        {
+                            Action selected = null;
+                            var showUpdate = contextItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+                            if (showUpdate == null
+                                || !showUpdate.SuppressPropertyChangeUpdates)
+                            {
+                                selected = () =>
+                                {
+                                    propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                                };
                             }
 
-                            return childrenSelector;
-                        });
-
-                    rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme);
-                }
-                else // show the subtract editor for boolean subtract and subtract and replace
-                {
-                    rowContainer = PropertyEditor.CreateSettingsColumn(property);
-                    if (property.Source is OperationSourceContainerObject3D sourceContainer)
-                    {
-                        Action selected = null;
-                        var showUpdate = contextItem.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
-                        if (showUpdate == null
-                            || !showUpdate.SuppressPropertyChangeUpdates)
-                        {
-                            selected = () =>
-                            {
-                                propertyIObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
-                            };
+                            rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme, selected));
                         }
-
-                        rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme, selected));
-                    }
-                    else
-                    {
-                        rowContainer.AddChild(CreateSelector(childSelector, propertyIObject3D, theme));
+                        else
+                        {
+                            rowContainer.AddChild(CreateSelector(childSelector, propertyIObject3D, theme));
+                        }
                     }
                 }
+
+                return rowContainer;
             }
 
-            return rowContainer;
+            return null;
         }
 
         public static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)

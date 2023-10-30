@@ -48,178 +48,176 @@ namespace MatterHackers.MatterControl.DesignTools
     {
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
         {
-            var stringValue = property.Source as string;
-            if (stringValue != null)
+            if (property.Value is string stringValue)
             {
-                // we passed the wrong type
-                throw new Exception("Passed the wrong type to the SelectedChildrenEditor");
-            }
+                var theme = propertyEditor.Theme;
+                var undoBuffer = propertyEditor.UndoBuffer;
 
-            var theme = propertyEditor.Theme;
-            var undoBuffer = propertyEditor.UndoBuffer;
+                var contextItem = context.Item;
+                var contextObject3D = contextItem as IObject3D;
+                var propertyIObject3D = property.Source as IObject3D;
+                var propertyGridModifier = property.Source as IPropertyGridModifier;
 
-            var contextItem = context.Item;
-            var contextObject3D = contextItem as IObject3D;
-            var propertyIObject3D = property.Source as IObject3D;
-            var propertyGridModifier = property.Source as IPropertyGridModifier;
+                GuiWidget rowContainer = null;
 
-			GuiWidget rowContainer = null;
- 
-            if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
-            {
-                rowContainer = NewImageSearchWidget(theme);
-            }
-            else if (propertyIObject3D is AssetObject3D assetObject
-                && property.PropertyInfo.Name == "AssetPath")
-            {
-                // This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
-                // Change button
-                var changeButton = new ThemedTextButton(property.Description, theme)
+                if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
                 {
-                    BackgroundColor = theme.MinimalShade,
-                    Margin = 3
-                };
-
-                rowContainer = new SettingsRow(property.DisplayName,
-                    null,
-                    changeButton,
-                    theme);
-
-
-                changeButton.Click += (sender, e) =>
+                    rowContainer = NewImageSearchWidget(theme);
+                }
+                else if (propertyIObject3D is AssetObject3D assetObject
+                    && property.PropertyInfo.Name == "AssetPath")
                 {
-                    UiThread.RunOnIdle(() =>
+                    // This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
+                    // Change button
+                    var changeButton = new ThemedTextButton(property.Description, theme)
                     {
-                        ImageObject3D.ShowOpenDialog(assetObject);
-                    });
-                };
-            }
-            else
-            {
-                var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
+                        BackgroundColor = theme.MinimalShade,
+                        Margin = 3
+                    };
 
-                if (readOnly)
-                {
-                    WrappedTextWidget wrappedTextWidget = null;
-                    if (!string.IsNullOrEmpty(property.DisplayName))
+                    rowContainer = new SettingsRow(property.DisplayName,
+                        null,
+                        changeButton,
+                        theme);
+
+
+                    changeButton.Click += (sender, e) =>
                     {
-                        rowContainer = new GuiWidget()
+                        UiThread.RunOnIdle(() =>
                         {
-                            HAnchor = HAnchor.Stretch,
-                            VAnchor = VAnchor.Fit,
-                            Margin = 9
-                        };
-
-                        var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
-                            textColor: theme.TextColor,
-                            pointSize: 10)
-                        {
-                            VAnchor = VAnchor.Center,
+                            ImageObject3D.ShowOpenDialog(assetObject);
                         });
-
-                        var wrapContainer = new GuiWidget()
-                        {
-                            Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
-                            HAnchor = HAnchor.Stretch,
-                            VAnchor = VAnchor.Fit
-                        };
-                        wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
-                        {
-                            HAnchor = HAnchor.Stretch
-                        };
-                        wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
-                        wrapContainer.AddChild(wrappedTextWidget);
-                        rowContainer.AddChild(wrapContainer);
-                    }
-                    else
-                    {
-                        rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
-                                                textColor: theme.TextColor,
-                                                pointSize: 10)
-                        {
-                            Margin = 9
-                        };
-                    }
-
-                    void RefreshField(object s, InvalidateArgs e)
-                    {
-                        if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
-                        {
-                            wrappedTextWidget.Text = property.Value.ToString();
-                        }
-                    }
-
-                    if (propertyIObject3D != null)
-                    {
-                        propertyIObject3D.Invalidated += RefreshField;
-                        wrappedTextWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
-                    }
+                    };
                 }
-                else // normal edit row
+                else
                 {
-                    if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
-                    {
-                        // create a a multi-line string editor
-                        var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
-                        field.Initialize(0);
-                        field.SetValue(stringValue, false);
-                        field.ClearUndoHistory();
-                        field.Content.HAnchor = HAnchor.Stretch;
-                        field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
-                        field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
-                        field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
-                        field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-                        PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-                        rowContainer = PropertyEditor.CreateSettingsColumn(property, field, fullWidth: true);
-                    }
-                    else
-                    {
-                        // create a string editor
-                        var field = new TextField(theme);
-                        field.Initialize(0);
-                        field.SetValue(stringValue, false);
-                        field.ClearUndoHistory();
-                        field.Content.HAnchor = HAnchor.Stretch;
-                        PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-                        rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+                    var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 
-                        // check for DirectoryPathAttribute
-                        var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
-                        if (directoryPathAttribute != null)
+                    if (readOnly)
+                    {
+                        WrappedTextWidget wrappedTextWidget = null;
+                        if (!string.IsNullOrEmpty(property.DisplayName))
                         {
-                            // add a browse button
-                            var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
+                            rowContainer = new GuiWidget()
                             {
-                                ToolTipText = "Select Folder".Localize(),
+                                HAnchor = HAnchor.Stretch,
+                                VAnchor = VAnchor.Fit,
+                                Margin = 9
                             };
-                            browseButton.Click += (s, e) =>
+
+                            var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
+                                textColor: theme.TextColor,
+                                pointSize: 10)
                             {
-                                UiThread.RunOnIdle(() =>
+                                VAnchor = VAnchor.Center,
+                            });
+
+                            var wrapContainer = new GuiWidget()
+                            {
+                                Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
+                                HAnchor = HAnchor.Stretch,
+                                VAnchor = VAnchor.Fit
+                            };
+                            wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+                            {
+                                HAnchor = HAnchor.Stretch
+                            };
+                            wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
+                            wrapContainer.AddChild(wrappedTextWidget);
+                            rowContainer.AddChild(wrapContainer);
+                        }
+                        else
+                        {
+                            rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
+                                                    textColor: theme.TextColor,
+                                                    pointSize: 10)
+                            {
+                                Margin = 9
+                            };
+                        }
+
+                        void RefreshField(object s, InvalidateArgs e)
+                        {
+                            if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+                            {
+                                wrappedTextWidget.Text = property.Value.ToString();
+                            }
+                        }
+
+                        if (propertyIObject3D != null)
+                        {
+                            propertyIObject3D.Invalidated += RefreshField;
+                            wrappedTextWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
+                        }
+                    }
+                    else // normal edit row
+                    {
+                        if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
+                        {
+                            // create a a multi-line string editor
+                            var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
+                            field.Initialize(0);
+                            field.SetValue(stringValue, false);
+                            field.ClearUndoHistory();
+                            field.Content.HAnchor = HAnchor.Stretch;
+                            field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+                            field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+                            field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+                            field.Content.Margin = new BorderDouble(0, 0, 0, 5);
+                            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
+                            rowContainer = PropertyEditor.CreateSettingsColumn(property, field, fullWidth: true);
+                        }
+                        else
+                        {
+                            // create a string editor
+                            var field = new TextField(theme);
+                            field.Initialize(0);
+                            field.SetValue(stringValue, false);
+                            field.ClearUndoHistory();
+                            field.Content.HAnchor = HAnchor.Stretch;
+                            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
+                            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+
+                            // check for DirectoryPathAttribute
+                            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
+                            if (directoryPathAttribute != null)
+                            {
+                                // add a browse button
+                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
                                 {
-                                    AggContext.FileDialogs.SelectFolderDialog(
-                                        new SelectFolderDialogParams(directoryPathAttribute.Message)
-                                        {
-                                            ActionButtonLabel = directoryPathAttribute.ActionLabel,
-                                            Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
-                                            RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
-                                            FolderPath = stringValue
-                                        },
-                                        (openParams) =>
-                                        {
-                                            if (!string.IsNullOrEmpty(openParams.FolderPath))
+                                    ToolTipText = "Select Folder".Localize(),
+                                };
+                                browseButton.Click += (s, e) =>
+                                {
+                                    UiThread.RunOnIdle(() =>
+                                    {
+                                        AggContext.FileDialogs.SelectFolderDialog(
+                                            new SelectFolderDialogParams(directoryPathAttribute.Message)
                                             {
-                                                field.SetValue(openParams.FolderPath, true);
-                                            }
-                                        });
-                                });
-                            };
-                            rowContainer.AddChild(browseButton);
+                                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
+                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
+                                                RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
+                                                FolderPath = stringValue
+                                            },
+                                            (openParams) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(openParams.FolderPath))
+                                                {
+                                                    field.SetValue(openParams.FolderPath, true);
+                                                }
+                                            });
+                                    });
+                                };
+                                rowContainer.AddChild(browseButton);
+                            }
                         }
                     }
                 }
+
+                return rowContainer;
             }
 
-            return rowContainer;
+            return null;
         }
 
         public static GuiWidget NewImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")
