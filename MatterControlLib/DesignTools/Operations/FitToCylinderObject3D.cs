@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var center = vertexSource.GetBounds().Center;
 			foreach (var vertex in vertexSource.Vertices())
 			{
-				var position = vertex.position;
+				var position = vertex.Position;
 				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
 				if (distSqrd > maxDistSqrd)
 				{

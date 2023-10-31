@@ -266,19 +266,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (shape == null)
 			{
-				yield return new VertexData(ShapePath.FlagsAndCommand.MoveTo, 0, 0);
-				yield return new VertexData(ShapePath.FlagsAndCommand.LineTo, 20, 0);
-				yield return new VertexData(ShapePath.FlagsAndCommand.LineTo, 0, 20);
+				yield return new VertexData(FlagsAndCommand.MoveTo, 0, 0);
+				yield return new VertexData(FlagsAndCommand.LineTo, 20, 0);
+				yield return new VertexData(FlagsAndCommand.LineTo, 0, 20);
 			}
 			else
 			{
 				foreach (var poly in shape)
 				{
-					var command = ShapePath.FlagsAndCommand.MoveTo;
+					var command = FlagsAndCommand.MoveTo;
 					foreach (var point in poly)
 					{
 						yield return new VertexData(command, point.X / 1000.0, point.Y / 1000.0);
-						command = ShapePath.FlagsAndCommand.LineTo;
+						command = FlagsAndCommand.LineTo;
 					}
 				}
 			}

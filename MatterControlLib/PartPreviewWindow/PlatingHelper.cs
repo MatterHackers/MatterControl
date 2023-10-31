@@ -54,19 +54,19 @@ namespace MatterHackers.MatterControl
                 {
                     if (first)
                     {
-                        output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.MoveTo);
+                        output.Add(point.X, point.Y, FlagsAndCommand.MoveTo);
                         first = false;
                     }
                     else
                     {
-                        output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.LineTo);
+                        output.Add(point.X, point.Y, FlagsAndCommand.LineTo);
                     }
                 }
 
                 output.ClosePolygon();
             }
 
-            output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
+            output.Add(0, 0, FlagsAndCommand.Stop);
 
             return output;
         }

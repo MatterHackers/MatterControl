@@ -167,8 +167,8 @@ namespace MatterHackers.GCodeVisualizer
 						LineJoin = LineJoin.Round
 					};
 
-					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
-					pathStorage.Add(end.X, end.Y, ShapePath.FlagsAndCommand.LineTo);
+					pathStorage.Add(start.X, start.Y, FlagsAndCommand.MoveTo);
+					pathStorage.Add(end.X, end.Y, FlagsAndCommand.LineTo);
 
 					graphics2D.Render(stroke, extrusionColor);
 				}

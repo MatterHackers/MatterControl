@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var firstMove = Vector2.Zero;
 				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
-					var position = vertex.position;
+					var position = vertex.Position;
 					if (first)
 					{
 						GL.PushMatrix();
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				foreach (var vertex in item.GetVertexSource().Vertices())
 				{
-					var position = vertex.position;
+					var position = vertex.Position;
 
 					if (vertex.IsLineTo)
 					{
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static Affine GetCenteringTransformExpandedToRadius(this IVertexSource vertexSource, double radius)
 		{
-			var circle = SmallestEnclosingCircle.MakeCircle(vertexSource.Vertices().Select((v) => new Vector2(v.position.X, v.position.Y)));
+			var circle = SmallestEnclosingCircle.MakeCircle(vertexSource.Vertices().Select((v) => new Vector2(v.Position.X, v.Position.Y)));
 
 			// move the circle center to the origin
 			var centering = Affine.NewTranslation(-circle.Center);
@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var center = vertexSource.GetBounds().Center;
 			foreach (var vertex in vertexSource.Vertices())
 			{
-				var position = vertex.position;
+				var position = vertex.Position;
 				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
 				if (distSqrd > maxDistSqrd)
 				{

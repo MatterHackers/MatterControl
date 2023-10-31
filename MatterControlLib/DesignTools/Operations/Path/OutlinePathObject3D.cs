@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			VertexStorage = allLoops.CreateVertexStorage();
 
-			VertexStorage.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
+			VertexStorage.Add(0, 0, FlagsAndCommand.Stop);
 		}
 	}
 }

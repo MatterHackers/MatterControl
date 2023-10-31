@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class PathEditor : IPropertyEditorFactory
     {
-        private ulong lastRenderHashCode = 0;
         private Action vertexChanged;
         private ThemeConfig theme;
         private VertexStorage vertexStorage;
@@ -210,8 +209,6 @@ namespace MatterHackers.MatterControl.DesignTools
         public Vector2 Point6 { get; set;} = new Vector2(5, 16);
         public Vector2 Point7 { get; set;} = new Vector2(6, 18);
         public Vector2 Point8 { get; set;} = new Vector2(7, 20);
-        public Vector2 Point9 { get; set;} = new Vector2(8, 22);
-        public Vector2 Point10 { get; set;} = new Vector2(9, 24);
 
 
 
@@ -275,7 +272,6 @@ namespace MatterHackers.MatterControl.DesignTools
                         PathForHorizontalOffsets.MoveTo(Point1);
                         PathForHorizontalOffsets.Curve4(Point2, Point3, Point4);
                         PathForHorizontalOffsets.Curve4(Point5, Point6, Point7);
-                        PathForHorizontalOffsets.Curve4(Point8, Point9, Point10);
                     }
 
                     var horizontalOffset = new FlattenCurves(new VertexSourceApplyTransform(PathForHorizontalOffsets, Affine.NewScaling(10)));

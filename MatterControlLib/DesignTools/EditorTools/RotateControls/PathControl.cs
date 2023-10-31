@@ -126,7 +126,7 @@ namespace MatterHackers.Plugins.EditorTools
 			if (flattened != null
 				&& e.Graphics2D is Graphics2DOpenGL glGraphics)
 			{
-				var pixelWidth = world.GetWorldUnitsPerScreenPixelAtPosition(new Vector3(activePoints.First().position));
+				var pixelWidth = world.GetWorldUnitsPerScreenPixelAtPosition(new Vector3(activePoints.First().Position));
 
 				world.RenderPath(
 					new Stroke(flattened, pixelWidth * .02),
@@ -212,11 +212,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 						if (ShapePath.IsVertex(command))
 						{
-							if (command == ShapePath.FlagsAndCommand.Curve4)
+							if (command == FlagsAndCommand.Curve4)
 							{
-								// vertexDataManager.AddVertex(x_ctrl1, y_ctrl1, ShapePath.FlagsAndCommand.Curve4);
-								// vertexDataManager.AddVertex(x_ctrl2, y_ctrl2, ShapePath.FlagsAndCommand.Curve4);
-								// vertexDataManager.AddVertex(x_to, y_to, ShapePath.FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_ctrl1, y_ctrl1, FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_ctrl2, y_ctrl2, FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_to, y_to, FlagsAndCommand.Curve4);
 
 								var lastItem = targets.LastOrDefault();
 
@@ -314,7 +314,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private class CurveControlPoint : VertexPointWidget
 		{
-			public CurveControlPoint(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+			public CurveControlPoint(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, FlagsAndCommand flagsandCommand, int index)
 				: base(context, pathControl, vertexStorage, point, flagsandCommand, index)
 			{
 				this.ClaimSelection = false;
@@ -329,7 +329,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			private readonly bool _focused;
 
-			public Curve4AnchorWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+			public Curve4AnchorWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, FlagsAndCommand flagsandCommand, int index)
 				: base(context, pathControl, vertexStorage, point, flagsandCommand, index)
 			{
 			}
@@ -360,14 +360,14 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			public PathControl PathControl { get; }
 
-			private readonly ShapePath.FlagsAndCommand command;
+			private readonly FlagsAndCommand command;
 
 			private readonly VertexStorage vertexStorage;
 			private Vector3 _point = Vector3.NegativeInfinity;
 			private Vector3 controlPointDelta;
 			private readonly int index;
 
-			public VertexPointWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+			public VertexPointWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, FlagsAndCommand flagsandCommand, int index)
 				: base(context, point)
 			{
 				this.PathControl = pathControl;

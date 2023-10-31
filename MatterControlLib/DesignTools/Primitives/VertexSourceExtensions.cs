@@ -84,7 +84,7 @@ public static class VertexSourceExtensions
 
 		VertexStorage output = outputPolys.CreateVertexStorage();
 
-		output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
+		output.Add(0, 0, FlagsAndCommand.Stop);
 
 		return output;
 	}

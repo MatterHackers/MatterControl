@@ -109,14 +109,14 @@ namespace MatterHackers.GCodeVisualizer
 						LineJoin = LineJoin.Round
 					};
 
-					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
+					pathStorage.Add(start.X, start.Y, FlagsAndCommand.MoveTo);
 					if (end.X != start.X || end.Y != start.Y)
 					{
-						pathStorage.Add(end.X, end.Y, ShapePath.FlagsAndCommand.LineTo);
+						pathStorage.Add(end.X, end.Y, FlagsAndCommand.LineTo);
 					}
 					else
 					{
-						pathStorage.Add(end.X + .01, end.Y, ShapePath.FlagsAndCommand.LineTo);
+						pathStorage.Add(end.X + .01, end.Y, FlagsAndCommand.LineTo);
 					}
 
 					graphics2D.Render(stroke, movementColor);

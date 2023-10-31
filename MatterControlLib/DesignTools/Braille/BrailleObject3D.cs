@@ -148,12 +148,12 @@ namespace MatterHackers.MatterControl.DesignTools
 							// find each dot outline and get it's center and place a sphere there
 							foreach (var vertex in scalledLetterPrinter.Vertices())
 							{
-								switch (vertex.command)
+								switch (vertex.Command)
 								{
-									case Agg.ShapePath.FlagsAndCommand.Stop:
-									case Agg.ShapePath.FlagsAndCommand.EndPoly:
-									case Agg.ShapePath.FlagsAndCommand.FlagClose:
-									case Agg.ShapePath.FlagsAndCommand.MoveTo:
+									case Agg.FlagsAndCommand.Stop:
+									case Agg.FlagsAndCommand.EndPoly:
+									case Agg.FlagsAndCommand.FlagClose:
+									case Agg.FlagsAndCommand.MoveTo:
 										if (vertexCount > 0)
 										{
 											var center = positionSum / vertexCount;
@@ -168,11 +168,11 @@ namespace MatterHackers.MatterControl.DesignTools
 										vertexCount = 0;
 										positionSum = Vector2.Zero;
 										break;
-									case Agg.ShapePath.FlagsAndCommand.Curve3:
-									case Agg.ShapePath.FlagsAndCommand.Curve4:
-									case Agg.ShapePath.FlagsAndCommand.LineTo:
+									case Agg.FlagsAndCommand.Curve3:
+									case Agg.FlagsAndCommand.Curve4:
+									case Agg.FlagsAndCommand.LineTo:
 										vertexCount++;
-										lastPosition = vertex.position;
+										lastPosition = vertex.Position;
 										positionSum += lastPosition;
 										break;
 								}
