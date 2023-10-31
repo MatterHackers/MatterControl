@@ -3805,6 +3805,36 @@ Translated:Plug in printer USB cable and turn printer on
 English:Plugins
 Translated:Plugins
 
+English:Point 1
+Translated:Point 1
+
+English:Point 10
+Translated:Point 10
+
+English:Point 2
+Translated:Point 2
+
+English:Point 3
+Translated:Point 3
+
+English:Point 4
+Translated:Point 4
+
+English:Point 5
+Translated:Point 5
+
+English:Point 6
+Translated:Point 6
+
+English:Point 7
+Translated:Point 7
+
+English:Point 8
+Translated:Point 8
+
+English:Point 9
+Translated:Point 9
+
 English:Point Size
 Translated:Point Size
 

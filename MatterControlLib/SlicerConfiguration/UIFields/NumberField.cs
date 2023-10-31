@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             };
         }
 
-        private static void InternalTextEditWidget_KeyDown(object sender, KeyEventArgs e)
+        public static void InternalTextEditWidget_KeyDown(object sender, KeyEventArgs e)
         {
             var textEditWidget = sender as TextEditWidget;
             var internalTextEditWidget = textEditWidget.InternalTextEditWidget;

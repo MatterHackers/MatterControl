@@ -51,49 +51,89 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class PathEditor : IPropertyEditorFactory
     {
+        private ulong lastRenderHashCode = 0;
+        private Action vertexChanged;
+        private ThemeConfig theme;
+        private VertexStorage vertexStorage;
+        private GuiWidget container;
+        private ImageWidget imageWidget;
+        private Object3D object3D;
+
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
         {
+            if (property.Source is Object3D object3D)
+            {
+                this.object3D = object3D;
+                object3D.Invalidated += RebuildImage;
+            }
+
             if (property.Value is VertexStorage vertexStorage)
             {
-                var container = new GuiWidget()
-                {
-                    HAnchor = HAnchor.Stretch,
-                    VAnchor = VAnchor.Stretch,
-                    BackgroundOutlineWidth = 1,
-                    BackgroundColor = Color.White,
-                    BorderColor = Color.Black,
-                    Margin = 1,
-                };
+                var wdiget = CreateEditor(vertexStorage, propertyEditor.UndoBuffer, propertyEditor.Theme, VertexBufferChanged);
+                imageWidget.Closed += ImageWidget_Closed;
 
-                var imageWidget = new ImageWidget(100, 200)
-                {
-                    AutoResize = true,
-                    HAnchor = HAnchor.Center,
-                    VAnchor = VAnchor.Center,
-                };
-                container.AddChild(imageWidget);
-
-                void RebuildImage(object item, EventArgs e)
-                {
-                    imageWidget.Width = container.Width;
-                    imageWidget.Height = container.Height;
-                    imageWidget.Image.Allocate((int)container.Width, (int)container.Height, 32, new BlenderBGRA());
-
-                    var graphics2D = imageWidget.Image.NewGraphics2D();
-
-                    var bounds = imageWidget.Image.GetBounds();
-                    bounds.Inflate(-1);
-                    graphics2D.Rectangle(bounds, Color.Red);
-
-                    vertexStorage.RenderCurve(graphics2D, Color.Black, 2, true);
-                }
-
-                container.SizeChanged += RebuildImage;
-
-                return container;
+                return wdiget;
             }
 
             return null;
+        }
+
+        private void VertexBufferChanged()
+        {
+            object3D.Invalidate(InvalidateType.Path);
+        }
+
+        private void ImageWidget_Closed(object sender, EventArgs e)
+        {
+            imageWidget.Closed -= ImageWidget_Closed;
+            object3D.Invalidated -= RebuildImage;
+        }
+
+        void RebuildImage(object item, EventArgs e)
+        {
+            imageWidget.Width = container.Width;
+            imageWidget.Height = container.Height;
+            imageWidget.Image.Allocate((int)container.Width, (int)container.Height, 32, new BlenderBGRA());
+
+            var graphics2D = imageWidget.Image.NewGraphics2D();
+            graphics2D.Clear(theme.BackgroundColor);
+
+            var bounds = imageWidget.Image.GetBounds();
+            bounds.Inflate(-1);
+            graphics2D.Rectangle(bounds, theme.PrimaryAccentColor);
+
+            var pathBounds = vertexStorage.GetBounds();
+
+            new VertexSourceApplyTransform(vertexStorage, Affine.NewScaling(1 / pathBounds.Height * bounds.Height)).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
+        }
+
+        public GuiWidget CreateEditor(VertexStorage vertexStorage, UndoBuffer undoBuffer, ThemeConfig theme, Action vertexChanged)
+        {
+            this.vertexChanged = vertexChanged;
+            this.theme = theme;
+            this.vertexStorage = vertexStorage;
+
+            container = new GuiWidget()
+            {
+                HAnchor = HAnchor.Stretch,
+                VAnchor = VAnchor.Stretch,
+                BackgroundOutlineWidth = 1,
+                BackgroundColor = Color.White,
+                BorderColor = Color.Black,
+                Margin = 1,
+            };
+
+            imageWidget = new ImageWidget(100, 200)
+            {
+                AutoResize = true,
+                HAnchor = HAnchor.Center,
+                VAnchor = VAnchor.Center,
+            };
+            container.AddChild(imageWidget);
+
+            container.SizeChanged += RebuildImage;
+
+            return container;
         }
     }
 
@@ -162,6 +202,19 @@ namespace MatterHackers.MatterControl.DesignTools
             return AxisAlignedBoundingBox.CenteredBox(new Vector3(1, 1, sourceAabb.ZSize), center).NewTransformed(this.WorldMatrix());
         }
 
+        public Vector2 Point1 { get; set; } = new Vector2(0, 0);
+        public Vector2 Point2 {get; set;} = new Vector2(1, 4);
+        public Vector2 Point3 { get; set;} = new Vector2(2, 8);
+        public Vector2 Point4 { get; set;} = new Vector2(3, 12);
+        public Vector2 Point5 { get; set;} = new Vector2(4, 14);
+        public Vector2 Point6 { get; set;} = new Vector2(5, 16);
+        public Vector2 Point7 { get; set;} = new Vector2(6, 18);
+        public Vector2 Point8 { get; set;} = new Vector2(7, 20);
+        public Vector2 Point9 { get; set;} = new Vector2(8, 22);
+        public Vector2 Point10 { get; set;} = new Vector2(9, 24);
+
+
+
         public override Task Rebuild()
         {
             this.DebugDepth("Rebuild");
@@ -219,10 +272,10 @@ namespace MatterHackers.MatterControl.DesignTools
                         middlePoint.X *= 2;
 
                         PathForHorizontalOffsets.Clear();
-                        PathForHorizontalOffsets.MoveTo(bottomPoint);
-                        PathForHorizontalOffsets.Curve4(bottomPoint, bottomPoint + new Vector2(.5, .5), middlePoint);
-                        PathForHorizontalOffsets.Curve4(middlePoint - new Vector2(0, -1), middlePoint + new Vector2(0, 1), topPoint);
-                        PathForHorizontalOffsets.Curve4(topPoint - new Vector2(.5, .5), topPoint, topPoint);
+                        PathForHorizontalOffsets.MoveTo(Point1);
+                        PathForHorizontalOffsets.Curve4(Point2, Point3, Point4);
+                        PathForHorizontalOffsets.Curve4(Point5, Point6, Point7);
+                        PathForHorizontalOffsets.Curve4(Point8, Point9, Point10);
                     }
 
                     var horizontalOffset = new FlattenCurves(new VertexSourceApplyTransform(PathForHorizontalOffsets, Affine.NewScaling(10)));

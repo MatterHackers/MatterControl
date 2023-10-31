@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -82,10 +83,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.SetValue(
 					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString("0.###"), yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
-					userInitiated: true);
+				userInitiated: true);
 			};
 
-			container.AddChild(xEditWidget);
+            xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
+
+            container.AddChild(xEditWidget);
 
 			double.TryParse(xyValueStrings[1], out double currentYValue);
 
@@ -102,7 +105,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(yEditWidget);
+            yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
+
+            container.AddChild(yEditWidget);
 
 			this.Content = container;
 		}
