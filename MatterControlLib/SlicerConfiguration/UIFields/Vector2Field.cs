@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget = new ThemedNumberEdit(currentXValue, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget = new ThemedNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 			};
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>

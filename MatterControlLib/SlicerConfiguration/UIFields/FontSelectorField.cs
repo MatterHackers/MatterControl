@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>

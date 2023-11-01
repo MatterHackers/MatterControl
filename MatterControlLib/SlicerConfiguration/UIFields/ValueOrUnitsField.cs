@@ -41,9 +41,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
-			base.Initialize(tabIndex);
+			base.Initialize(ref tabIndex);
 
 			textEditWidget.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (s, e) =>
 			{

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			this.Content = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Fit,
 			};
 
-			base.Initialize(tabIndex);
+			base.Initialize(ref tabIndex);
 		}
 
 		public List<string> _list = new List<string>();

@@ -41,12 +41,13 @@ using System.Web;
 using System.ComponentModel;
 using MatterHackers.VectorMath;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class StringPropertyEditor : IPropertyEditorFactory
     {
-        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
+        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
             if (property.Value is string stringValue)
             {
@@ -156,7 +157,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         {
                             // create a a multi-line string editor
                             var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
-                            field.Initialize(0);
+                            field.Initialize(ref tabIndex);
                             field.SetValue(stringValue, false);
                             field.ClearUndoHistory();
                             field.Content.HAnchor = HAnchor.Stretch;
@@ -171,7 +172,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         {
                             // create a string editor
                             var field = new TextField(theme);
-                            field.Initialize(0);
+                            field.Initialize(ref tabIndex);
                             field.SetValue(stringValue, false);
                             field.ClearUndoHistory();
                             field.Content.HAnchor = HAnchor.Stretch;

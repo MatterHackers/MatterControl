@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var aligner = new GuiWidget()
 			{
@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,
 				Name = this.Name,
-			});
+                TabIndex = tabIndex++,
+            });
 
 			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 			{

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public int MaterialIndex { get; set; }
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 

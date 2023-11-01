@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			editWidget = new ThemedTextEditWidget("", theme, pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{

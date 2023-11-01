@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
@@ -182,6 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public void SetActiveItem(ISceneContext sceneContext)
         {
+            int tabIndex = 0;
             var selectedItem = sceneContext?.Scene?.SelectedItem;
             if (this.item == selectedItem)
             {
@@ -296,7 +298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
             {
-                AddMaterialAndColorSelector(sceneContext, selectedItem, undoBuffer);
+                AddMaterialAndColorSelector(sceneContext, selectedItem, undoBuffer, ref tabIndex);
             }
 
             var rows = new SafeList<SettingsRow>();
@@ -305,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (selectedItem is ComponentObject3D componentObject
                 && componentObject.Finalized)
             {
-                AddComponentEditor(selectedItem, undoBuffer, rows, componentObject);
+                AddComponentEditor(selectedItem, undoBuffer, rows, componentObject, ref tabIndex);
             }
             else
             {
@@ -316,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-            void AddMaterialAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer)
+            void AddMaterialAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
             {
                 var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
                 var worldColor = Color.White;
@@ -327,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in a color edit field
                 var colorField = new ColorField(theme, worldColor, GetNextSelectionColor, true);
-                colorField.Initialize(0);
+                colorField.Initialize(ref tabIndex);
                 colorField.ValueChanged += (s, e) =>
                 {
                     if (selectedItem.Color != colorField.Color)
@@ -513,7 +515,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in a material edit field
                 var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
-                materialField.Initialize(0);
+                materialField.Initialize(ref tabIndex);
                 materialField.ValueChanged += (s, e) =>
                 {
                     if (selectedItem.MaterialIndex != materialField.MaterialIndex)
@@ -536,7 +538,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject)
+        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject, ref int tabIndex)
         {
             var context = new EditorContext();
             PropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
@@ -578,7 +580,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
 
                             var propertyEditor = new PropertyEditor(theme, undoBuffer);
-                            var editor = propertyEditor.CreatePropertyEditor(editableProperty, undoBuffer, context, theme);
+                            var editor = propertyEditor.CreatePropertyEditor(editableProperty, undoBuffer, context, theme, ref tabIndex);
                             if (editor != null)
                             {
                                 editorPanel.AddChild(editor);
@@ -612,7 +614,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         Name = cellId + " Field",
                     };
-                    field.Initialize(0);
+                    int tabIndex = 0;
+                    field.Initialize(ref tabIndex);
                     field.SetValue(cellData, false);
                     field.ClearUndoHistory();
                     field.Content.HAnchor = HAnchor.Stretch;

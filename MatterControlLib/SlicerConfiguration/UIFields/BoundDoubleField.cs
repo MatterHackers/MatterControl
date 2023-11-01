@@ -49,9 +49,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.settingData = settingData;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
-			base.Initialize(tabIndex);
+			base.Initialize(ref tabIndex);
 			this.textEditWidget.BackgroundColor = Color.Pink;
 			ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
 		}

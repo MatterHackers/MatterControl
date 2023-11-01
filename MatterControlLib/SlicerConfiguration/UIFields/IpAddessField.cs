@@ -29,9 +29,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
-			base.Initialize(tabIndex);
+			base.Initialize(ref tabIndex);
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
 			var selectedMachine = printer.Settings.GetValue(SettingsKey.selector_ip_address);

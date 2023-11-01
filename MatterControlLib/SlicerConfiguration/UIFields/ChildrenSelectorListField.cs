@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			// Enum keyed on name to friendly name
 			List<(string key, string value)> names = null;
@@ -70,9 +70,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			dropDownList = new MHDropDownList("Name".Localize(), theme);
+			dropDownList = new MHDropDownList("Name".Localize(), theme)
+			{
+				TabIndex = tabIndex++,
+			};
 
-			var orderedItems = names.OrderBy(n => n.value);
+
+            var orderedItems = names.OrderBy(n => n.value);
 
 			foreach (var orderItem in orderedItems)
 			{

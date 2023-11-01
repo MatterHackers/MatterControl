@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			textEditWidget = new ThemedTextEditWidget("", theme, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{

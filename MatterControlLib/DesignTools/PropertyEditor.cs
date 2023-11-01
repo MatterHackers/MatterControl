@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public interface IPropertyEditorFactory
     {
-        GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context);
+        GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex);
     }
 
     public class PropertyEditor : IObjectEditor
@@ -302,6 +302,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 rows.Clear();
 
+                int tabIndex = 0;
+
                 // Create a field editor for each editable property detected via reflection
                 foreach (var property in GetEditablePropreties(context.Item))
                 {
@@ -347,7 +349,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         scope = mainContainer;
                     }
 
-                    var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
+                    var editor = CreatePropertyEditor(property, undoBuffer, context, theme, ref tabIndex);
                     if (editor != null)
                     {
                         scope.AddChild(editor);
@@ -387,7 +389,7 @@ namespace MatterHackers.MatterControl.DesignTools
             return mainContainer;
         }
 
-        public GuiWidget CreatePropertyEditor(EditableProperty property, UndoBuffer undoBuffer, EditorContext context, ThemeConfig theme)
+        public GuiWidget CreatePropertyEditor(EditableProperty property, UndoBuffer undoBuffer, EditorContext context, ThemeConfig theme, ref int tabIndex)
         {
             if (property == null
                 || context == null)
@@ -411,7 +413,7 @@ namespace MatterHackers.MatterControl.DesignTools
             if (AllowedTypes.ContainsKey(propertyValue.GetType())
                 && AllowedTypes[propertyValue.GetType()] != null)
             {
-                rowContainer = AllowedTypes[propertyValue.GetType()].CreateEditor(this, property, context);
+                rowContainer = AllowedTypes[propertyValue.GetType()].CreateEditor(this, property, context, ref tabIndex);
             }
             else if (propertyValue is double doubleValue)
             {
@@ -442,7 +444,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 else // normal edit row
                 {
                     var field = new DoubleField(theme);
-                    field.Initialize(0);
+                    field.Initialize(ref tabIndex);
                     field.DoubleValue = doubleValue;
                     field.ClearUndoHistory();
                     RegisterValueChanged(property, undoBuffer, context, field, (valueString) => { return double.Parse(valueString); });
@@ -479,7 +481,7 @@ namespace MatterHackers.MatterControl.DesignTools
             else if (propertyValue is Color color)
             {
                 var field = new ColorField(theme, color, null, false);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.ValueChanged += (s, e) =>
                 {
                     property.SetValue(field.Color);
@@ -492,7 +494,7 @@ namespace MatterHackers.MatterControl.DesignTools
             else if (propertyValue is Vector2 vector2)
             {
                 var field = new Vector2Field(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.Vector2 = vector2;
                 field.ClearUndoHistory();
 
@@ -512,7 +514,7 @@ namespace MatterHackers.MatterControl.DesignTools
             else if (propertyValue is Vector3 vector3)
             {
                 var field = new Vector3Field(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.Vector3 = vector3;
                 field.ClearUndoHistory();
 
@@ -536,7 +538,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     field.Labels = vectorFieldLabels.Labels;
                 }
 
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.Vector4 = vector4;
                 field.ClearUndoHistory();
 
@@ -555,7 +557,7 @@ namespace MatterHackers.MatterControl.DesignTools
             else if (propertyValue is DirectionVector directionVector)
             {
                 var field = new DirectionVectorField(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.SetValue(directionVector);
                 field.ClearUndoHistory();
 
@@ -573,7 +575,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 rowContainer = CreateSettingsColumn(property);
 
                 var field1 = new DirectionVectorField(theme);
-                field1.Initialize(0);
+                field1.Initialize(ref tabIndex);
                 field1.ClearUndoHistory();
 
                 field1.SetValue(new DirectionVector()
@@ -587,7 +589,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 // the distance from the center of the part
                 // create a double editor
                 var field2 = new Vector3Field(theme);
-                field2.Initialize(0);
+                field2.Initialize(ref tabIndex);
                 field2.Vector3 = directionAxis.Origin - propertyIObject3D.Children.First().GetAxisAlignedBoundingBox().Center;
                 field2.ClearUndoHistory();
 
@@ -745,7 +747,7 @@ namespace MatterHackers.MatterControl.DesignTools
             else if (propertyValue is List<string> stringList)
             {
                 var field = new SurfacedEditorsField(theme, propertyIObject3D);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.ListValue = stringList;
                 field.ValueChanged += (s, e) =>
                 {
@@ -803,7 +805,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 else // normal edit row
                 {
                     var field = new IntField(theme);
-                    field.Initialize(0);
+                    field.Initialize(ref tabIndex);
                     field.IntValue = intValue;
                     field.ClearUndoHistory();
 
@@ -834,7 +836,7 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 // create a bool editor
                 var field = new ToggleboxField(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.Checked = boolValue;
 
                 RegisterValueChanged(property, undoBuffer, context,
@@ -850,7 +852,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     Name = property.DisplayName + " Field"
                 };
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 if (doubleExpresion.Expression.Contains("="))
                 {
                     field.SetValue(doubleExpresion.Expression, false);
@@ -926,7 +928,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     Name = property.DisplayName + " Field"
                 };
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 if (intExpresion.Expression.Contains("="))
                 {
                     field.SetValue(intExpresion.Expression, false);
@@ -1001,7 +1003,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     // create a a multi-line string editor
                     var field = new MultilineStringField(theme);
-                    field.Initialize(0);
+                    field.Initialize(ref tabIndex);
                     field.SetValue(stringOrExpression.Expression, false);
                     field.ClearUndoHistory();
                     field.Content.HAnchor = HAnchor.Stretch;
@@ -1022,7 +1024,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     // create a string editor
                     var field = new TextField(theme);
-                    field.Initialize(0);
+                    field.Initialize(ref tabIndex);
                     field.SetValue(stringOrExpression.Expression, false);
                     field.ClearUndoHistory();
                     field.Content.HAnchor = HAnchor.Stretch;
@@ -1040,7 +1042,7 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 // create a string editor
                 var field = new TextField(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.SetValue(dateTime.ToString("MM/dd/yyyy HH:mm"), false);
                 field.ClearUndoHistory();
                 field.Content.HAnchor = HAnchor.Stretch;
@@ -1057,7 +1059,7 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 // create a char editor
                 var field = new CharField(theme);
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 field.SetValue(charValue.ToString(), false);
                 field.ClearUndoHistory();
                 field.ValueChanged += (s, e) =>
@@ -1099,7 +1101,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     }
                 }
 
-                field.Initialize(0);
+                field.Initialize(ref tabIndex);
                 RegisterValueChanged(property, undoBuffer, context,
                     field,
                     (valueString) =>

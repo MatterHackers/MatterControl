@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -69,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				.SingleOrDefault();
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			(string key, string name) GetKeyName(Enum value)
 			{
@@ -117,9 +118,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				default:
 					throw new NotImplementedException();
 			}
+
+			tabIndex++;
 		}
 
-		private void EnableReduceWidth(ThemedRadioTextButton enumTab)
+        private void EnableReduceWidth(ThemedRadioTextButton enumTab)
 		{
 			var deviceScale = GuiWidget.DeviceScale;
 			var padingSize = enumTab.Padding.Left * deviceScale;

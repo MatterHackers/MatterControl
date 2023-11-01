@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget = new ThemedNumberEdit(currentXValue, theme, Labels[0] /* X */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget = new ThemedNumberEdit(currentYValue, theme, Labels[1] /* Y */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			zEditWidget = new ThemedNumberEdit(currentZValue, theme, Labels[2] /* Z */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			wEditWidget = new ThemedNumberEdit(currentZValue, theme, Labels[3] /* W */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};

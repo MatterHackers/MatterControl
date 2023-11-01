@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
         private ImageWidget imageWidget;
         private Object3D object3D;
 
-        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
+        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
             if (property.Source is Object3D object3D)
             {
@@ -98,7 +99,6 @@ namespace MatterHackers.MatterControl.DesignTools
             graphics2D.Clear(theme.BackgroundColor);
 
             var bounds = imageWidget.Image.GetBounds();
-            bounds.Inflate(-1);
             graphics2D.Rectangle(bounds, theme.PrimaryAccentColor);
 
             var pathBounds = vertexStorage.GetBounds();

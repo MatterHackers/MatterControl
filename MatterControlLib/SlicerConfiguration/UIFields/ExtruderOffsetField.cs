@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			childFields = new List<Vector3Field>();
 
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				row.AddChild(labelWidget);
 
 				var field = new Vector3Field(theme);
-				field.Initialize(tabIndex++);
+				field.Initialize(ref tabIndex);
 				field.Content.Margin = new BorderDouble(right: 55);
 				field.Content.VAnchor = VAnchor.Center;
 				field.ValueChanged += (s, e) =>
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				childFields.Add(field);
 			}
 
-			base.Initialize(tabIndex);
+			base.Initialize(ref tabIndex);
 		}
 
 		private static double StripZeroSign(double x)

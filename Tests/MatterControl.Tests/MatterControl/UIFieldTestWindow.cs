@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Reflection.Metadata.Ecma335;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -53,8 +54,9 @@ namespace MatterControl.Tests.MatterControl
 			// Store
 			this.field = field;
 
-			// Initialize the field and store the generated content reference
-			field.Initialize(0);
+			int tabIndex = 0;
+            // Initialize the field and store the generated content reference
+            field.Initialize(ref tabIndex);
 
 			GuiWidget widgetUnderTest = field.Content;
 

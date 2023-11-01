@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using static MatterHackers.Agg.UI.OnScreenKeyboard;
 
@@ -43,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class SelectedChildrenPropertyEditor : IPropertyEditorFactory
     {
-        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context)
+        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
             if (property.Value is SelectedChildren childSelector)
             {
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     {
                         UIField field = new ChildrenSelectorListField(property, theme);
 
-                        field.Initialize(0);
+                        field.Initialize(ref tabIndex);
                         PropertyEditor.RegisterValueChanged(property, undoBuffer, context,
                             field,
                             (valueString) =>

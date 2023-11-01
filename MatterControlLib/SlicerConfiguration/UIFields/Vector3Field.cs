@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
@@ -71,10 +71,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[0], out double currentXValue);
 
-			xEditWidget = new ThemedNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			xEditWidget = new ThemedNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -93,10 +93,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[1], out double currentYValue);
 
-			yEditWidget = new ThemedNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			yEditWidget = new ThemedNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};
@@ -115,10 +115,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzStrings[2], out double currentZValue);
 
-			zEditWidget = new ThemedNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex++)
+			zEditWidget = new ThemedNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
-				TabIndex = tabIndex + 1,
+				TabIndex = tabIndex++,
 				SelectAllOnFocus = true,
 				Margin = theme.ButtonSpacing
 			};

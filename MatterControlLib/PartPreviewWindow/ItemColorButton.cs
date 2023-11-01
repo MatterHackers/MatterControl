@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -145,8 +146,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			});
 
-			// put in an html edit field
-			htmlField.Initialize(0);
+			int tabIndex = 0;
+
+            // put in an html edit field
+            htmlField.Initialize(ref tabIndex);
 			htmlField.SetValue(startingColor.Html.Substring(1, 6), false);
 			htmlField.ClearUndoHistory();
 			htmlField.ValueChanged += (s, e) =>

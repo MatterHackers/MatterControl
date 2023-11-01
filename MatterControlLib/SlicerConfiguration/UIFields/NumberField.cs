@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
         
-        public override void Initialize(int tabIndex)
+        public override void Initialize(ref int tabIndex)
 		{
 			numberEdit = new ThemedNumberEdit(0, theme, pixelWidth: ControlWidth, allowDecimals: this.AllowDecimals, allowNegatives: this.AllowNegatives, tabIndex: tabIndex)
 			{

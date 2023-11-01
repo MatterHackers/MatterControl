@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public new string Name { get; set; }
 		public static bool ShowPortWizardButton { get; set; } = true;
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
 
@@ -71,11 +71,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				ToolTipText = this.HelpText,
 				Margin = new BorderDouble(),
-				TabIndex = tabIndex,
 				Name = "com_port Field",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
-			};
+                TabIndex = tabIndex++,
+            };
 
 			dropdownList.Click += (s, e) =>
 			{

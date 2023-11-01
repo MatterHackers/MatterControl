@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set => colorWidget.Color = value;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 

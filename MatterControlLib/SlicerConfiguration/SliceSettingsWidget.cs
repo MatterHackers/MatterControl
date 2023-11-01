@@ -866,7 +866,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 uiField.HelpText = settingData.HelpText;
 
                 uiField.Name = $"{settingData.PresentationName} Field";
-                uiField.Initialize(tabIndexForItem++);
+                uiField.Initialize(ref tabIndexForItem);
 
                 if (settingData.DataEditType == SliceSettingData.DataEditTypes.WIDE_STRING)
                 {

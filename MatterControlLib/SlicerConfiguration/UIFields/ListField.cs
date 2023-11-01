@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return 0;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			dropdownList = new MHDropDownList("None".Localize(), theme, maxHeight: 200 * GuiWidget.DeviceScale)
 			{

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public new string Name { get; set; }
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
 

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.fieldTitle = fieldTitle;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var editButton = new ThemedIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{

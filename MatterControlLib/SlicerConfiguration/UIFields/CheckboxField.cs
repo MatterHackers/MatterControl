@@ -46,14 +46,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			checkBoxWidget = new CheckBox("")
 			{
 				VAnchor = VAnchor.Bottom,
 				Name = this.Name,
 				TextColor = theme.TextColor,
-				Checked = this.Value == "1"
+				Checked = this.Value == "1",
+				TabIndex = tabIndex++,
 			};
 			checkBoxWidget.CheckedStateChanged += (s, e) =>
 			{
@@ -89,7 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.theme = theme;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override void Initialize(ref int tabIndex)
 		{
 			var pixelWidth = this.ControlWidth + 6; // HACK: work around agg-bug where text fields are padding*2 bigger than ControlWidth
 

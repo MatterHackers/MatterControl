@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -62,11 +63,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var propertyEditor = new PropertyEditor(theme, new UndoBuffer());
 
+			int tabIndex = 0;
+
             var editor = propertyEditor.CreatePropertyEditor(
 				new EditableProperty(propertyInfo, supportGenerator),
 				null,
 				new EditorContext(),
-				theme);
+				theme,
+				ref tabIndex);
 
 			if (editor != null)
 			{
@@ -75,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in support pillar size
 			var pillarSizeField = new DoubleField(theme);
-			pillarSizeField.Initialize(0);
+			pillarSizeField.Initialize(ref tabIndex);
 			pillarSizeField.DoubleValue = supportGenerator.PillarSize;
 			pillarSizeField.ValueChanged += (s, e) =>
 			{
@@ -97,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the angle setting
 			var overHangField = new DoubleField(theme);
-			overHangField.Initialize(0);
+			overHangField.Initialize(ref tabIndex);
 			overHangField.DoubleValue = supportGenerator.MaxOverHangAngle;
 			overHangField.ValueChanged += (s, e) =>
 			{

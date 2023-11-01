@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return newValue;
 		}
 
-		public virtual void Initialize(int tabIndex)
+		public virtual void Initialize(ref int tabIndex)
 		{
 		}
 
