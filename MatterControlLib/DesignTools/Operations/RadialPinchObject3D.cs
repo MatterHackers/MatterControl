@@ -35,7 +35,6 @@ using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -50,101 +49,18 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class PathEditor : IPropertyEditorFactory
-    {
-        private Action vertexChanged;
-        private ThemeConfig theme;
-        private VertexStorage vertexStorage;
-        private GuiWidget container;
-        private ImageWidget imageWidget;
-        private Object3D object3D;
-
-        public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
-        {
-            if (property.Source is Object3D object3D)
-            {
-                this.object3D = object3D;
-                object3D.Invalidated += RebuildImage;
-            }
-
-            if (property.Value is VertexStorage vertexStorage)
-            {
-                var wdiget = CreateEditor(vertexStorage, propertyEditor.UndoBuffer, propertyEditor.Theme, VertexBufferChanged);
-                imageWidget.Closed += ImageWidget_Closed;
-
-                return wdiget;
-            }
-
-            return null;
-        }
-
-        private void VertexBufferChanged()
-        {
-            object3D.Invalidate(InvalidateType.Path);
-        }
-
-        private void ImageWidget_Closed(object sender, EventArgs e)
-        {
-            imageWidget.Closed -= ImageWidget_Closed;
-            object3D.Invalidated -= RebuildImage;
-        }
-
-        void RebuildImage(object item, EventArgs e)
-        {
-            imageWidget.Width = container.Width;
-            imageWidget.Height = container.Height;
-            imageWidget.Image.Allocate((int)container.Width, (int)container.Height, 32, new BlenderBGRA());
-
-            var graphics2D = imageWidget.Image.NewGraphics2D();
-            graphics2D.Clear(theme.BackgroundColor);
-
-            var bounds = imageWidget.Image.GetBounds();
-            graphics2D.Rectangle(bounds, theme.PrimaryAccentColor);
-
-            var pathBounds = vertexStorage.GetBounds();
-
-            new VertexSourceApplyTransform(vertexStorage, Affine.NewScaling(1 / pathBounds.Height * bounds.Height)).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
-        }
-
-        public GuiWidget CreateEditor(VertexStorage vertexStorage, UndoBuffer undoBuffer, ThemeConfig theme, Action vertexChanged)
-        {
-            this.vertexChanged = vertexChanged;
-            this.theme = theme;
-            this.vertexStorage = vertexStorage;
-
-            container = new GuiWidget()
-            {
-                HAnchor = HAnchor.Stretch,
-                VAnchor = VAnchor.Stretch,
-                BackgroundOutlineWidth = 1,
-                BackgroundColor = Color.White,
-                BorderColor = Color.Black,
-                Margin = 1,
-            };
-
-            imageWidget = new ImageWidget(100, 200)
-            {
-                AutoResize = true,
-                HAnchor = HAnchor.Center,
-                VAnchor = VAnchor.Center,
-            };
-            container.AddChild(imageWidget);
-
-            container.SizeChanged += RebuildImage;
-
-            return container;
-        }
-    }
-
     public class RadialPinchObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
     {
         public RadialPinchObject3D()
         {
+            // make sure the path editor is registered
             PropertyEditor.RegisterEditor(typeof(VertexStorage), new PathEditor());
 
             Name = "Radial Pinch".Localize();
         }
 
+        [PathEditor.TopAndBottomMoveXOnly]
+        [PathEditor.XMustBeGreaterThan0]
         public VertexStorage PathForHorizontalOffsets { get; set; } = new VertexStorage();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
@@ -208,9 +124,6 @@ namespace MatterHackers.MatterControl.DesignTools
         public Vector2 Point5 { get; set;} = new Vector2(4, 14);
         public Vector2 Point6 { get; set;} = new Vector2(5, 16);
         public Vector2 Point7 { get; set;} = new Vector2(6, 18);
-        public Vector2 Point8 { get; set;} = new Vector2(7, 20);
-
-
 
         public override Task Rebuild()
         {

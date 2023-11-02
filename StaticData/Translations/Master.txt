@@ -4363,6 +4363,9 @@ Translated:Reset to Factory Defaults
 English:Reset View
 Translated:Reset View
 
+English:Reset Zoom
+Translated:Reset Zoom
+
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 Translated:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
 
