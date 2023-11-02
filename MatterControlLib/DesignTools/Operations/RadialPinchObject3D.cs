@@ -51,17 +51,22 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class RadialPinchObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
     {
+        public class EditableVertexStorage : VertexStorage
+        {
+
+        }
+
         public RadialPinchObject3D()
         {
             // make sure the path editor is registered
-            PropertyEditor.RegisterEditor(typeof(VertexStorage), new PathEditor());
+            PropertyEditor.RegisterEditor(typeof(EditableVertexStorage), new PathEditor());
 
             Name = "Radial Pinch".Localize();
         }
 
         [PathEditor.TopAndBottomMoveXOnly]
         [PathEditor.XMustBeGreaterThan0]
-        public VertexStorage PathForHorizontalOffsets { get; set; } = new VertexStorage();
+        public EditableVertexStorage PathForHorizontalOffsets { get; set; } = new EditableVertexStorage();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
         [Slider(0, 50, snapDistance: 1)]
