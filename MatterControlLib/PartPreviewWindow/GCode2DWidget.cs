@@ -127,18 +127,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private double layerScale { get; set; } = 1;
 
-		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
+		private GCodeFile LoadedGCode => printer.Bed.LoadedGCode;
 
-		private Affine scalingTransform => Affine.NewScaling(layerScale, layerScale);
+		private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
 
-		private Affine totalTransform => Affine.NewTranslation(unscaledRenderOffset) * scalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
+		private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
 		public void CenterPartInView()
 		{
-			if (loadedGCode != null)
+			if (LoadedGCode != null)
 			{
-				RectangleDouble partBounds = loadedGCode.GetBounds();
-				Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
+				RectangleDouble partBounds = LoadedGCode.GetBounds();
+				Vector2 weightedCenter = LoadedGCode.GetWeightedCenter();
 
 				unscaledRenderOffset = -weightedCenter;
 				layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (loadedGCode != null)
+			if (LoadedGCode != null)
 			{
 				if (layerScale == 0)
 				{
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
-					Affine transform = totalTransform;
+					Affine transform = TotalTransform;
 
 					if (this.options.RenderBed)
 					{
@@ -266,19 +266,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 
 						Vector2 mousePreScale = mouseDownPosition;
-						totalTransform.inverse_transform(ref mousePreScale);
+						TotalTransform.inverse_transform(ref mousePreScale);
 
 						layerScale *= zoomDelta;
 
 						Vector2 mousePostScale = mouseDownPosition;
-						totalTransform.inverse_transform(ref mousePostScale);
+						TotalTransform.inverse_transform(ref mousePostScale);
 
 						unscaledRenderOffset += (mousePostScale - mousePreScale);
 						break;
 
 					case ETransformState.Move:
 					default: // also treat everything else like a move
-						scalingTransform.inverse_transform(ref mouseDelta);
+						ScalingTransform.inverse_transform(ref mouseDelta);
 
 						unscaledRenderOffset += mouseDelta;
 						break;
@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void LoadedGCodeChanged(object sender, EventArgs e)
 		{
-			if (loadedGCode == null)
+			if (LoadedGCode == null)
 			{
 				// TODO: Display an overlay for invalid GCode
 			}
@@ -351,12 +351,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
 		{
 			Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			totalTransform.inverse_transform(ref mousePreScale);
+			TotalTransform.inverse_transform(ref mousePreScale);
 
 			layerScale = scaleAmount;
 
 			Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			totalTransform.inverse_transform(ref mousePostScale);
+			TotalTransform.inverse_transform(ref mousePostScale);
 
 			unscaledRenderOffset += (mousePostScale - mousePreScale);
 		}
