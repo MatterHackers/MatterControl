@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
             SizeChanged += (s, e) =>
             {
-                Height = Width / 2;
+                Height = Width * 6 / 9;
             };
 
             this.vertexChanged = vertexChanged;
