@@ -44,8 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
     {
         private Vector2 lastMousePosition = new Vector2(0, 0);
         private Vector2 mouseDownPosition = new Vector2(0, 0);
-        private double pinchStartScale = 1;
-        private double startDistanceBetweenPoints = 1;
+        private Action<Vector2, double> scaleChanged;
         private ThemeConfig theme;
 
         private Vector2 unscaledRenderOffset = new Vector2(0, 0);
@@ -53,7 +52,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private VertexStorage vertexStorage;
 
-        public PathEditorWidget(VertexStorage vertexStorage, UndoBuffer undoBuffer, ThemeConfig theme, Action vertexChanged)
+        public PathEditorWidget(VertexStorage vertexStorage,
+            UndoBuffer undoBuffer,
+            ThemeConfig theme,
+            Action vertexChanged,
+            Vector2 unscaledRenderOffset = default(Vector2),
+            double layerScale = 1,
+            Action<Vector2, double> scaleChanged = null)
         {
             HAnchor = HAnchor.Stretch;
             BackgroundOutlineWidth = 1;
@@ -61,7 +66,12 @@ namespace MatterHackers.MatterControl.DesignTools
             BorderColor = theme.TextColor;
             Margin = 1;
 
+            this.unscaledRenderOffset = unscaledRenderOffset;
+            this.layerScale = layerScale;
+
             var topToBottom = this;
+
+            this.scaleChanged = scaleChanged;
 
             SizeChanged += (s, e) =>
             {
@@ -99,59 +109,39 @@ namespace MatterHackers.MatterControl.DesignTools
             };
         }
 
-        public override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-        }
-
         public ETransformState TransformState { get; set; }
         private double layerScale { get; set; } = 1;
 
         private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
         private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
+
+            base.OnDraw(graphics2D);
+        }
+
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
             base.OnMouseDown(mouseEvent);
             if (MouseCaptured)
             {
-                if (mouseEvent.NumPositions == 1)
-                {
-                    mouseDownPosition.X = mouseEvent.X;
-                    mouseDownPosition.Y = mouseEvent.Y;
-                }
-                else
-                {
-                    Vector2 centerPosition = (mouseEvent.GetPosition(1) + mouseEvent.GetPosition(0)) / 2;
-                    mouseDownPosition = centerPosition;
-                }
+                mouseDownPosition.X = mouseEvent.X;
+                mouseDownPosition.Y = mouseEvent.Y;
 
                 lastMousePosition = mouseDownPosition;
-
-                if (mouseEvent.NumPositions > 1)
-                {
-                    startDistanceBetweenPoints = (mouseEvent.GetPosition(1) - mouseEvent.GetPosition(0)).Length;
-                    pinchStartScale = layerScale;
-                }
             }
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
         {
             base.OnMouseMove(mouseEvent);
-            Vector2 mousePos = new Vector2();
-            if (mouseEvent.NumPositions == 1)
-            {
-                mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
-            }
-            else
-            {
-                Vector2 centerPosition = (mouseEvent.GetPosition(1) + mouseEvent.GetPosition(0)) / 2;
-                mousePos = centerPosition;
-            }
+            var mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+
             if (MouseCaptured)
             {
-                Vector2 mouseDelta = mousePos - lastMousePosition;
+                var mouseDelta = mousePos - lastMousePosition;
                 switch (TransformState)
                 {
                     case ETransformState.Scale:
@@ -165,15 +155,16 @@ namespace MatterHackers.MatterControl.DesignTools
                             zoomDelta = 1 + (1 * mouseDelta.Y / 100);
                         }
 
-                        Vector2 mousePreScale = mouseDownPosition;
+                        var mousePreScale = mouseDownPosition;
                         TotalTransform.inverse_transform(ref mousePreScale);
 
                         layerScale *= zoomDelta;
 
-                        Vector2 mousePostScale = mouseDownPosition;
+                        var mousePostScale = mouseDownPosition;
                         TotalTransform.inverse_transform(ref mousePostScale);
 
                         unscaledRenderOffset += (mousePostScale - mousePreScale);
+                        scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
                         break;
 
                     case ETransformState.Move:
@@ -181,23 +172,14 @@ namespace MatterHackers.MatterControl.DesignTools
                         ScalingTransform.inverse_transform(ref mouseDelta);
 
                         unscaledRenderOffset += mouseDelta;
+                        scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
                         break;
                 }
 
                 Invalidate();
             }
+
             lastMousePosition = mousePos;
-
-            // check if we should do some scaling
-            if (TransformState == ETransformState.Move
-                && mouseEvent.NumPositions > 1
-                && startDistanceBetweenPoints > 0)
-            {
-                double curDistanceBetweenPoints = (mouseEvent.GetPosition(1) - mouseEvent.GetPosition(0)).Length;
-
-                double scaleAmount = pinchStartScale * curDistanceBetweenPoints / startDistanceBetweenPoints;
-                ScalePartAndFixPosition(mouseEvent, scaleAmount);
-            }
         }
 
         public override void OnMouseWheel(MouseEventArgs mouseEvent)
@@ -210,17 +192,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
 
-                mouseEvent.Handled = true;
+                mouseEvent.WheelDelta = 0;
 
                 Invalidate();
             }
-        }
-
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
-
-            base.OnDraw(graphics2D);
         }
 
         public void Zoom(double scaleAmount)
@@ -231,15 +206,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
         {
-            Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+            var mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
             TotalTransform.inverse_transform(ref mousePreScale);
 
             layerScale = scaleAmount;
 
-            Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
+            var mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
             TotalTransform.inverse_transform(ref mousePostScale);
 
             unscaledRenderOffset += (mousePostScale - mousePreScale);
+
+            scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
         }
     }
 }

@@ -30,19 +30,37 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class PathEditorFactory : IPropertyEditorFactory
     {
+        public class EditableVertexStorage : VertexStorage
+        {
+            public Vector2 UnscaledOffset { get; set; } = Vector2.Zero;
+            public double Scale { get; set; } = 1;
+        }
+
         private Object3D object3D;
 
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
-            if (property.Value is VertexStorage vertexStorage)
+            if (property.Value is EditableVertexStorage vertexStorage)
             {
-                var pathEditorWidget = new PathEditorWidget(vertexStorage, propertyEditor.UndoBuffer, propertyEditor.Theme, VertexBufferChanged);
+                var pathEditorWidget = new PathEditorWidget(vertexStorage,
+                    propertyEditor.UndoBuffer,
+                    propertyEditor.Theme,
+                    VertexBufferChanged,
+                    vertexStorage.UnscaledOffset,
+                    vertexStorage.Scale,
+                    (unscaledOffset, scale) =>
+                    {
+                        vertexStorage.UnscaledOffset = unscaledOffset;
+                        vertexStorage.Scale = scale;
+                    }
+                    );
 
                 if (property.Source is Object3D object3D)
                 {
