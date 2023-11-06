@@ -28,9 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -82,10 +80,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString("0.###"), yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
-				userInitiated: true);
+					string.Format("{0},{1}",
+					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					userInitiated: true);
 			};
-
             xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
             container.AddChild(xEditWidget);
@@ -101,10 +100,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString("0.###"), yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format("{0},{1}",
+					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
-
             yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
             container.AddChild(yEditWidget);

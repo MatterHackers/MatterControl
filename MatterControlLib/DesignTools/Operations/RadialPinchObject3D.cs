@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -59,8 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
             Name = "Radial Pinch".Localize();
         }
 
-        [PathEditorFactory.TopAndBottomMoveXOnly]
-        [PathEditorFactory.XMustBeGreaterThan0]
+        [PathEditorFactory.ShowAxis]
         public PathEditorFactory.EditableVertexStorage PathForHorizontalOffsets { get; set; } = new PathEditorFactory.EditableVertexStorage();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
@@ -117,14 +115,6 @@ namespace MatterHackers.MatterControl.DesignTools
             return AxisAlignedBoundingBox.CenteredBox(new Vector3(1, 1, sourceAabb.ZSize), center).NewTransformed(this.WorldMatrix());
         }
 
-        public Vector2 Point1 { get; set; } = new Vector2(0, 0);
-        public Vector2 Point2 {get; set;} = new Vector2(1, 4);
-        public Vector2 Point3 { get; set;} = new Vector2(2, 8);
-        public Vector2 Point4 { get; set;} = new Vector2(3, 12);
-        public Vector2 Point5 { get; set;} = new Vector2(4, 14);
-        public Vector2 Point6 { get; set;} = new Vector2(5, 16);
-        public Vector2 Point7 { get; set;} = new Vector2(6, 18);
-
         public override Task Rebuild()
         {
             this.DebugDepth("Rebuild");
@@ -174,13 +164,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
                     var maxRadius = enclosingCircle.Radius + RotationOffset.Length;
 
-                    //if (PathForHorizontalOffsets.Count == 0)
+                    // if there is no path make a bad one
+                    if (PathForHorizontalOffsets.Count == 0)
                     {
                         var bottomPoint = new Vector2(maxRadius, bottom * 10);
                         var topPoint = new Vector2(maxRadius, top * 10);
                         var middlePoint = (bottomPoint + topPoint) / 2;
                         middlePoint.X *= 2;
-
+                        
+                        var Point1 = new Vector2(0, 0);
+                        var Point2 = new Vector2(1, 4);
+                        var Point3 = new Vector2(2, 8);
+                        var Point4 = new Vector2(3, 12);
+                        var Point5 = new Vector2(4, 14);
+                        var Point6 = new Vector2(5, 16);
+                        var Point7 = new Vector2(6, 18);
+                        
                         PathForHorizontalOffsets.Clear();
                         PathForHorizontalOffsets.MoveTo(Point1);
                         PathForHorizontalOffsets.Curve4(Point2, Point3, Point4);

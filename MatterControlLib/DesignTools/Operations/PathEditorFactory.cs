@@ -75,16 +75,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private void VertexBufferChanged()
         {
-            object3D.Invalidate(InvalidateType.Path);
+            object3D.Invalidate(new InvalidateArgs(null, InvalidateType.Path));
         }
 
         [AttributeUsage(AttributeTargets.Property)]
-        public class TopAndBottomMoveXOnlyAttribute : Attribute
-        {
-        }
-
-        [AttributeUsage(AttributeTargets.Property)]
-        public class XMustBeGreaterThan0Attribute : Attribute
+        public class ShowAxisAttribute : Attribute
         {
         }
     }

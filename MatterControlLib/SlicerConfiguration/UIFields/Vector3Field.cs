@@ -88,8 +88,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
+            xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
-			container.AddChild(xEditWidget);
+            container.AddChild(xEditWidget);
 
 			double.TryParse(xyzStrings[1], out double currentYValue);
 
@@ -110,8 +111,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
+            yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
-			container.AddChild(yEditWidget);
+            container.AddChild(yEditWidget);
 
 			double.TryParse(xyzStrings[2], out double currentZValue);
 
@@ -132,8 +134,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
+            zEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
-			container.AddChild(zEditWidget);
+            container.AddChild(zEditWidget);
 
 			this.Content = container;
 		}

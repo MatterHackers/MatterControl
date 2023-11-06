@@ -34,15 +34,23 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
-using static MatterHackers.MatterControl.PartPreviewWindow.GCode2DWidget;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class PathEditorWidget : GuiWidget
     {
+        public enum ETransformState
+        {
+            Edit,
+            Move,
+            Scale
+        };
+
         private Vector2 lastMousePosition = new Vector2(0, 0);
+        private ETransformState mouseDownTransformOverride;
         private Vector2 mouseDownPosition = new Vector2(0, 0);
         private Action<Vector2, double> scaleChanged;
         private ThemeConfig theme;
@@ -56,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
             UndoBuffer undoBuffer,
             ThemeConfig theme,
             Action vertexChanged,
-            Vector2 unscaledRenderOffset = default(Vector2),
+            Vector2 unscaledRenderOffset = default,
             double layerScale = 1,
             Action<Vector2, double> scaleChanged = null)
         {
@@ -85,13 +93,76 @@ namespace MatterHackers.MatterControl.DesignTools
             var toolBar = new FlowLayoutWidget()
             {
                 HAnchor = HAnchor.Stretch,
-                VAnchor = VAnchor.Bottom
+                Margin = 5,
+                BackgroundColor= theme.TextColor.WithAlpha(20),
             };
+
+            toolBar.VAnchor |= VAnchor.Bottom;
 
             this.AddChild(toolBar);
 
-            var menuTheme = ApplicationController.Instance.MenuTheme;
-            var homeButton = new ThemedTextIconButton("Home".Localize(), StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(menuTheme.TextColor), theme)
+            AddHomeButton(theme, toolBar);
+
+            toolBar.AddChild(new HorizontalSpacer());
+
+            AddPositionControls(theme, toolBar);
+        }
+
+        public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+
+        private void AddPositionControls(ThemeConfig theme, FlowLayoutWidget toolBar)
+        {
+            var tabIndex = 0;
+            var xEditWidget = new ThemedNumberEdit(0, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            {
+                TabIndex = tabIndex++,
+                SelectAllOnFocus = true,
+                Margin = theme.ButtonSpacing,
+                VAnchor = VAnchor.Center,
+            };
+            xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+            {
+                if (controlPointBeingDragged > -1)
+                {
+                    var vertexData = vertexStorage[controlPointBeingDragged];
+                    if (vertexData.Hint == CommandHint.C4Point)
+                    {
+                        // the prev point
+                        if (controlPointBeingDragged > 0)
+                        {
+                            controlPointBeingDragged--;
+                            vertexData = new VertexData(vertexData.Command, new Vector2(vertexData.Position.X, xEditWidget.ActuallNumberEdit.Value), vertexData.Hint);
+                            controlPointBeingDragged++;
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+            };
+
+            xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
+            toolBar.AddChild(xEditWidget);
+
+            var yEditWidget = new ThemedNumberEdit(0, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            {
+                TabIndex = tabIndex++,
+                SelectAllOnFocus = true,
+                VAnchor = VAnchor.Center,
+                Margin = theme.ButtonSpacing,
+            };
+            yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+            {
+            };
+            yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
+
+            toolBar.AddChild(yEditWidget);
+        }
+
+        private void AddHomeButton(ThemeConfig theme, FlowLayoutWidget toolBar)
+        {
+            var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
             {
                 BackgroundColor = theme.SlightShade,
                 HoverColor = theme.SlightShade.WithAlpha(75),
@@ -102,10 +173,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
             homeButton.Click += (s, e) =>
             {
-                UiThread.RunOnIdle(() =>
-                {
-                    ApplicationController.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
-                });
+                CenterPartInView();
             };
         }
 
@@ -114,6 +182,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
         private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
+
+        private int controlPointBeingDragged = -1;
+        private int controlPointBeingHovered = -1;
+
+        public void CenterPartInView()
+        {
+            if (vertexStorage != null)
+            {
+                var partBounds = vertexStorage.GetBounds();
+                var weightedCenter = partBounds.Center;
+
+                unscaledRenderOffset = -weightedCenter;
+                layerScale = Math.Min((Height - 30) / partBounds.Height, (Width - 30) / partBounds.Width);
+
+                Invalidate();
+            }
+        }
 
         public override void OnDraw(Graphics2D graphics2D)
         {
@@ -127,59 +212,170 @@ namespace MatterHackers.MatterControl.DesignTools
             base.OnMouseDown(mouseEvent);
             if (MouseCaptured)
             {
+                controlPointBeingDragged = -1;
+
                 mouseDownPosition.X = mouseEvent.X;
                 mouseDownPosition.Y = mouseEvent.Y;
 
                 lastMousePosition = mouseDownPosition;
+
+                mouseDownTransformOverride = TransformState;
+
+                // check if not left button
+                switch (mouseEvent.Button)
+                {
+                    case MouseButtons.Left:
+                        if (Keyboard.IsKeyDown(Keys.ControlKey))
+                        {
+                            if (Keyboard.IsKeyDown(Keys.Alt))
+                            {
+                                mouseDownTransformOverride = ETransformState.Scale;
+                            }
+                            else
+                            {
+                                mouseDownTransformOverride = ETransformState.Move;
+                            }
+                        }
+                        else
+                        {
+                            // we are in edit mode, check if we are over any control points
+                            controlPointBeingDragged = GetControlPointIndex(mouseEvent.Position);
+                        }
+                        break;
+
+                    case MouseButtons.Middle:
+                        mouseDownTransformOverride = ETransformState.Move;
+                        break;
+
+                    case MouseButtons.Right:
+                        mouseDownTransformOverride = ETransformState.Scale;
+                        break;
+                }
             }
+        }
+
+        private int GetControlPointIndex(Vector2 mousePosition)
+        {
+            double hitThreshold = 10; // Threshold for considering a hit, in screen pixels
+
+            for (int i = 0; i < vertexStorage.Count; i++)
+            {
+                Vector2 controlPoint = vertexStorage[i].Position + unscaledRenderOffset;
+                ScalingTransform.transform(ref controlPoint);
+                // we center on the scren so we have to add that in after scaling
+                controlPoint += new Vector2(Width / 2, Height / 2);
+
+                if ((controlPoint - mousePosition).Length <= hitThreshold) // Check if the mouse position is within the threshold
+                {
+                    return i; // Control point index
+                }
+            }
+
+            return -1; // No control point found at this position
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
         {
             base.OnMouseMove(mouseEvent);
-            var mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
 
             if (MouseCaptured)
             {
-                var mouseDelta = mousePos - lastMousePosition;
-                switch (TransformState)
+                DoTranslateAndZoom(mouseEvent);
+
+                if (controlPointBeingDragged > -1)
                 {
-                    case ETransformState.Scale:
-                        double zoomDelta = 1;
-                        if (mouseDelta.Y < 0)
-                        {
-                            zoomDelta = 1 - (-1 * mouseDelta.Y / 100);
-                        }
-                        else if (mouseDelta.Y > 0)
-                        {
-                            zoomDelta = 1 + (1 * mouseDelta.Y / 100);
-                        }
-
-                        var mousePreScale = mouseDownPosition;
-                        TotalTransform.inverse_transform(ref mousePreScale);
-
-                        layerScale *= zoomDelta;
-
-                        var mousePostScale = mouseDownPosition;
-                        TotalTransform.inverse_transform(ref mousePostScale);
-
-                        unscaledRenderOffset += (mousePostScale - mousePreScale);
-                        scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
-                        break;
-
-                    case ETransformState.Move:
-                    default: // also treat everything else like a move
+                    // we are dragging a control point
+                    var mouseDelta = mouseEvent.Position - lastMousePosition;
+                    if (mouseDelta.LengthSquared > 0)
+                    {
                         ScalingTransform.inverse_transform(ref mouseDelta);
-
-                        unscaledRenderOffset += mouseDelta;
-                        scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
-                        break;
+                        OffsetSelectedPoint(mouseDelta);
+                        vertexChanged?.Invoke();
+                    }
                 }
-
-                Invalidate();
+            }
+            else
+            {
+                // highlight any contorl points we are over
             }
 
-            lastMousePosition = mousePos;
+            lastMousePosition = mouseEvent.Position;
+        }
+
+        private void OffsetSelectedPoint(Vector2 delta)
+        {
+            if (controlPointBeingDragged < 0
+                || controlPointBeingDragged >= vertexStorage.Count)
+            { 
+                return;
+            }
+
+            var vertexData = vertexStorage[controlPointBeingDragged];
+
+            if (vertexData.Hint == CommandHint.C4Point)
+            {
+                for (int i = -1; i < 2; i++)
+                {
+                    var pointIndex = controlPointBeingDragged + i;
+                    // the prev point
+                    if (pointIndex > 0
+                        && pointIndex < vertexStorage.Count)
+                    {
+                        var vertexData2 = vertexStorage[pointIndex];
+                        vertexStorage[pointIndex] = new VertexData(vertexData2.Command, vertexData2.Position + delta, vertexData2.Hint);
+                    }
+                }
+            }
+            else
+            {
+                // only drag the point
+                vertexStorage[controlPointBeingDragged] = new VertexData(vertexData.Command, vertexData.Position + delta, vertexData.Hint);
+            }
+        }
+
+        private void DoTranslateAndZoom(MouseEventArgs mouseEvent)
+        {
+            var mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+            var mouseDelta = mousePos - lastMousePosition;
+
+            switch (mouseDownTransformOverride)
+            {
+                case ETransformState.Scale:
+                    double zoomDelta = 1;
+                    if (mouseDelta.Y < 0)
+                    {
+                        zoomDelta = 1 - (-1 * mouseDelta.Y / 100);
+                    }
+                    else if (mouseDelta.Y > 0)
+                    {
+                        zoomDelta = 1 + (1 * mouseDelta.Y / 100);
+                    }
+
+                    var mousePreScale = mouseDownPosition;
+                    TotalTransform.inverse_transform(ref mousePreScale);
+
+                    layerScale *= zoomDelta;
+
+                    var mousePostScale = mouseDownPosition;
+                    TotalTransform.inverse_transform(ref mousePostScale);
+
+                    unscaledRenderOffset += (mousePostScale - mousePreScale);
+                    scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
+                    break;
+
+                case ETransformState.Move:
+                    ScalingTransform.inverse_transform(ref mouseDelta);
+
+                    unscaledRenderOffset += mouseDelta;
+                    scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
+                    break;
+
+                case ETransformState.Edit:
+                default: // also treat everything else like an edit
+                    break;
+            }
+
+            Invalidate();
         }
 
         public override void OnMouseWheel(MouseEventArgs mouseEvent)
