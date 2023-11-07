@@ -313,6 +313,9 @@ Translated:Alert
 English:Align
 Translated:Align
 
+English:Aligned Corner
+Translated:Aligned Corner
+
 English:Aligning Z Axis
 Translated:Aligning Z Axis
 
@@ -2067,6 +2070,9 @@ Translated:Forums
 
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Found a line that is {0} characters long.\n{1}...
+
+English:Free
+Translated:Free
 
 English:Furthest Back
 Translated:Furthest Back
@@ -4860,6 +4866,9 @@ Translated:Share with someone
 
 English:Shared with Me
 Translated:Shared with Me
+
+English:Sharp Corner
+Translated:Sharp Corner
 
 English:Shift + G
 Translated:Shift + G

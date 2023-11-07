@@ -37,6 +37,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -49,6 +50,13 @@ namespace MatterHackers.MatterControl.DesignTools
             Scale
         };
 
+        public enum ControlPointConstraint
+        {
+            Sharp,
+            Aligned,
+            Free
+        }
+
         private Vector2 lastMousePosition = new Vector2(0, 0);
         private ETransformState mouseDownTransformOverride;
         private Vector2 mouseDownPosition = new Vector2(0, 0);
@@ -59,6 +67,8 @@ namespace MatterHackers.MatterControl.DesignTools
         private Action vertexChanged;
 
         private VertexStorage vertexStorage;
+
+        private ControlPointConstraint controlPointConstraint = ControlPointConstraint.Free;
 
         public PathEditorWidget(VertexStorage vertexStorage,
             UndoBuffer undoBuffer,
@@ -94,14 +104,19 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 HAnchor = HAnchor.Stretch,
                 Margin = 5,
-                BackgroundColor= theme.TextColor.WithAlpha(20),
+                BackgroundColor = theme.TextColor.WithAlpha(20),
             };
 
             toolBar.VAnchor |= VAnchor.Bottom;
 
             this.AddChild(toolBar);
 
-            AddHomeButton(theme, toolBar);
+            AddControlsToToolBar(theme, toolBar);
+        }
+
+        private void AddControlsToToolBar(ThemeConfig theme, FlowLayoutWidget toolBar)
+        {
+            AddButtons(theme, toolBar);
 
             toolBar.AddChild(new HorizontalSpacer());
 
@@ -113,13 +128,14 @@ namespace MatterHackers.MatterControl.DesignTools
         private void AddPositionControls(ThemeConfig theme, FlowLayoutWidget toolBar)
         {
             var tabIndex = 0;
-            var xEditWidget = new ThemedNumberEdit(0, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            xEditWidget = new ThemedNumberEdit(0, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
             {
                 TabIndex = tabIndex++,
                 SelectAllOnFocus = true,
                 Margin = theme.ButtonSpacing,
                 VAnchor = VAnchor.Center,
             };
+            xEditWidget.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 3;
             xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
             {
                 if (controlPointBeingDragged > -1)
@@ -137,7 +153,6 @@ namespace MatterHackers.MatterControl.DesignTools
                     }
                     else
                     {
-
                     }
                 }
             };
@@ -145,13 +160,14 @@ namespace MatterHackers.MatterControl.DesignTools
             xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
             toolBar.AddChild(xEditWidget);
 
-            var yEditWidget = new ThemedNumberEdit(0, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            yEditWidget = new ThemedNumberEdit(0, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
             {
                 TabIndex = tabIndex++,
                 SelectAllOnFocus = true,
                 VAnchor = VAnchor.Center,
                 Margin = theme.ButtonSpacing,
             };
+            yEditWidget.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 3;
             yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
             {
             };
@@ -160,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools
             toolBar.AddChild(yEditWidget);
         }
 
-        private void AddHomeButton(ThemeConfig theme, FlowLayoutWidget toolBar)
+        private void AddButtons(ThemeConfig theme, FlowLayoutWidget toolBar)
         {
             var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
             {
@@ -175,6 +191,45 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 CenterPartInView();
             };
+
+            // the sharp corner button
+            var sharpButton = new ThemedRadioTextButton("S", theme)
+            {
+                BackgroundColor = theme.SlightShade,
+                HoverColor = theme.SlightShade.WithAlpha(75),
+                Margin = new BorderDouble(3, 3, 6, 3),
+                ToolTipText = "Sharp Corner".Localize(),
+                Checked = controlPointConstraint == ControlPointConstraint.Sharp,
+            };
+            toolBar.AddChild(sharpButton);
+
+            sharpButton.Click += (s, e) => { controlPointConstraint = ControlPointConstraint.Sharp; };
+
+            // the aligned corner button
+            var alignedButton = new ThemedRadioTextButton("A", theme)
+            {
+                BackgroundColor = theme.SlightShade,
+                HoverColor = theme.SlightShade.WithAlpha(75),
+                Margin = new BorderDouble(3, 3, 6, 3),
+                ToolTipText = "Aligned Corner".Localize(),
+                Checked = controlPointConstraint == ControlPointConstraint.Aligned,
+            };
+            toolBar.AddChild(alignedButton);
+
+            alignedButton.Click += (s, e) => { controlPointConstraint = ControlPointConstraint.Aligned; };
+
+            // the free button
+            var freeButton = new ThemedRadioTextButton("F", theme)
+            {
+                BackgroundColor = theme.SlightShade,
+                HoverColor = theme.SlightShade.WithAlpha(75),
+                Margin = new BorderDouble(3, 3, 6, 3),
+                ToolTipText = "Free".Localize(),
+                Checked = controlPointConstraint == ControlPointConstraint.Free,
+            };
+            toolBar.AddChild(freeButton);
+
+            freeButton.Click += (s, e) => { controlPointConstraint = ControlPointConstraint.Free; };
         }
 
         public ETransformState TransformState { get; set; }
@@ -184,7 +239,10 @@ namespace MatterHackers.MatterControl.DesignTools
         private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
         private int controlPointBeingDragged = -1;
+        private int selectedPointIndex;
         private int controlPointBeingHovered = -1;
+        private ThemedNumberEdit yEditWidget;
+        private ThemedNumberEdit xEditWidget;
 
         public void CenterPartInView()
         {
@@ -203,6 +261,16 @@ namespace MatterHackers.MatterControl.DesignTools
         public override void OnDraw(Graphics2D graphics2D)
         {
             new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
+
+            //if (vertexStorage.GetType().GetCustomAttributes(typeof(PathEditorFactory.ShowAxisAttribute), true).FirstOrDefault() is PathEditorFactory.ShowAxisAttribute showAxisAttribute)
+            {
+                var leftOrigin = new Vector2(-10000, 0);
+                var rightOrigin = new Vector2(10000, 0);
+                graphics2D.Line(TotalTransform.Transform(leftOrigin), TotalTransform.Transform(rightOrigin), Color.Red);
+                var bottomOrigin = new Vector2(0, -10000);
+                var topOrigin = new Vector2(0, 10000);
+                graphics2D.Line(TotalTransform.Transform(bottomOrigin), TotalTransform.Transform(topOrigin), Color.Green);
+            }
 
             base.OnDraw(graphics2D);
         }
@@ -240,6 +308,21 @@ namespace MatterHackers.MatterControl.DesignTools
                         {
                             // we are in edit mode, check if we are over any control points
                             controlPointBeingDragged = GetControlPointIndex(mouseEvent.Position);
+                            selectedPointIndex = controlPointBeingDragged;
+
+                            if (selectedPointIndex == -1)
+                            {
+                                xEditWidget.Text = "---";
+                                xEditWidget.Enabled= false;
+                                yEditWidget.Text = "---";
+                                yEditWidget.Enabled= false;
+                            }
+                            else
+                            {
+                                xEditWidget.Enabled = true;
+                                yEditWidget.Enabled = true;
+                                UpdatePositionControls();
+                            }
                         }
                         break;
 
@@ -252,6 +335,12 @@ namespace MatterHackers.MatterControl.DesignTools
                         break;
                 }
             }
+        }
+
+        private void UpdatePositionControls()
+        {
+            xEditWidget.Value = vertexStorage[controlPointBeingDragged].Position.X;
+            yEditWidget.Value = vertexStorage[controlPointBeingDragged].Position.Y;
         }
 
         private int GetControlPointIndex(Vector2 mousePosition)
@@ -291,6 +380,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         ScalingTransform.inverse_transform(ref mouseDelta);
                         OffsetSelectedPoint(mouseDelta);
                         vertexChanged?.Invoke();
+                        UpdatePositionControls();
                     }
                 }
             }
@@ -306,7 +396,7 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             if (controlPointBeingDragged < 0
                 || controlPointBeingDragged >= vertexStorage.Count)
-            { 
+            {
                 return;
             }
 
