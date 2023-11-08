@@ -53,14 +53,14 @@ namespace MatterHackers.MatterControl.DesignTools
                     propertyEditor.UndoBuffer,
                     propertyEditor.Theme,
                     VertexBufferChanged,
+                    ref tabIndex,
                     vertexStorage.UnscaledOffset,
                     vertexStorage.Scale,
                     (unscaledOffset, scale) =>
                     {
                         vertexStorage.UnscaledOffset = unscaledOffset;
                         vertexStorage.Scale = scale;
-                    }
-                    );
+                    });
 
                 if (property.Source is Object3D object3D)
                 {

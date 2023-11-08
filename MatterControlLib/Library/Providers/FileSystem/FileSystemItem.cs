@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public DateTime DateModified { get; }
 
-		public virtual string ID => Util.GetLongHashCode(this.FilePath).ToString();
+		public virtual string ID => Util.GetLongHashCode(this.FilePath + DateModified.ToString()).ToString();
 
 		public virtual bool IsProtected => false;
 

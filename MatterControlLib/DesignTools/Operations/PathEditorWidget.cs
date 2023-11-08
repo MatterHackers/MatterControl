@@ -74,10 +74,16 @@ namespace MatterHackers.MatterControl.DesignTools
             UndoBuffer undoBuffer,
             ThemeConfig theme,
             Action vertexChanged,
+            ref int tabIndex,
             Vector2 unscaledRenderOffset = default,
             double layerScale = 1,
             Action<Vector2, double> scaleChanged = null)
         {
+            // remember the initial tab index
+            initialTabIndex = tabIndex;
+            // and add to the tab index the number of controls we plan to add
+            tabIndex += 2;
+
             HAnchor = HAnchor.Stretch;
             BackgroundOutlineWidth = 1;
             BackgroundColor = theme.BackgroundColor;
@@ -127,49 +133,42 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private void AddPositionControls(ThemeConfig theme, FlowLayoutWidget toolBar)
         {
-            var tabIndex = 0;
-            xEditWidget = new ThemedNumberEdit(0, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            var tabIndex = initialTabIndex;
+            xEditWidget = new ThemedNumberEdit(0, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth)
             {
                 TabIndex = tabIndex++,
                 SelectAllOnFocus = true,
                 Margin = theme.ButtonSpacing,
                 VAnchor = VAnchor.Center,
+                Enabled = false,
             };
             xEditWidget.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 3;
             xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
             {
-                if (controlPointBeingDragged > -1)
-                {
-                    var vertexData = vertexStorage[controlPointBeingDragged];
-                    if (vertexData.Hint == CommandHint.C4Point)
-                    {
-                        // the prev point
-                        if (controlPointBeingDragged > 0)
-                        {
-                            controlPointBeingDragged--;
-                            vertexData = new VertexData(vertexData.Command, new Vector2(vertexData.Position.X, xEditWidget.ActuallNumberEdit.Value), vertexData.Hint);
-                            controlPointBeingDragged++;
-                        }
-                    }
-                    else
-                    {
-                    }
-                }
+                var oldPosition = vertexStorage[controlPointBeingDragged].Position;
+                var newPosition = new Vector2(xEditWidget.ActuallNumberEdit.Value, yEditWidget.ActuallNumberEdit.Value);
+                var delta = newPosition - oldPosition;
+                OffsetSelectedPoint(delta);
             };
 
             xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
             toolBar.AddChild(xEditWidget);
 
-            yEditWidget = new ThemedNumberEdit(0, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+            yEditWidget = new ThemedNumberEdit(0, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth)
             {
                 TabIndex = tabIndex++,
                 SelectAllOnFocus = true,
                 VAnchor = VAnchor.Center,
                 Margin = theme.ButtonSpacing,
+                Enabled = false,
             };
             yEditWidget.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 3;
             yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
             {
+                var oldPosition = vertexStorage[controlPointBeingDragged].Position;
+                var newPosition = new Vector2(xEditWidget.ActuallNumberEdit.Value, yEditWidget.ActuallNumberEdit.Value);
+                var delta = newPosition - oldPosition;
+                OffsetSelectedPoint(delta);
             };
             yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
@@ -193,7 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools
             };
 
             // the sharp corner button
-            var sharpButton = new ThemedRadioTextButton("S", theme)
+            sharpButton = new ThemedRadioTextButton("S", theme)
             {
                 BackgroundColor = theme.SlightShade,
                 HoverColor = theme.SlightShade.WithAlpha(75),
@@ -206,7 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools
             sharpButton.Click += (s, e) => { controlPointConstraint = ControlPointConstraint.Sharp; };
 
             // the aligned corner button
-            var alignedButton = new ThemedRadioTextButton("A", theme)
+            alignedButton = new ThemedRadioTextButton("A", theme)
             {
                 BackgroundColor = theme.SlightShade,
                 HoverColor = theme.SlightShade.WithAlpha(75),
@@ -219,7 +218,7 @@ namespace MatterHackers.MatterControl.DesignTools
             alignedButton.Click += (s, e) => { controlPointConstraint = ControlPointConstraint.Aligned; };
 
             // the free button
-            var freeButton = new ThemedRadioTextButton("F", theme)
+            freeButton = new ThemedRadioTextButton("F", theme)
             {
                 BackgroundColor = theme.SlightShade,
                 HoverColor = theme.SlightShade.WithAlpha(75),
@@ -243,6 +242,10 @@ namespace MatterHackers.MatterControl.DesignTools
         private int controlPointBeingHovered = -1;
         private ThemedNumberEdit yEditWidget;
         private ThemedNumberEdit xEditWidget;
+        private int initialTabIndex;
+        private ThemedRadioTextButton sharpButton;
+        private ThemedRadioTextButton alignedButton;
+        private ThemedRadioTextButton freeButton;
 
         public void CenterPartInView()
         {
@@ -260,7 +263,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderCurve(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
+            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
 
             //if (vertexStorage.GetType().GetCustomAttributes(typeof(PathEditorFactory.ShowAxisAttribute), true).FirstOrDefault() is PathEditorFactory.ShowAxisAttribute showAxisAttribute)
             {
@@ -316,31 +319,62 @@ namespace MatterHackers.MatterControl.DesignTools
                                 xEditWidget.Enabled= false;
                                 yEditWidget.Text = "---";
                                 yEditWidget.Enabled= false;
+
+                                sharpButton.Enabled = false;
+                                alignedButton.Enabled = false;
+                                freeButton.Enabled = false;
                             }
                             else
                             {
-                                xEditWidget.Enabled = true;
-                                yEditWidget.Enabled = true;
-                                UpdatePositionControls();
+                                UpdateControlsForSelection();
                             }
                         }
                         break;
 
                     case MouseButtons.Middle:
-                        mouseDownTransformOverride = ETransformState.Move;
-                        break;
-
                     case MouseButtons.Right:
-                        mouseDownTransformOverride = ETransformState.Scale;
+                        if (Keyboard.IsKeyDown(Keys.ControlKey))
+                        {
+                            mouseDownTransformOverride = ETransformState.Scale;
+                        }
+                        else
+                        {
+                            mouseDownTransformOverride = ETransformState.Move;
+                        }
                         break;
                 }
             }
         }
 
-        private void UpdatePositionControls()
+        private void UpdateControlsForSelection()
         {
-            xEditWidget.Value = vertexStorage[controlPointBeingDragged].Position.X;
-            yEditWidget.Value = vertexStorage[controlPointBeingDragged].Position.Y;
+            xEditWidget.Enabled = true;
+            yEditWidget.Enabled = true;
+            sharpButton.Enabled = true;
+            alignedButton.Enabled = true;
+            freeButton.Enabled = true;
+
+            var selected = vertexStorage[controlPointBeingDragged];
+            xEditWidget.Value = selected.Position.X;
+            yEditWidget.Value = selected.Position.Y;
+
+            switch(selected.Hint)
+            {
+                case CommandHint.C4Point:
+                case CommandHint.C4ControlToPoint:
+                case CommandHint.C4ControlFromPrev:
+                    freeButton.Checked = true;
+                    break;
+
+                default:
+                    if (selected.IsMoveTo
+                        || selected.IsLineTo)
+                    {
+                        sharpButton.Checked = true;
+                    }
+                    break;
+            }
+
         }
 
         private int GetControlPointIndex(Vector2 mousePosition)
@@ -379,8 +413,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     {
                         ScalingTransform.inverse_transform(ref mouseDelta);
                         OffsetSelectedPoint(mouseDelta);
-                        vertexChanged?.Invoke();
-                        UpdatePositionControls();
+                        UpdateControlsForSelection();
                     }
                 }
             }
@@ -395,7 +428,8 @@ namespace MatterHackers.MatterControl.DesignTools
         private void OffsetSelectedPoint(Vector2 delta)
         {
             if (controlPointBeingDragged < 0
-                || controlPointBeingDragged >= vertexStorage.Count)
+                || controlPointBeingDragged >= vertexStorage.Count
+                || delta.LengthSquared == 0)
             {
                 return;
             }
@@ -421,6 +455,8 @@ namespace MatterHackers.MatterControl.DesignTools
                 // only drag the point
                 vertexStorage[controlPointBeingDragged] = new VertexData(vertexData.Command, vertexData.Position + delta, vertexData.Hint);
             }
+
+            vertexChanged?.Invoke();
         }
 
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)

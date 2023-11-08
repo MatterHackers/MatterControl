@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (item is ILibraryAssetStream streamInterface)
 					{
-						// If we are loding a binary MCX file, coy its assets
+						// If we are loding a binary MCX file, copy its assets
 						await CopyAssetsFromBinaryMcx(streamInterface);
 
 						using (var contentStream = await streamInterface.GetStream(progressReporter))
