@@ -63,21 +63,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
         [Slider(0, 50, snapDistance: 1)]
-        public IntOrExpression PinchSlices { get; set; } = 5;
+        public IntOrExpression PinchSlices { get; set; } = 20;
 
         [Description("Enable advanced features.")]
         public bool Advanced { get; set; } = false;
 
         [Description("Allows for the repositioning of the rotation origin")]
         public Vector2 RotationOffset { get; set; }
-
-        [Description("The percentage up from the bottom to end the pinch")]
-        [Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
-        public DoubleOrExpression EndHeightPercent { get; set; } = 100;
-
-        [Description("The percentage up from the bottom to start the pinch")]
-        [Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
-        public DoubleOrExpression StartHeightPercent { get; set; } = 0;
 
         public IRadiusProvider RadiusProvider
         {
@@ -124,11 +116,6 @@ namespace MatterHackers.MatterControl.DesignTools
             var aabb = this.GetAxisAlignedBoundingBox();
 
             var pinchSlices = PinchSlices.ClampIfNotCalculated(this, 0, 300, ref valuesChanged);
-            var endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
-            endHeightPercent = EndHeightPercent.ClampIfNotCalculated(this, 1, 100, ref valuesChanged);
-            var startHeightPercent = StartHeightPercent.ClampIfNotCalculated(this, 0, endHeightPercent - 1, ref valuesChanged);
-            startHeightPercent = Math.Min(endHeightPercent - 1, startHeightPercent);
-
             var rebuildLocks = this.RebuilLockAll();
 
             return ApplicationController.Instance.Tasks.Execute(
@@ -141,12 +128,6 @@ namespace MatterHackers.MatterControl.DesignTools
                     var bottom = sourceAabb.MinXYZ.Z;
                     var top = sourceAabb.MaxXYZ.Z;
                     var size = sourceAabb.ZSize;
-                    if (Advanced)
-                    {
-                        top = sourceAabb.ZSize * endHeightPercent / 100.0;
-                        bottom = sourceAabb.ZSize * startHeightPercent / 100.0;
-                        size = top - bottom;
-                    }
 
                     double numberOfCuts = pinchSlices;
 
@@ -172,13 +153,13 @@ namespace MatterHackers.MatterControl.DesignTools
                         var middlePoint = (bottomPoint + topPoint) / 2;
                         middlePoint.X *= 2;
                         
-                        var Point1 = new Vector2(0, 0);
-                        var Point2 = new Vector2(1, 4);
-                        var Point3 = new Vector2(2, 8);
-                        var Point4 = new Vector2(3, 12);
-                        var Point5 = new Vector2(4, 14);
-                        var Point6 = new Vector2(5, 16);
-                        var Point7 = new Vector2(6, 18);
+                        var Point1 = new Vector2(maxRadius, bottom);
+                        var Point2 = new Vector2(maxRadius, bottom + (top - bottom) * .2);
+                        var Point3 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .2);
+                        var Point4 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .5);
+                        var Point5 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .8);
+                        var Point6 = new Vector2(maxRadius, bottom + (top - bottom) * .8);
+                        var Point7 = new Vector2(maxRadius, top);
                         
                         PathForHorizontalOffsets.Clear();
                         PathForHorizontalOffsets.MoveTo(Point1);
@@ -281,8 +262,6 @@ namespace MatterHackers.MatterControl.DesignTools
             changeSet.Clear();
 
             changeSet.Add(nameof(RotationOffset), Advanced);
-            changeSet.Add(nameof(StartHeightPercent), Advanced);
-            changeSet.Add(nameof(EndHeightPercent), Advanced);
 
             // first turn on all the settings we want to see
             foreach (var kvp in changeSet.Where(c => c.Value))
