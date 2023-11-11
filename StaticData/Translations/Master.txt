@@ -1273,6 +1273,9 @@ Translated:Currently available serial ports.
 English:Curve
 Translated:Curve
 
+English:Custom Object Builder
+Translated:Custom Object Builder
+
 English:Custom Points
 Translated:Custom Points
 
@@ -2034,6 +2037,9 @@ Translated:Flattened
 
 English:Flooded Hot End
 Translated:Flooded Hot End
+
+English:Folder Being Monitored
+Translated:Folder Being Monitored
 
 English:Folder Name
 Translated:Folder Name

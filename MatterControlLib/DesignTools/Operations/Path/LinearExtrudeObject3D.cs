@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
                     if (childPaths != null)
                     {
-                        childPaths = childPaths.Union(childPaths);
+                        //childPaths = childPaths.Union(childPaths);
                         Mesh = VertexSourceToMesh.Extrude(childPaths, height, bevel, InflatePathObject3D.GetJoinType(Style));
                         if (Mesh.Vertices.Count == 0)
                         {
