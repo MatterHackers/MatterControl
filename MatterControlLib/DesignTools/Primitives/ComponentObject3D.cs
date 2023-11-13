@@ -27,275 +27,284 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideChildrenFromTreeView]
-	public class ComponentObject3D : Object3D, IRightClickMenuProvider
-	{
-		private const string ImageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
+    public interface IComponentObject3D : IObject3D
+    {
+        bool Finalized { get; set; }
+        bool ProOnly { get; set; }
 
-		public ComponentObject3D()
-		{
-		}
+        (string cellId, string cellData) DecodeContent(int editorIndex);
 
-		public ComponentObject3D(IEnumerable<IObject3D> children)
-			: base(children)
-		{
-		}
+        List<string> SurfacedEditors { get; set; }
+    }
 
-		public override bool CanApply => !Finalized || Persistable;
+    [HideChildrenFromTreeView]
+    public class ComponentObject3D : Object3D, IRightClickMenuProvider, IComponentObject3D
+    {
+        private const string ImageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
 
-		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
-
-		private bool _finalizade = true;
-		
-		[Description("Switch from editing to distribution")]
-		public bool Finalized
-		{
-			get => _finalizade;
-			
-			set
-			{
-				_finalizade = value;
-				// on any invalidate ensure that the visibility setting are correct for embedded sheet objects
-				foreach (var child in this.Descendants())
-				{
-					if (child is SheetObject3D)
-					{
-						child.Visible = !this.Finalized;
-					}
-				}
-			}
-		}
-
-		public List<string> SurfacedEditors { get; set; } = new List<string>();
-
-		[HideFromEditor]
-		public string ComponentID { get; set; } = "";
-
-		[Description("MatterHackers Internal Use")]
-		public bool ProOnly { get; set; }
-
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			// we want to end up with just a group of all the visible mesh objects
-			using (RebuildLock())
-			{
-				var newChildren = new List<IObject3D>();
-
-				// push our matrix into a copy of our visible children
-				foreach (var child in this.VisibleMeshes())
-				{
-					var meshOnlyItem = new Object3D
-					{
-						Matrix = child.WorldMatrix(this),
-						Color = child.WorldColor(this),
-						MaterialIndex = child.WorldMaterialIndex(this),
-						OutputType = child.WorldOutputType(this),
-						Mesh = child.Mesh,
-						Name = "Mesh".Localize()
-					};
-					newChildren.Add(meshOnlyItem);
-				}
-
-				if (newChildren.Count > 1)
-				{
-					var group = new GroupHolesAppliedObject3D
-					{
-						Name = this.Name
-					};
-					group.Children.Modify(list =>
-					{
-						list.AddRange(newChildren);
-					});
-					newChildren.Clear();
-					newChildren.Add(group);
-				}
-				else if (newChildren.Count == 1)
-				{
-					newChildren[0].Name = this.Name;
-				}
-
-				// and replace us with the children
-				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, newChildren));
-			}
-
-			Invalidate(InvalidateType.Children);
-		}
-
-		public (string cellId, string cellData) DecodeContent(int editorIndex)
-		{
-			if (SurfacedEditors[editorIndex].StartsWith("!"))
-			{
-				var cellData2 = SurfacedEditors[editorIndex].Substring(1);
-				var cellId2 = cellData2.ToLower();
-				// check if it has embededdata
-				var separator = cellData2.IndexOf(',');
-				if (separator != -1)
-				{
-					cellId2 = cellData2.Substring(0, separator).ToLower();
-					cellData2 = cellData2.Substring(separator + 1);
-				}
-				else
-				{
-					var controledSheet = ControledSheet;
-					if (controledSheet != null)
-					{
-						// We don't have any cache of the cell content, get the current content
-						cellData2 = controledSheet.SheetData.GetCellValue(cellId2);
-					}
-				}
-
-				return (cellId2, cellData2);
-			}
-
-			return (null, null);
-		}
-
-		private SheetObject3D ControledSheet => this.Descendants<SheetObject3D>().ToArray()[0];//.FirstOrDefault();
-			// this.Children.Where(s => s is SheetObject3D).FirstOrDefault() as SheetObject3D;
-
-		private void RecalculateSheet()
-		{
-			// if there are editors that reference cells
-			for (int i=0; i<SurfacedEditors.Count; i++)
-            {
-				var (cellId, cellData) = this.DecodeContent(i);
-				if (cellData != null 
-					&& cellData.StartsWith("="))
-				{
-					var expression = new DoubleOrExpression(cellData);
-					var controledSheet = ControledSheet;
-					if (controledSheet != null)
-					{
-						var cell = controledSheet.SheetData[cellId];
-						if (cell != null)
-						{
-							cell.Expression = expression.Value(this).ToString();
-						}
-					}
-				}
-			}
-
-			if (SurfacedEditors.Any(se => se.StartsWith("!"))
-				&& !this.RebuildLocked)
-			{
-				var controledSheet = ControledSheet;
-
-				var componentLock = this.RebuildLock();
-				controledSheet.SheetData.Recalculate();
-
-				UiThread.RunOnIdle(() =>
-				{
-					// wait until the sheet is done rebuilding (or 30 seconds)
-					var startTime = UiThread.CurrentTimerMs;
-					while (controledSheet.RebuildLocked
-						&& startTime + 30000 < UiThread.CurrentTimerMs)
-					{
-						Thread.Sleep(1);
-					}
-
-					componentLock.Dispose();
-				});
-			}
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+        public ComponentObject3D()
         {
-			switch(invalidateType.InvalidateType)
+        }
+
+        public ComponentObject3D(IEnumerable<IObject3D> children)
+            : base(children)
+        {
+        }
+
+        public override bool CanApply => !Finalized || Persistable;
+
+        public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
+
+        private bool _finalizade = true;
+
+        [Description("Switch from editing to distribution")]
+        public bool Finalized
+        {
+            get => _finalizade;
+
+            set
             {
-				case InvalidateType.SheetUpdated:
-				case InvalidateType.Properties:
-					RecalculateSheet();
-					break;
+                _finalizade = value;
+                // on any invalidate ensure that the visibility setting are correct for embedded sheet objects
+                foreach (var child in this.Descendants())
+                {
+                    if (child is SheetObject3D)
+                    {
+                        child.Visible = !this.Finalized;
+                    }
+                }
+            }
+        }
+
+        public List<string> SurfacedEditors { get; set; } = new List<string>();
+
+        [HideFromEditor]
+        public string ComponentID { get; set; } = "";
+
+        [Description("MatterHackers Internal Use")]
+        public bool ProOnly { get; set; }
+
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+            // we want to end up with just a group of all the visible mesh objects
+            using (RebuildLock())
+            {
+                var newChildren = new List<IObject3D>();
+
+                // push our matrix into a copy of our visible children
+                foreach (var child in this.VisibleMeshes())
+                {
+                    var meshOnlyItem = new Object3D
+                    {
+                        Matrix = child.WorldMatrix(this),
+                        Color = child.WorldColor(this),
+                        MaterialIndex = child.WorldMaterialIndex(this),
+                        OutputType = child.WorldOutputType(this),
+                        Mesh = child.Mesh,
+                        Name = "Mesh".Localize()
+                    };
+                    newChildren.Add(meshOnlyItem);
+                }
+
+                if (newChildren.Count > 1)
+                {
+                    var group = new GroupHolesAppliedObject3D
+                    {
+                        Name = this.Name
+                    };
+                    group.Children.Modify(list =>
+                    {
+                        list.AddRange(newChildren);
+                    });
+                    newChildren.Clear();
+                    newChildren.Add(group);
+                }
+                else if (newChildren.Count == 1)
+                {
+                    newChildren[0].Name = this.Name;
+                }
+
+                // and replace us with the children
+                undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, newChildren));
+            }
+
+            Invalidate(InvalidateType.Children);
+        }
+
+        public (string cellId, string cellData) DecodeContent(int editorIndex)
+        {
+            if (SurfacedEditors[editorIndex].StartsWith("!"))
+            {
+                var cellData2 = SurfacedEditors[editorIndex].Substring(1);
+                var cellId2 = cellData2.ToLower();
+                // check if it has embededdata
+                var separator = cellData2.IndexOf(',');
+                if (separator != -1)
+                {
+                    cellId2 = cellData2.Substring(0, separator).ToLower();
+                    cellData2 = cellData2.Substring(separator + 1);
+                }
+                else
+                {
+                    var controledSheet = ControledSheet;
+                    if (controledSheet != null)
+                    {
+                        // We don't have any cache of the cell content, get the current content
+                        cellData2 = controledSheet.SheetData.GetCellValue(cellId2);
+                    }
+                }
+
+                return (cellId2, cellData2);
+            }
+
+            return (null, null);
+        }
+
+        private SheetObject3D ControledSheet => this.Descendants<SheetObject3D>().ToArray()[0];//.FirstOrDefault();
+                                                                                               // this.Children.Where(s => s is SheetObject3D).FirstOrDefault() as SheetObject3D;
+
+        private void RecalculateSheet()
+        {
+            // if there are editors that reference cells
+            for (int i = 0; i < SurfacedEditors.Count; i++)
+            {
+                var (cellId, cellData) = this.DecodeContent(i);
+                if (cellData != null
+                    && cellData.StartsWith("="))
+                {
+                    var expression = new DoubleOrExpression(cellData);
+                    var controledSheet = ControledSheet;
+                    if (controledSheet != null)
+                    {
+                        var cell = controledSheet.SheetData[cellId];
+                        if (cell != null)
+                        {
+                            cell.Expression = expression.Value(this).ToString();
+                        }
+                    }
+                }
+            }
+
+            if (SurfacedEditors.Any(se => se.StartsWith("!"))
+                && !this.RebuildLocked)
+            {
+                var controledSheet = ControledSheet;
+
+                var componentLock = this.RebuildLock();
+                controledSheet.SheetData.Recalculate();
+
+                UiThread.RunOnIdle(() =>
+                {
+                    // wait until the sheet is done rebuilding (or 30 seconds)
+                    var startTime = UiThread.CurrentTimerMs;
+                    while (controledSheet.RebuildLocked
+                        && startTime + 30000 < UiThread.CurrentTimerMs)
+                    {
+                        Thread.Sleep(1);
+                    }
+
+                    componentLock.Dispose();
+                });
+            }
+        }
+
+        public override void OnInvalidate(InvalidateArgs invalidateType)
+        {
+            switch (invalidateType.InvalidateType)
+            {
+                case InvalidateType.SheetUpdated:
+                case InvalidateType.Properties:
+                    RecalculateSheet();
+                    break;
             }
 
             base.OnInvalidate(invalidateType);
         }
 
         public override void Cancel(UndoBuffer undoBuffer)
-		{
-			// Make any hiden children visible
-			// on any invalidate ensure that the visibility setting are correct for embedded sheet objects
-			foreach (var child in this.Descendants())
-			{
-				if (child is SheetObject3D)
-				{
-					child.Visible = true;
-				}
-			}
+        {
+            // Make any hiden children visible
+            // on any invalidate ensure that the visibility setting are correct for embedded sheet objects
+            foreach (var child in this.Descendants())
+            {
+                if (child is SheetObject3D)
+                {
+                    child.Visible = true;
+                }
+            }
 
-			// Custom remove for ImageConverter
-			if (this.ComponentID == ImageConverterComponentID)
-			{
-				var parent = this.Parent;
+            // Custom remove for ImageConverter
+            if (this.ComponentID == ImageConverterComponentID)
+            {
+                var parent = this.Parent;
 
-				using (RebuildLock())
-				{
-					if (this.Descendants<ImageObject3D>().FirstOrDefault() is ImageObject3D imageObject3D)
-					{
-						imageObject3D.Matrix = this.Matrix;
+                using (RebuildLock())
+                {
+                    if (this.Descendants<ImageObject3D>().FirstOrDefault() is ImageObject3D imageObject3D)
+                    {
+                        imageObject3D.Matrix = this.Matrix;
 
-						if (undoBuffer != null)
-						{
-							undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { imageObject3D }));
-						}
-						else
-						{
-							parent.Children.Modify(list =>
-							{
-								list.Remove(this);
-								list.Add(imageObject3D);
-							});
-						}
-					}
-				}
+                        if (undoBuffer != null)
+                        {
+                            undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { imageObject3D }));
+                        }
+                        else
+                        {
+                            parent.Children.Modify(list =>
+                            {
+                                list.Remove(this);
+                                list.Add(imageObject3D);
+                            });
+                        }
+                    }
+                }
 
-				parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-			}
-			else
-			{
-				if (ProOnly)
-				{
-					// just delete it
-					var parent = this.Parent;
+                parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+            }
+            else
+            {
+                if (ProOnly)
+                {
+                    // just delete it
+                    var parent = this.Parent;
 
-					using (RebuildLock())
-					{
-						if (undoBuffer != null)
-						{
-							// and replace us with nothing
-							undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new List<IObject3D>(), false));
-						}
-						else
-						{
-							parent.Children.Modify(list =>
-							{
-								list.Remove(this);
-							});
-						}
-					}
+                    using (RebuildLock())
+                    {
+                        if (undoBuffer != null)
+                        {
+                            // and replace us with nothing
+                            undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new List<IObject3D>(), false));
+                        }
+                        else
+                        {
+                            parent.Children.Modify(list =>
+                            {
+                                list.Remove(this);
+                            });
+                        }
+                    }
 
-					parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-				}
-				else
-				{
-					// remove the component and leave the inside parts
-					base.Cancel(undoBuffer);
-				}
-			}
-		}
+                    parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+                }
+                else
+                {
+                    // remove the component and leave the inside parts
+                    base.Cancel(undoBuffer);
+                }
+            }
+        }
 
         public void AddRightClickMenuItemsItems(PopupMenu popupMenu, ThemeConfig theme)
         {
@@ -303,20 +312,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
             string componentID = this.ComponentID;
 
-			var helpItem = popupMenu.CreateMenuItem("Help".Localize());
-			var helpArticlesByID = ApplicationController.Instance.HelpArticlesByID;
-			helpItem.Enabled = !string.IsNullOrEmpty(componentID) && helpArticlesByID.ContainsKey(componentID);
-			helpItem.Click += (s, e) =>
-			{
-				var helpTab = ApplicationController.Instance.ActivateHelpTab("Docs");
-				if (helpTab.TabContent is HelpTreePanel helpTreePanel)
-				{
-					if (helpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
-					{
-						helpTreePanel.ActiveNodePath = componentID;
-					}
-				}
-			};
-		}
+            var helpItem = popupMenu.CreateMenuItem("Help".Localize());
+            var helpArticlesByID = ApplicationController.Instance.HelpArticlesByID;
+            helpItem.Enabled = !string.IsNullOrEmpty(componentID) && helpArticlesByID.ContainsKey(componentID);
+            helpItem.Click += (s, e) =>
+            {
+                var helpTab = ApplicationController.Instance.ActivateHelpTab("Docs");
+                if (helpTab.TabContent is HelpTreePanel helpTreePanel)
+                {
+                    if (helpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
+                    {
+                        helpTreePanel.ActiveNodePath = componentID;
+                    }
+                }
+            };
+        }
     }
 }

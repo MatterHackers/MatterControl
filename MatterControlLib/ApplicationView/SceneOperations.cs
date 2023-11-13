@@ -219,19 +219,19 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("EditComponent")
 			{
 				TitleGetter = () => "Edit Component".Localize(),
-				ResultType = typeof(ComponentObject3D),
+				ResultType = typeof(IComponentObject3D),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is ComponentObject3D componentObject)
+					if (sceneItem is IComponentObject3D componentObject)
 					{
 						// Enable editing mode
 						componentObject.Finalized = false;
 
 						// Force editor rebuild
 						scene.SelectedItem = null;
-						scene.SelectedItem = componentObject;
+						scene.SelectedItem = componentObject as Object3D;
 
 						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 					}
@@ -242,13 +242,13 @@ namespace MatterHackers.MatterControl
 					var sceneItem = scene.SelectedItem;
 					return sceneItem.Parent != null
 						&& sceneItem.Parent.Parent == null
-						&& sceneItem is ComponentObject3D componentObject
+						&& sceneItem is IComponentObject3D componentObject
 						&& componentObject.Finalized
 						&& !componentObject.ProOnly;
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("scale_32x32.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A component must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && (sceneContext.Scene.SelectedItem is ComponentObject3D),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && (sceneContext.Scene.SelectedItem is IComponentObject3D),
 			};
 		}
 
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("ImageConverter")
 			{
 				TitleGetter = () => "Image Converter".Localize(),
-				ResultType = typeof(ComponentObject3D),
+				ResultType = typeof(IComponentObject3D),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;

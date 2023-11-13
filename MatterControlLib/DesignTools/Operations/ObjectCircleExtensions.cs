@@ -46,6 +46,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				foreach (var visibleMesh in visibleMeshes)
 				{
 					var matrix = visibleMesh.source.WorldMatrix(object3D);
+					if (visibleMesh.convexHull == null)
+					{
+                        continue;
+                    }
 					foreach (var positon in visibleMesh.convexHull.Vertices)
 					{
 						var transformed = positon.Transform(matrix);

@@ -3727,6 +3727,9 @@ Translated:Pinch
 English:Pinch Slices
 Translated:Pinch Slices
 
+English:Pinch Type Value
+Translated:Pinch Type Value
+
 English:Pipe Works
 Translated:Pipe Works
 

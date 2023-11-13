@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     }
 
                     // Also convert index expressions in ComponentObjects to their constants
-                    if (item is ComponentObject3D component)
+                    if (item is IComponentObject3D component)
                     {
                         for (int i = 0; i < component.SurfacedEditors.Count; i++)
                         {
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     // we don't need to rebuild our source object
                     return false;
                 }
-                else if (item.Parent is ComponentObject3D)
+                else if (item.Parent is IComponentObject3D)
                 {
                     return false;
                 }

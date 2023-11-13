@@ -68,6 +68,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
         private VertexStorage vertexStorage;
 
+        // the last vertex storage before the last change
+        private VertexStorage beforeLastChange;
+
         private ControlPointConstraint controlPointConstraint = ControlPointConstraint.Free;
 
         public PathEditorWidget(VertexStorage vertexStorage,
@@ -92,6 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
             this.unscaledRenderOffset = unscaledRenderOffset;
             this.layerScale = layerScale;
+            this.undoBuffer = undoBuffer;
 
             var topToBottom = this;
 
@@ -105,6 +109,8 @@ namespace MatterHackers.MatterControl.DesignTools
             this.vertexChanged = vertexChanged;
             this.theme = theme;
             this.vertexStorage = vertexStorage;
+            this.beforeLastChange = new VertexStorage();
+            beforeLastChange.SvgDString = vertexStorage.SvgDString;
 
             var toolBar = new FlowLayoutWidget()
             {
@@ -148,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 var oldPosition = vertexStorage[controlPointBeingDragged].Position;
                 var newPosition = new Vector2(xEditWidget.ActuallNumberEdit.Value, yEditWidget.ActuallNumberEdit.Value);
                 var delta = newPosition - oldPosition;
-                OffsetSelectedPoint(delta);
+                OffsetSelectedPoint(delta, true);
             };
 
             xEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
@@ -168,7 +174,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 var oldPosition = vertexStorage[controlPointBeingDragged].Position;
                 var newPosition = new Vector2(xEditWidget.ActuallNumberEdit.Value, yEditWidget.ActuallNumberEdit.Value);
                 var delta = newPosition - oldPosition;
-                OffsetSelectedPoint(delta);
+                OffsetSelectedPoint(delta, true);
             };
             yEditWidget.ActuallNumberEdit.KeyDown += NumberField.InternalTextEditWidget_KeyDown;
 
@@ -234,6 +240,8 @@ namespace MatterHackers.MatterControl.DesignTools
         public ETransformState TransformState { get; set; }
         private double layerScale { get; set; } = 1;
 
+        private UndoBuffer undoBuffer;
+
         private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
         private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
@@ -246,6 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools
         private ThemedRadioTextButton sharpButton;
         private ThemedRadioTextButton alignedButton;
         private ThemedRadioTextButton freeButton;
+        private bool hasBeenStartupPositioned;
 
         public void CenterPartInView()
         {
@@ -254,15 +263,29 @@ namespace MatterHackers.MatterControl.DesignTools
                 var partBounds = vertexStorage.GetBounds();
                 var weightedCenter = partBounds.Center;
 
+                var bottomPixels = 20;
+                var margin = 30;
                 unscaledRenderOffset = -weightedCenter;
-                layerScale = Math.Min((Height - 30) / partBounds.Height, (Width - 30) / partBounds.Width);
+                layerScale = Math.Min((Height - margin - bottomPixels * 2) / partBounds.Height, (Width - margin) / partBounds.Width);
+                unscaledRenderOffset += new Vector2(0, bottomPixels) / layerScale;
 
                 Invalidate();
+                scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
             }
         }
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (!hasBeenStartupPositioned)
+            {
+                if (unscaledRenderOffset == Vector2.Zero
+                    && layerScale == 1)
+                {
+                    CenterPartInView();
+                }
+                hasBeenStartupPositioned = true;
+            }
+
             new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
 
             //if (vertexStorage.GetType().GetCustomAttributes(typeof(PathEditorFactory.ShowAxisAttribute), true).FirstOrDefault() is PathEditorFactory.ShowAxisAttribute showAxisAttribute)
@@ -412,7 +435,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     if (mouseDelta.LengthSquared > 0)
                     {
                         ScalingTransform.inverse_transform(ref mouseDelta);
-                        OffsetSelectedPoint(mouseDelta);
+                        OffsetSelectedPoint(mouseDelta, false);
                         UpdateControlsForSelection();
                     }
                 }
@@ -425,38 +448,67 @@ namespace MatterHackers.MatterControl.DesignTools
             lastMousePosition = mouseEvent.Position;
         }
 
-        private void OffsetSelectedPoint(Vector2 delta)
+        public override void OnMouseUp(MouseEventArgs mouseEvent)
+        {
+            OffsetSelectedPoint(new Vector2(), true);
+            base.OnMouseUp(mouseEvent);
+        }
+
+        private void OffsetSelectedPoint(Vector2 delta, bool recordUndo)
         {
             if (controlPointBeingDragged < 0
-                || controlPointBeingDragged >= vertexStorage.Count
-                || delta.LengthSquared == 0)
+                || controlPointBeingDragged >= vertexStorage.Count)
             {
                 return;
             }
 
-            var vertexData = vertexStorage[controlPointBeingDragged];
-
-            if (vertexData.Hint == CommandHint.C4Point)
+            if (delta.LengthSquared > 0)
             {
-                for (int i = -1; i < 2; i++)
+                var vertexData = vertexStorage[controlPointBeingDragged];
+
+                if (vertexData.Hint == CommandHint.C4Point)
                 {
-                    var pointIndex = controlPointBeingDragged + i;
-                    // the prev point
-                    if (pointIndex > 0
-                        && pointIndex < vertexStorage.Count)
+                    for (int i = -1; i < 2; i++)
                     {
-                        var vertexData2 = vertexStorage[pointIndex];
-                        vertexStorage[pointIndex] = new VertexData(vertexData2.Command, vertexData2.Position + delta, vertexData2.Hint);
+                        var pointIndex = controlPointBeingDragged + i;
+                        // the prev point
+                        if (pointIndex > 0
+                            && pointIndex < vertexStorage.Count)
+                        {
+                            var vertexData2 = vertexStorage[pointIndex];
+                            vertexStorage[pointIndex] = new VertexData(vertexData2.Command, vertexData2.Position + delta, vertexData2.Hint);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // only drag the point
-                vertexStorage[controlPointBeingDragged] = new VertexData(vertexData.Command, vertexData.Position + delta, vertexData.Hint);
+                else
+                {
+                    // only drag the point
+                    vertexStorage[controlPointBeingDragged] = new VertexData(vertexData.Command, vertexData.Position + delta, vertexData.Hint);
+                }
+
+                vertexChanged?.Invoke();
             }
 
-            vertexChanged?.Invoke();
+            if (recordUndo)
+            {
+                var doVertexBuffer = new VertexStorage();
+                doVertexBuffer.SvgDString = vertexStorage.SvgDString;
+
+                var undoVertexBuffer = new VertexStorage();
+                undoVertexBuffer.SvgDString = beforeLastChange.SvgDString;
+
+                undoBuffer.AddAndDo(new UndoRedoActions(() =>
+                {
+                    vertexStorage.SvgDString = undoVertexBuffer.SvgDString;
+                    vertexChanged?.Invoke();
+                }, () =>
+                {
+                    vertexStorage.SvgDString = doVertexBuffer.SvgDString;
+                    vertexChanged?.Invoke();
+                }));
+                // record the change
+                beforeLastChange.SvgDString = vertexStorage.SvgDString;
+            }
         }
 
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)

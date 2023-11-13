@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             var rows = new SafeList<SettingsRow>();
 
             // put in the normal editor
-            if (selectedItem is ComponentObject3D componentObject
+            if (selectedItem is IComponentObject3D componentObject
                 && componentObject.Finalized)
             {
                 AddComponentEditor(selectedItem, undoBuffer, rows, componentObject, ref tabIndex);
@@ -538,7 +538,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, ComponentObject3D componentObject, ref int tabIndex)
+        private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, IComponentObject3D componentObject, ref int tabIndex)
         {
             var context = new EditorContext();
             PropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
@@ -600,7 +600,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void AddSheetCellEditor(UndoBuffer undoBuffer, ComponentObject3D componentObject, List<string> editorList, int editorIndex)
+        private void AddSheetCellEditor(UndoBuffer undoBuffer, IComponentObject3D componentObject, List<string> editorList, int editorIndex)
         {
             var firtSheet = componentObject.Descendants<SheetObject3D>().FirstOrDefault();
             if (firtSheet != null)
@@ -633,7 +633,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 editorList[editorIndex] = "!" + cellId + "," + oldValue;
                                 var expression = new StringOrExpression(oldValue);
                                 cell.Expression = expression.Value(componentObject).ToString();
-                                componentObject.Invalidate(InvalidateType.SheetUpdated);
+                                (componentObject as Object3D).Invalidate(InvalidateType.SheetUpdated);
                                 doOrUndoing = false;
                             },
                             () =>
@@ -642,7 +642,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 editorList[editorIndex] = "!" + cellId + "," + newValue;
                                 var expression = new StringOrExpression(newValue);
                                 cell.Expression = expression.Value(componentObject).ToString();
-                                componentObject.Invalidate(InvalidateType.SheetUpdated);
+                                (componentObject as Object3D).Invalidate(InvalidateType.SheetUpdated);
                                 doOrUndoing = false;
                             }));
                         }

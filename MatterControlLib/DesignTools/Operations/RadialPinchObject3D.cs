@@ -65,8 +65,14 @@ namespace MatterHackers.MatterControl.DesignTools
         [Slider(0, 50, snapDistance: 1)]
         public IntOrExpression PinchSlices { get; set; } = 20;
 
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+
         [Description("Enable advanced features.")]
         public bool Advanced { get; set; } = false;
+
+        public enum PinchType { Radial, XAxis }
+
+        public PinchType PinchTypeValue { get; set; } = PinchType.Radial;
 
         [Description("Allows for the repositioning of the rotation origin")]
         public Vector2 RotationOffset { get; set; }
@@ -203,15 +209,11 @@ namespace MatterHackers.MatterControl.DesignTools
                             }
 
                             var positionXy = new Vector2(position) - rotationCenter;
-                            var fromLine = true;
-                            if (fromLine)
+                            positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxRadius * 10);
+                            if (PinchTypeValue == PinchType.XAxis)
                             {
-                                positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxRadius * 10);
-                                //positionXy *= xAtYInterpolator.Get(position.Z * 10) / maxRadius;
-                            }
-                            else
-                            {
-                                positionXy *= Easing.Quadratic.InOut(ratio);
+                                // only use the x value
+                                positionXy.Y = position.Y;
                             }
                             positionXy += rotationCenter;
                             transformedMesh.Vertices[i] = new Vector3Float(positionXy.X, positionXy.Y, position.Z);

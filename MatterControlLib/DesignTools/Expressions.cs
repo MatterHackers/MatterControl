@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools
             }
         }
 
-        public static IEnumerable<int> GetComponentExpressions(ComponentObject3D component, string checkForString, bool startsWith)
+        public static IEnumerable<int> GetComponentExpressions(IComponentObject3D component, string checkForString, bool startsWith)
         {
             for (var i = 0; i < component.SurfacedEditors.Count; i++)
             {
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools
             foreach (var item in itemToCheck.DescendantsAndSelf())
             {
                 if (GetActiveExpression(item, checkForString, startsWith).Any()
-                    || itemToCheck is ComponentObject3D component
+                    || itemToCheck is IComponentObject3D component
                         && GetComponentExpressions(component, checkForString, startsWith).Any())
                 {
                     // three is one so return true

@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using g3;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
