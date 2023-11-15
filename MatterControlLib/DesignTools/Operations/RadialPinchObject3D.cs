@@ -40,6 +40,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -298,10 +299,13 @@ namespace MatterHackers.MatterControl.DesignTools
             graphics2D.Line(pathEditorWidget.TotalTransform.Transform(leftOrigin), pathEditorWidget.TotalTransform.Transform(rightOrigin), lineColor);
             graphics2D.DrawString(bounds.ZSize.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(0, bounds.ZSize)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
 
-            var bottomOrigin = new Vector2(bounds.XSize / 2, -10000);
-            var topOrigin = new Vector2(bounds.XSize / 2, 10000);
+            var maxWidthDepth = Math.Max(bounds.XSize / 2 + RotationOffset.X, bounds.YSize / 2 + RotationOffset.Y);
+
+            var bottomOrigin = new Vector2(maxWidthDepth, -10000);
+            var topOrigin = new Vector2(maxWidthDepth, 10000);
+
             graphics2D.Line(pathEditorWidget.TotalTransform.Transform(bottomOrigin), pathEditorWidget.TotalTransform.Transform(topOrigin), lineColor);
-            graphics2D.DrawString((bounds.XSize / 2).ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(bounds.XSize / 2, 0)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
+            graphics2D.DrawString(maxWidthDepth.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(maxWidthDepth, 0)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
         }
     }
 
