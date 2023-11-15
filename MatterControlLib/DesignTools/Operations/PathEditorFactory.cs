@@ -32,6 +32,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
             if (property.Value is EditableVertexStorage vertexStorage)
             {
                 var pathEditorWidget = new PathEditorWidget(vertexStorage,
+                    property,
                     propertyEditor.UndoBuffer,
                     propertyEditor.Theme,
                     VertexBufferChanged,
@@ -79,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools
         }
 
         [AttributeUsage(AttributeTargets.Property)]
-        public class ShowAxisAttribute : Attribute
+        public class ShowOriginAttribute : Attribute
         {
         }
     }

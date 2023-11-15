@@ -38,9 +38,15 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+    interface IPathEditorDraw
+    {
+        void OnPathDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget);
+    }
+
     public class PathEditorWidget : GuiWidget
     {
         public enum ETransformState
@@ -74,6 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
         private ControlPointConstraint controlPointConstraint = ControlPointConstraint.Free;
 
         public PathEditorWidget(VertexStorage vertexStorage,
+            EditableProperty editableProperty,
             UndoBuffer undoBuffer,
             ThemeConfig theme,
             Action vertexChanged,
@@ -82,6 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
             double layerScale = 1,
             Action<Vector2, double> scaleChanged = null)
         {
+            this.editableProperty = editableProperty;
             // remember the initial tab index
             initialTabIndex = tabIndex;
             // and add to the tab index the number of controls we plan to add
@@ -243,13 +251,14 @@ namespace MatterHackers.MatterControl.DesignTools
         private UndoBuffer undoBuffer;
 
         private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
-        private Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
+        public Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
         private int controlPointBeingDragged = -1;
         private int selectedPointIndex;
         private int controlPointBeingHovered = -1;
         private ThemedNumberEdit yEditWidget;
         private ThemedNumberEdit xEditWidget;
+        private EditableProperty editableProperty;
         private int initialTabIndex;
         private ThemedRadioTextButton sharpButton;
         private ThemedRadioTextButton alignedButton;
@@ -286,9 +295,14 @@ namespace MatterHackers.MatterControl.DesignTools
                 hasBeenStartupPositioned = true;
             }
 
+            if(editableProperty.Source is IPathEditorDraw pathEditorDraw)
+            {
+                pathEditorDraw.OnPathDraw(graphics2D, this);
+            }
+
             new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
 
-            //if (vertexStorage.GetType().GetCustomAttributes(typeof(PathEditorFactory.ShowAxisAttribute), true).FirstOrDefault() is PathEditorFactory.ShowAxisAttribute showAxisAttribute)
+            if(editableProperty.PropertyInfo.GetCustomAttributes(true).OfType<PathEditorFactory.ShowOriginAttribute>().FirstOrDefault() is PathEditorFactory.ShowOriginAttribute showAxisAttribute)
             {
                 var leftOrigin = new Vector2(-10000, 0);
                 var rightOrigin = new Vector2(10000, 0);

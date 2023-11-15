@@ -27,12 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using CsvHelper.Configuration.Attributes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -45,10 +40,15 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class RadialPinchObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
+    public class RadialPinchObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw, IPathEditorDraw
     {
         public RadialPinchObject3D()
         {
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
             Name = "Radial Pinch".Localize();
         }
 
-        [PathEditorFactory.ShowAxis]
+        [PathEditorFactory.ShowOrigin]
         public PathEditorFactory.EditableVertexStorage PathForHorizontalOffsets { get; set; } = new PathEditorFactory.EditableVertexStorage();
 
         [Description("Specifies the number of vertical cuts required to ensure the part can be pinched well.")]
@@ -66,12 +66,12 @@ namespace MatterHackers.MatterControl.DesignTools
         public IntOrExpression PinchSlices { get; set; } = 20;
 
         [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-
         [Description("Enable advanced features.")]
         public bool Advanced { get; set; } = false;
 
-        public enum PinchType { Radial, XAxis }
+        public enum PinchType { Radial, XAxis, YAxis }
 
+        [Name("Pinch Type")]
         public PinchType PinchTypeValue { get; set; } = PinchType.Radial;
 
         [Description("Allows for the repositioning of the rotation origin")]
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         var topPoint = new Vector2(maxRadius, top * 10);
                         var middlePoint = (bottomPoint + topPoint) / 2;
                         middlePoint.X *= 2;
-                        
+
                         var Point1 = new Vector2(maxRadius, bottom);
                         var Point2 = new Vector2(maxRadius, bottom + (top - bottom) * .2);
                         var Point3 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .2);
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         var Point5 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .8);
                         var Point6 = new Vector2(maxRadius, bottom + (top - bottom) * .8);
                         var Point7 = new Vector2(maxRadius, top);
-                        
+
                         PathForHorizontalOffsets.Clear();
                         PathForHorizontalOffsets.MoveTo(Point1);
                         PathForHorizontalOffsets.Curve4(Point2, Point3, Point4);
@@ -210,10 +210,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
                             var positionXy = new Vector2(position) - rotationCenter;
                             positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxRadius * 10);
-                            if (PinchTypeValue == PinchType.XAxis)
+                            if (Advanced)
                             {
-                                // only use the x value
-                                positionXy.Y = position.Y;
+                                if (PinchTypeValue == PinchType.XAxis)
+                                {
+                                    // only use the x value
+                                    positionXy.Y = position.Y - rotationCenter.Y;
+                                }
+                                else if (PinchTypeValue == PinchType.YAxis)
+                                {
+                                    // only use the y value
+                                    positionXy.X = position.X - rotationCenter.X;
+                                }
                             }
                             positionXy += rotationCenter;
                             transformedMesh.Vertices[i] = new Vector3Float(positionXy.X, positionXy.Y, position.Z);
@@ -264,6 +272,7 @@ namespace MatterHackers.MatterControl.DesignTools
             changeSet.Clear();
 
             changeSet.Add(nameof(RotationOffset), Advanced);
+            changeSet.Add(nameof(PinchTypeValue), Advanced);
 
             // first turn on all the settings we want to see
             foreach (var kvp in changeSet.Where(c => c.Value))
@@ -276,6 +285,23 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 change.SetRowVisible(kvp.Key, () => kvp.Value);
             }
+        }
+
+        public void OnPathDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget)
+        {
+            var theme = ApplicationController.Instance.Theme;
+            var bounds = SourceContainer.GetAxisAlignedBoundingBox();
+            var lineColor = theme.PrimaryAccentColor.WithAlpha(50);
+
+            var leftOrigin = new Vector2(-10000, bounds.ZSize);
+            var rightOrigin = new Vector2(10000, bounds.ZSize);
+            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(leftOrigin), pathEditorWidget.TotalTransform.Transform(rightOrigin), lineColor);
+            graphics2D.DrawString(bounds.ZSize.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(0, bounds.ZSize)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
+
+            var bottomOrigin = new Vector2(bounds.XSize / 2, -10000);
+            var topOrigin = new Vector2(bounds.XSize / 2, 10000);
+            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(bottomOrigin), pathEditorWidget.TotalTransform.Transform(topOrigin), lineColor);
+            graphics2D.DrawString((bounds.XSize / 2).ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(bounds.XSize / 2, 0)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
         }
     }
 
@@ -305,7 +331,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         internal double Get(double y)
         {
-            // check if we are bellow the bottom 
+            // check if we are bellow the bottom
             if (y <= bottom)
             {
                 return offsetAtY[0];
