@@ -46,11 +46,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Typography.OpenFont;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class RadialPinchObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw, IPathEditorDraw
     {
+        private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
+
         public RadialPinchObject3D()
         {
             // make sure the path editor is registered
@@ -58,6 +61,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
             Name = "Radial Pinch".Localize();
         }
+
+        public enum PinchType
+        { Radial, XAxis, YAxis }
 
         [PathEditorFactory.ShowOrigin]
         public PathEditorFactory.EditableVertexStorage PathForHorizontalOffsets { get; set; } = new PathEditorFactory.EditableVertexStorage();
@@ -70,13 +76,21 @@ namespace MatterHackers.MatterControl.DesignTools
         [Description("Enable advanced features.")]
         public bool Advanced { get; set; } = false;
 
-        public enum PinchType { Radial, XAxis, YAxis }
-
         [Name("Pinch Type")]
         public PinchType PinchTypeValue { get; set; } = PinchType.Radial;
 
         [Description("Allows for the repositioning of the rotation origin")]
         public Vector2 RotationOffset { get; set; }
+
+        private Vector2 GetRotationOffset()
+        {
+            if (Advanced)
+            {
+                return RotationOffset;
+            }
+
+            return Vector2.Zero;
+        }
 
         public IRadiusProvider RadiusProvider
         {
@@ -95,7 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools
         public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
         {
             var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-            var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;
+            var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + GetRotationOffset();
 
             var center = new Vector3(rotationCenter.X, rotationCenter.Y, sourceAabb.Center.Z);
 
@@ -109,9 +123,29 @@ namespace MatterHackers.MatterControl.DesignTools
         public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
         {
             var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-            var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;
+            var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + GetRotationOffset();
             var center = new Vector3(rotationCenter.X, rotationCenter.Y, sourceAabb.Center.Z);
             return AxisAlignedBoundingBox.CenteredBox(new Vector3(1, 1, sourceAabb.ZSize), center).NewTransformed(this.WorldMatrix());
+        }
+
+        public void BeforePathEditorDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget)
+        {
+            var theme = ApplicationController.Instance.Theme;
+            var sourceAabb = SourceContainer.GetAxisAlignedBoundingBox();
+            var lineColor = theme.PrimaryAccentColor.WithAlpha(50);
+
+            var leftOrigin = new Vector2(-10000, sourceAabb.ZSize);
+            var rightOrigin = new Vector2(10000, sourceAabb.ZSize);
+            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(leftOrigin), pathEditorWidget.TotalTransform.Transform(rightOrigin), lineColor);
+            graphics2D.DrawString(sourceAabb.ZSize.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(0, sourceAabb.ZSize)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
+
+            var maxWidthDepth = Math.Max(sourceAabb.XSize / 2 + GetRotationOffset().X, sourceAabb.YSize / 2 + GetRotationOffset().Y);
+
+            var bottomOrigin = new Vector2(maxWidthDepth, -10000);
+            var topOrigin = new Vector2(maxWidthDepth, 10000);
+
+            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(bottomOrigin), pathEditorWidget.TotalTransform.Transform(topOrigin), lineColor);
+            graphics2D.DrawString(maxWidthDepth.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(maxWidthDepth, 0)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
         }
 
         public override Task Rebuild()
@@ -147,26 +181,24 @@ namespace MatterHackers.MatterControl.DesignTools
                     }
 
                     // get the rotation from the center of the circumscribed circle of the convex hull
-                    var enclosingCircle = SourceContainer.GetSmallestEnclosingCircleAlongZ();
-                    var rotationCenter = enclosingCircle.Center + RotationOffset;
+                    var maxWidthDepth = Math.Max(sourceAabb.XSize / 2 + GetRotationOffset().X, sourceAabb.YSize / 2 + GetRotationOffset().Y);
+                    var rotationCenter = new Vector2(sourceAabb.Center) + GetRotationOffset();
 
-                    var maxRadius = enclosingCircle.Radius + RotationOffset.Length;
-
-                    // if there is no path make a bad one
+                    // if there is no path make one
                     if (PathForHorizontalOffsets.Count == 0)
                     {
-                        var bottomPoint = new Vector2(maxRadius, bottom * 10);
-                        var topPoint = new Vector2(maxRadius, top * 10);
+                        var bottomPoint = new Vector2(maxWidthDepth, bottom * 10);
+                        var topPoint = new Vector2(maxWidthDepth, top * 10);
                         var middlePoint = (bottomPoint + topPoint) / 2;
                         middlePoint.X *= 2;
 
-                        var Point1 = new Vector2(maxRadius, bottom);
-                        var Point2 = new Vector2(maxRadius, bottom + (top - bottom) * .2);
-                        var Point3 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .2);
-                        var Point4 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .5);
-                        var Point5 = new Vector2(maxRadius * 1.5, bottom + (top - bottom) * .8);
-                        var Point6 = new Vector2(maxRadius, bottom + (top - bottom) * .8);
-                        var Point7 = new Vector2(maxRadius, top);
+                        var Point1 = new Vector2(maxWidthDepth, bottom);
+                        var Point2 = new Vector2(maxWidthDepth, bottom + (top - bottom) * .2);
+                        var Point3 = new Vector2(maxWidthDepth * 1.5, bottom + (top - bottom) * .2);
+                        var Point4 = new Vector2(maxWidthDepth * 1.5, bottom + (top - bottom) * .5);
+                        var Point5 = new Vector2(maxWidthDepth * 1.5, bottom + (top - bottom) * .8);
+                        var Point6 = new Vector2(maxWidthDepth, bottom + (top - bottom) * .8);
+                        var Point7 = new Vector2(maxWidthDepth, top);
 
                         PathForHorizontalOffsets.Clear();
                         PathForHorizontalOffsets.MoveTo(Point1);
@@ -210,7 +242,7 @@ namespace MatterHackers.MatterControl.DesignTools
                             }
 
                             var positionXy = new Vector2(position) - rotationCenter;
-                            positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxRadius * 10);
+                            positionXy *= horizontalOffset.GetXAtY(position.Z * 10) / (maxWidthDepth * 10);
                             if (Advanced)
                             {
                                 if (PinchTypeValue == PinchType.XAxis)
@@ -266,8 +298,6 @@ namespace MatterHackers.MatterControl.DesignTools
                 });
         }
 
-        private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
-
         public void UpdateControls(PublicPropertyChange change)
         {
             changeSet.Clear();
@@ -287,35 +317,14 @@ namespace MatterHackers.MatterControl.DesignTools
                 change.SetRowVisible(kvp.Key, () => kvp.Value);
             }
         }
-
-        public void OnPathDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget)
-        {
-            var theme = ApplicationController.Instance.Theme;
-            var bounds = SourceContainer.GetAxisAlignedBoundingBox();
-            var lineColor = theme.PrimaryAccentColor.WithAlpha(50);
-
-            var leftOrigin = new Vector2(-10000, bounds.ZSize);
-            var rightOrigin = new Vector2(10000, bounds.ZSize);
-            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(leftOrigin), pathEditorWidget.TotalTransform.Transform(rightOrigin), lineColor);
-            graphics2D.DrawString(bounds.ZSize.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(0, bounds.ZSize)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
-
-            var maxWidthDepth = Math.Max(bounds.XSize / 2 + RotationOffset.X, bounds.YSize / 2 + RotationOffset.Y);
-
-            var bottomOrigin = new Vector2(maxWidthDepth, -10000);
-            var topOrigin = new Vector2(maxWidthDepth, 10000);
-
-            graphics2D.Line(pathEditorWidget.TotalTransform.Transform(bottomOrigin), pathEditorWidget.TotalTransform.Transform(topOrigin), lineColor);
-            graphics2D.DrawString(maxWidthDepth.ToString("0.##"), pathEditorWidget.TotalTransform.Transform(new Vector2(maxWidthDepth, 0)) + new Vector2(2, 2), 9, color: lineColor.WithAlpha(150));
-        }
     }
 
     internal class XAtYInterpolator
     {
         private double bottom;
-        private double top;
-
         private int numberOfSegments;
         private double[] offsetAtY;
+        private double top;
 
         public XAtYInterpolator(IVertexSource inputCurveIn)
         {

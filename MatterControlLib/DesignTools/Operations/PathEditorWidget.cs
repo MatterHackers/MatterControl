@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     interface IPathEditorDraw
     {
-        void OnPathDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget);
+        void BeforePathEditorDraw(Graphics2D graphics2D, PathEditorWidget pathEditorWidget);
     }
 
     public class PathEditorWidget : GuiWidget
@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
             if(editableProperty.Source is IPathEditorDraw pathEditorDraw)
             {
-                pathEditorDraw.OnPathDraw(graphics2D, this);
+                pathEditorDraw.BeforePathEditorDraw(graphics2D, this);
             }
 
             new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
@@ -496,8 +496,19 @@ namespace MatterHackers.MatterControl.DesignTools
                 }
                 else
                 {
-                    // only drag the point
+                    // drag the point
                     vertexStorage[controlPointBeingDragged] = new VertexData(vertexData.Command, vertexData.Position + delta, vertexData.Hint);
+
+                    // and check if the next point is a c4 control point
+                    var nextPointIndex = controlPointBeingDragged + 1;
+                    if (nextPointIndex < vertexStorage.Count)
+                    {
+                        var nextVertexData = vertexStorage[nextPointIndex];
+                        if (nextVertexData.Hint == CommandHint.C4ControlFromPrev)
+                        {
+                            vertexStorage[nextPointIndex] = new VertexData(nextVertexData.Command, nextVertexData.Position + delta, nextVertexData.Hint);
+                        }
+                    }
                 }
 
                 vertexChanged?.Invoke();
