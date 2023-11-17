@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,15 +36,14 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToBoundsObject3D_3 : TransformWrapperObject3D, IEditorDraw
-	{
+	public class FitToBoundsObject3D_3 : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
+    {
 		private InvalidateType additonalInvalidate;
 
 		public FitToBoundsObject3D_3()
@@ -52,8 +51,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Fit to Bounds".Localize();
 		}
 
-		private IObject3D FitBounds => Children.Last();
+		public enum StretchOption
+		{
+			[Description("Do not change this axis")]
+			None,
+			[Description("Do not grow, only keep in bounds")]
+			Shrink,
+			[Description("Grow to fit bounds")]
+			Expand
+		}
 
+        private IObject3D FitBounds => Children.Last();
+
+        public bool Advanced { get; set; } = false;
+        
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		[Description("Ensure that the part maintains its proportions.")]
 		public LockProportions LockProportion { get; set; } = LockProportions.X_Y_Z;
@@ -76,6 +87,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Allows you turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
+        [EnumDisplay(IconPaths = new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
+        public Align XAlign { get; set; } = Align.None;
+
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public StretchOption XStretchOption { get; set; } = StretchOption.Expand;
+
+        [EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
+        public Align YAlign { get; set; } = Align.None;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public StretchOption YStretchOption { get; set; } = StretchOption.Expand;
+
+        [EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
+        public Align ZAlign { get; set; } = Align.None;
+
+        [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public StretchOption ZStretchOption { get; set; } = StretchOption.Expand;
+        
 		public static async Task<FitToBoundsObject3D_3> Create(IObject3D itemToFit)
 		{
 			var fitToBounds = new FitToBoundsObject3D_3();
@@ -210,22 +239,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 				ItemWithTransform.Matrix = Matrix4X4.Identity;
-				var scale = Vector3.One;
-				var width = Width.Value(this);
-				var depth = Depth.Value(this);
-				var height = Height.Value(this); 
-				if (StretchX)
-				{
-					scale.X = width / aabb.XSize;
-				}
-				if (StretchY)
-				{
-					scale.Y = depth / aabb.YSize;
-				}
-				if (StretchZ)
-				{
-					scale.Z = height / aabb.ZSize;
-				}
+				var constraint = new Vector3(Width.Value(this), Depth.Value(this), Height.Value(this));
+
+				var scale = GetScale(constraint, aabb.Size);
 
 				switch (LockProportion)
 				{
@@ -248,12 +264,75 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				if (aabb.XSize > 0 && aabb.YSize > 0 && aabb.ZSize > 0)
 				{
-					ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+					var scalingMatrix = Matrix4X4.CreateScale(scale);
+
+                    if (Advanced)
+					{
+						var scaledBounds = aabb.Size * scale;
+					}
+					else
+					{
+						ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, scalingMatrix);
+					}
 				}
 			}
 		}
 
-		private void UpdateBoundsItem()
+        private Vector3 GetScale(Vector3 constraint, Vector3 size)
+        {
+            var scale = Vector3.One;
+
+			bool[] stretchs = { StretchX, StretchY, StretchZ };
+            StretchOption[] stretchOptions = { XStretchOption, YStretchOption, ZStretchOption };
+
+			for (var i = 0; i < 3; i++)
+			{
+				if (Advanced)
+				{
+					switch (stretchOptions[i])
+					{
+                        case StretchOption.None:
+							scale[i] = 1;
+                            break;
+
+                        case StretchOption.Shrink:
+							scale[i] = Math.Min(constraint[i] / size[i], 1);
+                            break;
+
+                        case StretchOption.Expand:
+                            scale[i] = constraint[i] / size[i];
+                            break;
+                    }
+				}
+				else
+				{
+					if (stretchs[i])
+					{
+						scale[i] = constraint[i] / size[i];
+					}
+				}
+			}
+
+			return scale;
+        }
+
+        public void UpdateControls(PublicPropertyChange change)
+        {
+			change.SetRowVisible(nameof(StretchX), () => !Advanced);
+			change.SetRowVisible(nameof(StretchY), () => !Advanced);
+			change.SetRowVisible(nameof(StretchZ), () => !Advanced);
+
+            change.SetRowVisible(nameof(XAlign), () => Advanced);
+            change.SetRowVisible(nameof(XStretchOption), () => Advanced);
+
+			change.SetRowVisible(nameof(YAlign), () => Advanced);
+            change.SetRowVisible(nameof(YStretchOption), () => Advanced);
+
+            change.SetRowVisible(nameof(ZAlign), () => Advanced);
+            change.SetRowVisible(nameof(ZStretchOption), () => Advanced);
+        }
+
+        private void UpdateBoundsItem()
 		{
 			if (Children.Count == 2)
 			{
