@@ -289,6 +289,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             progress?.Invoke((UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds, null);
                         }
 
+                        // If the reason we exited the loop was due to a cancellation request, return no color
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            setColor?.Invoke(Color.Transparent);
+                        }
+
                         scene.SelectionChanged -= SelectionChanged;
                         return Task.CompletedTask;
                     });

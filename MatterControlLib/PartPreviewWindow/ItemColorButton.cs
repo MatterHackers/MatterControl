@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2023, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -42,7 +41,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ItemColorButton : PopupButton
+    public class ItemColorButton : PopupButton
 	{
 		private ColorButton colorButton;
 		private GuiWidget popupContent;
@@ -259,19 +258,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				picker.SetColorWithoutChangeEvent(Color.White);
 			};
 
-			if (getPickedColor != null)
-			{
-				var selectButton = rightContent.AddChild(new ThemedTextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).GrayToColor(theme.TextColor), theme)
-				{
-					Margin = 0,
-					HAnchor = HAnchor.Fit | HAnchor.Left,
-					VAnchor = VAnchor.Absolute
-				});
+            var selectButton = rightContent.AddChild(new ThemedTextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16).GrayToColor(theme.TextColor), theme)
+            {
+                Margin = 0,
+                HAnchor = HAnchor.Fit | HAnchor.Left,
+                VAnchor = VAnchor.Absolute
+            });
 
-				selectButton.Click += (s, e) =>
+			// If there is a custom function to get a color, use it.
+			if (getPickedColor == null)
+			{
+                // get a color picker for all of windows
+				getPickedColor = new WindowsColorOnMouseDown().GetColor;
+            }
+
+			selectButton.Click += (s, e) =>
+			{
+				getPickedColor((color) =>
 				{
-					getPickedColor((color) =>
+					if (color.Alpha0To255 > 0)
 					{
+						// only run this code if we did get a color (the timeout will result in no color)
 						update?.Invoke(color);
 						if (transparent?.Checked == true)
 						{
@@ -281,20 +288,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							picker.SelectedColor = color;
 						}
-					});
-				};
-				
-				if (selectButton.Width < resetButton.Width)
-				{
-					selectButton.HAnchor = HAnchor.Stretch;
-				}
-				else
-				{
-					resetButton.HAnchor = HAnchor.Stretch;
-				}
-			}
+					}
+				});
+			};
 
-			return content;
+            if (selectButton.Width < resetButton.Width)
+            {
+                selectButton.HAnchor = HAnchor.Stretch;
+            }
+            else
+            {
+                resetButton.HAnchor = HAnchor.Stretch;
+            }
+
+            return content;
 		}
 
 		public override void OnLoad(EventArgs args)
