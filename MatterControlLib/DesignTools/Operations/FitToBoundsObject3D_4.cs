@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public enum StretchOption
         {
-            [Description("Do not change this side")]
-            None,
             [Description("Shrink if required, but do not grow")]
             Inside,
             [Description("Grow to fill bounds")]
@@ -285,10 +283,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             {
                 switch (stretchOptions[i])
                 {
-                    case StretchOption.None:
-                        scale[i] = 1;
-                        break;
-
                     case StretchOption.Inside:
                         scale[i] = Math.Min(constraint[i] / size[i], 1);
                         break;
@@ -346,8 +340,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             changeSet.Clear();
 
             changeSet.Add(nameof(XAlign), XStretchOption == StretchOption.Inside);
-            changeSet.Add(nameof(YAlign), YStretchOption == StretchOption.Inside);
-            changeSet.Add(nameof(ZAlign), ZStretchOption == StretchOption.Inside);
+            changeSet.Add(nameof(YAlign), YStretchOption == StretchOption.Inside || LockProportion != LockProportions.None);
+            changeSet.Add(nameof(ZAlign), ZStretchOption == StretchOption.Inside || LockProportion == LockProportions.X_Y_Z);
+
+            changeSet.Add(nameof(YStretchOption), LockProportion == LockProportions.None);
+            changeSet.Add(nameof(ZStretchOption), LockProportion != LockProportions.X_Y_Z);
 
             // first turn on all the settings we want to see
             foreach (var kvp in changeSet.Where(c => c.Value))
