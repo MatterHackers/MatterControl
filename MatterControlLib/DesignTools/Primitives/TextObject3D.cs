@@ -105,12 +105,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Text")]
 		public StringOrExpression MultiLineText { get; set; } = "MultiLine\nText";
 
-		[Description("Leave 0 for no wrapping")]
-		public DoubleOrExpression WrappingWidth { get; set; } = 0;
-
-		[Description("The number of spaces to add after wrapping a line. Very useful for bullet points.")]
-		public IntOrExpression WrappingIndent { get; set; } = 0;
-
         [Slider(1, 48, snapDistance: 1)]
 		public DoubleOrExpression PointSize { get; set; } = 24;
 
@@ -125,6 +119,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public OutputDimensions Output { get; set; } = OutputDimensions.Output3D;
 
+		public bool WrapLines { get; set; } = false;
+
+        [Description("The width to wrap at in mm")]
+        public DoubleOrExpression WrappingWidth { get; set; } = 200;
+
+        [Description("The number of spaces to add after wrapping a line. Very useful for bullet points.")]
+        public IntOrExpression WrappingIndent { get; set; } = 0;
+        
 		public override bool CanApply => true;
 
 		public override IVertexSource GetVertexSource()
@@ -203,10 +205,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
                     var pointSize = PointSize.Value(this);
 
-					if (MultiLine && wrappingWidth > 0)
+					if (WrapLines && wrappingWidth > 0)
 					{
 						var wrapper = new EnglishTextWrapping(pointSize);
-						textToWrite = wrapper.InsertCRs(textToWrite, wrappingWidth, wrappingIndent);
+						textToWrite = wrapper.InsertCRs(textToWrite, wrappingWidth, MultiLine ? wrappingIndent : 0);
 					}
 
                     if (string.IsNullOrWhiteSpace(textToWrite))
@@ -351,8 +353,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.SetRowVisible(nameof(Alignment), () => MultiLine);
 			change.SetRowVisible(nameof(NameToWrite), () => !MultiLine);
 			change.SetRowVisible(nameof(Height), () => Output == OutputDimensions.Output3D);
-			change.SetRowVisible(nameof(WrappingWidth), () => MultiLine);
-            change.SetRowVisible(nameof(WrappingIndent), () => MultiLine);
+			change.SetRowVisible(nameof(WrappingWidth), () => WrapLines);
+            change.SetRowVisible(nameof(WrappingIndent), () => MultiLine && WrapLines);
             if (change.PropertyChanged == nameof(Output))
             {
 				refreshToolBar = true;

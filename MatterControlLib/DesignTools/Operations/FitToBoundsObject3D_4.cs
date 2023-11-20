@@ -36,13 +36,14 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class FitToBoundsObject3D_4 : TransformWrapperObject3D, IEditorDraw
+    public class FitToBoundsObject3D_4 : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
     {
         private InvalidateType additonalInvalidate;
 
@@ -61,6 +62,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             Expand
         }
 
+        public enum FitAlign
+        { 
+            Min,
+            Center,
+            Max
+        }
+
         private IObject3D FitBounds => Children.Last();
 
         [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
@@ -76,29 +84,29 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
         [MaxDecimalPlaces(3)]
         public DoubleOrExpression Height { get; set; } = 0;
 
-        [SectionStart("X Axis"), DisplayName("Align")]
-        [EnumDisplay(IconPaths = new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
-        public Align XAlign { get; set; } = Align.None;
-
-        [DisplayName("Stretch")]
+        [SectionStart("X Axis"), DisplayName("Stretch")]
         [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
         public StretchOption XStretchOption { get; set; } = StretchOption.Expand;
 
-        [SectionStart("Y Axis"), DisplayName("Align")]
-        [EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
-        public Align YAlign { get; set; } = Align.None;
+        [DisplayName("Align")]
+        [EnumDisplay(IconPaths = new string[] { "align_left.png", "align_center_x.png", "align_right.png" }, InvertIcons = true)]
+        public FitAlign XAlign { get; set; } = FitAlign.Center;
 
-        [DisplayName("Stretch")]
+        [SectionStart("Y Axis"), DisplayName("Stretch")]
         [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
         public StretchOption YStretchOption { get; set; } = StretchOption.Expand;
 
-        [SectionStart("Z Axis"), DisplayName("Align")]
-        [EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" }, InvertIcons = true)]
-        public Align ZAlign { get; set; } = Align.None;
+        [DisplayName("Align")]
+        [EnumDisplay(IconPaths = new string[] { "align_bottom.png", "align_center_y.png", "align_top.png" }, InvertIcons = true)]
+        public FitAlign YAlign { get; set; } = FitAlign.Center;
 
-        [DisplayName("Stretch")]
+        [SectionStart("Z Axis"), DisplayName("Stretch")]
         [EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
         public StretchOption ZStretchOption { get; set; } = StretchOption.Expand;
+
+        [DisplayName("Align")]
+        [EnumDisplay(IconPaths = new string[] { "align_bottom.png", "align_center_y.png", "align_top.png" }, InvertIcons = true)]
+        public FitAlign ZAlign { get; set; } = FitAlign.Center;
 
         public static async Task<FitToBoundsObject3D_4> Create(IObject3D itemToFit)
         {
@@ -109,7 +117,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 itemToFit.Translate(-startingAabb.Center);
 
                 // add the fit item
-                var scaleItem = new Object3D();
+                var scaleItem = new Object3D()
+                {
+                    Name = "Scale Item - Hold Children"
+                };
                 fitToBounds.Children.Add(scaleItem);
                 scaleItem.Children.Add(itemToFit);
 
@@ -118,7 +129,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 {
                     Visible = false,
                     Color = new Color(Color.Red, 100),
-                    Mesh = PlatonicSolids.CreateCube()
+                    Mesh = PlatonicSolids.CreateCube(),
+                    Name = "Fit Bounds - No Children"
                 };
                 // add the item that holds the bounds
                 fitToBounds.Children.Add(fitBounds);
@@ -137,36 +149,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         AxisAlignedBoundingBox CalcBounds()
         {
-            var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+            var aabb = FitBounds.GetAxisAlignedBoundingBox();
             var center = aabb.Center;
 
-            var constraint = new Vector3(Width.Value(this), Depth.Value(this), Height.Value(this));
-            var aligns = new Align[] { XAlign, YAlign, ZAlign };
+            var width = Width.Value(this);
+            var depth = Depth.Value(this);
+            var height = Height.Value(this);
 
-            var minXyz = Vector3.Zero;
-            var maxXyz = Vector3.Zero;
-            for (int i = 0; i < 3; i++)
-            {
-                switch (aligns[i])
-                {
-                    case Align.Center:
-                    case Align.None:
-                        minXyz[i] = center[i] - constraint[i] / 2;
-                        maxXyz[i] = center[i] + constraint[i] / 2;
-                        break;
-
-                    case Align.Min:
-                        minXyz[i] = aabb.MinXYZ[i];
-                        maxXyz[i] = minXyz[i] + constraint[i];
-                        break;
-
-                    case Align.Max:
-                        maxXyz[i] = aabb.MaxXYZ[i];
-                        minXyz[i] = maxXyz[i] - constraint[i];
-                        break;
-                }
-            }
-
+            var minXyz = center - new Vector3(width / 2, depth / 2, height / 2);
+            var maxXyz = center + new Vector3(width / 2, depth / 2, height / 2);
             return new AxisAlignedBoundingBox(minXyz, maxXyz);
         }
 
@@ -319,41 +310,55 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
                 var fitSize = fitAabb.Size;
                 var boundsSize = new Vector3(Width.Value(this), Depth.Value(this), Height.Value(this));
-                if (boundsSize.X != 0 && boundsSize.Y != 0 && boundsSize.Z != 0
-                    && (fitSize != boundsSize
-                    || fitAabb.Center != transformAabb.Center))
+                FitBounds.Matrix *= Matrix4X4.CreateScale(
+                    boundsSize.X / fitSize.X,
+                    boundsSize.Y / fitSize.Y,
+                    boundsSize.Z / fitSize.Z);
+
+                Vector3 offset = Vector3.Zero;
+                FitAlign[] align = { XAlign, YAlign, ZAlign };
+
+                for (int i = 0; i < 3; i++)
                 {
-                    FitBounds.Matrix *= Matrix4X4.CreateScale(
-                        boundsSize.X / fitSize.X,
-                        boundsSize.Y / fitSize.Y,
-                        boundsSize.Z / fitSize.Z);
-
-                    Vector3 offset = Vector3.Zero;
-                    Align[] align = { XAlign, YAlign, ZAlign };
-
-                    for (int i = 0; i < 3; i++)
+                    switch (align[i])
                     {
-                        switch (align[i])
-                        {
-                            case Align.None:
-                                break;
+                        case FitAlign.Min:
+                            offset[i] = transformAabb.MinXYZ[i] - fitAabb.MinXYZ[i];
+                            break;
 
-                            case Align.Min:
-                                offset[i] = transformAabb.MinXYZ[i] - fitAabb.MinXYZ[i];
-                                break;
+                        case FitAlign.Center:
+                            offset[i] = transformAabb.Center[i] - fitAabb.Center[i];
+                            break;
 
-                            case Align.Center:
-                                offset[i] = transformAabb.Center[i] - fitAabb.Center[i];
-                                break;
-
-                            case Align.Max:
-                                offset[i] = transformAabb.MaxXYZ[i] - fitAabb.MaxXYZ[i];
-                                break;
-                        }
+                        case FitAlign.Max:
+                            offset[i] = transformAabb.MaxXYZ[i] - fitAabb.MaxXYZ[i];
+                            break;
                     }
- 
-                    FitBounds.Matrix *= Matrix4X4.CreateTranslation(offset);
                 }
+ 
+                FitBounds.Matrix *= Matrix4X4.CreateTranslation(offset);
+            }
+        }
+
+        private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
+        public void UpdateControls(PublicPropertyChange change)
+        {
+            changeSet.Clear();
+
+            changeSet.Add(nameof(XAlign), XStretchOption == StretchOption.Inside);
+            changeSet.Add(nameof(YAlign), YStretchOption == StretchOption.Inside);
+            changeSet.Add(nameof(ZAlign), ZStretchOption == StretchOption.Inside);
+
+            // first turn on all the settings we want to see
+            foreach (var kvp in changeSet.Where(c => c.Value))
+            {
+                change.SetRowVisible(kvp.Key, () => kvp.Value);
+            }
+
+            // then turn off all the settings we want to hide
+            foreach (var kvp in changeSet.Where(c => !c.Value))
+            {
+                change.SetRowVisible(kvp.Key, () => kvp.Value);
             }
         }
     }
