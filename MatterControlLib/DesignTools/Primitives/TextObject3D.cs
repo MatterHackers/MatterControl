@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var textToWrite = MultiLine
 						? MultiLineText.Value(this).Replace("\\n", "\n").Replace("\r", "\n")
-						: NameToWrite.Value(this);
+						: NameToWrite.Value(this).Replace("\\n", "\n").Replace("\r", "\n");
 
                     var pointSize = PointSize.Value(this);
 

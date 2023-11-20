@@ -6694,6 +6694,9 @@ Translated:Would you like to setup Wifi?
 English:Wouldn’t Slice Correctly
 Translated:Wouldn’t Slice Correctly
 
+English:Wrap Lines
+Translated:Wrap Lines
+
 English:Wrapping Indent
 Translated:Wrapping Indent
 
