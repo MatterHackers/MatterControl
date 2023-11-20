@@ -965,14 +965,14 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("Fit to Bounds")
 			{
-				ResultType = typeof(FitToBoundsObject3D_3),
+				ResultType = typeof(FitToBoundsObject3D_4),
 				TitleGetter = () => "Fit to Bounds".Localize(),
 				Action = async (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
 					scene.SelectedItem = null;
-					var fit = await FitToBoundsObject3D_3.Create(selectedItem.Clone());
+					var fit = await FitToBoundsObject3D_4.Create(selectedItem.Clone());
 					fit.MakeNameNonColliding();
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 					scene.SelectedItem = fit;

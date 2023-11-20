@@ -5236,6 +5236,9 @@ Translated:Stop trying to connect to the printer.
 English:Store
 Translated:Store
 
+English:Stretch
+Translated:Stretch
+
 English:Stretch X
 Translated:Stretch X
 
@@ -6703,6 +6706,9 @@ Translated:Write Filter
 English:Writing G-Code
 Translated:Writing G-Code
 
+English:X Align
+Translated:X Align
+
 English:X and Y Distance
 Translated:X and Y Distance
 
@@ -6715,6 +6721,9 @@ Translated:X Offset
 English:X Options
 Translated:X Options
 
+English:X Stretch Option
+Translated:X Stretch Option
+
 English:X Y Nozzle Offsets Have Been Calibrated
 Translated:X Y Nozzle Offsets Have Been Calibrated
 
@@ -6724,6 +6733,9 @@ Translated:XY Calibration
 English:XY Homing Position
 Translated:XY Homing Position
 
+English:Y Align
+Translated:Y Align
+
 English:Y Intercept
 Translated:Y Intercept
 
@@ -6732,6 +6744,9 @@ Translated:Y Offset
 
 English:Y Options
 Translated:Y Options
+
+English:Y Stretch Option
+Translated:Y Stretch Option
 
 English:Yes
 Translated:Yes
@@ -6841,6 +6856,9 @@ Translated:Your Start G-Code should not contain a G30 if you are planning on usi
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 Translated:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 
+English:Z Align
+Translated:Z Align
+
 English:Z Calibration
 Translated:Z Calibration
 
@@ -6861,6 +6879,9 @@ Translated:Z Offset is too large.
 
 English:Z Options
 Translated:Z Options
+
+English:Z Stretch Option
+Translated:Z Stretch Option
 
 English:ZIP File
 Translated:ZIP File

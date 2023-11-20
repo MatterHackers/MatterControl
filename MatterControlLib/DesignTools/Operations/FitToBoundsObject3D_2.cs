@@ -48,7 +48,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_3", true)]
+	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_4", true)]
 	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
 		private Vector3 boundsSize;

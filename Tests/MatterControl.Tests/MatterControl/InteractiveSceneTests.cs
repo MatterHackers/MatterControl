@@ -411,7 +411,7 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(cube);
 				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 				root.Children.Remove(cube);
-				var fit = await FitToBoundsObject3D_3.Create(cube);
+				var fit = await FitToBoundsObject3D_4.Create(cube);
 
 				fit.Width = 50;
 				fit.Depth = 20;
@@ -426,7 +426,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = await CubeObject3D.Create(20, 20, 20);
-				var fit = await FitToBoundsObject3D_3.Create(cube);
+				var fit = await FitToBoundsObject3D_4.Create(cube);
 
 				fit.Width = 50;
 				fit.Depth = 20;
@@ -471,7 +471,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = await CubeObject3D.Create(20, 20, 20);
-				var fit = await FitToBoundsObject3D_3.Create(cube);
+				var fit = await FitToBoundsObject3D_4.Create(cube);
 
 				fit.Width = 50;
 				fit.Depth = 20;
@@ -606,7 +606,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
-			var fit = await FitToBoundsObject3D_3.Create(cube);
+			var fit = await FitToBoundsObject3D_4.Create(cube);
 
 			fit.Width = 10;
 			fit.Depth = 10;
@@ -795,7 +795,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var root = new Object3D();
 			var cube = await CubeObject3D.Create(20, 20, 20);
-			var fit = await FitToBoundsObject3D_3.Create(cube);
+			var fit = await FitToBoundsObject3D_4.Create(cube);
 
 			fit.Width = 50;
 			fit.Depth = 20;

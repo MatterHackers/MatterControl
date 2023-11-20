@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -42,7 +47,8 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToBoundsObject3D_3 : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
+    [Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_4", true)]
+    public class FitToBoundsObject3D_3 : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
     {
 		private InvalidateType additonalInvalidate;
 
