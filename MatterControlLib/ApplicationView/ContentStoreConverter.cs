@@ -27,56 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using global::MatterControl.Printing;
-using Markdig.Agg;
-using Markdig.Renderers.Agg;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MatterControl.Plugins;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.Tour;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
-using MatterHackers.VectorMath.TrackBall;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -84,20 +40,19 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl
 {
+    public class ContentStoreConverter : JsonConverter<IContentStore>
+    {
+        public override bool CanWrite => false;
 
-	public class ContentStoreConverter : JsonConverter<IContentStore>
-	{
-		public override bool CanWrite => false;
+        public override IContentStore ReadJson(JsonReader reader, Type objectType, IContentStore existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var token = JToken.Load(reader);
 
-		public override IContentStore ReadJson(JsonReader reader, Type objectType, IContentStore existingValue, bool hasExistingValue, JsonSerializer serializer)
-		{
-			var token = JToken.Load(reader);
+            return null;
+        }
 
-			return null;
-		}
-
-		public override void WriteJson(JsonWriter writer, IContentStore value, JsonSerializer serializer)
-		{
-		}
-	}
+        public override void WriteJson(JsonWriter writer, IContentStore value, JsonSerializer serializer)
+        {
+        }
+    }
 }

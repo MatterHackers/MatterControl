@@ -191,12 +191,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					bool valuesChanged = false;
 					var height = Height.ClampIfNotCalculated(this, .01, 1000000, ref valuesChanged);
-					var wrappingWidth = WrappingWidth.Value(this);
+					var wrappingWidth_mm = WrappingWidth.Value(this);
 					var wrappingIndent = WrappingIndent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
 
-                    if (wrappingWidth < 10)
+                    if (wrappingWidth_mm < 10)
 					{
-						wrappingWidth = 0;
+						wrappingWidth_mm = 0;
 					}
 
 					var textToWrite = MultiLine
@@ -205,10 +205,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
                     var pointSize = PointSize.Value(this);
 
-					if (WrapLines && wrappingWidth > 0)
+					var mmPerInch = 25.4;
+                    var mmPerPoint = mmPerInch / StyledTypeFace.PointsPerInch;
+                    var pixelsPerPoint = StyledTypeFace.PixelsPerInch / StyledTypeFace.PointsPerInch;
+
+                    if (WrapLines && wrappingWidth_mm > 0)
 					{
 						var wrapper = new EnglishTextWrapping(pointSize);
-						textToWrite = wrapper.InsertCRs(textToWrite, wrappingWidth, MultiLine ? wrappingIndent : 0);
+						var wrappingPoints = wrappingWidth_mm / mmPerPoint;
+                        var wrappingPixels = wrappingPoints * pixelsPerPoint;
+                        textToWrite = wrapper.InsertCRs(textToWrite, wrappingPixels, MultiLine ? wrappingIndent : 0);
 					}
 
                     if (string.IsNullOrWhiteSpace(textToWrite))
@@ -224,7 +230,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							list.Clear();
 
 							var offset = Vector2.Zero;
-							double pointsToMm = 0.352778;
 							var lineNumber = 1;
 							var leterNumber = 1;
 							var lineObject = new Object3D()
@@ -240,14 +245,14 @@ namespace MatterHackers.MatterControl.DesignTools
 								{
 									ResolutionScale = 10
 								};
-								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(mmPerPoint));
 
 								if (letter == '\n')
 								{
 									leterNumber = 0;
 									lineNumber++;
 									offset.X = 0;
-									offset.Y -= style.EmSizeInPoints * pointsToMm * 1.4;
+									offset.Y -= style.EmSizeInPoints * mmPerPoint * 1.4;
 									lineObject = new Object3D()
 									{
 										Matrix = Matrix4X4.CreateTranslation(0, offset.Y, 0),
@@ -261,11 +266,11 @@ namespace MatterHackers.MatterControl.DesignTools
 									switch (letter)
 									{
 										case ' ':
-											offset.X += letterPrinter.GetSize(" ").X * pointsToMm;
+											offset.X += letterPrinter.GetSize(" ").X * mmPerPoint;
 											break;
 
 										case '\t':
-											offset.X += letterPrinter.GetSize("    ").X * pointsToMm;
+											offset.X += letterPrinter.GetSize("    ").X * mmPerPoint;
 											break;
 
 										default:
@@ -281,7 +286,7 @@ namespace MatterHackers.MatterControl.DesignTools
 													new VertexSourceApplyTransform(
 														new VertexStorage(scaledLetterPrinter), Affine.NewTranslation(offset.X, offset.Y)));
 											}
-											offset.X += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+											offset.X += letterPrinter.GetSize(letter.ToString()).X * mmPerPoint;
 											break;
 									}
 

@@ -115,6 +115,9 @@ Translated:3D
 English:3D Layer View
 Translated:3D Layer View
 
+English:3MF File
+Translated:3MF File
+
 English:3x3 Mesh
 Translated:3x3 Mesh
 
