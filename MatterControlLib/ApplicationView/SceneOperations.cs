@@ -1068,7 +1068,7 @@ namespace MatterHackers.MatterControl
 		{
 			return item != null
 				&& !(item is ImageObject3D)
-				&& !(item.IsPathObject());
+				&& !(item.IsPathObject() && item is CurveObject3D_3);
 		}
 
 		private static bool IsPathObject(IObject3D item)
