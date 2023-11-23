@@ -33,6 +33,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using g3;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -326,12 +327,38 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		ulong lastRecalculateHash;
+
 		public void Recalculate()
 		{
+			ulong GetLongHashCode()
+			{
+				var hash = "start".GetLongHashCode();
+                // get the long hash of the constants
+                foreach (var kvp in constants)
+				{
+					hash = $"{kvp.Key}+{kvp.Value}".GetLongHashCode(hash);
+                }
+                // get the long hash of the table
+                foreach (var xyCell in EnumerateCells())
+                {
+                    hash = xyCell.cell.Expression.Trim().GetLongHashCode(hash);
+                }
+
+                return hash;
+			}
+
 			BuildTableConstants();
 
-			Recalculated?.Invoke(this, null);
-		}
+			var postBuildHash = GetLongHashCode();
+
+			if (postBuildHash != lastRecalculateHash)
+			{
+                // if the hash changed let everyone know
+                Recalculated?.Invoke(this, null);
+                lastRecalculateHash = postBuildHash;
+            }
+        }
 
 		private void BuildTableConstants()
 		{
