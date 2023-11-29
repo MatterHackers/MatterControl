@@ -116,8 +116,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+        public override bool MeshIsSolidObject => false;
 
-		private AnalysisTypes _featureDetector = AnalysisTypes.Intensity;
+        private AnalysisTypes _featureDetector = AnalysisTypes.Intensity;
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public AnalysisTypes AnalysisType
 		{

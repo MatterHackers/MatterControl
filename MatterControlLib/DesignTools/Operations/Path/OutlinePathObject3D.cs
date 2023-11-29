@@ -88,6 +88,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+        public override bool MeshIsSolidObject => false;
+        
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);

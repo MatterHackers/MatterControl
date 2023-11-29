@@ -59,7 +59,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("The number of smoothing passes")]
 		public IntOrExpression Iterations { get; set; } = 3;
 
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		public override bool MeshIsSolidObject => false;
+
+        public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}

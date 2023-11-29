@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 				// this is for when base is working with generic meshes
 				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem.IsPathObject()),
 				// this is for when only IPathObjects are working correctly
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i.IsPathObject()).Any(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i is IPathObject3D).Any(),
 			};
 		}
 
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
 			};
 		}
 
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-                    var pathObject = sceneItem.GetVertexSource();
+					var pathObject = sceneItem as IPathObject3D;
                     if (pathObject != null)
 					{
 						var extrude = new LinearExtrudeObject3D();
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
 			};
 		}
 
@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-                    var pathObject = sceneItem.GetVertexSource();
+					var pathObject = sceneItem as IPathObject3D;
                     if (pathObject != null)
 					{
 						var revolve = new RevolveObject3D();
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
 			};
 		}
 
@@ -549,7 +549,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
 			};
 		}
 
@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.IsPathObject(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
 			};
 		}
 
@@ -689,28 +689,34 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static bool BooleanCandidate(IObject3D selectedItem, bool includePaths)
-		{
-			if (selectedItem != null)
-			{
-				// mesh items
-				if (selectedItem.VisibleMeshes().Count() > 1
-					&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i)))
-				{
-					return true;
-				}
+		/// <summary>
+        /// Determines if the selected item is a candidate for boolean operations.
+        /// </summary>
+        /// <param name="selectedItem">The selected item in the scene.</param>
+        /// <param name="includePaths">Flag indicating whether to include path items in the check.</param>
+        /// <returns>Returns true if the selected item is a candidate for boolean operations, false otherwise.</returns>
+        private static bool BooleanCandidate(IObject3D selectedItem, bool includePaths)
+        {
+            if (selectedItem != null)
+            {
+                // all are path items
+                if (includePaths
+                    && selectedItem.VisibleMeshes().Count() > 1
+                    && selectedItem.VisibleMeshes().All(i => i is IPathObject3D))
+                {
+                    return true;
+                }
 
-				// path items
-				if (includePaths
-					&& selectedItem.VisiblePaths().Count() > 1
-					&& selectedItem.VisiblePaths().All(i => IsPathObject(i)))
-				{
-					return true;
-				}
-			}
+                // mesh items
+                if (selectedItem.VisibleMeshes().Count() > 1
+                    && selectedItem.VisibleMeshes().All(i => IsMeshObject(i)))
+                {
+                    return true;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
 		private static void Build()
 		{
@@ -1066,16 +1072,39 @@ namespace MatterHackers.MatterControl
 
 		private static bool IsMeshObject(IObject3D item)
 		{
-			return item != null
-				&& !(item is ImageObject3D)
-				&& !(item.IsPathObject() && item is CurveObject3D_3);
+			if (item != null)
+			{
+				if (item is ImageObject3D)
+				{
+					return false;
+				}
+
+				if (item is IPathObject3D pathObject)
+				{
+					if (!pathObject.MeshIsSolidObject)
+					{
+						return false;
+					}
+                }
+
+				return true;
+			}
+
+			return false;
 		}
 
 		private static bool IsPathObject(IObject3D item)
 		{
-			return item != null
-				&& !(item is ImageObject3D)
-				&& (item.IsPathObject());
+			if (item != null)
+			{
+                if (item is IPathObject3D pathObject
+					&& !pathObject.MeshIsSolidObject)
+				{
+                    return true;
+                }
+            }
+
+            return false;
 		}
 
 		private static SceneOperation LayFlatOperation()

@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class LinearExtrudeObject3D : Object3D, IPrimaryOperationsSpecifier, IPropertyGridModifier
+    public class LinearExtrudeObject3D : PathObject3D, IPrimaryOperationsSpecifier, IPropertyGridModifier
     {
         [Description("The height of the extrusion")]
         [Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
         public IntOrExpression Segments { get; set; } = 9;
 
         public override bool CanApply => true;
+
+        public override bool MeshIsSolidObject => true;
 
         public override void Apply(UndoBuffer undoBuffer)
         {

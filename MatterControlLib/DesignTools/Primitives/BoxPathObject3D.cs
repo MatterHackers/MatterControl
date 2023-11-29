@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.DesignTools.Primitives
             Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
         }
 
+        public override bool MeshIsSolidObject => false;
+
         public static double MinEdgeSize = .001;
 
         public string ThumbnailName => "Box";

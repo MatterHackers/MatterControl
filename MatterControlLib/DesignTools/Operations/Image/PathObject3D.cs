@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -37,7 +38,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class PathObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier
+    public abstract class PathObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
     {
         public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
         {
@@ -48,6 +49,15 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             return this.GetWorldspaceAabbOfDrawPath();
         }
+
+        public VertexStorage VertexStorage { get; set; }
+
+        public virtual IVertexSource GetVertexSource()
+        {
+            return VertexStorage;
+        }
+
+        public abstract bool MeshIsSolidObject { get; }
 
         public static IEnumerable<SceneOperation> GetOperations(Type type)
         {

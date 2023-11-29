@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
 
+        public override bool MeshIsSolidObject => false;
+        
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
