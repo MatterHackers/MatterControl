@@ -888,9 +888,9 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
-					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
-					{
-						new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    {
+                        new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
 					{
@@ -1055,9 +1055,9 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
-					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
-					{
-						new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    {
+                        new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
 					{
@@ -1356,9 +1356,9 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
-					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
-					{
-						new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    {
+                        new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
 					else
 					{

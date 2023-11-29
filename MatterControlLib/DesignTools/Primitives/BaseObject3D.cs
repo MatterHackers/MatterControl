@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		Outline
 	}
 
-	public class BaseObject3D : Object3D, IPropertyGridModifier, IEditorDraw
+	public class BaseObject3D : PathObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public enum CenteringTypes
 		{
@@ -113,7 +113,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public CenteringTypes Centering { get; set; } = CenteringTypes.Weighted;
 
-		public override void Cancel(UndoBuffer undoBuffer)
+        public override bool MeshIsSolidObject => true;
+
+        public override void Cancel(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{

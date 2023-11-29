@@ -55,7 +55,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
     [Obsolete("Use ImageToPathObject3D_2 instead", false)]
-    public class ImageToPathObject3D : Object3D, IEditorDraw, IObject3DControlsProvider
+    public class ImageToPathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
     {
         private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
 
@@ -216,6 +216,8 @@ namespace MatterHackers.MatterControl.DesignTools
         }
 
         public override bool CanApply => true;
+
+        public override bool MeshIsSolidObject => false;
 
         public override void Apply(UndoBuffer undoBuffer)
         {

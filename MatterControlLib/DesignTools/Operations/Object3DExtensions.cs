@@ -182,12 +182,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void FlattenToPathObject(this IObject3D item, UndoBuffer undoBuffer)
 		{
-			if (item.GetVertexSource() != null)
+            var pathItem = item as IPathObject3D;
+            if (pathItem?.GetVertexSource() != null)
 			{
 				using (item.RebuildLock())
 				{
 					var newPathObject = new PathObject3D();
-					newPathObject.VertexStorage = new VertexStorage(item.GetVertexSource());
+					newPathObject.VertexStorage = new VertexStorage(pathItem.GetVertexSource());
 
 					// and replace us with the children
 					var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
@@ -208,14 +209,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void DrawPath(this IObject3D item)
 		{
-			if (item.GetVertexSource() != null)
+			var pathItem = item as IPathObject3D;
+			if (pathItem?.GetVertexSource() != null)
 			{
 				bool first = true;
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 				var firstMove = Vector2.Zero;
-				foreach (var vertex in item.GetVertexSource().Vertices())
+				foreach (var vertex in pathItem.GetVertexSource().Vertices())
 				{
 					var position = vertex.Position;
 					if (first)
@@ -264,13 +266,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
 
-			if (item.GetVertexSource() != null)
+			var pathItem = item as IPathObject3D;
+
+            if (pathItem?.GetVertexSource() != null)
 			{
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 
-				foreach (var vertex in item.GetVertexSource().Vertices())
+				foreach (var vertex in pathItem.GetVertexSource().Vertices())
 				{
 					var position = vertex.Position;
 
