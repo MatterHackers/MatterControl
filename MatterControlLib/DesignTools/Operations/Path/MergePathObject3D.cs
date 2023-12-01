@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             SourceContainer.Visible = true;
             RemoveAllButSource();
 
-            var participants = SourceContainer.VisiblePaths2();
+            var participants = SourceContainer.VisiblePaths();
             var first = participants.First();
             var firstObject3D = first as Object3D;
             if (participants.Count() < 2)
@@ -147,6 +147,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 {
                     var itemObject3D = item as Object3D;
                     var itemVertexSource = item.GetVertexSource().Transform(itemObject3D.WorldMatrix(this));
+
+                    this.CopyProperties(firstObject3D, Object3DPropertyFlags.Color);
 
                     resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
 

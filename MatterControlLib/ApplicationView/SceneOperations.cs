@@ -888,7 +888,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
                     {
                         new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1055,7 +1055,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
                     {
                         new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1081,30 +1081,13 @@ namespace MatterHackers.MatterControl
 
 				if (item is IPathObject3D pathObject)
 				{
-					if (!pathObject.MeshIsSolidObject)
-					{
-						return false;
-					}
+					return pathObject.MeshIsSolidObject;
                 }
 
 				return true;
 			}
 
 			return false;
-		}
-
-		private static bool IsPathObject(IObject3D item)
-		{
-			if (item != null)
-			{
-                if (item is IPathObject3D pathObject
-					&& !pathObject.MeshIsSolidObject)
-				{
-                    return true;
-                }
-            }
-
-            return false;
 		}
 
 		private static SceneOperation LayFlatOperation()
@@ -1356,7 +1339,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathEditorDraw))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
                     {
                         new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}

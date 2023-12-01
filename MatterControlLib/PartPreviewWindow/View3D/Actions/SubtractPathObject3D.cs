@@ -45,7 +45,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-    public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier
+    public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier, IPathObject3D
     {
         public SubtractPathObject3D()
         {
@@ -92,6 +92,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
         }
 
         public override bool CanApply => true;
+
+        public bool MeshIsSolidObject => false;
+
+        public VertexStorage VertexStorage { get; set; }
 
         public override void Apply(UndoBuffer undoBuffer)
         {
@@ -189,11 +193,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                 bool first = true;
                 foreach (var keep in keepVisibleItems)
                 {
-                    var resultsVertexSource = keep.GetVertexSource().Transform(keep.Matrix);
+                    var keepObject3D = keep as Object3D;
+                    var resultsVertexSource = keep.GetVertexSource().Transform(keepObject3D.Matrix);
 
                     foreach (var remove in removeVisibleItems)
                     {
-                        resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
+                        var removeObject3D = remove as Object3D;
+                        resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(removeObject3D.Matrix), ClipperLib.ClipType.ctDifference);
 
                         // report our progress
                         ratioCompleted += amountPerOperation;
@@ -203,6 +209,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                     if (first)
                     {
                         this.VertexStorage = new VertexStorage(resultsVertexSource);
+                        this.CopyProperties(keepObject3D, Object3DPropertyFlags.Color);
+
                         first = false;
                     }
                     else
@@ -250,6 +258,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
         public IEnumerable<SceneOperation> GetOperations()
         {
             return PathContainerObject3D.GetOperations(this.GetType());
+        }
+
+        public IVertexSource GetVertexSource()
+        {
+            return VertexStorage;
         }
     }
 }
