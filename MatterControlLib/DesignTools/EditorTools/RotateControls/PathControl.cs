@@ -193,7 +193,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				lastItem = selectedItem;
 
-				if (selectedItem is PathObject3D pathObject)
+				if (selectedItem is PathContainerObject3D pathObject)
 				{
 					var vertexStorage = pathObject.VertexStorage;
 

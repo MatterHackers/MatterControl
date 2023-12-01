@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class LinearExtrudeObject3D : PathObject3D, IPrimaryOperationsSpecifier, IPropertyGridModifier
+    public class LinearExtrudeObject3D : PathContainerObject3D, IPrimaryOperationsSpecifier, IPropertyGridModifier
     {
         [Description("The height of the extrusion")]
         [Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]

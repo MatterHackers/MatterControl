@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Primitives
 {
-    public class BoxPathObject3D : PathObject3D, IObject3DControlsProvider, IEditorDraw, IPropertyGridModifier, IStaticThumbnail
+    public class BoxPathObject3D : PathContainerObject3D, IObject3DControlsProvider, IEditorDraw, IPropertyGridModifier, IStaticThumbnail
     {
         public BoxPathObject3D()
         {

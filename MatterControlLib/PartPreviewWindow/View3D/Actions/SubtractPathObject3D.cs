@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
         public IEnumerable<SceneOperation> GetOperations()
         {
-            return PathObject3D.GetOperations(this.GetType());
+            return PathContainerObject3D.GetOperations(this.GetType());
         }
     }
 }

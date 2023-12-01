@@ -38,7 +38,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public abstract class PathObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
+    public abstract class PathContainerObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
     {
         public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
         {
@@ -80,5 +80,14 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             return GetOperations(this.GetType());
         }
+    }
+
+    /// <summary>
+    /// This is a class that is specifically holding a path and the mesh is a visualization of the path
+    /// </summary>
+    public class PathObject3D : PathContainerObject3D
+    {
+        // Report that the Mesh is a visual representation of the Path and not a solid object
+        public override bool MeshIsSolidObject => false;
     }
 }

@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	}
     
 	[HideChildrenFromTreeView]
-    public class TextObject3D : PathObject3D, IPropertyGridModifier, IEditorDraw, IPrimaryOperationsSpecifier
+    public class TextObject3D : PathContainerObject3D, IPropertyGridModifier, IEditorDraw, IPrimaryOperationsSpecifier
     {
         private bool refreshToolBar;
 
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.DesignTools
 											};
 											if (Output == OutputDimensions.Output2D)
 											{
-												var pathObject = this as PathObject3D;
+												var pathObject = this as PathContainerObject3D;
                                                 pathObject.VertexStorage = new VertexStorage(
 													new VertexSourceApplyTransform(
 														new VertexStorage(scaledLetterPrinter), Affine.NewTranslation(offset.X, offset.Y)));
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             if (Output == OutputDimensions.Output2D)
             {
-                return PathObject3D.GetOperations(this.GetType());
+                return PathContainerObject3D.GetOperations(this.GetType());
             }
 
             // return no enumerations

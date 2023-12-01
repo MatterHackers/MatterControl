@@ -42,7 +42,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
+	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathObject3D
 	{
 		public FindSliceObject3D()
 		{
@@ -50,9 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double SliceHeight { get; set; } = 10;
+        public VertexStorage VertexStorage { get; set; }
 
-		
-		private double cutMargin = .01;
+        public bool MeshIsSolidObject => false;
+
+        private double cutMargin = .01;
 
 		public (Mesh mesh, Polygons polygons) Cut(IObject3D item)
 		{
@@ -192,5 +194,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void UpdateControls(PublicPropertyChange change)
 		{
 		}
-	}
+
+        public IVertexSource GetVertexSource()
+        {
+            return VertexStorage;
+        }
+    }
 }

@@ -44,7 +44,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SmoothPathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
+	public class SmoothPathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
 	{
 		public SmoothPathObject3D()
 		{

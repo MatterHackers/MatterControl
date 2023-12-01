@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-    public class InflatePathObject3D : PathObject3D, IEditorDraw, IObject3DControlsProvider
+    public class InflatePathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
     {
 		public InflatePathObject3D()
 		{
