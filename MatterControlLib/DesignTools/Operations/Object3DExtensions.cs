@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -41,6 +42,7 @@ using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -187,11 +189,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				using (item.RebuildLock())
 				{
-					var newPathObject = new PathObject3D();
-					newPathObject.VertexStorage = new VertexStorage(pathItem.GetVertexSource());
+					var newPathObject = new CustomPathObject3D();
 
-					// and replace us with the children
-					var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
+                    var vertexStorage = new VertexStorage(pathItem.GetVertexSource());
+                    newPathObject.PathForEditing.SvgDString = vertexStorage.SvgDString;
+
+					newPathObject.CopyProperties(item, Object3DPropertyFlags.All);
+					newPathObject.Rebuild();
+
+                    // and replace us with the children
+                    var replaceCommand = new ReplaceCommand(new[] { item }, new[] { newPathObject });
 
 					if (undoBuffer != null)
 					{

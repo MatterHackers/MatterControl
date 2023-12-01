@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Image.ThresholdFunctions;
@@ -51,8 +52,8 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideMeterialAndColor]
-    public class ImageToPathObject3D_2 : PathContainerObject3D, IImageProvider, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
+    [HideMeterialAndColor]
+    public class ImageToPathObject3D_2 : PathObject3DAbstract, IImageProvider, IObject3DControlsProvider, IPropertyGridModifier, IEditorWidgetModifier
     {
 		public ImageToPathObject3D_2()
 		{

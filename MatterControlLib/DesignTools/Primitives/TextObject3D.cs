@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
@@ -61,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	}
     
 	[HideChildrenFromTreeView]
-    public class TextObject3D : PathContainerObject3D, IPropertyGridModifier, IEditorDraw, IPrimaryOperationsSpecifier
+    public class TextObject3D : PathObject3DAbstract, IPropertyGridModifier, IEditorDraw, IPrimaryOperationsSpecifier
     {
         private bool refreshToolBar;
 
@@ -284,7 +285,7 @@ namespace MatterHackers.MatterControl.DesignTools
 											};
 											if (Output == OutputDimensions.Output2D)
 											{
-												var pathObject = this as PathContainerObject3D;
+												var pathObject = this as PathObject3DAbstract;
                                                 pathObject.VertexStorage = new VertexStorage(
 													new VertexSourceApplyTransform(
 														new VertexStorage(scaledLetterPrinter), Affine.NewTranslation(offset.X, offset.Y)));
@@ -383,7 +384,7 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             if (Output == OutputDimensions.Output2D)
             {
-                return PathContainerObject3D.GetOperations(this.GetType());
+                return PathObject3DAbstract.GetOperations(this.GetType());
             }
 
             // return no enumerations

@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -257,7 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
         public IEnumerable<SceneOperation> GetOperations()
         {
-            return PathContainerObject3D.GetOperations(this.GetType());
+            return PathObject3DAbstract.GetOperations(this.GetType());
         }
 
         public IVertexSource GetVertexSource()

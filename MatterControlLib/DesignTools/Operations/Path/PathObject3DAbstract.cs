@@ -30,15 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterControlLib.DesignTools.Operations.Path
 {
-    public abstract class PathContainerObject3D : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
+    public abstract class PathObject3DAbstract : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
     {
         public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
         {
@@ -50,11 +52,25 @@ namespace MatterHackers.MatterControl.DesignTools
             return this.GetWorldspaceAabbOfDrawPath();
         }
 
-        public VertexStorage VertexStorage { get; set; }
+        public VertexStorage VertexStorage { get; set; } = new VertexStorage();
 
         public virtual IVertexSource GetVertexSource()
         {
             return VertexStorage;
+        }
+
+        public override bool CanApply => true;
+
+        public override void Apply(UndoBuffer undoBuffer)
+        {
+            if (MeshIsSolidObject)
+            {
+                base.Apply(undoBuffer);
+            }
+            else
+            {
+                this.FlattenToPathObject(undoBuffer);
+            }
         }
 
         public abstract bool MeshIsSolidObject { get; }
@@ -78,16 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public IEnumerable<SceneOperation> GetOperations()
         {
-            return GetOperations(this.GetType());
+            return GetOperations(GetType());
         }
-    }
-
-    /// <summary>
-    /// This is a class that is specifically holding a path and the mesh is a visualization of the path
-    /// </summary>
-    public class PathObject3D : PathContainerObject3D
-    {
-        // Report that the Mesh is a visual representation of the Path and not a solid object
-        public override bool MeshIsSolidObject => false;
     }
 }

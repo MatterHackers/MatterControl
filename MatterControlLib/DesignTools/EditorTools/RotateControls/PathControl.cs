@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -45,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class PathControl : IObject3DControl, IObject3DControlsProvider
+    public class PathControl : IObject3DControl, IObject3DControlsProvider
 	{
 		private readonly IObject3DControlContext context;
 
@@ -193,7 +194,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				lastItem = selectedItem;
 
-				if (selectedItem is PathContainerObject3D pathObject)
+				if (selectedItem is PathObject3DAbstract pathObject)
 				{
 					var vertexStorage = pathObject.VertexStorage;
 

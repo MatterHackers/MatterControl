@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
@@ -43,14 +44,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum ExpandStyles
+    public enum ExpandStyles
 	{
 		Flat,
 		Round,
 		Sharp,
 	}
 
-    public class InflatePathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
+    public class InflatePathObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider
     {
 		public InflatePathObject3D()
 		{

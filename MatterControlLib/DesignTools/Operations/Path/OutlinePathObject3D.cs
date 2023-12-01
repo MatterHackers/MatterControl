@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -45,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class OutlinePathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
+    public class OutlinePathObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider
     {
 		public OutlinePathObject3D()
 		{

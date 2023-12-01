@@ -36,6 +36,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Image.ThresholdFunctions;
@@ -55,7 +56,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 namespace MatterHackers.MatterControl.DesignTools
 {
     [Obsolete("Use ImageToPathObject3D_2 instead", false)]
-    public class ImageToPathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
+    public class ImageToPathObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider
     {
         private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
 
@@ -203,16 +204,6 @@ namespace MatterHackers.MatterControl.DesignTools
         public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
         {
             object3DControlsLayer.AddControls(ControlTypes.Standard2D);
-        }
-
-        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
-        {
-            this.DrawPath();
-        }
-
-        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
-        {
-            return this.GetWorldspaceAabbOfDrawPath();
         }
 
         public override bool CanApply => true;

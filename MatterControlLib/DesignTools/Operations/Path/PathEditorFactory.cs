@@ -30,11 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterControlLib.DesignTools.Operations.Path
 {
     public class PathEditorFactory : IPropertyEditorFactory
     {

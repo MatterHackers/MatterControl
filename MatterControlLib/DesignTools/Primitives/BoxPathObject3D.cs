@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -39,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Primitives
 {
-    public class BoxPathObject3D : PathContainerObject3D, IObject3DControlsProvider, IEditorDraw, IPropertyGridModifier, IStaticThumbnail
+    public class BoxPathObject3D : PathObject3DAbstract, IObject3DControlsProvider, IEditorDraw, IPropertyGridModifier, IStaticThumbnail
     {
         public BoxPathObject3D()
         {

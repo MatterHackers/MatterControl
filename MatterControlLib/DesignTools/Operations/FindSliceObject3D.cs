@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
@@ -83,12 +85,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			var newPathObject = new PathObject3D()
-			{
-				VertexStorage = new VertexStorage(this.GetVertexSource())
-			};
+			var newPathObject = new CustomPathObject3D();
 
-			base.Apply(undoBuffer, new IObject3D[] { newPathObject });
+			var vertexStorage = new VertexStorage(this.GetVertexSource());
+			newPathObject.PathForEditing.SvgDString = vertexStorage.SvgDString;
+            newPathObject.Rebuild();
+
+            base.Apply(undoBuffer, new IObject3D[] { newPathObject });
 		}
 
 		private void RemoveFacesAboveCut(Mesh mesh)

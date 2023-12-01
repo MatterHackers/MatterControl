@@ -58,6 +58,10 @@ namespace MatterHackers.MatterControl.Library
                     "Box".Localize(),
                     async () => await BoxPathObject3D.Create())
                     { DateCreated = new DateTime(index++) },
+                new GeneratorItem(
+                    "Custom Path".Localize(),
+                    async () => await CustomPathObject3D.Create())
+                    { DateCreated = new DateTime(index++) },
 #if DEBUG
                 new GeneratorItem(
                     "Triangle".Localize(),

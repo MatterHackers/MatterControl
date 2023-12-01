@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public IEnumerable<SceneOperation> GetOperations()
         {
-            return PathContainerObject3D.GetOperations(this.GetType());
+            return PathObject3DAbstract.GetOperations(this.GetType());
         }
 
         public IVertexSource GetVertexSource()

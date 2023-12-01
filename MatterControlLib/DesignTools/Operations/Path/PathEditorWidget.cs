@@ -34,13 +34,14 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterControlLib.DesignTools.Operations.Path
 {
     interface IPathEditorDraw
     {
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools
             this.vertexChanged = vertexChanged;
             this.theme = theme;
             this.vertexStorage = vertexStorage;
-            this.beforeLastChange = new VertexStorage();
+            beforeLastChange = new VertexStorage();
             beforeLastChange.SvgDString = vertexStorage.SvgDString;
 
             var toolBar = new FlowLayoutWidget()
@@ -129,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
             toolBar.VAnchor |= VAnchor.Bottom;
 
-            this.AddChild(toolBar);
+            AddChild(toolBar);
 
             AddControlsToToolBar(theme, toolBar);
         }
@@ -143,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools
             AddPositionControls(theme, toolBar);
         }
 
-        public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+        public static readonly int VectorXYEditWidth = (int)(60 * DeviceScale + .5);
 
         private void AddPositionControls(ThemeConfig theme, FlowLayoutWidget toolBar)
         {
@@ -295,14 +296,14 @@ namespace MatterHackers.MatterControl.DesignTools
                 hasBeenStartupPositioned = true;
             }
 
-            if(editableProperty.Source is IPathEditorDraw pathEditorDraw)
+            if (editableProperty.Source is IPathEditorDraw pathEditorDraw)
             {
                 pathEditorDraw.BeforePathEditorDraw(graphics2D, this);
             }
 
             new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
 
-            if(editableProperty.PropertyInfo.GetCustomAttributes(true).OfType<PathEditorFactory.ShowOriginAttribute>().FirstOrDefault() is PathEditorFactory.ShowOriginAttribute showAxisAttribute)
+            if (editableProperty.PropertyInfo.GetCustomAttributes(true).OfType<PathEditorFactory.ShowOriginAttribute>().FirstOrDefault() is PathEditorFactory.ShowOriginAttribute showAxisAttribute)
             {
                 var leftOrigin = new Vector2(-10000, 0);
                 var rightOrigin = new Vector2(10000, 0);
@@ -353,9 +354,9 @@ namespace MatterHackers.MatterControl.DesignTools
                             if (selectedPointIndex == -1)
                             {
                                 xEditWidget.Text = "---";
-                                xEditWidget.Enabled= false;
+                                xEditWidget.Enabled = false;
                                 yEditWidget.Text = "---";
-                                yEditWidget.Enabled= false;
+                                yEditWidget.Enabled = false;
 
                                 sharpButton.Enabled = false;
                                 alignedButton.Enabled = false;
@@ -395,7 +396,7 @@ namespace MatterHackers.MatterControl.DesignTools
             xEditWidget.Value = selected.Position.X;
             yEditWidget.Value = selected.Position.Y;
 
-            switch(selected.Hint)
+            switch (selected.Hint)
             {
                 case CommandHint.C4Point:
                 case CommandHint.C4ControlToPoint:
@@ -551,7 +552,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     }
                     else if (mouseDelta.Y > 0)
                     {
-                        zoomDelta = 1 + (1 * mouseDelta.Y / 100);
+                        zoomDelta = 1 + 1 * mouseDelta.Y / 100;
                     }
 
                     var mousePreScale = mouseDownPosition;
@@ -562,7 +563,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     var mousePostScale = mouseDownPosition;
                     TotalTransform.inverse_transform(ref mousePostScale);
 
-                    unscaledRenderOffset += (mousePostScale - mousePreScale);
+                    unscaledRenderOffset += mousePostScale - mousePreScale;
                     scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
                     break;
 
@@ -587,7 +588,7 @@ namespace MatterHackers.MatterControl.DesignTools
             if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
             {
                 const double deltaFor1Click = 120;
-                double scaleAmount = (mouseEvent.WheelDelta / deltaFor1Click) * .1;
+                double scaleAmount = mouseEvent.WheelDelta / deltaFor1Click * .1;
 
                 ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
 
@@ -613,7 +614,7 @@ namespace MatterHackers.MatterControl.DesignTools
             var mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
             TotalTransform.inverse_transform(ref mousePostScale);
 
-            unscaledRenderOffset += (mousePostScale - mousePreScale);
+            unscaledRenderOffset += mousePostScale - mousePreScale;
 
             scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
         }

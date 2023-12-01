@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
@@ -44,7 +45,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SmoothPathObject3D : PathContainerObject3D, IEditorDraw, IObject3DControlsProvider
+    public class SmoothPathObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider
 	{
 		public SmoothPathObject3D()
 		{

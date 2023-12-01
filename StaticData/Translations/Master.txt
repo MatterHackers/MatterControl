@@ -1279,6 +1279,9 @@ Translated:Curve
 English:Custom Object Builder
 Translated:Custom Object Builder
 
+English:Custom Path
+Translated:Custom Path
+
 English:Custom Points
 Translated:Custom Points
 

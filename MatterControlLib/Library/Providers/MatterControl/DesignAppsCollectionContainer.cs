@@ -29,12 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -106,24 +103,6 @@ namespace MatterHackers.MatterControl.Library
                                 "Calibration Face".Localize(),
                                 async () => await XyCalibrationFaceObject3D.Create())
                             { DateCreated = new System.DateTime(index++) },
-                            new GeneratorItem(
-                                "Path".Localize(),
-                                () =>
-                                {
-                                    var storage = new VertexStorage();
-                                    storage.MoveTo(5, 5);
-                                    storage.LineTo(10, 5);
-                                    storage.LineTo(7.5, 10);
-                                    storage.ClosePolygon();
-
-                                    var path = new PathObject3D()
-                                    {
-                                        VertexStorage = storage
-                                    };
-
-                                    return Task.FromResult<IObject3D>(path);
-                                })
-                                { DateCreated = new System.DateTime(index++) },
                         },
                         Name = "Experimental".Localize()
                     })

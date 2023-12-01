@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -52,7 +53,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public enum BaseTypes
+    public enum BaseTypes
 	{
 		None,
 		Rectangle,
@@ -61,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		Outline
 	}
 
-	public class BaseObject3D : PathContainerObject3D, IPropertyGridModifier, IEditorDraw
+	public class BaseObject3D : PathObject3DAbstract, IPropertyGridModifier, IEditorDraw
 	{
 		public enum CenteringTypes
 		{

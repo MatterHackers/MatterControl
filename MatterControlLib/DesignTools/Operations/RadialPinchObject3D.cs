@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using CsvHelper.Configuration.Attributes;
+using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
