@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Primitives
 {
-    public class CustomPathObject3D : Object3D, IEditorDraw, IStaticThumbnail, IPathObject3D, IPrimaryOperationsSpecifier
+    public class CustomPathObject3D : Object3D, IEditorDraw, IStaticThumbnail, IPathProvider, IPrimaryOperationsSpecifier
     {
         public static double MinEdgeSize = .001;
 
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools.Primitives
             return PathObject3DAbstract.GetOperations(this.GetType());
         }
 
-        public virtual IVertexSource GetVertexSource()
+        public virtual IVertexSource GetRawPath()
         {
             return PathForEditing;
         }

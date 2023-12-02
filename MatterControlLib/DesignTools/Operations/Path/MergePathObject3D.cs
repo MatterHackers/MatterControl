@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier, IPathObject3D
+    public class MergePathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier, IPathProvider
     {
         private ClipperLib.ClipType clipType;
         private string operationName;
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                     }
 
                     // set the mesh to show the path
-                    this.Mesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+                    this.Mesh = this.GetRawPath().Extrude(Constants.PathPolygonsHeight);
 
                     UiThread.RunOnIdle(() =>
                     {
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             SourceContainer.Visible = true;
             RemoveAllButSource();
 
-            var participants = SourceContainer.VisiblePaths();
+            var participants = SourceContainer.VisiblePathProviders();
             var first = participants.First();
             var firstObject3D = first as Object3D;
             if (participants.Count() < 2)
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 return;
             }
 
-            var resultsVertexSource = first.GetVertexSource().Transform(firstObject3D.WorldMatrix(this));
+            var resultsVertexSource = first.GetTransformedPath(this);
 
             var totalOperations = participants.Count() - 1;
             double amountPerOperation = 1.0 / totalOperations;
@@ -143,15 +143,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
             foreach (var item in participants)
             {
+                IVertexSource itemPath = item.GetTransformedPath(this);
                 if (item != first
-                    && item.GetVertexSource() != null)
+                    && itemPath != null)
                 {
                     var itemObject3D = item as Object3D;
-                    var itemVertexSource = item.GetVertexSource().Transform(itemObject3D.WorldMatrix(this));
 
                     this.CopyProperties(firstObject3D, Object3DPropertyFlags.Color);
 
-                    resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, clipType);
+                    resultsVertexSource = resultsVertexSource.MergePaths(itemPath, clipType);
 
                     ratioCompleted += amountPerOperation;
                     reporter?.Invoke(ratioCompleted, null);
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             return PathObject3DAbstract.GetOperations(this.GetType());
         }
 
-        public IVertexSource GetVertexSource()
+        public IVertexSource GetRawPath()
         {
             return VertexStorage;
         }

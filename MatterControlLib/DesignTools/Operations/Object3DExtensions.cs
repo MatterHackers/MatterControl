@@ -184,14 +184,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void FlattenToPathObject(this IObject3D item, UndoBuffer undoBuffer)
 		{
-            var pathItem = item as IPathObject3D;
-            if (pathItem?.GetVertexSource() != null)
+            var pathItem = item as IPathProvider;
+            if (pathItem?.GetRawPath() != null)
 			{
 				using (item.RebuildLock())
 				{
 					var newPathObject = new CustomPathObject3D();
 
-                    var vertexStorage = new VertexStorage(pathItem.GetVertexSource());
+                    var vertexStorage = new VertexStorage(pathItem.GetRawPath());
                     newPathObject.PathForEditing.SvgDString = vertexStorage.SvgDString;
 
 					newPathObject.CopyProperties(item, Object3DPropertyFlags.All);
@@ -216,15 +216,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void DrawPath(this IObject3D item)
 		{
-			var pathItem = item as IPathObject3D;
-			if (pathItem?.GetVertexSource() != null)
+			var pathItem = item as IPathProvider;
+			if (pathItem?.GetRawPath() != null)
 			{
 				bool first = true;
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 				var firstMove = Vector2.Zero;
-				foreach (var vertex in pathItem.GetVertexSource().Vertices())
+				foreach (var vertex in pathItem.GetRawPath().Vertices())
 				{
 					var position = vertex.Position;
 					if (first)
@@ -273,15 +273,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			AxisAlignedBoundingBox box = AxisAlignedBoundingBox.Empty();
 
-			var pathItem = item as IPathObject3D;
+			var pathItem = item as IPathProvider;
 
-            if (pathItem?.GetVertexSource() != null)
+            if (pathItem?.GetRawPath() != null)
 			{
 				var lastPosition = Vector2.Zero;
 				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
 				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 
-				foreach (var vertex in pathItem.GetVertexSource().Vertices())
+				foreach (var vertex in pathItem.GetRawPath().Vertices())
 				{
 					var position = vertex.Position;
 

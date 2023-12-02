@@ -132,12 +132,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public override bool MeshIsSolidObject => Output == OutputDimensions.Output3D;
 
-        public override IVertexSource GetVertexSource()
-		{
+        public override IVertexSource GetRawPath()
+        {
 			if (Output == OutputDimensions.Output2D)
 			{
-				return this.CombinedVisibleChildrenPaths();
-			}
+				return VertexStorage;
+            }
 
 			return null;
 		}
@@ -241,6 +241,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							};
 							list.Add(lineObject);
 
+							var letterPaths = new List<IVertexSource>();
 							foreach (var letter in textToWrite.ToCharArray())
 							{
 								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize);
@@ -285,10 +286,9 @@ namespace MatterHackers.MatterControl.DesignTools
 											};
 											if (Output == OutputDimensions.Output2D)
 											{
-												var pathObject = this as PathObject3DAbstract;
-                                                pathObject.VertexStorage = new VertexStorage(
-													new VertexSourceApplyTransform(
-														new VertexStorage(scaledLetterPrinter), Affine.NewTranslation(offset.X, offset.Y)));
+												var letterPath = new VertexSourceApplyTransform(new VertexStorage(scaledLetterPrinter),
+														Affine.NewTranslation(offset.X, offset.Y));
+                                                letterPaths.Add(letterPath);
 											}
 											offset.X += letterPrinter.GetSize(letter.ToString()).X * mmPerPoint;
 											break;
@@ -301,6 +301,11 @@ namespace MatterHackers.MatterControl.DesignTools
 									}
 								}
 							}
+
+							if (Output == OutputDimensions.Output2D)
+							{
+                                this.VertexStorage = new VertexStorage(new CombinePaths(letterPaths));
+                            }
 
 							for (var i = list.Count - 1; i >= 0; i--)
 							{
@@ -370,17 +375,25 @@ namespace MatterHackers.MatterControl.DesignTools
             }
 		}
 
-        public void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e)
+        public override void DrawEditor(Object3DControlsLayer object3DControlLayer, DrawEventArgs e)
         {
-			this.DrawPath();
+			if (Output == OutputDimensions.Output2D)
+			{
+				this.DrawPath();
+			}
 		}
 
-		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+		public override AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
         {
-			return this.GetWorldspaceAabbOfDrawPath();
-		}
+			if (Output == OutputDimensions.Output2D)
+			{
+				return this.GetWorldspaceAabbOfDrawPath();
+			}
 
-        public IEnumerable<SceneOperation> GetOperations()
+            return AxisAlignedBoundingBox.Empty();
+        }
+
+        public override IEnumerable<SceneOperation> GetOperations()
         {
             if (Output == OutputDimensions.Output2D)
             {

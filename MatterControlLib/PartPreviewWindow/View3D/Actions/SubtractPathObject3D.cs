@@ -46,7 +46,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-    public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier, IPathObject3D
+    public class SubtractPathObject3D : OperationSourceContainerObject3D, IEditorDraw, IObject3DControlsProvider, IPrimaryOperationsSpecifier, IPathProvider
     {
         public SubtractPathObject3D()
         {
@@ -123,9 +123,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                     }
 
                     // set the mesh to show the path
-                    if (this.GetVertexSource() != null)
+                    if (this.GetRawPath() != null)
                     {
-                        var extrudeMesh = this.GetVertexSource().Extrude(Constants.PathPolygonsHeight);
+                        var extrudeMesh = this.GetRawPath().Extrude(Constants.PathPolygonsHeight);
                         if (extrudeMesh.Vertices.Count() > 5)
                         {
                             this.Mesh = extrudeMesh;
@@ -175,14 +175,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             var removeVisibleItems = parentOfSubtractTargets.Children
                 .Where((i) => SelectedChildren
                 .Contains(i.ID))
-                .SelectMany(c => c.VisiblePaths())
+                .SelectMany(c => c.VisiblePathProviders())
                 .ToList();
 
             var keepItems = parentOfSubtractTargets.Children
                 .Where((i) => !SelectedChildren
                 .Contains(i.ID));
 
-            var keepVisibleItems = keepItems.SelectMany(c => c.VisiblePaths()).ToList();
+            var keepVisibleItems = keepItems.SelectMany(c => c.VisiblePathProviders()).ToList();
 
             if (removeVisibleItems.Any()
                 && keepVisibleItems.Any())
@@ -195,12 +195,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                 foreach (var keep in keepVisibleItems)
                 {
                     var keepObject3D = keep as Object3D;
-                    var resultsVertexSource = keep.GetVertexSource().Transform(keepObject3D.Matrix);
+                    var resultsVertexSource = keep.GetTransformedPath(this);
 
                     foreach (var remove in removeVisibleItems)
                     {
-                        var removeObject3D = remove as Object3D;
-                        resultsVertexSource = resultsVertexSource.MergePaths(remove.GetVertexSource().Transform(removeObject3D.Matrix), ClipperLib.ClipType.ctDifference);
+                        resultsVertexSource = resultsVertexSource.MergePaths(remove.GetTransformedPath(this), ClipperLib.ClipType.ctDifference);
 
                         // report our progress
                         ratioCompleted += amountPerOperation;
@@ -216,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                     }
                     else
                     {
-                        this.GetVertexSource().MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
+                        this.GetRawPath().MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
                     }
                 }
 
@@ -261,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             return PathObject3DAbstract.GetOperations(this.GetType());
         }
 
-        public IVertexSource GetVertexSource()
+        public IVertexSource GetRawPath()
         {
             return VertexStorage;
         }

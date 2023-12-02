@@ -44,7 +44,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathObject3D
+	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathProvider
 	{
 		public FindSliceObject3D()
 		{
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var newPathObject = new CustomPathObject3D();
 
-			var vertexStorage = new VertexStorage(this.GetVertexSource());
+			var vertexStorage = new VertexStorage(this.GetRawPath());
 			newPathObject.PathForEditing.SvgDString = vertexStorage.SvgDString;
             newPathObject.Rebuild();
 
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-        public IVertexSource GetVertexSource()
+        public IVertexSource GetRawPath()
         {
             return VertexStorage;
         }

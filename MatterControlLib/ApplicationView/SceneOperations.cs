@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 				// this is for when base is working with generic meshes
 				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem.IsPathObject()),
 				// this is for when only IPathObjects are working correctly
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i is IPathObject3D).Any(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i is IPathProvider).Any(),
 			};
 		}
 
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
 			};
 		}
 
@@ -405,15 +405,13 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					var pathObject = sceneItem as IPathObject3D;
+					var pathObject = sceneItem as IPathProvider;
                     if (pathObject != null)
 					{
 						var extrude = new LinearExtrudeObject3D();
 
 						var itemClone = sceneItem.Clone();
 						extrude.Children.Add(itemClone);
-						extrude.Matrix = itemClone.Matrix;
-						itemClone.Matrix = Matrix4X4.Identity;
 
 						scene.SelectedItem = null;
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
@@ -424,7 +422,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("linear_extrude.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
 			};
 		}
 
@@ -438,7 +436,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					var pathObject = sceneItem as IPathObject3D;
+					var pathObject = sceneItem as IPathProvider;
                     if (pathObject != null)
 					{
 						var revolve = new RevolveObject3D();
@@ -457,7 +455,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("revolve.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
 			};
 		}
 
@@ -549,7 +547,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("outline.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
 			};
 		}
 
@@ -609,7 +607,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (theme) => StaticData.Instance.LoadIcon("smooth_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
 				HelpTextGetter = () => "A path must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject3D,
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
 			};
 		}
 
@@ -702,7 +700,7 @@ namespace MatterHackers.MatterControl
                 // all are path items
                 if (includePaths
                     && selectedItem.VisibleMeshes().Count() > 1
-                    && selectedItem.VisibleMeshes().All(i => i is IPathObject3D))
+                    && selectedItem.VisibleMeshes().All(i => i is IPathProvider))
                 {
                     return true;
                 }
@@ -888,7 +886,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Combine".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathProvider))
                     {
                         new MergePathObject3D("Combine".Localize(), ClipperLib.ClipType.ctUnion).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1055,7 +1053,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Intersect".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathProvider))
                     {
                         new MergePathObject3D("Intersect".Localize(), ClipperLib.ClipType.ctIntersection).WrapSelectedItemAndSelect(sceneContext.Scene);
 					}
@@ -1079,7 +1077,7 @@ namespace MatterHackers.MatterControl
 					return false;
 				}
 
-				if (item is IPathObject3D pathObject)
+				if (item is IPathProvider pathObject)
 				{
 					return pathObject.MeshIsSolidObject;
                 }
@@ -1339,7 +1337,7 @@ namespace MatterHackers.MatterControl
 				TitleGetter = () => "Subtract".Localize(),
 				Action = (sceneContext) =>
 				{
-                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathObject3D))
+                    if (sceneContext.Scene.SelectedItem.VisibleMeshes().All(o => o is IPathProvider))
                     {
                         new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 					}

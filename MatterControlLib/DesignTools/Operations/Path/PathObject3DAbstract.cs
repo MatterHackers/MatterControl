@@ -40,21 +40,21 @@ using System.Collections.Generic;
 
 namespace MatterControlLib.DesignTools.Operations.Path
 {
-    public abstract class PathObject3DAbstract : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathObject3D
+    public abstract class PathObject3DAbstract : Object3D, IEditorDraw, IPrimaryOperationsSpecifier, IPathProvider
     {
-        public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        public virtual void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
         {
             this.DrawPath();
         }
 
-        public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        public virtual AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
         {
             return this.GetWorldspaceAabbOfDrawPath();
         }
 
         public VertexStorage VertexStorage { get; set; } = new VertexStorage();
 
-        public virtual IVertexSource GetVertexSource()
+        public virtual IVertexSource GetRawPath()
         {
             return VertexStorage;
         }
@@ -92,7 +92,7 @@ namespace MatterControlLib.DesignTools.Operations.Path
             }
         }
 
-        public IEnumerable<SceneOperation> GetOperations()
+        public virtual IEnumerable<SceneOperation> GetOperations()
         {
             return GetOperations(GetType());
         }

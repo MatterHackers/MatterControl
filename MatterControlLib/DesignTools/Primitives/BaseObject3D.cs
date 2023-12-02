@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private double cacheHeight;
 
-		public override IVertexSource GetVertexSource()
+		public override IVertexSource GetRawPath()
 		{
 			var paths = this.CombinedVisibleChildrenPaths();
             if (paths == null)
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						});
 
 						// and create the base
-						var vertexSource = GetVertexSource();
+						var vertexSource = GetRawPath();
 
 						// Convert VertexSource into expected Polygons
 						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var outsidePolygons = new Polygons();
 				// remove all holes from the polygons so we only center the major outlines
-				var polygons = GetVertexSource().CreatePolygons();
+				var polygons = GetRawPath().CreatePolygons();
 				polygons = polygons.GetCorrectedWinding();
 
 				foreach (var polygon in polygons)
@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
 			changeSet.Add(nameof(Style), BaseType != BaseTypes.Circle);
 
-			var vertexSource = GetVertexSource();
+			var vertexSource = GetRawPath();
             var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
 
 			changeSet.Add(nameof(CalculationHeight), vertexSource == null && meshSource.Where(m => m.Mesh != null).Any());
@@ -456,9 +456,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
-			if (GetVertexSource() != null)
+			if (GetRawPath() != null)
 			{
-				layer.World.RenderPathOutline(CalcTransform(), GetVertexSource(), Agg.Color.Red, 5);
+				layer.World.RenderPathOutline(CalcTransform(), GetRawPath(), Agg.Color.Red, 5);
 
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
@@ -467,10 +467,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
 		{
-			if (GetVertexSource() != null)
+			if (GetRawPath() != null)
 			{
 				// TODO: Untested.
-				return layer.World.GetWorldspaceAabbOfRenderPathOutline(CalcTransform(), GetVertexSource(), 5);
+				return layer.World.GetWorldspaceAabbOfRenderPathOutline(CalcTransform(), GetRawPath(), 5);
 			}
 			return AxisAlignedBoundingBox.Empty();
 		}
