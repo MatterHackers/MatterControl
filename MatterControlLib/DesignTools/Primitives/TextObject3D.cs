@@ -144,18 +144,25 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public override void Apply(UndoBuffer undoBuffer)
 		{
-			// change this from a text object to a group
-			var newContainer = new GroupObject3D();
-			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
-			foreach (var child in this.Children)
+            if (Output == OutputDimensions.Output2D)
 			{
-				var clone = child.Clone();
-				newContainer.Children.Add(clone);
-			}
+                this.FlattenToPathObject(undoBuffer);
+            }
+            else
+			{
+                // change this from a text object to a group
+                var newContainer = new GroupObject3D();
+                newContainer.CopyProperties(this, Object3DPropertyFlags.All);
+                foreach (var child in this.Children)
+                {
+                    var clone = child.Clone();
+                    newContainer.Children.Add(clone);
+                }
 
-			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
-			newContainer.Name = this.Name;
-		}
+                undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
+                newContainer.Name = this.Name;
+            }
+        }
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
@@ -244,10 +251,13 @@ namespace MatterHackers.MatterControl.DesignTools
 							var letterPaths = new List<IVertexSource>();
 							foreach (var letter in textToWrite.ToCharArray())
 							{
-								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize);
+								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize)
+								{
+									FlattenCurves = false
+								};
 								var letterPrinter = new TypeFacePrinter(letter.ToString(), style)
 								{
-									ResolutionScale = 10
+									ResolutionScale = 10,
 								};
 								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(mmPerPoint));
 
@@ -286,6 +296,7 @@ namespace MatterHackers.MatterControl.DesignTools
 											};
 											if (Output == OutputDimensions.Output2D)
 											{
+
 												var letterPath = new VertexSourceApplyTransform(new VertexStorage(scaledLetterPrinter),
 														Affine.NewTranslation(offset.X, offset.Y));
                                                 letterPaths.Add(letterPath);
