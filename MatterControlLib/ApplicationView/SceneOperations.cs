@@ -443,8 +443,6 @@ namespace MatterHackers.MatterControl
 
 						var itemClone = sceneItem.Clone();
 						revolve.Children.Add(itemClone);
-						revolve.Matrix = itemClone.Matrix;
-						itemClone.Matrix = Matrix4X4.Identity;
 
 						scene.SelectedItem = null;
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { revolve }));

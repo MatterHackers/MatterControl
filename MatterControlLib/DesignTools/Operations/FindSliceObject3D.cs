@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;

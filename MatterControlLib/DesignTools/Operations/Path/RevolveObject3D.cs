@@ -136,7 +136,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
 		{
 			var path = this.CombinedVisibleChildrenPaths();
-			if (path != null)
+			// we only draw the rotation line if we are not rotated
+			if (path != null
+				&& Rotation.Value(this) == 0)
 			{
 				var (start, end) = GetStartEnd(this, path);
 				layer.World.Render3DLine(start, end, Color.Red, true);
@@ -198,6 +200,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					vertexSource = vertexSource.Translate(-pathBounds.Left - axisPosition, 0);
 					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
 						sides,
+						// A right hand rule rotation about y would make the part go clockwise into the ground so we need to rotate the other way
+						// Starting at the end and going to the start
 						MathHelper.DegreesToRadians(360 - endingAngle),
 						MathHelper.DegreesToRadians(360 - startingAngle),
 						false);
