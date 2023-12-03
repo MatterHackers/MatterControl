@@ -81,7 +81,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			editSelectionGroup.AddChild(EditSelectedExpression);
 			EditSelectedExpression.ActualTextEditWidget.EditComplete += ActualTextEditWidget_EditComplete1;
 
-			gridWidget = new GridWidget(sheetData.Width + 1, sheetData.Height + 1, theme: theme);
+			gridWidget = new GridWidget(sheetData.Width + 1, sheetData.Height + 1, theme: theme)
+			{
+				Margin = new BorderDouble(7, 0),
+			};
 
 			this.AddChild(gridWidget);
 
