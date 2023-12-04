@@ -314,29 +314,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			EnableReduceWidth(tab, theme);
 
-			if (!OemSettings.Instance.DesignToolsOnly)
-			{
-				// Hardware tab
-				tabControl.AddTab(
-				tab = new ChromeTab(
-					"Hardware",
-					"Printers".Localize(),
-					tabControl,
-					new PrintersTabPage(theme)
-					{
-						BackgroundColor = theme.BackgroundColor
-					},
-					theme,
-					hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Hardware Tab",
-					Padding = new BorderDouble(15, 0),
-				});
-			}
-
-			EnableReduceWidth(tab, theme);
-
 			SetInitialTab();
 
 			var brandMenu = new BrandMenuButton(theme)

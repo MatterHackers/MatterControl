@@ -423,8 +423,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							if (cancellationToken.IsCancellationRequested)
 							{
-								MatterHackers.MatterSlice.MatterSlice.Stop();
-								forcedExit = true;
+                                throw new NotImplementedException();
+                                forcedExit = true;
 							}
 
 							if (s is string stringValue)
@@ -433,13 +433,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						}
 
-						MatterSlice.LogOutput.GetLogWrites += WriteOutput;
+						throw new NotImplementedException();
 
-						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
-
-						MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
-
-						slicingSucceeded = !forcedExit;
+                        slicingSucceeded = !forcedExit;
 					}
 					else
 					{

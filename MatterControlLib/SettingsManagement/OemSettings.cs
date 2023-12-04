@@ -69,8 +69,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public bool ShowShopButton = true;
 
-        public bool DesignToolsOnly = false;
-
         public bool CheckForUpdatesOnFirstRun = false;
 
         public string UnregisteredProductName { get; set; } = "MatterControl";

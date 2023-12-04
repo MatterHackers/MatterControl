@@ -696,7 +696,7 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
+					//PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
 
 					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
 					await applicationController.RestoreUserTabs();

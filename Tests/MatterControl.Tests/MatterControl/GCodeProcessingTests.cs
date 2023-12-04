@@ -82,7 +82,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var settings = new PrinterSettings();
-			settings.Slicer = new EngineMappingsMatterSlice();
+			//settings.Slicer = new EngineMappingsMatterSlice();
 
 			void TestMacroReplacement(string inputText, string outputControl)
 			{

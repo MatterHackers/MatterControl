@@ -21,7 +21,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 
 			var printer = new PrinterConfig(new PrinterSettings());
-			printer.Settings.Slicer = new EngineMappingsMatterSlice();
+			//printer.Settings.Slicer = new EngineMappingsMatterSlice();
 
 			Slicer.ExtrudersUsed = new List<bool> { true };
 
