@@ -110,7 +110,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				numCell.AddChild(new TextWidget((y + 1).ToString())
 				{
 					TextColor = theme.TextColor,
-					VAnchor = VAnchor.Center,
+                    HAnchor = HAnchor.Center,
+                    VAnchor = VAnchor.Center,
 				});
 
 				numCell.BackgroundColor = theme.SlightShade;

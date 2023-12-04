@@ -488,29 +488,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!string.IsNullOrEmpty(filePath)
 				&& File.Exists(filePath))
 			{
-                if (Path.GetExtension(filePath).ToLower() == ".mcx")
-                {
-					if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(filePath))
-					{
-						return;
-					}
+				switch (Path.GetExtension(filePath).ToLower())
+				{
+					case ".mcx":
+						{
+							if (ApplicationController.Instance.SwitchToWorkspaceIfAlreadyOpen(filePath))
+							{
+								return;
+							}
 
-					var history = ApplicationController.Instance.Library.PlatingHistory;
-                    var workspace = new PartWorkspace(new BedConfig(history));
-                    // Load the previous content
-                    await workspace.SceneContext.LoadContent(new EditContext()
-                    {
-                        ContentStore = history,
-                        SourceItem = new FileSystemFileItem(filePath)
-                    }, null);
+							var history = ApplicationController.Instance.Library.PlatingHistory;
+							var workspace = new PartWorkspace(new BedConfig(history));
+							// Load the previous content
+							await workspace.SceneContext.LoadContent(new EditContext()
+							{
+								ContentStore = history,
+								SourceItem = new FileSystemFileItem(filePath)
+							}, null);
 
-                    ApplicationController.Instance.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
-                }
-                else
-                {
-                    var workspace = await CreateNewDesignTab(false);
-					workspace.SceneContext.AddToPlate(new string[] { filePath }, false);
-                }
+							ApplicationController.Instance.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
+						}
+						break;
+
+					default:
+						{
+							var workspace = await CreateNewDesignTab(false);
+							workspace.SceneContext.AddToPlate(new string[] { filePath }, false);
+						}
+						break;
+				}
             }
 		}
 
