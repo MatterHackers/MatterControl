@@ -29,19 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.ImageProcessing;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Web;
-using System.ComponentModel;
-using MatterHackers.VectorMath;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -54,41 +53,21 @@ namespace MatterHackers.MatterControl.DesignTools
                 var theme = propertyEditor.Theme;
                 var undoBuffer = propertyEditor.UndoBuffer;
 
-                var contextItem = context.Item;
-                var contextObject3D = contextItem as IObject3D;
                 var propertyIObject3D = property.Source as IObject3D;
-                var propertyGridModifier = property.Source as IPropertyGridModifier;
 
-                GuiWidget rowContainer = null;
-
+                GuiWidget rowContainer;
                 if (property.PropertyInfo.GetCustomAttributes(true).OfType<GoogleSearchAttribute>().FirstOrDefault() != null)
                 {
                     rowContainer = NewImageSearchWidget(theme);
                 }
+                if (property.PropertyInfo.GetCustomAttributes(true).OfType<FontSelectorAttribute>().FirstOrDefault() != null)
+                {
+                    rowContainer = InsertFontSelectorField(propertyEditor, property, context, ref tabIndex, stringValue, theme, undoBuffer);
+                }
                 else if (propertyIObject3D is AssetObject3D assetObject
                     && property.PropertyInfo.Name == "AssetPath")
                 {
-                    // This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
-                    // Change button
-                    var changeButton = new ThemedTextButton(property.Description, theme)
-                    {
-                        BackgroundColor = theme.MinimalShade,
-                        Margin = 3
-                    };
-
-                    rowContainer = new SettingsRow(property.DisplayName,
-                        null,
-                        changeButton,
-                        theme);
-
-
-                    changeButton.Click += (sender, e) =>
-                    {
-                        UiThread.RunOnIdle(() =>
-                        {
-                            ImageObject3D.ShowOpenDialog(assetObject);
-                        });
-                    };
+                    rowContainer = InsertEditFieldWithFileButton(property, theme, assetObject);
                 }
                 else
                 {
@@ -96,121 +75,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
                     if (readOnly)
                     {
-                        WrappedTextWidget wrappedTextWidget = null;
-                        if (!string.IsNullOrEmpty(property.DisplayName))
-                        {
-                            rowContainer = new GuiWidget()
-                            {
-                                HAnchor = HAnchor.Stretch,
-                                VAnchor = VAnchor.Fit,
-                                Margin = 9
-                            };
-
-                            var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
-                                textColor: theme.TextColor,
-                                pointSize: 10)
-                            {
-                                VAnchor = VAnchor.Center,
-                            });
-
-                            var wrapContainer = new GuiWidget()
-                            {
-                                Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
-                                HAnchor = HAnchor.Stretch,
-                                VAnchor = VAnchor.Fit
-                            };
-                            wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
-                            {
-                                HAnchor = HAnchor.Stretch
-                            };
-                            wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
-                            wrapContainer.AddChild(wrappedTextWidget);
-                            rowContainer.AddChild(wrapContainer);
-                        }
-                        else
-                        {
-                            rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
-                                                    textColor: theme.TextColor,
-                                                    pointSize: 10)
-                            {
-                                Margin = 9
-                            };
-                        }
-
-                        void RefreshField(object s, InvalidateArgs e)
-                        {
-                            if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
-                            {
-                                wrappedTextWidget.Text = property.Value.ToString();
-                            }
-                        }
-
-                        if (propertyIObject3D != null)
-                        {
-                            propertyIObject3D.Invalidated += RefreshField;
-                            wrappedTextWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
-                        }
+                        rowContainer = InsertReadOnlyTextDisplay(property, stringValue, theme, propertyIObject3D);
                     }
                     else // normal edit row
                     {
                         if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
                         {
-                            // create a a multi-line string editor
-                            var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
-                            field.Initialize(ref tabIndex);
-                            field.SetValue(stringValue, false);
-                            field.ClearUndoHistory();
-                            field.Content.HAnchor = HAnchor.Stretch;
-                            field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
-                            field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
-                            field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
-                            field.Content.Margin = new BorderDouble(0, 0, 0, 5);
-                            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-                            rowContainer = PropertyEditor.CreateSettingsColumn(property, field, fullWidth: true);
+                            rowContainer = InsertMultiLineEdit(property, context, ref tabIndex, stringValue, theme, undoBuffer);
                         }
                         else
                         {
-                            // create a string editor
-                            var field = new TextField(theme);
-                            field.Initialize(ref tabIndex);
-                            field.SetValue(stringValue, false);
-                            field.ClearUndoHistory();
-                            field.Content.HAnchor = HAnchor.Stretch;
-                            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-                            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
-
-                            // check for DirectoryPathAttribute
-                            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
-                            if (directoryPathAttribute != null)
-                            {
-                                // add a browse button
-                                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
-                                {
-                                    ToolTipText = "Select Folder".Localize(),
-                                };
-                                browseButton.Click += (s, e) =>
-                                {
-                                    UiThread.RunOnIdle(() =>
-                                    {
-                                        AggContext.FileDialogs.SelectFolderDialog(
-                                            new SelectFolderDialogParams(directoryPathAttribute.Message)
-                                            {
-                                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
-                                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
-                                                RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
-                                                FolderPath = stringValue
-                                            },
-                                            (openParams) =>
-                                            {
-                                                if (!string.IsNullOrEmpty(openParams.FolderPath))
-                                                {
-                                                    field.SetValue(openParams.FolderPath, true);
-                                                }
-                                            });
-                                    });
-                                };
-                                rowContainer.AddChild(browseButton);
-                            }
+                            rowContainer = InsertSingleLineEdit(propertyEditor, property, context, ref tabIndex, stringValue, theme, undoBuffer);
                         }
                     }
                 }
@@ -219,6 +94,174 @@ namespace MatterHackers.MatterControl.DesignTools
             }
 
             return null;
+        }
+
+        private GuiWidget InsertFontSelectorField(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex, string stringValue, ThemeConfig theme, UndoBuffer undoBuffer)
+        {
+            GuiWidget rowContainer;
+            var field = new FontSelectorField(property, theme);
+
+            field.Initialize(ref tabIndex);
+            field.SetValue(stringValue, false);
+            field.ClearUndoHistory();
+            field.Content.HAnchor = HAnchor.Stretch;
+            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
+            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+
+            return rowContainer;
+        }
+
+        private static GuiWidget InsertSingleLineEdit(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex, string stringValue, ThemeConfig theme, UndoBuffer undoBuffer)
+        {
+            GuiWidget rowContainer;
+            // create a string editor
+            var field = new TextField(theme);
+            field.Initialize(ref tabIndex);
+            field.SetValue(stringValue, false);
+            field.ClearUndoHistory();
+            field.Content.HAnchor = HAnchor.Stretch;
+            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
+            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+
+            // check for DirectoryPathAttribute
+            var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();
+            if (directoryPathAttribute != null)
+            {
+                // add a browse button
+                var browseButton = new ThemedIconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png"), 16, 16).GrayToColor(theme.TextColor), theme)
+                {
+                    ToolTipText = "Select Folder".Localize(),
+                };
+                browseButton.Click += (s, e) =>
+                {
+                    UiThread.RunOnIdle(() =>
+                    {
+                        AggContext.FileDialogs.SelectFolderDialog(
+                            new SelectFolderDialogParams(directoryPathAttribute.Message)
+                            {
+                                ActionButtonLabel = directoryPathAttribute.ActionLabel,
+                                Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize(),
+                                RootFolder = SelectFolderDialogParams.RootFolderTypes.Specify,
+                                FolderPath = stringValue
+                            },
+                            (openParams) =>
+                            {
+                                if (!string.IsNullOrEmpty(openParams.FolderPath))
+                                {
+                                    field.SetValue(openParams.FolderPath, true);
+                                }
+                            });
+                    });
+                };
+                rowContainer.AddChild(browseButton);
+            }
+
+            return rowContainer;
+        }
+
+        private static GuiWidget InsertMultiLineEdit(EditableProperty property, EditorContext context, ref int tabIndex, string stringValue, ThemeConfig theme, UndoBuffer undoBuffer)
+        {
+            GuiWidget rowContainer;
+            // create a a multi-line string editor
+            var field = new MultilineStringField(theme, property.PropertyInfo.GetCustomAttributes(true).OfType<UpdateOnEveryKeystrokeAttribute>().FirstOrDefault() != null);
+            field.Initialize(ref tabIndex);
+            field.SetValue(stringValue, false);
+            field.ClearUndoHistory();
+            field.Content.HAnchor = HAnchor.Stretch;
+            field.Content.Descendants<ScrollableWidget>().FirstOrDefault().MaximumSize = new Vector2(double.MaxValue, 200);
+            field.Content.Descendants<ScrollingArea>().FirstOrDefault().Parent.VAnchor = VAnchor.Top;
+            field.Content.MinimumSize = new Vector2(0, 100 * GuiWidget.DeviceScale);
+            field.Content.Margin = new BorderDouble(0, 0, 0, 5);
+            PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
+            rowContainer = PropertyEditor.CreateSettingsColumn(property, field, fullWidth: true);
+            return rowContainer;
+        }
+
+        private static GuiWidget InsertReadOnlyTextDisplay(EditableProperty property, string stringValue, ThemeConfig theme, IObject3D propertyIObject3D)
+        {
+            GuiWidget rowContainer;
+            WrappedTextWidget wrappedTextWidget = null;
+            if (!string.IsNullOrEmpty(property.DisplayName))
+            {
+                rowContainer = new GuiWidget()
+                {
+                    HAnchor = HAnchor.Stretch,
+                    VAnchor = VAnchor.Fit,
+                    Margin = 9
+                };
+
+                var displayName = rowContainer.AddChild(new TextWidget(property.DisplayName,
+                    textColor: theme.TextColor,
+                    pointSize: 10)
+                {
+                    VAnchor = VAnchor.Center,
+                });
+
+                var wrapContainer = new GuiWidget()
+                {
+                    Margin = new BorderDouble(displayName.Width + displayName.Margin.Width + 15, 3, 3, 3),
+                    HAnchor = HAnchor.Stretch,
+                    VAnchor = VAnchor.Fit
+                };
+                wrappedTextWidget = new WrappedTextWidget(stringValue, textColor: theme.TextColor, pointSize: 10)
+                {
+                    HAnchor = HAnchor.Stretch
+                };
+                wrappedTextWidget.TextWidget.HAnchor = HAnchor.Right;
+                wrapContainer.AddChild(wrappedTextWidget);
+                rowContainer.AddChild(wrapContainer);
+            }
+            else
+            {
+                rowContainer = wrappedTextWidget = new WrappedTextWidget(stringValue,
+                                        textColor: theme.TextColor,
+                                        pointSize: 10)
+                {
+                    Margin = 9
+                };
+            }
+
+            void RefreshField(object s, InvalidateArgs e)
+            {
+                if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+                {
+                    wrappedTextWidget.Text = property.Value.ToString();
+                }
+            }
+
+            if (propertyIObject3D != null)
+            {
+                propertyIObject3D.Invalidated += RefreshField;
+                wrappedTextWidget.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
+            }
+
+            return rowContainer;
+        }
+
+        private static GuiWidget InsertEditFieldWithFileButton(EditableProperty property, ThemeConfig theme, AssetObject3D assetObject)
+        {
+            GuiWidget rowContainer;
+            // This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
+            // Change button
+            var changeButton = new ThemedTextButton(property.Description, theme)
+            {
+                BackgroundColor = theme.MinimalShade,
+                Margin = 3
+            };
+
+            rowContainer = new SettingsRow(property.DisplayName,
+                null,
+                changeButton,
+                theme);
+
+            changeButton.Click += (sender, e) =>
+            {
+                UiThread.RunOnIdle(() =>
+                {
+                    ImageObject3D.ShowOpenDialog(assetObject);
+                });
+            };
+            return rowContainer;
         }
 
         public static GuiWidget NewImageSearchWidget(ThemeConfig theme, string postPend = "silhouette")

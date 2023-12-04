@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							// Add temperature text
 							var text = new TextObject3D()
 							{
-								Font = NamedTypeFace.Fredoka,
+								Font = "Fredoka",
 								Height = 1,
 								Name = $"{temp:0.##}",
 								PointSize = 10,

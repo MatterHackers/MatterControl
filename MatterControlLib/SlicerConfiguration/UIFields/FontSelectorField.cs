@@ -50,39 +50,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void Initialize(ref int tabIndex)
 		{
 			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
-			{
-				var renamedName = enumName;
-
-				var renameAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumRenameAttribute>().FirstOrDefault();
-				if (renameAttribute != null)
-				{
-					if (renameAttribute.NameMaping.TryGetValue(renamedName, out string value))
-					{
-						renamedName = value;
-					}
-				}
-
-				return new
-				{
-					Key = enumName,
-					Value = renamedName.Replace('_', ' ')
-				};
-			});
+			var orderedItems = ApplicationController.Instance.TypeFaceCache.OrderBy(n => n.Key);
 
 			dropDownList = new MHDropDownList("Name".Localize(), theme)
 			{
 				Name = property.DisplayName + " DropDownList"
 			};
 
-			var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
-			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
-
 			foreach (var orderItem in orderedItems)
 			{
-				Enum.TryParse<NamedTypeFace>(orderItem.Key, out NamedTypeFace namedTypeFace);
-				var typeFace = ApplicationController.GetTypeFace(namedTypeFace);
-				MenuItem newItem = dropDownList.AddItem(orderItem.Value, orderItem.Key, typeFace);
+                var namedTypeFace = orderItem.Key;
+                var typeFace = ApplicationController.Instance.GetTypeFace(namedTypeFace);
+				MenuItem newItem = dropDownList.AddItem(orderItem.Key, orderItem.Key, typeFace);
 
 				var localOrderedItem = orderItem;
 				newItem.Selected += (sender, e) =>

@@ -113,9 +113,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(1, 400, VectorMath.Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression Height { get; set; } = 3;
 
-		[Sortable]
-		[JsonConverter(typeof(StringEnumConverter))]
-		public NamedTypeFace Font { get; set; } = NamedTypeFace.Nunito_Bold;
+        [FontSelector]
+        public string Font { get; set; } = "Nunito_Bold";
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public OutputDimensions Output { get; set; } = OutputDimensions.Output3D;
@@ -251,7 +250,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var letterPaths = new List<IVertexSource>();
 							foreach (var letter in textToWrite.ToCharArray())
 							{
-								var style = new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), pointSize)
+								var style = new StyledTypeFace(ApplicationController.Instance.GetTypeFace(Font), pointSize)
 								{
 									FlattenCurves = false
 								};

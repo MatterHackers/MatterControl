@@ -71,15 +71,6 @@ namespace MatterHackers.MatterControl
 		{
 			timer = Stopwatch.StartNew();
 
-			if (false)
-			{
-				// set the default font
-				AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Regular);
-				AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold);
-				AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Italic);
-				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold_Italic);
-			}
-
 			var rootSystemWindow = new RootSystemWindow(width, height);
 
 			var overlay = new GuiWidget()

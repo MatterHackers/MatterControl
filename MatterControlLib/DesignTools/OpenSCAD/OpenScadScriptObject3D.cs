@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class OpenScadScriptObject3D : Object3D
 	{
-		[MultiLineEditAttribute]
+		[MultiLineEdit]
 		public string NameToWrite { get; set; } = "cube([20, 20, 20]);";
 
 		public OpenScadScriptObject3D()

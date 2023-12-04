@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2023, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,8 @@ using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-
     [AttributeUsage(AttributeTargets.Property)]
-	public class MultiLineEditAttribute : Attribute
-	{
-	}
-
-	[AttributeUsage(AttributeTargets.Property)]
-	public class UpdateOnEveryKeystrokeAttribute : Attribute
-	{
-	}
+    public class FontSelectorAttribute : Attribute
+    {
+    }
 }

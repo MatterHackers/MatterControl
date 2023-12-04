@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 		public TextScrollWidget(PrinterConfig printer, TerminalLog terminalLog)
 		{
 			this.printer = printer;
-			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
+			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.Instance.GetTypeFace("Liberation_Mono"), 12));
 			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.terminalLog = terminalLog;
 			this.visibleLines = terminalLog.AllLines().ToList();

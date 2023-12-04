@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else
 					{
-						textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), pointSize));
+						textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(ApplicationController.Instance.GetTypeFace("Liberation_Mono"), pointSize));
 					}
 
 					foreach (var letter in brailleText.ToCharArray())
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 						else
 						{
-							letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), pointSize));
+							letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.Instance.GetTypeFace("Liberation_Mono"), pointSize));
 							var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 							letterObject = new Object3D()
 							{

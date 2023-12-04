@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					Key = enumName,
 					Value = renamedName.Replace('_', ' ')
-			};
+				};
 			});
 
 			dropDownList = new MHDropDownList("Name".Localize(), theme)

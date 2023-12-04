@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.BackgroundColor
 			};
 
-			editWidget = new ThemedTextEditWidget("", theme, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			editWidget = new ThemedTextEditWidget("", theme, multiLine: true, typeFace: ApplicationController.Instance.GetTypeFace("Liberation_Mono"))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,

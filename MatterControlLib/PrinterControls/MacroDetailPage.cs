@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
 
-			macroCommandInput = new ThemedTextEditWidget(gcodeMacro.GCode, theme, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			macroCommandInput = new ThemedTextEditWidget(gcodeMacro.GCode, theme, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.Instance.GetTypeFace("Liberation_Mono"))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch

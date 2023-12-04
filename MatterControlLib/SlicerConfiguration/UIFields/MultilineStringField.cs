@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(ref int tabIndex)
 		{
-			editWidget = new ThemedTextEditWidget("", theme, pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			editWidget = new ThemedTextEditWidget("", theme, pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.Instance.GetTypeFace("Liberation_Mono"))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

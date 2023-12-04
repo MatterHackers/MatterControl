@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(inputRow);
 
-			manualCommandTextEdit = new ThemedTextEditWidget("", theme, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			manualCommandTextEdit = new ThemedTextEditWidget("", theme, typeFace: ApplicationController.Instance.GetTypeFace("Liberation_Mono"))
 			{
 				Margin = new BorderDouble(right: 3),
 				HAnchor = HAnchor.Stretch,

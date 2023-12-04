@@ -68,12 +68,14 @@ using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Pathfinding;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Typography.OpenFont;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -81,36 +83,35 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl
 {
-	[JsonConverter(typeof(StringEnumConverter))]
-	public enum NamedTypeFace
-	{
-		Alfa_Slab,
-		Audiowide,
-		Bangers,
-		Courgette,
-		Damion,
-		Firefly_Sung,
-		Fredoka,
-		Great_Vibes,
-		Liberation_Mono,
-		Liberation_Sans,
-		Liberation_Sans_Bold,
-		Lobster,
-		Nunito_Regular,
-		Nunito_Bold,
-		Nunito_Bold_Italic,
-		Nunito_Italic,
-		Pacifico,
-		Poppins,
-		Questrial,
-		Righteous,
-		Russo,
-		Titan,
-		Titillium,
-	}
-
 	public class ApplicationController
 	{
+        public Dictionary<string, TypeFace> TypeFaceCache = new Dictionary<string, TypeFace>()
+		{
+			{"Alfa_Slab", null},
+			{"Audiowide", null},
+			{"Bangers", null},
+			{"Courgette", null},
+			{"Damion", null},
+			{"Firefly_Sung", null},
+			{"Fredoka", null},
+			{"Great_Vibes", null},
+			{"Liberation_Mono", TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg"))) },
+			{"Liberation_Sans", LiberationSansFont.Instance},
+			{"Liberation_Sans_Bold", LiberationSansBoldFont.Instance},
+			{"Lobster", null},
+			{"Nunito_Regular", null},
+			{"Nunito_Bold", null},
+			{"Nunito_Bold_Italic", null},
+			{"Nunito_Italic", null},
+			{"Pacifico", null},
+			{"Poppins", null},
+			{"Questrial", null},
+			{"Righteous", null},
+			{"Russo", null},
+			{"Titan", null},
+			{"Titillium", null}
+		};
+        
 		public event EventHandler<string> ApplicationError;
 
 		public event EventHandler<string> ApplicationEvent;
@@ -1367,21 +1368,52 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static readonly Dictionary<NamedTypeFace, TypeFace> TypeFaceCache = new Dictionary<NamedTypeFace, TypeFace>()
-		{
-			[NamedTypeFace.Liberation_Sans] = LiberationSansFont.Instance,
-			[NamedTypeFace.Liberation_Sans_Bold] = LiberationSansBoldFont.Instance,
-			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
-		};
-
 		private static object locker = new object();
 
-		public static TypeFace GetTypeFace(NamedTypeFace namedTypeFace)
+		bool addedWindowsFonts = false;
+
+		public TypeFace GetTypeFace(string namedTypeFace)
 		{
 			lock (locker)
 			{
+				if (!addedWindowsFonts)
+				{
+					addedWindowsFonts = true;
+
+                    // add all the windows fonts
+					// get all the files with the extension .ttf in the windows/fonts directory
+					var ttfs = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "*.ttf");
+					var otf = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "*.otf");
+					var fonts = ttfs.Concat(otf);
+					// add all the fonts to the cache
+                    foreach (var font in fonts)
+					{
+						var fontName = Path.GetFileNameWithoutExtension(font);
+                        if (!TypeFaceCache.ContainsKey(fontName))
+						{
+                            var stream2 = File.OpenRead(font);
+                            var typeFace = new TypeFace();
+							if (stream2 != null
+								&& typeFace.LoadTTF(stream2))
+							{
+								TypeFaceCache.Add(fontName, typeFace);
+							}
+							else
+							{
+								TypeFaceCache.Add(fontName, null);
+							}
+                        }
+                    }
+				}
+
 				if (!TypeFaceCache.ContainsKey(namedTypeFace))
 				{
+					// add it
+					TypeFaceCache.Add(namedTypeFace, null);
+				}
+				else if (TypeFaceCache[namedTypeFace] == null)
+				{ 
+					// try and load it from the cache
 					var typeFace = new TypeFace();
 					var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
 					var exists = StaticData.Instance.FileExists(path);
@@ -1389,7 +1421,7 @@ namespace MatterHackers.MatterControl
 					if (stream != null
 						&& typeFace.LoadTTF(stream))
 					{
-						TypeFaceCache.Add(namedTypeFace, typeFace);
+						TypeFaceCache[namedTypeFace] = typeFace;
 					}
 					else
 					{
@@ -1399,13 +1431,31 @@ namespace MatterHackers.MatterControl
 						typeFace = exists ? TypeFace.LoadFrom(StaticData.Instance.ReadAllText(path)) : null;
 						if (typeFace != null)
 						{
-							TypeFaceCache.Add(namedTypeFace, typeFace);
+							TypeFaceCache[namedTypeFace] = typeFace;
 						}
 						else
 						{
-							// assign it to the default
-							TypeFaceCache.Add(namedTypeFace, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
-						}
+                            var extensionsToTry = new string[] { ".ttf", ".otf" };
+                            // try and load it from windows
+                            // check if the there is a font with the given name and an extension of ttf in the windows/fonts directory
+                            foreach (var extension in extensionsToTry)
+                            {
+                                var fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), $"{namedTypeFace}{extension}");
+                                var stream2 = exists ? StaticData.Instance.OpenStream(fontPath) : null;
+                                if (stream2 != null
+                                    && typeFace.LoadTTF(stream2))
+                                {
+                                    TypeFaceCache[namedTypeFace] = typeFace;
+                                }
+                            }
+
+                            // if we did not find it in windows/fonts set it to the default
+                            if (typeFace == null)
+                            {
+                                // assign it to the default
+                                TypeFaceCache[namedTypeFace] = TypeFaceCache["Liberation_Sans"];
+                            }
+                        }
 					}
 
 					stream?.Dispose();
@@ -2180,10 +2230,10 @@ namespace MatterHackers.MatterControl
 			if (twoLetterIsoLanguageName == "ja"
 				|| twoLetterIsoLanguageName == "zh")
 			{
-				AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
-				AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
-				AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
-				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFont = ApplicationController.Instance.GetTypeFace("Firefly_Sung");
+				AggContext.DefaultFontBold = ApplicationController.Instance.GetTypeFace("Firefly_Sung");
+				AggContext.DefaultFontItalic = ApplicationController.Instance.GetTypeFace("Firefly_Sung");
+				AggContext.DefaultFontBoldItalic = ApplicationController.Instance.GetTypeFace("1Firefly_Sung");
 			}
 			else
 			{
