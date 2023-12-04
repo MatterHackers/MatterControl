@@ -42,6 +42,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
@@ -510,7 +511,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						break;
 
-					default:
+					case ".ttf":
+					case ".otf":
+						{
+							// check if the file is already in the fonts directory
+							if (!File.Exists(Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, Path.GetFileName(filePath))))
+							{
+                                // make sure the directory exists
+                                Directory.CreateDirectory(ApplicationDataStorage.Instance.ApplicationFontsDataPath);
+
+                                // copy the file to the fonts directory
+                                var newFilePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, Path.GetFileName(filePath));
+                                File.Copy(filePath, newFilePath, true);
+                            }
+                        }
+						break;
+
+                    default:
 						{
 							var workspace = await CreateNewDesignTab(false);
 							workspace.SceneContext.AddToPlate(new string[] { filePath }, false);

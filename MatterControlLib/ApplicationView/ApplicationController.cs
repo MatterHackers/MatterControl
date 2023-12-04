@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler AnyPrintComplete;
 
-		public static string[] ShellFileExtensions => new string[] { ".stl", ".amf", ".3mf", ".obj", ".mcx", ".png", ".jpg", ".jpeg" };
+		public static string[] ShellFileExtensions => new string[] { ".stl", ".amf", ".3mf", ".obj", ".mcx", ".png", ".jpg", ".jpeg", ".ttf", ".otf" };
 
 		public bool IsMatterControlPro()
 		{
@@ -1380,10 +1380,9 @@ namespace MatterHackers.MatterControl
 				{
 					addedWindowsFonts = true;
 
-                    // add all the windows fonts
-					// get all the files with the extension .ttf in the windows/fonts directory
-					var ttfs = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "*.ttf");
-					var otf = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "*.otf");
+                    // add all the fonts from user data "Fonts" folder
+					var ttfs = Directory.GetFiles(ApplicationDataStorage.Instance.ApplicationFontsDataPath, "*.ttf");
+					var otf = Directory.GetFiles(ApplicationDataStorage.Instance.ApplicationFontsDataPath, "*.otf");
 					var fonts = ttfs.Concat(otf);
 					// add all the fonts to the cache
                     foreach (var font in fonts)

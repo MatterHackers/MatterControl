@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public static string LibraryFilterFileExtensions { get; } = ValidFileExtensions + ",.gcode";
 
-		public static string OpenDesignFileParams { get; } = "STL, AMF, OBJ, 3MF, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
+		public static string OpenDesignFileParams { get; } = "STL, AMF, OBJ, 3MF, MCX, TTF, OTF|*.stl;*.amf;*.obj;*.mcx;*.ttf;*.otf";
 
 		private static ApplicationSettings globalInstance = null;
 

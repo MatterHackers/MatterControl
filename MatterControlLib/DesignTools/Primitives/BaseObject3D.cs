@@ -231,10 +231,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						});
 
 						// and create the base
-						var vertexSource = GetRawPath();
+						var vertexSource = this.CombinedVisibleChildrenPaths();
 
-						// Convert VertexSource into expected Polygons
-						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+                        // Convert VertexSource into expected Polygons
+                        Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
 						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 					}
 

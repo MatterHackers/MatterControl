@@ -2434,6 +2434,9 @@ Translated:Image Converter
 English:Image Missing
 Translated:Image Missing
 
+English:Image Search
+Translated:Image Search
+
 English:Image to Path
 Translated:Image to Path
 

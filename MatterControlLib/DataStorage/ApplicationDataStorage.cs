@@ -76,7 +76,9 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationDataFolderName);
 
-		private static string _applicationLibraryDataPath => Path.Combine(_applicationUserDataPath, "Library");
+        private static string _applicationLibraryDataPath => Path.Combine(_applicationUserDataPath, "Library");
+        
+		private static string _applicationFontsDataPath => Path.Combine(_applicationUserDataPath, "Fonts");
 
 		private static string _libraryAssetPath => Path.Combine(_applicationLibraryDataPath, "Assets");
 
@@ -95,6 +97,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
 		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
+
+		public string ApplicationFontsDataPath => EnsurePath(_applicationFontsDataPath);
 
 		public string CloudLibraryPath => EnsurePath(_cloudLibraryPath);
 

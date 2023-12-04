@@ -34,6 +34,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
@@ -44,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class LinearExtrudeObject3D : PathObject3DAbstract, IPrimaryOperationsSpecifier, IPropertyGridModifier
+    public class LinearExtrudeObject3D : Object3D, IPrimaryOperationsSpecifier, IPropertyGridModifier, IPathProvider
     {
         [Description("The height of the extrusion")]
         [Slider(.1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
@@ -65,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         public override bool CanApply => true;
 
-        public override bool MeshIsSolidObject => true;
+        public bool MeshIsSolidObject => true;
 
         public override void Apply(UndoBuffer undoBuffer)
         {
@@ -194,6 +195,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
         public IEnumerable<SceneOperation> GetOperations()
         {
             yield return SceneOperations.ById("AddBase");
+        }
+
+        public IVertexSource GetRawPath()
+        {
+            return this.CombinedVisibleChildrenPaths();
         }
     }
 }
