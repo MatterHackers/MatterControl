@@ -28,27 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
     public class ProductSection : FlowLeftRightWithWrapping
 	{
 		private List<ProductItem> allIconViews = new List<ProductItem>();
-		private FeedSectionData content;
-		private ThemeConfig theme;
-		private ThemedTextButton moreButton;
 
 		public ProductSection(FeedSectionData content, ThemeConfig theme)
 		{
 			Proportional = true;
 			VAnchor = VAnchor.Fit | VAnchor.Top;
-			this.content = content;
-			this.theme = theme;
 
 			foreach (var item in content.group_items)
 			{

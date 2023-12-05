@@ -35,7 +35,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -244,9 +243,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				case "article_group":
 					{
+						// check if the sectionSelectButtons already has a button for this group
+						var existingButton = sectionSelectButtons.Descendants<ThemedButton>().FirstOrDefault(b => b.Name == content.group_title);
+						// if it does skip adding anything
+						if (existingButton != null)
+						{
+                            break;
+                        }
+
 						// add the article group button to the button group
 						// add a content section connected to the button
-						var sectionButton = new ThemedTextButton(content.group_title, theme);
+						var sectionButton = new ThemedTextButton(content.group_title, theme)
+						{
+							Name = content.group_title
+						};
 						sectionButton.BackgroundColor = sectionButton.HoverColor.WithAlpha(buttonBackgroundAlpha);
 						sectionButton.Click += ButtonSelected;
                         sectionSelectButtons.AddChild(sectionButton);
