@@ -166,6 +166,10 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     return (T)(object)(int)Math.Round(result);
                 }
+                if (typeof(T) == typeof(bool))
+                {
+                    return (T)(object)(result != 0);
+                }
 
                 return (T)(object)0;
             }

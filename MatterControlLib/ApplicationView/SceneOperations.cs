@@ -395,6 +395,35 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+        public static SceneOperation SelectPathsOperation()
+        {
+            return new SceneOperation("SelectPaths")
+            {
+                TitleGetter = () => "Select Paths".Localize(),
+                ResultType = typeof(SelectPathsObject3D),
+                Action = (sceneContext) =>
+                {
+                    var scene = sceneContext.Scene;
+                    var sceneItem = scene.SelectedItem;
+                    var outlinePath = new SelectPathsObject3D();
+                    var itemClone = sceneItem.Clone();
+                    outlinePath.Children.Add(itemClone);
+                    outlinePath.Matrix = itemClone.Matrix;
+                    itemClone.Matrix = Matrix4X4.Identity;
+
+                    scene.SelectedItem = null;
+                    scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { outlinePath }));
+                    scene.SelectedItem = outlinePath;
+
+
+                    outlinePath.Invalidate(InvalidateType.Properties);
+                },
+                Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
+                HelpTextGetter = () => "A path must be selected".Localize().Stars(),
+                IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
+            };
+        }
+        
 		public static SceneOperation LinearExtrudeOperation()
 		{
 			return new SceneOperation("LinearExtrude")
@@ -795,8 +824,9 @@ namespace MatterHackers.MatterControl
 						InflatePathOperation(),
 						OutlinePathOperation(),
 						AddBaseOperation(),
-					}
-				},
+                        SelectPathsOperation(),
+                    }
+                },
 				new OperationGroup("Merge")
 				{
 					TitleGetter = () => "Merge".Localize(),

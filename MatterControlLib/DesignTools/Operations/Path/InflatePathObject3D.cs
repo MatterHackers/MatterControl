@@ -27,13 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterControlLib.DesignTools.Operations.Path;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
@@ -125,7 +123,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static JoinType GetJoinType(ExpandStyles style)
 		{
-			ClipperLib.JoinType joinType = JoinType.jtMiter;
+			JoinType joinType = JoinType.jtMiter;
 			switch (style)
 			{
 				case ExpandStyles.Flat:
