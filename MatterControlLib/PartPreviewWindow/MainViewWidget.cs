@@ -491,16 +491,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case ".ttf":
 					case ".otf":
 						{
-							// check if the file is already in the fonts directory
-							if (!File.Exists(Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, Path.GetFileName(filePath))))
+							var fileName = Path.GetFileName(filePath);
+                            // check if the file is already in the fonts directory
+                            if (!File.Exists(Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, fileName)))
 							{
                                 // make sure the directory exists
                                 Directory.CreateDirectory(ApplicationDataStorage.Instance.ApplicationFontsDataPath);
 
                                 // copy the file to the fonts directory
-                                var newFilePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, Path.GetFileName(filePath));
+                                var newFilePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationFontsDataPath, fileName);
                                 File.Copy(filePath, newFilePath, true);
+                                ApplicationController.Instance.ShowNotification($"Font added: {fileName}", 5);
                             }
+                            else
+							{
+                                ApplicationController.Instance.ShowNotification($"Font already present: {fileName}", 5);
+							}
                         }
 						break;
 

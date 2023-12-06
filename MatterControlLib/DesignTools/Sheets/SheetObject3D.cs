@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
     [HideMeterialAndColor]
     [WebPageLink("Documentation", "Open", "https://www.matterhackers.com/support/mattercontrol-variable-support")]
     [MarkDownDescription("[BETA] - Experimental support for variables and equations with a sheets like interface.")]
-    public class SheetObject3D : Object3D, IStaticThumbnail, IVariableContainer
+    public class SheetObject3D : Object3D, IStaticThumbnail, IVariableResolver
     {
         private SheetData _sheetData;
         public SheetData SheetData

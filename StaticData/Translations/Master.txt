@@ -2476,6 +2476,9 @@ Translated:Inactive Cool Down
 English:Include a picture of my print
 Translated:Include a picture of my print
 
+English:Include Function
+Translated:Include Function
+
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
 Translated:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
 
@@ -4734,6 +4737,9 @@ Translated:Select Folder
 
 English:Select Parts
 Translated:Select Parts
+
+English:Select Paths
+Translated:Select Paths
 
 English:Select Printer
 Translated:Select Printer

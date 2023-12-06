@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -41,7 +42,10 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-    public class SelectPathsObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider
+    using Polygon = List<IntPoint>;
+    using Polygons = List<List<IntPoint>>;
+
+    public class SelectPathsObject3D : PathObject3DAbstract, IEditorDraw, IObject3DControlsProvider, IInternalStateResolver
     {
         public SelectPathsObject3D()
         {
@@ -57,7 +61,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
         [ReadOnly(true)]
         [DisplayName("")]
-        public string IncludeDocs { get; set; } = "You can use the following variables in the Include Function:\n\n[length] - The length of the path loop\n[index] - The loop index in the body\n[depth] - The count from the outside";
+        public string IncludeDocs { get; set; } = @"You can use the following variables in the Include Function:
+
+GroupIndex - The index of each group of paths
+GroupOuterLength - The length of the outer path loop for the group
+GroupOuterArea - The area of the outer path loop for the group
+PathIndex - The index of each path in a group
+PathLength - The length of the path loop
+PathArea - The area of the path loop
+PathDepth - The path index from the outside of each body
+
+Path excluded if function = 0 and included if != 0";
 
         public DoubleOrExpression IncludeFunction { get; set; } = 1;
 
@@ -100,6 +114,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             return Task.CompletedTask;
         }
 
+        private int groupIndex; // - The index of each group of paths
+        private double groupOuterLength; // - The length of the outer path loop for the group
+        private double groupOuterArea; // - The area of the outer path loop for the group
+        private int pathIndex; // - The index of each path in a group
+        private double pathLength; // - The length of the path loop
+        private double pathArea; // - The area of the path loop
+        private int pathDepth; // - The path index from the outside of each body";
+
         private void GetOutlinePath()
         {
             var path = this.CombinedVisibleChildrenPaths();
@@ -124,6 +146,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             }
 
             VertexStorage = outlines.CreateVertexStorage();
+        }
+
+        public string EvaluateExpression(string expression)
+        {
+            expression = expression.Replace("GroupIndex", groupIndex.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("GroupOuterLength", groupOuterLength.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("GroupOuterArea", groupOuterArea.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("PathIndex", pathIndex.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("PathLength", pathLength.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("PathArea", pathArea.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("PathDepth", pathDepth.ToString(), StringComparison.InvariantCultureIgnoreCase);
+
+            return expression;
         }
     }
 }
