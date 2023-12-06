@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -164,6 +165,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
 			AddSelectedObjectSidePanel();
+
+			int TabIndex = 0;
+			nodeEditorHolder = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom,
+				Height = 200,
+				Visible = false
+			};
+			nodeEditorHolder.AddChild(new NodeEditor(this, theme, ref TabIndex));
+			this.AddChild(nodeEditorHolder);
 
 			workspaceName.ActionArea.AddChild(
 				new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).GrayToColor(theme.TextColor), theme)
@@ -2131,8 +2143,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var selectedItem = Scene.SelectedItem;
 
-				// Change tree selection to current node
-				if (selectedItem != null
+				if (selectedItem is NodesObject3D nodesObject)
+				{
+					nodeEditorHolder.Visible = true;
+                }
+				else
+				{
+                    nodeEditorHolder.Visible = false;
+                }
+
+                // Change tree selection to current node
+                if (selectedItem != null
 					&& treeNodesByObject.TryGetValue(selectedItem, out TreeNode treeNode))
 				{
 					treeView.SelectedNode = treeNode;
@@ -2194,8 +2215,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InlineStringEdit workspaceName;
 		private int lastSceneDescendantsCount;
 		private Vector2 beforeReubildScrollPosition;
+        private GuiWidget nodeEditorHolder;
 
-		public InteractiveScene Scene => sceneContext.Scene;
+        public InteractiveScene Scene => sceneContext.Scene;
 
 		protected ViewToolBarControls viewControls3D { get; }
 

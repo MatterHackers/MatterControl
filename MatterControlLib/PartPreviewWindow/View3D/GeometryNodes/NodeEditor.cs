@@ -33,35 +33,39 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using System;
-using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 {
     public class NodeEditor : GuiWidget
     {
-        public enum ETransformState
-        {
-            Edit,
-            Move,
-            Scale
-        };
+        public static readonly int VectorXYEditWidth = (int)(60 * DeviceScale + .5);
+
+        public Action ScaleChanged;
+        public Action UnscaledPositionChanged;
+        private NodesObject3D geometryNodes;
+
+        private bool hasBeenStartupPositioned;
+
+        private int initialTabIndex;
 
         private Vector2 lastMousePosition = new Vector2(0, 0);
-        private ETransformState mouseDownTransformOverride;
+
         private Vector2 mouseDownPosition = new Vector2(0, 0);
-        private Action<Vector2, double> scaleChanged;
+
+        private ETransformState mouseDownTransformOverride;
+
         private ThemeConfig theme;
 
-        private Vector2 unscaledRenderOffset = new Vector2(0, 0);
+        private View3DWidget view3DWidget;
 
         public NodeEditor(View3DWidget view3DWidget,
             ThemeConfig theme,
             ref int tabIndex,
             Vector2 unscaledRenderOffset = default,
-            double layerScale = 1,
-            Action<Vector2, double> scaleChanged = null)
+            double layerScale = 1)
 
         {
             HAnchor = HAnchor.Stretch;
@@ -75,16 +79,14 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             tabIndex += 2;
 
             BackgroundOutlineWidth = 1;
-            BackgroundColor = theme.BackgroundColor;
+            BackgroundColor = theme.BackgroundColor.WithAlpha(150);
             BorderColor = theme.TextColor;
             Margin = 1;
 
-            this.unscaledRenderOffset = unscaledRenderOffset;
-            this.layerScale = layerScale;
+            this.UnscaledRenderOffset = unscaledRenderOffset;
+            this.LayerScale = layerScale;
 
             var topToBottom = this;
-
-            this.scaleChanged = scaleChanged;
 
             this.theme = theme;
 
@@ -97,6 +99,9 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             toolBar.VAnchor |= VAnchor.Bottom;
 
+            ScrollArea = new GuiWidget();
+            AddChild(ScrollArea);
+
             AddChild(toolBar);
 
             AddControlsToToolBar(theme, toolBar);
@@ -104,44 +109,45 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             view3DWidget.Scene.SelectionChanged += Scene_SelectionChanged;
         }
 
-        private void AddControlsToToolBar(ThemeConfig theme, FlowLayoutWidget toolBar)
+        public enum ETransformState
         {
-            AddButtons(theme, toolBar);
+            Edit,
+            Move,
+            Scale
+        };
 
-            toolBar.AddChild(new HorizontalSpacer());
-        }
-
-        public static readonly int VectorXYEditWidth = (int)(60 * DeviceScale + .5);
-
-        private void AddButtons(ThemeConfig theme, FlowLayoutWidget toolBar)
-        {
-            var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
-            {
-                BackgroundColor = theme.SlightShade,
-                HoverColor = theme.SlightShade.WithAlpha(75),
-                Margin = new BorderDouble(3, 3, 6, 3),
-                ToolTipText = "Reset Zoom".Localize()
-            };
-            toolBar.AddChild(homeButton);
-
-            homeButton.Click += (s, e) =>
-            {
-                CenterPartInView();
-            };
-        }
-
+        public GuiWidget ScrollArea { get; set; }
+        public Affine TotalTransform => Affine.NewTranslation(UnscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
         public ETransformState TransformState { get; set; }
-        private double layerScale { get; set; } = 1;
-
         private UndoBuffer UndoBuffer => view3DWidget.Scene.UndoBuffer;
 
-        private Affine ScalingTransform => Affine.NewScaling(layerScale, layerScale);
-        public Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
-
-        private View3DWidget view3DWidget;
-        private int initialTabIndex;
-        private bool hasBeenStartupPositioned;
-        private NodesObject3D geometryNodes;
+        private double _layerScale = 1;
+        public double LayerScale
+        {
+            get => _layerScale;
+            set
+            {
+                if (_layerScale != value)
+                {
+                    _layerScale = value;
+                    ScaleChanged?.Invoke();
+                }
+            }
+        }
+        private Affine ScalingTransform => Affine.NewScaling(LayerScale, LayerScale);
+        private Vector2 _unscaledRenderOffset = new Vector2(0, 0);
+        public Vector2 UnscaledRenderOffset
+        {
+            get => _unscaledRenderOffset;
+            set
+            {
+                if (_unscaledRenderOffset != value)
+                {
+                    _unscaledRenderOffset = value;
+                    UnscaledPositionChanged?.Invoke();
+                }
+            }
+        }
 
         public void CenterPartInView()
         {
@@ -153,13 +159,20 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                 var bottomPixels = 20;
                 var margin = 30;
-                unscaledRenderOffset = -weightedCenter;
-                layerScale = Math.Min((Height - margin - bottomPixels * 2) / partBounds.Height, (Width - margin) / partBounds.Width);
-                unscaledRenderOffset += new Vector2(0, bottomPixels) / layerScale;
+                UnscaledRenderOffset = -weightedCenter;
+                LayerScale = Math.Min((Height - margin - bottomPixels * 2) * partBounds.Height, (Width - margin) * partBounds.Width);
+                UnscaledRenderOffset += new Vector2(0, bottomPixels) * LayerScale;
 
                 Invalidate();
-                scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
             }
+        }
+
+        public override void OnBoundsChanged(EventArgs e)
+        {
+            // make sure the scroll area is the right size
+            AdjustScrollArea();
+
+            base.OnBoundsChanged(e);
         }
 
         public override void OnClosed(EventArgs e)
@@ -168,29 +181,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             base.OnClosed(e);
         }
 
-        private void Scene_SelectionChanged(object sender, EventArgs e)
-        {
-            var selectedItem = view3DWidget.Scene.SelectedItem;
-
-            // Change tree selection to current node
-            if (selectedItem != null
-                && selectedItem is NodesObject3D geometryNodes)
-            {
-                this.geometryNodes = geometryNodes;
-            }
-            else
-            {
-                // Clear the editor of any controls
-                this.geometryNodes = null;
-            }
-        }
-
         public override void OnDraw(Graphics2D graphics2D)
         {
             if (!hasBeenStartupPositioned)
             {
-                if (unscaledRenderOffset == Vector2.Zero
-                    && layerScale == 1)
+                if (UnscaledRenderOffset == Vector2.Zero
+                    && LayerScale == 1)
                 {
                     CenterPartInView();
                 }
@@ -208,7 +204,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 graphics2D.Line(TotalTransform.Transform(bottomOrigin), TotalTransform.Transform(topOrigin), Color.Green);
             }
 
-            if(geometryNodes != null)
+            if (geometryNodes != null)
             {
                 foreach (var node in geometryNodes.Nodes)
                 {
@@ -217,12 +213,20 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 }
             }
 
-            graphics2D.PushTransform();
-            Affine currentGraphics2DTransform = graphics2D.GetTransform();
-            Affine accumulatedTransform = currentGraphics2DTransform * TotalTransform;
-            graphics2D.SetTransform(accumulatedTransform);
-            base.OnDraw(graphics2D);
-            graphics2D.PopTransform();
+            var newTransform = true;
+            if (newTransform)
+            {
+                graphics2D.PushTransform();
+                Affine currentGraphics2DTransform = graphics2D.GetTransform();
+                Affine accumulatedTransform = currentGraphics2DTransform * TotalTransform;
+                graphics2D.SetTransform(accumulatedTransform);
+                base.OnDraw(graphics2D);
+                graphics2D.PopTransform();
+            }
+            else
+            {
+                base.OnDraw(graphics2D);
+            }
         }
 
         public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -294,6 +298,66 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             base.OnMouseUp(mouseEvent);
         }
 
+        public override void OnMouseWheel(MouseEventArgs mouseEvent)
+        {
+            base.OnMouseWheel(mouseEvent);
+            if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
+            {
+                const double deltaFor1Click = 120;
+                double scaleAmount = mouseEvent.WheelDelta / deltaFor1Click * .1;
+
+                ScalePartAndFixPosition(mouseEvent, LayerScale + LayerScale * scaleAmount);
+
+                mouseEvent.WheelDelta = 0;
+
+                Invalidate();
+            }
+        }
+
+        public void Zoom(double scaleAmount)
+        {
+            ScalePartAndFixPosition(new MouseEventArgs(MouseButtons.None, 0, Width / 2, Height / 2, 0), LayerScale * scaleAmount);
+            Invalidate();
+        }
+
+        private void AddButtons(ThemeConfig theme, FlowLayoutWidget toolBar)
+        {
+            var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
+            {
+                BackgroundColor = theme.SlightShade,
+                HoverColor = theme.SlightShade.WithAlpha(75),
+                Margin = new BorderDouble(3, 3, 6, 3),
+                ToolTipText = "Reset Zoom".Localize()
+            };
+            toolBar.AddChild(homeButton);
+
+            homeButton.Click += (s, e) =>
+            {
+                CenterPartInView();
+            };
+        }
+
+        private void AddControlsToToolBar(ThemeConfig theme, FlowLayoutWidget toolBar)
+        {
+            AddButtons(theme, toolBar);
+
+            toolBar.AddChild(new HorizontalSpacer());
+        }
+
+        private void AdjustScrollArea()
+        {
+            // Calculate the scaled width and height
+            double scaledWidth = Width / LayerScale;
+            double scaledHeight = Height / LayerScale;
+
+            // Calculate the offset based on the UnscaledRenderOffset
+            double offsetX = -UnscaledRenderOffset.X / LayerScale;
+            double offsetY = -UnscaledRenderOffset.Y / LayerScale;
+
+            // Set the LocalBounds of the ScrollArea with the offset
+            ScrollArea.LocalBounds = new RectangleDouble(offsetX, offsetY, offsetX + scaledWidth, offsetY + scaledHeight);
+        }
+
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)
         {
             var mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
@@ -315,20 +379,18 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     var mousePreScale = mouseDownPosition;
                     TotalTransform.inverse_transform(ref mousePreScale);
 
-                    layerScale *= zoomDelta;
+                    LayerScale *= zoomDelta;
 
                     var mousePostScale = mouseDownPosition;
                     TotalTransform.inverse_transform(ref mousePostScale);
 
-                    unscaledRenderOffset += mousePostScale - mousePreScale;
-                    scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
+                    UnscaledRenderOffset += mousePostScale - mousePreScale;
                     break;
 
                 case ETransformState.Move:
                     ScalingTransform.inverse_transform(ref mouseDelta);
 
-                    unscaledRenderOffset += mouseDelta;
-                    scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
+                    UnscaledRenderOffset += mouseDelta;
                     break;
 
                 case ETransformState.Edit:
@@ -336,28 +398,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     break;
             }
 
-            Invalidate();
-        }
+            AdjustScrollArea();
 
-        public override void OnMouseWheel(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseWheel(mouseEvent);
-            if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
-            {
-                const double deltaFor1Click = 120;
-                double scaleAmount = mouseEvent.WheelDelta / deltaFor1Click * .1;
-
-                ScalePartAndFixPosition(mouseEvent, layerScale + layerScale * scaleAmount);
-
-                mouseEvent.WheelDelta = 0;
-
-                Invalidate();
-            }
-        }
-
-        public void Zoom(double scaleAmount)
-        {
-            ScalePartAndFixPosition(new MouseEventArgs(MouseButtons.None, 0, Width / 2, Height / 2, 0), layerScale * scaleAmount);
             Invalidate();
         }
 
@@ -366,14 +408,48 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             var mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
             TotalTransform.inverse_transform(ref mousePreScale);
 
-            layerScale = scaleAmount;
+            LayerScale = scaleAmount;
 
             var mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
             TotalTransform.inverse_transform(ref mousePostScale);
 
-            unscaledRenderOffset += mousePostScale - mousePreScale;
+            UnscaledRenderOffset += mousePostScale - mousePreScale;
 
-            scaleChanged?.Invoke(unscaledRenderOffset, layerScale);
+            AdjustScrollArea();
+        }
+
+        private void Scene_SelectionChanged(object sender, EventArgs e)
+        {
+            var selectedItem = view3DWidget.Scene.SelectedItem;
+
+            // Change tree selection to current node
+            if (selectedItem != null
+                && selectedItem is NodesObject3D geometryNodes)
+            {
+                this.geometryNodes = geometryNodes;
+
+                var yOffset = 0;
+                foreach (var node in geometryNodes.Nodes)
+                {
+                    ScrollArea.AddChild(new GuiWidget()
+                    {
+                        Position = node.Position,
+                        VAnchor = VAnchor.Absolute,
+                        HAnchor = HAnchor.Absolute,
+                        Width = 10,
+                        Height = 10 + yOffset,
+                        BackgroundColor = Color.Red
+                    });
+
+                    yOffset += 20;
+                }
+            }
+            else
+            {
+                // Clear the editor of any controls
+                this.geometryNodes = null;
+                ScrollArea.CloseChildren();
+            }
         }
     }
 }
