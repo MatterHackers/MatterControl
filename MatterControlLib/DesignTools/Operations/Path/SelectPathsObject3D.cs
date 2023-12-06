@@ -38,6 +38,7 @@ using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -132,16 +133,35 @@ Path excluded if function = 0 and included if != 0";
                 return;
             }
 
+            var outlines = new Polygons();
+
             var polygons = path.CreatePolygons();
-            var separated = polygons.SeparateIntoOutlinesAndContainedHoles();
-
-            var outlines = new List<List<IntPoint>>();
-
-            foreach(var outlineIndHoles in separated)
+            var lastGroupIndex = -1;
+            foreach(var description in polygons.DescribeAllPolygons())
             {
+                var polygon = description.polygon;
+
+                groupIndex = description.group;
+                if (groupIndex != lastGroupIndex)
+                {
+                    lastGroupIndex = groupIndex;
+                    groupOuterLength = polygon.Length();
+                    groupOuterArea = polygon.Area();
+                    pathLength = groupOuterLength;
+                    pathArea = groupOuterArea;
+                }
+                else
+                {
+                    pathLength = polygon.Length();
+                    pathArea = polygon.Area();
+                }
+
+                pathIndex = description.path;
+                pathDepth = description.depth;
+
                 if (IncludeFunction.Value(this) != 0)
                 {
-                    outlines.Add(outlineIndHoles[0]);
+                    outlines.Add(polygon);
                 }
             }
 
@@ -150,6 +170,7 @@ Path excluded if function = 0 and included if != 0";
 
         public string EvaluateExpression(string expression)
         {
+            expression = expression.Trim();
             expression = expression.Replace("GroupIndex", groupIndex.ToString(), StringComparison.InvariantCultureIgnoreCase);
             expression = expression.Replace("GroupOuterLength", groupOuterLength.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
             expression = expression.Replace("GroupOuterArea", groupOuterArea.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
