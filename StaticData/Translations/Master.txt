@@ -2191,6 +2191,9 @@ Translated:Generating Config
 English:Generating Lithophane
 Translated:Generating Lithophane
 
+English:Geometry Nodes
+Translated:Geometry Nodes
+
 English:GitHub Personal Access Token
 Translated:GitHub Personal Access Token
 

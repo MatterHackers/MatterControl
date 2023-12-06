@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.editorType = editorType;
 			this.theme = theme;
 			this.printer = sceneContext.Printer;
-			this.EnsureBedTexture(selectedItem: null);
 
 			// Register listeners
 			if (printer != null)
@@ -100,8 +99,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (editorType == Object3DControlsLayer.EditorType.Printer)
 			{
-				this.EnsureBedTexture(sceneContext.Scene.SelectedItem);
-
 				var alpha = 255;
 				if (SelectedObjectUnderBed)
                 {
@@ -219,92 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return new AxisAlignedBoundingBox(-GridSize, -GridSize, 0, GridSize, GridSize, 0);
 			}
-		}
-
-		private void EnsureBedTexture(IObject3D selectedItem, bool clearToPlaceholderImage = true)
-		{
-			// Early exit for invalid cases
-			if (loadingTextures
-				|| printer == null)
-			{
-				return;
-			}
-
-			if (bedTextures == null)
-			{
-				loadingTextures = true;
-
-				Task.Run(() =>
-				{
-					// On first draw we might take a few 100ms to generate textures and this
-					// ensures we get a theme colored bed appearing on screen before out main
-					// textures are finished generating
-					if (clearToPlaceholderImage)
-					{
-						var placeHolderImage = new ImageBuffer(5, 5);
-						var graphics = placeHolderImage.NewGraphics2D();
-						graphics.Clear(theme.BedColor);
-
-						SetActiveTexture(placeHolderImage);
-					}
-
-					try
-					{
-						var bedImage = BedMeshGenerator.CreatePrintBedImage(sceneContext.Printer);
-
-						if (printer.Settings.Helpers.HotendCount() > 1)
-						{
-							bedTextures = new[]
-							{
-								bedImage,					// No limits, basic themed bed
-								new ImageBuffer(bedImage),	// T0 limits
-								new ImageBuffer(bedImage),	// T1 limits
-								new ImageBuffer(bedImage)	// Unioned T0 & T1 limits
-							};
-
-							GenerateToolLimitsTexture(printer, 0, bedTextures[1]);
-							GenerateToolLimitsTexture(printer, 1, bedTextures[2]);
-
-							// Special case for union of both tools
-							GenerateToolLimitsTexture(printer, 2, bedTextures[3]);
-						}
-						else
-						{
-							bedTextures = new[]
-							{
-								bedImage,                   // No limits, basic themed bed
-							};
-
-							activeBedToolClippingImage = 0;
-						}
-
-						this.SetActiveTexture(bedTextures[0]);
-					}
-					catch
-					{
-					}
-
-					loadingTextures = false;
-				});
-			}
-			else if (printer.Settings.Helpers.HotendCount() > 1
-				&& printer.Bed.BedShape == BedShape.Rectangular)
-			{
-				int toolIndex = GetActiveToolIndex(selectedItem);
-
-				if (activeBedToolClippingImage != toolIndex)
-				{
-					// Clamp to the range that's currently supported
-					if (toolIndex > 2)
-					{
-						toolIndex = -1;
-					}
-
-					this.SetActiveTexture(bedTextures[toolIndex + 1]);
-					activeBedToolClippingImage = toolIndex;
-				}
-			}
-		}
+		}		
 
 		private void Settings_SettingChanged(object sender, StringEventArgs e)
 		{
@@ -323,7 +235,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
 				bedTextures = null;
-				this.EnsureBedTexture(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
 			}
 		}
 

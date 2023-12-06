@@ -128,8 +128,6 @@ namespace MatterHackers.MatterControl
 				var offsetDist = 50;
 				var arrowKeyOperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
-				var gcode2D = rootSystemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-
 				if (keyEvent.KeyCode == Keys.F1)
 				{
 					ApplicationController.Instance.ActivateHelpTab("Docs");
@@ -142,35 +140,6 @@ namespace MatterHackers.MatterControl
 					GC.WaitForPendingFinalizers();
 					GC.Collect();
 					rootSystemWindow.Invalidate();
-				}
-
-				if (!keyEvent.Handled
-					&& gcode2D != null)
-				{
-					switch (keyEvent.KeyCode)
-					{
-						case Keys.Oemplus:
-						case Keys.Add:
-							if (keyEvent.Control)
-							{
-								// Zoom out
-								gcode2D.Zoom(1.2);
-								keyEvent.Handled = true;
-							}
-
-							break;
-
-						case Keys.OemMinus:
-						case Keys.Subtract:
-							if (keyEvent.Control)
-							{
-								// Zoom in
-								gcode2D.Zoom(.8);
-								keyEvent.Handled = true;
-							}
-
-							break;
-					}
 				}
 
 				if (!keyEvent.Handled

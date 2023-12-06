@@ -47,13 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTabPage : DesignTabPage
 	{
-		private GCode2DWidget gcode2DWidget;
-
 		private View3DConfig gcodeOptions;
 
 		private readonly DoubleSolidSlider layerRenderRatioSlider;
 
-		private GCodePanel gcodePanel;
 		private VerticalResizeContainer gcodeContainer;
 
 		public PrinterActionsBar PrinterActionsBar { get; set; }
@@ -67,34 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeOptions = sceneContext.RendererOptions;
 
 			view3DWidget.Object3DControlLayer.EditorMode = Object3DControlsLayer.EditorType.Printer;
-
-			viewToolBarControls.TransformStateChanged += (s, e) =>
-			{
-				switch (e.TransformMode)
-				{
-					case ViewControls3DButtons.Scale:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
-						}
-						break;
-
-					default:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
-						}
-						break;
-				}
-			};
-
-			viewToolBarControls.ResetView += (sender, e) =>
-			{
-				if (gcode2DWidget?.Visible == true)
-				{
-					gcode2DWidget.CenterPartInView();
-				}
-			};
 
 			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
 
@@ -153,14 +122,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var position = view3DWidget.Object3DControlLayer.Children.IndexOf(trackball);
 
-			gcodePanel = new GCodePanel(this, Printer, sceneContext, theme)
-			{
-				Name = "GCode3DWidget",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = theme.InteractionLayerOverlayColor,
-			};
-
 			var modelViewSidePanel = view3DWidget.Descendants<VerticalResizeContainer>().FirstOrDefault();
 
 			gcodeContainer = new VerticalResizeContainer(theme, GrabBarSide.Left)
@@ -173,7 +134,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Visible = false,
 			};
 
-			gcodeContainer.AddChild(gcodePanel);
 			gcodeContainer.Resized += (s, e) =>
 			{
 				if (Printer != null)
@@ -196,12 +156,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			splitContainer.AddChild(gcodeContainer);
 
-			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(Printer, theme)
-			{
-				Visible = Printer.ViewState.ViewMode == PartViewMode.Layers2D
-			};
-
 			var trackballIndex = 0;
 			foreach (var child in view3DWidget.Object3DControlLayer.Children)
 			{
@@ -212,8 +166,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				trackballIndex++;
 			}
-
-			view3DWidget.Object3DControlLayer.AddChild(gcode2DWidget, trackballIndex + 1);
 
 			SetSliderSizes();
 
@@ -390,36 +342,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetViewMode(PartViewMode viewMode)
 		{
-			if (gcodePanel == null || gcode2DWidget == null)
-			{
-				// Wait for controls to initialize
-				return;
-			}
-
-			switch (viewMode)
-			{
-				case PartViewMode.Layers2D:
-					UserSettings.Instance.set(UserSettingsKey.LayerViewDefault, "2D Layer");
-					gcode2DWidget.Visible = true;
-					break;
-
-				case PartViewMode.Layers3D:
-					UserSettings.Instance.set(UserSettingsKey.LayerViewDefault, "3D Layer");
-					break;
-
-				case PartViewMode.Model:
-					break;
-			}
-
-			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
-
 			view3DWidget.Object3DControlLayer.DrawOpenGLContent = Printer?.ViewState.ViewMode != PartViewMode.Layers2D;
 
 			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
 
 			gcodeContainer.Visible = viewMode != PartViewMode.Model;
-
-			tumbleCubeControl.Visible = !gcode2DWidget.Visible;
 
 			if (viewMode == PartViewMode.Layers3D)
 			{

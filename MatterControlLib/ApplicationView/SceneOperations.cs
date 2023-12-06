@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -418,7 +419,7 @@ namespace MatterHackers.MatterControl
 
                     outlinePath.Invalidate(InvalidateType.Properties);
                 },
-                Icon = (theme) => StaticData.Instance.LoadIcon("inflate_path.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
+                Icon = (theme) => StaticData.Instance.LoadIcon("select_curves.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
                 HelpTextGetter = () => "A path must be selected".Localize().Stars(),
                 IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathProvider,
             };
@@ -883,7 +884,8 @@ namespace MatterHackers.MatterControl
 #endif
 						MakeComponentOperation(),
 						EditComponentOperation(),
-					},
+                        AddGeometyNodesOperation(),
+                    },
 				},
 			};
 
@@ -906,7 +908,24 @@ namespace MatterHackers.MatterControl
 			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply());
 		}
 
-		private static SceneOperation CombineOperation()
+        private static SceneOperation AddGeometyNodesOperation()
+        {
+            return new SceneOperation("Geometry Nodes")
+            {
+                ResultType = typeof(NodesObject3D),
+                TitleGetter = () => "Geometry Nodes".Localize(),
+                Action = (sceneContext) =>
+                {
+                    var geometryNodes = new NodesObject3D();
+                    geometryNodes.WrapSelectedItemAndSelect(sceneContext.Scene);
+                },
+                Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
+                HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+                IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+            };
+        }
+
+        private static SceneOperation CombineOperation()
 		{
 			return new SceneOperation("Combine")
 			{

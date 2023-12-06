@@ -86,19 +86,19 @@ namespace MatterHackers.MatterControl
 
 		bool HadSaveError { get; }
 
-		// TODO: Isolate printer specifics from ISceneContext
+        [Obsolete("Remove when possible")]
+        event EventHandler ActiveLayerChanged;
 
-		// *******************************************************
-		// ****             Printer specific                  ****
-		// *******************************************************
-		event EventHandler ActiveLayerChanged;
+		[Obsolete("Remove when possible")]
+        event EventHandler LoadedGCodeChanged;
 
-		event EventHandler LoadedGCodeChanged;
+		[Obsolete("Remove when possible")]
+        int ActiveLayerIndex { get; set; }
 
-		int ActiveLayerIndex { get; set; }
+        [Obsolete("Remove when possible")]
+        GCodeRenderer GCodeRenderer { get; set; }
 
-		GCodeRenderer GCodeRenderer { get; set; }
-
+		[Obsolete("Remove when possible")]
 		GCodeFile LoadedGCode { get; }
 
 		BedShape BedShape { get; }
@@ -109,9 +109,11 @@ namespace MatterHackers.MatterControl
 
 		Mesh Mesh { get; }
 
-		PrinterConfig Printer { get; set; }
+        [Obsolete("Remove when possible")]
+        PrinterConfig Printer { get; set; }
 
-		Mesh PrinterShape { get; }
+		[Obsolete("Remove when possible")]
+        Mesh PrinterShape { get; }
 
 		View3DConfig RendererOptions { get; }
 

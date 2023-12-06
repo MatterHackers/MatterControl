@@ -441,9 +441,6 @@ namespace MatterHackers.MatterControl
 			{
 				if (_bedMesh == null)
 				{
-					// Load bed and build volume meshes
-					(_bedMesh, _buildVolumeMesh) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
-
 					Task.Run(() =>
 					{
 						try
