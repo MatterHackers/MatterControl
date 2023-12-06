@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 GroupIndex - The index of each group of paths
 GroupOuterLength - The length of the outer path loop for the group
 GroupOuterArea - The area of the outer path loop for the group
+ChildCount - The number of paths in the group
+
 PathIndex - The index of each path in a group
 PathLength - The length of the path loop
 PathArea - The area of the path loop
@@ -122,6 +124,7 @@ Path excluded if function = 0 and included if != 0";
         private double pathLength; // - The length of the path loop
         private double pathArea; // - The area of the path loop
         private int pathDepth; // - The path index from the outside of each body";
+        private int childCount; // - The number of paths in the group
 
         private void GetOutlinePath()
         {
@@ -148,12 +151,13 @@ Path excluded if function = 0 and included if != 0";
                     groupOuterLength = polygon.Length();
                     groupOuterArea = polygon.Area();
                     pathLength = groupOuterLength;
-                    pathArea = groupOuterArea;
+                    pathArea = Math.Abs(groupOuterArea);
+                    childCount = description.count;
                 }
                 else
                 {
                     pathLength = polygon.Length();
-                    pathArea = polygon.Area();
+                    pathArea = Math.Abs(polygon.Area());
                 }
 
                 pathIndex = description.path;
@@ -178,6 +182,7 @@ Path excluded if function = 0 and included if != 0";
             expression = expression.Replace("PathLength", pathLength.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
             expression = expression.Replace("PathArea", pathArea.ToString(".###"), StringComparison.InvariantCultureIgnoreCase);
             expression = expression.Replace("PathDepth", pathDepth.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            expression = expression.Replace("ChildCount", childCount.ToString(), StringComparison.InvariantCultureIgnoreCase);
 
             return expression;
         }
