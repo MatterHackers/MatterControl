@@ -45,12 +45,15 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         public Action ScaleChanged;
         public Action UnscaledPositionChanged;
+        private double _layerScale = 1;
+        private Vector2 _unscaledRenderOffset = new Vector2(0, 0);
         private NodesObject3D geometryNodes;
 
         private bool hasBeenStartupPositioned;
 
         private Vector2 lastMousePosition = new Vector2(0, 0);
 
+        Vector2 lastOriginRelativeToParent = new Vector2(0, 0);
         private Vector2 mouseDownPosition = new Vector2(0, 0);
 
         private ETransformState mouseDownTransformOverride;
@@ -58,7 +61,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         private ThemeConfig theme;
 
         private View3DWidget view3DWidget;
-
         public NodeEditor(View3DWidget view3DWidget,
             ThemeConfig theme,
             Vector2 unscaledRenderOffset = default,
@@ -87,11 +89,17 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 HAnchor = HAnchor.Stretch,
                 Margin = 5,
                 BackgroundColor = theme.TextColor.WithAlpha(20),
+                Name = "ToolBar",
             };
 
             toolBar.VAnchor |= VAnchor.Bottom;
 
-            ScrollArea = new GuiWidget();
+            ScrollArea = new GuiWidget()
+            {
+                Name = "ScrollArea",
+                DebugShowBounds = true,
+                Selectable = false,
+            };
             AddChild(ScrollArea);
 
             AddChild(toolBar);
@@ -108,12 +116,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             Scale
         };
 
-        public GuiWidget ScrollArea { get; set; }
-        public Affine TotalTransform => Affine.NewTranslation(UnscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
-        public ETransformState TransformState { get; set; }
-        private UndoBuffer UndoBuffer => view3DWidget.Scene.UndoBuffer;
-
-        private double _layerScale = 1;
         public double LayerScale
         {
             get => _layerScale;
@@ -126,8 +128,11 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 }
             }
         }
-        private Affine ScalingTransform => Affine.NewScaling(LayerScale, LayerScale);
-        private Vector2 _unscaledRenderOffset = new Vector2(0, 0);
+
+        public GuiWidget ScrollArea { get; set; }
+        public Affine TotalTransform => Affine.NewTranslation(UnscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
+        public ETransformState TransformState { get; set; }
+        private UndoBuffer UndoBuffer => view3DWidget.Scene.UndoBuffer;
         public Vector2 UnscaledRenderOffset
         {
             get => _unscaledRenderOffset;
@@ -141,9 +146,10 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             }
         }
 
+        private Affine ScalingTransform => Affine.NewScaling(LayerScale, LayerScale);
         public void CenterPartInView()
         {
-            var ready = true;
+            var ready = false;
             if (ready)
             {
                 var partBounds = new RectangleDouble(0, 0, 100, 100);
@@ -206,7 +212,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 }
             }
 
-            var newTransform = true;
+            var newTransform = false;
             if (newTransform)
             {
                 graphics2D.PushTransform();
@@ -349,6 +355,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             // Set the LocalBounds of the ScrollArea with the offset
             ScrollArea.LocalBounds = new RectangleDouble(offsetX, offsetY, offsetX + scaledWidth, offsetY + scaledHeight);
+            ScrollArea.OriginRelativeParent = UnscaledRenderOffset;
         }
 
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)
@@ -426,11 +433,11 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 {
                     ScrollArea.AddChild(new GuiWidget()
                     {
-                        Position = node.Position,
+                        Position = node.Position + new Vector2(10, yOffset),
                         VAnchor = VAnchor.Absolute,
                         HAnchor = HAnchor.Absolute,
-                        Width = 10,
-                        Height = 10 + yOffset,
+                        Width = 100,
+                        Height = 100,
                         BackgroundColor = Color.Red
                     });
 

@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = 200,
 				Visible = false
 			};
-			nodeEditorHolder.AddChild(new NodeEditor(this, theme, ref TabIndex));
+			nodeEditorHolder.AddChild(new NodeEditor(this, theme));
 			this.AddChild(nodeEditorHolder);
 
 			workspaceName.ActionArea.AddChild(
