@@ -49,8 +49,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         private bool hasBeenStartupPositioned;
 
-        private int initialTabIndex;
-
         private Vector2 lastMousePosition = new Vector2(0, 0);
 
         private Vector2 mouseDownPosition = new Vector2(0, 0);
@@ -63,7 +61,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         public NodeEditor(View3DWidget view3DWidget,
             ThemeConfig theme,
-            ref int tabIndex,
             Vector2 unscaledRenderOffset = default,
             double layerScale = 1)
 
@@ -72,11 +69,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             VAnchor = VAnchor.Stretch;
 
             this.view3DWidget = view3DWidget;
-
-            // remember the initial tab index
-            initialTabIndex = tabIndex;
-            // and add to the tab index the number of controls we plan to add
-            tabIndex += 2;
 
             BackgroundOutlineWidth = 1;
             BackgroundColor = theme.BackgroundColor.WithAlpha(150);
@@ -157,6 +149,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 var partBounds = new RectangleDouble(0, 0, 100, 100);
                 var weightedCenter = partBounds.Center;
 
+                var oldOrigin = ScrollArea.OriginRelativeParent - UnscaledRenderOffset;
                 var bottomPixels = 20;
                 var margin = 30;
                 UnscaledRenderOffset = -weightedCenter;
