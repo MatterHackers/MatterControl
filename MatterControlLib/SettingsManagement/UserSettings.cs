@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl
 		public const string SceneTreeRatio = nameof(SceneTreeRatio);
 		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
-		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
+		public const string NodeEditorPanelHeight = nameof(NodeEditorPanelHeight);
+        public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
 		public const string ShownWelcomeMessage = nameof(ShownWelcomeMessage);
 		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
 		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
@@ -287,7 +288,26 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public double SelectedObjectPanelWidth
+        public double NodeEditorPanelHeight
+        {
+            get
+            {
+                if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.NodeEditorPanelHeight), out double controlWidth))
+                {
+                    return Math.Max(controlWidth, 150);
+                }
+
+                return 200;
+            }
+
+            set
+            {
+                var minimumValue = Math.Max(value, 150);
+                UserSettings.Instance.set(UserSettingsKey.NodeEditorPanelHeight, minimumValue.ToString());
+            }
+        }
+
+        public double SelectedObjectPanelWidth
 		{
 			get
 			{

@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			SimpleTabs tabControl = null;
 
-			var grabBarSide = DockSide == DockSide.Left ? GrabBarSide.Right : GrabBarSide.Left;
+			var grabBarSide = DockSide == DockSide.Left ? VerticalResizeContainer.GrabBarSide.Right : VerticalResizeContainer.GrabBarSide.Left;
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new VerticalResizeContainer(theme, grabBarSide)

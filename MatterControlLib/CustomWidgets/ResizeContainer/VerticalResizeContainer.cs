@@ -33,10 +33,10 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public enum GrabBarSide { Left, Right }
-
-	public class VerticalResizeContainer : FlowLayoutWidget
+    public class VerticalResizeContainer : FlowLayoutWidget
 	{
+        public enum GrabBarSide { Left, Right }
+        
 		public event EventHandler Resized;
 
 		private double downWidth = 0;

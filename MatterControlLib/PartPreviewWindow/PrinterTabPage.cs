@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var modelViewSidePanel = view3DWidget.Descendants<VerticalResizeContainer>().FirstOrDefault();
 
-			gcodeContainer = new VerticalResizeContainer(theme, GrabBarSide.Left)
+			gcodeContainer = new VerticalResizeContainer(theme, VerticalResizeContainer.GrabBarSide.Left)
 			{
 				Width = UserSettings.Instance.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,

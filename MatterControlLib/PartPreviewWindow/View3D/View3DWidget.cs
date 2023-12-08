@@ -166,18 +166,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			AddSelectedObjectSidePanel();
 
-			int TabIndex = 0;
-			nodeEditorHolder = new GuiWidget()
+			nodeEditorHolder = new HorizontalResizeContainer(theme, HorizontalResizeContainer.GrabBarSide.Top)
 			{
+				Margin = new BorderDouble(0, 0, modelViewSidePanel.Width, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Bottom,
-				Height = 200,
+				Height = UserSettings.Instance.NodeEditorPanelHeight,
 				Visible = false
 			};
 			nodeEditorHolder.AddChild(new NodeEditor(this, theme));
-			this.AddChild(nodeEditorHolder);
+            nodeEditorHolder.Resized += (s, e)=>
+			{
+                UserSettings.Instance.NodeEditorPanelHeight = selectedObjectPanel.Width;
+            };
 
-			workspaceName.ActionArea.AddChild(
+            this.AddChild(nodeEditorHolder);
+			modelViewSidePanel.BoundsChanged += (s, e) =>
+			{
+                nodeEditorHolder.Margin = new BorderDouble(0, 0, modelViewSidePanel.Width, 0);
+            };
+
+
+            workspaceName.ActionArea.AddChild(
 				new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).GrayToColor(theme.TextColor), theme)
 				{
 					Enabled = false
@@ -233,7 +243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 VAnchor = VAnchor.Stretch,
             };
 
-            modelViewSidePanel = new VerticalResizeContainer(theme, GrabBarSide.Left)
+            modelViewSidePanel = new VerticalResizeContainer(theme, VerticalResizeContainer.GrabBarSide.Left)
             {
                 Width = UserSettings.Instance.SelectedObjectPanelWidth,
                 VAnchor = VAnchor.Stretch,
@@ -245,7 +255,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
             modelViewSidePanel.BoundsChanged += UpdateRenderView;
 
-            modelViewSidePanel.Resized += ModelViewSidePanel_Resized;
+			modelViewSidePanel.Resized += (s, e) =>
+			{
+				UserSettings.Instance.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+			};
 
             // add the tree view
             treeView = new TreeView(theme)
@@ -919,11 +932,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
-		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
-		{
-			UserSettings.Instance.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-		}
-
 		private void UpdateRenderView(object sender, EventArgs e)
 		{
 			UiThread.RunOnUiThread(() => TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width);
@@ -1137,7 +1145,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Scene.Invalidated -= Scene_Invalidated;
 
 			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
-			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 
 			if (this.Object3DControlLayer != null)
 			{
@@ -2215,7 +2222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InlineStringEdit workspaceName;
 		private int lastSceneDescendantsCount;
 		private Vector2 beforeReubildScrollPosition;
-        private GuiWidget nodeEditorHolder;
+        private HorizontalResizeContainer nodeEditorHolder;
 
         public InteractiveScene Scene => sceneContext.Scene;
 

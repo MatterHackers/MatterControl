@@ -57,15 +57,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         private Vector2 mouseDownPosition = new Vector2(0, 0);
 
         private ETransformState mouseDownTransformOverride;
-
         private ThemeConfig theme;
-
         private View3DWidget view3DWidget;
         public NodeEditor(View3DWidget view3DWidget,
             ThemeConfig theme,
             Vector2 unscaledRenderOffset = default,
             double layerScale = 1)
-
         {
             HAnchor = HAnchor.Stretch;
             VAnchor = VAnchor.Stretch;
@@ -75,7 +72,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             BackgroundOutlineWidth = 1;
             BackgroundColor = theme.BackgroundColor.WithAlpha(150);
             BorderColor = theme.TextColor;
-            Margin = 1;
 
             this.UnscaledRenderOffset = unscaledRenderOffset;
             this.LayerScale = layerScale;
@@ -90,6 +86,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 Margin = 5,
                 BackgroundColor = theme.TextColor.WithAlpha(20),
                 Name = "ToolBar",
+                Selectable = false,
             };
 
             toolBar.VAnchor |= VAnchor.Bottom;
@@ -168,8 +165,11 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         public override void OnBoundsChanged(EventArgs e)
         {
-            // make sure the scroll area is the right size
-            AdjustScrollArea();
+            if (ScrollArea != null)
+            {
+                // make sure the scroll area is the right size
+                AdjustScrollArea();
+            }
 
             base.OnBoundsChanged(e);
         }

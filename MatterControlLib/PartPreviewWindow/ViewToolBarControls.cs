@@ -807,7 +807,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						mainViewWidget = this.Parents<MainViewWidget>().FirstOrDefault();
 					}
 
-					var verticalResizeContainer = new VerticalResizeContainer(theme, GrabBarSide.Right)
+					var verticalResizeContainer = new VerticalResizeContainer(theme, VerticalResizeContainer.GrabBarSide.Right)
 					{
 						BackgroundColor = openColor,
 						MinimumSize = new Vector2(120, 50),
