@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			nodeEditorHolder.AddChild(new NodeEditor(this, theme));
             nodeEditorHolder.Resized += (s, e)=>
 			{
-                UserSettings.Instance.NodeEditorPanelHeight = selectedObjectPanel.Width;
+                UserSettings.Instance.NodeEditorPanelHeight = nodeEditorHolder.Height;
             };
 
             this.AddChild(nodeEditorHolder);

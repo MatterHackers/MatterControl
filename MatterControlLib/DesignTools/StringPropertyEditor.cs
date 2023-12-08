@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 {
                     rowContainer = NewImageSearchWidget(theme);
                 }
-                if (property.PropertyInfo.GetCustomAttributes(true).OfType<FontSelectorAttribute>().FirstOrDefault() != null)
+                else if (property.PropertyInfo.GetCustomAttributes(true).OfType<FontSelectorAttribute>().FirstOrDefault() != null)
                 {
                     rowContainer = InsertFontSelectorField(propertyEditor, property, context, ref tabIndex, stringValue, theme, undoBuffer);
                 }

@@ -80,17 +80,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             this.theme = theme;
 
-            var toolBar = new FlowLayoutWidget()
-            {
-                HAnchor = HAnchor.Stretch,
-                Margin = 5,
-                BackgroundColor = theme.TextColor.WithAlpha(20),
-                Name = "ToolBar",
-                Selectable = false,
-            };
-
-            toolBar.VAnchor |= VAnchor.Bottom;
-
             ScrollArea = new GuiWidget()
             {
                 Name = "ScrollArea",
@@ -99,9 +88,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             };
             AddChild(ScrollArea);
 
-            AddChild(toolBar);
-
-            AddControlsToToolBar(theme, toolBar);
+            AddControls();
 
             view3DWidget.Scene.SelectionChanged += Scene_SelectionChanged;
         }
@@ -153,6 +140,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 var weightedCenter = partBounds.Center;
 
                 var oldOrigin = ScrollArea.OriginRelativeParent - UnscaledRenderOffset;
+
                 var bottomPixels = 20;
                 var margin = 30;
                 UnscaledRenderOffset = -weightedCenter;
@@ -212,20 +200,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 }
             }
 
-            var newTransform = false;
-            if (newTransform)
-            {
-                graphics2D.PushTransform();
-                Affine currentGraphics2DTransform = graphics2D.GetTransform();
-                Affine accumulatedTransform = currentGraphics2DTransform * TotalTransform;
-                graphics2D.SetTransform(accumulatedTransform);
-                base.OnDraw(graphics2D);
-                graphics2D.PopTransform();
-            }
-            else
-            {
-                base.OnDraw(graphics2D);
-            }
+            base.OnDraw(graphics2D);
         }
 
         public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -319,28 +294,34 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             Invalidate();
         }
 
-        private void AddButtons(ThemeConfig theme, FlowLayoutWidget toolBar)
+        private void AddControls()
         {
+            var buttonMargin = 5.0;
+
+            var leftOffset = 7.0;
+            var bottomOffset = 7.0;
+
+            // add the home button
             var homeButton = new ThemedIconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16).GrayToColor(theme.TextColor), theme)
             {
                 BackgroundColor = theme.SlightShade,
                 HoverColor = theme.SlightShade.WithAlpha(75),
-                Margin = new BorderDouble(3, 3, 6, 3),
-                ToolTipText = "Reset Zoom".Localize()
+                Margin = new BorderDouble(leftOffset, bottomOffset, 0, 0),
+                ToolTipText = "Reset Zoom".Localize(),
+                HAnchor = HAnchor.Left,
+                VAnchor = VAnchor.Bottom,
             };
-            toolBar.AddChild(homeButton);
+            this.AddChild(homeButton);
 
             homeButton.Click += (s, e) =>
             {
                 CenterPartInView();
             };
-        }
 
-        private void AddControlsToToolBar(ThemeConfig theme, FlowLayoutWidget toolBar)
-        {
-            AddButtons(theme, toolBar);
+            // increment the left offset
+            leftOffset += homeButton.Width + buttonMargin;
 
-            toolBar.AddChild(new HorizontalSpacer());
+            // add the next button
         }
 
         private void AdjustScrollArea()
@@ -355,7 +336,23 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             // Set the LocalBounds of the ScrollArea with the offset
             ScrollArea.LocalBounds = new RectangleDouble(offsetX, offsetY, offsetX + scaledWidth, offsetY + scaledHeight);
-            ScrollArea.OriginRelativeParent = UnscaledRenderOffset;
+
+            var tranlation = Affine.NewTranslation(UnscaledRenderOffset);
+            var scale = Affine.NewScaling(LayerScale, LayerScale);
+
+            var oldTransform = true;
+            if (oldTransform)
+            {
+                scale = Affine.NewScaling(1, 1);
+            }
+
+            var newTransform2 = tranlation * scale;
+            ScrollArea.ParentToChildTransform = newTransform2;
+
+            if (!ScrollArea.Parent.LayoutLocked)
+            {
+                ScrollArea.Parent.OnLayout(new LayoutEventArgs(ScrollArea.Parent, ScrollArea, PropertyCausingLayout.Position));
+            }
         }
 
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)
