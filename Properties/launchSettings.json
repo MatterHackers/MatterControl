@@ -2,6 +2,7 @@
   "profiles": {
     "MatterControl": {
       "commandName": "Project",
+      "commandLineArgs": "SHOW_MEMORY",
       "hotReloadEnabled": false,
       "nativeDebugging": false
     }

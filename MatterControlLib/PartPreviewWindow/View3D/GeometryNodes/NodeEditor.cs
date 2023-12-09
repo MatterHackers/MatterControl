@@ -53,7 +53,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         private Vector2 lastMousePosition = new Vector2(0, 0);
 
-        Vector2 lastOriginRelativeToParent = new Vector2(0, 0);
         private Vector2 mouseDownPosition = new Vector2(0, 0);
 
         private ETransformState mouseDownTransformOverride;
@@ -330,24 +329,9 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             double scaledWidth = Width / LayerScale;
             double scaledHeight = Height / LayerScale;
 
-            // Calculate the offset based on the UnscaledRenderOffset
-            double offsetX = -UnscaledRenderOffset.X / LayerScale;
-            double offsetY = -UnscaledRenderOffset.Y / LayerScale;
-
             // Set the LocalBounds of the ScrollArea with the offset
-            ScrollArea.LocalBounds = new RectangleDouble(offsetX, offsetY, offsetX + scaledWidth, offsetY + scaledHeight);
-
-            var tranlation = Affine.NewTranslation(UnscaledRenderOffset);
-            var scale = Affine.NewScaling(LayerScale, LayerScale);
-
-            var oldTransform = true;
-            if (oldTransform)
-            {
-                scale = Affine.NewScaling(1, 1);
-            }
-
-            var newTransform2 = tranlation * scale;
-            ScrollArea.ParentToChildTransform = newTransform2;
+            ScrollArea.LocalBounds = new RectangleDouble(0, 0, scaledWidth, scaledHeight);
+            ScrollArea.ParentToChildTransform = TotalTransform;
 
             if (!ScrollArea.Parent.LayoutLocked)
             {
@@ -428,15 +412,25 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 var yOffset = 0;
                 foreach (var node in geometryNodes.Nodes)
                 {
-                    ScrollArea.AddChild(new GuiWidget()
+                    var testWindow = new GuiWidget()
                     {
                         Position = node.Position + new Vector2(10, yOffset),
-                        VAnchor = VAnchor.Absolute,
-                        HAnchor = HAnchor.Absolute,
                         Width = 100,
                         Height = 100,
                         BackgroundColor = Color.Red
+                    };
+                    ScrollArea.AddChild(testWindow);
+
+                    testWindow.AddChild(new TextWidget(selectedItem.Name, pointSize: 10)
+                    {
+                        TextColor = theme.TextColor,
+                        VAnchor = VAnchor.Top,
                     });
+
+                    testWindow.BeforeDraw += (s, e) =>
+                    {
+                        var a = 0;
+                    };
 
                     yOffset += 20;
                 }
