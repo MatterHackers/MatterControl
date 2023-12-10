@@ -83,7 +83,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             {
                 Name = "ScrollArea",
                 DebugShowBounds = true,
-                Selectable = false,
+                //Selectable = false,
             };
             AddChild(ScrollArea);
 
@@ -412,20 +412,20 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 var yOffset = 0;
                 foreach (var node in geometryNodes.Nodes)
                 {
-                    var testWindow = new GuiWidget()
+                    var testWindow = new WindowWidget(theme, new RectangleDouble(0, 0, 100, 100))
                     {
                         Position = node.Position + new Vector2(10, yOffset),
-                        Width = 100,
-                        Height = 100,
-                        BackgroundColor = Color.Red
+                        BackgroundRadius = 3,
                     };
                     ScrollArea.AddChild(testWindow);
 
-                    testWindow.AddChild(new TextWidget(selectedItem.Name, pointSize: 10)
+                    testWindow.TitleBar.AddChild(new TextWidget("Node - Test", pointSize: 10)
                     {
                         TextColor = theme.TextColor,
-                        VAnchor = VAnchor.Top,
+                        VAnchor = VAnchor.Center,
+                        HAnchor = HAnchor.Left,
                     });
+                    testWindow.TitleBar.Height = 20;
 
                     testWindow.BeforeDraw += (s, e) =>
                     {
