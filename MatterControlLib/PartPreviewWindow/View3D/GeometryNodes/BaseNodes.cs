@@ -33,6 +33,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
 {
     public class BaseNode
     {
-        public Vector2 Position { get; set; }
+        public Vector2 WindowSize { get; set; } = new Vector2(400, 10);
+        public Vector2 WindowPosition { get; set; }
     }
 }

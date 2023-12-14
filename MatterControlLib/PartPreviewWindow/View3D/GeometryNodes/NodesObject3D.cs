@@ -35,6 +35,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,25 +44,17 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 {
     public class NodesObject3D : OperationSourceContainerObject3D
     {
-        public List<BaseNode> Nodes = new List<BaseNode>();
-
         private CancellationTokenSource cancellationToken;
-
         public NodesObject3D()
         {
             Name = "Geometry Nodes".Localize();
         }
 
-        public override void WrapSelectedItemAndSelect(InteractiveScene scene)
-        {
-            base.WrapSelectedItemAndSelect(scene);
+        public List<BaseNode> Nodes { get; set; } = new List<BaseNode>();
 
-            // foreach child add a new node
-            foreach (var child in Children)
-            {
-                Nodes.Add(new InputObject3DNode(child));
-            }
-        }
+        public Vector2 UscaledViewOffset { get; set; } = Vector2.Zero;
+
+        public double Scale { get; set; } = 1;
 
         public override Task Rebuild()
         {
@@ -120,6 +113,17 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                     return Task.CompletedTask;
                 });
+        }
+
+        public override void WrapSelectedItemAndSelect(InteractiveScene scene)
+        {
+            base.WrapSelectedItemAndSelect(scene);
+
+            // foreach child add a new node
+            foreach (var child in Children)
+            {
+                Nodes.Add(new InputObject3DNode(child));
+            }
         }
     }
 }

@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			OutputType = PrintOutputTypes.Hole;
         }
 
-		public static async Task<CubeHoleObject3D> Create()
+		public new static async Task<CubeHoleObject3D> Create()
 		{
 			var item = new CubeHoleObject3D();
 			await item.Rebuild();

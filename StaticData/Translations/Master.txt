@@ -3625,6 +3625,9 @@ Translated:Pan
 English:Pan View
 Translated:Pan View
 
+English:Parent ID
+Translated:Parent ID
+
 English:Part Cooling Fan
 Translated:Part Cooling Fan
 
@@ -4560,6 +4563,15 @@ Translated:Round
 
 English:Round Segments
 Translated:Round Segments
+
+English:Royalty Amount
+Translated:Royalty Amount
+
+English:Royalty Percent
+Translated:Royalty Percent
+
+English:Royalty Type
+Translated:Royalty Type
 
 English:Rubber Band Selection
 Translated:Rubber Band Selection
@@ -6405,6 +6417,9 @@ Translated:Uploading
 
 English:Uploading...
 Translated:Uploading...
+
+English:Uscaled View Offset
+Translated:Uscaled View Offset
 
 English:Use Automatic Z Probe
 Translated:Use Automatic Z Probe
