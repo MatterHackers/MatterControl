@@ -86,7 +86,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             {
                 Name = "ScrollArea",
                 DebugShowBounds = true,
-                //Selectable = false,
+                Selectable = false,
             };
             AddChild(ScrollArea);
 
@@ -116,7 +116,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         }
 
         public GuiWidget ScrollArea { get; set; }
-        public Affine TotalTransform => Affine.NewTranslation(UnscaledRenderOffset) * ScalingTransform;
+        public Affine TotalTransform => Affine.NewTranslation(UnscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
         public ETransformState TransformState { get; set; }
         private UndoBuffer UndoBuffer => view3DWidget.Scene.UndoBuffer;
         public Vector2 UnscaledRenderOffset
@@ -133,7 +133,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         }
 
         private Affine ScalingTransform => Affine.NewScaling(LayerScale, LayerScale);
-
         public void CenterPartInView()
         {
             var ready = false;
@@ -254,7 +253,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             if (MouseCaptured)
             {
-                DoTranslateAndZoom(mouseEvent.Position);
+                DoTranslateAndZoom(mouseEvent);
             }
             else
             {
@@ -328,11 +327,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             double scaledWidth = Width / LayerScale;
             double scaledHeight = Height / LayerScale;
 
-            var origin = -TotalTransform.Transform(new Vector2(0, 0));
-            ScrollArea.LocalBounds = new RectangleDouble(origin, origin + new Vector2(scaledWidth, scaledHeight));
-
             // Set the LocalBounds of the ScrollArea with the offset
             ScrollArea.ParentToChildTransform = TotalTransform;
+
+            var origin = -TotalTransform.Transform(new Vector2(0, 0));
+            origin /= LayerScale;
+            ScrollArea.LocalBounds = new RectangleDouble(origin, origin + new Vector2(scaledWidth, scaledHeight));
 
             if (!ScrollArea.Parent.LayoutLocked)
             {
@@ -340,8 +340,9 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             }
         }
 
-        private void DoTranslateAndZoom(Vector2 mousePos)
+        private void DoTranslateAndZoom(MouseEventArgs mouseEvent)
         {
+            var mousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
             var mouseDelta = mousePos - lastMousePosition;
 
             switch (mouseDownTransformOverride)
@@ -357,13 +358,21 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                         zoomDelta = 1 + 1 * mouseDelta.Y / 100;
                     }
 
-                    ScalePartAndFixPosition(mouseDownPosition, LayerScale * zoomDelta);
+                    var mousePreScale = mouseDownPosition;
+                    TotalTransform.inverse_transform(ref mousePreScale);
 
+                    LayerScale *= zoomDelta;
+
+                    var mousePostScale = mouseDownPosition;
+                    TotalTransform.inverse_transform(ref mousePostScale);
+
+                    UnscaledRenderOffset += mousePostScale - mousePreScale;
                     break;
 
                 case ETransformState.Move:
+                    ScalingTransform.inverse_transform(ref mouseDelta);
+
                     UnscaledRenderOffset += mouseDelta;
-                    ScalePartAndFixPosition(mouseDownPosition, LayerScale);
                     break;
 
                 case ETransformState.Edit:
