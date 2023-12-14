@@ -85,8 +85,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             ScrollArea = new GuiWidget()
             {
                 Name = "ScrollArea",
-                DebugShowBounds = true,
-                Selectable = false,
             };
             AddChild(ScrollArea);
 
@@ -133,27 +131,31 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         }
 
         private Affine ScalingTransform => Affine.NewScaling(LayerScale, LayerScale);
-        public void CenterPartInView()
+        public void CenterNodesInView()
         {
-            var ready = false;
+            // If there is no selection center all the nodes
+
+            var ready = true;
             if (ready)
             {
-                var partBounds = new RectangleDouble(0, 0, 100, 100);
-                var weightedCenter = partBounds.Center;
+                var partBounds = ScrollArea.GetChildrenBoundsIncludingMargins();
+                //TotalTransform.transform(ref partBounds);
 
-                var oldOrigin = ScrollArea.OriginRelativeParent - UnscaledRenderOffset;
+                var weightedCenter = partBounds.Center;
 
                 var bottomPixels = 20;
                 var margin = 30;
                 UnscaledRenderOffset = -weightedCenter;
-                LayerScale = Math.Min((Height - margin - bottomPixels * 2) * partBounds.Height, (Width - margin) * partBounds.Width);
+                LayerScale = Math.Min(1, Math.Min((Height - margin - bottomPixels * 2) / partBounds.Height, (Width - margin) / partBounds.Width));
                 UnscaledRenderOffset += new Vector2(0, bottomPixels) * LayerScale;
 
                 Invalidate();
             }
-
-            UnscaledRenderOffset = Vector2.Zero;
-            LayerScale = 1;
+            else
+            {
+                UnscaledRenderOffset = Vector2.Zero;
+                LayerScale = 1;
+            }
             AdjustScrollArea();
         }
 
@@ -181,7 +183,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 if (UnscaledRenderOffset == Vector2.Zero
                     && LayerScale == 1)
                 {
-                    CenterPartInView();
+                    CenterNodesInView();
                 }
                 hasBeenStartupPositioned = true;
             }
@@ -203,7 +205,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
             base.OnMouseDown(mouseEvent);
-            if (MouseCaptured)
+            if (ScrollArea.UnderMouseState == UnderMouseState.FirstUnderMouse)
             {
                 mouseDownPosition.X = mouseEvent.X;
                 mouseDownPosition.Y = mouseEvent.Y;
@@ -251,7 +253,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         {
             base.OnMouseMove(mouseEvent);
 
-            if (MouseCaptured)
+            if (ScrollArea.UnderMouseState == UnderMouseState.FirstUnderMouse
+                && (mouseDownTransformOverride == ETransformState.Move || mouseDownTransformOverride == ETransformState.Scale))
             {
                 DoTranslateAndZoom(mouseEvent);
             }
@@ -265,6 +268,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         public override void OnMouseUp(MouseEventArgs mouseEvent)
         {
+            mouseDownTransformOverride = ETransformState.Edit;
             base.OnMouseUp(mouseEvent);
         }
 
@@ -312,7 +316,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
             homeButton.Click += (s, e) =>
             {
-                CenterPartInView();
+                CenterNodesInView();
             };
 
             // increment the left offset
