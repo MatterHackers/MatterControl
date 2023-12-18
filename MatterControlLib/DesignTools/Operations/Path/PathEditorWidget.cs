@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -255,8 +256,10 @@ namespace MatterControlLib.DesignTools.Operations.Path
         public Affine TotalTransform => Affine.NewTranslation(unscaledRenderOffset) * ScalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
         private int controlPointBeingDragged = -1;
-        private int selectedPointIndex;
+        public SafeList<int> SelectedPoints { get; private set; } = new SafeList<int>();
+
         private int controlPointBeingHovered = -1;
+
         private ThemedNumberEdit yEditWidget;
         private ThemedNumberEdit xEditWidget;
         private EditableProperty editableProperty;
@@ -336,36 +339,37 @@ namespace MatterControlLib.DesignTools.Operations.Path
                     case MouseButtons.Left:
                         if (Keyboard.IsKeyDown(Keys.ControlKey))
                         {
-                            if (Keyboard.IsKeyDown(Keys.Alt))
+                            // if we clicked a control point add it to the selection
+                            var controlPointIndex = GetControlPointIndex(mouseEvent.Position);
+                            if (controlPointIndex > -1)
                             {
-                                mouseDownTransformOverride = ETransformState.Scale;
+                                if (SelectedPoints.Contains(controlPointIndex))
+                                {
+                                    SelectedPoints.Remove(controlPointIndex);
+                                }
+                                else
+                                {
+                                    SelectedPoints.Add(controlPointIndex);
+                                }
                             }
                             else
                             {
-                                mouseDownTransformOverride = ETransformState.Move;
+                                if (Keyboard.IsKeyDown(Keys.Alt))
+                                {
+                                    mouseDownTransformOverride = ETransformState.Scale;
+                                }
+                                else
+                                {
+                                    mouseDownTransformOverride = ETransformState.Move;
+                                }
                             }
                         }
                         else
                         {
                             // we are in edit mode, check if we are over any control points
                             controlPointBeingDragged = GetControlPointIndex(mouseEvent.Position);
-                            selectedPointIndex = controlPointBeingDragged;
-
-                            if (selectedPointIndex == -1)
-                            {
-                                xEditWidget.Text = "---";
-                                xEditWidget.Enabled = false;
-                                yEditWidget.Text = "---";
-                                yEditWidget.Enabled = false;
-
-                                sharpButton.Enabled = false;
-                                alignedButton.Enabled = false;
-                                freeButton.Enabled = false;
-                            }
-                            else
-                            {
-                                UpdateControlsForSelection();
-                            }
+                            SelectedPoints.Clear();
+                            SelectedPoints.Add(controlPointBeingDragged);
                         }
                         break;
 
@@ -381,11 +385,28 @@ namespace MatterControlLib.DesignTools.Operations.Path
                         }
                         break;
                 }
+
+                UpdateControlsForSelection();
             }
         }
 
         private void UpdateControlsForSelection()
         {
+            if (SelectedPoints.Count() != 1)
+            {
+                xEditWidget.Text = "---";
+                xEditWidget.Enabled = false;
+                yEditWidget.Text = "---";
+                yEditWidget.Enabled = false;
+
+                sharpButton.Enabled = false;
+                alignedButton.Enabled = false;
+                freeButton.Enabled = false;
+
+                return;
+            }
+
+            // we have a single selection so update the controls
             xEditWidget.Enabled = true;
             yEditWidget.Enabled = true;
             sharpButton.Enabled = true;
