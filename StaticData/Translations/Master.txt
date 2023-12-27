@@ -712,6 +712,9 @@ Translated:Build Height
 English:Build Plates
 Translated:Build Plates
 
+English:Building Nodes
+Translated:Building Nodes
+
 English:BuildTak
 Translated:BuildTak
 

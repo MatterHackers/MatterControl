@@ -914,10 +914,10 @@ namespace MatterHackers.MatterControl
             {
                 ResultType = typeof(NodesObject3D),
                 TitleGetter = () => "Geometry Nodes".Localize(),
-                Action = (sceneContext) =>
+                Action = async (sceneContext) =>
                 {
                     var geometryNodes = new NodesObject3D();
-                    geometryNodes.WrapSelectedItemAndSelect(sceneContext.Scene);
+                    await geometryNodes.ConvertChildrenToNodes(sceneContext.Scene);
                 },
                 Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
                 HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),

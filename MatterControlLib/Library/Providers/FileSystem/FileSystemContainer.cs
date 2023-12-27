@@ -178,6 +178,12 @@ namespace MatterHackers.MatterControl.Library
                                             writer.Write(await content.ToJson());
                                         }
                                     }
+
+#if DEBUG
+                                    // save the content.ToJson() to disk for debugging into the downloads folder
+                                    var debugPath = Path.Combine(ApplicationDataStorage.Instance.DownloadsDirectory, Path.GetFileName(fileItem.FilePath));
+                                    File.WriteAllText(debugPath, await content.ToJson());
+#endif
                                 }
                             }
 

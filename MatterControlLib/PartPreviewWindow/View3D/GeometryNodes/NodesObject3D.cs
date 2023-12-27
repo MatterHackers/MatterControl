@@ -28,21 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 {
-    public class NodesObject3D : OperationSourceContainerObject3D
+    public class NodesObject3D : Object3D
     {
         private CancellationTokenSource cancellationToken;
         public NodesObject3D()
@@ -50,7 +52,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             Name = "Geometry Nodes".Localize();
         }
 
-        public List<BaseNode> Nodes { get; set; } = new List<BaseNode>();
+        [JsonConverter(typeof(JsonINodeObjectConverter))]
+        public SafeList<INodeObject> Nodes { get; set; } = new SafeList<INodeObject>();
 
         public Vector2 UscaledViewOffset { get; set; } = Vector2.Zero;
 
@@ -63,50 +66,28 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             var rebuildLocks = this.RebuilLockAll();
 
             return ApplicationController.Instance.Tasks.Execute(
-                "Curve".Localize(),
+                "Building Nodes".Localize(),
                 null,
                 (reporter, cancellationTokenSource) =>
                 {
                     cancellationToken = cancellationTokenSource;
-                    var sourceAabb = SourceContainer.GetAxisAlignedBoundingBox();
 
-                    // If this is the first build (the only child is the source container), fix the aabb.
-                    var firstBuild = Children.Count == 1;
-                    var initialAabb = this.GetAxisAlignedBoundingBox();
+                    // start the rebuild process
 
-                    var processedChildren = new List<IObject3D>();
-
-                    foreach (var sourceItem in SourceContainer.VisibleMeshes())
-                    {
-                        var originalMesh = sourceItem.Mesh;
-                        reporter?.Invoke(0, "Copy Mesh".Localize());
-                        var processedMesh = originalMesh.Copy(CancellationToken.None);
-
-                        var newChild = new Object3D()
-                        {
-                            Mesh = processedMesh
-                        };
-
-                        newChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
-
-                        processedChildren.Add(newChild);
-                    }
-
-                    RemoveAllButSource();
-                    SourceContainer.Visible = false;
+                    // once complete find all the output nodes and add them as children
 
                     Children.Modify((list) =>
                     {
-                        list.AddRange(processedChildren);
+                        list.Add(new Object3D()
+                        {
+                            Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+                        });
                     });
-
-                    ApplyHoles(reporter, cancellationToken.Token);
 
                     cancellationToken = null;
                     UiThread.RunOnIdle(() =>
                     {
                         rebuildLocks.Dispose();
-                        Invalidate(InvalidateType.DisplayValues);
                         this.CancelAllParentBuilding();
                         Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
                     });
@@ -115,15 +96,48 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 });
         }
 
-        public override void WrapSelectedItemAndSelect(InteractiveScene scene)
+        public async Task ConvertChildrenToNodes(InteractiveScene scene)
         {
-            base.WrapSelectedItemAndSelect(scene);
-
-            // foreach child add a new node
-            foreach (var child in Children)
+            using (RebuildLock())
             {
-                Nodes.Add(new InputObject3DNode(child));
+                var selectedItems = scene.GetSelectedItems();
+
+                if (selectedItems.Count > 0)
+                {
+                    // clear the selected item
+                    scene.SelectedItem = null;
+
+                    using (RebuildLock())
+                    {
+                        // foreach child add a new node
+                        foreach (var child in selectedItems)
+                        {
+                            Nodes.Add(new InputObject3DNode(child.Clone()));
+                        }
+                    }
+
+                    scene.UndoBuffer.AddAndDo(
+                        new ReplaceCommand(
+                            new List<IObject3D>(selectedItems),
+                            new List<IObject3D> { this }));
+
+                    await this.Rebuild();
+
+                    Name = "Node - " + selectedItems.First().Name;
+                    NameOverriden = false;
+                }
             }
+
+            // and select this
+            var rootItem = this.Parents().Where(i => scene.Children.Contains(i)).FirstOrDefault();
+            if (rootItem != null)
+            {
+                scene.SelectedItem = rootItem;
+            }
+
+            scene.SelectedItem = this;
+
+            this.Invalidate(InvalidateType.Children);
         }
     }
 }

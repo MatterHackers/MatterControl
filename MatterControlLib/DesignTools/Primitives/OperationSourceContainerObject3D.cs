@@ -52,11 +52,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				if (base.Mesh == null && !RebuildLocked)
-				{
-					int a = 0;
-				}
-
 				return base.Mesh;
 			}
 

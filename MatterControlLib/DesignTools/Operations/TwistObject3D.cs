@@ -81,7 +81,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("The source part is specifying a preferred radius. You can turn this off to set a specific radius.")]
 		public bool EditRadius { get; set; } = false;
 
-		[Description("The radius described by the source part or implied by the geometry.")]
+        [JsonIgnore]
+        [Description("The radius described by the source part or implied by the geometry.")]
 		[ReadOnly(true)]
 		public double PreferedRadius { get; set; } = 0;
 
@@ -95,7 +96,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Enable advanced features like specifying when the twist starts and stops on the part.")]
 		public bool Advanced { get; set; } = false;
 
-		[ReadOnly(true)]
+        [JsonIgnore]
+        [ReadOnly(true)]
 		[DisplayName("")] // clear the display name so this text will be the full width of the editor
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more twist options.";
 

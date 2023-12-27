@@ -181,6 +181,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool Advanced { get; set; } = false;
 
+		[JsonIgnore]
 		[ReadOnly(true)]
 		[DisplayName("")] // clear the display name so this text will be the full width of the editor
 		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more align options.";

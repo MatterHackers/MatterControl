@@ -448,7 +448,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     if (node is InputObject3DNode inputObject)
                     {
                         var propertyEditor = new PropertyEditor(theme, UndoBuffer);
-                        var propertyWidget = propertyEditor.Create(inputObject.Object3D, UndoBuffer, theme);
+                        var propertyWidget = propertyEditor.Create(inputObject.NodeObjects.First(), UndoBuffer, theme);
+                        foreach(var widget in propertyWidget.Descendants())
+                        {
+                            widget.DoubleBuffer = false;
+                        }
+
                         //propertyWidget.VAnchor = VAnchor.Fit;
                         nodeEdit.ClientArea.AddChild(propertyWidget);
                         nodeEdit.VAnchor = VAnchor.Fit;

@@ -99,15 +99,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Slider(1, 50, Easing.EaseType.Quadratic, useSnappingGrid: true)]
 		public DoubleOrExpression ExtrusionHeight { get; set; } = 5;
 
-		[DisplayName("")]
+        [JsonIgnore]
+        [DisplayName("")]
 		[ReadOnly(true)]
 		public string NoBaseMessage { get; set; } = "No base is added under your part. Switch to a different base option to create a base.";
 
-		[DisplayName("")]
+        [JsonIgnore]
+        [DisplayName("")]
 		[ReadOnly(true)]
 		public string SpaceHolder1 { get; set; } = "";
 
-		[DisplayName("")]
+        [JsonIgnore]
+        [DisplayName("")]
 		[ReadOnly(true)]
 		public string SpaceHolder2 { get; set; } = "";
 

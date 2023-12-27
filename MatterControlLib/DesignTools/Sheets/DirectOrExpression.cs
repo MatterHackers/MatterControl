@@ -28,16 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using Newtonsoft.Json;
 using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class DirectOrExpression
 	{
-		/// <summary>
-		/// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
-		/// </summary>
-		public bool IsEquation 
+        [JsonIgnore]
+        /// <summary>
+        /// Is the expression referencing a cell in the table or an equation. If not it is simply a constant
+        /// </summary>
+        public bool IsEquation 
 		{
 			get
 			{
@@ -46,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		[JsonIgnore]
 		public string ExpressionValueAtLastRebuild { get; set; } = "";
 
 		public string Expression { get; set; }

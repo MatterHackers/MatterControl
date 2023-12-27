@@ -158,7 +158,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		[DisplayName("")]
+        [JsonIgnore]
+        [DisplayName("")]
 		[ReadOnly(true)]
 		public string TransparencyMessage { get; set; } = "Your image is processed as is with no modifications. Transparent pixels are ignored, only opaque pixels are considered in feature detection.";
 

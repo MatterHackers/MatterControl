@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterControlLib.DesignTools.Operations.Path;
@@ -60,6 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             object3DControlsLayer.AddControls(ControlTypes.Standard2D);
         }
 
+        [JsonIgnore]
         [ReadOnly(true)]
         [DisplayName("")]
         public string IncludeDocs { get; set; } = @"You can use the following variables in the Include Function:
