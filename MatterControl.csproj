@@ -21,7 +21,6 @@
 		<Compile Remove="MatterControl.SLA\**" />
 		<Compile Remove="MatterControl.Winforms\**" />
 		<Compile Remove="MatterControlLib\**" />
-		<Compile Remove="MatterHackers.gsSlicer\**" />
 		<Compile Remove="Plugins\**" />
 		<Compile Remove="PrinterDriverInstaller\**" />
 		<Compile Remove="PrusaI3-MK3\**" />
@@ -38,7 +37,6 @@
 		<EmbeddedResource Remove="MatterControl.SLA\**" />
 		<EmbeddedResource Remove="MatterControl.Winforms\**" />
 		<EmbeddedResource Remove="MatterControlLib\**" />
-		<EmbeddedResource Remove="MatterHackers.gsSlicer\**" />
 		<EmbeddedResource Remove="Plugins\**" />
 		<EmbeddedResource Remove="PrinterDriverInstaller\**" />
 		<EmbeddedResource Remove="PrusaI3-MK3\**" />
@@ -55,7 +53,6 @@
 		<None Remove="MatterControl.SLA\**" />
 		<None Remove="MatterControl.Winforms\**" />
 		<None Remove="MatterControlLib\**" />
-		<None Remove="MatterHackers.gsSlicer\**" />
 		<None Remove="Plugins\**" />
 		<None Remove="PrinterDriverInstaller\**" />
 		<None Remove="PrusaI3-MK3\**" />
@@ -75,7 +72,6 @@
 		<ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
-		<ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj" />
 		<ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -87,9 +83,7 @@
 		<None Include="StaticData\License\agg-sharp.txt" />
 		<None Include="StaticData\License\clipper.txt" />
 		<None Include="StaticData\License\markdig.txt" />
-		<None Include="StaticData\License\matterslice.txt" />
 		<None Include="StaticData\License\opentk.txt" />
-		<None Include="StaticData\SliceSettings\Layouts.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CsvHelper">
