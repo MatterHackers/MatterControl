@@ -162,6 +162,10 @@ namespace MatterHackers.MatterControl
 			}
 			else if (typeof(T) == typeof(bool))
 			{
+				if (settingValue == "True")
+				{
+                    settingValue = "1";
+                }
 				return (T)(object)(settingValue == "1");
 			}
 			else if (typeof(T) == typeof(int))

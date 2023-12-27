@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.Csg.Transform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
@@ -359,29 +360,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// hudBackground.BackBuffer.SetRecieveBlender(new BlenderBGRA());
 
-			GuiWidget AddRoundButton(GuiWidget widget, Vector2 offset, bool center = false)
-			{
-				widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
-				widget.BackgroundOutlineWidth = 1;
-				widget.VAnchor = VAnchor.Top;
-				widget.HAnchor = HAnchor.Right;
-				if (center)
-				{
-					offset.X -= (widget.Width / 2) / scale;
-				}
-				
-				widget.Margin = new BorderDouble(0, 0, offset.X, offset.Y);
-				return controlLayer.AddChild(widget);
-			}
-
-			Vector2 RotatedMargin(GuiWidget widget, double angle)
-			{
-				var radius = 70 * scale;
-				var widgetCenter = new Vector2(widget.Width / 2, widget.Height / 2);
-				// divide by scale to convert from pixels to margin units
-				return (cubeCenterFromRightTop - widgetCenter - new Vector2(0, radius).GetRotated(angle)) / scale;
-			}
-
 			// add the view controls
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
 			partSelectButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "partSelect.png"), 16, 16).GrayToColor(theme.TextColor), theme)
@@ -392,7 +370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			partSelectButton.MouseEnterBounds += (s, e) => partSelectButton.SetActiveUiHint("Ctrl + A = Select Alll, 'Space' = Clear Selection, 'ESC' = Cancel Drag".Localize());
-			AddRoundButton(partSelectButton, RotatedMargin(partSelectButton, MathHelper.Tau * .15));
+			MakeRoundAndAdd(partSelectButton, RotatedMargin(partSelectButton, cubeCenterFromRightTop, MathHelper.Tau * .15));
 			partSelectButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 
@@ -403,7 +381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			};
 			rotateButton.MouseEnterBounds += (s, e) => rotateButton.SetActiveUiHint("Rotate: Right Mouse Button, Ctrl + Left Mouse Button, Arrow Keys".Localize());
-			AddRoundButton(rotateButton, RotatedMargin(rotateButton, MathHelper.Tau * .05));
+			MakeRoundAndAdd(rotateButton, RotatedMargin(rotateButton, cubeCenterFromRightTop, MathHelper.Tau * .05));
 			rotateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			buttonGroupA.Add(rotateButton);
 
@@ -414,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			};
 			translateButton.MouseEnterBounds += (s, e) => translateButton.SetActiveUiHint("Move: Middle Mouse Button, Ctrl + Shift + Left Mouse Button, Shift Arrow Keys".Localize());
-			AddRoundButton(translateButton, RotatedMargin(translateButton , - MathHelper.Tau * .05));
+			MakeRoundAndAdd(translateButton, RotatedMargin(translateButton, cubeCenterFromRightTop, - MathHelper.Tau * .05));
 			translateButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			buttonGroupA.Add(translateButton);
 
@@ -425,7 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			};
 			zoomButton.MouseEnterBounds += (s, e) => zoomButton.SetActiveUiHint("Zoom: Mouse Wheel, Ctrl + Alt + Left Mouse Button, Ctrl + '+' & Ctrl + '-'".Localize());
-			AddRoundButton(zoomButton, RotatedMargin(zoomButton, - MathHelper.Tau * .15));
+			MakeRoundAndAdd(zoomButton, RotatedMargin(zoomButton, cubeCenterFromRightTop, - MathHelper.Tau * .15));
 			zoomButton.Click += (s, e) => viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
 			buttonGroupA.Add(zoomButton);
 
@@ -496,7 +474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			};
 			homeButton.MouseEnterBounds += (s1, e1) => homeButton.SetActiveUiHint("W Key");
-			AddRoundButton(homeButton, RotatedMargin(homeButton, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
+			MakeRoundAndAdd(homeButton, RotatedMargin(homeButton, cubeCenterFromRightTop, MathHelper.Tau * .3)).Click += (s, e) => viewControls3D.NotifyResetView();
 
 			var zoomToSelectionButton = new ThemedIconButton(StaticData.Instance.LoadIcon("select.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
@@ -514,64 +492,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Scene.SelectionChanged += SetZoomEnabled;
 			this.Closed += (s, e) => this.Scene.SelectionChanged -= SetZoomEnabled;
 
-			AddRoundButton(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, MathHelper.Tau * .4)).Click += (s, e) => ZoomToSelection();
+			MakeRoundAndAdd(zoomToSelectionButton, RotatedMargin(zoomToSelectionButton, cubeCenterFromRightTop, MathHelper.Tau * .4)).Click += (s, e) => ZoomToSelection();
 
-			var turntableEnabled = UserSettings.Instance.get(UserSettingsKey.TurntableMode) != "False";
-			TrackballTumbleWidget.TurntableEnabled = turntableEnabled;
+			AddTurnTableButton(cubeCenterFromRightTop);
 
-			var turnTableButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).GrayToColor(theme.TextColor), theme)
-			{
-				ToolTipText = "Turntable Mode".Localize(),
-				Margin = theme.ButtonSpacing,
-				Padding = 2,
-				ToggleButton = true,
-				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = turntableEnabled,
-				//DoubleBuffer = true,
-			};
-            turnTableButton.MouseEnterBounds += (s, e) => turnTableButton.SetActiveUiHint("Switch between turn table and trackball modes".Localize());
-
-            AddRoundButton(turnTableButton, RotatedMargin(turnTableButton, -MathHelper.Tau * .4)); // 2 button position
-			turnTableButton.CheckedStateChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.TurntableMode, turnTableButton.Checked.ToString());
-				TrackballTumbleWidget.TurntableEnabled = turnTableButton.Checked;
-				if (turnTableButton.Checked)
-				{
-					// Make sure the view has up going the right direction
-					// WIP, this should fix the current rotation rather than reset the view
-					viewControls3D.NotifyResetView();
-				}
-			};
-
-			var perspectiveEnabled = UserSettings.Instance.get(UserSettingsKey.PerspectiveMode) != false.ToString();
-			TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
-			var projectionButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).GrayToColor(theme.TextColor), theme)
-			{
-				Name = "Projection mode button",
-				ToolTipText = "Perspective Mode".Localize(),
-				Margin = theme.ButtonSpacing,
-				ToggleButton = true,
-				SiblingRadioButtonList = new List<GuiWidget>(),
-				Checked = TrackballTumbleWidget.PerspectiveMode,
-			};
-            projectionButton.MouseEnterBounds += (s, e) => projectionButton.SetActiveUiHint("Turn on and off perspective rendering".Localize());
-            AddRoundButton(projectionButton, RotatedMargin(projectionButton, -MathHelper.Tau * .3));
-			projectionButton.CheckedStateChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.PerspectiveMode, projectionButton.Checked.ToString());
-				TrackballTumbleWidget.ChangeProjectionMode(projectionButton.Checked, true);
-				if (true)
-				{
-						// Make sure the view has up going the right direction
-						// WIP, this should fix the current rotation rather than reset the view
-						//ResetView();
-				}
-				
-				Invalidate();
-			};
-
-			var startHeight = 180;
+			AddPerspectiveButton(cubeCenterFromRightTop);
+			
+            var startHeight = 180;
 			var ySpacing = 40;
 			cubeCenterFromRightTop.X -= bottomButtonOffset;
 
@@ -586,7 +513,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
             bedButton.MouseEnterBounds += (s, e) => bedButton.SetActiveUiHint("Hide and show the bed".Localize());
             
-			AddRoundButton(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
+			MakeRoundAndAdd(bedButton, new Vector2((cubeCenterFromRightTop.X + 18 * scale - bedButton.Width / 2) / scale, startHeight));
 			var printAreaButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16).GrayToColor(theme.TextColor), theme)
 			{
 				Name = "Bed Button",
@@ -605,7 +532,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
 
-			AddRoundButton(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
+			MakeRoundAndAdd(printAreaButton, new Vector2((cubeCenterFromRightTop.X - 18 * scale - bedButton.Width / 2) / scale, startHeight));
 
 			printAreaButton.CheckedStateChanged += (s, e) =>
 			{
@@ -647,7 +574,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
 			var marginCenter = cubeCenterFromRightTop.X / scale;
-			AddRoundButton(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
+			MakeRoundAndAdd(modelViewStyleButton, new Vector2(marginCenter, startHeight + 1 * ySpacing), true);
 			modelViewStyleButton.BackgroundColor = hudBackgroundColor;
 			modelViewStyleButton.BorderColor = hudStrokeColor;
 
@@ -682,7 +609,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
 			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
-			AddRoundButton(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
+			MakeRoundAndAdd(gridSnapButton, new Vector2(marginCenter, startHeight + 2 * ySpacing), true);
 			gridSnapButton.BackgroundColor = hudBackgroundColor;
 			gridSnapButton.BorderColor = hudStrokeColor;
 
@@ -699,11 +626,129 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				}
 			};
-			AddRoundButton(renderOptionsButton, new Vector2(marginCenter, startHeight + 3 * ySpacing), true);
+			MakeRoundAndAdd(renderOptionsButton, new Vector2(marginCenter, startHeight + 3 * ySpacing), true);
 #endif
 		}
 
-		public void ZoomToSelection()
+        private void AddTurnTableButton(Vector2 cubeCenterFromRightTop)
+        {
+            var turntableEnabled = UserSettings.Instance.GetValue(UserSettingsKey.TurntableMode, true);
+            TrackballTumbleWidget.TurntableEnabled = turntableEnabled;
+
+            var turnTableButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("spin.png", 16, 16).GrayToColor(theme.TextColor), theme)
+            {
+                ToolTipText = "Turntable Mode".Localize(),
+                Margin = theme.ButtonSpacing,
+                Padding = 2,
+                ToggleButton = true,
+                SiblingRadioButtonList = new List<GuiWidget>(),
+                Checked = turntableEnabled,
+                //DoubleBuffer = true,
+            };
+
+            var inButtonUpdate = false;
+            turnTableButton.MouseEnterBounds += (s, e) => turnTableButton.SetActiveUiHint("Switch between turn table and trackball modes".Localize());
+            MakeRoundAndAdd(turnTableButton, RotatedMargin(turnTableButton, cubeCenterFromRightTop, -MathHelper.Tau * .4)); // 2 button position
+            turnTableButton.CheckedStateChanged += (s, e) =>
+            {
+                inButtonUpdate = true;
+                UserSettings.Instance.SetValue(UserSettingsKey.TurntableMode, turnTableButton.Checked);
+                TrackballTumbleWidget.TurntableEnabled = turnTableButton.Checked;
+                if (turnTableButton.Checked)
+                {
+                    // Make sure the view has up going the right direction
+                    // WIP, this should fix the current rotation rather than reset the view
+                    viewControls3D.NotifyResetView();
+                }
+                inButtonUpdate = false;
+            };
+
+            void UpdateTurntableMode(object sender, EventArgs e)
+            {
+                if (e is StringEventArgs stringEvent
+                    && stringEvent.Data == UserSettingsKey.TurntableMode)
+                {
+                    var turntableEnabled = UserSettings.Instance.GetValue(UserSettingsKey.TurntableMode, true);
+                    if (!inButtonUpdate)
+                    {
+                        TrackballTumbleWidget.TurntableEnabled = turntableEnabled;
+                        turnTableButton.Checked = turntableEnabled;
+                    }
+                    Invalidate();
+                }
+            }
+            UserSettings.Instance.SettingChanged += UpdateTurntableMode;
+            turnTableButton.Closed -= UpdateTurntableMode;
+        }
+
+        Vector2 RotatedMargin(GuiWidget widget, Vector2 cubeCenterFromRightTop, double angle)
+        {
+            var radius = 70 * DeviceScale;
+            var widgetCenter = new Vector2(widget.Width / 2, widget.Height / 2);
+            // divide by scale to convert from pixels to margin units
+            return (cubeCenterFromRightTop - widgetCenter - new Vector2(0, radius).GetRotated(angle)) / DeviceScale;
+        }
+
+        GuiWidget MakeRoundAndAdd(GuiWidget widget, Vector2 offset, bool center = false)
+        {
+            widget.BackgroundRadius = new RadiusCorners(Math.Min(widget.Width / 2, widget.Height / 2));
+            widget.BackgroundOutlineWidth = 1;
+            widget.VAnchor = VAnchor.Top;
+            widget.HAnchor = HAnchor.Right;
+            if (center)
+            {
+				offset.X -= (widget.Width / 2) / DeviceScale;
+            }
+
+            widget.Margin = new BorderDouble(0, 0, offset.X, offset.Y);
+            return Object3DControlLayer.AddChild(widget);
+        }
+
+        private void AddPerspectiveButton(Vector2 cubeCenterFromRightTop)
+        {
+            var perspectiveEnabled = UserSettings.Instance.GetValue(UserSettingsKey.PerspectiveMode, true);
+            TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
+            var projectionButton = new ThemedRadioIconButton(StaticData.Instance.LoadIcon("perspective.png", 16, 16).GrayToColor(theme.TextColor), theme)
+            {
+                Name = "Projection mode button",
+                ToolTipText = "Perspective Mode".Localize(),
+                Margin = theme.ButtonSpacing,
+                ToggleButton = true,
+                SiblingRadioButtonList = new List<GuiWidget>(),
+                Checked = TrackballTumbleWidget.PerspectiveMode,
+            };
+
+			var inButtonUpdate = false;
+
+            projectionButton.MouseEnterBounds += (s, e) => projectionButton.SetActiveUiHint("Turn on and off perspective rendering".Localize());
+            MakeRoundAndAdd(projectionButton, RotatedMargin(projectionButton, cubeCenterFromRightTop, -MathHelper.Tau * .3));
+            projectionButton.CheckedStateChanged += (s, e) =>
+            {
+                inButtonUpdate = true;
+                TrackballTumbleWidget.ChangeProjectionMode(projectionButton.Checked, true);
+                UserSettings.Instance.SetValue(UserSettingsKey.PerspectiveMode, projectionButton.Checked);
+                Invalidate();
+                inButtonUpdate = false;
+            };
+            void UpdatePerspectiveMode(object sender, EventArgs e)
+            {
+                if (e is StringEventArgs stringEvent
+                    && stringEvent.Data == UserSettingsKey.PerspectiveMode)
+                {
+                    var perspectiveEnabled = UserSettings.Instance.GetValue(UserSettingsKey.PerspectiveMode, true);
+                    if (!inButtonUpdate)
+                    {
+                        TrackballTumbleWidget.ChangeProjectionMode(perspectiveEnabled, false);
+                        projectionButton.Checked = perspectiveEnabled;
+                    }
+                    Invalidate();
+                }
+            }
+            UserSettings.Instance.SettingChanged += UpdatePerspectiveMode;
+            projectionButton.Closed -= UpdatePerspectiveMode;
+        }
+
+        public void ZoomToSelection()
 		{
 			var selectedItem = this.Scene.SelectedItem;
 			if (selectedItem != null)
