@@ -821,7 +821,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Color drawColor = this.GetItemColor(item, selectedItem);
 
-				bool hasTransparentTextures = item.Mesh.FaceTextures.Any(ft => ft.Value.image.HasTransparency);
+				bool hasTransparentTextures = item.Mesh.FaceTextures.Any(ft =>
+				{
+					if (ft.Value?.image != null)
+					{
+                        return ft.Value.image.HasTransparency;
+                    }
+
+					return false;
+				});
 
 				if ((drawColor.alpha == 255
 					&& !hasTransparentTextures)
