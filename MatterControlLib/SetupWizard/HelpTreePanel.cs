@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 			theme.ApplyBottomBorder(toolbar);
 
-			toolbar.AddChild(new ThemedTextButton("MatterControl Help".Localize(), theme)
+			toolbar.AddChild(new ThemedTextButton("Matter CAD Help".Localize(), theme)
 			{
 				Padding = new BorderDouble(6, 0),
 				Selectable = false
@@ -133,7 +133,6 @@ namespace MatterHackers.MatterControl
 				("ctrl + s","Save".Localize()),
 				("ctrl + z","Undo".Localize()),
 				("ctrl + y","Redo".Localize()),
-				("ctrl + p","Print".Localize()),
 				("delete","Delete selection".Localize()),
 				//("enter","Accept command".Localize())
 			});

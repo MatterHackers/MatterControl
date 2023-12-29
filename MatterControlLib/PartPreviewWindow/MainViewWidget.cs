@@ -82,10 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.UiHintChanged += Tasks_TasksChanged;
 			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
-			// Register listeners
-			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
-
-			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
+            ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
 
 			ApplicationController.Instance.MainView = this;
 		}
@@ -336,14 +333,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ChromeTab newTab;
 
 				// Create and switch to new printer tab
-				if (workspace.Printer?.Settings.PrinterSelected == true)
-				{
-					newTab = this.CreatePrinterTab(workspace, theme);
-				}
-				else
-				{
-					newTab = this.CreateDesignTab(workspace, false);
-				}
+				newTab = this.CreateDesignTab(workspace, false);
 
 				if (newTab.Key == ApplicationController.Instance.MainTabKey)
 				{
@@ -635,27 +625,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Create printer or part tab
 				bool isPrinter = activePrinter?.Settings.PrinterSelected == true;
-				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : CreateDesignTab(workspace, false);
+				if (!isPrinter)
+				{
+					ChromeTab newTab = CreateDesignTab(workspace, false);
 
-				if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
-				{
-					ApplicationController.Instance.MainTabKey = newTab.Key;
-				}
+					if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
+					{
+						ApplicationController.Instance.MainTabKey = newTab.Key;
+					}
 
-				// Activate tab with previously active key
-				if (newTab.Key == ApplicationController.Instance.MainTabKey)
-				{
-					tabControl.ActiveTab = newTab;
-				}
-			}
-			else
-			{
-				// Close existing printer tabs
-				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTab
-						&& printerTab.Printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
-					&& tab.TabContent is PrinterTabPage printerPage)
-				{
-					tabControl.CloseTab(tab);
+					// Activate tab with previously active key
+					if (newTab.Key == ApplicationController.Instance.MainTabKey)
+					{
+						tabControl.ActiveTab = newTab;
+					}
 				}
 			}
 		}
@@ -750,78 +733,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ChromeTabs TabControl => tabControl;
 
 		private static int debugPrinterTabIndex = 0;
-
-		private ChromeTab CreatePrinterTab(PartWorkspace workspace, ThemeConfig theme)
-		{
-			var printer = workspace.Printer;
-			// Printer page is in fixed position
-			var tab1 = tabControl.AllTabs.FirstOrDefault();
-
-			var printerTabPage = tab1?.TabContent as PrinterTabPage;
-			if (printerTabPage == null
-				|| printerTabPage.Printer != printer)
-			{
-				// TODO - call save before remove
-				// printerTabPage.sceneContext.SaveChanges();
-
-				if (printerTabPage != null)
-				{
-					tabControl.CloseTab(tab1);
-				}
-
-				var printerTab = new ChromeTab(
-					printer.PrinterName,
-					printer.PrinterName,
-					tabControl,
-					new PrinterTabPage(workspace, theme, "unused_tab_title"),
-					theme,
-					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
-				{
-					Name = $"3D View Tab {debugPrinterTabIndex++}",
-				};
-
-				// add a right click menu
-				printerTab.Click += (s, e) =>
-				{
-					if (e.Button == MouseButtons.Right)
-					{
-						AddRightClickTabMenu(tabControl, printerTab, printer, null, e);
-					}
-				};
-
-				EnableReduceWidth(printerTab, theme);
-
-				void Tab_CloseClicked(object sender, EventArgs args)
-				{
-					ApplicationController.Instance.ClosePrinter(printer);
-				}
-
-				void Widget_Closed(object sender, EventArgs args)
-				{
-					// Unregister listeners
-					printerTab.CloseClicked -= Tab_CloseClicked;
-					printerTab.Closed -= Widget_Closed;
-					printer.Settings.SettingChanged -= Printer_SettingChanged;
-				}
-
-				// Register listeners
-				printer.Settings.SettingChanged += Printer_SettingChanged;
-				printerTab.CloseClicked += Tab_CloseClicked;
-				printerTab.Closed += Widget_Closed;
-
-				// Add printer tab
-				tabControl.AddTab(printerTab);
-
-				return printerTab;
-			}
-			else if (tab1 != null)
-			{
-				tabControl.ActiveTab = tab1;
-				return tab1 as ChromeTab;
-			}
-
-			return null;
-		}
 
 		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, PartWorkspace workspace, MouseEventArgs mouseEvent)
 		{
@@ -1078,7 +989,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
 			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
 			ApplicationController.Instance.WorkspacesChanged -= Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
@@ -1099,21 +1009,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Console.WriteLine();
 		}
 #endif
-
-		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
-		{
-			if (s is PrinterSettings printerSettings
-				&& stringEvent?.Data == SettingsKey.printer_name)
-			{
-				// Try to find a printer tab for the given printer
-				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.Printer.Settings.ID == printerSettings.ID) as ChromeTab;
-				if (printerTab != null)
-				{
-					printerTab.Text = printerSettings.GetValue(SettingsKey.printer_name);
-					// printerTab.ToolTipText = printerTab.Text;
-				}
-			}
-		}
 
 		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)
 		{

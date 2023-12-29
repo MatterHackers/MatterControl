@@ -43,8 +43,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj" />
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
-    <ProjectReference Include="..\..\Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

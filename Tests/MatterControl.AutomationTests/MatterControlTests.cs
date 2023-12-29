@@ -73,49 +73,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			});
-		}
-
-		[Test, ChildProcessTest]
-		public async Task PrinterTabRemainsAfterReloadAll()
-		{
-			await MatterControlUtilities.RunTest((testRunner) =>
-			{
-				testRunner.WaitForFirstDraw();
-
-				// Add Guest printers
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-				Assert.AreEqual(
-					1,
-					ApplicationController.Instance.ActivePrinters.Count(),
-					"One printer should exist after Airwolf add");
-
-				testRunner.SwitchToSliceSettings();
-
-				// Move to Adhesion tab
-				testRunner.SelectSliceSettingsField(SettingsKey.skirts);
-
-				// Click Brim toggle field forcing ReloadAll
-				testRunner.WaitForReloadAll(() =>
-				{
-					testRunner.ClickByName("Create Brim Field");
-					ApplicationController.Instance.ReloadAll();
-				});
-
-				// Ensure tabs remain
-				Assert.AreEqual(
-					1,
-					ApplicationController.Instance.ActivePrinters.Count(),
-					"One printer should exist after Airwolf add");
-
-				testRunner.Delay(1);
-
-				Assert.AreEqual(
-					1,
-					ApplicationController.Instance.MainView.TabControl.AllTabs.Select(t => t.TabContent).OfType<PrinterTabPage>().Count(),
-					"One printer tab should exist after ReloadAll");
-
-				return Task.CompletedTask;
-			}, maxTimeToRun: 120);
-		}
+		}	
 	}
 }

@@ -221,8 +221,8 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget GetConnectDevicePage(object printer)
 		{
-			return new SetupStepComPortOne(printer as PrinterConfig);
-		}
+            throw new NotImplementedException();
+        }
 
 		// Primarily required for Android, return true on non-Android platforms
 		public bool HasPermissionToDevice(object printer) => true;

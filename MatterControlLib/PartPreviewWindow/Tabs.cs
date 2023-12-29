@@ -478,28 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (this.TabContent is PrinterTabPage printerTab
-					&& printerTab.Printer.Connection.Printing)
-				{
-					StyledMessageBox.ShowMessageBox(
-						(bool response) =>
-						{
-							if (response)
-							{
-								UiThread.RunOnIdle(() =>
-								{
-									this.parentTabControl.CloseTab(this);
-									this.CloseClicked?.Invoke(this, null);
-								});
-							}
-						},
-						"Cancel the current print?".Localize(),
-						"Cancel Print?".Localize(),
-						StyledMessageBox.MessageType.YES_NO,
-						"Cancel Print".Localize(),
-						"Continue Printing".Localize());
-				}
-				else if (this.TabContent is DesignTabPage partTab // we are a part tap
+				if (this.TabContent is DesignTabPage partTab // we are a part tap
 					&& partTab?.Workspace?.SceneContext is ISceneContext sceneContext // we have a context
                     && sceneContext.Scene is InteractiveScene scene // we have a scene
                     && scene.HasUnsavedChanges // we have unsaved changes

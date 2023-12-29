@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.AnchorAll();
 
-			this.HeaderText = this.WindowTitle = "MatterControl Plugins".Localize();
+			this.HeaderText = this.WindowTitle = "Matter CAD Plugins".Localize();
 
 			var contentScroll = new ScrollableWidget(true);
 			contentScroll.ScrollArea.HAnchor |= HAnchor.Stretch;

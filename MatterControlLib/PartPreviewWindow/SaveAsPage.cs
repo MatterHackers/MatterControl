@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 		public SaveAsPage(Action<ILibraryContainer, string> itemSaver)
 			: base(itemSaver, "Save".Localize())
 		{
-			this.WindowTitle = "MatterControl - " + "Save As".Localize();
+			this.WindowTitle = "Matter CAD - " + "Save As".Localize();
 			this.Name = "Save As Window";
 			this.WindowSize = new Vector2(480 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale);
 			this.HeaderText = "Save New Design".Localize() + ":";

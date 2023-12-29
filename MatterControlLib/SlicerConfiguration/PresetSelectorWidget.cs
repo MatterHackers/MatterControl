@@ -515,8 +515,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (updateAllSettings)
 				{
-					ApplicationController.Instance.ReloadSettings(printer);
-				}
+                    throw new NotImplementedException();
+                }
 				else
                 {
 					sliceSettingsWidget.UpdateAllStyles();

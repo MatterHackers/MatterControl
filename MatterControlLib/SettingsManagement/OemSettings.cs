@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public bool CheckForUpdatesOnFirstRun = false;
 
-        public string UnregisteredProductName { get; set; } = "MatterControl";
-        public string RegisteredProductName { get; set; } = "MatterControl Pro";
+        public string UnregisteredProductName { get; set; } = "Matter CAD";
+        public string RegisteredProductName { get; set; } = "Matter CAD Pro";
 
         public List<string> PrinterWhiteList { get; private set; } = new List<string>();
 

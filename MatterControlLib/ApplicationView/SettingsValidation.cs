@@ -441,32 +441,6 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (printer.Connection.IsConnected
-					&& printer.Settings?.Helpers.ComPort() == "Emulator"
-					&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
-					&& fffPrinter)
-				{
-					errors.Add(
-						new SettingsValidationError(SettingsKey.com_port, "Connected to Emulator".Localize())
-						{
-							Error = "You are connected to the Emulator not an actual printer.".Localize(),
-							ErrorLevel = ValidationErrorLevel.Warning,
-							FixAction = new NamedAction()
-							{
-								Title = "Switch".Localize(),
-								IsEnabled = () => !printer.Connection.Printing && !printer.Connection.Paused,
-								Action = () => UiThread.RunOnIdle(() =>
-								{
-									// make sure we are not connected or we can't change the port
-									printer.Connection.Disable();
-
-									// User initiated connect attempt failed, show port selection dialog
-									DialogWindow.Show(new SetupStepComPortOne(printer));
-								})
-							}
-						});
-				}
-
 				if (settingsContext.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
 				{
 					errors.Add(
@@ -683,30 +657,7 @@ namespace MatterHackers.MatterControl
 					FixAction = new NamedAction()
 					{
 						Title = "Connect".Localize(),
-						Action = () => ApplicationController.Instance.ConnectToPrinter(printer)
-					}
-				});
-			}
-
-			if (PrinterSetupRequired(printer))
-			{
-				errors.Add(new ValidationError(ValidationErrors.PrinterSetupRequired)
-				{
-					Error = "Printer Setup Required".Localize(),
-					Details = "Printer Setup must be run before printing".Localize(),
-					FixAction = new NamedAction()
-					{
-						ID = "SetupPrinter",
-						Title = "Setup".Localize() + "...",
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								DialogWindow.Show(
-									new PrinterCalibrationWizard(printer, AppContext.Theme),
-									advanceToIncompleteStage: true);
-							});
-						}
+						Action = () => throw new NotImplementedException()
 					}
 				});
 			}

@@ -88,11 +88,6 @@ namespace MatterHackers.MatterControl
 	public class RunningTaskOptions
 	{
 		/// <summary>
-		/// Gets or sets the Rich progress widget to be shown when expanded
-		/// </summary>
-		public Func<GuiWidget> RichProgressWidget { get; set; }
-
-		/// <summary>
 		/// Gets or sets the database key used to round trip expansion state
 		/// </summary>
 		public string ExpansionSerializationKey { get; set; }

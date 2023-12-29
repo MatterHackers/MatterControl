@@ -445,8 +445,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (changingTo)
 						{
 							UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
-							ApplicationController.Instance.ReloadSettings(printer);
-							UserSettings.Instance.set(UserSettingsKey.SliceSettingsMoreClicked, "true");
+                            throw new NotImplementedException();
+                            UserSettings.Instance.set(UserSettingsKey.SliceSettingsMoreClicked, "true");
 						}
 					});
 				}

@@ -35,8 +35,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj" />
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSlice.csproj" />
-    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
@@ -50,6 +48,5 @@
   <ItemGroup>
     <Compile Remove="MatterControl\LibraryProviderSqliteTests.cs" />
     <Compile Remove="MatterControl\LibraryProviderTests.cs" />
-    <Compile Remove="MatterControl\Slicing\SliceMappingTests.cs" />
   </ItemGroup>
 </Project>

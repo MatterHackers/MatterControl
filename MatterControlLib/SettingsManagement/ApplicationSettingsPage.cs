@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			: base("Close".Localize())
 		{
 			this.AlwaysOnTopOfMain = true;
-			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
+			this.WindowTitle = this.HeaderText = "Matter CAD " + "Settings".Localize();
 			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
 			contentRow.Padding = theme.DefaultContainerPadding;

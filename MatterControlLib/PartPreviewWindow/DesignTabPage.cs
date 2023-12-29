@@ -62,15 +62,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = 0;
 			this.Workspace = workspace;
 
-			bool isPrinterType = this is PrinterTabPage;
-
 			var favoritesBarAndView3DWidget = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
 
-			viewToolBarControls = new ViewToolBarControls(workspace, theme, sceneContext.Scene.UndoBuffer, isPrinterType, !(this is PrinterTabPage))
+			viewToolBarControls = new ViewToolBarControls(workspace, theme, sceneContext.Scene.UndoBuffer)
 			{
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
@@ -78,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Shade border if toolbar is secondary rather than primary
-			theme.ApplyBottomBorder(viewToolBarControls, shadedBorder: this is PrinterTabPage);
+			theme.ApplyBottomBorder(viewToolBarControls, shadedBorder: false);
 
 			viewToolBarControls.ResetView += (sender, e) =>
 			{
@@ -94,8 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sceneContext,
 				viewToolBarControls,
 				theme,
-				this,
-				editorType: isPrinterType ? Object3DControlsLayer.EditorType.Printer : Object3DControlsLayer.EditorType.Part);
+				this);
 
 			// add in the task display
 			view3DWidget.AddChild(new RunningTasksWidget(theme, Printer)

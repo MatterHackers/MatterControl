@@ -42,9 +42,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		// Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
 
-		private const string ApplicationDataFolderName = "MatterControl";
+		private const string ApplicationDataFolderName = "Matter CAD";
 
-		private const string DatastoreName = "MatterControl.db";
+		private const string DatastoreName = "Matter CAD.db";
 
 		private string _applicationPath;
 

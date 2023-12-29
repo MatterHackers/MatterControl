@@ -193,14 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(detailsPanel);
 
 			// Add rich progress controls
-			if (taskDetails.Options?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
-			{
-				detailsPanel.AddChild(guiWidget);
-			}
-			else
-			{
-				expandButton.Expandable = false;
-			}
+			expandButton.Expandable = false;
 
 			if (taskDetails.Options?.ReadOnlyReporting == true)
 			{

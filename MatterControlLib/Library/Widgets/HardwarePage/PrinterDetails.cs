@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				};
 				openButton.Click += (s, e) =>
 				{
-					ApplicationController.Instance.OpenPrinter(printerInfo);
-				};
+                    throw new NotImplementedException();
+                };
 				headingRow.AddChild(openButton);
 			}
 

@@ -762,19 +762,5 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.AreEqual(settings.ToJson(), clone.ToJson(), "Cloned settings via CopyFrom should equal source");
 			Assert.AreEqual(sha1, clone.ComputeSHA1(), "Cloned settings via CopyFrom should equal source");
 		}
-
-		private void CloseAllPrinterTabs(AutomationRunner testRunner)
-		{
-			// Close all printer tabs
-			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
-			foreach (var tab in mainViewWidget.TabControl.AllTabs.Where(t => t.TabContent is PrinterTabPage).ToList())
-			{
-				if (tab is GuiWidget widget)
-				{
-					var closeWidget = widget.Descendants<ImageWidget>().First();
-					closeWidget.InvokeClick();
-				}
-			}
-		}
 	}
 }

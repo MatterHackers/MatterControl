@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
                         Settings.OnSettingChanged(setting);
                     }
                     ProfileManager.SaveOnSingleSettingChange = true;
-                    ApplicationController.Instance.UpdateAllSettingsStyles(this);
+                    throw new NotImplementedException();
                 }
 
                 // return the current set
@@ -448,8 +448,8 @@ namespace MatterHackers.MatterControl
 								break;
 
 							case SliceSettingData.UiUpdateRequired.SliceSettings:
-								ApplicationController.Instance.ReloadSettings(this);
-								break;
+                                throw new NotImplementedException();
+                                break;
 
 							default:
 								throw new NotImplementedException();

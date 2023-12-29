@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 		public MoveItemPage(Action<ILibraryWritableContainer, string> itemMover)
 			: base(itemMover, "Move".Localize())
 		{
-			this.WindowTitle = "MatterControl - " + "Move Item".Localize();
+			this.WindowTitle = "Matter CAD - " + "Move Item".Localize();
 			this.Name = "Move Item Window";
 			this.WindowSize = new Vector2(480, 500);
 			this.HeaderText = "Select a new Destination".Localize() + ":";

@@ -91,10 +91,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly ThemedIconButton undoButton;
 		private readonly ThemedIconButton redoButton;
 
-		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
+		public ViewToolBarControls(PartWorkspace workspace, ThemeConfig theme, UndoBuffer undoBuffer)
 		{
 			this.undoBuffer = undoBuffer;
-			this.IsPrinterMode = isPrinterType;
 			this.sceneContext = workspace.SceneContext;
 			this.workspace = workspace;
 
@@ -154,20 +153,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.Object3DControlLayer.Focus();
 			};
 			this.AddChild(redoButton);
-
-			if (showPrintButton)
-			{
-				var printButton = new ThemedTextButton("Print", theme)
-				{
-					Name = "Print Button",
-					BackgroundColor = theme.AccentMimimalOverlay
-				};
-				printButton.Click += (s, e) =>
-				{
-					view3DWidget.PushToPrinterAndPrint();
-				};
-				this.AddChild(printButton);
-			}
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
@@ -576,8 +561,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ResetView.Invoke(this, null);
 		}
 
-		public bool IsPrinterMode { get; }
-
 		public ViewControls3DButtons ActiveButton
 		{
 			get => activeTransformState;
@@ -683,7 +666,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new ActionSeparator(),
 					workspaceActions["Edit"],
 					new ActionSeparator(),
-					workspaceActions["Print"],
 					new ActionSeparator(),
 					new NamedAction()
 					{

@@ -2794,6 +2794,9 @@ Translated:Lithophane
 English:Load
 Translated:Load
 
+English:Load existing tabs or open new tab.
+Translated:Load existing tabs or open new tab.
+
 English:Load Extruder
 Translated:Load Extruder
 
@@ -4291,6 +4294,9 @@ Translated:Refresh
 English:Refresh Folder
 Translated:Refresh Folder
 
+English:Refresh Queue
+Translated:Refresh Queue
+
 English:Release
 Translated:Release
 
@@ -4983,6 +4989,9 @@ Translated:sign in
 
 English:Sign in
 Translated:Sign in
+
+English:Sign in complete
+Translated:Sign in complete
 
 English:Sign in Required
 Translated:Sign in Required

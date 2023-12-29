@@ -235,7 +235,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
 			}
 
-			// make sure the MatterCAD add function is working
+			// make sure the MatterControl add function is working
 			{
 				var cubeA = await CubeObject3D.Create(20, 20, 20);
 				var cubeB = await CubeObject3D.Create(20, 20, 20);
@@ -310,7 +310,7 @@ namespace MatterControl.Tests.MatterControl
 					0, 10, 10).Equals(rootAabb, .001));
 			}
 
-			// make sure the MatterCAD subtract function is working
+			// make sure the MatterControl subtract function is working
 			{
 				var cubeA = await CubeObject3D.Create(20, 20, 20);
 				var cubeB = await CubeObject3D.Create(20, 20, 20);

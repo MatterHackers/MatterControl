@@ -557,9 +557,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.ClickByName($"Node{make}{model}") // Click printer node
 				.ClickByName("Next Button") // Continue to next page
 				.Delay()
-				.WaitFor(() => testRunner.ChildExists<SetupStepComPortOne>());
+				.WaitFor(() => throw new NotImplementedException());
 			testRunner.ClickByName("Cancel Wizard Button")
-				.WaitFor(() => !testRunner.ChildExists<SetupStepComPortOne>());
+				.WaitFor(() => throw new NotImplementedException());
 
 			testRunner.VerifyAndRemovePhil();
 
@@ -632,9 +632,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.WaitFor(() =>
 			{
-				return testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
-					&& headerRow.Parents<DialogPage>().FirstOrDefault() is SetupStepMakeModelName;
-			});
+                throw new NotImplementedException();
+            });
 
 			testRunner.ClickByName("Cancel Wizard Button");
 		}
@@ -955,19 +954,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner CloseFirstPrinterTab(this AutomationRunner testRunner)
 		{
 			// Close all printer tabs
-			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
-			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
-			{
-				var closeWidget = widget.Descendants<ImageWidget>().First();
-				Assert.AreEqual("Close Tab Button", closeWidget.Name, "Expected widget ('Close Tab Button') not found");
-
-				testRunner.ClickWidget(closeWidget);
-
-				// close the save dialog
-				testRunner.ClickByName("No Button");
-			}
-
-			return testRunner;
+			throw new NotImplementedException();
 		}
 
 		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)

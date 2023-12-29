@@ -1,4 +1,4 @@
-End-User License Agreement for MatterControl Software
+End-User License Agreement for Matter CAD Software
 
 IMPORTANT: read the following terms carefully before installing, using and copying the Software Product. By installing, using and copying the Software Product you agree to accept all of the following terms. If you do not agree with the terms of this EULA, you must not use the Software Product.
 This End-User License Agreement ("EULA"), effective as of the date you accept the terms hereof (unless returned as specified above, the Effective Date), is a legal agreement entered into between MatterHackers, Inc. with an address at 20321 Valencia Cir, Lake Forest, CA 92630, USA ("MatterHackers") and you, the end user of Software Product. The parties agree as follows:
@@ -9,7 +9,7 @@ In accordance with the terms herein, MatterHackers grants to you, and you accept
 
 2. DEFINITIONS
 
-Software Product means MatterControl software accompanying this EULA, which includes executable modules and electronic documentation and may include associated media, printed materials, and information available at the product web site protected by copyright laws. The Software Product also includes any updates and supplements to the original Software Product provided by MatterHackers. Any software provided along with the Software Product that is associated with a separate end-user license agreement is licensed to you under the terms of that license agreement.
+Software Product means Matter CAD software accompanying this EULA, which includes executable modules and electronic documentation and may include associated media, printed materials, and information available at the product web site protected by copyright laws. The Software Product also includes any updates and supplements to the original Software Product provided by MatterHackers. Any software provided along with the Software Product that is associated with a separate end-user license agreement is licensed to you under the terms of that license agreement.
 
 3. GRANT OF LICENSE
 

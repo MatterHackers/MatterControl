@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				return new SetupStepMakeModelName(options == StartPageOptions.ShowPulseModels);
+				return null;
 			}
 		}
 	}

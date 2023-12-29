@@ -156,13 +156,13 @@ namespace MatterHackers.MatterControl
 				{
 					case MessageType.YES_NO_WITHOUT_HIGHLIGHT:
 					case MessageType.YES_NO:
-						this.WindowTitle = "MatterControl - " + "Please Confirm".Localize();
+						this.WindowTitle = "Matter CAD - " + "Please Confirm".Localize();
 						affirmativeButton.Name = "Yes Button";
 						this.SetCancelButtonName("No Button");
 						break;
 
 					case MessageType.OK:
-						this.WindowTitle = "MatterControl - " + "Alert".Localize();
+						this.WindowTitle = "Matter CAD - " + "Alert".Localize();
 						affirmativeButton.Name = "Ok Button";
 						this.HideCancelButton();
 						break;
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl
 
 				this.AddPageAction(noButton);
 
-				this.WindowTitle = "MatterControl - " + "Please Confirm".Localize();
+				this.WindowTitle = "Matter CAD - " + "Please Confirm".Localize();
 				this.SetCancelButtonName("Cancel Button");
 
 				this.AdjustTextWrap();

@@ -124,7 +124,6 @@ namespace MatterHackers.MatterControl
 			rootSystemWindow.KeyDown += (s, keyEvent) =>
 			{
 				var view3D = rootSystemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-				var printerTabPage = rootSystemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var offsetDist = 50;
 				var arrowKeyOperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
@@ -152,14 +151,6 @@ namespace MatterHackers.MatterControl
 							{
 								view3D.Scene.Copy();
 								keyEvent.Handled = true;
-							}
-
-							break;
-
-						case Keys.P:
-							if (keyEvent.Control)
-							{
-								view3D.PushToPrinterAndPrint();
 							}
 
 							break;
@@ -284,14 +275,6 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Left:
-							if (keyEvent.Control
-								&& printerTabPage != null
-								&& !printerTabPage.sceneContext.ViewState.ModelView)
-							{
-								// Decrement slider
-								printerTabPage.LayerFeaturesIndex -= 1;
-							}
-							else
 							{
 								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
 								{
@@ -309,14 +292,6 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Right:
-							if (keyEvent.Control
-								&& printerTabPage != null
-								&& !printerTabPage.sceneContext.ViewState.ModelView)
-							{
-								// Increment slider
-								printerTabPage.LayerFeaturesIndex += 1;
-							}
-							else
 							{
 								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
 								{
@@ -334,13 +309,6 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Up:
-							if (view3D.Printer != null
-								&& printerTabPage != null
-								&& view3D.Printer.ViewState.ViewMode != PartViewMode.Model)
-							{
-								printerTabPage.LayerScrollbar.Value += 1;
-							}
-							else
 							{
 								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
 								{
@@ -357,13 +325,6 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Down:
-							if (view3D.Printer != null
-								&& printerTabPage != null
-								&& view3D.Printer.ViewState.ViewMode != PartViewMode.Model)
-							{
-								printerTabPage.LayerScrollbar.Value -= 1;
-							}
-							else
 							{
 								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
 								{
@@ -499,7 +460,6 @@ namespace MatterHackers.MatterControl
 			if (sender is SystemWindow systemWindow)
 			{
 				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 
 				if (!keyEvent.Handled
 					&& view3D != null)

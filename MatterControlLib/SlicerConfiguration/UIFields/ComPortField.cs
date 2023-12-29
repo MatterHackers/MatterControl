@@ -115,8 +115,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				configureIcon.Click += (s, e) =>
 				{
-					DialogWindow.Show(new SetupStepComPortOne(printer));
-				};
+                    throw new NotImplementedException();
+                };
 			
 				panel.AddChild(configureIcon);
 			}

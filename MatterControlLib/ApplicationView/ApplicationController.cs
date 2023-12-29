@@ -68,6 +68,7 @@ using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tour;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
@@ -390,32 +391,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void ExportAsMatterControlConfig(PrinterConfig printer)
-		{
-			AggContext.FileDialogs.SaveFileDialog(
-				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
-				{
-					FileName = printer.PrinterName
-				},
-				(saveParams) =>
-				{
-					try
-					{
-						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
-						{
-							File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printer.Settings, Formatting.Indented));
-						}
-					}
-					catch (Exception e)
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
-						});
-					}
-				});
-		}
-
 		public void LogError(string errorMessage)
 		{
 			this.ApplicationError?.Invoke(this, errorMessage);
@@ -454,51 +429,6 @@ namespace MatterHackers.MatterControl
 		public event EventHandler<WorkspacesChangedEventArgs> WorkspacesChanged;
 
 		public event EventHandler ReloadSettingsTriggered;
-
-		public void UpdateAllSettingsStyles(PrinterConfig printer)
-		{
-			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
-			if (printerTabPage != null)
-			{
-                var sliceSettingsWidget = printerTabPage.Descendants<SliceSettingsWidget>().FirstOrDefault();
-                if (sliceSettingsWidget != null)
-                {
-                    sliceSettingsWidget.UpdateAllStyles();
-                }
-            }
-		}
-
-        public void ReloadSettings(PrinterConfig printer)
-		{
-			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
-			if (printerTabPage != null)
-			{
-				Instance.IsReloading = true;
-				var settingsContext = new SettingsContext(
-						printer,
-						null,
-						NamedSettingsLayers.All);
-
-				var sideBar = printerTabPage.Descendants<DockingTabControl>().FirstOrDefault();
-				
-				if (printer.ViewState.ConfigurePrinterVisible)
-				{
-					sideBar.ReplacePage(
-						"Printer",
-						new ConfigurePrinterWidget(settingsContext, printer, Theme)
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Stretch,
-						},
-						false);
-				}
-
-				sideBar.ReplacePage("Slice Settings", new SliceSettingsWidget(printer, settingsContext, Theme));
-				Instance.IsReloading = false;
-			}
-
-			ReloadSettingsTriggered?.Invoke(null, null);
-		}
 
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
@@ -692,24 +622,6 @@ namespace MatterHackers.MatterControl
 			// Build workspace actions, each having a unique ID
 			var actions = new[]
 			{
-				new NamedAction()
-				{
-					ID = "Print",
-					Title = "Print".Localize(),
-					Shortcut = "Ctrl+P",
-					Action = view3DWidget.PushToPrinterAndPrint,
-					IsEnabled = () =>
-					{
-						if (sceneContext.Printer != null)
-						{
-							return sceneContext.Printer.PrintButtonEnabled();
-						}
-
-						return sceneContext.EditableScene
-							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase));
-					},
-				},
 				new NamedActionGroup()
 				{
 					ID = "Edit",
@@ -1079,13 +991,6 @@ namespace MatterHackers.MatterControl
 				ActiveContainer = new WrappedLibraryContainer(this.Library.RootLibaryContainer)
 				{
 					ExtraContainers = new List<ILibraryContainerLink>()
-					{
-						new DynamicContainerLink(
-							"Printers".Localize(),
-							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-							StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
-							() => new OpenPrintersContainer())
-					}
 				}
 			};
 		}
@@ -1837,21 +1742,6 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		public void OpenPrinter(PrinterInfo printerInfo)
-		{
-			if (this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerInfo.ID) is PrinterConfig printer
-				&& this.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.Printer == printer) is ITab tab)
-			{
-				// Switch to existing printer tab
-				this.MainView.TabControl.ActiveTab = tab;
-			}
-			else
-			{
-				// Open new printer tab
-				this.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
-			}
-		}
-
 		public void OpenWorkspace(PartWorkspace workspace)
 		{
 			this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
@@ -1974,10 +1864,20 @@ namespace MatterHackers.MatterControl
 				&& !ProfileManager.Instance.ActiveProfiles.Any()
 				&& SystemWindow.AllOpenSystemWindows.Count() < 2)
 			{
-				UiThread.RunOnIdle(() =>
+				UiThread.RunOnIdle(async () =>
 				{
-					DialogWindow.Show<StartupPage>();
-				});
+                    await Instance.MainView.CreateNewDesignTab(true);
+
+                    // If we have not cancled the show welcome message and there is a window open
+                    if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false"
+                        && Instance.Workspaces.Count > 0)
+                    {
+                        UiThread.RunOnIdle(() =>
+                        {
+                            DialogWindow.Show<WelcomePage>();
+                        });
+                    }
+                });
 			}
 
 			restoringWorkspaces = false;
@@ -2308,7 +2208,6 @@ namespace MatterHackers.MatterControl
 				taskActions: new RunningTaskOptions()
 				{
 					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
-					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, this.Theme),
 					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer?.Connection.TerminalLog.WriteLine("User Requested Pause");
@@ -2575,59 +2474,7 @@ namespace MatterHackers.MatterControl
 
 			KeepAwakeIfNeeded();
 			AnyPrintCanceled?.Invoke(sender, e);
-		}
-
-		public void ConnectToPrinter(PrinterConfig printer)
-		{
-			if (!printer.Settings.PrinterSelected)
-			{
-				return;
-			}
-
-			bool listenForConnectFailed = true;
-			long connectStartMs = UiThread.CurrentTimerMs;
-
-			void Connection_Failed(object s, EventArgs e)
-			{
-#if !__ANDROID__
-				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
-				// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
-				// Connect button started the task
-				if (listenForConnectFailed
-					&& UiThread.CurrentTimerMs - connectStartMs < 25000)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						// User initiated connect attempt failed, show port selection dialog
-						DialogWindow.Show(new SetupStepComPortOne(printer));
-					});
-				}
-#endif
-				ClearEvents();
-			}
-
-			void Connection_Succeeded(object s, EventArgs e)
-			{
-				ClearEvents();
-			}
-
-			void ClearEvents()
-			{
-				listenForConnectFailed = false;
-
-				printer.Connection.ConnectionFailed -= Connection_Failed;
-				printer.Connection.ConnectionSucceeded -= Connection_Succeeded;
-			}
-
-			printer.Connection.ConnectionFailed += Connection_Failed;
-			printer.Connection.ConnectionSucceeded += Connection_Succeeded;
-
-			if (AppContext.Platform.HasPermissionToDevice(printer))
-			{
-				printer.Connection.HaltConnectionThread();
-				printer.Connection.Connect();
-			}
-		}
+		}		
 
 		/// <summary>
 		/// Replace invalid filename characters with the given replacement value to ensure working paths for the current filesystem

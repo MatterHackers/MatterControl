@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 		public MarkdownEditPage(UIField uiField)
 		{
-			this.WindowTitle = "MatterControl - " + "Markdown Edit".Localize();
+			this.WindowTitle = "Matter CAD - " + "Markdown Edit".Localize();
 			this.HeaderText = "Edit Page".Localize() + ":";
 
 			var tabControl = new SimpleTabs(theme, null, new GuiWidget())

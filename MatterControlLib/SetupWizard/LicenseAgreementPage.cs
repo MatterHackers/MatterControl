@@ -42,7 +42,7 @@ public class LicenseAgreementPage : DialogPage
 			this.WindowTitle = "Software License Agreement".Localize();
 		this.HeaderText = "Software License Agreement".Localize();
 
-		string eulaText = StaticData.Instance.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
+		string eulaText = StaticData.Instance.ReadAllText("Matter CAD EULA.txt").Replace("\r\n", "\n");
 
 		var scrollable = new ScrollableWidget(true);
 		scrollable.AnchorAll();
