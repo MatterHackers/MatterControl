@@ -304,7 +304,11 @@ namespace MatterControlLib.DesignTools.Operations.Path
                 pathEditorDraw.BeforePathEditorDraw(graphics2D, this);
             }
 
-            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D, theme.TextColor, 2, true, theme.PrimaryAccentColor.Blend(theme.TextColor, .5), theme.PrimaryAccentColor);
+            new VertexSourceApplyTransform(vertexStorage, TotalTransform).RenderPath(graphics2D,
+                theme.TextColor, 2, true,
+                theme.PrimaryAccentColor.Blend(theme.TextColor, .5),
+                theme.PrimaryAccentColor,
+                SelectedPoints, theme.PrimaryAccentColor);
 
             if (editableProperty.PropertyInfo.GetCustomAttributes(true).OfType<PathEditorFactory.ShowOriginAttribute>().FirstOrDefault() is PathEditorFactory.ShowOriginAttribute showAxisAttribute)
             {
@@ -413,27 +417,29 @@ namespace MatterControlLib.DesignTools.Operations.Path
             alignedButton.Enabled = true;
             freeButton.Enabled = true;
 
-            var selected = vertexStorage[controlPointBeingDragged];
-            xEditWidget.Value = selected.Position.X;
-            yEditWidget.Value = selected.Position.Y;
-
-            switch (selected.Hint)
+            if (controlPointBeingDragged != -1)
             {
-                case CommandHint.C4Point:
-                case CommandHint.C4ControlToPoint:
-                case CommandHint.C4ControlFromPrev:
-                    freeButton.Checked = true;
-                    break;
+                var selected = vertexStorage[controlPointBeingDragged];
+                xEditWidget.Value = selected.Position.X;
+                yEditWidget.Value = selected.Position.Y;
 
-                default:
-                    if (selected.IsMoveTo
-                        || selected.IsLineTo)
-                    {
-                        sharpButton.Checked = true;
-                    }
-                    break;
+                switch (selected.Hint)
+                {
+                    case CommandHint.C4Point:
+                    case CommandHint.C4ControlToPoint:
+                    case CommandHint.C4ControlFromPrev:
+                        freeButton.Checked = true;
+                        break;
+
+                    default:
+                        if (selected.IsMoveTo
+                            || selected.IsLineTo)
+                        {
+                            sharpButton.Checked = true;
+                        }
+                        break;
+                }
             }
-
         }
 
         private int GetControlPointIndex(Vector2 mousePosition)

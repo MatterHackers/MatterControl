@@ -42,7 +42,7 @@ public static class VertexSourceExtensions
 		return MergePaths(a, b, ClipType.ctDifference);
 	}
 
-	public static IVertexSource Plus(this IVertexSource a, IVertexSource b)
+    public static IVertexSource Plus(this IVertexSource a, IVertexSource b)
 	{
 		return MergePaths(a, b, ClipType.ctUnion);
 	}
