@@ -33,71 +33,24 @@ using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class TerminalLog : IDisposable
+	public class TerminalLog
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
-		private PrinterConnection printerConnection;
 
-		public TerminalLog(PrinterConnection printerConnection)
+		public TerminalLog()
 		{
-			// Register event listeners
-			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
-			printerConnection.LineReceived += Printer_LineReceived;
-			printerConnection.LineSent += Printer_LineSent;
-
-			this.printerConnection = printerConnection;
-
 			if (Is32Bit)
 			{
 				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
 				maxLinesToBuffer = 450000;
 			}
-		}
-
-		public static void Export(PrinterConnection printerConnection)
-		{
-			AggContext.FileDialogs.SaveFileDialog(
-				new SaveFileDialogParams("Save as Text|*.txt")
-				{
-					Title = "MatterControl: Terminal Log",
-					ActionButtonLabel = "Export",
-					FileName = "print_log.txt"
-				},
-				(saveParams) =>
-				{
-					if (!string.IsNullOrEmpty(saveParams.FileName))
-					{
-						string filePathToSave = saveParams.FileName;
-
-						if (filePathToSave != null && filePathToSave != "")
-						{
-							try
-							{
-								printerConnection.TerminalLog.WriteToFile(filePathToSave);
-							}
-							catch (UnauthorizedAccessException ex)
-							{
-								printerConnection.TerminalLog.WriteLine("");
-								printerConnection.TerminalLog.WriteLine("WARNING: Write Failed!".Localize());
-								printerConnection.TerminalLog.WriteLine("Can't access".Localize() + " " + filePathToSave);
-								printerConnection.TerminalLog.WriteLine("");
-
-								UiThread.RunOnIdle(() =>
-								{
-									StyledMessageBox.ShowMessageBox(ex.Message, "Couldn't save file".Localize());
-								});
-							}
-						}
-					}
-				});
-		}
+		}		
 
 		private void WriteToFile(string filePath)
 		{
@@ -178,43 +131,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void Instance_ConnectionFailed(object sender, EventArgs e)
-		{
-			if (e is ConnectFailedEventArgs args)
-			{
-				string message;
-
-				switch (args.Reason)
-				{
-					case ConnectionFailure.AlreadyConnected:
-						message = "You can only connect when not currently connected".Localize();
-						break;
-					case ConnectionFailure.UnsupportedBaudRate:
-						message = "Unsupported Baud Rate".Localize();
-						break;
-					case ConnectionFailure.PortInUse:
-						message = "Serial port in use".Localize();
-						break;
-					case ConnectionFailure.PortNotFound:
-						message = "Port not found".Localize();
-						break;
-					case ConnectionFailure.PortUnavailable:
-						message = "Port not available".Localize();
-						break;
-					case ConnectionFailure.ConnectionTimeout:
-						message = "Connection timed out".Localize();
-						break;
-					default:
-						message = "Unknown Reason".Localize();
-						break;
-				}
-
-				this.WriteLine("Connection Failed".Localize() + ": " + message);
-			}
-
-			this.WriteLine("Lost connection to printer");
-		}
-
 		public void Clear()
 		{
 			lock (printerLines)
@@ -223,16 +139,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.LogCleared?.Invoke(this, null);
-		}
-
-		public void Dispose()
-		{
-			// Unregister event listeners
-			printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
-			printerConnection.LineReceived -= Printer_LineReceived;
-			printerConnection.LineSent -= Printer_LineSent;
-
-			printerConnection = null;
 		}
 	}
 }

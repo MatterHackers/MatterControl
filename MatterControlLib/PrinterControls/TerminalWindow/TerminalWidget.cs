@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(bodyRow);
 
-			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog)
+			textScrollWidget = new TextScrollWidget(printer, null)
 			{
 				BackgroundColor = theme.MinimalShade,
 				TextColor = theme.TextColor,
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl
 			clearButton.Margin = theme.ButtonSpacing;
 			clearButton.Click += (s, e) =>
 			{
-				printer.Connection.TerminalLog.Clear();
+				throw new NotImplementedException();
 			};
 
 			footerRow.AddChild(clearButton);
@@ -258,8 +258,8 @@ namespace MatterHackers.MatterControl
 			exportButton.Margin = theme.ButtonSpacing;
 			exportButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() => TerminalLog.Export(printer.Connection));
-			};
+                throw new NotImplementedException();
+            };
 			footerRow.AddChild(exportButton);
 
 			footerRow.AddChild(new HorizontalSpacer());
@@ -366,8 +366,8 @@ namespace MatterHackers.MatterControl
 
 			commandHistoryIndex = commandHistory.Count;
 
-			printer.Connection.QueueLine(textToSend);
-			manualCommandTextEdit.Text = "";
+            throw new NotImplementedException();
+            manualCommandTextEdit.Text = "";
 		}
 	}
 }

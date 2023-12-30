@@ -29,10 +29,10 @@ namespace MatterHackers.MatterControl
 	[Serializable]
 	public class LocalService : IMainService
 	{
-		private const string ServicePipeName = "MatterControlMainInstance";
+		private const string ServicePipeName = "MatterCADMainInstance";
 
 #if USE_SERVICEWIRE
-		private const string MainInstanceMutexName = "MatterControlMainInstanceMutex";
+		private const string MainInstanceMutexName = "MatterCADMainInstanceMutex";
 #pragma warning disable IDE0052 // Remove unread private members
 		// Don't let the GC clean this up.
 		private static Mutex MainInstanceMutex = null;

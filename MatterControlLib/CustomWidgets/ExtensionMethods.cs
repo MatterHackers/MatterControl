@@ -35,7 +35,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl
 {
@@ -63,36 +62,6 @@ namespace MatterHackers.MatterControl
 		public static ImageBuffer AlphaToPrimaryAccent(this ImageBuffer sourceImage)
 		{
 			return sourceImage.AnyAlphaToColor(ApplicationController.Instance.Theme.PrimaryAccentColor);
-		}
-
-
-		public static string GetDebugState(this GCodeStream sourceStream)
-		{
-			return GetDebugState(sourceStream, ApplicationController.Instance.ActivePrinters.First());
-		}
-
-		public static string GetDebugState(this GCodeStream sourceStream, PrinterConfig printer)
-		{
-			var context = printer.Connection.TotalGCodeStream;
-
-			var sb = new StringBuilder();
-
-			while (context is GCodeStream gCodeStream)
-			{
-				sb.AppendFormat("{0} {1}\r\n", gCodeStream.GetType().Name, gCodeStream.DebugInfo);
-				context = gCodeStream.InternalStream;
-			}
-
-			return sb.ToString();
-		}
-
-		public static IEnumerable<GCodeStream> InternalStreams(this GCodeStream context)
-		{
-			while (context is GCodeStream gCodeStream)
-			{
-				context = gCodeStream.InternalStream;
-				yield return context;
-			}
 		}
 	}
 }

@@ -120,35 +120,6 @@ namespace MatterHackers.MatterControl
 				};
 				contentRow.AddChild(pluginButton);
 
-				if (plugin is GCodeExport)
-				{
-					var gcodeExportButton = pluginButton;
-					gcodeExportButton.CheckedStateChanged += (s, e) =>
-					{
-						validationPanel.CloseChildren();
-
-						if (gcodeExportButton.Checked)
-						{
-							var errors = new List<ValidationError>();
-							printer.ValidateSettings(errors, validatePrintBed: false);
-
-							exportButton.Enabled = !errors.Any(item => item.ErrorLevel == ValidationErrorLevel.Error);
-
-							validationPanel.AddChild(
-								new ValidationErrorsPanel(
-									errors,
-									AppContext.Theme)
-								{
-									HAnchor = HAnchor.Stretch
-								});
-						}
-						else
-						{
-							exportButton.Enabled = true;
-						}
-					};
-				}
-
 				if (isFirstItem)
 				{
 					pluginButton.Checked = true;
@@ -291,11 +262,6 @@ namespace MatterHackers.MatterControl
 
 									if (exportPlugin != null)
 									{
-										if (exportPlugin is GCodeExport gCodeExport)
-										{
-											gCodeExport.CenterOnBed = centerOnBed;
-										}
-
 										exportErrors = await exportPlugin.Generate(libraryItems, savePath, reporter, cancellationTokenSource.Token);
 									}
 
@@ -313,13 +279,8 @@ namespace MatterHackers.MatterControl
 									}
 									else
 									{
-										bool showGenerateErrors = !(exportPlugin is GCodeExport);
-
 										// Only show errors in Generate if not GCodeExport - GCodeExport shows validation errors before Generate call
-										if (showGenerateErrors)
-										{
-											ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
-										}
+										throw new NotImplementedException();
 									}
 								});
 						}

@@ -140,11 +140,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				File.WriteAllText(filePath, json);
 			}
-
-			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == settings.ID) is PrinterConfig printer)
-			{
-				ApplicationController.Instance.ActiveProfileModified.CallEvents(printer.Settings, null);
-			}
 		}
 	}
 }

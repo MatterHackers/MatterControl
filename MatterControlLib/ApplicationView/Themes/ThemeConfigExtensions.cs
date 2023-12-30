@@ -34,7 +34,6 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
@@ -114,22 +113,6 @@ namespace MatterHackers.MatterControl
             solidSlider.View.TrackRadius = 4;
 
             return solidSlider;
-        }
-
-        public static JogControls.ExtrudeButton CreateExtrudeButton(this ThemeConfig theme, PrinterConfig printer, string label, double movementFeedRate, int extruderNumber, bool levelingButtons = false)
-        {
-            return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, theme)
-            {
-                BackgroundColor = theme.MinimalShade,
-                BorderColor = theme.BorderColor40,
-                BackgroundOutlineWidth = 1,
-                VAnchor = VAnchor.Absolute,
-                HAnchor = HAnchor.Absolute,
-                Margin = 0,
-                Padding = 0,
-                Height = (levelingButtons ? 45 : 40) * GuiWidget.DeviceScale,
-                Width = (levelingButtons ? 90 : 40) * GuiWidget.DeviceScale,
-            };
         }
 
         public static FlowLayoutWidget CreateMenuItems(this ThemeConfig theme, PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
@@ -246,22 +229,6 @@ namespace MatterHackers.MatterControl
             siblingRadioButtonList?.Add(radioButton);
 
             return radioButton;
-        }
-
-        public static JogControls.MoveButton CreateMoveButton(this ThemeConfig theme, PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
-        {
-            return new JogControls.MoveButton(label, printer, axis, movementFeedRate, theme)
-            {
-                BackgroundColor = theme.MinimalShade,
-                BorderColor = theme.BorderColor40,
-                BackgroundOutlineWidth = 1,
-                VAnchor = VAnchor.Absolute,
-                HAnchor = HAnchor.Absolute,
-                Margin = 0,
-                Padding = 0,
-                Height = (levelingButtons ? 45 : 40) * GuiWidget.DeviceScale,
-                Width = (levelingButtons ? 90 : 40) * GuiWidget.DeviceScale,
-            };
         }
 
         public static GuiWidget CreateSearchButton(this ThemeConfig theme)

@@ -274,7 +274,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
 
 				var errors = new List<ValidationError>();
-				printer.ValidateSettings(errors, settingsContext);
 
 				// Loop over categories creating a tab for each
 				foreach (var category in settingsSection.Categories)
@@ -699,10 +698,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new DoubleField(theme);
 					break;
 
-				case SliceSettingData.DataEditTypes.SLICE_ENGINE:
-					uiField = new SliceEngineField(printer, theme);
-					break;
-
 				case SliceSettingData.DataEditTypes.COLOR:
 					uiField = new ColorField(theme, Color.Transparent, null, false);
 					break;
@@ -774,19 +769,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new MarkdownEditField(theme, settingData.PresentationName);
 					break;
 
-				case SliceSettingData.DataEditTypes.COM_PORT:
-					useDefaultSavePattern = false;
-					sliceSettingValue = printer.Settings.Helpers.ComPort();
-					uiField = new ComPortField(printer, theme);
-					uiField.ValueChanged += (s, e) =>
-					{
-						if (e.UserInitiated)
-						{
-							printer.Settings.Helpers.SetComPort(uiField.Value);
-						}
-					};
-					break;
-
 				case SliceSettingData.DataEditTypes.LIST:
 					{
 						var items = settingData.ListValues.Split(',');
@@ -845,11 +827,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					break;
-#if !__ANDROID__
-				case SliceSettingData.DataEditTypes.IP_LIST:
-					uiField = new IpAddessField(printer, theme);
-					break;
-#endif
 
 				default:
 					// Missing Setting

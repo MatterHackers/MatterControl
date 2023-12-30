@@ -76,8 +76,6 @@ namespace MatterHackers.MatterControl
 
 		void LoadEmptyContent(EditContext editContext);
 
-		Task LoadGCodeContent(Stream stream);
-
 		Task LoadIntoCurrent(EditContext editContext, Action<double, string> progressReporter);
 
 		Task LoadLibraryContent(ILibraryItem libraryItem, Action<double, string> progressReporter);
@@ -85,21 +83,6 @@ namespace MatterHackers.MatterControl
 		Task SaveChanges(Action<double, string> progress, CancellationTokenSource cancellationToken);
 
 		bool HadSaveError { get; }
-
-        [Obsolete("Remove when possible")]
-        event EventHandler ActiveLayerChanged;
-
-		[Obsolete("Remove when possible")]
-        event EventHandler LoadedGCodeChanged;
-
-		[Obsolete("Remove when possible")]
-        int ActiveLayerIndex { get; set; }
-
-        [Obsolete("Remove when possible")]
-        GCodeRenderer GCodeRenderer { get; set; }
-
-		[Obsolete("Remove when possible")]
-		GCodeFile LoadedGCode { get; }
 
 		BedShape BedShape { get; }
 
@@ -117,17 +100,7 @@ namespace MatterHackers.MatterControl
 
 		View3DConfig RendererOptions { get; }
 
-		GCodeRenderInfo RenderInfo { get; set; }
-
 		void InvalidateBedMesh();
-
-		void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter);
-
-		void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter);
-
-		Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems);
-
-		Task StashAndPrintGCode(ILibraryItem libraryItem);
 
 		Vector3 ViewerVolume { get; }
 	}

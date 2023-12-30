@@ -213,60 +213,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
             }
         }
 
-        public async Task ReloadOemProfiles()
-        {
-            // In public builds this won't be assigned to and we should exit
-            if (ApplicationController.GetPublicProfileList == null)
-            {
-                return;
-            }
-
-            await ApplicationController.LoadCacheableAsync<OemProfileDictionary>(
-                "oemprofiles.json",
-                "public-profiles",
-                async () =>
-                {
-                    var result = await ApplicationController.GetPublicProfileList();
-                    if (result != null)
-                    {
-                        // Refresh the in memory instance any time the server responds with updated content - caller will serialize
-                        OemProfiles = result;
-
-                        SetManufacturers(result.Keys.ToDictionary(oem => oem));
-                    }
-
-                    return result;
-                });
-
-            await DownloadMissingProfiles();
-        }
-
-        private async Task DownloadMissingProfiles()
-        {
-            int index = 0;
-            foreach (string oem in OemProfiles.Keys)
-            {
-                string cacheScope = Path.Combine("public-profiles", oem);
-
-                index++;
-                foreach (var model in OemProfiles[oem].Keys)
-                {
-                    var publicDevice = OemProfiles[oem][model];
-                    string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
-                    if (!File.Exists(cachePath))
-                    {
-                        await Task.Delay(20000);
-                        await ProfileManager.LoadOemSettingsAsync(publicDevice, oem, model);
-
-                        if (ApplicationController.Instance.ApplicationExiting)
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
         private OemSettings()
         {
             this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();

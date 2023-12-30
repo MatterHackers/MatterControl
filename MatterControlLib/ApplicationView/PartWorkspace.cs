@@ -45,26 +45,6 @@ namespace MatterHackers.MatterControl
 		[JsonIgnore]
 		public ILibraryContext LibraryView { get; set; }
 
-		public PartWorkspace(PrinterConfig printer)
-			: this(printer.Bed)
-		{
-			this.Printer = printer;
-			this.PrinterID = printer.Settings.ID;
-
-			if (this.LibraryView.ActiveContainer is WrappedLibraryContainer wrappedLibrary)
-			{
-				wrappedLibrary.ExtraContainers.Add(
-					new DynamicContainerLink(
-						printer.PrinterName,
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
-						() => new PrinterContainer(printer))
-					{
-						IsReadOnly = true
-					});
-			}
-		}
-
 		public PartWorkspace(ISceneContext sceneContext)
 		{
 			// Create a new library context for the SaveAs view
@@ -87,12 +67,6 @@ namespace MatterHackers.MatterControl
 					return name;
 				}
 
-				name = Printer?.Settings?.GetValue(SettingsKey.printer_name);
-				if (!string.IsNullOrEmpty(name))
-				{
-					return name;
-				}
-
 				return "New Design";
 			}
 
@@ -106,11 +80,6 @@ namespace MatterHackers.MatterControl
 
 		[JsonIgnore]
 		public ISceneContext SceneContext { get; }
-
-		public string PrinterID { get; set; }
-
-		[JsonIgnore]
-		public PrinterConfig Printer { get; }
 
 		public string ContentPath { get; set; }
 	}

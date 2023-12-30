@@ -31,7 +31,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Color color = Color.White;
 
 			List<AxisAlignedBoundingBox> aabbs = layer.MakeListOfObjectControlBoundingBoxes();
-			aabbs.Add(layer.GetPrinterNozzleAABB());
 
 			foreach (var box in aabbs)
 			{

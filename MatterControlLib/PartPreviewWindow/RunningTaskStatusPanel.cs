@@ -99,8 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& details.Owner is PrinterConfig printer)
 				{
                     // only write it to the terminal
-					printer.Connection.TerminalLog.WriteLine(e.status);
-					return;
+                    throw new NotImplementedException();
+                    return;
 				}
 			}
 

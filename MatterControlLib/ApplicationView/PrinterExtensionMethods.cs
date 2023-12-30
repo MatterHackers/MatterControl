@@ -152,38 +152,5 @@ namespace MatterHackers.MatterControl
 				&& printer.InsideHotendBounds(item)
 				&& !item.GetType().GetCustomAttributes(typeof(NonPrintableAttribute), true).Any());
 		}
-
-		/// <summary>
-		/// Conditionally cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
-		/// </summary>
-		/// <param name="abortCancel">The action to run if the user aborts the Cancel operation</param>
-		public static void CancelPrint(this PrinterConfig printer, Action abortCancel = null)
-		{
-			if (printer.Connection.SecondsPrinted > 120)
-			{
-				StyledMessageBox.ShowMessageBox(
-					(bool response) =>
-					{
-						if (response)
-						{
-							UiThread.RunOnIdle(() => printer.Connection.Stop());
-						}
-						else
-						{
-							abortCancel?.Invoke();
-						}
-
-					},
-					"Cancel the current print?".Localize(),
-					"Cancel Print?".Localize(),
-					StyledMessageBox.MessageType.YES_NO,
-					"Cancel Print".Localize(),
-					"Continue Printing".Localize());
-			}
-			else
-			{
-				printer.Connection.Stop();
-			}
-		}
 	}
 }

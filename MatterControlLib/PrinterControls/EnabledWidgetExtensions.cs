@@ -27,21 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public static class EnabledWidgetExtensions
-	{
-		public static void SetEnabled(this GuiWidget guiWidget, bool enabled)
-		{
-			guiWidget.Enabled = enabled;
-		}
-	}
+    public static class EnabledWidgetExtensions
+    {
+        public static void SetEnabled(this GuiWidget guiWidget, bool enabled)
+        {
+            guiWidget.Enabled = enabled;
+        }
+    }
 }

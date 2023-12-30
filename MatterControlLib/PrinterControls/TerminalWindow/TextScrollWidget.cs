@@ -67,10 +67,6 @@ namespace MatterHackers.MatterControl
 			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.terminalLog = terminalLog;
 			this.visibleLines = terminalLog.AllLines().ToList();
-
-			// Register listeners
-			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
-			printer.Connection.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
 		}
 
 		private double documentHeight => visibleLines.Count * typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
@@ -165,15 +161,6 @@ namespace MatterHackers.MatterControl
 			{
 				ConditionalyAddToVisible(lineData);
 			}
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			printer.Connection.TerminalLog.LineAdded -= this.TerminalLog_LineAdded;
-			printer.Connection.TerminalLog.LogCleared -= this.TerminalLog_LogCleared;
-
-			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

@@ -62,9 +62,7 @@ using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Plugins;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -144,8 +142,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
-
-		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
 
 		public EditorExtensionsConfig EditorExtensions { get; }
 
@@ -348,20 +344,10 @@ namespace MatterHackers.MatterControl
 				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
 				.Select(w =>
 				{
-					if (w.Printer == null)
-					{
 						return new PartWorkspace(w.SceneContext)
 						{
 							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
 						};
-					}
-					else
-					{
-						return new PartWorkspace(w.Printer)
-						{
-							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-						};
-					}
 				});
 
 			lock (workspaces)
@@ -376,18 +362,6 @@ namespace MatterHackers.MatterControl
 				
 				// Persist workspace definition to disk
 				File.WriteAllText(ProfileManager.Instance.OpenTabsPath, content);
-			}
-		}
-
-		public async Task PersistPrintTabsContent()
-		{
-			// Persist all pending changes in all workspaces to disk
-			foreach (var workspace in this.Workspaces.ToArray())
-			{
-				if (workspace.Printer != null)
-				{
-					await this.Tasks.Execute("Saving".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
-				}
 			}
 		}
 
@@ -417,8 +391,6 @@ namespace MatterHackers.MatterControl
 
 		public Func<IObject3D, ThemeConfig, (string url, GuiWidget markdownWidget)> GetUnlockData { get; set; }
 
-		public Func<PrintTask, Task<Dictionary<string, string>>> PushPrintTaskToServer { get; set; }
-
 		private static ApplicationController globalInstance;
 
 		public RootedObjectEventHandler CloudSyncStatusChanged { get; private set; } = new RootedObjectEventHandler();
@@ -443,8 +415,6 @@ namespace MatterHackers.MatterControl
 
 		public bool ApplicationExiting { get; internal set; } = false;
 
-		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
-
 		public void OnWorkspacesChanged(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
 			this.WorkspacesChanged?.Invoke(this, new WorkspacesChangedEventArgs(
@@ -466,27 +436,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return null;
-		}
-
-		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
-		{
-			// Actually clear printer
-			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
-
-			// Shutdown the printer connection
-			printer.Connection.Disable();
-
-			if (allowChangedEvent)
-			{
-				if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
-				{
-					this.Workspaces.Remove(workspace);
-
-					this.OnWorkspacesChanged(workspace, WorkspacesChangedEventArgs.OperationType.Remove);
-				}
-			}
-
-			printer.Dispose();
 		}
 
         public static void LaunchBrowser(string targetUri)
@@ -582,20 +531,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Plugin Registration Points
-
-		// Returns the user printer profile from the webservices plugin
-		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
-
-		// Executes the user printer profile sync logic in the webservices plugin
-		public static Func<string, Action<double, string>, Task> SyncCloudProfiles;
-
-		public static Action<string> QueueCloudProfileSync;
-
-		// Returns all public printer profiles from the webservices plugin
-		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
-
-		// Returns the public printer profile from the webservices plugin
-		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
 		// Indicates if guest, rather than an authenticated user, is active
 		public static Func<bool> GuestUserActive { get; set; }
@@ -862,13 +797,13 @@ namespace MatterHackers.MatterControl
 					if (mcAssembly != null)
 					{
 						string applicationName = Path.GetFileNameWithoutExtension(mcAssembly.Location).ToUpper();
-						Process[] p1 = Process.GetProcesses();
-						foreach (System.Diagnostics.Process pro in p1)
+						Process[] processes = Process.GetProcesses();
+						foreach (var process in processes)
 						{
 							try
 							{
-								if (pro?.ProcessName != null
-								   && pro.ProcessName.ToUpper().Contains(applicationName))
+								if (process?.ProcessName != null
+								   && process.ProcessName.ToUpper().Contains(applicationName))
 								{
 									applicationInstanceCount++;
 								}
@@ -975,16 +910,6 @@ namespace MatterHackers.MatterControl
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 
-			this.Library.RegisterContainer(
-				new DynamicContainerLink(
-					"History".Localize(),
-					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
-					() => new RootHistoryContainer())
-				{
-					IsReadOnly = true
-				});
-
 			// Create a new library context for the SaveAs view
 			this.LibraryTabContext = new LibraryConfig()
 			{
@@ -999,51 +924,19 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (printer != null || this.ActivePrinters.Count() == 1)
+				// If there are no printers setup show the export dialog but have the gcode option disabled
+				if (!ProfileManager.Instance.ActiveProfiles.Any()
+					|| ProfileManager.Instance.ActiveProfiles.Count() > 1)
 				{
-                    // If unspecified but count is one, select the one active printer
-                    if (printer == null)
-					{
-						printer = this.ActivePrinters.First();
-					}
-
-                    printer.ForceSceneSettingsUpdate();
-
-                    DialogWindow.Show(
-						new ExportPrintItemPage(libraryItems, centerOnBed, printer));
+					DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
 				}
-				else
+				else // If there is only one printer constructed, use it.
 				{
-					// If there are no printers setup show the export dialog but have the gcode option disabled
-					if (!ProfileManager.Instance.ActiveProfiles.Any()
-						|| ProfileManager.Instance.ActiveProfiles.Count() > 1)
-					{
-						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
-					}
-					else // If there is only one printer constructed, use it.
-					{
-						var historyContainer = this.Library.PlatingHistory;
+					var historyContainer = this.Library.PlatingHistory;
 
-						var printerInfo = ProfileManager.Instance.ActiveProfiles.First();
-						ProfileManager.LoadSettingsAsync(printerInfo.ID).ContinueWith(task =>
-						{
-							var settings = task.Result;
-							var onlyPrinter = new PrinterConfig(settings);
-
-							onlyPrinter.Bed.LoadEmptyContent(
-								new EditContext()
-								{
-									ContentStore = historyContainer,
-									SourceItem = historyContainer.NewBedPlate(onlyPrinter.Bed)
-								});
-
-							UiThread.RunOnIdle(() =>
-							{
-								DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, onlyPrinter));
-							});
-						});
-					}
-				}
+					var printerInfo = ProfileManager.Instance.ActiveProfiles.First();
+                    throw new NotImplementedException();
+                }
 			});
 		}
 
@@ -1120,15 +1013,6 @@ namespace MatterHackers.MatterControl
 		/// <param name="durationSeconds">The length of time to show the message</param>
 		public void ShowNotification(string message, double durationSeconds = 10)
         {
-			foreach(var printer in ActivePrinters)
-            {
-				var terminal = printer?.Connection?.TerminalLog;
-				if (terminal != null)
-                {
-					terminal.WriteLine(message);
-                }
-            }
-
 			// show the message for the time requested
 			this.Tasks.Execute(message,
 				null,
@@ -1143,120 +1027,7 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				});
-        }
-
-        public void Connection_ErrorReported(object sender, string line)
-		{
-			if (line != null)
-			{
-				if (sender is PrinterConnection printerConnection)
-				{
-					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
-						+ "\n"
-						+ "\n"
-						+ "Error Reported".Localize() + ":"
-						+ $" \"{line}\".";
-
-					UiThread.RunOnIdle(() =>
-					{
-						var prinerName = printerConnection.Printer.PrinterName;
-						var messageBox = new StyledMessageBox.MessageBoxPage((clickedOk) =>
-						{
-							if (clickedOk && printerConnection.Paused)
-							{
-								printerConnection.Resume();
-							}
-						},
-						message,
-						prinerName + " is reporting a Hardware Error".Localize(),
-						StyledMessageBox.MessageType.YES_NO,
-						null,
-						400,
-						300,
-						"Resume".Localize(),
-						"OK".Localize(),
-						ApplicationController.Instance.Theme);
-
-						var exportButton = Theme.CreateDialogButton("Export Print Log...".Localize());
-						exportButton.Click += (s, e) =>
-						{
-							UiThread.RunOnIdle(() => TerminalLog.Export(printerConnection), .1);
-						};
-						messageBox.AddPageAction(exportButton);
-
-						DialogWindow.Show(messageBox);
-					});
-				}
-			}
-		}
-
-		public void Connection_TemporarilyHoldingTemp(object sender, EventArgs e)
-		{
-			if (sender is PrinterConnection printerConnection)
-			{
-				if (printerConnection.AnyHeatIsOn)
-				{
-					var paused = false;
-					Tasks.Execute("", printerConnection.Printer, (reporter, cancellationToken) =>
-					{
-						while (printerConnection.SecondsToHoldTemperature > 0
-							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinueHoldingTemperature)
-						{
-							var status = "";
-							if (paused)
-							{
-                                status = "Holding Temperature".Localize();
-							}
-							else
-							{
-								if (printerConnection.SecondsToHoldTemperature > 60)
-								{
-                                    status = string.Format(
-										"{0} {1:0}m {2:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										(int)printerConnection.SecondsToHoldTemperature / 60,
-										(int)printerConnection.SecondsToHoldTemperature % 60);
-								}
-								else
-								{
-                                    status = string.Format(
-										"{0} {1:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										printerConnection.SecondsToHoldTemperature);
-								}
-							}
-
-							var progress = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
-							reporter?.Invoke(progress, status);
-							Thread.Sleep(20);
-						}
-
-						return Task.CompletedTask;
-					},
-					taskActions: new RunningTaskOptions()
-					{
-						PauseAction = () => UiThread.RunOnIdle(() =>
-						{
-							paused = true;
-							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
-						}),
-						PauseToolTip = "Pause automatic heater shutdown".Localize(),
-						ResumeAction = () => UiThread.RunOnIdle(() =>
-						{
-							paused = false;
-							printerConnection.TimeHaveBeenHoldingTemperature.Start();
-						}),
-						ResumeToolTip = "Resume automatic heater shutdown".Localize(),
-						StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
-						{
-							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
-						}),
-						StopToolTip = "Immediately turn off heaters".Localize()
-					});
-				}
-			}
-		}
+        }		
 
 		public void Shutdown()
 		{
@@ -1689,59 +1460,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task<PrinterConfig> LoadPrinter(string printerID)
-		{
-			var printer = this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
-			if (printer == null)
-			{
-				if (!string.IsNullOrEmpty(printerID)
-					&& ProfileManager.Instance[printerID] != null)
-				{
-					printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
-				}
-			}
-
-			if (printer != null
-				&& printer.Settings.PrinterSelected
-				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-			{
-				printer.Connection.Connect();
-			}
-
-			return printer;
-		}
-
-		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID, bool addPhilToBed = false)
-		{
-			if (!string.IsNullOrEmpty(printerID)
-				&& ProfileManager.Instance[printerID] != null)
-			{
-				var printer = await this.LoadPrinter(printerID);
-
-				// Add workspace for printer
-				var workspace = new PartWorkspace(printer);
-				var history = this.Library.PlatingHistory;
-
-				await workspace.SceneContext.LoadContent(new EditContext()
-				{
-					ContentStore = history,
-					SourceItem = history.NewBedPlate(workspace.Printer.Bed)
-				},
-				null);
-
-				this.OpenWorkspace(workspace);
-
-				if (addPhilToBed)
-                {
-					workspace.SceneContext.AddPhilToBed();
-				}
-
-				return printer;
-			}
-
-			return null;
-		}
-
 		public void OpenWorkspace(PartWorkspace workspace)
 		{
 			this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
@@ -1801,32 +1519,10 @@ namespace MatterHackers.MatterControl
 									// Load the actual workspace if content file exists
 									if (File.Exists(persistedWorkspace.ContentPath))
 									{
-										string printerID = persistedWorkspace.PrinterID;
-
 										PartWorkspace workspace = null;
 
-										if (!string.IsNullOrEmpty(printerID)
-											&& ProfileManager.Instance[printerID] != null)
-										{
-											// Only create one workspace per printer
-											if (!loadedPrinters.Contains(printerID))
-											{
-												// Add workspace for printer
-												workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
-
-												loadedPrinters.Add(printerID);
-											}
-											else
-											{
-												// Ignore additional workspaces for the same printer once one is loaded
-												continue;
-											}
-										}
-										else
-										{
-											// Add workspace for part
-											workspace = new PartWorkspace(new BedConfig(history));
-										}
+										// Add workspace for part
+										workspace = new PartWorkspace(new BedConfig(history));
 
 										// Load the previous content
 										await workspace.SceneContext.LoadContent(new EditContext()
@@ -1957,11 +1653,6 @@ namespace MatterHackers.MatterControl
 
 		public static Type ServicesStatusType { get; set; }
 
-		/// <summary>
-		/// Gets a value indicating whether any ActivePrinter is running a print task, either in paused or printing states
-		/// </summary>
-		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.Printing || p.Connection.Paused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
-
 		public event EventHandler<ApplicationTopBarCreatedEventArgs> ApplicationTopBarCreated;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
@@ -1972,146 +1663,7 @@ namespace MatterHackers.MatterControl
 			var leftChild = sourceExentionArea.Parent.Children.First();
 			var padding = leftChild.Padding;
 			leftChild.Padding = new BorderDouble(padding.Left, padding.Bottom, sourceExentionArea.Width, padding.Height);
-		}
-
-		public async Task PrintPart(EditContext editContext, PrinterConfig printerConfig, Action<double, string> reporter, CancellationToken cancellationToken, PrinterConnection.PrintingModes printingMode)
-		{
-			var partFilePath = editContext.SourceFilePath;
-			var gcodeFilePath = await editContext.GCodeFilePath(printerConfig);
-			var printItemName = editContext.SourceItem.Name;
-
-			printerConfig.ForceSceneSettingsUpdate();
-
-            // Exit if called in a non-applicable state
-            if (printerConfig.Connection.CommunicationState != CommunicationStates.Connected
-				&& printerConfig.Connection.CommunicationState != CommunicationStates.FinishedPrint)
-			{
-				return;
-			}
-
-			try
-			{
-				if (PrinterCalibrationWizard.SetupRequired(printerConfig, requiresLoadedFilament: true))
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(
-							new PrinterCalibrationWizard(printerConfig, AppContext.Theme),
-							advanceToIncompleteStage: true);
-					});
-
-					return;
-				}
-
-				printerConfig.Connection.PrintingItemName = printItemName;
-
-				var errors = new List<ValidationError>();
-				printerConfig.ValidateSettings(errors, validatePrintBed: !printerConfig.Bed.EditContext.IsGGCodeSource);
-				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
-				{
-					this.ShowValidationErrors("Validation Error".Localize(), errors);
-				}
-				else // there are no errors continue printing
-				{
-					// clear the output cache prior to starting a print
-					printerConfig.Connection.TerminalLog.Clear();
-
-					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
-
-					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE")
-					{
-						if (hideGCodeWarning != "true")
-						{
-							var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
-							{
-								TextColor = this.Theme.TextColor,
-								Margin = new BorderDouble(top: 6, left: 6),
-								HAnchor = Agg.UI.HAnchor.Left
-							};
-							hideGCodeWarningCheckBox.Click += (sender, e) =>
-							{
-								if (hideGCodeWarningCheckBox.Checked)
-								{
-									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
-								}
-								else
-								{
-									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
-								}
-							};
-
-							UiThread.RunOnIdle(() =>
-							{
-								StyledMessageBox.ShowMessageBox(
-									(messageBoxResponse) =>
-									{
-										if (messageBoxResponse)
-										{
-											printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printerConfig, printingMode);
-										}
-									},
-									"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
-									"Warning - GCode file".Localize(),
-									new GuiWidget[]
-									{
-										hideGCodeWarningCheckBox
-									},
-									StyledMessageBox.MessageType.YES_NO);
-							});
-						}
-						else
-						{
-							printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printerConfig, printingMode);
-						}
-					}
-					else
-					{
-						printerConfig.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-
-						(bool slicingSucceeded, string finalPath) = await this.SliceItemLoadOutput(
-							printerConfig,
-							printerConfig.Bed.Scene,
-							gcodeFilePath);
-
-						// Only start print if slicing completed
-						if (slicingSucceeded)
-						{
-							this.ArchiveAndStartPrint(partFilePath, finalPath, printerConfig, printingMode);
-						}
-						else
-						{
-							// TODO: Need to reset printing state? This seems like I shouldn't own this indicator
-							printerConfig.Connection.CommunicationState = CommunicationStates.Connected;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-			}
-		}
-
-		public void ShowValidationErrors(string windowTitle, List<ValidationError> errors)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				var dialogPage = new DialogPage("Close".Localize())
-				{
-					HAnchor = HAnchor.Stretch,
-					WindowTitle = windowTitle,
-					HeaderText = "Action Required".Localize()
-				};
-
-				dialogPage.ContentRow.AddChild(new ValidationErrorsPanel(errors, AppContext.Theme)
-				{
-					HAnchor = HAnchor.Stretch
-				});
-
-				DialogWindow.Show(dialogPage);
-			});
-		}
+		}		
 
 		public void ResetTranslationMap()
 		{
@@ -2172,67 +1724,7 @@ namespace MatterHackers.MatterControl
             {
 				TranslationMap.ActiveTranslationMap = new TranslationMap(twoLetterIsoLanguageName);
 			}
-		}
-
-		public void MonitorPrintTask(PrinterConfig printer)
-		{
-			this.Tasks.Execute(
-				"Printing".Localize(),
-				printer,
-				(reporterB, cancellationTokenB) =>
-				{
-					return Task.Run(() =>
-					{
-						string printing = "Printing".Localize();
-						int totalLayers = printer.Connection.TotalLayersInPrint;
-
-						while (!printer.Connection.Printing
-							&& !cancellationTokenB.IsCancellationRequested)
-						{
-							// Wait for printing
-							Thread.Sleep(200);
-						}
-
-						while ((printer.Connection.Printing || printer.Connection.Paused)
-							&& !cancellationTokenB.IsCancellationRequested)
-						{
-							var layerCount = printer.Bed.LoadedGCode == null ? "?" : printer.Bed.LoadedGCode.LayerCount.ToString();
-							var status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1} of {layerCount}) - {printer.Connection.PercentComplete:0}%";
-
-							var progress0To1 = printer.Connection.PercentComplete / 100;
-							reporterB?.Invoke(progress0To1, status);
-							Thread.Sleep(200);
-						}
-					});
-				},
-				taskActions: new RunningTaskOptions()
-				{
-					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
-					PauseAction = () => UiThread.RunOnIdle(() =>
-					{
-						printer?.Connection.TerminalLog.WriteLine("User Requested Pause");
-						printer.Connection.RequestPause();
-					}),
-					IsPaused = () =>
-					{
-						return printer.Connection.Paused || printer.Connection.WaitingToPause;
-					},
-					PauseToolTip = "Pause Print".Localize(),
-					PauseText = "Pause".Localize(),
-					ResumeAction = () => UiThread.RunOnIdle(() =>
-					{
-						printer.Connection.Resume();
-					}),
-					ResumeToolTip = "Resume Print".Localize(),
-					ResumeText = "Resume".Localize(),
-					StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
-					{
-						printer.CancelPrint(abortCancel);
-					}),
-					StopToolTip = "Cancel Print".Localize(),
-					StopText = "Stop".Localize(),
-				});
-		}
+		}		
 
 		private static PluginManager pluginManager = null;
         private bool restoringWorkspaces;
@@ -2255,168 +1747,6 @@ namespace MatterHackers.MatterControl
 		public bool Allow32BitReSlice { get; set; }
 		public Action<bool> KeepAwake { get; set; }
 
-		/// <summary>
-		/// Archives MCX and validates GCode results before starting a print operation
-		/// </summary>
-		/// <param name="sourcePath">The source file which originally caused the slice->print operation</param>
-		/// <param name="gcodeFilePath">The resulting GCode to print</param>
-		private async void ArchiveAndStartPrint(string sourcePath, string gcodeFilePath, PrinterConfig printer, PrinterConnection.PrintingModes printingMode)
-		{
-			if (File.Exists(sourcePath)
-				&& File.Exists(gcodeFilePath))
-			{
-				bool originalIsGCode = Path.GetExtension(sourcePath).ToUpper() == ".GCODE";
-				if (File.Exists(gcodeFilePath))
-				{
-					// Create archive point for printing attempt
-					if (Path.GetExtension(sourcePath).ToUpper() == ".MCX")
-					{
-						string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-						string archivePath = Path.Combine(ApplicationDataStorage.Instance.PrintHistoryPath, now + ".zip");
-
-						string settingsFilePath = ProfileManager.Instance.ProfilePath(printer.Settings.ID);
-
-						// if the printer was deleted while printing the path can be null
-						if (settingsFilePath != null)
-						{
-							using (var file = File.OpenWrite(archivePath))
-							{
-								using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
-								{
-									zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-									zip.CreateEntryFromFile(settingsFilePath, printer.PrinterName + ".printer");
-									zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
-								}
-							}
-						}
-					}
-
-					if (originalIsGCode)
-					{
-						await printer.Connection.StartPrint(gcodeFilePath, printingMode: printingMode);
-
-						MonitorPrintTask(printer);
-
-						return;
-					}
-					else
-					{
-						// Ask for slicer specific gcode validation
-						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
-						{
-							await printer.Connection.StartPrint(gcodeFilePath, printingMode: printingMode);
-							MonitorPrintTask(printer);
-							return;
-						}
-					}
-				}
-
-				printer.Connection.CommunicationState = CommunicationStates.Connected;
-			}
-		}
-
-		/// <summary>
-		/// Slice the given IObject3D to the target GCode file using the referenced printer settings
-		/// </summary>
-		/// <param name="printer">The printer/settings to use</param>
-		/// <param name="object3D">The IObject3D to slice</param>
-		/// <param name="gcodeFilePath">The path to write the file to</param>
-		/// <returns>A boolean indicating if the slicing operation completed without aborting</returns>
-		public async Task<(bool, string)> SliceItemLoadOutput(PrinterConfig printer, IObject3D object3D, string gcodeFilePath)
-		{
-			// Slice
-			bool slicingSucceeded = false;
-
-			printer.ViewState.SlicingItem = true;
-
-			await this.Tasks.Execute("Slicing".Localize(), printer, async (reporter, cancellationTokenSource) =>
-			{
-				slicingSucceeded = await Slicer.SliceItem(
-					object3D,
-					gcodeFilePath,
-					printer,
-					reporter,
-					cancellationTokenSource.Token);
-			});
-
-			printer.ViewState.SlicingItem = false;
-
-			// Skip loading GCode output if slicing failed
-			if (!slicingSucceeded)
-			{
-				return (false, gcodeFilePath);
-			}
-
-			var postProcessors = printer.Bed.Scene.Children.OfType<IGCodePostProcessor>();
-			if (postProcessors.Any())
-			{
-				using (var resultStream = File.OpenRead(gcodeFilePath))
-				{
-					Stream contextStream = resultStream;
-
-					// Execute each post processor
-					foreach (var processor in postProcessors)
-					{
-						// Invoke the processor and store the resulting output to the context stream reference
-						contextStream = processor.ProcessOutput(contextStream);
-
-						// Reset to the beginning
-						contextStream.Position = 0;
-					}
-
-					// Modify final file name
-					gcodeFilePath = Path.ChangeExtension(gcodeFilePath, GCodeFile.PostProcessedExtension);
-
-					// Copy the final stream to the revised gcodeFilePath
-					using (var finalStream = File.OpenWrite(gcodeFilePath))
-					{
-						contextStream.CopyTo(finalStream);
-					}
-				}
-			}
-
-			await this.Tasks.Execute("Loading GCode".Localize(), printer, (innerProgress, concelationTokenSource) =>
-			{
-				printer.Bed.LoadActiveSceneGCode(gcodeFilePath, concelationTokenSource.Token, (progress0to1, statusText) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						var progress0To1 = progress0to1;
-						var status = statusText;
-
-						innerProgress?.Invoke(progress0To1, status);
-					});
-				});
-
-				if (printer.Bed.LoadedGCode is GCodeMemoryFile gcodeMemoryFile)
-				{
-					// try to validate the gcode file and warn if it seems invalid.
-					// for now the definition of invalid is that it has a print time of < 30 seconds
-					var estimatedPrintSeconds = gcodeMemoryFile.EstimatedPrintSeconds();
-					if (estimatedPrintSeconds < 30)
-					{
-						var message = "The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected."
-							.Localize()
-							.FormatWith((int)estimatedPrintSeconds);
-						UiThread.RunOnIdle(() =>
-						{
-							StyledMessageBox.ShowMessageBox(message, "Warning, very short print".Localize());
-						});
-					}
-				}
-
-				// Switch to the 3D layer view if on Model view and slicing succeeded
-				if (printer.ViewState.ViewMode == PartViewMode.Model)
-				{
-					printer.ViewState.ViewMode = PartViewMode.Layers3D;
-				}
-
-				return Task.CompletedTask;
-			});
-
-			return (slicingSucceeded, gcodeFilePath);
-		}
-
 		public void ShellOpenFile(string file)
 		{
 			UiThread.RunOnIdle(() =>
@@ -2425,56 +1755,6 @@ namespace MatterHackers.MatterControl
 				AppContext.RootSystemWindow.BringToFront();
 			});
 		}
-
-		private void KeepAwakeIfNeeded()
-		{
-			KeepAwake?.Invoke(AnyPrintTaskRunning);
-		}
-
-		public void Connection_PrintStarted(object sender, EventArgs e)
-		{
-			KeepAwakeIfNeeded();
-			AnyPrintStarted?.Invoke(sender, e);
-		}
-
-		public void Connection_PrintFinished(object sender, (string printerName, string itemName) e)
-		{
-			if (sender is PrinterConnection printerConnection)
-			{
-				var activePrintTask = printerConnection.ActivePrintTask;
-				switch (printerConnection.PrintingMode)
-				{
-					case PrinterConnection.PrintingModes.Normal:
-						var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-						var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, activePrintTask, printTasks);
-						printHistoryEditor.CollectInfoPrintFinished();
-						break;
-
-					case PrinterConnection.PrintingModes.Calibration:
-						break;
-
-					case PrinterConnection.PrintingModes.Autopilot:
-						break;
-				}
-			}
-
-			KeepAwakeIfNeeded();
-			AnyPrintComplete?.Invoke(sender, null);
-		}
-
-		public void Connection_PrintCanceled(object sender, EventArgs e)
-		{
-			if (sender is PrinterConnection printerConnection
-				&& printerConnection.PrintingMode == PrinterConnection.PrintingModes.Normal)
-			{
-				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.CanceledPrintTask, printTasks);
-				printHistoryEditor.CollectInfoPrintCanceled();
-			}
-
-			KeepAwakeIfNeeded();
-			AnyPrintCanceled?.Invoke(sender, e);
-		}		
 
 		/// <summary>
 		/// Replace invalid filename characters with the given replacement value to ensure working paths for the current filesystem

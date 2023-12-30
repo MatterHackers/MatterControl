@@ -27,56 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using global::MatterControl.Printing;
-using Markdig.Agg;
-using Markdig.Renderers.Agg;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Extensibility;
-using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MatterControl.Plugins;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.Tour;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
-using MatterHackers.VectorMath.TrackBall;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -84,69 +38,68 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl
 {
-
-	public class RunningTaskDetails
-	{
+    public class RunningTaskDetails
+    {
         public event EventHandler<(double ratio, string message)> ProgressChanged;
 
         public Func<GuiWidget> DetailsItemAction { get; set; }
 
-		private CancellationTokenSource tokenSource;
+        private CancellationTokenSource tokenSource;
 
-		private bool? _isExpanded = null;
+        private bool? _isExpanded = null;
 
-		public RunningTaskDetails(CancellationTokenSource tokenSource)
-		{
-			this.tokenSource = tokenSource;
-		}
+        public RunningTaskDetails(CancellationTokenSource tokenSource)
+        {
+            this.tokenSource = tokenSource;
+        }
 
-		public string Title { get; set; }
+        public string Title { get; set; }
 
-		public object Owner { get; set; }
+        public object Owner { get; set; }
 
-		public RunningTaskOptions Options { get; internal set; }
+        public RunningTaskOptions Options { get; internal set; }
 
-		public bool IsExpanded
-		{
-			get
-			{
-				if (_isExpanded == null)
-				{
-					if (this.Options is RunningTaskOptions options
-						&& !string.IsNullOrWhiteSpace(options.ExpansionSerializationKey))
-					{
-						string dbValue = UserSettings.Instance.get(options.ExpansionSerializationKey);
-						_isExpanded = dbValue != "0";
-					}
-					else
-					{
-						_isExpanded = false;
-					}
-				}
+        public bool IsExpanded
+        {
+            get
+            {
+                if (_isExpanded == null)
+                {
+                    if (this.Options is RunningTaskOptions options
+                        && !string.IsNullOrWhiteSpace(options.ExpansionSerializationKey))
+                    {
+                        string dbValue = UserSettings.Instance.get(options.ExpansionSerializationKey);
+                        _isExpanded = dbValue != "0";
+                    }
+                    else
+                    {
+                        _isExpanded = false;
+                    }
+                }
 
-				return _isExpanded ?? false;
-			}
+                return _isExpanded ?? false;
+            }
 
-			set
-			{
-				_isExpanded = value;
+            set
+            {
+                _isExpanded = value;
 
-				if (this.Options?.ExpansionSerializationKey is string expansionKey
-					&& !string.IsNullOrWhiteSpace(expansionKey))
-				{
-					UserSettings.Instance.set(expansionKey, (_isExpanded ?? false) ? "1" : "0");
-				}
-			}
-		}
+                if (this.Options?.ExpansionSerializationKey is string expansionKey
+                    && !string.IsNullOrWhiteSpace(expansionKey))
+                {
+                    UserSettings.Instance.set(expansionKey, (_isExpanded ?? false) ? "1" : "0");
+                }
+            }
+        }
 
-		public void Report(double ratio, string message)
-		{
+        public void Report(double ratio, string message)
+        {
             this.ProgressChanged?.Invoke(this, (ratio, message));
         }
 
         public void CancelTask()
-		{
-			this.tokenSource.Cancel();
-		}
-	}
+        {
+            this.tokenSource.Cancel();
+        }
+    }
 }

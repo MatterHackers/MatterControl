@@ -539,11 +539,5 @@ namespace MatterHackers.MatterControl
 		{
 			ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			var context = ApplicationController.Instance.ActivePrinters.First().Connection.TotalGCodeStream;
-			textBox1.Text = context.GetDebugState();
-		}
 	}
 }

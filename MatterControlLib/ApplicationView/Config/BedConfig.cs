@@ -43,7 +43,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -132,55 +131,18 @@ namespace MatterHackers.MatterControl
 		public async Task LoadIntoCurrent(EditContext editContext, Action<double, string> progressReporter)
 		{
 			// Load
-			if (editContext.SourceItem is ILibraryAssetStream contentStream
-				&& contentStream.ContentType == "gcode")
-			{
-				using (var task = await contentStream.GetStream(null))
-				{
-					await LoadGCodeContent(task.Stream);
-				}
+			// Load last item or fall back to empty if unsuccessful
+			var content = await editContext.SourceItem.CreateContent(progressReporter) ?? new Object3D();
 
-				// No content store for GCode
-				editContext.ContentStore = null;
-			}
-			else
-			{
-				// Load last item or fall back to empty if unsuccessful
-				var content = await editContext.SourceItem.CreateContent(progressReporter) ?? new Object3D();
-
-				loadedGCode = null;
-				this.GCodeRenderer = null;
-
-				this.Scene.Load(content);
-			}
+			this.Scene.Load(content);
 
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
 		}
 
-		public async Task LoadGCodeContent(Stream stream)
-		{
-			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), Printer, (reporter, cancellationTokenSource) =>
-			{
-				this.LoadGCode(stream, cancellationTokenSource.Token, (progress0To1, status) =>
-				{
-					reporter?.Invoke(progress0To1, status);
-				});
-
-				this.Scene.Children.Modify(children => children.Clear());
-
-				this.EditContext.FreezeGCode = true;
-
-				return Task.CompletedTask;
-			});
-		}
-
 		public void ClearPlate()
 		{
 			// Clear existing
-			this.LoadedGCode = null;
-			this.GCodeRenderer = null;
-
 			// Switch back to Model view on ClearPlate
 			if (this.Printer != null)
 			{
@@ -305,82 +267,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
-		{
-			// Clear plate
-			this.ClearPlate();
-
-			// Add content
-			await this.LoadContent(
-				new EditContext()
-				{
-					SourceItem = libraryItem,
-					// No content store for GCode
-					ContentStore = null
-				},
-				null);
-
-			// Slice and print
-			await ApplicationController.Instance.PrintPart(
-				this.EditContext,
-				this.Printer,
-				null,
-				CancellationToken.None,
-				PrinterConnection.PrintingModes.Normal);
-		}
-
-		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
-		{
-			// Clear plate
-			this.ClearPlate();
-
-			// Add content
-			var insertionGroup = this.AddToPlate(selectedLibraryItems);
-			await insertionGroup.LoadingItemsTask;
-
-			// Persist changes
-			await this.SaveChanges(null, null);
-
-			// Slice and print
-			await ApplicationController.Instance.PrintPart(
-				this.EditContext,
-				this.Printer,
-				null,
-				CancellationToken.None,
-				PrinterConnection.PrintingModes.Normal);
-		}
-
-		private GCodeFile loadedGCode;
-
-		public GCodeFile LoadedGCode
-		{
-			get => loadedGCode;
-			private set
-			{
-				if (loadedGCode != value)
-				{
-					loadedGCode = value;
-					LoadedGCodeChanged?.Invoke(null, null);
-				}
-			}
-		}
-
-		internal async void EnsureGCodeLoaded()
-		{
-			if (this.LoadedGCode == null
-				&& !this.Printer.ViewState.SlicingItem
-				&& File.Exists(await this.EditContext?.GCodeFilePath(this.Printer)))
-			{
-				UiThread.RunOnIdle(async () =>
-				{
-					using (var stream = File.OpenRead(await this.EditContext.GCodeFilePath(this.Printer)))
-					{
-						await LoadGCodeContent(stream);
-					}
-				});
-			}
-		}
-
 		public WorldView World { get; } = new WorldView(0, 0);
 
 		public double BuildHeight { get; internal set; }
@@ -390,42 +276,6 @@ namespace MatterHackers.MatterControl
 		public Vector2 BedCenter { get; internal set; } = Vector2.Zero;
 
 		public BedShape BedShape { get; internal set; }
-
-		// TODO: Make assignment private, wire up post slicing initialization here
-		public GCodeRenderer GCodeRenderer { get; set; }
-
-		private int _activeLayerIndex;
-
-		public int ActiveLayerIndex
-		{
-			get => _activeLayerIndex;
-			set
-			{
-				if (_activeLayerIndex != value)
-				{
-					_activeLayerIndex = value;
-
-					// Clamp activeLayerIndex to valid range
-					if (this.GCodeRenderer == null || _activeLayerIndex < 0)
-					{
-						_activeLayerIndex = 0;
-					}
-					else if (_activeLayerIndex >= this.LoadedGCode.LayerCount)
-					{
-						_activeLayerIndex = this.LoadedGCode.LayerCount - 1;
-					}
-
-					// When the active layer changes we update the selected range accordingly - constrain to applicable values
-					if (this.RenderInfo != null)
-					{
-						// TODO: Unexpected that rendering layer 2 requires that we set the range to 0-3. Seems like model should be updated to allow 0-2 to mean render up to layer 2
-						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(_activeLayerIndex + 1, 1));
-					}
-
-					ActiveLayerChanged?.Invoke(this, null);
-				}
-			}
-		}
 
 		[JsonIgnore]
 		public InteractiveScene Scene { get; } = new InteractiveScene();
@@ -526,49 +376,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void RenderGCode3D(DrawEventArgs e)
-		{
-			if (this.RenderInfo != null)
-			{
-				// If needed, update the RenderType flags to match to current user selection
-				if (RendererOptions.IsDirty)
-				{
-					this.RenderInfo.RefreshRenderType();
-					RendererOptions.IsDirty = false;
-				}
-
-				this.GCodeRenderer.Render3D(this.RenderInfo, e);
-			}
-		}
-
-		internal AxisAlignedBoundingBox GetAabbOfRenderGCode3D()
-		{
-			if (this.RenderInfo != null)
-			{
-				// If needed, update the RenderType flags to match to current user selection
-				if (RendererOptions.IsDirty)
-				{
-					this.RenderInfo.RefreshRenderType();
-					RendererOptions.IsDirty = false;
-				}
-
-				return this.GCodeRenderer.GetAabbOfRender3D(this.RenderInfo);
-			}
-
-			return AxisAlignedBoundingBox.Empty();
-		}
-
-		public void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
-		{
-			if (File.Exists(filePath))
-			{
-				using (var stream = File.OpenRead(filePath))
-				{
-					this.LoadGCode(stream, cancellationToken, progressReporter);
-				}
-			}
-		}
-
 		private RenderType GetRenderType()
 		{
 			var options = this.RendererOptions;
@@ -605,62 +412,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return renderType;
-		}
-
-		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
-		{
-			var settings = this.Printer.Settings;
-			var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
-			var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
-			var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
-			var multiplier = settings.GetValue<double>(SettingsKey.print_time_estimate_multiplier) / 100.0;
-
-			var loadedGCode = GCodeMemoryFile.Load(stream,
-				new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
-				new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
-				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
-				new Vector4(multiplier, multiplier, multiplier, multiplier),
-				cancellationToken,
-				progressReporter);
-
-			this.GCodeRenderer = new GCodeRenderer(loadedGCode)
-			{
-				Gray = AppContext.Theme.IsDarkTheme ? Color.DarkGray : Color.Gray
-			};
-
-			this.RenderInfo = new GCodeRenderInfo(
-					0,
-					// Renderer requires endLayerIndex to be desiredLayer+1: to render layer zero we set endLayerIndex to 1
-					Math.Max(1, this.ActiveLayerIndex + 1),
-					Agg.Transform.Affine.NewIdentity(),
-					1,
-					0,
-					1,
-					this.GetRenderType,
-					(index) => MaterialRendering.Color(this.Printer, index));
-
-			GCodeRenderer.ExtruderWidth = this.Printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-
-			try
-			{
-				// TODO: After loading we reprocess the entire document just to compute filament used. If it's a feature we need, seems like it should just be normal step during load and result stored in a property
-				GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(this.Printer.Settings.GetValue<double>(SettingsKey.filament_diameter));
-			}
-			catch (Exception ex)
-			{
-				Debug.Print(ex.Message);
-			}
-
-			// Assign property causing event and UI load
-			this.LoadedGCode = loadedGCode;
-
-			// Constrain to max layers
-			if (this.ActiveLayerIndex > loadedGCode?.LayerCount)
-			{
-				this.ActiveLayerIndex = loadedGCode.LayerCount;
-			}
-
-			ActiveLayerChanged?.Invoke(this, null);
 		}
 
 		public void InvalidateBedMesh()

@@ -369,14 +369,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string DeviceToken { get; set; }
 		public double VolumeMm3 { get; internal set; }
 
-		public void CommitAndPushToServer()
-		{
-			// push to the web service if registered
-			ApplicationController.Instance.PushPrintTaskToServer?.Invoke(this);
-			// and do the normal commit
-			Commit();
-		}
-
 		public override void Commit()
 		{
 			if (this.PrintEnd != DateTime.MinValue)

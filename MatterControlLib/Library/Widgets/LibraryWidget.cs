@@ -41,7 +41,6 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using static MatterHackers.MatterControl.Library.Widgets.PopupLibraryWidget;
 
@@ -570,7 +569,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 			searchButton.Enabled = activeContainer.Parent != null;
 		}
 
-		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, ILibraryContext libraryContext, MainViewWidget mainViewWidget, ThemeConfig theme, bool allowPrint)
+		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, ILibraryContext libraryContext, MainViewWidget mainViewWidget, ThemeConfig theme)
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
@@ -648,63 +647,6 @@ namespace MatterHackers.MatterControl.Library.Widgets
 					return true;
 				}
 			});
-
-			if (allowPrint)
-			{
-				menuActions.Add(new LibraryAction(ActionScope.ListItem)
-				{
-					Title = "Print".Localize(),
-					Action = (selectedLibraryItems, listView) =>
-					{
-						// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
-						var activeContext = ApplicationController.Instance.DragDropData;
-						var printer = activeContext.View3DWidget.Printer;
-
-						switch (selectedLibraryItems.FirstOrDefault())
-						{
-							case SDCardFileItem sdcardItem:
-								// TODO: Confirm SD printing?
-								// TODO: Need to rewrite library menu item validation can write one off validations like below so we don't end up here
-								//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-								printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
-								break;
-							case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0:
-								if (printer != null)
-								{
-									UiThread.RunOnIdle(async () =>
-									{
-										await printer.Bed.StashAndPrintGCode(fileItem);
-									});
-								}
-
-								break;
-							default:
-							// TODO: Otherwise add the selected items to the plate and print the plate?
-								if (printer != null)
-								{
-									UiThread.RunOnIdle(async () =>
-									{
-										await printer.Bed.StashAndPrint(selectedLibraryItems);
-									});
-								}
-
-								break;
-						}
-					},
-					IsEnabled = (selectedListItems, listView) =>
-					{
-						var communicationState = ApplicationController.Instance.DragDropData?.View3DWidget?.Printer?.Connection.CommunicationState;
-
-						// Singleselect - disallow containers
-						return listView.SelectedItems.Count == 1
-								&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
-								&& !(firstItem is ILibraryContainer)
-								&& (communicationState == CommunicationStates.Connected
-									|| communicationState == CommunicationStates.FinishedPrint)
-								&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
-					}
-				});
-			}
 
 			menuActions.Add(new MenuSeparator("Open"));
 
@@ -1120,7 +1062,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme, allowPrint: false);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>

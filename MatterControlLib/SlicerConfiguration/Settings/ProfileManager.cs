@@ -146,11 +146,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var make = printer.Settings.GetValue(SettingsKey.make);
 			var model = printer.Settings.GetValue(SettingsKey.model);
-			var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
-				make,
-				model);
+            throw new NotImplementedException();
 
-			var ignoreSettings = new HashSet<string>()
+            var ignoreSettings = new HashSet<string>()
 			{
 				SettingsKey.created_date,
 				SettingsKey.active_material_key,
@@ -164,80 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.probe_offset] = "0,0,0"
 			};
 
-			foreach (var localOemSetting in printer.Settings.OemLayer)
-			{
-				var key = localOemSetting.Key;
-				if (!ignoreSettings.Contains(key)
-					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(key)
-					&& serverOemSettings.GetValue(key) != localOemSetting.Value)
-				{
-					var serverSetting = serverOemSettings.GetValue(localOemSetting.Key);
-					if (!serverValuesToIgnore.ContainsKey(key)
-						|| serverSetting != serverValuesToIgnore[key])
-					{
-						oemSettingsNeedingUpdateCache.Add((localOemSetting.Key, localOemSetting.Value, serverSetting));
-					}
-				}
-			}
-
-			oemSettingsNeedingUpdateCache.Sort((a, b) =>
-			{
-				var aInfo = "Unknown";
-				if (PrinterSettings.SettingsData.ContainsKey(a.key))
-				{
-					var aData = PrinterSettings.SettingsData[a.key];
-					var aGroup = aData.OrganizerGroup;
-					var aCategory = aGroup?.Category;
-					aInfo = $"{aCategory?.Name}:{aGroup?.Name}:{aData.PresentationName}";
-				}
-
-				var bInfo = "Unknown";
-				if (PrinterSettings.SettingsData.ContainsKey(b.key))
-				{
-					var bData = PrinterSettings.SettingsData[b.key];
-					var bGroup = bData.OrganizerGroup;
-					var bCategory = bGroup?.Category;
-					bInfo = $"{bCategory?.Name}:{bGroup?.Name}:{bData.PresentationName}";
-				}
-
-				return string.Compare(aInfo, bInfo);
-			});
-
 			return oemSettingsNeedingUpdateCache;
-		}
-
-		public void DeletePrinter(string printerID)
-		{
-			var printerInfo = ProfileManager.Instance[printerID];
-			if (printerInfo != null)
-			{
-				printerInfo.MarkedForDelete = true;
-				ProfileManager.Instance.Save();
-			}
-
-			// TODO: Consolidate ActivePrinters into ProfileManager.OpenPrinters
-			var openedPrinter = ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
-			if (openedPrinter != null)
-			{
-				// Clear selected printer state
-				ProfileManager.Instance.ClosePrinter(printerID);
-			}
-
-			_activeProfileIDs.Remove(printerID);
-
-			UiThread.RunOnIdle(() =>
-			{
-				if (openedPrinter != null)
-				{
-					ApplicationController.Instance.ClosePrinter(openedPrinter);
-				}
-
-				// Notify listeners of a ProfileListChange event due to this printers removal
-				ProfileManager.ProfilesListChanged.CallEvents(this, null);
-
-				// Queue sync after marking printer for delete
-				ApplicationController.QueueCloudProfileSync?.Invoke("SettingsHelpers.SetMarkedForDelete()");
-			});
 		}
 
 		[JsonIgnore]
@@ -307,9 +232,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			ProfileManager.UserChanged?.Invoke(loadedInstance, null);
 
-			// Ensure SQLite printers are imported
-			loadedInstance?.EnsurePrintersImported();
-
 			return loadedInstance;
 		}
 
@@ -346,21 +268,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				return profileIDsBackingField;
-			}
-		}
-
-		public void ClosePrinter(string printerID)
-		{
-			try
-			{
-				// Unregister listener
-				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID) is PrinterConfig printer)
-				{
-					printer.Settings.SettingChanged -= PrinterSettings_SettingChanged;
-				}
-			}
-			catch
-			{
 			}
 		}
 
@@ -411,69 +318,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		/// <summary>
-		/// Loads the specified printer settings, performing recovery options if required
-		/// </summary>
-		/// <param name="printerID">The printer ID to load</param>
-		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
-		/// <returns></returns>
-		public static async Task<PrinterSettings> LoadSettingsAsync(string printerID, bool useActiveInstance = true)
-		{
-			// Check loaded printers for printerID and return if found
-			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID) is PrinterConfig activePrinter)
-			{
-				return activePrinter.Settings;
-			}
-
-			// Only load profiles by ID that are defined in the profiles document
-			var printerInfo = Instance[printerID];
-			if (printerInfo == null)
-			{
-				return null;
-			}
-
-			// Attempt to load from disk, pull from the web or fall back using recovery logic
-			PrinterSettings printerSettings = Instance.LoadSettingsWithoutRecovery(printerID);
-			if (printerSettings != null)
-			{
-				// Make sure we have the name set
-				if (printerSettings.GetValue(SettingsKey.printer_name) == "")
-				{
-					// This can happen when a profile is pushed to a user account from the web.
-					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
-				}
-			}
-			else if (ApplicationController.GetPrinterProfileAsync != null)
-			{
-				// Attempt to load from MCWS if missing on disk
-				printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, null);
-				if (printerSettings != null)
-				{
-					// If successful, persist downloaded profile and return
-					printerSettings.Save(userDrivenChange: false);
-				}
-			}
-
-			// Recover to a default working profile if still null
-			if (printerSettings == null)
-			{
-				printerSettings = await RecoverProfile(printerInfo);
-			}
-
-			// Register listener on non-null settings
-			if (printerSettings != null)
-			{
-				// TODO: This is likely to leak and keep printerSettings in memory in some cases until we combine PrinterConfig
-				// loading into profile manager and have a single owner of loaded printers that can unwire this when their
-				// tabs close
-				//
-				// Register listener
-				printerSettings.SettingChanged += PrinterSettings_SettingChanged;
-			}
-
-			return printerSettings;
-		}
-
 		public static bool SaveOnSingleSettingChange { get; set; } = true;
 
 		// Settings persistence moved from PrinterSettings into ProfileManager to break dependency around ProfileManager paths/MatterControl specific details
@@ -484,51 +328,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				settings.Save();
 			}
-		}
-
-		public static async Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
-		{
-			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (userIsLoggedIn && printerInfo != null)
-			{
-				// Attempt to load from MCWS history
-				var printerSettings = await GetFirstValidHistoryItem(printerInfo);
-				if (printerSettings == null)
-				{
-					// Fall back to OemProfile defaults if load from history fails
-					printerSettings = RestoreFromOemProfile(printerInfo);
-				}
-
-				if (printerSettings == null)
-				{
-					// If we still have failed to recover a profile, create an empty profile with
-					// just enough data to delete the printer
-					printerSettings = PrinterSettings.Empty;
-					printerSettings.ID = printerInfo.ID;
-					printerSettings.UserLayer[SettingsKey.device_token] = printerInfo.DeviceToken;
-					printerSettings.Helpers.SetComPort(printerInfo.ComPort);
-					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
-
-					// Add any setting value to the OemLayer to pass the .PrinterSelected property
-					printerSettings.OemLayer = new PrinterSettingsLayer
-					{
-						{ "empty", "setting" }
-					};
-					printerSettings.Save(userDrivenChange: false);
-				}
-
-				if (printerSettings != null)
-				{
-					// Persist any profile recovered above as the current
-					printerSettings.Save(userDrivenChange: false);
-
-					WarnAboutRevert(printerInfo);
-				}
-
-				return printerSettings;
-			}
-
-			return null;
 		}
 
 		private static bool warningWindowOpen = false;
@@ -576,37 +375,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return oemProfile;
-		}
-
-		private static async Task<PrinterSettings> GetFirstValidHistoryItem(PrinterInfo printerInfo)
-		{
-			Dictionary<string, string> recentProfileHistoryItems = null;
-			if (ApplicationController.GetProfileHistory != null)
-			{
-				recentProfileHistoryItems = await ApplicationController.GetProfileHistory.Invoke(printerInfo.DeviceToken);
-			}
-
-			if (recentProfileHistoryItems != null)
-			{
-				// Iterate history, skipping the first item, limiting to the next five, attempt to load and return the first success
-				foreach (var keyValue in recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).Skip(1).Take(5))
-				{
-					// Attempt to download and parse each profile, returning if successful
-					try
-					{
-						var printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, keyValue.Value);
-						if (printerSettings != null)
-						{
-							return printerSettings;
-						}
-					}
-					catch
-					{
-					}
-				}
-			}
-
-			return null;
 		}
 
 		internal static bool ImportFromExisting(string settingsFilePath, bool resetSettingsForNewProfile, out string printerName)
@@ -818,89 +586,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		public static async Task<PrinterConfig> CreatePrinterAsync(string make, string model, string printerName)
-		{
-			string guid = Guid.NewGuid().ToString();
-
-			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
-			if (publicDevice == null)
-			{
-				return null;
-			}
-
-			var printerSettings = await LoadOemSettingsAsync(publicDevice, make, model);
-			if (printerSettings == null)
-			{
-				return null;
-			}
-
-			printerSettings.ID = guid;
-			printerSettings.DocumentVersion = PrinterSettings.LatestVersion;
-
-			printerSettings.UserLayer[SettingsKey.printer_name] = printerName;
-
-			// Add to Profiles - fires ProfileManager.Save due to ObservableCollection event listener
-			Instance.Profiles.Add(new PrinterInfo
-			{
-				Name = printerName,
-				ID = guid,
-				Make = make,
-				Model = model
-			});
-
-			// Persist changes to PrinterSettings - must come after adding to Profiles above
-			printerSettings.ResetSettingsForNewProfile();
-			printerSettings.Save(userDrivenChange: false);
-
-			// Set as active profile
-			return await ApplicationController.Instance.OpenEmptyPrinter(guid, true);
-		}
-
-		public static async Task<PrinterSettings> LoadOemSettingsAsync(PublicDevice publicDevice, string make, string model)
-		{
-			string cacheScope = Path.Combine("public-profiles", make);
-			string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
-
-			return await ApplicationController.LoadCacheableAsync<PrinterSettings>(
-				publicDevice.CacheKey,
-				cacheScope,
-				async () =>
-				{
-					// The collector specifically returns null to ensure LoadCacheable skips writing the
-					// result to the cache. After this result is returned, it will attempt to load from
-					// the local cache if the collector yielded no result
-					if (File.Exists(cachePath)
-						|| ApplicationController.DownloadPublicProfileAsync == null)
-					{
-						return null;
-					}
-					else
-					{
-						// If the cache file for the current deviceToken does not exist, attempt to download it.
-						// An http 304 results in a null value and LoadCacheable will then load from the cache
-						return await ApplicationController.DownloadPublicProfileAsync(publicDevice.ProfileToken);
-					}
-				},
-				Path.Combine("Profiles", make, model + ProfileManager.ProfileExtension));
-		}
-
-		private void EnsurePrintersImported()
-		{
-			if (IsGuestProfile && !PrintersImported)
-			{
-				int intialCount = this.Profiles.Count;
-
-				// Import Sqlite printer profiles into local json files
-				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance);
-				PrintersImported = true;
-
-				if (intialCount != this.Profiles.Count)
-				{
-					this.Save();
-				}
-			}
-		}
-
 		private static void Profiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			// Any time the list changes, persist the updates to disk
@@ -909,7 +594,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfilesListChanged.CallEvents(null, null);
 
 			// Queue sync after any collection change event
-			ApplicationController.QueueCloudProfileSync?.Invoke("ProfileManager.Profiles_CollectionChanged()");
+			throw new NotImplementedException();
 		}
 
 		private void Printer_SettingsChanged(object sender, StringEventArgs e)

@@ -377,7 +377,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme, allowPrint: true);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>

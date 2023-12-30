@@ -48,12 +48,8 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SQLiteWin32;
@@ -371,46 +367,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner,
-			string make = "Airwolf 3D",
-			string model = "HD",
-			bool runSlow = false,
-			bool pinSettingsOpen = true)
-		{
-			var hardwareTab = testRunner.GetWidgetByName("Hardware Tab", out SystemWindow systemWindow, 10);
-
-			// make sure we wait for MC to be up and running
-			testRunner.WaitforDraw(systemWindow);
-
-			// Load the TestEnv config
-			var config = TestAutomationConfig.Load();
-
-			// Override the heat up time
-			Emulator.DefaultHeatUpTime = config.HeatupTime;
-
-			// Override the temp stabilization time
-			WaitForTempStream.WaitAfterReachTempTime = config.TempStabilizationTime;
-
-			// Create the printer
-			testRunner.AddAndSelectPrinter(make, model)
-				.SwitchToPrinterSettings(pinSettingsOpen)
-				.GetWidgetByName("com_port Field", out GuiWidget serialPortDropDown, out _)
-				// Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
-				.WaitFor(() => serialPortDropDown.Enabled)
-				.ClickByName("com_port Field")
-				.ClickByName("Emulator Menu Item")
-				.ClickByName("Connect to printer button") // connect to the created printer
-				.WaitForName("Disconnect from printer button");
-
-			// replace the old behavior of clicking the 'Already Loaded' button by setting to filament_has_been_loaded.
-			ApplicationController.Instance.ActivePrinters.First().Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-
-			// Access through static instance must occur after Connect has occurred and the port has spun up
-			Emulator.Instance.RunSlow = runSlow;
-
-			return Emulator.Instance;
-		}
-
 		public static AutomationRunner PausePrint(this AutomationRunner testRunner)
 		{
 			testRunner.WaitForWidgetEnabled("Print Progress Dial", 15)
@@ -461,26 +417,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			return testRunner;
-		}
-
-		public static void WaitForLayer(this Emulator emulator, PrinterSettings printerSettings, int layerNumber, double secondsToWait = 30)
-		{
-			var resetEvent = new AutoResetEvent(false);
-
-			var heightAtTargetLayer = printerSettings.GetValue<double>(SettingsKey.layer_height) * layerNumber;
-
-			// Wait for emulator to hit target layer
-			emulator.DestinationChanged += (s, e) =>
-			{
-				// Wait for print to start, then slow down the emulator and continue. Failing to slow down frequently causes a timing issue where the print
-				// finishes before we make it down to 'CloseMatterControlViaUi' and thus no prompt to close appears and the test fails when clicking 'Yes Button'
-				if (emulator.Destination.Z >= heightAtTargetLayer)
-				{
-					resetEvent.Set();
-				}
-			};
-
-			resetEvent.WaitOne((int) (secondsToWait * 1000));
 		}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
@@ -727,24 +663,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner.ClickByName(buttonName);
 		}
 
-		public static AutomationRunner ClickResumeButton(this AutomationRunner testRunner,
-			PrinterConfig printer,
-			bool resume,
-			int expectedLayer)
-		{
-			var buttonName = resume ? "Yes Button" : "No Button";
-			var buttonText = resume ? "Resume" : "OK";
-			testRunner.WaitForName(buttonName, 90, predicate: (w) => w.Children.FirstOrDefault().Text == buttonText);
-			Assert.AreEqual(expectedLayer,
-				printer.Connection.CurrentlyPrintingLayer,
-				$"Expected the paused layer to be {expectedLayer} but was {printer.Connection.CurrentlyPrintingLayer}.");
-
-			testRunner.ClickByName(buttonName)
-				.WaitFor(() => !testRunner.NameExists(buttonName), 2);
-
-			return testRunner;
-		}
-
 		public static AutomationRunner NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			testRunner.EnsureContentMenuOpen();
@@ -930,37 +848,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.Delay(2);
 		}
 
-		public static AutomationRunner WaitForPrintFinished(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
-		{
-			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
-			// click the ok button on the print complete dialog
-			testRunner.ClickByName("Cancel Wizard Button");
-
-			return testRunner;
-		}
-
-		/// <summary>
-		/// Gets a reference to the first and only active printer. Throws if called when multiple active printers exists
-		/// </summary>
-		/// <param name="testRunner">The AutomationRunner in use</param>
-		/// <returns>The first active printer</returns>
-		public static PrinterConfig FirstPrinter(this AutomationRunner testRunner)
-		{
-			Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "FirstPrinter() is only valid in single printer scenarios");
-
-			return ApplicationController.Instance.ActivePrinters.First();
-		}
-
 		public static AutomationRunner CloseFirstPrinterTab(this AutomationRunner testRunner)
 		{
 			// Close all printer tabs
 			throw new NotImplementedException();
 		}
 
-		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
-		{
-			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
-		}
 
 		public static async Task RunTest(
 			AutomationTest testMethod,
@@ -1054,14 +947,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				defaultTestImages,
 				closeWindow: (testRunner) =>
 				{
-					foreach (var printer in ApplicationController.Instance.ActivePrinters)
-					{
-						if (printer.Connection.CommunicationState == CommunicationStates.Printing)
-						{
-							printer.Connection.Disable();
-						}
-					}
-
 					rootSystemWindow.Close();
 
 					testRunner.Delay();
@@ -1114,164 +999,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner StartSlicing(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Generate Gcode Button");
-			return testRunner;
-		}
-
-		public static AutomationRunner OpenPrintPopupMenu(this AutomationRunner testRunner)
-		{
-			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
-
-			if (printerConnection.CommunicationState != CommunicationStates.Connected
-				&& printerConnection.CommunicationState != CommunicationStates.FinishedPrint)
-			{
-				testRunner.ClickByName("Connect to printer button");
-				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
-			}
-
-			// Open PopupMenu
-			testRunner.ClickByName("PrintPopupMenu");
-
-			// Wait for child control
-			testRunner.WaitForName("Start Print Button");
-			return testRunner;
-		}
-
-		public static AutomationRunner WaitForLayerAndResume(this AutomationRunner testRunner, PrinterConfig printer, int indexToWaitFor)
-		{
-			testRunner.WaitForName("Yes Button", 15);
-
-			// Wait for layer
-			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 10, 500);
-			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1, "Active layer index does not match expected");
-
-			testRunner.ClickByName("Yes Button");
-			testRunner.Delay();
-			return testRunner;
-		}
-
-		/// <summary>
-		/// Open the Print popup menu and click the Start Print button
-		/// </summary>
-		/// <param name="testRunner">The AutomationRunner we are using.</param>
-		/// <param name="printer">The printer to run the print on.</param>
-		/// <param name="pauseAtLayers">The string to write into the pause field in the print menu.</param>
-		/// <returns>The automation runner to allow fluid design</returns>
-		public static AutomationRunner StartPrint(this AutomationRunner testRunner,
-			PrinterConfig printer,
-			string pauseAtLayers = null)
-		{
-			// Open popup
-			testRunner.OpenPrintPopupMenu();
-
-			if (pauseAtLayers != null)
-			{
-				testRunner.OpenPrintPopupAdvanced();
-
-				testRunner.ClickByName("Layer(s) To Pause Field");
-				testRunner.Type(pauseAtLayers);
-			}
-
-			if (testRunner.NameExists("SetupPrinter", .2))
-			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
-				{
-					testRunner.ClickByName("SetupPrinter")
-						.ClickByName("Already Loaded Button")
-						.ClickByName("Cancel Wizard Button")
-						.OpenPrintPopupMenu();
-				}
-				else
-				{
-					testRunner.ClickByName("SetupPrinter")
-						.ClickByName("Already Loaded Button")
-						.ClickByName("Cancel Wizard Button")
-						.OpenPrintPopupMenu();
-				}
-			}
-
-			testRunner.ClickByName("Start Print Button");
-
-			return testRunner;
-		}
-
-		/// <summary>
-		/// Open the Print popup menu and click the Start Print button
-		/// </summary>
-		/// <param name="testRunner">The AutomationRunner we are using.</param>
-		/// <param name="printer">The printer to run the print on.</param>
-		/// <param name="exportedGCode">The exported gcode is loaded and put into this variable.</param>
-		/// <returns>The automation runner to allow fluid design</returns>
-		public static AutomationRunner ExportPrintAndLoadGCode(this AutomationRunner testRunner,
-			PrinterConfig printer,
-			out string exportedGCode)
-		{
-			// Open popup
-			testRunner.OpenPrintPopupMenu();
-
-			if (testRunner.NameExists("SetupPrinter"))
-			{
-				testRunner.ClickByName("SetupPrinter")
-					.ClickByName("Already Loaded Button")
-					.ClickByName("Cancel Wizard Button")
-					.OpenPrintPopupMenu();
-			}
-
-			testRunner.ClickByName("Export GCode Button");
-
-			// wait for the export to finish
-			throw new NotImplementedException();
-
-			exportedGCode = "";
-			return testRunner;
-		}
-
-		public static AutomationRunner WaitForPause(this AutomationRunner testRunner, PrinterConfig printer, int expectedLayer)
-		{
-			testRunner.WaitForName("Yes Button", 15, predicate: (w) => w.Children.FirstOrDefault().Text == "Resume");
-			// validate the current layer
-			if (expectedLayer != printer.Connection.CurrentlyPrintingLayer)
-			{
-				throw new Exception($"Expected the paused layer to be {expectedLayer} but was {printer.Connection.CurrentlyPrintingLayer}.");
-			}
-
-			return testRunner;
-		}
-
-		public static void OpenPrintPopupAdvanced(this AutomationRunner testRunner)
-		{
-			// Expand advanced panel if needed
-			if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
-			{
-				testRunner.ClickByName("Advanced Section");
-			}
-
-			// wait for child
-			testRunner.WaitForName("Layer(s) To Pause Field");
-		}
-
-		public static void OpenGCode3DOverflowMenu(this AutomationRunner testRunner)
-		{
-			var button = testRunner.GetWidgetByName("Layers3D Button", out _) as ICheckbox;
-			if (!button.Checked)
-			{
-				testRunner.ClickByName("Layers3D Button");
-			}
-
-			testRunner.ClickByName("View3D Overflow Menu");
-		}
-
-		/// <summary>
-		/// Switch to the primary SliceSettings tab
-		/// </summary>
-		/// <param name="testRunner">The AutomationRunner in use</param>
-		public static AutomationRunner SwitchToSliceSettings(this AutomationRunner testRunner)
-		{
-			OpenSettingsSidebar(testRunner);
-
-			testRunner.WaitForWidgetEnabled("Slice Settings Tab");
-
-			testRunner.ClickByName("Slice Settings Tab");
-
 			return testRunner;
 		}
 

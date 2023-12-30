@@ -680,7 +680,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new Object3DControlBoundingBoxesDrawable(),
 				new SceneTraceDataDrawable(sceneContext),
 				new AABBDrawable(sceneContext),
-				new LevelingDataDrawable(sceneContext),
 			});
 #endif
 			itemDrawables.AddRange(new IDrawableItem[]
@@ -1052,12 +1051,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
-		private Matrix4X4 GetEmulatorNozzleTransform()
-		{
-			var emulator = (PrinterEmulator.Emulator)sceneContext.Printer.Connection.serialPort;
-			return Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
-		}
-
 		private HashSet<IObject3D> editorDrawItems = new HashSet<IObject3D>();
 		private void DrawGlContent(DrawEventArgs e)
 		{
@@ -1108,35 +1101,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in scene.Descendants().Where(i => i is IEditorDrawControled customEditorDraw1 && customEditorDraw1.DoEditorDraw(i == selectedItem)))
 			{
 				editorDrawItems.Add(item);
-			}
-
-			if (sceneContext.Printer?.Connection?.serialPort is PrinterEmulator.Emulator emulator)
-			{
-				void NozzlePositionChanged(object s, EventArgs e2)
-				{
-					// limit max number of updates per second to 10
-					if (UiThread.CurrentTimerMs > lastEmulatorDrawMs + 100)
-					{
-						UiThread.RunOnIdle(Invalidate);
-						// set it to now
-						lastEmulatorDrawMs = UiThread.CurrentTimerMs;
-					}
-				}
-
-				var matrix = GetEmulatorNozzleTransform();
-				GLHelper.Render(emulatorNozzleMesh,
-					MaterialRendering.Color(sceneContext.Printer, emulator.ExtruderIndex),
-					matrix,
-					RenderTypes.Shaded,
-					matrix * World.ModelviewMatrix);
-
-				if (!emulatorHooked)
-				{
-					emulator.DestinationChanged += NozzlePositionChanged;
-					emulatorHooked = true;
-				}
-
-				Closed += (s, e3) => emulator.DestinationChanged -= NozzlePositionChanged;
 			}
 
 			transparentMeshes.Sort(BackToFrontXY);
@@ -1368,16 +1332,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			aabbs.Add(floorDrawable.GetWorldspaceAABB());
 
 			return aabbs;
-		}
-
-		public AxisAlignedBoundingBox GetPrinterNozzleAABB()
-		{
-			if (sceneContext.Printer?.Connection?.serialPort is PrinterEmulator.Emulator emulator)
-			{
-				return emulatorNozzleMesh.GetAxisAlignedBoundingBox().NewTransformed(GetEmulatorNozzleTransform());
-			}
-			
-			return AxisAlignedBoundingBox.Empty();
 		}
 	}
 }

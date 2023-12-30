@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl
 				RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
 				width,
 				height,
-				allowMultiThreading: !ApplicationController.Instance.AnyPrintTaskRunning);
+				true);
 		}
 
 		public ImageBuffer DefaultImage

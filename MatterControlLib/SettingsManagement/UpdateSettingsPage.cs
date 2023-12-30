@@ -123,12 +123,6 @@ namespace MatterHackers.MatterControl
 
 			int tabIndex = 0;
 
-			var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
-				make,
-				model);
-
-			var oemPrinter = new PrinterConfig(serverOemSettings);
-
 			foreach (var setting in ProfileManager.GetOemSettingsNeedingUpdate(printer))
 			{
 				void AddSetting(PrinterConfig printer, string description, string key, Color overlay)
@@ -179,7 +173,6 @@ namespace MatterHackers.MatterControl
 					currentText += ": " + category.Name + " > " + group.Name + " > " + settingData.PresentationName;
 
 					AddSetting(printer, currentText, setting.key, theme.SlightShade);
-					AddSetting(oemPrinter, "Will be updated to:".Localize(), setting.key, Color.Transparent);
 
 					var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
 					{

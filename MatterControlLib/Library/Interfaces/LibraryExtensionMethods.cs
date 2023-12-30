@@ -61,8 +61,6 @@ namespace MatterHackers.MatterControl.Library
 		public static bool IsContentFileType(this ILibraryItem item)
 		{
 			return item is ILibraryObject3D
-				|| item is SDCardFileItem
-				|| item is PrintHistoryItem
 				|| (item is ILibraryAssetStream contentStream
 					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
 		}

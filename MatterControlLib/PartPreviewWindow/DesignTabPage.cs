@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected FlowLayoutWidget leftToRight;
 		protected LibraryListView favoritesBar;
 
-		public PrinterConfig Printer => Workspace.Printer;
-
 		public DesignTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
 			: base(tabTitle)
 		{
@@ -88,14 +86,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The 3D model view
 			view3DWidget = new View3DWidget(
-				Printer,
+				null,
 				sceneContext,
 				viewToolBarControls,
 				theme,
 				this);
 
 			// add in the task display
-			view3DWidget.AddChild(new RunningTasksWidget(theme, Printer)
+			view3DWidget.AddChild(new RunningTasksWidget(theme, null)
 			{
 				MinimumSize = new Vector2(100, 0),
 				Margin = new BorderDouble(9, 0, 0, 9),
