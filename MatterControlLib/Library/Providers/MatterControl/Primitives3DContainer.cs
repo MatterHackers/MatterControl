@@ -111,20 +111,16 @@ namespace MatterHackers.MatterControl.Library
                     async () => await HalfSphereObject3D.Create())
                     { DateCreated = new DateTime(index++) },
 #if DEBUG
-				new GeneratorItem(
-                    "SCAD Script".Localize(),
-                    async () => await OpenScadScriptObject3D.Create())
-                    { DateCreated = new DateTime(index++) },
                 new GeneratorItem(
                     "Dual Contouring".Localize(),
                     async () => await DualContouringObject3D.Create())
                     { DateCreated = new DateTime(index++) },
+#endif
                 new GeneratorItem(
                     "QR Code".Localize(),
                     async () => await QrCodeObject3D.Create())
                     { DateCreated = new DateTime(index++) },
-#endif
-				new GeneratorItem(
+                new GeneratorItem(
                     "Image Converter".Localize(),
                     () =>
                     {

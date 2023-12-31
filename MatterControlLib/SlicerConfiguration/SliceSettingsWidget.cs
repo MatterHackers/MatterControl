@@ -45,8 +45,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
-		private readonly PresetsToolbar settingsControlBar;
-
 		public SettingsContext SettingsContext { get; private set; }
 
         private readonly PrinterConfig printer;
@@ -58,16 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.printer = printer;
 
-			settingsControlBar = new PresetsToolbar(printer, theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5)
-			};
-
 			using (this.LayoutLock())
 			{
-				this.AddChild(settingsControlBar);
-
 				var settingsSection = PrinterSettings.Layout.SlicingSections[0];
 				switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
 				{
@@ -96,38 +86,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab));
 			}
 
-			var scene = printer?.Bed?.Scene;
-			if(scene != null)
-            {
-                scene.Invalidated += Scene_Invalidated;
-
-				this.Closed += (s, e) => scene.Invalidated -= Scene_Invalidated;
-			}
-
 			this.AnchorAll();
 		}
 
 		private bool foundPartSettingsObject;
-
-		private void Scene_Invalidated(object sender, DataConverters3D.InvalidateArgs e)
-		{
-			var scene = printer?.Bed?.Scene;
-			if (scene != null)
-			{
-				if (scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D).Any())
-				{
-					foundPartSettingsObject = true;
-					// if there is a a PartSettingsObject than make sure the settings dislpay is updates on changes
-					UpdateAllStyles();
-				}
-				else if (foundPartSettingsObject)
-                {
-					foundPartSettingsObject = false;
-					// we just delete the last one be sure we still update
-					UpdateAllStyles();
-				}
-			}
-		}
 
         // TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
         private bool showControlBar = true;
@@ -141,7 +103,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			set
 			{
-				settingsControlBar.Visible = value;
 				showControlBar = value;
 			}
 		}

@@ -77,7 +77,6 @@ namespace MatterHackers.MatterControl.DesignTools
             { typeof(Histogram), null },
             { typeof(DateTime), null },
             { typeof(List<string>), null },
-            { typeof(PrinterSettingsLayer), null }
         };
 
         private SafeList<SettingsRow> rows = new SafeList<SettingsRow>();
@@ -630,21 +629,6 @@ namespace MatterHackers.MatterControl.DesignTools
                 };
 
                 rowContainer.AddChild(row2);
-            }
-            else if (propertyValue is PrinterSettingsLayer printerSettingsLayer)
-            {
-                var printerProfile = new PrinterSettings();
-                rowContainer = AddMaterialWidget.CreateSetingsList(printerProfile, printerSettingsLayer, theme);
-
-                rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
-                {
-                    Height = 4 * GuiWidget.DeviceScale
-                }, 0);
-
-                rowContainer.Children.First().AddChild(new HorizontalLine(Color.Green)
-                {
-                    Height = 4 * GuiWidget.DeviceScale
-                });
             }
             else if (propertyValue is ImageBuffer imageBuffer)
             {

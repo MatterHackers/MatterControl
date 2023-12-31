@@ -68,107 +68,7 @@ namespace MatterHackers.MatterControl
         private int sceneChildrenCount = 0;
 		private RunningInterval sceneLayerUpdateInterval;
 
-		/// <summary>
-		/// Make sure any settings object that has been added to the scene is processed right away
-		/// </summary>
-		public void ForceSceneSettingsUpdate()
-		{
-            undoBufferHashCode = ulong.MaxValue;
-            UpdateSceneLayer();
-        }
-
-        private void UpdateSceneLayer()
-        {
-			var scene = Bed?.Scene;
-			if (scene != null)
-			{
-                var undoBuffer = scene.UndoBuffer;
-
-                if (undoBuffer != null
-                    && undoBufferHashCode == undoBuffer.GetLongHashCode()
-                    && sceneChildrenCount == scene.Children.Count)
-                {
-					return;
-                }
-
-				var newSceneOverrides = new PrinterSettingsLayer();
-				// accumulate all the scene overrides ordered by their names, which is the order they will be in the design tree
-				foreach (var partSettingsObject in scene.DescendantsAndSelf().Where(c => c is PartSettingsObject3D && c.Parent?.WorldPrintable() == true).OrderBy(i => i.Name))
-				{
-					var settings = ((PartSettingsObject3D)partSettingsObject).Overrides;
-					foreach (var setting in settings)
-					{
-						newSceneOverrides[setting.Key] = setting.Value;
-					}
-				}
-
-				var same = newSceneOverrides.Count == sceneOverrides.Count && !newSceneOverrides.Except(sceneOverrides).Any();
-				// if settings count and keys are the same, check the value of the settings
-				if (same && sceneOverrides.Count > 0)
-				{
-					// check each setting if it is the same
-					foreach (var kvp in newSceneOverrides)
-					{
-						if (sceneOverrides[kvp.Key] != newSceneOverrides[kvp.Key])
-						{
-							same = false;
-						}
-					}
-				}
-
-				// if they are different 
-				if (!same)
-                {
-                    var settingsToUpdate = new HashSet<string>();
-					var settingsToRevert = new PrinterSettingsLayer();
-                    var settingsToSet = new PrinterSettingsLayer();
-
-					foreach (var kvp in sceneOverrides)
-					{
-                        if (!newSceneOverrides.ContainsKey(kvp.Key))
-                        {
-                            settingsToRevert[kvp.Key] = kvp.Value;
-                        }
-                        settingsToUpdate.Add(kvp.Key);
-                    }
-                    
-					foreach (var kvp in newSceneOverrides)
-					{
-                        if (newSceneOverrides[kvp.Key] != kvp.Value)
-                        {
-                            settingsToSet[kvp.Key] = newSceneOverrides[kvp.Key];
-                        }
-                        settingsToUpdate.Add(kvp.Key);
-                    }
-
-                    // store that current set
-                    var storeSceneOverrides = new PrinterSettingsLayer();
-                    ProfileManager.SaveOnSingleSettingChange = false;
-					Settings.RestoreConflictingUserOverrides(settingsToRevert);
-                    foreach(var setting in newSceneOverrides)
-                    {
-                        Settings.SetValue(setting.Key, setting.Value, storeSceneOverrides);
-                    }
-                    sceneOverrides = storeSceneOverrides;
-                    foreach (var setting in settingsToUpdate)
-                    {
-                        Settings.OnSettingChanged(setting);
-                    }
-                    ProfileManager.SaveOnSingleSettingChange = true;
-                    throw new NotImplementedException();
-                }
-
-                // return the current set
-                if (undoBuffer != null)
-				{
-					undoBufferHashCode = undoBuffer.GetLongHashCode();
-                }
-                
-                sceneChildrenCount = scene.Children.Count;
-			}
-		}
-
-        private PrinterSettingsLayer GetSceneLayer()
+		private PrinterSettingsLayer GetSceneLayer()
         {
             return sceneOverrides;
         }
@@ -185,11 +85,6 @@ namespace MatterHackers.MatterControl
 			// Initialize bed settings
 			this.ReloadBedSettings();
 			this.Bed.InvalidateBedMesh();
-
-            sceneLayerUpdateInterval = UiThread.SetInterval(() =>
-            {
-                UpdateSceneLayer();
-            }, .5);
 		}
 
 

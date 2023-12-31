@@ -47,9 +47,6 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				applicationController.Library.RegisterCreator(item);
 			}
-
-			applicationController.EditorExtensions.RegisterFactory((theme, undoBuffer) => new OpenSCADBuilder());
-			// applicationController.Extensions.Register(new PrimitivesEditor());
 		}
 
 		public PluginInfo MetaData { get; } = new PluginInfo()

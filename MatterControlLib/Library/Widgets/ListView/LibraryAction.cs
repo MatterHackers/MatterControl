@@ -71,9 +71,4 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 		}
 	}
-
-	public abstract class PrintItemMenuExtension
-	{
-		public abstract IEnumerable<LibraryAction> GetMenuItems();
-	}
 }

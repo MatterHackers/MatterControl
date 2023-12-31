@@ -481,8 +481,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Wait for the tree to load before filtering
 			testRunner.WaitFor(() =>
 			{
-				var widget = testRunner.GetWidgetByName("AddPrinterWidget", out _) as AddPrinterWidget;
-				return widget.TreeLoaded;
+				throw new NotImplementedException();
 			});
 
 			// Apply filter

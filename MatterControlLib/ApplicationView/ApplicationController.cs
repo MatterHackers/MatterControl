@@ -538,9 +538,6 @@ namespace MatterHackers.MatterControl
 		// Returns the authentication dialog from the authentication plugin
 		public static Func<AuthenticationContext, DialogPage> GetAuthPage;
 
-		public SlicePresetsPage AcitveSlicePresetsPage { get; set; }
-
-
 		public MainViewWidget MainView;
 
 		private readonly Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
@@ -998,9 +995,8 @@ namespace MatterHackers.MatterControl
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "3mf", "amf", "mcx" }, new MeshContentProvider());
-			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
-			this.Library.ContentProviders.Add(new[] { "scad" }, new OpenScadContentProvider());
+            //this.Library.ContentProviders.Add(new[] { "svg", }, new SvgContentProvider());
 
 			this.InitializeLibrary();
 		}
