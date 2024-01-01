@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,7 +80,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter();
 
-				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
+				throw new NotImplementedException("fix this");
+				//Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
 
 				// Invoke Queue -> Export to Zip dialog
 				testRunner.ClickByName("Queue... Menu");
@@ -100,10 +102,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == 8);
-				Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
+                throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == 8);
+                //Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
-				testRunner.Delay(.3);
+                testRunner.Delay(.3);
 
 				try
 				{
@@ -153,7 +156,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				bool queueEmpty = true;
-				int queueItemCount = QueueData.Instance.ItemCount;
+                throw new NotImplementedException("fix this");
+				int queueItemCount = 0;//  QueueData.Instance.ItemCount;
 
 				if (queueItemCount == 3)
 				{

@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using NUnit.Framework;
@@ -43,10 +44,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				// Expected = initial + 1
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                // Expected = initial + 1
+                throw new NotImplementedException("fix this");
+				int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
-				testRunner.AddAndSelectPrinter();
+                testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -57,10 +59,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 
 				// Wait for expected outcome
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
 
@@ -73,10 +77,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				// Expected = initial + 2;
-				int expectedCount = QueueData.Instance.ItemCount + 2;
+                // Expected = initial + 2;
+                throw new NotImplementedException("fix this");
+                int expectedCount = 0;// QueueData.Instance.ItemCount + 2;
 
-				testRunner.AddAndSelectPrinter();
+                testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -91,12 +96,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					secondsToWait: 2);
 
-				// Wait for expected outcome
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
+                // Wait for expected outcome
+                throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
-				// Assert - two parts added and queue count increases by two
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
+                // Assert - two parts added and queue count increases by two
+                throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
+                Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
@@ -108,7 +115,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				int expectedCount = QueueData.Instance.ItemCount - 1;
+				throw new NotImplementedException("fix this");
+				int expectedCount = 0;// QueueData.Instance.ItemCount - 1;
 
 				testRunner.AddAndSelectPrinter();
 
@@ -119,9 +127,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove item
 				testRunner.LibraryRemoveSelectedItem();
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
 
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
+				throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
 				// Make sure selected item was removed
 				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5), "Mouthpiece part should *not* exist after remove");
@@ -135,7 +145,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				int expectedCount = QueueData.Instance.ItemCount - 2;
+				throw new NotImplementedException("fix this");
+                int expectedCount = 0;// QueueData.Instance.ItemCount - 2;
 
 				testRunner.AddAndSelectPrinter();
 
@@ -146,9 +157,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove items
 				testRunner.LibraryRemoveSelectedItem();
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
 
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
+				throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
 				// Make sure both selected items are removed
 				Assert.IsFalse(testRunner.WaitForName("Row Item Batman.stl", .5), "Batman part should *not* exist after remove");
@@ -190,8 +203,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				// Expected = initial + 1
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                // Expected = initial + 1
+                throw new NotImplementedException("fix this");
+
+                int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
 				testRunner.AddAndSelectPrinter();
 
@@ -205,10 +220,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("Rook.amf"));
 
 				// Wait for expected outcome
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Named widget should exist after add(Rook)");
 
 				return Task.CompletedTask;
@@ -220,8 +237,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				// Expected = initial + 1
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                // Expected = initial + 1
+                throw new NotImplementedException("fix this");
+
+                int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
 				testRunner.AddAndSelectPrinter();
 
@@ -235,10 +254,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("Batman.stl"));
 
 				// Wait for expected outcome
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
-				// Assert - one part  added and queue count increases by one
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+                // Assert - one part  added and queue count increases by one
+				throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
@@ -250,8 +271,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				// Expected = initial + 1
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                // Expected = initial + 1
+                throw new NotImplementedException("fix this");
+
+                int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
 				testRunner.AddAndSelectPrinter();
 
@@ -265,11 +288,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 
 				// Wait for expected outcome
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
+				throw new NotImplementedException("fix this");
+                //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
-				// Assert - one part  added and queue count increases by one
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode"), "Named widget should exist after add(chichen-itza)");
+                // Assert - one part  added and queue count increases by one
+                throw new NotImplementedException("fix this");
+
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+                Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode"), "Named widget should exist after add(chichen-itza)");
 
 				return Task.CompletedTask;
 			});

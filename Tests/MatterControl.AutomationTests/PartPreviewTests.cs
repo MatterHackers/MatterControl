@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -596,16 +597,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                throw new NotImplementedException("fix this");
+				int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
-				testRunner.SaveBedplateToFolder("Test PartA.mcx", "Queue Row Item Collection")
+                testRunner.SaveBedplateToFolder("Test PartA.mcx", "Queue Row Item Collection")
 					.NavigateToLibraryHome()
 					.NavigateToFolder("Queue Row Item Collection");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA.mcx"), "The part we added should be in the library");
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
+                throw new NotImplementedException("fix this");
+                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			});
 		}
 
@@ -622,9 +625,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				int expectedCount = QueueData.Instance.ItemCount + 1;
+                throw new NotImplementedException("fix this");
+				int expectedCount = 0;// QueueData.Instance.ItemCount + 1;
 
-				testRunner.SaveBedplateToFolder("Test PartB", "Local Library Row Item Collection")
+                testRunner.SaveBedplateToFolder("Test PartB", "Local Library Row Item Collection")
 					.NavigateToLibraryHome()
 					.NavigateToFolder("Local Library Row Item Collection");
 

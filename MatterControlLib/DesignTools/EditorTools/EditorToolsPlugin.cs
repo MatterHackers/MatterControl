@@ -40,10 +40,10 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			var applicationController = ApplicationController.Instance;
 
-			var primitives = new Primitives3DContainer();
-			primitives.Load();
+			var sidebar = new SidebarContainer();
+			sidebar.Load();
 
-			foreach (var item in primitives.Items.OfType<ILibraryObject3D>())
+			foreach (var item in sidebar.Items.OfType<ILibraryObject3D>())
 			{
 				applicationController.Library.RegisterCreator(item);
 			}

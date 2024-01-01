@@ -850,38 +850,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var forceAddQueue = false;
-#if DEBUG
-			forceAddQueue = true;
-#endif
-			// only add the queue if there are items in it
-			var queueDirectory = LegacyQueueFiles.QueueDirectory;
-			LegacyQueueFiles.ImportFromLegacy();
-			if (forceAddQueue || Directory.Exists(queueDirectory))
-			{
-				// make sure the queue directory exists
-				Directory.CreateDirectory(queueDirectory);
-
-				this.Library.RegisterContainer(new DynamicContainerLink(
-						"Queue".Localize(),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
-						() => new FileSystemContainer(queueDirectory)
-						{
-							UseIncrementedNameDuringTypeChange = true,
-							DefaultSort = new LibrarySortBehavior()
-							{
-								SortKey = SortKey.ModifiedDate,
-							}
-						}));
-			}
-
-			this.Library.BundledPartsCollectionContainer = new BundledPartsCollectionContainer();
+			this.Library.BundledPartsCollectionContainer = new IncludedPartsCollectionContainer();
 			// this.Library.LibraryCollectionContainer.HeaderMarkdown = "Here you can find the collection of libraries you can use".Localize();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					"Bundled".Localize(),
+					"Included".Localize(),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "design_apps_icon.png")),
 					() => this.Library.BundledPartsCollectionContainer)

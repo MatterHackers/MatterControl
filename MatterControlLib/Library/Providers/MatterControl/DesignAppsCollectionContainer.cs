@@ -35,33 +35,13 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.Library
 {
-    public class BundledPartsCollectionContainer : LibraryContainer
+    public class IncludedPartsCollectionContainer : LibraryContainer
     {
-        public BundledPartsCollectionContainer()
+        public IncludedPartsCollectionContainer()
         {
             this.ChildContainers = new SafeList<ILibraryContainerLink>();
             this.Items = new SafeList<ILibraryItem>();
-            this.Name = "Bundled".Localize();
-
-            this.ChildContainers.Add(
-                new DynamicContainerLink(
-                    "Calibration Parts".Localize(),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
-                    () => new CalibrationPartsContainer())
-                {
-                    IsReadOnly = true
-                });
-
-            this.ChildContainers.Add(
-                new DynamicContainerLink(
-                    "Scripting".Localize(),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "scripting_icon.png")),
-                    () => new ScriptingPartsContainer())
-                {
-                    IsReadOnly = true
-                });
+            this.Name = "Included".Localize();
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
@@ -82,34 +62,6 @@ namespace MatterHackers.MatterControl.Library
                 {
                     IsReadOnly = true
                 });
-
-#if DEBUG
-            int index = 0;
-
-            this.ChildContainers.Add(
-                new DynamicContainerLink(
-                    "Experimental".Localize(),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "experimental.png")),
-                    () => new DynamicContainer()
-                    {
-                        Items = new SafeList<ILibraryItem>()
-                        {
-                            new GeneratorItem(
-                                "Calibration Tab".Localize(),
-                                async () => await XyCalibrationTabObject3D.Create())
-                            { DateCreated = new System.DateTime(index++) },
-                            new GeneratorItem(
-                                "Calibration Face".Localize(),
-                                async () => await XyCalibrationFaceObject3D.Create())
-                            { DateCreated = new System.DateTime(index++) },
-                        },
-                        Name = "Experimental".Localize()
-                    })
-                {
-                    IsReadOnly = true,
-                });
-#endif
         }
 
         public override void Load()

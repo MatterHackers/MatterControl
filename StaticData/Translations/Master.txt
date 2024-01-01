@@ -4981,6 +4981,12 @@ Translated:Show Welcome Message
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 Translated:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 
+English:Sidebar
+Translated:Sidebar
+
+English:Sidebar Items
+Translated:Sidebar Items
+
 English:Sides
 Translated:Sides
 

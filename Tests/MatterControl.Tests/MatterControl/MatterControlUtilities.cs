@@ -619,15 +619,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (!File.Exists(mcpPath))
 			{
-				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new LegacyQueueFiles()
-				{
-					ProjectFiles = new List<PrintItem>()
-				}, Formatting.Indented));
+                throw new NotImplementedException("fix this");
+                //File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new LegacyQueueFiles()
+                //{
+                  //  ProjectFiles = new List<PrintItem>()
+				//}, Formatting.Indented));
 			}
 
-			var queueItemData = JsonConvert.DeserializeObject<LegacyQueueFiles>(File.ReadAllText(mcpPath));
+            throw new NotImplementedException("fix this");
+			var queueItemData = 0;// JsonConvert.DeserializeObject<LegacyQueueFiles>(File.ReadAllText(mcpPath));
 
-			string queueData = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "testitems");
+            string queueData = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "testitems");
 
 			// Create empty TestParts folder
 			Directory.CreateDirectory(queueData);
@@ -638,20 +640,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				string newFilePath = Path.Combine(queueData, Path.GetFileName(file));
 				File.Copy(file, newFilePath, true);
-				queueItemData.ProjectFiles.Add(new PrintItem()
-				{
-					FileLocation = newFilePath,
-					Name = Path.GetFileNameWithoutExtension(file),
-					DateAdded = DateTime.Now
-				});
+                throw new NotImplementedException("fix this");
+                //queueItemData.ProjectFiles.Add(new PrintItem()
+                //{
+                  //  FileLocation = newFilePath,
+//					Name = Path.GetFileNameWithoutExtension(file),
+	//				DateAdded = DateTime.Now
+		//		});
 			}
 
 			File.WriteAllText(mcpPath, JsonConvert.SerializeObject(queueItemData, Formatting.Indented));
 
-			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
-		}
+            throw new NotImplementedException("fix this");
+            //Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
+        }
 
-		public static AutomationRunner OpenUserPopupMenu(this AutomationRunner testRunner)
+        public static AutomationRunner OpenUserPopupMenu(this AutomationRunner testRunner)
 		{
 			return testRunner.ClickByName("User Options Menu");
 		}
