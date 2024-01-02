@@ -1030,6 +1030,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 field.SetValue(dateTime.ToString("MM/dd/yyyy HH:mm"), false);
                 field.ClearUndoHistory();
                 field.Content.HAnchor = HAnchor.Stretch;
+                field.Content.VAnchor |= VAnchor.Center;
                 RegisterValueChanged(property, undoBuffer, context,
                     field,
                     (valueString) => DateTime.Parse(valueString),
@@ -1037,7 +1038,32 @@ namespace MatterHackers.MatterControl.DesignTools
                     {
                         return ((DateTime)value).ToString("MM/dd/yyyy HH:mm");
                     });
+
                 rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+
+                var setDateButtonAttributes = property.PropertyInfo.GetCustomAttributes(true).OfType<SetDateButtonAttribute>();
+                if (setDateButtonAttributes.Any())
+                {
+                    var leftToRight = rowContainer.Descendants().Where(c => c is FlowLayoutWidget flw && flw.FlowDirection == FlowDirection.LeftToRight).FirstOrDefault();
+
+                    foreach (var setDateButtonAttribute in setDateButtonAttributes)
+                    {
+                        var button = new ThemedTextButton(setDateButtonAttribute.ButtonName, theme)
+                        {
+                            Margin = new BorderDouble(5, 0, 0, 0),
+                            BackgroundColor = theme.MinimalShade,
+                            ToolTipText = setDateButtonAttribute.ButtonHint,
+                            VAnchor = VAnchor.Center
+                        };
+
+                        button.Click += (s, e) =>
+                        {
+                            field.SetValue(setDateButtonAttribute.Date.ToString("MM/dd/yyyy HH:mm"), true);
+                        };
+
+                        leftToRight.AddChild(button);
+                    }
+                }
             }
             else if (propertyValue is char charValue)
             {
