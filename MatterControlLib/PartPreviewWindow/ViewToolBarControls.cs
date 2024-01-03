@@ -170,14 +170,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
-				// add the create support before the align
-				if (namedAction is OperationGroup group
-					&& group.Id == "Transform")
-				{
-					this.AddChild(CreateSupportButton(theme));
-					this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
-				}
-
 				if (namedAction is OperationGroup operationGroup)
 				{
 					var expandoSet = new FlowLayoutWidget();
@@ -867,34 +859,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			return libraryPopup;
-		}
-
-		private GuiWidget CreateSupportButton(ThemeConfig theme)
-		{
-			PopupMenuButton toggleSupportButton = null;
-
-			var minimumSupportHeight = .05;
-			if (sceneContext.Printer != null)
-			{
-				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
-			}
-
-			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("edit_support.png", 16, 16).GrayToColor(theme.TextColor), theme)
-			{
-				Name = "Support SplitButton",
-				ToolTipText = "Generate Support".Localize(),
-				DynamicPopupContent = () => new GenerateSupportPanel(AppContext.MenuTheme, sceneContext.Scene, minimumSupportHeight),
-				PopupHAnchor = HAnchor.Fit,
-				PopupVAnchor = VAnchor.Fit,
-				MakeScrollable = false,
-				BackgroundColor = theme.ToolbarButtonBackground,
-				HoverColor = theme.ToolbarButtonHover,
-				MouseDownColor = theme.ToolbarButtonDown,
-				DrawArrow = true,
-				Margin = theme.ButtonSpacing,
-			};
-
-			return toggleSupportButton;
 		}
 
 		private GuiWidget CreateSaveButton(ThemeConfig theme)

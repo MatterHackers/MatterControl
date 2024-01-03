@@ -931,59 +931,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				drawColor = MaterialRendering.Color(sceneContext.Printer, item.WorldMaterialIndex());
 			}
 
-			if (sceneContext.Printer is PrinterConfig printer)
-			{
-				if (printer.InsideBuildVolume(item))
-				{
-					if (printer.Settings.Helpers.HotendCount() > 1)
-					{
-						var materialIndex = item.WorldMaterialIndex();
-						if (materialIndex == -1)
-						{
-							materialIndex = 0;
-						}
-
-						bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
-
-						// Determine if the given item is outside the bounds of the given extruder
-						if (materialIndex < printer.Settings.ToolBounds.Length
-							|| isWipeTower)
-						{
-							var itemAABB = item.WorldAxisAlignedBoundingBox();
-							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
-
-							var activeHotends = new HashSet<int>(new[] { materialIndex });
-
-							if (isWipeTower)
-							{
-								activeHotends.Add(0);
-								activeHotends.Add(1);
-							}
-
-							// Validate against active hotends
-							foreach (var hotendIndex in activeHotends)
-							{
-								if (printer?.Settings?.ToolBounds != null
-									&& hotendIndex < printer.Settings.ToolBounds.Length)
-								{
-									var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
-									if (!hotendBounds.Contains(itemBounds))
-									{
-										// Draw in red outside of the bounds for the hotend
-										drawColor = Color.Red.WithAlpha(90);
-									}
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					// Outside of printer build volume
-					drawColor = new Color(drawColor, 65);
-				}
-			}
-
 			if (drawColor.alpha < 255
 				&& drawColor.alpha > 0
 				&& item is Object3D item3D)

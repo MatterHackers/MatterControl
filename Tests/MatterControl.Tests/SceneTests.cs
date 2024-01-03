@@ -56,8 +56,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
         private readonly Matrix4X4 GreenMatrix = Matrix4X4.CreateTranslation(15, 0, 0);
 
-        private readonly PrintOutputTypes GreenOutputType = PrintOutputTypes.Support;
-
         private readonly int GroupMaterialIndex = 3;
 
         private readonly Matrix4X4 GroupMatrix = Matrix4X4.Identity;
@@ -67,8 +65,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
         private readonly int RedMaterialIndex = 4;
 
         private readonly Matrix4X4 RedMatrix = Matrix4X4.CreateTranslation(10, 0, 0);
-
-        private readonly PrintOutputTypes RedOutputType = PrintOutputTypes.Support;
 
         private readonly int RootMaterialIndex = 1;
 
@@ -100,7 +96,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Mesh = PlatonicSolids.CreateCube(20, 20, 20),
                 Name = "test1",
-                OutputType = PrintOutputTypes.Support,
                 Color = Color.Red,
                 MaterialIndex = 2,
             });
@@ -127,7 +122,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
             IObject3D item1 = loadedItem.Children.Last();
             Assert.AreEqual("test1", item1.Name);
-            Assert.AreEqual(PrintOutputTypes.Support, item1.OutputType);
             Assert.AreEqual(2, item1.MaterialIndex);
             Assert.AreEqual(Color.Red, item1.Color);
             Assert.AreEqual(12, item1.Mesh.Faces.Count);
@@ -362,7 +356,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
                 Color = Color.Red,
                 MaterialIndex = this.RedMaterialIndex,
                 Matrix = this.RedMatrix,
-                OutputType = this.RedOutputType
             });
 
             group = new Object3D()
@@ -380,7 +373,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
                 Color = Color.Green,
                 MaterialIndex = this.GreenMaterialIndex,
                 Matrix = this.GreenMatrix,
-                OutputType = this.GreenOutputType
             });
 
             group = new Object3D()
@@ -511,9 +503,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(this.RootOutputType, scene.OutputType, "OutputType property on root should be RootOutputType");
             Assert.AreEqual(this.RootOutputType, scene.WorldOutputType(), "WorldOutputType on root should be RootOutputType");
 
-            // Validate red node
-            Assert.AreEqual(this.RedOutputType, redItem.OutputType, "Color property on node should be Red");
-
             // Validate WorldColor with non-ancestor param
             Assert.AreEqual(this.RootOutputType, redItem.WorldOutputType(nonAncestor), "WorldOutputType on Red with non-ancestor should be RootOutputType");
         }
@@ -599,12 +588,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.AreEqual(this.RootOutputType, scene.WorldOutputType(), "WorldOutputType on root should be RootOutputType");
 
             // Validate red node
-            Assert.AreEqual(this.RedOutputType, redItem.OutputType, "OutputType property on node should be RedOutputType");
             Assert.AreEqual(this.GroupOutputType, redItem.WorldOutputType(redItem.Parent), "WorldOutputType on Red up to parent node should be GroupOutputType");
             Assert.AreEqual(this.SuperGroupOutputType, redItem.WorldOutputType(superGroup), "WorldOutputType on Red up to supergroup should be SuperGroupOutputType");
 
             // Validate green node
-            Assert.AreEqual(this.GreenOutputType, greenItem.OutputType, "OutputType property on node should be GreenOutputType");
             Assert.AreEqual(this.GroupOutputType, greenItem.WorldOutputType(greenItem.Parent), "WorldOutputType on Green up to parent node should be GroupOutputType");
             Assert.AreEqual(this.SuperGroupOutputType, greenItem.WorldOutputType(superGroup), "WorldOutputType on Green up to supergroup should be SuperGroupOutputType");
 

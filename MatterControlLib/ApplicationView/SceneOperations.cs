@@ -860,17 +860,6 @@ namespace MatterHackers.MatterControl
 						RepairOperation(),
 					}
 				},
-				new OperationGroup("Printing")
-				{
-					TitleGetter = () => "Printing".Localize(),
-					Visible = OperationGroup.GetVisible("Path", false),
-					Operations = new List<SceneOperation>()
-					{
-						ToggleSupportOperation(),
-						ToggleWipeTowerOperation(),
-						ToggleFuzzyOperation(),
-					}
-				},
 				new OperationGroup("Constraints")
 				{
 					TitleGetter = () => "Constraints".Localize(),
@@ -1397,98 +1386,6 @@ namespace MatterHackers.MatterControl
 				Icon = (theme) => StaticData.Instance.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
 				HelpTextGetter = () => "At least 2 parts must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, true),
-			};
-		}
-
-		private static SceneOperation ToggleSupportOperation()
-		{
-			return new SceneOperation("Convert to Support")
-			{
-				TitleGetter = () => "Convert to Support".Localize(),
-				Action = (sceneContext) =>
-				{
-					var scene = sceneContext.Scene;
-					var selectedItem = scene.SelectedItem;
-					if (selectedItem != null)
-					{
-						bool allAreSupport = false;
-						if (selectedItem is SelectionGroupObject3D)
-						{
-							allAreSupport = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Support);
-						}
-						else
-						{
-							allAreSupport = selectedItem.OutputType == PrintOutputTypes.Support;
-						}
-
-						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
-					}
-				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("support.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
-			};
-		}
-
-		private static SceneOperation ToggleWipeTowerOperation()
-		{
-			return new SceneOperation("Convert to Wipe Tower")
-			{
-				TitleGetter = () => "Convert to Wipe Tower".Localize(),
-				Action = (sceneContext) =>
-				{
-					var scene = sceneContext.Scene;
-					var selectedItem = scene.SelectedItem;
-					if (selectedItem != null)
-					{
-						bool allAreWipeTower = false;
-
-						if (selectedItem is SelectionGroupObject3D)
-						{
-							allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
-						}
-						else
-						{
-							allAreWipeTower = selectedItem.OutputType == PrintOutputTypes.WipeTower;
-						}
-
-						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
-					}
-				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("wipe_tower.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
-			};
-		}
-
-		private static SceneOperation ToggleFuzzyOperation()
-		{
-			return new SceneOperation("Convert to Fuzzy Region")
-			{
-				TitleGetter = () => "Convert to Fuzzy Region".Localize(),
-				Action = (sceneContext) =>
-				{
-					var scene = sceneContext.Scene;
-					var selectedItem = scene.SelectedItem;
-					if (selectedItem != null)
-					{
-						bool allAreFuzzy = false;
-
-						if (selectedItem is SelectionGroupObject3D)
-						{
-							allAreFuzzy = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Fuzzy);
-						}
-						else
-						{
-							allAreFuzzy = selectedItem.OutputType == PrintOutputTypes.Fuzzy;
-						}
-
-						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreFuzzy ? PrintOutputTypes.Default : PrintOutputTypes.Fuzzy));
-					}
-				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("fuzzy_region.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
-				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 

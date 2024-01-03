@@ -94,50 +94,7 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private static bool InsideHotendBounds(this PrinterConfig printer, IObject3D item)
-		{
-			if (printer.Settings.Helpers.HotendCount() == 1)
-			{
-				return true;
-			}
-
-			var materialIndex = item.WorldMaterialIndex();
-			if (materialIndex == -1)
-			{
-				materialIndex = 0;
-			}
-
-			bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
-
-			// Determine if the given item is outside the bounds of the given extruder
-			if (materialIndex < printer.Settings.ToolBounds.Length
-				|| isWipeTower)
-			{
-				var itemAABB = item.WorldAxisAlignedBoundingBox();
-				var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
-
-				var activeHotends = new HashSet<int>(new[] { materialIndex });
-
-				if (isWipeTower)
-				{
-					activeHotends.Add(0);
-					activeHotends.Add(1);
-				}
-
-				// Validate against active hotends
-				foreach (var hotendIndex in activeHotends)
-				{
-					var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
-					if (!hotendBounds.Contains(itemBounds))
-					{
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
+		
 		/// <summary>
 		/// Filters items from a given source returning only persistable items inside the Build Volume
 		/// </summary>
@@ -149,7 +106,6 @@ namespace MatterHackers.MatterControl
 			return source.VisibleMeshes().Where(item => item.WorldPersistable()
 				&& item.WorldPrintable()
 				&& printer.InsideBuildVolume(item)
-				&& printer.InsideHotendBounds(item)
 				&& !item.GetType().GetCustomAttributes(typeof(NonPrintableAttribute), true).Any());
 		}
 	}

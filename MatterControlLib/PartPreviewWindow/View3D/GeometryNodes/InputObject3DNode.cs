@@ -35,12 +35,16 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
 {
     public class InputObject3DNode : NodeObject
     {
+        public InputObject3DNode()
+        {
+        }
+        
         public InputObject3DNode(IObject3D object3D)
         {
-            NodeObjects = new AscendableSafeList<IObject3D>(new[] { object3D }, null);
+            Object3D = object3D;
         }
 
-        [JsonConverter(typeof(JsonIObject3DChildrenConverter))]
-        public AscendableSafeList<IObject3D> NodeObjects { get; set; }
+        [JsonConverter(typeof(JsonIObject3DConverter))]
+        public IObject3D Object3D { get; set; }
     }
 }

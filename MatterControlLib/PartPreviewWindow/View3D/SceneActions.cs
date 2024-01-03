@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             IObject3D itemToLayFlat = null;
             Mesh meshWithLowest = null;
 
-            var items = objectToLayFlat.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
+            var items = objectToLayFlat.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Hole);
             if (!items.Any())
             {
                 items = objectToLayFlat.VisibleMeshes();
@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity, (item) =>
                 {
-                    return item.OutputType != PrintOutputTypes.Support;
+                    return item.OutputType != PrintOutputTypes.Hole;
                 });
                 Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
 

@@ -357,16 +357,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 TextWidget otherText = null;
                 GuiWidget holeContainer = null;
                 GuiWidget solidContainer = null;
-                void SetOtherOutputSelection(string text)
-                {
-                    otherText.Text = text;
-                    otherContainer.Visible = true;
-                    holeContainer.BackgroundOutlineWidth = 0;
-                    holeButton.BackgroundOutlineWidth = 1;
-
-                    solidContainer.BackgroundOutlineWidth = 0;
-                    solidButton.BackgroundOutlineWidth = 1;
-                }
 
                 var scaledButtonSize = 24 * GuiWidget.DeviceScale;
                 void SetButtonStates()
@@ -394,18 +384,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             solidButton.BackgroundOutlineWidth = 2;
                             solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
                             otherContainer.Visible = false;
-                            break;
-
-                        case PrintOutputTypes.Support:
-                            SetOtherOutputSelection("Support".Localize());
-                            break;
-
-                        case PrintOutputTypes.WipeTower:
-                            SetOtherOutputSelection("Wipe Tower".Localize());
-                            break;
-
-                        case PrintOutputTypes.Fuzzy:
-                            SetOtherOutputSelection("Fuzzy".Localize());
                             break;
                     }
                 }
