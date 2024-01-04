@@ -276,7 +276,8 @@ namespace MatterHackers.MatterControl
 			};
 			textSizeApplyButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				GuiWidget.DeviceScale = textSizeSlider.Value;
+				var valueToTenths = Math.Round(textSizeSlider.Value, 1);
+				GuiWidget.DeviceScale = valueToTenths;
 				ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 			});
 			optionalContainer.AddChild(textSizeApplyButton);
