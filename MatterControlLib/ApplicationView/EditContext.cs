@@ -63,8 +63,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool FreezeGCode { get; set; }
-
 		public event EventHandler SourceItemChanged;
 
 		private ILibraryItem _sourceItem;
@@ -85,79 +83,30 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool IsGGCodeSource => (this.SourceItem as ILibraryAsset)?.ContentType == "gcode";
-
-		// Override or natural path
-		public async Task<string> GCodeFilePath(PrinterConfig printer)
-		{
-			var path = await this.GCodeOverridePath(printer);
-			if (File.Exists(path))
-			{
-				return path;
-			}
-
-			return await GCodePath(printer);
-		}
-
-		public static string GCodeFilePath(PrinterConfig printer, IObject3D object3D)
-		{
-			using (var memoryStream = new MemoryStream())
-			{
-				// Write JSON
-				object3D.SaveTo(memoryStream);
-
-				// Reposition
-				memoryStream.Position = 0;
-
-				// Calculate
-				string fileHashCode = HashGenerator.ComputeSHA1(memoryStream);
-
-				ulong settingsHashCode = printer.Settings.GetGCodeCacheKey();
-
-				return Path.Combine(
-					ApplicationDataStorage.Instance.GCodeOutputPath,
-					$"{fileHashCode}_{ settingsHashCode}.gcode");
-			}
-		}
-
 		public async Task Save(IObject3D scene)
 		{
-			if (!this.FreezeGCode)
+			if (this.SourceItem != null)
 			{
-				if (this.SourceItem != null)
-				{
-					ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
-				}
+				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
+			}
 
-				if (scene is InteractiveScene interactiveScene)
+			if (scene is InteractiveScene interactiveScene)
+			{
+				using (new SelectionMaintainer(interactiveScene))
 				{
-					using (new SelectionMaintainer(interactiveScene))
-					{
-						// Call save on the provider
-						await this.ContentStore?.Save(this.SourceItem, scene);
-					}
-
-					interactiveScene.MarkSavePoint();
-				}
-				else
-                {
 					// Call save on the provider
 					await this.ContentStore?.Save(this.SourceItem, scene);
 				}
+
+				interactiveScene.MarkSavePoint();
+			}
+			else
+			{
+				// Call save on the provider
+				await this.ContentStore?.Save(this.SourceItem, scene);
 			}
 		}
         
-        // Natural path
-        private async Task<string> GCodePath(PrinterConfig printer)
-		{
-			if (File.Exists(this.SourceFilePath))
-			{
-				return await this.GetGCodePath(printer, this.SourceFilePath);
-			}
-
-			return null;
-		}
-
 		public static string[] GetFileNamesFromMcx(string mcxFileName)
 		{
 			// add in the cache path
@@ -173,59 +122,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return null;
-		}
-
-
-		/// <summary>
-		/// Returns the computed GCode path given a content file path and considering current settings
-		/// </summary>
-		/// <param name="printer">The associated printer</param>
-		/// <param name="fileLocation">The source file</param>
-		/// <returns>The target GCode path</returns>
-		private async Task<string> GetGCodePath(PrinterConfig printer, string fileLocation)
-		{
-			if (fileLocation.Trim() != "")
-			{
-				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
-				{
-					return fileLocation;
-				}
-
-				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
-
-				var fileExtension = Path.GetExtension(fileLocation).ToUpper();
-				if (fileExtension == ".MCX")
-				{
-					var hashCode = fileHashCode.GetLongHashCode();
-					var fileNames = GetFileNamesFromMcx(fileLocation);
-					foreach (var file in fileNames)
-					{
-						var fullPath = Object3DExtensions.ResolveFilePath(file, null, CancellationToken.None);
-						if (File.Exists(fullPath))
-						{
-							hashCode = File.GetLastWriteTime(fullPath).ToString().GetLongHashCode(hashCode);
-						}
-					}
-
-					fileHashCode = hashCode.ToString();
-				}
-
-				ulong settingsHashCode = printer.Settings.GetGCodeCacheKey();
-
-				return Path.Combine(
-					ApplicationDataStorage.Instance.GCodeOutputPath,
-					$"{fileHashCode}_{ settingsHashCode}.gcode");
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		// Override path
-		private async Task<string> GCodeOverridePath(PrinterConfig printer)
-		{
-			return Path.ChangeExtension(await GCodePath(printer), GCodeFile.PostProcessedExtension);
 		}
 	}
 }

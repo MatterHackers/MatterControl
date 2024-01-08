@@ -408,11 +408,26 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         {
             var selectedItem = view3DWidget.Scene.SelectedItem;
 
+            ScrollArea.CloseChildren();
+
+            if (this.geometryNodes != null)
+            {
+                // save the scale and position
+                this.geometryNodes.Scale = LayerScale;
+                this.geometryNodes.UnscaledRenderOffset = UnscaledRenderOffset;
+            }
+
             // Change tree selection to current node
             if (selectedItem != null
                 && selectedItem is NodesObject3D geometryNodes)
             {
                 this.geometryNodes = geometryNodes;
+
+                // Set the editor to the current node
+                UnscaledRenderOffset = geometryNodes.UnscaledRenderOffset;
+                LayerScale = geometryNodes.Scale;
+                AdjustScrollArea();
+
 
                 var yOffset = 0;
                 foreach (var node in geometryNodes.Nodes)
@@ -448,7 +463,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     if (node is InputObject3DNode inputObject)
                     {
                         var propertyEditor = new PropertyEditor(theme, UndoBuffer);
-                        var propertyWidget = propertyEditor.Create(inputObject.Object3D, UndoBuffer, theme);
+                        var propertyWidget = propertyEditor.Create(inputObject.Children.First(), UndoBuffer, theme);
                         foreach(var widget in propertyWidget.Descendants())
                         {
                             widget.DoubleBuffer = false;
@@ -473,7 +488,6 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             {
                 // Clear the editor of any controls
                 this.geometryNodes = null;
-                ScrollArea.CloseChildren();
             }
         }
     }

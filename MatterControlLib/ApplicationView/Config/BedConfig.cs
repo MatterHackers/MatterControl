@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl
 		[JsonIgnore]
 		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
-		public bool EditableScene => this.EditContext?.FreezeGCode != true;
+		public bool EditableScene => true;
 
 		public string ContentType { get; private set; }
 

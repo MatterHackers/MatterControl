@@ -34,6 +34,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ using System.Threading.Tasks;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 {
+    [HideMeterialAndColor]
     public class NodesObject3D : Object3D
     {
         private CancellationTokenSource cancellationToken;
@@ -52,11 +54,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             Name = "Geometry Nodes".Localize();
         }
 
-        [JsonConverter(typeof(JsonINodeObjectConverter))]
         public SafeList<INodeObject> Nodes { get; set; } = new SafeList<INodeObject>();
 
-        public Vector2 UscaledViewOffset { get; set; } = Vector2.Zero;
+        [HideFromEditor]
+        public Vector2 UnscaledRenderOffset { get; set; } = Vector2.Zero;
 
+        [HideFromEditor]
         public double Scale { get; set; } = 1;
 
         public override Task Rebuild()

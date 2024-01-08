@@ -6379,6 +6379,12 @@ Translated:Unpin
 English:Unplug printer USB cable from computer
 Translated:Unplug printer USB cable from computer
 
+English:Unscaled Render Offset
+Translated:Unscaled Render Offset
+
+English:Unscaled View Offset
+Translated:Unscaled View Offset
+
 English:Unsupported Baud Rate
 Translated:Unsupported Baud Rate
 

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
@@ -41,10 +42,10 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
         
         public InputObject3DNode(IObject3D object3D)
         {
-            Object3D = object3D;
+            Children.Add(object3D);
         }
 
         [JsonConverter(typeof(JsonIObject3DConverter))]
-        public IObject3D Object3D { get; set; }
+        public AscendableSafeList<IObject3D> Children { get; set; } = new AscendableSafeList<IObject3D>(null);
     }
 }

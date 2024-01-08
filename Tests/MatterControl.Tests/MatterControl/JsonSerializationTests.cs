@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.Agg.Tests
@@ -50,13 +51,23 @@ namespace MatterHackers.Agg.Tests
                 Height = 100
             };
 
+            var containerObject = new Object3D()
+            {
+                Name = "Container",
+            };
+
+            containerObject.Children.Add(cubeObject);
+
             // Act: Serialize the cubeObject to JSON and then Deserialize it back
-            var json = await cubeObject.ToJson();
-            var deserializedCubeObject = JsonConvert.DeserializeObject(json,
+            var json = await containerObject.ToJson();
+            var item = JsonConvert.DeserializeObject(json,
                 new JsonSerializerSettings()
                 {
                     Converters = { new JsonIObject3DConverter() }
-                }) as CubeObject3D;
+                });
+            var deserializedObject = item as Object3D;
+
+            var deserializedCubeObject = deserializedObject.Children.First() as CubeObject3D;
 
             // Assert: Check if the deserialized object's properties match the original object's properties
             Assert.IsNotNull(deserializedCubeObject);
@@ -86,7 +97,7 @@ namespace MatterHackers.Agg.Tests
 
             // Assert: Check if the deserialized object's properties match the original object's properties
             Assert.IsNotNull(deserializedInputObject);
-            var deserializedCubeObject = deserializedInputObject.Object3D as CubeObject3D;
+            var deserializedCubeObject = deserializedInputObject.Children.First() as CubeObject3D;
             Assert.IsNotNull(cubeObject);
             Assert.IsTrue(cubeObject is CubeObject3D);
             // make sure the object is a cube and has the same properties
