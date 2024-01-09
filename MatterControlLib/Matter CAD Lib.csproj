@@ -66,9 +66,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj" />
+    <ProjectReference Include="..\MatterControl.Common\Matter CAD.Common.csproj" />
     <ProjectReference Include="..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj" />
-    <ProjectReference Include="..\MatterControl.OpenGL\MatterControl.OpenGL.csproj" />
     <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />

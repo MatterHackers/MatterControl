@@ -38,7 +38,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
@@ -280,8 +279,6 @@ namespace MatterHackers.MatterControl
 		[JsonIgnore]
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
-		public GCodeRenderInfo RenderInfo { get; set; }
-
 		private Mesh _bedMesh;
 
 		[JsonIgnore]
@@ -374,44 +371,6 @@ namespace MatterHackers.MatterControl
 					printCenter.Y + bedSize.Y / 2, // max y
 					buildHeight); // max z
 			}
-		}
-
-		private RenderType GetRenderType()
-		{
-			var options = this.RendererOptions;
-
-			RenderType renderType = RenderType.Extrusions;
-
-			if (options.RenderMoves)
-			{
-				renderType |= RenderType.Moves;
-			}
-
-			if (options.RenderRetractions)
-			{
-				renderType |= RenderType.Retractions;
-			}
-
-			if (options.GCodeLineColorStyle == "Speeds")
-			{
-				renderType |= RenderType.SpeedColors;
-			}
-			else if (options.GCodeLineColorStyle != "Materials")
-			{
-				renderType |= RenderType.GrayColors;
-			}
-
-			if (options.SimulateExtrusion)
-			{
-				renderType |= RenderType.SimulateExtrusion;
-			}
-
-			if (options.TransparentExtrusion)
-			{
-				renderType |= RenderType.TransparentExtrusion;
-			}
-
-			return renderType;
 		}
 
 		public void InvalidateBedMesh()

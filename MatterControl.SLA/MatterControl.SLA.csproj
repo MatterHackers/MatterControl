@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj">
+    <ProjectReference Include="..\MatterControl.Common\Matter CAD.Common.csproj">
     </ProjectReference>
     <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">

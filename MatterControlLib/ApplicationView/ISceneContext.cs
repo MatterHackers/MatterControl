@@ -29,13 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;

@@ -15,8 +15,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
-    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj" />
-    <ProjectReference Include="..\MatterControlLib\MatterControlLib.csproj" />
+    <ProjectReference Include="..\MatterControl.Common\Matter CAD.Common.csproj" />
+    <ProjectReference Include="..\MatterControlLib\Matter CAD Lib.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />

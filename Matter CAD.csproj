@@ -66,12 +66,12 @@
 		<ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj" />
 		<ProjectReference Include="MatterControl.SLA\MatterControl.SLA.csproj" />
 		<ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj" />
-		<ProjectReference Include="MatterControlLib\MatterControlLib.csproj" />
+		<ProjectReference Include="MatterControlLib\Matter CAD Lib.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\Glfw\GlfwProvider.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
-		<ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj" />
+		<ProjectReference Include="MatterControl.Common\Matter CAD.Common.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="application.ico">
