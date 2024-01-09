@@ -56,6 +56,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
         public SafeList<INodeObject> Nodes { get; set; } = new SafeList<INodeObject>();
 
+        public SafeList<NodeConnection> Connections { get; set; } = new SafeList<NodeConnection>();
+
         [HideFromEditor]
         public Vector2 UnscaledRenderOffset { get; set; } = Vector2.Zero;
 
