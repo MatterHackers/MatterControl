@@ -77,7 +77,7 @@ namespace MatterControlLib.DesignTools.Operations.Path
         private VertexStorage vertexStorage;
 
         // the last vertex storage before the last change
-        private VertexStorage beforeLastChange;
+        private string dStringAtLastUndoState;
 
         private ControlPointConstraint controlPointConstraint = ControlPointConstraint.Free;
 
@@ -119,8 +119,7 @@ namespace MatterControlLib.DesignTools.Operations.Path
             this.vertexChanged = vertexChanged;
             this.theme = theme;
             this.vertexStorage = vertexStorage;
-            beforeLastChange = new VertexStorage();
-            beforeLastChange.SvgDString = vertexStorage.SvgDString;
+            dStringAtLastUndoState = vertexStorage.SvgDString;
 
             var toolBar = new FlowLayoutWidget()
             {
@@ -394,6 +393,73 @@ namespace MatterControlLib.DesignTools.Operations.Path
             }
         }
 
+        public override void OnKeyDown(KeyEventArgs keyEvent)
+        {
+            // this must be called first to ensure we get the correct Handled state
+            base.OnKeyDown(keyEvent);
+            if (!keyEvent.Handled)
+            {
+                switch (keyEvent.KeyCode)
+                {
+                    case Keys.Escape:
+                        if (SelectedPoints.Count > 0)
+                        {
+                            // move the selected points back to their original positions
+
+                            // and mark the keys as handled
+                            keyEvent.SuppressKeyPress = true;
+                            keyEvent.Handled = true;
+                        }
+                        break;
+
+                    case Keys.Delete:
+                    case Keys.Back:
+                        if (SelectedPoints.Count > 0)
+                        {
+                            var vertexStorageWithDelete = new VertexStorage(this.vertexStorage.SvgDString);
+
+                            for(int i=SelectedPoints.Count - 1; i >= 0; i--)
+                            {
+                                var pointIndex = SelectedPoints[i];
+                                if (pointIndex > 0
+                                    && pointIndex < vertexStorageWithDelete.Count)
+                                {
+                                    vertexStorageWithDelete.RemoveAt(pointIndex);
+                                }
+                            }
+
+                            // delete the selected points
+                            ModifyVertexStorageAndAddUndo(vertexStorageWithDelete.SvgDString);
+
+                            // and mark the keys as handled
+                            keyEvent.SuppressKeyPress = true;
+                            keyEvent.Handled = true;
+                        }
+                        break;
+
+                    case Keys.Space:
+                        if (SelectedPoints.Count > 0)
+                        {
+                            // clear the selection
+
+                            // and mark the keys as handled
+                            keyEvent.SuppressKeyPress = true;
+                            keyEvent.Handled = true;
+                        }
+                        break;
+
+                    case Keys.Left:
+                        // move the selected points left
+                        break;
+
+                    case Keys.Right:
+                        // move the selected points right
+                        break;
+
+                }
+            }
+        }
+
         private void UpdateControlsForSelection()
         {
             if (SelectedPoints.Count() != 1)
@@ -544,24 +610,27 @@ namespace MatterControlLib.DesignTools.Operations.Path
 
             if (recordUndo)
             {
-                var doVertexBuffer = new VertexStorage();
-                doVertexBuffer.SvgDString = vertexStorage.SvgDString;
-
-                var undoVertexBuffer = new VertexStorage();
-                undoVertexBuffer.SvgDString = beforeLastChange.SvgDString;
-
-                undoBuffer.AddAndDo(new UndoRedoActions(() =>
-                {
-                    vertexStorage.SvgDString = undoVertexBuffer.SvgDString;
-                    vertexChanged?.Invoke();
-                }, () =>
-                {
-                    vertexStorage.SvgDString = doVertexBuffer.SvgDString;
-                    vertexChanged?.Invoke();
-                }));
-                // record the change
-                beforeLastChange.SvgDString = vertexStorage.SvgDString;
+                ModifyVertexStorageAndAddUndo(vertexStorage.SvgDString);
             }
+        }
+
+        private void ModifyVertexStorageAndAddUndo(string newSvgDString)
+        {
+            var doVertexBuffer = new VertexStorage(newSvgDString);
+            var undoVertexBuffer = new VertexStorage(dStringAtLastUndoState);
+
+            undoBuffer.AddAndDo(new UndoRedoActions(() =>
+            {
+                vertexStorage.SvgDString = undoVertexBuffer.SvgDString;
+                vertexChanged?.Invoke();
+            }, () =>
+            {
+                vertexStorage.SvgDString = doVertexBuffer.SvgDString;
+                vertexChanged?.Invoke();
+            }));
+
+            // record the change
+            dStringAtLastUndoState = newSvgDString;
         }
 
         private void DoTranslateAndZoom(MouseEventArgs mouseEvent)

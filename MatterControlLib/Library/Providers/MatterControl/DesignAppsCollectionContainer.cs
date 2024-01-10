@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
-                    "Primitives 3D".Localize(),
+                    "3D Primitives".Localize(),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
                     () => new Primitives3DContainer())
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
-                    "Primitives 2D".Localize(),
+                    "2D Primitives".Localize(),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
                     () => new Primitives2DContainer())

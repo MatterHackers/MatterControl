@@ -241,7 +241,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Path))
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
