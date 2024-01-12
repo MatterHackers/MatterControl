@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
@@ -109,6 +110,10 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             {
                 if (_layerScale != value)
                 {
+                    if (value > .95 && value < 1.05)
+                    {
+                        value = 1;
+                    }
                     _layerScale = value;
                     ScaleChanged?.Invoke();
                 }
@@ -406,6 +411,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             AdjustScrollArea();
         }
 
+        private Dictionary<int, GuiWidget> nodeToWindow = new Dictionary<int, GuiWidget>();
+
         private void Scene_SelectionChanged(object sender, EventArgs e)
         {
             var selectedItem = view3DWidget.Scene.SelectedItem;
@@ -420,6 +427,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 ScrollArea.BeforeDraw -= ScrollArea_BeforeDraw;
             }
 
+            var newNodeToWindow = new Dictionary<int, GuiWidget>();
             // Change tree selection to current node
             if (selectedItem != null
                 && selectedItem is NodesObject3D nodeObject3D)
@@ -431,17 +439,20 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 LayerScale = geometryNodes.Scale;
                 AdjustScrollArea();
 
-
                 var yOffset = 0;
-                foreach (var node in geometryNodes.Nodes)
+                for (var i = 0; i < geometryNodes.Nodes.Count; i++)
                 {
+                    var node = geometryNodes.Nodes[i];
                     var nodeEdit = new WindowWidget(theme, new RectangleDouble(0, 0, node.WindowSize.X, node.WindowSize.Y))
                     {
                         Position = node.WindowPosition,
                         BackgroundRadius = 3,
                         Name = "NodeEdit",
+                        BackgroundColor = theme.BackgroundColor.WithAlpha(150),
                     };
                     ScrollArea.AddChild(nodeEdit);
+
+                    newNodeToWindow.Add(i, nodeEdit);
 
                     nodeEdit.PositionChanged += (s, e1) =>
                     {
@@ -490,6 +501,8 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     yOffset += 20;
                 }
 
+                nodeToWindow = newNodeToWindow;
+
                 ScrollArea.BeforeDraw += ScrollArea_BeforeDraw;
             }
             else
@@ -505,15 +518,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             {
                 foreach (var connection in geometryNodes.Connections)
                 {
-                    //var startNode = geometryNodes.Nodes[connection.InputNodeIndex];
-                    ///var endNode = geometryNodes.Nodes[connection.OutputNodeIndex];
-                    ///
-
-                    if (this.ScrollArea.Children.Count > connection.InputNodeIndex
-                        && this.ScrollArea.Children.Count > connection.OutputNodeIndex)
+                    
+                    if (nodeToWindow.ContainsKey(connection.InputNodeIndex)
+                        && nodeToWindow.ContainsKey(connection.OutputNodeIndex))
                     {
-                        var child1 = this.ScrollArea.Children[connection.InputNodeIndex];
-                        var child2 = this.ScrollArea.Children[connection.OutputNodeIndex];
+                        var child1 = nodeToWindow[connection.InputNodeIndex];
+                        var child2 = nodeToWindow[connection.OutputNodeIndex];
 
                         var bounds1 = child1.BoundsRelativeToParent;
                         var bounds2 = child2.BoundsRelativeToParent;
@@ -528,7 +538,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                         pathStorage.Curve4(startPoint.X + distBetween / 2, startPoint.Y, endPoint.X - distBetween / 2, endPoint.Y, endPoint.X, endPoint.Y);
 
-                        e.Graphics2D.Render(new Stroke(new FlattenCurves(pathStorage), 2), theme.TextColor.WithAlpha(25));
+                        e.Graphics2D.Render(new Stroke(new FlattenCurves(pathStorage), 2), theme.TextColor.WithAlpha(50));
                     }
                 }
             }
