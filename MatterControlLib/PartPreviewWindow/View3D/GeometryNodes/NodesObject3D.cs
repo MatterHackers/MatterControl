@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using DataConverters3D.Object3D.Nodes;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -37,6 +38,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -78,6 +80,30 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     cancellationToken = cancellationTokenSource;
 
                     // start the rebuild process
+                    // find all the OutputMeshNodes
+                    List<(OutputMeshNode node, int index)> nodesAndIndices = new List<(OutputMeshNode outputNodes, int index)>();
+                    for(int i=0; i<Nodes.Count; i++)
+                    {
+                        if (Nodes[i] is OutputMeshNode)
+                        {
+                            nodesAndIndices.Add(((OutputMeshNode)Nodes[i], i));
+                        }
+                    }
+
+                    foreach(var nodeAndIndex in nodesAndIndices)
+                    {
+                        // find the connections to this node
+                        var connections = Connections.Where(c => c.OutputNodeIndex == nodeAndIndex.index).ToList();
+
+#if DEBUG
+                        // there should only be one or none throw if in the debugger and more than 1 connection
+                        if(connections.Count > 1)
+                        {
+                            throw new Exception("There should only be one connection to an output node");
+                        }
+#endif
+
+                    }
 
                     // once complete find all the output nodes and add them as children
 
@@ -117,7 +143,23 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                         // foreach child add a new node
                         foreach (var child in selectedItems)
                         {
-                            Nodes.Add(new InputObject3DNode(child.Clone()));
+                            var clone = child.Clone();
+                            Nodes.Add(new InputMeshNode(clone)
+                            {
+                                WindowPosition = new Vector2(-300, 0)
+                            });
+                            Nodes.Add(new OutputMeshNode()
+                            {
+                                WindowPosition = new Vector2(200, 0)
+                            });
+
+                            Connections.Add(new NodeConnection()
+                            {
+                                InputNodeIndex = Nodes.Count - 2,
+                                OutputNodeIndex = Nodes.Count - 1,
+                                InputIndex = 0,
+                                OutputIndex = 0                                
+                            });
                         }
                     }
 

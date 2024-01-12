@@ -87,11 +87,11 @@ namespace MatterHackers.Agg.Tests
             };
 
             // Arrange: Create an instance of InputObject3DNode and set properties
-            var inputObject = new InputObject3DNode(cubeObject);
+            var inputObject = new InputMeshNode(cubeObject);
 
             // Act: Serialize the inputObject to JSON and then Deserialize it back
             var json = JsonConvert.SerializeObject(inputObject, Formatting.Indented);
-            var deserializedInputObject = JsonConvert.DeserializeObject(json) as InputObject3DNode;//,
+            var deserializedInputObject = JsonConvert.DeserializeObject(json) as InputMeshNode;//,
                 //new JsonINodeObjectConverter(),
                 //new JsonIObject3DConverter());
 

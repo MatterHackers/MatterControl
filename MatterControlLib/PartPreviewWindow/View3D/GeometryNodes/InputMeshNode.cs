@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using DataConverters3D.Object3D.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using System.Linq;
@@ -34,18 +35,25 @@ using System.Text.Json.Serialization;
 
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
 {
-    public class InputObject3DNode : NodeObject
+    public class InputMeshNode : NodeObject
     {
-        public InputObject3DNode()
+        public InputMeshNode()
         {
         }
         
-        public InputObject3DNode(IObject3D object3D)
+        public InputMeshNode(IObject3D object3D)
         {
             Children.Add(object3D);
         }
 
         [JsonConverter(typeof(JsonIObject3DConverter))]
         public AscendableSafeList<IObject3D> Children { get; set; } = new AscendableSafeList<IObject3D>(null);
+    }
+
+    public class OutputMeshNode : NodeObject
+    {
+        public OutputMeshNode()
+        {
+        }
     }
 }

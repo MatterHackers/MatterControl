@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using DataConverters3D.Object3D.Nodes;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
@@ -210,7 +212,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 mouseDownPosition.X = mouseEvent.X;
                 mouseDownPosition.Y = mouseEvent.Y;
 
-                lastMousePosition = mouseDownPosition; 
+                lastMousePosition = mouseDownPosition;
                 mouseDownTransformOverride = TransformState;
 
                 // check if not left button
@@ -415,13 +417,14 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                 // save the scale and position
                 this.geometryNodes.Scale = LayerScale;
                 this.geometryNodes.UnscaledRenderOffset = UnscaledRenderOffset;
+                ScrollArea.BeforeDraw -= ScrollArea_BeforeDraw;
             }
 
             // Change tree selection to current node
             if (selectedItem != null
-                && selectedItem is NodesObject3D geometryNodes)
+                && selectedItem is NodesObject3D nodeObject3D)
             {
-                this.geometryNodes = geometryNodes;
+                this.geometryNodes = nodeObject3D;
 
                 // Set the editor to the current node
                 UnscaledRenderOffset = geometryNodes.UnscaledRenderOffset;
@@ -452,19 +455,27 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                     nodeEdit.TitleBar.ClampToParent = false;
 
-                    nodeEdit.TitleBar.AddChild(new TextWidget("Node - Test", pointSize: 10)
+                    var windowTitle = node.TypeName.SplitCamelCase();
+
+                    if (node is InputMeshNode inputMeshNode)
+                    {
+                        windowTitle += " - " + inputMeshNode.Children.First().Name;
+                    }
+
+                    nodeEdit.TitleBar.AddChild(new TextWidget(windowTitle, pointSize: 10)
                     {
                         TextColor = theme.TextColor,
                         VAnchor = VAnchor.Center,
                         HAnchor = HAnchor.Left,
+                        Margin = new BorderDouble(7, 0, 0, 0)
                     });
                     nodeEdit.TitleBar.Height = 20;
 
-                    if (node is InputObject3DNode inputObject)
+                    if (node is InputMeshNode inputObject)
                     {
                         var propertyEditor = new PropertyEditor(theme, UndoBuffer);
                         var propertyWidget = propertyEditor.Create(inputObject.Children.First(), UndoBuffer, theme);
-                        foreach(var widget in propertyWidget.Descendants())
+                        foreach (var widget in propertyWidget.Descendants())
                         {
                             widget.DoubleBuffer = false;
                         }
@@ -476,18 +487,50 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                         nodeEdit.ClientArea.VAnchor = VAnchor.Fit;
                     }
 
-                    nodeEdit.BeforeDraw += (s, e) =>
-                    {
-                        var a = 0;
-                    };
-
                     yOffset += 20;
                 }
+
+                ScrollArea.BeforeDraw += ScrollArea_BeforeDraw;
             }
             else
             {
                 // Clear the editor of any controls
                 this.geometryNodes = null;
+            }
+        }
+
+        private void ScrollArea_BeforeDraw(object sender, DrawEventArgs e)
+        {
+            if (geometryNodes != null)
+            {
+                foreach (var connection in geometryNodes.Connections)
+                {
+                    //var startNode = geometryNodes.Nodes[connection.InputNodeIndex];
+                    ///var endNode = geometryNodes.Nodes[connection.OutputNodeIndex];
+                    ///
+
+                    if (this.ScrollArea.Children.Count > connection.InputNodeIndex
+                        && this.ScrollArea.Children.Count > connection.OutputNodeIndex)
+                    {
+                        var child1 = this.ScrollArea.Children[connection.InputNodeIndex];
+                        var child2 = this.ScrollArea.Children[connection.OutputNodeIndex];
+
+                        var bounds1 = child1.BoundsRelativeToParent;
+                        var bounds2 = child2.BoundsRelativeToParent;
+
+                        // draw a line from the top right of of bounds1 to the top left of bounds2
+                        var pathStorage = new VertexStorage();
+
+                        var startPoint = new Vector2(bounds1.Right, bounds1.Top - 20);
+                        pathStorage.MoveTo(startPoint);
+                        var endPoint = new Vector2(bounds2.Left, bounds2.Top - 20);
+                        var distBetween = bounds2.Left - bounds1.Right;
+
+                        pathStorage.Curve4(startPoint.X + distBetween / 2, startPoint.Y, endPoint.X - distBetween / 2, endPoint.Y, endPoint.X, endPoint.Y);
+
+                        e.Graphics2D.Render(new Stroke(new FlattenCurves(pathStorage), 2), theme.TextColor.WithAlpha(25));
+                    }
+                }
             }
         }
     }

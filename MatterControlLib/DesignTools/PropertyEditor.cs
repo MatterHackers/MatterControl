@@ -409,7 +409,8 @@ namespace MatterHackers.MatterControl.DesignTools
             var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 
             // create a double editor
-            if (AllowedTypes.ContainsKey(propertyValue.GetType())
+            if (propertyValue != null
+                && AllowedTypes.ContainsKey(propertyValue.GetType())
                 && AllowedTypes[propertyValue.GetType()] != null)
             {
                 rowContainer = AllowedTypes[propertyValue.GetType()].CreateEditor(this, property, context, ref tabIndex);

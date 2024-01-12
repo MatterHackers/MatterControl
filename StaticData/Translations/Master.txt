@@ -1732,6 +1732,9 @@ Translated:Expand Thin Walls
 English:Expand Width
 Translated:Expand Width
 
+English:Expanded
+Translated:Expanded
+
 English:Experimental
 Translated:Experimental
 
@@ -2950,6 +2953,9 @@ Translated:Material
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:Material density. Only used for estimating mass in the Layer View.
 
+English:Material Index
+Translated:Material Index
+
 English:Material Setting
 Translated:Material Setting
 
@@ -3066,6 +3072,9 @@ Translated:Mesh
 
 English:Mesh Analysis
 Translated:Mesh Analysis
+
+English:Mesh Path
+Translated:Mesh Path
 
 English:middle drag
 Translated:middle drag
@@ -3261,6 +3270,9 @@ Translated:name
 
 English:Name
 Translated:Name
+
+English:Name Overriden
+Translated:Name Overriden
 
 English:Name To Write
 Translated:Name To Write
@@ -3604,6 +3616,9 @@ Translated:Output Option
 English:Output Resolution
 Translated:Output Resolution
 
+English:Output Type
+Translated:Output Type
+
 English:Outside Perimeter
 Translated:Outside Perimeter
 
@@ -3726,6 +3741,9 @@ Translated:Permission denied
 
 English:Permission Denied
 Translated:Permission Denied
+
+English:Persistable
+Translated:Persistable
 
 English:Perspective Mode
 Translated:Perspective Mode
@@ -6573,6 +6591,9 @@ Translated:View Small Icons
 
 English:View XSmall Icons
 Translated:View XSmall Icons
+
+English:Visible
+Translated:Visible
 
 English:Visit MatterHackers.com to Purchase
 Translated:Visit MatterHackers.com to Purchase
