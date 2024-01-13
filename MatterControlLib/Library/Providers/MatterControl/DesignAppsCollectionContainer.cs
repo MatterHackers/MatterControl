@@ -62,6 +62,17 @@ namespace MatterHackers.MatterControl.Library
                 {
                     IsReadOnly = true
                 });
+
+            this.ChildContainers.Add(
+                new DynamicContainerLink(
+                    "Design Tools".Localize(),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
+                    () => new DesignToolsContainer())
+                {
+                    IsReadOnly = true
+                });
+
         }
 
         public override void Load()

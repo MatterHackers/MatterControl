@@ -110,16 +110,6 @@ namespace MatterHackers.MatterControl.Library
                     "Half Sphere".Localize(),
                     async () => await HalfSphereObject3D.Create())
                     { DateCreated = new DateTime(index++) },
-#if DEBUG
-                new GeneratorItem(
-                    "Dual Contouring".Localize(),
-                    async () => await DualContouringObject3D.Create())
-                    { DateCreated = new DateTime(index++) },
-#endif
-                new GeneratorItem(
-                    "QR Code".Localize(),
-                    async () => await QrCodeObject3D.Create())
-                    { DateCreated = new DateTime(index++) },
                 new GeneratorItem(
                     "Image Converter".Localize(),
                     () =>
@@ -146,18 +136,6 @@ namespace MatterHackers.MatterControl.Library
 
                         return Task.FromResult(constructedComponent);
                     })
-                    { DateCreated = new DateTime(index++) },
-                new GeneratorItem(
-                    "Measure Tool".Localize(),
-                    async () => await MeasureToolObject3D.Create())
-                    { DateCreated = new DateTime(index++) },
-                new GeneratorItem(
-                    "Description".Localize(),
-                    async () => await DescriptionObject3D.Create())
-                    { DateCreated = new DateTime(index++) },
-                new GeneratorItem(
-                    "Variable Sheet".Localize(),
-                    async () => await SheetObject3D.Create())
                     { DateCreated = new DateTime(index++) },
             };
 
