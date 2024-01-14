@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var item = scene.SelectedItem;
 
-					var newChild = item.Clone();
+					var newChild = item.DeepCopy();
 					var baseMesh = new BaseObject3D()
 					{
 						Matrix = newChild.Matrix
@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					var imageObject = sceneItem.Clone() as ImageObject3D;
+					var imageObject = sceneItem.DeepCopy() as ImageObject3D;
 					var finalMatrix = imageObject.Matrix;
 					imageObject.Matrix = Matrix4X4.Identity;
 
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl
 
 						var path = new ImageToPathObject3D_2();
 
-						var itemClone = sceneItem.Clone();
+						var itemClone = sceneItem.DeepCopy();
 						path.Children.Add(itemClone);
 						path.Matrix = itemClone.Matrix;
 						itemClone.Matrix = Matrix4X4.Identity;
@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
 					var inflatePath = new InflatePathObject3D();
-					var itemClone = sceneItem.Clone();
+					var itemClone = sceneItem.DeepCopy();
 					inflatePath.Children.Add(itemClone);
 					inflatePath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl
                     var scene = sceneContext.Scene;
                     var sceneItem = scene.SelectedItem;
                     var outlinePath = new SelectPathsObject3D();
-                    var itemClone = sceneItem.Clone();
+                    var itemClone = sceneItem.DeepCopy();
                     outlinePath.Children.Add(itemClone);
                     outlinePath.Matrix = itemClone.Matrix;
                     itemClone.Matrix = Matrix4X4.Identity;
@@ -440,7 +440,7 @@ namespace MatterHackers.MatterControl
 					{
 						var extrude = new LinearExtrudeObject3D();
 
-						var itemClone = sceneItem.Clone();
+						var itemClone = sceneItem.DeepCopy();
 						extrude.Children.Add(itemClone);
 
 						scene.SelectedItem = null;
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl
 					{
 						var revolve = new RevolveObject3D();
 
-						var itemClone = sceneItem.Clone();
+						var itemClone = sceneItem.DeepCopy();
 						revolve.Children.Add(itemClone);
 
 						scene.SelectedItem = null;
@@ -516,7 +516,7 @@ namespace MatterHackers.MatterControl
 					// Copy an selected item into the component as a clone
 					component.Children.Modify(children =>
 					{
-						children.AddRange(items.Select(o => o.Clone()));
+						children.AddRange(items.Select(o => o.DeepCopy()));
 					});
 
 					component.MakeNameNonColliding();
@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
 					var outlinePath = new OutlinePathObject3D();
-					var itemClone = sceneItem.Clone();
+					var itemClone = sceneItem.DeepCopy();
 					outlinePath.Children.Add(itemClone);
 					outlinePath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
@@ -622,7 +622,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
 					var smoothPath = new SmoothPathObject3D();
-					var itemClone = sceneItem.Clone();
+					var itemClone = sceneItem.DeepCopy();
 					smoothPath.Children.Add(itemClone);
 					smoothPath.Matrix = itemClone.Matrix;
 					itemClone.Matrix = Matrix4X4.Identity;
@@ -929,7 +929,7 @@ namespace MatterHackers.MatterControl
 						selectedItem.CloneID = Guid.NewGuid().ToString();
 					}
 
-					var clone = selectedItem.Clone();
+					var clone = selectedItem.DeepCopy();
                     scene.UndoBuffer.AddAndDo(new InsertCommand(scene, clone));
                 },
                 HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
@@ -1037,7 +1037,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
 					scene.SelectedItem = null;
-					var fit = await FitToBoundsObject3D_4.Create(selectedItem.Clone());
+					var fit = await FitToBoundsObject3D_4.Create(selectedItem.DeepCopy());
 					fit.MakeNameNonColliding();
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 					scene.SelectedItem = fit;
@@ -1058,7 +1058,7 @@ namespace MatterHackers.MatterControl
 					var scene = sceneContext.Scene;
 					var selectedItem = scene.SelectedItem;
 					scene.SelectedItem = null;
-					var fit = await FitToCylinderObject3D.Create(selectedItem.Clone());
+					var fit = await FitToCylinderObject3D.Create(selectedItem.DeepCopy());
 					fit.MakeNameNonColliding();
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 					scene.SelectedItem = fit;

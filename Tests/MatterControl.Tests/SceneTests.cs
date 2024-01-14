@@ -97,7 +97,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
                 Mesh = PlatonicSolids.CreateCube(20, 20, 20),
                 Name = "test1",
                 Color = Color.Red,
-                MaterialIndex = 2,
             });
 
             scene.Children.Add(new Object3D
@@ -122,7 +121,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
             IObject3D item1 = loadedItem.Children.Last();
             Assert.AreEqual("test1", item1.Name);
-            Assert.AreEqual(2, item1.MaterialIndex);
             Assert.AreEqual(Color.Red, item1.Color);
             Assert.AreEqual(12, item1.Mesh.Faces.Count);
             var aabb1 = item1.GetAxisAlignedBoundingBox();
@@ -326,7 +324,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var scene = new InteractiveScene()
             {
                 Color = Color.Black,
-                MaterialIndex = this.RootMaterialIndex,
                 OutputType = this.RootOutputType
             };
 
@@ -334,7 +331,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = "SuperGroup",
                 Color = Color.Violet,
-                MaterialIndex = this.SuperGroupMaterialIndex,
                 Matrix = this.SuperGroupMatrix,
                 OutputType = this.SuperGroupOutputType
             };
@@ -344,7 +340,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = "GroupA",
                 Color = Color.Pink,
-                MaterialIndex = this.GroupMaterialIndex,
                 OutputType = this.GroupOutputType
             };
 
@@ -354,7 +349,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = nameof(Color.Red),
                 Color = Color.Red,
-                MaterialIndex = this.RedMaterialIndex,
                 Matrix = this.RedMatrix,
             });
 
@@ -362,7 +356,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = "GroupB",
                 Color = Color.Pink,
-                MaterialIndex = this.GroupMaterialIndex,
                 OutputType = this.GroupOutputType
             };
             supergroup.Children.Add(group);
@@ -371,7 +364,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = nameof(Color.Green),
                 Color = Color.Green,
-                MaterialIndex = this.GreenMaterialIndex,
                 Matrix = this.GreenMatrix,
             });
 
@@ -379,7 +371,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = "GroupB",
                 Color = Color.Pink,
-                MaterialIndex = this.GroupMaterialIndex,
                 OutputType = this.GroupOutputType
             };
             supergroup.Children.Add(group);
@@ -388,7 +379,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             {
                 Name = nameof(Color.Blue),
                 Color = Color.Blue,
-                MaterialIndex = this.BlueMaterialIndex,
                 Matrix = this.BlueMatrix,
                 OutputType = this.BlueOutputType
             });
@@ -476,17 +466,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             // Validate WorldColor with non-ancestor param
             Assert.AreEqual(Color.Black, redItem.WorldColor(nonAncestor), "WorldColor on Red with non-ancestor should be root color (Black)");
 
-            // ************************************* MaterialIndex *************************************
-            // Validate root
-            Assert.AreEqual(this.RootMaterialIndex, scene.MaterialIndex, "MaterialIndex property on root should be RootMaterialIndex");
-            Assert.AreEqual(this.RootMaterialIndex, scene.WorldMaterialIndex(), "WorldMaterialIndex on root should be RootMaterialIndex");
-
-            // Validate red node
-            Assert.AreEqual(this.RedMaterialIndex, redItem.MaterialIndex, "Color property on node should be Red");
-
-            // Validate WorldColor with non-ancestor param
-            Assert.AreEqual(this.RootMaterialIndex, redItem.WorldMaterialIndex(nonAncestor), "WorldMaterialIndex on Red with non-ancestor should be RootMaterialIndex");
-
             // ************************************* WorldMaxtrix *************************************
             // Validate root
             Assert.AreEqual(this.RootMatrix, scene.Matrix, "Matrix property on root should be RootMatrix");
@@ -516,28 +495,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
             var greenItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
-
-            // Validate root
-            Assert.AreEqual(this.RootMaterialIndex, scene.MaterialIndex, "MaterialIndex property on root should be RootMaterialIndex");
-            Assert.AreEqual(this.RootMaterialIndex, scene.WorldMaterialIndex(), "WorldMaterialIndex on root should be RootMaterialIndex");
-
-            // Validate red node
-            Assert.AreEqual(this.RedMaterialIndex, redItem.MaterialIndex, "MaterialIndex property on node should be RedMaterialIndex");
-            Assert.AreEqual(this.GroupMaterialIndex, redItem.WorldMaterialIndex(redItem.Parent), "WorldMaterialIndex on Red up to parent node should be GroupMaterialIndex");
-            Assert.AreEqual(this.SuperGroupMaterialIndex, redItem.WorldMaterialIndex(superGroup), "WorldMaterialIndex on Red up to supergroup should be SuperGroupMaterialIndex");
-
-            // Validate green node
-            Assert.AreEqual(this.GreenMaterialIndex, greenItem.MaterialIndex, "MaterialIndex property on node should be GreenMaterialIndex");
-            Assert.AreEqual(this.GroupMaterialIndex, greenItem.WorldMaterialIndex(greenItem.Parent), "WorldMaterialIndex on Green up to parent node should be GroupMaterialIndex");
-            Assert.AreEqual(this.SuperGroupMaterialIndex, greenItem.WorldMaterialIndex(superGroup), "WorldMaterialIndex on Green up to supergroup should be SuperGroupMaterialIndex");
-
-            // Validate green node
-            Assert.AreEqual(this.BlueMaterialIndex, blueItem.MaterialIndex, "MaterialIndex property on node should be BlueMaterialIndex");
-            Assert.AreEqual(this.GroupMaterialIndex, blueItem.WorldMaterialIndex(blueItem.Parent), "WorldMaterialIndex on Blue up to parent node should be GroupMaterialIndex");
-            Assert.AreEqual(this.SuperGroupMaterialIndex, blueItem.WorldMaterialIndex(superGroup), "WorldMaterialIndex on Blue up to supergroup should be SuperGroupMaterialIndex");
-
-            // Validate MaterialIndex with null param
-            Assert.AreEqual(this.RootMaterialIndex, redItem.WorldMaterialIndex(null), "WorldMaterialIndex on Red with null param should be root color (RootMaterialIndex)");
         }
 
         [Test, ChildProcessTest]

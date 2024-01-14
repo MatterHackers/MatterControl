@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						list.Clear();
 						list.Add(sourceContainer);
 						var lastChild = sourceContainer.Children.First();
-						list.Add(lastChild.Clone());
+						list.Add(lastChild.DeepCopy());
 						var offset = Offset;
 						var count = Count.Value(this);
 						var rotate = Rotate.Value(this);
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 								offset *= scale;
 							}
 
-							var next = lastChild.Clone();
+							var next = lastChild.DeepCopy();
 							offset = Vector3Ex.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
 							next.Matrix *= Matrix4X4.CreateTranslation(offset);
 

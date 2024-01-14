@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             return true;
                         }
 
-                        return item.Persistable == true && item.Printable == true;
+                        return item.Persistable == true;
                     }).ToList();
                     var transformData = new List<TransformData>();
                     foreach (var child in children)
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (selectedItem != null)
             {
                 Clipboard.Instance.SetText("!--IObjectSelection--!");
-                ApplicationController.ClipboardItem = selectedItem.Clone();
+                ApplicationController.ClipboardItem = selectedItem.DeepCopy();
                 // when we copy an object put it back in with a slight offset
                 pasteObjectXOffset = 5;
             }
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (selectedItem != null)
             {
                 Clipboard.Instance.SetText("!--IObjectSelection--!");
-                ApplicationController.ClipboardItem = selectedItem.Clone();
+                ApplicationController.ClipboardItem = selectedItem.DeepCopy();
                 // put it back in right where we cut it from
                 pasteObjectXOffset = 0;
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             scene.SelectedItem = null;
                             foreach (var item in copyList)
                             {
-                                var clonedItem = item.Clone();
+                                var clonedItem = item.DeepCopy();
                                 clonedItem.Translate(xOffset);
                                 // make the name unique
                                 var newName = Util.GetNonCollidingName(item.Name, namedItems);
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         }
                         else // the selection can be cloned easily
                         {
-                            var clonedItem = sourceItem.Clone();
+                            var clonedItem = sourceItem.DeepCopy();
 
                             clonedItem.Translate(xOffset);
                             // an empty string is used to denote special name processing for some container types
@@ -461,11 +461,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 if (selectedItem is OperationSourceContainerObject3D sourceContainer)
                 {
-                    sourceContainer.SourceContainer.Children.Add(clipboardItem.Clone());
+                    sourceContainer.SourceContainer.Children.Add(clipboardItem.DeepCopy());
                 }
                 else
                 {
-                    selectedItem.Children.Add(clipboardItem.Clone());
+                    selectedItem.Children.Add(clipboardItem.DeepCopy());
                 }
             }
         }

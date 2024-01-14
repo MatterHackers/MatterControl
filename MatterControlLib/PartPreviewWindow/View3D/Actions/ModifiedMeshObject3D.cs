@@ -53,11 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					this.Color = firstChild.Color;
 				}
-
-				if (invalidateType.InvalidateType.HasFlag(InvalidateType.Material))
-				{
-					this.MaterialIndex = firstChild.MaterialIndex;
-				}
 			}
 
 			base.OnInvalidate(invalidateType);

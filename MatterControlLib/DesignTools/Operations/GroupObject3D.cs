@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// push our matrix into a copy of our children
 				foreach (var child in this.SourceContainer.Children)
 				{
-					var newChild = child.Clone();
+					var newChild = child.DeepCopy();
 					newChildren.Add(newChild);
 					newChild.Matrix *= this.Matrix;
 				}

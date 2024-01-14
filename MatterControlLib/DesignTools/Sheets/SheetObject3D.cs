@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         {
                             list.Clear();
 
-                            list.Add(sheetObject.Clone());
+                            list.Add(sheetObject.DeepCopy());
                         });
                     }
                 }

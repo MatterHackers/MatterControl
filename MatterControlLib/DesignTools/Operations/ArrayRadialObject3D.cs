@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						var count = Count.Value(this);
 						for (int i = 0; i < Math.Max(count, 1); i++)
 						{
-							var next = sourceItem.Clone();
+							var next = sourceItem.DeepCopy();
 
 							var normal = Axis.Normal.GetNormal();
 							var angleRadians = MathHelper.Tau / count * i;

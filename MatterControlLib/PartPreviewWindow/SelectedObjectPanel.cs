@@ -496,29 +496,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 selectedItem.Invalidated += SelectedItemOutputChanged;
                 Closed += (s, e) => selectedItem.Invalidated -= SelectedItemOutputChanged;
-
-                // put in a material edit field
-                var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
-                materialField.Initialize(ref tabIndex);
-                materialField.ValueChanged += (s, e) =>
-                {
-                    if (selectedItem.MaterialIndex != materialField.MaterialIndex)
-                    {
-                        undoBuffer.AddAndDo(new ChangeMaterial(selectedItem, materialField.MaterialIndex));
-                    }
-                };
-
-                materialField.Content.MouseDown += (s, e) =>
-                {
-                    if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Materials)
-                    {
-                        // make sure the render mode is set to material
-                        sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
-                    }
-                };
-
-                // material row
-                editorPanel.AddChild(new SettingsRow("Material".Localize(), null, materialField.Content, theme));
             }
         }
 

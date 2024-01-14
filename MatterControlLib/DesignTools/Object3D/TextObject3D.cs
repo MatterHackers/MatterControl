@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 newContainer.CopyProperties(this, Object3DPropertyFlags.All);
                 foreach (var child in this.Children)
                 {
-                    var clone = child.Clone();
+                    var clone = child.DeepCopy();
                     newContainer.Children.Add(clone);
                 }
 

@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				[RenderTypes.Outlines] = (StaticData.Instance.LoadIcon("view_outlines.png", 16, 16), "View Mode = Outlines".Localize()),
 				[RenderTypes.Polygons] = (StaticData.Instance.LoadIcon("view_polygons.png", 16, 16), "View Mode = Polygons".Localize()),
 				[RenderTypes.NonManifold] = (StaticData.Instance.LoadIcon("view_polygons.png", 16, 16), "View Mode = Non-Manifold".Localize()),
-				[RenderTypes.Materials] = (StaticData.Instance.LoadIcon("view_materials.png", 16, 16), "View Mode = Materials".Localize()),
 				[RenderTypes.Overhang] = (StaticData.Instance.LoadIcon("view_overhang.png", 16, 16), "View Mode = Overhangs".Localize()),
 			};
 
@@ -150,17 +149,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				(isChecked) =>
 				{
 					sceneContext.ViewState.RenderType = RenderTypes.Polygons;
-				},
-				useRadioStyle: true,
-				siblingRadioButtonList: siblingList);
-
-			popupMenu.CreateBoolMenuItem(
-				"Materials".Localize(),
-				viewData[RenderTypes.Materials].image,
-				() => sceneContext.ViewState.RenderType == RenderTypes.Materials,
-				(isChecked) =>
-				{
-					sceneContext.ViewState.RenderType = RenderTypes.Materials;
 				},
 				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);

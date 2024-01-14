@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			RotationXDegrees = MathHelper.RadiansToDegrees(xRadians);
 			RotationYDegrees = MathHelper.RadiansToDegrees(yRadians);
 			RotationZDegrees = MathHelper.RadiansToDegrees(zRadians);
-			Children.Add(item.Clone());
+			Children.Add(item.DeepCopy());
 
 			Rebuild();
 		}

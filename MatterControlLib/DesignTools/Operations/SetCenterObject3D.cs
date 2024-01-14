@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public SetCenterObject3D(IObject3D item, Vector3 position)
 		{
 			Matrix = Matrix4X4.CreateTranslation(position - item.GetCenter());
-			Children.Add(item.Clone());
+			Children.Add(item.DeepCopy());
 		}
 
 		public SetCenterObject3D(IObject3D item, double x, double y, double z)
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Matrix = Matrix4X4.CreateTranslation(consideredOffset);
-			Children.Add(item.Clone());
+			Children.Add(item.DeepCopy());
 		}
 	}
 

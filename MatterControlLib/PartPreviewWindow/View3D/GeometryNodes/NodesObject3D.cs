@@ -143,7 +143,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                         // foreach child add a new node
                         foreach (var child in selectedItems)
                         {
-                            var clone = child.Clone();
+                            var clone = child.DeepCopy();
                             Nodes.Add(new InputMeshNode(clone)
                             {
                                 WindowPosition = new Vector2(-300, 0)

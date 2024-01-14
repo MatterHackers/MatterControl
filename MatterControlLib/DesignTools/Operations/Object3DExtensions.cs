@@ -405,8 +405,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			if (doMeshCombine)
 			{
 				var combine = new CombineObject3D_2();
-				combine.Children.Add(a.Clone());
-				combine.Children.Add(b.Clone());
+				combine.Children.Add(a.DeepCopy());
+				combine.Children.Add(b.DeepCopy());
 
 				combine.Combine();
 
@@ -428,8 +428,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
 		{
 			var subtract = new SubtractObject3D();
-			subtract.Children.Add(a.Clone());
-			var bClone = b.Clone();
+			subtract.Children.Add(a.DeepCopy());
+			var bClone = b.DeepCopy();
 			subtract.Children.Add(bClone);
 			subtract.SelectedChildren.Add(bClone.ID);
 
@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var name = "";
 					foreach (var item in selectedItems)
 					{
-						newParent.Children.Add(item.Clone());
+						newParent.Children.Add(item.DeepCopy());
 						if (name != "")
 						{
 							name += ", ";

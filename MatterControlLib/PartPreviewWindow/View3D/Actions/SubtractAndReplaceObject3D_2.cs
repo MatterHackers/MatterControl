@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
             {
                 if (parentOfPaintTargets.Children.Count() == 1)
                 {
-                    this.Children.Add(SourceContainer.Clone());
+                    this.Children.Add(SourceContainer.DeepCopy());
                     SourceContainer.Visible = false;
                 }
 

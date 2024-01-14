@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					foreach (var item in items)
 					{
-						firstChild.Children.Add(item.Clone());
+						firstChild.Children.Add(item.DeepCopy());
 					}
 
 					var replace = new ReplaceCommand(items, new[] { this });
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					foreach (var item in items)
 					{
-						firstChild.Children.Add(item.Clone());
+						firstChild.Children.Add(item.DeepCopy());
 					}
 					var replace = new ReplaceCommand(items, new[] { this });
 					undoBuffer.AddAndDo(replace);

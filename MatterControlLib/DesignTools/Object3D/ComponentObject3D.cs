@@ -110,7 +110,6 @@ namespace MatterHackers.MatterControl.DesignTools
                     {
                         Matrix = child.WorldMatrix(this),
                         Color = child.WorldColor(this),
-                        MaterialIndex = child.WorldMaterialIndex(this),
                         OutputType = child.WorldOutputType(this),
                         Mesh = child.Mesh,
                         Name = "Mesh".Localize()

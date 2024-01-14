@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Matrix *= Matrix4X4.CreateTranslation(positionToAlignTo);
-			Children.Add(item.Clone());
+			Children.Add(item.DeepCopy());
 		}
 
 		[ShowAsList]

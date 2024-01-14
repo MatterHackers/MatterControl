@@ -392,7 +392,7 @@ namespace MatterControl.Tests.MatterControl
             {
                 var cubeA1 = await CubeObject3D.Create(10, 20, 20);
 
-				var copy = cubeA1.Clone() as CubeObject3D;
+				var copy = cubeA1.DeepCopy() as CubeObject3D;
 
                 Assert.AreEqual("10", copy.Width.Expression, "10");
                 Assert.AreEqual(10, copy.GetAxisAlignedBoundingBox().XSize, .001);

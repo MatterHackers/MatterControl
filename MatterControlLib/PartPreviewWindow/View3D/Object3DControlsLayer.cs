@@ -925,11 +925,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// color bering set by output type
 				drawColor = drawColorWithOutputType;
             }
-			else if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
-			{
-				// check if we should be rendering materials (this overrides the other colors)
-				drawColor = MaterialRendering.Color(sceneContext.Printer, item.WorldMaterialIndex());
-			}
 
 			if (drawColor.alpha < 255
 				&& drawColor.alpha > 0

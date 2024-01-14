@@ -130,13 +130,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					if (!(child is OperationSourceObject3D))
 					{
-						var newChild = child.Clone();
+						var newChild = child.DeepCopy();
 						newChildren.Add(newChild);
 						newChild.Matrix *= this.Matrix;
 						var flags = Object3DPropertyFlags.Visible;
 						if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
 						if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
-						if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
 						newChild.CopyProperties(this, flags);
 					}
 				}
@@ -156,7 +155,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				if (newChildren.Count == 0)
 				{
-					newChildren = this.Children.Select(i => i.Clone()).ToList();
+					newChildren = this.Children.Select(i => i.DeepCopy()).ToList();
 				}
 
 				// add flatten to the name to show what happened
@@ -232,13 +231,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// push our matrix into a copy of our children
 				foreach (var child in this.SourceContainer.Children)
 				{
-					var newChild = child.Clone();
+					var newChild = child.DeepCopy();
 					newChildren.Add(newChild);
 					newChild.Matrix *= this.Matrix;
 					var flags = Object3DPropertyFlags.Visible;
 					if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
 					if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
-					if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
 					newChild.CopyProperties(this, flags);
 				}
 
@@ -280,7 +278,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					using (RebuildLock())
 					{
-						var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.Clone()));
+						var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.DeepCopy()));
 
 						Children.Modify((list) =>
 						{

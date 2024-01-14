@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			using (RebuildLock())
 			{
-				var thisCopy = this.Clone();
+				var thisCopy = this.DeepCopy();
 
 				using (thisCopy.RebuilLockAll())
 				{
@@ -99,13 +99,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					// push our matrix into a copy of our children
 					foreach (var child in thisCopy.Children)
 					{
-						var newChild = child.Clone();
+						var newChild = child.DeepCopy();
 						newChildren.Add(newChild);
 						newChild.Matrix *= thisCopy.Matrix;
 						var flags = Object3DPropertyFlags.Visible;
 						if (thisCopy.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
 						if (thisCopy.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
-						if (thisCopy.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
 						newChild.CopyProperties(thisCopy, flags);
 					}
 
@@ -164,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			using (RebuildLock())
 			{
-				var thisClone = this.Clone();
+				var thisClone = this.DeepCopy();
 
 				using (thisClone.RebuildLock())
 				{
@@ -273,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			using (RebuildLock())
 			{
-				var clonedItemsToAdd = new List<IObject3D>(items.Select((i) => i.Clone()));
+				var clonedItemsToAdd = new List<IObject3D>(items.Select((i) => i.DeepCopy()));
 
 				Children.Modify((list) =>
 				{
