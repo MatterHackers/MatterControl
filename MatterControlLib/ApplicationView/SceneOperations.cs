@@ -845,7 +845,8 @@ namespace MatterHackers.MatterControl
 					TitleGetter = () => "Duplication".Localize(),
 					Operations = new List<SceneOperation>()
 					{
-						LinearArrayOperation(),
+                        CloneOperation(),
+                        LinearArrayOperation(),
 						RadialArrayOperation(),
 						AdvancedArrayOperation(),
 					}
@@ -899,10 +900,10 @@ namespace MatterHackers.MatterControl
 
         private static SceneOperation AddGeometyNodesOperation()
         {
-            return new SceneOperation("Geometry Nodes")
+            return new SceneOperation("Add Geometry Nodes")
             {
                 ResultType = typeof(NodesObject3D),
-                TitleGetter = () => "Geometry Nodes".Localize(),
+                TitleGetter = () => "Add Geometry Nodes".Localize(),
                 Action = async (sceneContext) =>
                 {
                     var geometryNodes = new NodesObject3D();
@@ -911,6 +912,30 @@ namespace MatterHackers.MatterControl
                 Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
                 HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
                 IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+            };
+        }
+
+        private static SceneOperation CloneOperation()
+        {
+            return new SceneOperation("Clone")
+            {
+                Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+                    var selectedItem = scene.SelectedItem;
+					if (string.IsNullOrEmpty(selectedItem.CloneID))
+					{
+						// set it to a new guid
+						selectedItem.CloneID = Guid.NewGuid().ToString();
+					}
+
+					var clone = selectedItem.Clone();
+                    scene.UndoBuffer.AddAndDo(new InsertCommand(scene, clone));
+                },
+                HelpTextGetter = () => "A single part must be selected".Localize().Stars(),
+                Icon = (theme) => StaticData.Instance.LoadIcon("clone.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply(),
+                IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+                TitleGetter = () => "Clone".Localize(),
             };
         }
 

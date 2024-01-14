@@ -344,10 +344,10 @@ namespace MatterHackers.MatterControl
 				.Where(w => w.SceneContext?.EditContext?.SourceFilePath?.Contains("\\Library\\CloudData") == false)
 				.Select(w =>
 				{
-						return new PartWorkspace(w.SceneContext)
-						{
-							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-						};
+					return new PartWorkspace(w.SceneContext)
+					{
+						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+					};
 				});
 
 			lock (workspaces)

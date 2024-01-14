@@ -241,6 +241,9 @@ Translated:Add Base
 English:Add File to Bed
 Translated:Add File to Bed
 
+English:Add Geometry Nodes
+Translated:Add Geometry Nodes
+
 English:Add Hook
 Translated:Add Hook
 
@@ -927,6 +930,9 @@ Translated:Click to edit values
 
 English:Click to go back
 Translated:Click to go back
+
+English:Clone
+Translated:Clone
 
 English:Close
 Translated:Close
