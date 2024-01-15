@@ -31,6 +31,8 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -41,7 +43,7 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class DecimateObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
+    public class DecimateObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public DecimateObject3D()
 		{

@@ -31,16 +31,18 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using MatterHackers.Agg;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.SlicerConfiguration;
-	using MatterHackers.VectorMath;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Matter_CAD_Lib.DesignTools.Interfaces;
+    using Matter_CAD_Lib.DesignTools._Object3D;
+    using MatterHackers.Agg;
+    using MatterHackers.DataConverters3D;
+    using MatterHackers.Localizations;
+    using MatterHackers.MatterControl.SlicerConfiguration;
+    using MatterHackers.VectorMath;
 
-	public static class PrinterExtensionMethods
+    public static class PrinterExtensionMethods
 	{
 		public static bool InsideBuildVolume(this PrinterConfig printerConfig, IObject3D item)
 		{

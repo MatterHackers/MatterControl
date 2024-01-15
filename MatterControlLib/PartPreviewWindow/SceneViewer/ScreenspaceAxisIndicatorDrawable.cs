@@ -27,14 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ScreenspaceAxisIndicatorDrawable : AxisIndicatorDrawable
+    public class ScreenspaceAxisIndicatorDrawable : AxisIndicatorDrawable
 	{
 		public ScreenspaceAxisIndicatorDrawable()
 		{

@@ -42,8 +42,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using global::MatterControl.Printing;
 using Markdig.Agg;
+using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterControlLib.Library.OpenInto;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -81,7 +82,7 @@ using Typography.OpenFont;
 
 namespace MatterHackers.MatterControl
 {
-	public class ApplicationController
+    public class ApplicationController
 	{
         public Dictionary<string, TypeFace> TypeFaceCache = new Dictionary<string, TypeFace>()
 		{

@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl
 {
@@ -61,7 +60,6 @@ namespace MatterHackers.MatterControl
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			BuildValidationTests.AssertDebugNotDefined();
-			GCodeFile.AssertDebugNotDefined();
 			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
 			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
 			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();

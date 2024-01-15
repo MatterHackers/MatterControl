@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
@@ -35,10 +35,10 @@ using System;
 
 namespace MatterHackers.MeshVisualizer
 {
-	/// <summary>
-	/// Basic Interaction control - notified of position per OpenGL draw
-	/// </summary>
-	public interface IObject3DControl : IDisposable
+    /// <summary>
+    /// Basic Interaction control - notified of position per OpenGL draw
+    /// </summary>
+    public interface IObject3DControl : IDisposable
 	{
 		string Name { get; }
 

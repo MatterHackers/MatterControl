@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -37,7 +39,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class GroupObject3D : Object3D
+    public class GroupObject3D : Object3D
 	{
 		public override bool CanApply => true;
 

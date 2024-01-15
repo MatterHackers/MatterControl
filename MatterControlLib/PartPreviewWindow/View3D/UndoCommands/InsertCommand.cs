@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
@@ -34,7 +36,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class InsertCommand : IUndoRedoCommand
+    public class InsertCommand : IUndoRedoCommand
 	{
 		private IEnumerable<IObject3D> items;
 		private InteractiveScene scene;

@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -39,7 +41,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D_3 : OperationSourceContainerObject3D
+    public class PinchObject3D_3 : OperationSourceContainerObject3D
 	{
 		public PinchObject3D_3()
 		{

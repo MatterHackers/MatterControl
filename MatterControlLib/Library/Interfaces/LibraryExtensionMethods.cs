@@ -33,15 +33,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public static class LibraryExtensionMethods
+    public static class LibraryExtensionMethods
 	{
 		public static async Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{

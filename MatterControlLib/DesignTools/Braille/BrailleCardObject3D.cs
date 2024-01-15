@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -39,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideChildrenFromTreeView]
+    [HideChildrenFromTreeView]
 	[WebPageLink("Website", "About Braille", "https://en.wikipedia.org/wiki/Braille")]
 	public class BrailleCardObject3D : Object3D
 	{

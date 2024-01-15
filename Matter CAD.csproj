@@ -64,7 +64,6 @@
 	<ItemGroup>
 		<ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
 		<ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj" />
-		<ProjectReference Include="MatterControl.SLA\MatterControl.SLA.csproj" />
 		<ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj" />
 		<ProjectReference Include="MatterControlLib\Matter CAD Lib.csproj" />
 		<ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />

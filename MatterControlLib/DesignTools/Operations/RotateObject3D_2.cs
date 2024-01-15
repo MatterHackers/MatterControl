@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -42,7 +44,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
+    public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
 		public RotateObject3D_2()
 		{

@@ -28,22 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.IO;
-using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System;
-using System.Collections.Generic;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 
 namespace MatterHackers.MatterControl
 {
-	public class EditContext
+    public class EditContext
 	{
 		/// <summary>
 		/// The object responsible for item persistence 

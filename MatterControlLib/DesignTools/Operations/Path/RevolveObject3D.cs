@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -46,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RevolveObject3D : Object3D, IEditorDraw
+    public class RevolveObject3D : Object3D, IEditorDraw
 	{
 		[MaxDecimalPlaces(2)]
 		[Slider(0, 360, snapDistance: 1)]

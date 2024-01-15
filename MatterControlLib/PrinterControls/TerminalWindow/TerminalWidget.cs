@@ -29,11 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -113,7 +110,8 @@ namespace MatterHackers.MatterControl
 				var output = lineData.Direction == TerminalLine.MessageDirection.ToPrinter;
 				var outputLine = line;
 
-				var lineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(line);
+				throw new NotImplementedException();
+				var lineWithoutChecksum = "";// GCodeFile.GetLineWithoutChecksum(line);
 
 				// and set this as the output if desired
 				if (output

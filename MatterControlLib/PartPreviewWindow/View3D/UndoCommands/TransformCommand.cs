@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -35,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	internal class TransformData
+    internal class TransformData
 	{
 		public IObject3D TransformedObject { get; set; }
 		public Matrix4X4 RedoTransform { get; set; }

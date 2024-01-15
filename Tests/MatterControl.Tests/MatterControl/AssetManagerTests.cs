@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
@@ -12,7 +13,7 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture]
+    [TestFixture]
 	public class AssetManagerTests
 	{
 

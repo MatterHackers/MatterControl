@@ -26,16 +26,16 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DragDropLoadProgress
+    public class DragDropLoadProgress
 	{
 		private View3DWidget view3DWidget;
 		private ProgressBar progressBar;

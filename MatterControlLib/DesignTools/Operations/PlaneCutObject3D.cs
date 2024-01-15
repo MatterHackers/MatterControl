@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -43,7 +45,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PlaneCutObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
+    public class PlaneCutObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public PlaneCutObject3D()
 		{

@@ -116,10 +116,10 @@ namespace MatterHackers.MatterControl
 				{
 					if (line.Contains(" G1 "))
 					{
-						GCodeFile.GetFirstNumberAfter("X", line, ref newPosition.X);
-						GCodeFile.GetFirstNumberAfter("Y", line, ref newPosition.Y);
-						GCodeFile.GetFirstNumberAfter("Z", line, ref newPosition.Z);
-						GCodeFile.GetFirstNumberAfter("E", line, ref ePosition);
+						Util.GetFirstNumberAfter("X", line, ref newPosition.X);
+						Util.GetFirstNumberAfter("Y", line, ref newPosition.Y);
+						Util.GetFirstNumberAfter("Z", line, ref newPosition.Z);
+						Util.GetFirstNumberAfter("E", line, ref ePosition);
 
 						writetext.WriteLine($"G1 X{newPosition.X} Y{newPosition.Y} Z{newPosition.Z} E{ePosition}");
 						instruction++;

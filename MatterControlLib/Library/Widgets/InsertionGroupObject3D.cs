@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -39,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class InsertionGroupObject3D : Object3D
+    public class InsertionGroupObject3D : Object3D
 	{
 		internal static Mesh placeHolderMesh;
 

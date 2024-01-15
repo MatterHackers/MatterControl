@@ -31,26 +31,28 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	using System;
-	using System.IO;
+    using System;
+    using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Threading;
-	using MatterHackers.Agg.Image;
-	using MatterHackers.Agg.Platform;
+    using Matter_CAD_Lib.DesignTools._Object3D;
+    using Matter_CAD_Lib.DesignTools.Interfaces;
+    using MatterHackers.Agg.Image;
+    using MatterHackers.Agg.Platform;
     using MatterHackers.Agg.UI;
     using MatterHackers.DataConverters3D;
     using MatterHackers.ImageProcessing;
     using MatterHackers.MatterControl.DataStorage;
     using MatterHackers.MatterControl.DesignTools.Operations;
-	using MatterHackers.MatterControl.Library;
+    using MatterHackers.MatterControl.Library;
     using MatterHackers.PolygonMesh.Processors;
     using MatterHackers.RayTracer;
 
-	/// <summary>
-	/// Loads IObject3D objects for mesh based ILibraryItems
-	/// </summary>
-	public class MeshContentProvider : ISceneContentProvider
+    /// <summary>
+    /// Loads IObject3D objects for mesh based ILibraryItems
+    /// </summary>
+    public class MeshContentProvider : ISceneContentProvider
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 

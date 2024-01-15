@@ -30,8 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -42,7 +42,7 @@ using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl
 {
-	public class EditorExtensionsConfig
+    public class EditorExtensionsConfig
 	{
 		private LibraryConfig libraryConfig;
 

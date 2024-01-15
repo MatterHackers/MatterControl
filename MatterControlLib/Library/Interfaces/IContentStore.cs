@@ -27,13 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using System;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface IContentStore : IDisposable
+    public interface IContentStore : IDisposable
 	{
 		Task Save(ILibraryItem item, IObject3D content);
 	}

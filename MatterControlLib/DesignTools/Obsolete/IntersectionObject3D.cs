@@ -32,8 +32,9 @@ either expressed or implied, of the FreeBSD Project.
 /************************ USE NEWER VERSION **************************/
 /*********************************************************************/
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh.Csg;
 using System;

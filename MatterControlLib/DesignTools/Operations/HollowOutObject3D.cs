@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System.Threading;
 using System.Threading.Tasks;
 using g3;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -39,7 +41,7 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HollowOutObject3D : OperationSourceContainerObject3D
+    public class HollowOutObject3D : OperationSourceContainerObject3D
 	{
 		public HollowOutObject3D()
 		{

@@ -28,19 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
-	public class LithophanePlugin : IApplicationPlugin
+    public class LithophanePlugin : IApplicationPlugin
 	{
 		public static void WrapWith(IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{

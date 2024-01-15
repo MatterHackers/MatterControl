@@ -36,6 +36,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -46,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Use ScaleObject3D_3 instead", false)]
+    [Obsolete("Use ScaleObject3D_3 instead", false)]
 	public class ScaleObject3D_2 : TransformWrapperObject3D, IObject3DControlsProvider, IPropertyGridModifier, IScaleLocker
 	{
 		public enum ScaleTypes

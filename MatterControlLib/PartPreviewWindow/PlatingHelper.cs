@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClipperLib;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;

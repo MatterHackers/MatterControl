@@ -29,13 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterControl.Printing;
-using MatterHackers.Agg;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -43,14 +42,13 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class BedConfig : ISceneContext
+    public class BedConfig : ISceneContext
 	{
 		public event EventHandler ActiveLayerChanged;
 

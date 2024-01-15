@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -202,9 +201,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						// Our banners seem to end with something like "=w1520-h170"
 						// if present use that to get the right width and height
 						int expectedWidth = 1520;
-						GCodeFile.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
+						Util.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
 						int expectedHeight = 170;
-						GCodeFile.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
+						Util.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
 						if ((content.theme_filter == "dark" && theme.IsDarkTheme)
 							|| (content.theme_filter == "light" && !theme.IsDarkTheme)
 							|| (content.theme_filter == "all"))

@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -39,10 +40,10 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	/// <summary>
-	/// Loads IObject3D and thumbnails for ImageBuffer based ILibraryItem objects
-	/// </summary>
-	public class ImageContentProvider : ISceneContentProvider
+    /// <summary>
+    /// Loads IObject3D and thumbnails for ImageBuffer based ILibraryItem objects
+    /// </summary>
+    public class ImageContentProvider : ISceneContentProvider
 	{
 		public async Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{

@@ -7,8 +7,8 @@
 // If defined, use the same method as perspective near/far fitting. Represent the AABB as solid shapes instead of faces.
 //#define USE_TETRAHEDRON_CUTTING_FOR_ORTHOGRAPHIC_NEAR_FAR_FITTING
 
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System;
@@ -18,8 +18,8 @@ using System.Linq;
 
 namespace MatterHackers
 {
-	// For "zoom to selection" and dynamic near/far.
-	internal static class CameraFittingUtil
+    // For "zoom to selection" and dynamic near/far.
+    internal static class CameraFittingUtil
 	{
 		/// <summary>
 		/// This proportion, scaled by the smaller dimension of the viewport, is subtracted from each side of the viewport for fitting.

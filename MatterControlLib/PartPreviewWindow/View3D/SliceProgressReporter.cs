@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterControl.Printing;
 using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -50,8 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string statusText = status.Trim().TrimEnd('.');
 			var progress = 0.0;
 
-			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
-				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
+			if (Util.GetFirstNumberAfter("", statusText, ref currentValue)
+				&& Util.GetFirstNumberAfter("/", statusText, ref destValue))
 			{
 				if (destValue == 0)
 				{

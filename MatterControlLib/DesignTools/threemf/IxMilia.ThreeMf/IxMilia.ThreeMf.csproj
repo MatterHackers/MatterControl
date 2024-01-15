@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>A portable .NET library for reading and writing 3MF files.</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <AssemblyTitle>IxMilia.ThreeMf</AssemblyTitle>
+    <Authors>IxMilia</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>IxMilia.ThreeMf</AssemblyName>
+    <PackageId>IxMilia.ThreeMf</PackageId>
+    <PackageTags>CAD;3MF</PackageTags>
+    <PackageProjectUrl>https://github.com/ixmilia/threemf</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- SourceLink settings -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

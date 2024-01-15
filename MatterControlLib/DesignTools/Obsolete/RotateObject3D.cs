@@ -32,6 +32,8 @@ either expressed or implied, of the FreeBSD Project.
 /************************ USE NEWER VERSION **************************/
 /*********************************************************************/
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -41,7 +43,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Not used anymore. Replaced with RotateObject3D_2", false)]
+    [Obsolete("Not used anymore. Replaced with RotateObject3D_2", false)]
 	public class RotateObject3D : Object3D
 	{
 		[DisplayName("X")]

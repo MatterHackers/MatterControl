@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using g3;
 using gs;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -21,7 +23,7 @@ using static gs.MeshAutoRepair;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RepairObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
+    public class RepairObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public RepairObject3D()
 		{

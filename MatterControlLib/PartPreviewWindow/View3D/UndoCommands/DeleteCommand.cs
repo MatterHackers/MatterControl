@@ -28,13 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class DeleteCommand : IUndoRedoCommand
+    public class DeleteCommand : IUndoRedoCommand
 	{
 		private List<(IObject3D parent, IObject3D item)> items = new List<(IObject3D parent, IObject3D item)>();
 

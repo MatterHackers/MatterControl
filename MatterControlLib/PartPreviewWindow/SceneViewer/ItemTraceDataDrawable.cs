@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh.Processors;
@@ -39,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ItemTraceDataDrawable : IDrawableItem
+    public class ItemTraceDataDrawable : IDrawableItem
 	{
 		private InteractiveScene scene;
 

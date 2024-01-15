@@ -30,17 +30,19 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using Newtonsoft.Json;
-using static MatterHackers.DataConverters3D.Object3DExtensions;
+using static Matter_CAD_Lib.DesignTools._Object3D.Object3DExtensions;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public abstract class TransformWrapperObject3D : Object3D
+    public abstract class TransformWrapperObject3D : Object3D
 	{
 		public TransformWrapperObject3D()
 		{

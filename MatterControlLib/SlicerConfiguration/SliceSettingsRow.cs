@@ -368,58 +368,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string mapsTo = "";
 
-			if (printer.Settings.Slicer.Exports.TryGetValue(settingData.SlicerConfigName, out ExportField exportField))
-			{
-				mapsTo = " -> " + exportField.OuputName;
+            throw new NotImplementedException();
 
-				var settings = printer.Settings;
 
-				if (settingData.Converter is ValueConverter mappedSetting
-					&& mappedSetting is AsPercentOfReferenceOrDirect percentReference)
-				{
-					string settingValue = settings.GetValue(settingData.SlicerConfigName);
-					string referencedSetting = settings.GetValue(percentReference.ReferencedSetting);
-
-					double.TryParse(referencedSetting, out double referencedValue);
-
-					var theme = AppContext.Theme;
-
-					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						Margin = new BorderDouble(top: 8),
-						HAnchor = HAnchor.Stretch
-					};
-
-					if (settingValue.Contains("%")
-						&& PrinterSettings.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
-					{
-						column.AddChild(
-							new TextWidget(
-								string.Format("{0}: {1} ({2})", "Percentage of".Localize(), referencedSettingData.PresentationName, referencedSetting),
-								textColor: theme.TextColor,
-								pointSize: theme.DefaultFontSize - 1));
-
-						settingValue = settingValue.Replace("%", "").Trim();
-
-						if (int.TryParse(settingValue, out int percent))
-						{
-							double ratio = (double)percent / 100;
-
-							string line = string.Format(
-										"{0}% of {1} is {2:0.##}",
-										percent,
-										referencedValue,
-										settings.ResolveValue(settingData.SlicerConfigName));
-
-							column.AddChild(new TextWidget(line, textColor: theme.TextColor, pointSize: theme.DefaultFontSize - 1));
-
-							popover.AddChild(column);
-						}
-					}
-				}
-			}
-
-			if (extendedInfo.TryGetValue(settingData.SlicerConfigName, out Func<PrinterSettings, GuiWidget> extender))
+            if (extendedInfo.TryGetValue(settingData.SlicerConfigName, out Func<PrinterSettings, GuiWidget> extender))
 			{
 				if (extender.Invoke(printer.Settings) is GuiWidget widget)
 				{

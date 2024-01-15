@@ -28,13 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SurfacedEditorsField : ListStringField
+    public class SurfacedEditorsField : ListStringField
 	{
 		private IObject3D selectedItem;
 

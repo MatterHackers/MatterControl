@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
@@ -47,7 +49,7 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideChildrenFromTreeView]
+    [HideChildrenFromTreeView]
 	[WebPageLink("Website", "About Braille", "https://en.wikipedia.org/wiki/Braille")]
 	public class BrailleObject3D : Object3D
 	{

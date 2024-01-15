@@ -33,10 +33,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MeshVisualizer;
@@ -47,7 +48,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class Object3DView
+    public class Object3DView
 	{
 		public Color Color { get; set; }
 

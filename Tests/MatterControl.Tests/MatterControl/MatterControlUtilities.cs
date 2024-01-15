@@ -35,6 +35,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -56,7 +57,7 @@ using SQLiteWin32;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
+    [TestFixture, Category("MatterControl.UI.Automation")]
 	public static class MatterControlUtilities
 	{
 		private static bool saveImagesForDebug = true;

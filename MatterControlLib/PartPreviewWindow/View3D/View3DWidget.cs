@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -900,8 +902,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }, .5);
             }
 
-            // Top level selection only - rebuild tree
-            treeNodeContainer.CloseChildren();
+            var newTreeNodeContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+            {
+                HAnchor = HAnchor.Stretch,
+                VAnchor = VAnchor.Fit,
+                Margin = new BorderDouble(12, 3)
+            };
 
             treeNodesByObject.Clear();
 
@@ -921,14 +927,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
                 var rootNode = Object3DTreeBuilder.BuildTree(child, treeNodesByObject, theme);
-                treeNodeContainer.AddChild(rootNode);
+                newTreeNodeContainer.AddChild(rootNode);
                 rootNode.TreeView = treeView;
             }
 
             void HighLightSelection()
             {
                 var scene = sceneContext.Scene;
-                var nodes = treeNodeContainer.DescendantsAndSelf().Where(t => t is TreeNode);
+                var nodes = newTreeNodeContainer.DescendantsAndSelf().Where(t => t is TreeNode);
                 foreach (var uncastNode in nodes)
                 {
                     var node = (TreeNode)uncastNode;
@@ -964,6 +970,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             treeView.TopLeftOffset = beforeReubildScrollPosition;
 
             HighLightSelection();
+
+            // Top level selection only - rebuild tree
+            treeNodeContainer.CloseChildren();
+            foreach(var child in newTreeNodeContainer.Children.ToList())
+            {
+                newTreeNodeContainer.RemoveChild(child);
+                child.ClearRemovedFlag();
+                treeNodeContainer.AddChild(child);
+            }
 
             Invalidate();
         }
@@ -1970,6 +1985,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void Scene_Invalidated(object sender, InvalidateArgs e)
         {
+            if (sender == Scene
+                && e.InvalidateType == InvalidateType.DisplayValues
+                && !rebuildTreePending)
+            {
+                rebuildTreePending = true;
+                UiThread.RunOnIdle(this.RebuildTree);
+            }
+
             if (Scene.Descendants().Count() != lastSceneDescendantsCount
                 && !rebuildTreePending)
             {

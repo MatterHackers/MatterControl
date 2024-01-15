@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -34,7 +36,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class TranslateObject3D : TransformWrapperObject3D
+    public class TranslateObject3D : TransformWrapperObject3D
 	{
 		public TranslateObject3D()
 		{

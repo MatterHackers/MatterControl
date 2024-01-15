@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -44,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleMatrixCornerControl : Object3DControl
+    public class ScaleMatrixCornerControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 

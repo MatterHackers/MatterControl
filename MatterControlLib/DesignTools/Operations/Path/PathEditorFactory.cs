@@ -27,9 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.VectorMath;
 using System;

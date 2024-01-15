@@ -32,6 +32,8 @@ either expressed or implied, of the FreeBSD Project.
 /************************ USE NEWER VERSION **************************/
 /*********************************************************************/
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -48,7 +50,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_4", true)]
+    [Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_4", true)]
 	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
 		private Vector3 boundsSize;

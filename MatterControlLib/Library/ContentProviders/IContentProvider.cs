@@ -31,11 +31,11 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-	using System;
-	using MatterHackers.Agg.Image;
-	using MatterHackers.DataConverters3D;
+    using System;
+    using Matter_CAD_Lib.DesignTools.Interfaces;
+    using MatterHackers.Agg.Image;
 
-	public delegate void ThumbnailSetter(ImageBuffer imageBuffer, bool raytracedImage);
+    public delegate void ThumbnailSetter(ImageBuffer imageBuffer, bool raytracedImage);
 
 	public interface IContentProvider
 	{

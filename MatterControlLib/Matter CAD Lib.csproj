@@ -62,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DesignTools\Object3D\HexGridObject3D.cs" />
+    <Compile Remove="DesignTools\_Object3D\HexGridObject3D.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -80,7 +80,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\MarkdigAgg\MarkdigAgg.csproj" />
-    <ProjectReference Include="..\Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />

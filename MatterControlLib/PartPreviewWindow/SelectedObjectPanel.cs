@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using JsonPath;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;

@@ -28,7 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading;
-using MatterHackers.DataConverters3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {

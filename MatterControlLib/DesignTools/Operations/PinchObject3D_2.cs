@@ -32,6 +32,8 @@ either expressed or implied, of the FreeBSD Project.
 /************************ USE NEWER VERSION **************************/
 /*********************************************************************/
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -44,7 +46,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[Obsolete("Use PinchObject3D_2 instead", false)]
+    [Obsolete("Use PinchObject3D_2 instead", false)]
 	public class PinchObject3D_2 : OperationSourceContainerObject3D
 	{
 		public PinchObject3D_2()

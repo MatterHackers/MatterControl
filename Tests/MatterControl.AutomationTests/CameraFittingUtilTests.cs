@@ -1,4 +1,5 @@
-﻿using MatterHackers.Agg;
+﻿using Matter_CAD_Lib.DesignTools.Interfaces;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -11,7 +12,7 @@ using TestInvoker;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+    [TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class CameraFittingUtilTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";

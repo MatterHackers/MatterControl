@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -40,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	using WinTreeNode = System.Windows.Forms.TreeNode;
+    using WinTreeNode = System.Windows.Forms.TreeNode;
 
     public partial class InspectForm : WinformsSystemWindow.FormInspector
 	{

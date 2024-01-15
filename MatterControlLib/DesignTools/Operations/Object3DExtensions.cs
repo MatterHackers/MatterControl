@@ -33,6 +33,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ClipperLib;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -49,7 +51,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public static class Object3DExtensions
+    public static class Object3DExtensions
 	{
 		public static Color BlendHsl(string a, string b, int index, int count)
 		{

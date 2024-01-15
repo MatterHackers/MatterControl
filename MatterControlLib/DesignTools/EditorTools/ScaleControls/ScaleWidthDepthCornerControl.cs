@@ -27,9 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
@@ -44,7 +45,7 @@ using System;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleWidthDepthCornerControl : Object3DControl
+    public class ScaleWidthDepthCornerControl : Object3DControl
 	{
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw

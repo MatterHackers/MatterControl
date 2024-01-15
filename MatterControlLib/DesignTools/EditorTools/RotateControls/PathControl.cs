@@ -30,13 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;

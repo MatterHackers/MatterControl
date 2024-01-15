@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using CsvHelper.Configuration.Attributes;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;

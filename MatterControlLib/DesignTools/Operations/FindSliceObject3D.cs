@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -43,7 +45,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathProvider
+    public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathProvider
 	{
 		public FindSliceObject3D()
 		{

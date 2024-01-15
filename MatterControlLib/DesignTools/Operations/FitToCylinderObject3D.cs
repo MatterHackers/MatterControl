@@ -33,6 +33,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -49,7 +51,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
+    public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
 		public FitToCylinderObject3D()
 		{

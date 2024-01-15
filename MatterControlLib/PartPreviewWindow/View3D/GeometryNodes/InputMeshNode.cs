@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using DataConverters3D.Object3D.Nodes;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using System.Linq;

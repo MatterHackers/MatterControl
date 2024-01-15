@@ -31,6 +31,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -41,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
+    public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{

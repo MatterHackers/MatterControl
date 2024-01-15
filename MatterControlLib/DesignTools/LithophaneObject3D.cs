@@ -32,10 +32,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -44,7 +45,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
-	[ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
+    [ShowUpdateButton(SuppressPropertyChangeUpdates = true)]
 	public class LithophaneObject3D : Object3D
 	{
 		public LithophaneObject3D()

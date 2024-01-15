@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PrinterSettingsLayer _baseLayer;
 
-		private IObjectSlicer _slicer = null;
+		private object _slicer = null;
 
 		static PrinterSettings()
 		{
@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static Dictionary<string, SliceSettingData> SettingsData { get; }
 
-		public static Dictionary<string, IObjectSlicer> SliceEngines { get; } = new Dictionary<string, IObjectSlicer>();
+		public static Dictionary<string, object> SliceEngines { get; } = new Dictionary<string, object>();
 
 		[JsonIgnore]
 		public string ActiveMaterialKey
@@ -463,8 +463,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ID { get; set; }
 
-		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
-
 		[JsonIgnore]
 		public PrinterSettingsLayer MaterialLayer { get; set; }
 
@@ -538,7 +536,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public List<PrinterSettingsLayer> QualityLayers { get; private set; } = new List<PrinterSettingsLayer>();
 
 		[JsonIgnore]
-		public IObjectSlicer Slicer
+		public object Slicer
 		{
 			get
 			{
@@ -546,7 +544,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string userSlicer = this.GetValue(SettingsKey.slice_engine);
 
-					if (SliceEngines.TryGetValue(userSlicer, out IObjectSlicer slicer))
+					if (SliceEngines.TryGetValue(userSlicer, out object slicer))
 					{
 						_slicer = slicer;
 					}
@@ -743,7 +741,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
 			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
 			this.StagedUserSettings = printerSettings.StagedUserSettings;
-			this.Macros = printerSettings.Macros;
 		}
 
 		/// <summary>
@@ -900,8 +897,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool IsActive(string canonicalSettingsName)
 		{
-			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
-				|| (this.Slicer.PrinterType == PrinterType.FFF && DefaultFFFSettings.Contains(canonicalSettingsName));
+			throw new NotImplementedException();
 		}
 
 		public bool IsOverride(string sliceSetting, IEnumerable<PrinterSettingsLayer> layers)
@@ -1088,15 +1084,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					value = $"{doubleValue:0.###}";
 				}
 
-				// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
-				if (setting == SettingsKey.first_layer_bed_temperature
-					&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
-				{
-					value = $"{this.Helpers.ActiveBedTemperature}";
-				}
+                // Use bed_temperature if the slice engine does not have first_layer_bed_temperature
+                throw new NotImplementedException();
 
-				// braces then brackets replacement
-				inputString = inputString.Replace("{" + setting + "}", value);
+
+                // braces then brackets replacement
+                inputString = inputString.Replace("{" + setting + "}", value);
 				inputString = inputString.Replace("[" + setting + "]", value);
 				return inputString;
 			}

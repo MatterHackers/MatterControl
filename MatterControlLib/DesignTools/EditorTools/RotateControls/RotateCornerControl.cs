@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Transform;
@@ -46,7 +48,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class RotateCornerControl : Object3DControl
+    public class RotateCornerControl : Object3DControl
 	{
 		private IObject3D selectedItemOnMouseDown;
 		private static readonly VertexStorage Arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");

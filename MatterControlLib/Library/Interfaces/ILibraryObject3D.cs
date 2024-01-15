@@ -29,11 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface ILibraryObject3D : ILibraryAsset
+    public interface ILibraryObject3D : ILibraryAsset
 	{
 		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
 	}

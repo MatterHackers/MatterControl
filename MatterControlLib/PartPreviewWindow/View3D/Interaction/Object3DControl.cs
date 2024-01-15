@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public abstract class Object3DControl : IObject3DControl
+    public abstract class Object3DControl : IObject3DControl
 	{
 		public static string ScallingHint => "Hold 'Shift' to scale proportionally, Type 'Esc' to cancel".Localize();
 

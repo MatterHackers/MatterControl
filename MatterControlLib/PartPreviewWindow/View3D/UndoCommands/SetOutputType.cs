@@ -29,12 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SetOutputType : IUndoRedoCommand
+    public class SetOutputType : IUndoRedoCommand
 	{
 		List<PrintOutputTypes> startingOutputType = new List<PrintOutputTypes>();
 		List<IObject3D> itemsToChange = new List<IObject3D>();

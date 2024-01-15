@@ -32,6 +32,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -55,7 +57,7 @@ using Newtonsoft.Json.Linq;
 namespace MatterHackers.MatterControl
 {
 
-	public static class Application
+    public static class Application
 	{
 		private static ProgressBar progressBar;
 		private static TextWidget statusText;

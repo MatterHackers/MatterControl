@@ -27,10 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class SqliteLibraryContainer : WritableContainer, ICustomSearch
+    public class SqliteLibraryContainer : WritableContainer, ICustomSearch
 	{
 		private string keywordFilter = "";
 

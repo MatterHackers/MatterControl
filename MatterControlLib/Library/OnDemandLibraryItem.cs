@@ -30,12 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class OnDemandLibraryItem : ILibraryAssetStream
+    public class OnDemandLibraryItem : ILibraryAssetStream
 	{
 		public OnDemandLibraryItem(string name)
 		{

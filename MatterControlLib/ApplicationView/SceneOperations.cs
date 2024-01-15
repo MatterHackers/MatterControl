@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -57,7 +59,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public static class SceneOperations
+    public static class SceneOperations
 	{
 		private static bool built;
 

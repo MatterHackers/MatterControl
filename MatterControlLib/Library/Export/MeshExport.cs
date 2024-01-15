@@ -32,8 +32,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export

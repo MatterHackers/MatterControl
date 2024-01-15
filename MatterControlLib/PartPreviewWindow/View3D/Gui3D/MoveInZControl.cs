@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -46,7 +48,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MoveInZControl : Object3DControl
+    public class MoveInZControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 

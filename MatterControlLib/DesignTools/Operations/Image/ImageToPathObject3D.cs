@@ -36,6 +36,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;

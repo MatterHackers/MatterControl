@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -39,7 +41,7 @@ using System.Threading;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public abstract class MeshWrapperObject3D : Object3D
+    public abstract class MeshWrapperObject3D : Object3D
 	{
 		public MeshWrapperObject3D()
 		{

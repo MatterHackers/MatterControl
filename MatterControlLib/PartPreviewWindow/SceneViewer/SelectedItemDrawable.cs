@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -39,7 +41,7 @@ using static MatterHackers.VectorMath.Easing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectedItemDrawable : IDrawableItem, IDisposable
+    public class SelectedItemDrawable : IDrawableItem, IDisposable
 	{
 		private readonly InteractiveScene scene;
 		private readonly GuiWidget guiWidget;

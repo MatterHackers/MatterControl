@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Linq;
 using System.Threading.Tasks;
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -40,7 +42,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-	[TestFixture, Category("Agg.PolygonMesh.Rebuild")]
+    [TestFixture, Category("Agg.PolygonMesh.Rebuild")]
 	public class MeshRebuildTests
 	{
 		public void SetupEvnironment()

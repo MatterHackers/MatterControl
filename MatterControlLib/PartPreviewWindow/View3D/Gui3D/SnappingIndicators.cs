@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -35,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SnappingIndicators : Object3DControl
+    public class SnappingIndicators : Object3DControl
 	{
 		private readonly double distToStart = 10 * GuiWidget.DeviceScale;
 		private readonly double lineLength = 15 * GuiWidget.DeviceScale;

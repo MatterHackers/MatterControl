@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Matter_CAD_Lib.DesignTools.Interfaces;
+using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
@@ -34,11 +36,11 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	/// <summary>
-	/// The goal of MeshWrapper is to provide a mutated version of a source item by some operation. To do so we wrap and clone all
-	/// properties of the source item and reset the source matrix to Identity, given that it now exists on the wrapping parent.
-	/// </summary>
-	public class ModifiedMeshObject3D : Object3D
+    /// <summary>
+    /// The goal of MeshWrapper is to provide a mutated version of a source item by some operation. To do so we wrap and clone all
+    /// properties of the source item and reset the source matrix to Identity, given that it now exists on the wrapping parent.
+    /// </summary>
+    public class ModifiedMeshObject3D : Object3D
 	{
 		public ModifiedMeshObject3D()
 		{
