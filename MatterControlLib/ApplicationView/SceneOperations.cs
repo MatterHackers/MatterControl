@@ -34,23 +34,17 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools._Object3D;
-using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
@@ -876,7 +870,6 @@ namespace MatterHackers.MatterControl
 #endif
 						MakeComponentOperation(),
 						EditComponentOperation(),
-                        AddGeometyNodesOperation(),
                     },
 				},
 			};
@@ -899,23 +892,6 @@ namespace MatterHackers.MatterControl
 
 			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply());
 		}
-
-        private static SceneOperation AddGeometyNodesOperation()
-        {
-            return new SceneOperation("Add Geometry Nodes")
-            {
-                ResultType = typeof(NodesObject3D),
-                TitleGetter = () => "Add Geometry Nodes".Localize(),
-                Action = async (sceneContext) =>
-                {
-                    var geometryNodes = new NodesObject3D();
-                    await geometryNodes.ConvertChildrenToNodes(sceneContext.Scene);
-                },
-                Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
-                HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
-                IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-            };
-        }
 
         private static SceneOperation CloneOperation()
         {

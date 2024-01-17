@@ -32,7 +32,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools._Object3D;
-using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -161,26 +160,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
             AddSelectedObjectSidePanel();
-
-            nodeEditorHolder = new HorizontalResizeContainer(theme, HorizontalResizeContainer.GrabBarSide.Top)
-            {
-                Margin = new BorderDouble(0, 0, modelViewSidePanel.Width, 0),
-                HAnchor = HAnchor.Stretch,
-                VAnchor = VAnchor.Bottom,
-                Height = UserSettings.Instance.NodeEditorPanelHeight,
-                Visible = false
-            };
-            nodeEditorHolder.AddChild(new NodeEditor(this, theme));
-            nodeEditorHolder.Resized += (s, e) =>
-            {
-                UserSettings.Instance.NodeEditorPanelHeight = nodeEditorHolder.Height;
-            };
-
-            this.AddChild(nodeEditorHolder);
-            modelViewSidePanel.BoundsChanged += (s, e) =>
-            {
-                nodeEditorHolder.Margin = new BorderDouble(0, 0, modelViewSidePanel.Width, 0);
-            };
 
             workspaceName.ActionArea.AddChild(
                 new ThemedIconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12).GrayToColor(theme.TextColor), theme)
@@ -925,7 +904,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 children = selectionChildern.Union(notSelectionChildern);
             }
 
-            foreach (var child in children.OrderBy(i => i.Name))
+            // order by name and then by id
+            foreach (var child in children.OrderBy(c => c.Name).ThenBy(c => c.ID))
             {
                 if (child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())
                 {
@@ -2042,15 +2022,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 var selectedItem = Scene.SelectedItem;
 
-                if (selectedItem is NodesObject3D nodesObject)
-                {
-                    nodeEditorHolder.Visible = true;
-                }
-                else
-                {
-                    nodeEditorHolder.Visible = false;
-                }
-
                 // Change tree selection to current node
                 if (selectedItem != null
                     && treeNodesByObject.TryGetValue(selectedItem, out TreeNode treeNode))
@@ -2114,7 +2085,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private InlineStringEdit workspaceName;
         private int lastSceneDescendantsCount;
         private Vector2 beforeReubildScrollPosition;
-        private HorizontalResizeContainer nodeEditorHolder;
 
         public InteractiveScene Scene => sceneContext.Scene;
 

@@ -934,6 +934,9 @@ Translated:Click to go back
 English:Clone
 Translated:Clone
 
+English:Clone Count
+Translated:Clone Count
+
 English:Close
 Translated:Close
 

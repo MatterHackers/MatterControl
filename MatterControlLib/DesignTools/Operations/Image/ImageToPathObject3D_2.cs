@@ -149,6 +149,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					case AnalysisTypes.Intensity:
 					case AnalysisTypes.Colors:
+						if (alphaImage == null)
+						{
+							alphaImage = new ImageBuffer(SourceImage);
+						}
 						Histogram.BuildHistogramFromImage(sourceImage, AnalysisType);
 						Histogram.RebuildAlphaImage(sourceImage, alphaImage, Image, AnalysisType);
 						break;

@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     if (!orderChildrenByIndex)
                     {
-                        children = objectView.Children.OrderBy(i => i.Name);
+                        children = objectView.Children.OrderBy(i => i.Name).ThenBy(i => i.ID);
                     }
                     foreach (var child in children)
                     {

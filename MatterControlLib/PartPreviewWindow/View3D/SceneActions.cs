@@ -64,6 +64,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             var selectedItem = scene.SelectedItem;
             if (selectedItem != null && selectedItem.Matrix != originalTransform)
             {
+                if (!string.IsNullOrEmpty(selectedItem.CloneID))
+                {
+                    selectedItem.CloneUpdateCount++;
+                    selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Matrix));
+                }
                 scene.UndoBuffer.Add(new TransformCommand(selectedItem, originalTransform, selectedItem.Matrix));
             }
         }

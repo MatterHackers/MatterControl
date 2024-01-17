@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
             {
-                AddMaterialAndColorSelector(sceneContext, selectedItem, undoBuffer, ref tabIndex);
+                AddHoleAndColorSelector(sceneContext, selectedItem, undoBuffer, ref tabIndex);
             }
 
             var rows = new SafeList<SettingsRow>();
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-            void AddMaterialAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
+            void AddHoleAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
             {
                 var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
                 var worldColor = Color.White;
@@ -418,7 +418,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 solidButton.Parent.MouseDown += (s, e) => SetToSolid();
 
-                var colorRow = new SettingsRow("Output".Localize(), null, colorField.Content, theme)
+                var outputTitle = "Output".Localize();
+
+                if (!string.IsNullOrEmpty(selectedItem.CloneID))
+                {
+                    // find all the items with the same clone id
+                    var clones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
+                    if (clones.Count > 1)
+                    {
+                        outputTitle = "Output".Localize() + $" (#{clones.IndexOf(selectedItem) + 1} of {clones.Count} Clones)";
+                    }
+                }
+
+                var colorRow = new SettingsRow(outputTitle, null, colorField.Content, theme)
                 {
                     // Special top border style for first item in editor
                     Border = new BorderDouble(0, 1)

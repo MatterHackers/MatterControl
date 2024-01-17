@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using Matter_CAD_Lib.DesignTools._Object3D;
-using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using Newtonsoft.Json;
@@ -76,35 +75,5 @@ namespace MatterHackers.Agg.Tests
             Assert.AreEqual(cubeObject.Depth.Value(cubeObject), deserializedCubeObject.Depth.Value(deserializedCubeObject), "Depth should be equal.");
             Assert.AreEqual(cubeObject.Height.Value(cubeObject), deserializedCubeObject.Height.Value(deserializedCubeObject), "Height should be equal.");
         }
-
-        [Test]
-        public async Task InputObject3DNode_SerializeDeserializeTest()
-        {
-            var cubeObject = new CubeObject3D
-            {
-                Width = 100,
-                Depth = 100,
-                Height = 100
-            };
-
-            // Arrange: Create an instance of InputObject3DNode and set properties
-            var inputObject = new InputMeshNode(cubeObject);
-
-            // Act: Serialize the inputObject to JSON and then Deserialize it back
-            var json = JsonConvert.SerializeObject(inputObject, Formatting.Indented);
-            var deserializedInputObject = JsonConvert.DeserializeObject(json) as InputMeshNode;//,
-                //new JsonINodeObjectConverter(),
-                //new JsonIObject3DConverter());
-
-            // Assert: Check if the deserialized object's properties match the original object's properties
-            Assert.IsNotNull(deserializedInputObject);
-            var deserializedCubeObject = deserializedInputObject.Children.First() as CubeObject3D;
-            Assert.IsNotNull(cubeObject);
-            Assert.IsTrue(cubeObject is CubeObject3D);
-            // make sure the object is a cube and has the same properties
-            Assert.AreEqual(cubeObject.Width.Value(cubeObject), deserializedCubeObject.Width.Value(deserializedCubeObject), "Width should be equal.");
-            Assert.AreEqual(cubeObject.Depth.Value(cubeObject), deserializedCubeObject.Depth.Value(deserializedCubeObject), "Depth should be equal.");
-            Assert.AreEqual(cubeObject.Height.Value(cubeObject), deserializedCubeObject.Height.Value(deserializedCubeObject), "Height should be equal.");
-        }
-    }
+   }
 }
