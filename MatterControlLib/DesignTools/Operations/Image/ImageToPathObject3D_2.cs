@@ -319,8 +319,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Image)
-				&& invalidateArgs.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Image)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children))
+                && invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				// try to pick the best processing mode

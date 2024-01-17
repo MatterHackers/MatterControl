@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -729,36 +730,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static int debugPrinterTabIndex = 0;
 
-		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, PartWorkspace workspace, MouseEventArgs mouseEvent)
+		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab chromeTab, PartWorkspace workspace, MouseEventArgs mouseEvent)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
 			
 			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			renameMenuItem.Click += (s, e) =>
+			var sourceItem = workspace?.SceneContext?.EditContext?.SourceItem;
+            renameMenuItem.Click += (s, e) =>
 			{
-				if (workspace != null)
+				if (sourceItem != null)
 				{
-					workspace.SceneContext?.EditContext?.SourceItem?.Rename();
-				}
-				else if (printer != null)
-				{
-					DialogWindow.Show(
-						new InputBoxPage(
-							"Rename Item".Localize(),
-							"Name".Localize(),
-							printer.PrinterName,
-							"Enter New Name Here".Localize(),
-							"Rename".Localize(),
-							(newName) =>
-							{
-								printer.Settings.SetValue(SettingsKey.printer_name, newName);
-							}));
+                    sourceItem.Rename();
 				}
 			};
 
+			if (sourceItem is FileSystemFileItem fileSystemFileItem)
+			{
+                var showInExplorer = popupMenu.CreateMenuItem("Show in Explorer".Localize());
+                showInExplorer.Click += (s, e) =>
+                {
+                    Process.Start("explorer.exe", $"/select, \"{fileSystemFileItem.FilePath}\"");
+                };
+            }
 
-			var moveButtons = new FlowLayoutWidget();
+
+            var moveButtons = new FlowLayoutWidget();
 
 			var textWidget = new TextWidget("Move Tab", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
@@ -774,11 +771,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(3, 0),
 				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
-				Enabled = tabs.GetTabIndex(printerTab) > tabs.FirstMovableTab,
+				Enabled = tabs.GetTabIndex(chromeTab) > tabs.FirstMovableTab,
 			};
 			moveLeftButton.Click += (s, e) =>
 			{
-				tabs.MoveTabLeft(printerTab);
+				tabs.MoveTabLeft(chromeTab);
 				popupMenu.Unfocus();
 			};
 			moveButtons.AddChild(moveLeftButton);
@@ -790,19 +787,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(3, 0),
 				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
-				Enabled = printerTab.NextTab != null,
+				Enabled = chromeTab.NextTab != null,
 			};
 
 			moveRightButton.Click += (s, e) =>
 			{
-				tabs.MoveTabRight(printerTab);
+				tabs.MoveTabRight(chromeTab);
 				popupMenu.Unfocus();
 			};
 			moveButtons.AddChild(moveRightButton);
 
 			popupMenu.AddChild(moveButtons);
 
-			popupMenu.ShowMenu(printerTab, mouseEvent);
+			popupMenu.ShowMenu(chromeTab, mouseEvent);
 		}
 
 		public async Task<PartWorkspace> CreateNewDesignTab(bool addPhilToBed)
@@ -922,7 +919,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (e.Button == MouseButtons.Right)
 				{
-					AddRightClickTabMenu(tabControl, partTab, null, workspace, e);
+					AddRightClickTabMenu(tabControl, partTab, workspace, e);
 				}
 			};
 

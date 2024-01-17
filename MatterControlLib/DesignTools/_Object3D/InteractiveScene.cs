@@ -505,12 +505,15 @@ namespace MatterHackers.DataConverters3D
                         {
 							var cloneCopy = sourceClone.DeepCopy();
                             var existingCloneParent = existingClone.Parent;
-                            existingCloneParent.Children.Modify(existingCloneParentChildren =>
-                            {
-                                var exisitngCloneIndex = existingCloneParentChildren.IndexOf(existingClone);
-								// replace the existing clone with the new clone
-                                existingCloneParentChildren[exisitngCloneIndex] = cloneCopy;
-                            });
+							using (existingCloneParent.RebuildLock())
+							{
+								existingCloneParent.Children.Modify(existingCloneParentChildren =>
+								{
+									var exisitngCloneIndex = existingCloneParentChildren.IndexOf(existingClone);
+									// replace the existing clone with the new clone
+									existingCloneParentChildren[exisitngCloneIndex] = cloneCopy;
+								});
+							}
 
 							UiThread.RunOnIdle(() => existingCloneParent.Invalidate(new InvalidateArgs(cloneCopy, InvalidateType.Children)));
                         }

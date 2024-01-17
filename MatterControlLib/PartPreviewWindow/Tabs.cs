@@ -341,6 +341,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private int NumberOfFixedTabs => 2;
+
 		public void MoveTabRight(ITab tab)
 		{
 			var index = AllTabs.IndexOf(tab);
@@ -356,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					list.Insert(tabIndex + 1, tabWidget);
 				});
 
-				var savedIndex = index - 3;
+				var savedIndex = index - NumberOfFixedTabs;
 				var moving = ApplicationController.Instance.Workspaces[savedIndex];
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex + 1, moving);
@@ -382,7 +384,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					list.Insert(tabIndex - 1, tabWidget);
 				});
 
-				var savedIndex = index - 3;
+				var savedIndex = index - NumberOfFixedTabs;
 				var moving = ApplicationController.Instance.Workspaces[savedIndex];
 				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
 				ApplicationController.Instance.Workspaces.Insert(savedIndex - 1, moving);

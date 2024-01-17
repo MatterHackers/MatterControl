@@ -183,7 +183,9 @@ namespace MatterHackers.MatterControl.Library
 
 #if DEBUG
                                     // save the content.ToJson() to disk for debugging into the downloads folder
-                                    var debugPath = Path.Combine(ApplicationDataStorage.Instance.DownloadsDirectory, "D_" + Path.GetFileName(fileItem.FilePath));
+                                    var folder = Path.Combine(ApplicationDataStorage.Instance.DownloadsDirectory, "DebugMcx");
+                                    Directory.CreateDirectory(folder);
+                                    var debugPath = Path.Combine(folder, Path.GetFileName(fileItem.FilePath));
                                     File.WriteAllText(debugPath, await content.ToJson());
 #endif
                                 }

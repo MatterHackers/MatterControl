@@ -89,7 +89,10 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
 
         private void Children_ItemsModified(object sender, EventArgs e)
         {
-            Invalidate(InvalidateType.Children);
+            if (!RebuildLocked)
+            {
+                Invalidate(InvalidateType.Children);
+            }
         }
 
         public string ID { get; set; } = Guid.NewGuid().ToString();

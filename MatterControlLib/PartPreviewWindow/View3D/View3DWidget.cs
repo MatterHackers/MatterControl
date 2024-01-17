@@ -409,56 +409,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // controlLayer.BeforeDraw += (s, e) => // enable to debug any rendering errors that might be due to double buffered hudBackground
             hudBackground.BeforeDraw += (s, e) =>
             {
-                var tumbleCubeRadius = tumbleCubeControl.Width / 2;
-                var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
-                    controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
-
-                void renderPath(IVertexSource vertexSource, double width)
+                using (new QuickTimerReport("View3DWidegt.DeforeDraw"))
                 {
-                    var background = new Stroke(vertexSource, width * 2);
-                    background.LineCap = LineCap.Round;
-                    e.Graphics2D.Render(background, hudBackgroundColor);
-                    e.Graphics2D.Render(new Stroke(background, scale), hudStrokeColor);
+                    var tumbleCubeRadius = tumbleCubeControl.Width / 2;
+                    var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
+                        controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
+
+                    void RenderPath(IVertexSource vertexSource, double width)
+                    {
+                        using (new QuickTimerReport("View3DWidegt.renderPath"))
+                        {
+                            var background = new Stroke(vertexSource, width * 2);
+                            background.LineCap = LineCap.Round;
+                            e.Graphics2D.Render(background, hudBackgroundColor);
+                            e.Graphics2D.Render(new Stroke(background, scale), hudStrokeColor);
+                        }
+                    }
+
+                    void renderRoundedGroup(double spanRatio, double startRatio)
+                    {
+                        var angle = MathHelper.Tau * spanRatio;
+                        var width = 17 * scale;
+                        var start = MathHelper.Tau * startRatio - angle / 2;
+                        var end = MathHelper.Tau * startRatio + angle / 2;
+                        var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
+
+                        RenderPath(arc, width);
+                    }
+
+                    renderRoundedGroup(.3, .25);
+                    renderRoundedGroup(.1, .5 + .1);
+
+                    // render the perspective and turntable group background
+                    renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
+
+                    void renderRoundedLine(double lineWidth, double heightBelowCenter)
+                    {
+                        lineWidth *= scale;
+                        var width = 17 * scale;
+                        var height = tumbleCubeCenter.Y - heightBelowCenter * scale;
+                        var start = tumbleCubeCenter.X - lineWidth;
+                        var end = tumbleCubeCenter.X + lineWidth;
+                        var line = new VertexStorage();
+                        line.MoveTo(start, height);
+                        line.LineTo(end, height);
+
+                        RenderPath(line, width);
+                    }
+
+                    tumbleCubeCenter.X += bottomButtonOffset;
+
+                    renderRoundedLine(18, 101);
+
+                    // e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
+
+                    // ImageIO.SaveImageData("C:\\temp\\test.png", hudBackground.BackBuffer);
                 }
-
-                void renderRoundedGroup(double spanRatio, double startRatio)
-                {
-                    var angle = MathHelper.Tau * spanRatio;
-                    var width = 17 * scale;
-                    var start = MathHelper.Tau * startRatio - angle / 2;
-                    var end = MathHelper.Tau * startRatio + angle / 2;
-                    var arc = new Arc(tumbleCubeCenter, tumbleCubeRadius + 12 * scale + width / 2, start, end);
-
-                    renderPath(arc, width);
-                }
-
-                renderRoundedGroup(.3, .25);
-                renderRoundedGroup(.1, .5 + .1);
-
-                // render the perspective and turntable group background
-                renderRoundedGroup(.1, 1 - .1); // when we have both ortho and turntable
-
-                void renderRoundedLine(double lineWidth, double heightBelowCenter)
-                {
-                    lineWidth *= scale;
-                    var width = 17 * scale;
-                    var height = tumbleCubeCenter.Y - heightBelowCenter * scale;
-                    var start = tumbleCubeCenter.X - lineWidth;
-                    var end = tumbleCubeCenter.X + lineWidth;
-                    var line = new VertexStorage();
-                    line.MoveTo(start, height);
-                    line.LineTo(end, height);
-
-                    renderPath(line, width);
-                }
-
-                tumbleCubeCenter.X += bottomButtonOffset;
-
-                renderRoundedLine(18, 101);
-
-                // e.Graphics2D.Circle(controlLayer.Width - cubeCenterFromRightTop.X, controlLayer.Height - cubeCenterFromRightTop.Y, 150, Color.Cyan);
-
-                // ImageIO.SaveImageData("C:\\temp\\test.png", hudBackground.BackBuffer);
             };
 
             // add the home button
