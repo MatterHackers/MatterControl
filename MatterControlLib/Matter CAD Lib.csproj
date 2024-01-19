@@ -62,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DesignTools\_Object3D\HexGridObject3D.cs" />
+    <Compile Remove="DesignTools\Objects3D\HexGridObject3D.cs" />
   </ItemGroup>
 
   <ItemGroup>
