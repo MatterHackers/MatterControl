@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				UiThread.RunOnIdle(() =>
 				{
 					rebuildLocks.Dispose();
-					this.CancelAllParentBuilding();
+					this.DoRebuildComplete();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 				});
 

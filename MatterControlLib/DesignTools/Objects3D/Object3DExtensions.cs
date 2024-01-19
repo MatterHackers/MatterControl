@@ -66,8 +66,17 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
             }
         }
 
-        public static void CancelAllParentBuilding(this IObject3D object3D)
+        /// <summary>
+        /// This will cancele all parent building and update the clone count for any clon that has rebuilt.
+        /// </summary>
+        /// <param name="object3D"></param>
+        public static void DoRebuildComplete(this IObject3D object3D)
         {
+            if (!string.IsNullOrEmpty(object3D.CloneID))
+            {
+                object3D.CloneUpdateCount++;
+            }
+
             // and cancel the current building of any parent that can be canceled
             foreach (var parent in object3D.Parents())
             {

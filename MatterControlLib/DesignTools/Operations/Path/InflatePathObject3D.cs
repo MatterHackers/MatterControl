@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
 			}
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;
 		}

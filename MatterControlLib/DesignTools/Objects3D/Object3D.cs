@@ -226,7 +226,10 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
                         traceData = null;
                         MeshPath = null;
 
-                        CloneUpdateCount++;
+                        if (!string.IsNullOrEmpty(CloneID))
+                        {
+                            CloneUpdateCount++;
+                        }
 
                         Invalidate(InvalidateType.Mesh);
                     }

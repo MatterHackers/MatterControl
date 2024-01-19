@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			Invalidate(InvalidateType.DisplayValues);
 

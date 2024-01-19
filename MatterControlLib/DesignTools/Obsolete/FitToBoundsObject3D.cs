@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return base.Rebuild();
 		}

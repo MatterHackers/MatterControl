@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();
-						this.CancelAllParentBuilding();
+						this.DoRebuildComplete();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					});
 					return Task.CompletedTask;

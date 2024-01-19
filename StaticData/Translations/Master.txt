@@ -781,6 +781,9 @@ Translated:Cancel
 English:Cancel Check In
 Translated:Cancel Check In
 
+English:Cancel Clone, Make Individual
+Translated:Cancel Clone, Make Individual
+
 English:Cancel command
 Translated:Cancel command
 
@@ -2505,6 +2508,9 @@ Translated:Include Function
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
 Translated:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
+
+English:Individual
+Translated:Individual
 
 English:Infill
 Translated:Infill
@@ -4788,6 +4794,9 @@ Translated:Select an object to copy its color
 
 English:Select cell to edit
 Translated:Select cell to edit
+
+English:Select Clone
+Translated:Select Clone
 
 English:Select Folder
 Translated:Select Folder

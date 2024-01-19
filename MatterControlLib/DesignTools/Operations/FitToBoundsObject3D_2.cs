@@ -232,8 +232,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			this.CancelAllParentBuilding();
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix | additonalInvalidate));
 			return Task.CompletedTask;
 		}

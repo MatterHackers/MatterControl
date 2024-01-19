@@ -254,16 +254,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             var selectedItemName = selectedItem.Name ?? selectedItemType.Name;
 
-            if (!string.IsNullOrEmpty(selectedItem.CloneID))
-            {
-                // find all the items with the same clone id
-                var clones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
-                if (clones.Count > 1)
-                {
-                    selectedItemName = $" (Clone #{clones.IndexOf(selectedItem) + 1} of {clones.Count}) - {selectedItemName}";
-                }
-            }
-
             editorSectionWidget.Text = selectedItemName;
 
             HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> mappedEditors = ApplicationController.Instance.EditorExtensions.GetEditorsForType(selectedItemType);
@@ -316,10 +306,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scene.SelectionChanged += SelectionChanged;
             }
 
+            var firstItem = true;
             if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
             {
                 AddHoleAndColorSelector(sceneContext, selectedItem, undoBuffer, ref tabIndex);
+                firstItem = false;
             }
+
+            AddCloneInfoAndSelector(sceneContext, selectedItem, undoBuffer, firstItem, ref tabIndex);
 
             var rows = new SafeList<SettingsRow>();
 
@@ -335,6 +329,76 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     && ApplicationController.Instance.EditorExtensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is Func<ThemeConfig, UndoBuffer, IObjectEditor> editorFactory)
                 {
                     ShowObjectEditor((editorFactory.Invoke(theme, undoBuffer), item, item.Name), selectedItem);
+                }
+            }
+
+            void AddCloneInfoAndSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, bool firstItem, ref int tabIndex)
+            {
+                if (!string.IsNullOrEmpty(selectedItem.CloneID))
+                {
+                    // find all the items with the same clone id
+                    var allClones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
+                    if (allClones.Count == 1)
+                    {
+                        // there is only one clone of this object clear its clone id
+                        allClones[0].CloneID = null;
+                    }
+
+                    var clonesInSceneTreeView = allClones; // .Where(i => i.Parents().All(p => p.Visible && !(p is OperationSourceContainerObject3D))).ToList();
+                    if (clonesInSceneTreeView.Count > 1)
+                    {
+                        var leftToRightCloneControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+
+                        leftToRightCloneControls.AddChild(new TextWidget("Select".Localize(), textColor: theme.TextColor)
+                        {
+                            VAnchor = VAnchor.Center,
+                        });
+
+                        var dropDownList = new MHDropDownList("Select", theme)
+                        {
+                            Name = "Select Clone Drop Down",
+                            Margin = new BorderDouble(5, 0),
+                            //VAnchor = VAnchor.Center,
+                            //HAnchor = HAnchor.Fit,
+                            //BackgroundColor = theme.MinimalShade,
+                            //BackgroundRadius = 3,
+                            //BackgroundOutlineWidth = 1,
+                            //BorderColor = theme.TextColor,
+                            //TextColor = theme.TextColor,
+                        };
+
+                        for (var i = 0; i < clonesInSceneTreeView.Count; i++)
+                        {
+                            var clone = clonesInSceneTreeView[i];
+                            MenuItem newItem = dropDownList.AddItem($"Clone {i + 1}", clone.ID);
+                            newItem.Selected += (sender, e) =>
+                            {
+                                if (scene.SelectedItem != clone)
+                                {
+                                    UiThread.RunOnIdle(() => scene.SelectedItem = clone);
+                                }
+                            };
+                        }
+                        leftToRightCloneControls.AddChild(dropDownList);
+                        dropDownList.SelectedLabel = $"Clone {clonesInSceneTreeView.IndexOf(selectedItem) + 1}";
+
+                        var uncloneButton = theme.CreateDialogButton("Unclone");
+                        uncloneButton.ToolTipText = "Cancel Clone, Make Individual".Localize();
+                        uncloneButton.Height = 22 * DeviceScale;
+                        uncloneButton.Margin = new BorderDouble(5, 0);
+                        leftToRightCloneControls.AddChild(uncloneButton);
+
+                        var cloneDetails = $"Clone - {clonesInSceneTreeView.IndexOf(selectedItem) + 1} of {clonesInSceneTreeView.Count}";
+
+                        var cloneRow = new SettingsRow(cloneDetails, null, leftToRightCloneControls, theme);
+                        editorPanel.AddChild(cloneRow);
+
+                        if (firstItem)
+                        {
+                            // Special top border style for first item in editor
+                            cloneRow.Border = new BorderDouble(0, 1);
+                        };
+                    }
                 }
             }
 

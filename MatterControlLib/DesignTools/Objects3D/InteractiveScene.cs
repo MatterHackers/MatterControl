@@ -515,6 +515,7 @@ namespace MatterHackers.DataConverters3D
 								});
 							}
 
+							// wait until the next update to invalidate the parents
 							UiThread.RunOnIdle(() => existingCloneParent.Invalidate(new InvalidateArgs(cloneCopy, InvalidateType.Children)));
                         }
                     }
@@ -523,6 +524,12 @@ namespace MatterHackers.DataConverters3D
                         // If no clones were found, the source is not a clone, so we can remove the clone ID
                         sourceClone.CloneID = null;
                     }
+
+					// set all the clone counts to 0
+					foreach(var clone in clones)
+					{
+						clone.CloneUpdateCount = 0;
+					}
                 }
 
 				this.Invalidate(new InvalidateArgs(this, InvalidateType.DisplayValues));

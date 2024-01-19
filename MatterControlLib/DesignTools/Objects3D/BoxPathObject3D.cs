@@ -136,7 +136,7 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
                 }
             }
 
-            this.CancelAllParentBuilding();
+            this.DoRebuildComplete();
             Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
             return Task.CompletedTask;
         }

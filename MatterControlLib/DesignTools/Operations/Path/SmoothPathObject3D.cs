@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					{
 						rebuildLock.Dispose();
 						this.Invalidate(InvalidateType.DisplayValues);
-						this.CancelAllParentBuilding();
+						this.DoRebuildComplete();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					});
 					return Task.CompletedTask;

@@ -116,7 +116,7 @@ Path excluded if function = 0 and included if != 0";
                 this.Mesh = VertexStorage.Extrude(Constants.PathPolygonsHeight);
             }
 
-            this.CancelAllParentBuilding();
+            this.DoRebuildComplete();
             Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
             return Task.CompletedTask;
         }

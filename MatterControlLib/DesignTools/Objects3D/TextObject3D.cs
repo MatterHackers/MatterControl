@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rebuildLock.Dispose();
 					Invalidate(InvalidateType.DisplayValues);
-					this.CancelAllParentBuilding();
+					this.DoRebuildComplete();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
                     if (refreshToolBar)
                     {

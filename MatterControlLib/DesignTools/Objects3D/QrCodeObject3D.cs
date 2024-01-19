@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
                     RebuildImage();
 
                     // send the invalidate on image change
-                    this.CancelAllParentBuilding();
+                    this.DoRebuildComplete();
                     Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Image));
                     Invalidate(InvalidateType.DisplayValues);
                 }

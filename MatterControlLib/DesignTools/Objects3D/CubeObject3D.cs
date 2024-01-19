@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// if any of our parest are re-bulding cancel it as we just changed and they need to start over
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 
 			return base.Rebuild();

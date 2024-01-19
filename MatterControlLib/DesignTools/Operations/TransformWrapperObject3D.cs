@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			scene.SelectedItem = this;
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			parent?.Invalidate(new InvalidateArgs(parent, InvalidateType.Children));
 		}
 
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			parentLock?.Dispose();
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			parent?.Invalidate(new InvalidateArgs(parent, InvalidateType.Children));
 		}
 	}

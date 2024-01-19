@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
                     UiThread.RunOnIdle(() =>
                     {
                         rebuildLocks.Dispose();
-                        this.CancelAllParentBuilding();
+                        this.DoRebuildComplete();
                         Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
                     });
 

@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Invalidate(InvalidateType.DisplayValues);
 
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}

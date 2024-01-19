@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 
 			Invalidate(InvalidateType.DisplayValues);
-			this.CancelAllParentBuilding();
+			this.DoRebuildComplete();
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 
 			return Task.CompletedTask;
