@@ -67,7 +67,7 @@ public static class VertexSourceExtensions
 		return a.Plus(b);
 	}
 
-	public static VertexStorage MergePaths(this IVertexSource a, IVertexSource b, ClipType clipType)
+	public static VertexStorage MergePaths(this IVertexSource a, IVertexSource b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd)
 	{
 		List<List<IntPoint>> aPolys = a.CreatePolygons();
 		List<List<IntPoint>> bPolys = b.CreatePolygons();
@@ -78,7 +78,7 @@ public static class VertexSourceExtensions
 		clipper.AddPaths(bPolys, PolyType.ptClip, true);
 
 		var outputPolys = new List<List<IntPoint>>();
-		clipper.Execute(clipType, outputPolys, PolyFillType.pftNonZero);
+		clipper.Execute(clipType, outputPolys, polyFillType);
 
 		Clipper.CleanPolygons(outputPolys);
 

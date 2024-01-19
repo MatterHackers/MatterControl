@@ -125,8 +125,6 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             var inputExpression = inExpression;
 
-            inputExpression = SearchSiblingProperties(owner, inputExpression);
-
             inputExpression = ReplaceConstantsWithValues(owner, inputExpression);
 
             // check if the expression is an equation (starts with "=")
@@ -530,53 +528,6 @@ namespace MatterHackers.MatterControl.DesignTools
             }
 
             return stringWithConstants;
-        }
-
-        private static string SearchSiblingProperties(IObject3D owner, string inExpression)
-        {
-            var parent = owner.Parent;
-            if (parent != null)
-            {
-                var matches = ConstantFinder.Matches(inExpression);
-
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    var constant = matches[i].Value;
-                    // split inExpression on .
-                    var splitExpression = constant.Split('.');
-                    if (splitExpression.Length == 2)
-                    {
-                        foreach (var child in parent.Children)
-                        {
-                            // skip if owner
-                            if (child != owner)
-                            {
-                                var itemName = splitExpression[0];
-                                var propertyName = splitExpression[1];
-                                // if child has the same name as itemName
-                                if (child.Name == itemName)
-                                {
-                                    // enumerate public properties on child
-                                    foreach (var property in child.GetType().GetProperties())
-                                    {
-                                        var displayName = GetDisplayName(property);
-                                        // if property name matches propertyName
-                                        if (displayName == propertyName)
-                                        {
-                                            // return the value
-                                            var expression = child.GetType().GetProperty(property.Name).GetValue(child, null).ToString();
-                                            var value = EvaluateExpression<double>(child, expression).ToString();
-                                            inExpression = inExpression.Replace("[" + constant + "]", value);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return inExpression;
-        }
+        }        
     }
 }

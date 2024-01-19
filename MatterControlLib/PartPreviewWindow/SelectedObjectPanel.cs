@@ -252,7 +252,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 primaryActionsPanel.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
             }
 
-            editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
+            var selectedItemName = selectedItem.Name ?? selectedItemType.Name;
+
+            if (!string.IsNullOrEmpty(selectedItem.CloneID))
+            {
+                // find all the items with the same clone id
+                var clones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
+                if (clones.Count > 1)
+                {
+                    selectedItemName = $" (Clone #{clones.IndexOf(selectedItem) + 1} of {clones.Count}) - {selectedItemName}";
+                }
+            }
+
+            editorSectionWidget.Text = selectedItemName;
 
             HashSet<Func<ThemeConfig, UndoBuffer, IObjectEditor>> mappedEditors = ApplicationController.Instance.EditorExtensions.GetEditorsForType(selectedItemType);
 
@@ -419,16 +431,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 solidButton.Parent.MouseDown += (s, e) => SetToSolid();
 
                 var outputTitle = "Output".Localize();
-
-                if (!string.IsNullOrEmpty(selectedItem.CloneID))
-                {
-                    // find all the items with the same clone id
-                    var clones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
-                    if (clones.Count > 1)
-                    {
-                        outputTitle = "Output".Localize() + $" (#{clones.IndexOf(selectedItem) + 1} of {clones.Count} Clones)";
-                    }
-                }
 
                 var colorRow = new SettingsRow(outputTitle, null, colorField.Content, theme)
                 {

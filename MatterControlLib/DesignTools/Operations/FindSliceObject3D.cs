@@ -42,10 +42,11 @@ using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class FindSliceObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IPathProvider
+    public class FindSliceObject3D : OperationSourceContainerObject3D, IEditorDraw, IPropertyGridModifier, IPathProvider
 	{
 		public FindSliceObject3D()
 		{
@@ -84,6 +85,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			return (mesh, slice);
 		}
 
+        public virtual void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
+        {
+            this.DrawPath();
+        }
+
+        public virtual AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
+        {
+            return this.GetWorldspaceAabbOfDrawPath();
+        }
+        
 		public override void Apply(UndoBuffer undoBuffer)
 		{
 			var newPathObject = new CustomPathObject3D();

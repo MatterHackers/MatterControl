@@ -246,10 +246,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
+			var rootSelectedItem = RootSelection;
+
+            if (mouseEvent3D.info != null && rootSelectedItem != null)
 			{
 				hadClickOnControl = true;
-				activeSelectedItem = RootSelection;
+				activeSelectedItem = rootSelectedItem;
 
 				zValueDisplayInfo.Visible = true;
 
