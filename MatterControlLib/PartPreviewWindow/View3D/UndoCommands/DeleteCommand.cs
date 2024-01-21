@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -58,7 +59,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetDeletionObjects(scene, deletingItems);
 		}
 
-		private void SetDeletionObjects(InteractiveScene scene, IEnumerable<IObject3D> deletingItems)
+        public string Name => "Delete".Localize();
+
+        private void SetDeletionObjects(InteractiveScene scene, IEnumerable<IObject3D> deletingItems)
 		{ 
 			this.scene = scene;
 			scene.ClearSelection();

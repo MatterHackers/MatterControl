@@ -576,6 +576,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
+            public string Name => "Arrange".Localize();
+
             public void Do()
             {
                 for (int i = 0; i < allUndoTransforms.Count; i++)

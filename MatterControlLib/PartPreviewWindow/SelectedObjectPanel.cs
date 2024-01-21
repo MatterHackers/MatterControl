@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     if (allClones.Count == 1)
                     {
                         // there is only one clone of this object clear its clone id
-                        allClones[0].CloneID = null;
+                        selectedItem.CloneID = null;
                     }
 
                     var clonesInSceneTreeView = allClones; // .Where(i => i.Parents().All(p => p.Visible && !(p is OperationSourceContainerObject3D))).ToList();
@@ -386,6 +386,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         uncloneButton.ToolTipText = "Cancel Clone, Make Individual".Localize();
                         uncloneButton.Height = 22 * DeviceScale;
                         uncloneButton.Margin = new BorderDouble(5, 0);
+                        uncloneButton.Click += (s, e) =>
+                        {
+                            var cloneId = selectedItem.CloneID;
+
+                            undoBuffer.AddAndDo(new DoUndoActions("Remove Clone".Localize(), () =>
+                            {
+                                selectedItem.CloneID = null;
+                                scene.SelectedItem = null;
+                                scene.SelectedItem = selectedItem;
+                            },
+                            () =>
+                            {
+                                selectedItem.CloneID = cloneId;
+                                scene.SelectedItem = null;
+                                scene.SelectedItem = selectedItem;
+                            }));
+
+                        };
                         leftToRightCloneControls.AddChild(uncloneButton);
 
                         var cloneDetails = $"Clone - {clonesInSceneTreeView.IndexOf(selectedItem) + 1} of {clonesInSceneTreeView.Count}";
@@ -668,11 +686,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             var oldValue = componentObject.DecodeContent(editorIndex).cellData;
                             var newValue = field.Value;
-                            undoBuffer.AddAndDo(new UndoRedoActions(() =>
+                            undoBuffer.AddAndDo(new DoUndoActions("Edit Cell".Localize(), () =>
                             {
                                 doOrUndoing = true;
-                                editorList[editorIndex] = "!" + cellId + "," + oldValue;
-                                var expression = new StringOrExpression(oldValue);
+                                editorList[editorIndex] = "!" + cellId + "," + newValue;
+                                var expression = new StringOrExpression(newValue);
                                 cell.Expression = expression.Value(componentObject).ToString();
                                 (componentObject as Object3D).Invalidate(InvalidateType.SheetUpdated);
                                 doOrUndoing = false;
@@ -680,8 +698,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             () =>
                             {
                                 doOrUndoing = true;
-                                editorList[editorIndex] = "!" + cellId + "," + newValue;
-                                var expression = new StringOrExpression(newValue);
+                                editorList[editorIndex] = "!" + cellId + "," + oldValue;
+                                var expression = new StringOrExpression(oldValue);
                                 cell.Expression = expression.Value(componentObject).ToString();
                                 (componentObject as Object3D).Invalidate(InvalidateType.SheetUpdated);
                                 doOrUndoing = false;

@@ -33,6 +33,7 @@ using System.Linq;
 using Matter_CAD_Lib.DesignTools._Object3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.DataConverters3D.UndoCommands
@@ -66,6 +67,8 @@ namespace MatterHackers.DataConverters3D.UndoCommands
 			this.removeItems = removeItems;
 			this.addItems = addItems;
 		}
+
+		public string Name => "Replace".Localize();
 
 		public void Do()
 		{

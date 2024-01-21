@@ -137,14 +137,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					changeDueToSlider = false;
 
 					// save the undo information
-					undoBuffer.Add(new UndoRedoActions(() =>
-					{
-						SetValue(property, context, valueFromString, sliderDownValue);
-					},
-					() =>
-					{
-						SetValue(property, context, valueFromString, currentValue);
-					}));
+					undoBuffer.Add(new DoUndoActions("Value Change", () =>
+                    {
+                        SetValue(property, context, valueFromString, currentValue);
+                    },
+                    () =>
+                    {
+                        SetValue(property, context, valueFromString, sliderDownValue);
+                    }));
 				};
 
 				GuiWidget content = null;

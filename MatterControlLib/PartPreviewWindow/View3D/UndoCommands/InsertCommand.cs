@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -55,6 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.items = insertingItem;
 			this.selectAfterInsert = selectAfterInsert;
 		}
+
+		public string Name => "Insert".Localize();
 
 		public void Do()
 		{

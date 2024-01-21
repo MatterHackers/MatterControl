@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -46,6 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.originalItem = ungroupingItem;
 			this.scene = scene;
 		}
+
+		public string Name => "Ungroup".Localize();
 
 		public void Do()
 		{

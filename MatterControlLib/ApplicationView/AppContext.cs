@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 			ToolTipManager.CreateToolTip = MatterControlToolTipWidget;
 		}
 
-		private static GuiWidget MatterControlToolTipWidget(string toolTipText)
+		private static (GuiWidget widgetToShow, Action<GuiWidget, string> changeWidgetText) MatterControlToolTipWidget(string toolTipText)
 		{
 			var toolTipPopover = new ClickablePopover(ArrowDirection.Up, new BorderDouble(0, 0), 7, 0);
 
@@ -143,15 +143,32 @@ namespace MatterHackers.MatterControl
             };
             
             markdownWidegt.Width = 350 * GuiWidget.DeviceScale;
-			var maxLineWidth = 0.0;
-			if (markdownWidegt.Descendants<ParagraphX>().Any())
+			
+			double MaxLineWidth()
 			{
-				maxLineWidth = markdownWidegt.Descendants<ParagraphX>().Max(i => i.MaxLineWidth);
+				var maxLineWidth = 0.0;
+				if (markdownWidegt.Descendants<ParagraphX>().Any())
+				{
+					maxLineWidth = markdownWidegt.Descendants<ParagraphX>().Max(i => i.MaxLineWidth);
+				}
+
+				return maxLineWidth + 15;
 			}
 
-			markdownWidegt.Width = maxLineWidth + 15;
+			markdownWidegt.Width = MaxLineWidth();
 
-			return markdownWidegt;
+            void ChangeWidgetText(GuiWidget widget, string newText)
+			{
+                var markdownWidget = widget.DescendantsAndSelf<MarkdownWidget>().FirstOrDefault() as MarkdownWidget;
+
+                if (markdownWidget != null)
+				{
+                    markdownWidget.Markdown = newText;
+                    markdownWidegt.Width = MaxLineWidth();
+                }
+            }
+
+            return (markdownWidegt, ChangeWidgetText);
 		}
 
 		public static ThemeConfig LoadTheme(string themeName)

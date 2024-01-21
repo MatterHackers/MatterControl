@@ -32,6 +32,7 @@ using System.Linq;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -63,6 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.startingOutputType.Add(item.OutputType);
 			}
 		}
+
+		public string Name => "Set Output".Localize();
 
 		void IUndoRedoCommand.Do()
 		{

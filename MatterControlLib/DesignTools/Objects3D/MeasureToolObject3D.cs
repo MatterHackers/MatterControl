@@ -191,18 +191,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			var undoBuffer = controlLayer?.Scene?.UndoBuffer;
 			if (undoBuffer != null)
 			{
-				undoBuffer.Add(new UndoRedoActions(() =>
-				{
-					worldStartPosition = undoStartPosition;
-					worldEndPosition = undoEndPosition;
-					this.Invalidate(InvalidateType.Matrix);
-				},
-				() =>
-				{
-					worldStartPosition = doStartPosition;
-					worldEndPosition = doEndPosition;
-					this.Invalidate(InvalidateType.Matrix);
-				}));
+				undoBuffer.Add(new DoUndoActions("Extents".Localize(), () =>
+                {
+                    worldStartPosition = doStartPosition;
+                    worldEndPosition = doEndPosition;
+                    this.Invalidate(InvalidateType.Matrix);
+                },
+                () =>
+                {
+                    worldStartPosition = undoStartPosition;
+                    worldEndPosition = undoEndPosition;
+                    this.Invalidate(InvalidateType.Matrix);
+                }));
 			}
 		}
 

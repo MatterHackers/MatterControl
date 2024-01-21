@@ -130,7 +130,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
 			};
-			undoButton.MouseEnterBounds += (s, e) => undoButton.SetActiveUiHint("Ctrl + z".Localize());
+            void UndoBuffer_Changed(object sender, EventArgs e)
+            {
+                undoButton.Enabled = undoBuffer.UndoCount > 0;
+                undoButton.ToolTipText = "Undo".Localize() + (undoButton.Enabled ? $" - {undoBuffer.UndoName}" : "");
+            }
+            undoBuffer.Changed += UndoBuffer_Changed;
+			undoButton.Closed += (s, e) => undoBuffer.Changed -= UndoBuffer_Changed;
+            undoButton.MouseEnterBounds += (s, e) => undoButton.SetActiveUiHint("Ctrl + z".Localize());
 			undoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Undo();
@@ -146,6 +153,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Enabled = false,
 				VAnchor = VAnchor.Center
 			};
+			void RedoBuffer_Changed(object sender, EventArgs e)
+			{
+                redoButton.Enabled = undoBuffer.RedoCount > 0;
+                redoButton.ToolTipText = "Redo".Localize() + (redoButton.Enabled ? $" - {undoBuffer.RedoName}" : "");
+            }
+			undoBuffer.Changed += RedoBuffer_Changed;
+			redoButton.Closed += (s, e) => undoBuffer.Changed -= RedoBuffer_Changed;
 			redoButton.MouseEnterBounds += (s, e) => redoButton.SetActiveUiHint("Ctrl + Y, Ctrl + Shift + Z".Localize());
 			redoButton.Click += (sender, e) =>
 			{
@@ -283,7 +297,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			optionsButton.DynamicPopupContent = () => GenerateToolBarOptionsMenu(theme);
 
 			// Register listeners
-			undoBuffer.Changed += UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged += UpdateToolbarButtons;
 			sceneContext.Scene.ItemsModified += UpdateToolbarButtons;
 
@@ -696,12 +709,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		private void UndoBuffer_Changed(object sender, EventArgs e)
-		{
-			undoButton.Enabled = undoBuffer.UndoCount > 0;
-			redoButton.Enabled = undoBuffer.RedoCount > 0;
-		}
-
 		private GuiWidget CreateOpenFileButton(GuiWidget openLibraryButton, ThemeConfig theme)
 		{
 			var popupMenu = new PopupMenuButton(openLibraryButton, theme)
@@ -929,7 +936,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			undoBuffer.Changed -= UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged -= UpdateToolbarButtons;
 			sceneContext.Scene.Children.ItemsModified -= UpdateToolbarButtons;
 

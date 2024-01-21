@@ -127,14 +127,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						var oldName = item.Name;
 						if (newName != oldName)
 						{
-							undoBuffer.AddAndDo(new UndoRedoActions(() =>
-							{
-								item.Name = oldName;
-							},
-							() =>
-							{
-								item.Name = newName;
-							}));
+							undoBuffer.AddAndDo(new DoUndoActions("Rename".Localize(), () =>
+                            {
+                                item.Name = newName;
+                            },
+                            () =>
+                            {
+                                item.Name = oldName;
+                            }));
 						}
 					}));
 		}

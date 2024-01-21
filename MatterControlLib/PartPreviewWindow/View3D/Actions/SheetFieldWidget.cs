@@ -265,22 +265,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				var newValue = this.content.Text;
 				var oldValue = SheetData[x, y].Expression;
 				// this needs to support undo buffer
-				sheetEditorWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() =>
-				{
-					this.content.Text = oldValue;
-					// make sure the is a sheet update
-					SheetData[x, y].Expression = this.content.Text;
-					SheetData.Recalculate();
-					undoContent = this.content.Text;
-				},
-				() =>
-				{
-					this.content.Text = newValue;
-					// make sure the is a sheet update
-					SheetData[x, y].Expression = this.content.Text;
-					SheetData.Recalculate();
-					undoContent = this.content.Text;
-				}));
+				sheetEditorWidget.UndoBuffer.AddAndDo(new DoUndoActions("Cell Edit", () =>
+                {
+                    this.content.Text = newValue;
+                    // make sure the is a sheet update
+                    SheetData[x, y].Expression = this.content.Text;
+                    SheetData.Recalculate();
+                    undoContent = this.content.Text;
+                },
+                () =>
+                {
+                    this.content.Text = oldValue;
+                    // make sure the is a sheet update
+                    SheetData[x, y].Expression = this.content.Text;
+                    SheetData.Recalculate();
+                    undoContent = this.content.Text;
+                }));
 
 			}
 

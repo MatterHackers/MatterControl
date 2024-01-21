@@ -36,6 +36,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.Plugins.EditorTools
 {
@@ -251,22 +252,22 @@ namespace MatterHackers.Plugins.EditorTools
 
 			var undoBuffer = context.Scene.UndoBuffer;
 
-			undoBuffer.Add(new UndoRedoActions(async () =>
-			{
-				SetItem(selectedItem, undoState);
-				await selectedItem.Rebuild();
-				// we set the matrix again after as the rebuild might move the object
-				selectedItem.Matrix = undoState.Matrix;
-				selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-			},
-			async () =>
-			{
-				SetItem(selectedItem, doState);
-				await selectedItem.Rebuild();
-				// we set the matrix again after as the rebuild might move the object
-				selectedItem.Matrix = doState.Matrix;
-				selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-			}));
+			undoBuffer.Add(new DoUndoActions("Scale".Localize(), async () =>
+            {
+                SetItem(selectedItem, doState);
+                await selectedItem.Rebuild();
+                // we set the matrix again after as the rebuild might move the object
+                selectedItem.Matrix = doState.Matrix;
+                selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+            },
+            async () =>
+            {
+                SetItem(selectedItem, undoState);
+                await selectedItem.Rebuild();
+                // we set the matrix again after as the rebuild might move the object
+                selectedItem.Matrix = undoState.Matrix;
+                selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+            }));
 		}
 
 		private void ScaleProportional(double scale)

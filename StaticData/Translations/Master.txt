@@ -2575,6 +2575,9 @@ Translated:Inner Style
 English:Input Resolution
 Translated:Input Resolution
 
+English:Insert
+Translated:Insert
+
 English:Insert Filament
 Translated:Insert Filament
 
@@ -6564,6 +6567,9 @@ Translated:Validation Threshold
 
 English:Value
 Translated:Value
+
+English:Value Change
+Translated:Value Change
 
 English:Variable Sheet
 Translated:Variable Sheet

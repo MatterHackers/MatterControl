@@ -420,16 +420,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var doPosition = worldPosition;
 
-			controlLayer.Scene.UndoBuffer.Add(new UndoRedoActions(() =>
-			{
-				worldPosition = undoPosition;
-				this.Invalidate(InvalidateType.Matrix);
-			},
-			() =>
-			{
-				worldPosition = doPosition;
-				this.Invalidate(InvalidateType.Matrix);
-			}));
+			controlLayer.Scene.UndoBuffer.Add(new DoUndoActions("Description".Localize(), () =>
+            {
+                worldPosition = doPosition;
+                this.Invalidate(InvalidateType.Matrix);
+            },
+            () =>
+            {
+                worldPosition = undoPosition;
+                this.Invalidate(InvalidateType.Matrix);
+            }));
 		}
 
 		private void GuiSurface_AfterDraw(object sender, DrawEventArgs e)

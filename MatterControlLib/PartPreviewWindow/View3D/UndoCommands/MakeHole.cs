@@ -32,6 +32,7 @@ using System.Linq;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -61,7 +62,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		void IUndoRedoCommand.Do()
+		public string Name => "Make Hole".Localize();
+
+        void IUndoRedoCommand.Do()
 		{
 			foreach (var item in this.itemsToChange)
 			{

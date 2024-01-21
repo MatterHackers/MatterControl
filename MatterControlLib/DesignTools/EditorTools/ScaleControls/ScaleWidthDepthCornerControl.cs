@@ -567,22 +567,22 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void SetWidthDepthUndo(IObject3D selectedItem, UndoBuffer undoBuffer, Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
 		{
-			undoBuffer.AddAndDo(new UndoRedoActions(async () =>
-			{
-				setWidth(undoWidthDepth.X);
-				setDepth(undoWidthDepth.Y);
-				await selectedItem.Rebuild();
-				selectedItem.Matrix = undoMatrix;
-				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-			},
-			async () =>
-			{
-				setWidth(doWidthDepth.X);
-				setDepth(doWidthDepth.Y);
-				await selectedItem.Rebuild();
-				selectedItem.Matrix = doMatrix;
-				selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
-			}));
+			undoBuffer.AddAndDo(new DoUndoActions("Scale", async () =>
+            {
+                setWidth(doWidthDepth.X);
+                setDepth(doWidthDepth.Y);
+                await selectedItem.Rebuild();
+                selectedItem.Matrix = doMatrix;
+                selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+            },
+            async () =>
+            {
+                setWidth(undoWidthDepth.X);
+                setDepth(undoWidthDepth.Y);
+                await selectedItem.Rebuild();
+                selectedItem.Matrix = undoMatrix;
+                selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
+            }));
 		}
 	}
 }

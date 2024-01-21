@@ -255,15 +255,15 @@ namespace MatterHackers.MatterControl.DesignTools
                 if (undoBuffer != null
                     && e.UserInitiated)
                 {
-                    undoBuffer.AddAndDo(new UndoRedoActions(() =>
+                    undoBuffer.AddAndDo(new DoUndoActions("Value Change".Localize(), () =>
                     {
-                        property.SetValue(valueFromString(oldValue));
+                        property.SetValue(valueFromString(newValue));
                         propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
                         propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
                     },
                     () =>
                     {
-                        property.SetValue(valueFromString(newValue));
+                        property.SetValue(valueFromString(oldValue));
                         propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
                         propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
                     }));

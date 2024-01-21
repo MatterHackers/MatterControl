@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -51,6 +52,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.transformDatas = transformDatas;
 		}
+
+		public string Name => "Transform".Localize();
 
 		public TransformCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{

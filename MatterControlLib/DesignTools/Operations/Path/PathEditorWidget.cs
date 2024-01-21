@@ -619,13 +619,13 @@ namespace MatterControlLib.DesignTools.Operations.Path
             var doVertexBuffer = new VertexStorage(newSvgDString);
             var undoVertexBuffer = new VertexStorage(dStringAtLastUndoState);
 
-            undoBuffer.AddAndDo(new UndoRedoActions(() =>
+            undoBuffer.AddAndDo(new DoUndoActions("Shape".Localize(), () =>
             {
-                vertexStorage.SvgDString = undoVertexBuffer.SvgDString;
+                vertexStorage.SvgDString = doVertexBuffer.SvgDString;
                 vertexChanged?.Invoke();
             }, () =>
             {
-                vertexStorage.SvgDString = doVertexBuffer.SvgDString;
+                vertexStorage.SvgDString = undoVertexBuffer.SvgDString;
                 vertexChanged?.Invoke();
             }));
 
