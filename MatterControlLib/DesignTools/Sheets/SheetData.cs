@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using org.mariuszgromada.math.mxparser;
 using Newtonsoft.Json;
 using System.Linq;
 using System;
@@ -85,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (expression.StartsWith("="))
 				{
 					expression = expression.Substring(1);
-					var evaluator = new Expression(expression.ToLower());
+					var evaluator = new ExpressionParser(expression.ToLower());
 					AddConstants(evaluator);
 					var value = evaluator.calculate();
 
@@ -142,7 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// fall through to evaluate the expression
 				}
 
-				var evaluator = new Expression(expression.ToLower());
+				var evaluator = new ExpressionParser(expression.ToLower());
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
 
@@ -362,7 +361,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void BuildTableConstants()
 		{
-			double GetValue((int x, int y, TableCell cell) xyCell)
+			string GetValue((int x, int y, TableCell cell) xyCell)
 			{
 				var expression = xyCell.cell.Expression;
 				if (expression.StartsWith("="))
@@ -373,7 +372,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					expression = "0" + expression;
 				}
-				var evaluator = new Expression(expression.ToLower());
+				var evaluator = new ExpressionParser(expression.ToLower());
 				AddConstants(evaluator);
 				var value = evaluator.calculate();
 				return value;
@@ -393,7 +392,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					addedConstant = false;
 					foreach (var xyCell in list)
 					{
-						double value = GetValue(xyCell);
+						double value = double.NaN;
+						double.TryParse(GetValue(xyCell), out value);
 						if (double.IsNaN(value)
 							|| double.IsInfinity(value))
 						{
@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void AddConstants(Expression evaluator)
+		private void AddConstants(ExpressionParser evaluator)
 		{
 			lock (locker)
 			{

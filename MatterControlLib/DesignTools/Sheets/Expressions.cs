@@ -32,7 +32,6 @@ using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,7 +145,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 }
 
                 // could not find a sheet, try to evaluate the expression directly
-                var evaluator = new Expression(inputExpression.Substring(1).ToLower());
+                var evaluator = new ExpressionParser(inputExpression.Substring(1).ToLower());
                 if (evaluator.checkSyntax())
                 {
                     Debug.WriteLine(evaluator.getErrorMessage());
