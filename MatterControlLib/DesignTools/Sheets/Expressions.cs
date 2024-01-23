@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
             // length
             ["cm"] = (owner) => 10,
             ["m"] = (owner) => 1000,
-            ["inch"] = (owner) => 25.4,
+            ["inch"] = (owner) => 25.4, 
             ["ft"] = (owner) => 304.8,
             // math constant
             ["pi"] = (owner) => Math.PI,

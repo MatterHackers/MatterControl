@@ -623,7 +623,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-		public bool SuppressObject3DControls { get; set; } = false;
+		public bool SuppressObject3DControls
+		{
+			get
+			{
+				if (!MouseIneractingWith3DScene)
+				{
+                    // not currently interacting with a 3D object make sure the TrackballTumbleWidget is first under mouse
+                    var view3D = this.Parents<View3DWidget>().First();
+					if (view3D != null)
+					{
+						return !view3D.TrackballTumbleWidget.FirstWidgetUnderMouse;
+                    }
+				}
+
+				return true;
+			}
+		}
+
+        public bool MouseIneractingWith3DScene { get; set; } = false;
 
 		public bool MouseDownOnObject3DControlVolume => SelectedObject3DControl != null;
 
