@@ -127,7 +127,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // MeshViewer
             TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer, theme)
             {
-                TransformState = TrackBallTransformType.Rotation
+                TransformState = TrackBallTransformType.Rotation,
+                Name = "TrackballTumbleWidget",
             };
 
             TrackballTumbleWidget.GetNearFar = GetNearFar;
@@ -308,9 +309,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void CreateTumbleCubeAndControls(ThemeConfig theme)
         {
-            var controlLayer = this.Object3DControlLayer;
             var scale = GuiWidget.DeviceScale;
-            var tumbleCubeControl = new TumbleCubeControl(controlLayer, theme, TrackballTumbleWidget)
+            var tumbleCubeControl = new TumbleCubeControl(Object3DControlLayer, theme, TrackballTumbleWidget)
             {
                 Margin = new BorderDouble(0, 0, 40, 45),
                 VAnchor = VAnchor.Top,
@@ -321,17 +321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             var cubeCenterFromRightTop = new Vector2(tumbleCubeControl.Margin.Right * scale + tumbleCubeControl.Width / 2,
                 tumbleCubeControl.Margin.Top * scale + tumbleCubeControl.Height / 2);
 
-            controlLayer.AddChild(tumbleCubeControl);
-
-            var hudBackground = controlLayer.AddChild(new GuiWidget()
-            {
-                VAnchor = VAnchor.Stretch,
-                HAnchor = HAnchor.Stretch,
-                Selectable = false,
-                // DoubleBuffer = true
-            });
-
-            // hudBackground.BackBuffer.SetRecieveBlender(new BlenderBGRA());
+            Object3DControlLayer.AddChild(tumbleCubeControl);
 
             // add the view controls
             var buttonGroupA = new ObservableCollection<GuiWidget>();
@@ -386,13 +376,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // add the background render for the view controls
             // controlLayer.BeforeDraw += (s, e) => // enable to debug any rendering errors that might be due to double buffered hudBackground
-            hudBackground.BeforeDraw += (s, e) =>
+            Object3DControlLayer.BeforeDraw += (s, e) =>
             {
                 using (new QuickTimerReport("View3DWidegt.DeforeDraw"))
                 {
                     var tumbleCubeRadius = tumbleCubeControl.Width / 2;
-                    var tumbleCubeCenter = new Vector2(controlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
-                        controlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
+                    var tumbleCubeCenter = new Vector2(Object3DControlLayer.Width - tumbleCubeControl.Margin.Right * scale - tumbleCubeRadius,
+                        Object3DControlLayer.Height - tumbleCubeControl.Margin.Top * scale - tumbleCubeRadius);
 
                     void RenderPath(IVertexSource vertexSource, double width)
                     {
@@ -518,7 +508,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
             };
 
-            this.BindBedOptions(controlLayer, bedButton, printAreaButton, sceneContext.RendererOptions);
+            this.BindBedOptions(Object3DControlLayer, bedButton, printAreaButton, sceneContext.RendererOptions);
 
             if (printer != null)
             {
@@ -531,7 +521,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 printer.ViewState.ViewModeChanged += ViewModeChanged;
 
-                controlLayer.Closed += (s, e) =>
+                Object3DControlLayer.Closed += (s, e) =>
                 {
                     printer.ViewState.ViewModeChanged -= ViewModeChanged;
                 };
@@ -1395,7 +1385,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 if (mouseEvent.Button == MouseButtons.Right ||
                     mouseEvent.Button == MouseButtons.Middle)
                 {
-                    this.Object3DControlLayer.SuppressObject3DControls = true;
+                    this.Object3DControlLayer.MouseIneractingWith3DScene = true;
                 }
 
                 base.OnMouseDown(mouseEvent);
@@ -1412,7 +1402,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         if (!this.Object3DControlLayer.MouseDownOnObject3DControlVolume)
                         {
-                            this.Object3DControlLayer.SuppressObject3DControls = true;
+                            this.Object3DControlLayer.MouseIneractingWith3DScene = true;
 
                             IObject3D hitObject = null;
                             IntersectInfo info = null;
@@ -1809,7 +1799,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-            this.Object3DControlLayer.SuppressObject3DControls = false;
+            this.Object3DControlLayer.MouseIneractingWith3DScene = false;
 
             CurrentSelectInfo.DownOnPart = false;
 
