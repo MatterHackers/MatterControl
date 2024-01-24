@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					expression = expression.Substring(1);
 					var evaluator = new ExpressionParser(expression.ToLower());
 					AddConstants(evaluator);
-					var value = evaluator.calculate();
+					var value = evaluator.Calculate();
 
 					return value.ToString();
 				}
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var evaluator = new ExpressionParser(expression.ToLower());
 				AddConstants(evaluator);
-				var value = evaluator.calculate();
+				var value = evaluator.Calculate();
 
 				return value.ToString();
 			}
@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				var evaluator = new ExpressionParser(expression.ToLower());
 				AddConstants(evaluator);
-				var value = evaluator.calculate();
+				var value = evaluator.Calculate();
 				return value;
 			}
 
@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				foreach (var kvp in constants)
 				{
-					evaluator.defineConstant(kvp.Key, kvp.Value);
+					evaluator.DefineConstant(kvp.Key, kvp.Value);
 				}
 			}
 		}

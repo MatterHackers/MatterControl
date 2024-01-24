@@ -146,12 +146,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 // could not find a sheet, try to evaluate the expression directly
                 var evaluator = new ExpressionParser(inputExpression.Substring(1).ToLower());
-                if (evaluator.checkSyntax())
+                if (evaluator.CheckSyntax())
                 {
-                    Debug.WriteLine(evaluator.getErrorMessage());
+                    Debug.WriteLine(evaluator.GetErrorMessage());
                 }
 
-                return CastResult<T>(evaluator.calculate().ToString(), inputExpression);
+                return CastResult<T>(evaluator.Calculate().ToString(), inputExpression);
             }
             else // not an equation so try to parse it directly
             {

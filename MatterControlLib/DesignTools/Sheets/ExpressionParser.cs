@@ -27,40 +27,95 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using org.mariuszgromada.math.mxparser;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
     public class ExpressionParser
     {
-        private string expressionString;
         Expression expression;
+
+        private static bool ranTests = false;
+
+        public static void RunTests()
+        {
+            RunTest("1+1", "2");
+            RunTest("5+3*(7-4)/A1+Radius", "12.5", new List<(string, string)>() { ("A1", "2"), ("Radius", "3") });
+        }
+
+        public static void RunTest(string formula, string expectedOutput, IEnumerable<(string, string)> constants = null, bool expectSyntaxFail = false)
+        {
+            var expressionParser = new ExpressionParser(formula);
+            if (constants != null)
+            {
+                foreach (var constant in constants)
+                {
+                    expressionParser.DefineConstant(constant.Item1, double.Parse(constant.Item2));
+                }
+            }
+
+            if (expectSyntaxFail)
+            {
+                if (expressionParser.CheckSyntax())
+                {
+                    throw new Exception($"Expected syntax failure but got success for {formula}");
+                }
+            }
+
+            if (!expressionParser.CheckSyntax())
+            {
+                throw new Exception($"Expected syntax success but got failure for {formula}");
+            }
+
+            var result = expressionParser.Calculate();
+            if (result != expectedOutput)
+            {
+                throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
+            }
+        }
 
         public ExpressionParser(string expressionString)
         {
-            this.expressionString = expressionString;
+#if DEBUG
+            if (!ranTests)
+            {
+                ranTests = true;
+                RunTests();
+            }
+#endif
+
             expression = new Expression(expressionString);
         }
 
-        public string calculate()
+        public string Calculate()
         {
             return expression.calculate().ToString();
         }
 
-        public bool checkSyntax()
+        /// <summary>
+        /// Check the syntax of the expression
+        /// </summary>
+        /// <returns>True if the syntax is valid</returns>
+        public bool CheckSyntax()
         {
             return expression.checkSyntax();
         }
 
-        public void defineConstant(string key, double value)
+        public void DefineConstant(string key, double value)
         {
             expression.defineConstant(key, value);
         }
 
-        public string getErrorMessage()
+        public string GetErrorMessage()
         {
             return expression.getErrorMessage();
         }
+    }
+
+
+    public class ExpressionEvaluator
+    {
     }
 }
