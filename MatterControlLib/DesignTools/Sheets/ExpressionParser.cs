@@ -28,11 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using org.mariuszgromada.math.mxparser;
-using Sprache;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -132,55 +129,6 @@ namespace MatterHackers.MatterControl.DesignTools
         public string GetErrorMessage()
         {
             return expression.getErrorMessage();
-        }
-    }
-
-
-    public class ExpressionEvaluator
-    {
-        public static string ParseExpression(string input, IEnumerable<(string, string)> constants)
-        {
-            var constantsDictionary = new Dictionary<string, string>();
-            if (constants != null)
-            {
-                constantsDictionary = constants.ToDictionary(c => c.Item1, c => c.Item2);
-            }
-
-            // Must find at least one letter then any number of letters or numbers
-            var identifier = Parse.Letter.AtLeastOnce().Text().Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
-
-
-            var number = Parse.Number.Select(n => double.Parse(n)).Token();
-            var str = Parse.CharExcept('"').Many().Text().Contained(Parse.Char('"'), Parse.Char('"')).Token();
-
-            // Constant Parser
-            var constantParser = identifier.Select(id =>
-            {
-                return constantsDictionary.TryGetValue(id, out var value) ? double.Parse(value) : double.NaN;
-            }).Where(c => !double.IsNaN(c));
-
-            Parser<double> expr = null; // Declare expr as null initially
-
-            var factor = Parse.Ref(() => expr).Contained(Parse.Char('('), Parse.Char(')'))
-                         .XOr(number)
-                         .XOr(constantParser); // Integrate constant parser here
-
-            var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')), factor, (op, a, b) => op == '*' ? a * b : a / b);
-            expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')), term, (op, a, b) => op == '+' ? a + b : a - b);
-
-            var concatFunc = from concat in identifier
-                             from _ in Parse.Char('(')
-                             from first in str.Or(expr.Select(e => e.ToString()))
-                             from __ in Parse.Char(',')
-                             from second in str.Or(expr.Select(e => e.ToString()))
-                             from ___ in Parse.Char(')')
-                             where concat == "concat"
-                             select first + second;
-
-            var fullParser = concatFunc.XOr(expr.Select(e => (object)e));
-
-            var result = fullParser.Parse(input).ToString();
-            return result;
         }
     }
 }
