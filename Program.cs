@@ -38,6 +38,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -82,6 +83,7 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main(string[] args)
 		{
+            ExpressionParser.RunTests();
 #if false // this is for some early testing of SLA output
 			var test = new PhotonFile();
 			void Progress(string message)
@@ -133,8 +135,8 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-			// If StaticData is missing, use the StaticData at the relative project root if it exists.
-			if (!StaticData.Instance.DirectoryExists("."))
+            // If StaticData is missing, use the StaticData at the relative project root if it exists.
+            if (!StaticData.Instance.DirectoryExists("."))
 			{
 				var mainOutputDirectoryAttribute = MainOutputDirectoryAttribute.GetFromProgramAssembly();
 				var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;

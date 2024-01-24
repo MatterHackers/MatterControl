@@ -28,8 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using org.mariuszgromada.math.mxparser;
+using Sprache;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -41,49 +44,67 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static void RunTests()
         {
-            RunTest("1+1", "2");
-            RunTest("5+3*(7-4)/A1+Radius", "12.5", new List<(string, string)>() { ("A1", "2"), ("Radius", "3") });
+            if (!ranTests)
+            {
+                ranTests = true;
+
+                RunTest("1+1", "2");
+                RunTest("concat(\"test\", \"this\")", "testthis");
+                RunTest("concat(\"test \", 6/3)", "test 2");
+                RunTest("5+3*(7-4)/A1+Radius", "12.5", new List<(string, string)>() { ("A1", "2"), ("Radius", "3") });
+                RunTest("3+5*(5-3)", "13");
+            }
         }
 
         public static void RunTest(string formula, string expectedOutput, IEnumerable<(string, string)> constants = null, bool expectSyntaxFail = false)
         {
-            var expressionParser = new ExpressionParser(formula);
-            if (constants != null)
+            var oldWay = false;
+            if (oldWay)
             {
-                foreach (var constant in constants)
+                // the old way
+                var expressionParser = new ExpressionParser(formula);
+                if (constants != null)
                 {
-                    expressionParser.DefineConstant(constant.Item1, double.Parse(constant.Item2));
+                    foreach (var constant in constants)
+                    {
+                        expressionParser.DefineConstant(constant.Item1, double.Parse(constant.Item2));
+                    }
+                }
+
+                if (expectSyntaxFail)
+                {
+                    if (expressionParser.CheckSyntax())
+                    {
+                        throw new Exception($"Expected syntax failure but got success for {formula}");
+                    }
+                }
+
+                if (!expressionParser.CheckSyntax())
+                {
+                    throw new Exception($"Expected syntax success but got failure for {formula}");
+                }
+
+                var result = expressionParser.Calculate();
+                if (result != expectedOutput)
+                {
+                    throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
                 }
             }
-
-            if (expectSyntaxFail)
+            else
             {
-                if (expressionParser.CheckSyntax())
+                // the new way
+                if (ExpressionEvaluator.ParseExpression(formula, constants) != expectedOutput)
                 {
-                    throw new Exception($"Expected syntax failure but got success for {formula}");
+                    var result = ExpressionEvaluator.ParseExpression(formula, constants);
+                    throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
                 }
-            }
-
-            if (!expressionParser.CheckSyntax())
-            {
-                throw new Exception($"Expected syntax success but got failure for {formula}");
-            }
-
-            var result = expressionParser.Calculate();
-            if (result != expectedOutput)
-            {
-                throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
             }
         }
 
         public ExpressionParser(string expressionString)
         {
 #if DEBUG
-            if (!ranTests)
-            {
-                ranTests = true;
-                RunTests();
-            }
+            RunTests();
 #endif
 
             expression = new Expression(expressionString);
@@ -117,5 +138,49 @@ namespace MatterHackers.MatterControl.DesignTools
 
     public class ExpressionEvaluator
     {
+        public static string ParseExpression(string input, IEnumerable<(string, string)> constants)
+        {
+            var constantsDictionary = new Dictionary<string, string>();
+            if (constants != null)
+            {
+                constantsDictionary = constants.ToDictionary(c => c.Item1, c => c.Item2);
+            }
+
+            // Must find at least one letter then any number of letters or numbers
+            var identifier = Parse.Letter.AtLeastOnce().Text().Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
+
+
+            var number = Parse.Number.Select(n => double.Parse(n)).Token();
+            var str = Parse.CharExcept('"').Many().Text().Contained(Parse.Char('"'), Parse.Char('"')).Token();
+
+            // Constant Parser
+            var constantParser = identifier.Select(id =>
+            {
+                return constantsDictionary.TryGetValue(id, out var value) ? double.Parse(value) : double.NaN;
+            }).Where(c => !double.IsNaN(c));
+
+            Parser<double> expr = null; // Declare expr as null initially
+
+            var factor = Parse.Ref(() => expr).Contained(Parse.Char('('), Parse.Char(')'))
+                         .XOr(number)
+                         .XOr(constantParser); // Integrate constant parser here
+
+            var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')), factor, (op, a, b) => op == '*' ? a * b : a / b);
+            expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')), term, (op, a, b) => op == '+' ? a + b : a - b);
+
+            var concatFunc = from concat in identifier
+                             from _ in Parse.Char('(')
+                             from first in str.Or(expr.Select(e => e.ToString()))
+                             from __ in Parse.Char(',')
+                             from second in str.Or(expr.Select(e => e.ToString()))
+                             from ___ in Parse.Char(')')
+                             where concat == "concat"
+                             select first + second;
+
+            var fullParser = concatFunc.XOr(expr.Select(e => (object)e));
+
+            var result = fullParser.Parse(input).ToString();
+            return result;
+        }
     }
 }
