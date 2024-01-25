@@ -50,6 +50,16 @@ namespace MatterHackers.MatterControl.DesignTools
                 RunTest(" 1 + 1 ", "2");
                 RunTest("concat(\"test\", \"this\")", "testthis");
                 RunTest("concat(\"test \", 6/3)", "test 2");
+                RunTest("concat(ipbase, concat(sku, concat(13, concat(\" of \", count))))",
+                    "basevalWG-XP-LM13 of 75",
+                    new List<(string, string)>() 
+                    {
+                        ("ipbase", "baseval"),
+                        ("sku", "WG-XP-LM"),
+                        ("index", "13"),
+                        ("count", "75")
+                    });
+                
                 RunTest("5+3*(7-4)/A1+Radius", "12.5", new List<(string, string)>() { ("A1", "2"), ("Radius", "3") });
                 RunTest("3+5*(5-3)", "13");
             }
