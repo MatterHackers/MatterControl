@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class ExpressionEvaluator
     {
-        private Dictionary<string, object> constantsDictionary = new Dictionary<string, object>();
+        private Dictionary<string, string> constantsDictionary = new Dictionary<string, string>();
         private string expression;
 
         public ExpressionEvaluator(string expression)
@@ -50,32 +50,40 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 var input = expression;
 
-                var identifier = Parse.Letter.AtLeastOnce().Text().Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
+                var identifier = Parse.Letter.AtLeastOnce().Text()
+                    .Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
 
+                // Number parser definition
                 var number = Parse.Number.Select(n => double.Parse(n)).Token();
-                var str = Parse.CharExcept('"').Many().Text().Contained(Parse.Char('"'), Parse.Char('"')).Token();
 
-                // Updated Constant Parser
+                var str = Parse.CharExcept('"').Many().Text()
+                    .Contained(Parse.Char('"'), Parse.Char('"')).Token();
+
+                // Constant parser definition
                 var constantParser = identifier.Select(id =>
                 {
                     if (constantsDictionary.TryGetValue(id, out var value))
                     {
-                        return value is double ? (double)value : double.NaN;
+                        return value;
                     }
-                    return double.NaN;
-                }).Where(c => !double.IsNaN(c));
+                    return id;
+                });
 
-                Parser<double> expr = null; // Declare expr as null initially
+                Parser<string> expr = null; // Declare expr as null initially
 
                 // Forward declaration of concatFunc
                 Parser<string> concatFunc = null;
 
-                var factor = Parse.Ref(() => expr).Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
-                             .XOr(number)
-                             .XOr(constantParser);
+                var factor = Parse.Ref(() => expr)
+                    .Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+                    .XOr(number.Select(n => n.ToString())) // Convert number to string
+                    .XOr(constantParser);
 
-                var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')).Token(), factor, (op, a, b) => op == '*' ? a * b : a / b);
-                expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')).Token(), term, (op, a, b) => op == '+' ? a + b : a - b);
+                var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')).Token(), factor, (op, a, b) =>
+                    op == '*' ? (double.Parse(a) * double.Parse(b)).ToString() : (double.Parse(a) / double.Parse(b)).ToString());
+
+                expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')).Token(), term, (op, a, b) =>
+                    op == '+' ? (double.Parse(a) + double.Parse(b)).ToString() : (double.Parse(a) - double.Parse(b)).ToString());
 
                 // Updated concatFunc definition to handle nested concatenations
                 concatFunc = from concat in identifier
@@ -90,7 +98,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 var whiteSpace = Parse.WhiteSpace.Many().Text();
 
                 var fullParser = from leading in whiteSpace.Optional()
-                                 from expression in concatFunc.XOr(expr.Select(e => e.ToString()))
+                                 from expression in concatFunc.XOr(expr)
                                  from trailing in whiteSpace.Optional()
                                  select expression;
 
@@ -103,7 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools
             }
         }
 
-        public void DefineConstant(string key, object value)
+        public void DefineConstant(string key, string value)
         {
             constantsDictionary[key] = value;
         }

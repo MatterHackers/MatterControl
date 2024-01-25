@@ -1546,6 +1546,9 @@ Translated:edit
 English:Edit
 Translated:Edit
 
+English:Edit Cell
+Translated:Edit Cell
+
 English:Edit Component
 Translated:Edit Component
 
