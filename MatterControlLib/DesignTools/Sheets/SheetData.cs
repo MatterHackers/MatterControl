@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public List<RowData> Rows = new List<RowData>();
 
-		Dictionary<string, double> constants = new Dictionary<string, double>();
+		Dictionary<string, string> constants = new Dictionary<string, string>();
 		private bool tabelCalculated;
 
 		private IEnumerable<(int x, int y, TableCell cell)> EnumerateCells()
@@ -364,18 +364,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			string GetValue((int x, int y, TableCell cell) xyCell)
 			{
 				var expression = xyCell.cell.Expression;
+				if (string.IsNullOrEmpty(expression))
+				{
+                    return "NaN";
+                }
 				if (expression.StartsWith("="))
 				{
 					expression = expression.Substring(1);
-				}
-				if (expression.StartsWith("."))
+                    var evaluator = new ExpressionParser(expression.ToLower());
+                    AddConstants(evaluator);
+                    var value = evaluator.Calculate();
+					return value;
+                }
+                if (expression.StartsWith("."))
 				{
-					expression = "0" + expression;
+					return "0" + expression;
 				}
-				var evaluator = new ExpressionParser(expression.ToLower());
-				AddConstants(evaluator);
-				var value = evaluator.Calculate();
-				return value;
+
+				return expression;
 			}
 
 			lock (locker)
@@ -393,7 +399,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					foreach (var xyCell in list)
 					{
 						double value = double.NaN;
-						double.TryParse(GetValue(xyCell), out value);
+						var cellValue = GetValue(xyCell);
+                        double.TryParse(cellValue, out value);
 						if (double.IsNaN(value)
 							|| double.IsInfinity(value))
 						{
@@ -401,10 +408,10 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 						else
 						{
-							constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), value);
+							constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), cellValue);
 							if (!string.IsNullOrEmpty(xyCell.cell.Name))
 							{
-								constants.Add(xyCell.cell.Name.ToLower(), value);
+								constants.Add(xyCell.cell.Name.ToLower(), cellValue);
 							}
 
 							addedConstant = true;
@@ -419,10 +426,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				// add the rest of the cells to constants as 0's
 				foreach (var xyCell in list)
 				{
-					constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), 0);
+					constants.Add(CellId(xyCell.x, xyCell.y).ToLower(), "0");
 					if (!string.IsNullOrEmpty(xyCell.cell.Name))
 					{
-						constants.Add(xyCell.cell.Name.ToLower(), 0);
+						constants.Add(xyCell.cell.Name.ToLower(), "0");
 					}
 				}
 

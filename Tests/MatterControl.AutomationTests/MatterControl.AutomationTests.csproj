@@ -30,7 +30,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\MatterControl.Common\Matter CAD.Common.csproj" />
     <ProjectReference Include="..\..\Matter CAD.csproj" />
-    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj" />
     <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\..\MatterControl.Winforms\MatterControl.Winforms.csproj" />
     <ProjectReference Include="..\..\MatterControlLib\Matter CAD Lib.csproj" />

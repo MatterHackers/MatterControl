@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2023, Lars Brubaker, John Lewin
+Copyright (c) 2023, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using Sprache;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,49 +36,76 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class ExpressionEvaluator
     {
-        public static string ParseExpression(string input, IEnumerable<(string, string)> constants)
+        private Dictionary<string, object> constantsDictionary = new Dictionary<string, object>();
+        private string expression;
+
+        public ExpressionEvaluator(string expression)
         {
-            var constantsDictionary = new Dictionary<string, string>();
-            if (constants != null)
+            this.expression = expression;
+        }
+
+        public string Calculate()
+        {
+            try
             {
-                constantsDictionary = constants.ToDictionary(c => c.Item1, c => c.Item2);
-            }
+                var input = expression;
 
-            // Must find at least one letter then any number of letters or numbers
-            var identifier = Parse.Letter.AtLeastOnce().Text().Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
+                var identifier = Parse.Letter.AtLeastOnce().Text().Then(id => Parse.LetterOrDigit.Many().Text().Select(rest => id + rest)).Token();
 
+                var number = Parse.Number.Select(n => double.Parse(n)).Token();
+                var str = Parse.CharExcept('"').Many().Text().Contained(Parse.Char('"'), Parse.Char('"')).Token();
 
-            var number = Parse.Number.Select(n => double.Parse(n)).Token();
-            var str = Parse.CharExcept('"').Many().Text().Contained(Parse.Char('"'), Parse.Char('"')).Token();
+                // Updated Constant Parser
+                var constantParser = identifier.Select(id =>
+                {
+                    if (constantsDictionary.TryGetValue(id, out var value))
+                    {
+                        return value is double ? (double)value : double.NaN;
+                    }
+                    return double.NaN;
+                }).Where(c => !double.IsNaN(c));
 
-            // Constant Parser
-            var constantParser = identifier.Select(id =>
-            {
-                return constantsDictionary.TryGetValue(id, out var value) ? double.Parse(value) : double.NaN;
-            }).Where(c => !double.IsNaN(c));
+                Parser<double> expr = null; // Declare expr as null initially
 
-            Parser<double> expr = null; // Declare expr as null initially
+                // Forward declaration of concatFunc
+                Parser<string> concatFunc = null;
 
-            var factor = Parse.Ref(() => expr).Contained(Parse.Char('('), Parse.Char(')'))
-                         .XOr(number)
-                         .XOr(constantParser); // Integrate constant parser here
+                var factor = Parse.Ref(() => expr).Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+                             .XOr(number)
+                             .XOr(constantParser);
 
-            var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')), factor, (op, a, b) => op == '*' ? a * b : a / b);
-            expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')), term, (op, a, b) => op == '+' ? a + b : a - b);
+                var term = Parse.ChainOperator(Parse.Char('*').Or(Parse.Char('/')).Token(), factor, (op, a, b) => op == '*' ? a * b : a / b);
+                expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')).Token(), term, (op, a, b) => op == '+' ? a + b : a - b);
 
-            var concatFunc = from concat in identifier
-                             from _ in Parse.Char('(')
-                             from first in str.Or(expr.Select(e => e.ToString()))
-                             from __ in Parse.Char(',')
-                             from second in str.Or(expr.Select(e => e.ToString()))
-                             from ___ in Parse.Char(')')
+                // Updated concatFunc definition to handle nested concatenations
+                concatFunc = from concat in identifier
+                             from _ in Parse.Char('(').Token()
+                             from first in str.Or(Parse.Ref(() => concatFunc)).Or(expr.Select(e => e.ToString()))
+                             from __ in Parse.Char(',').Token()
+                             from second in str.Or(Parse.Ref(() => concatFunc)).Or(expr.Select(e => e.ToString()))
+                             from ___ in Parse.Char(')').Token()
                              where concat == "concat"
                              select first + second;
 
-            var fullParser = concatFunc.XOr(expr.Select(e => (object)e));
+                var whiteSpace = Parse.WhiteSpace.Many().Text();
 
-            var result = fullParser.Parse(input).ToString();
-            return result;
+                var fullParser = from leading in whiteSpace.Optional()
+                                 from expression in concatFunc.XOr(expr.Select(e => e.ToString()))
+                                 from trailing in whiteSpace.Optional()
+                                 select expression;
+
+                var result = fullParser.Parse(input).ToString();
+                return result;
+            }
+            catch
+            {
+                return "NaN";
+            }
+        }
+
+        public void DefineConstant(string key, object value)
+        {
+            constantsDictionary[key] = value;
         }
     }
 }

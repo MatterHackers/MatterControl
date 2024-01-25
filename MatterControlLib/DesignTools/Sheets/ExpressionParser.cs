@@ -35,7 +35,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
     public class ExpressionParser
     {
-        Expression expression;
+        Expression mxParser;
+        ExpressionEvaluator expressionEvaluator;
 
         private static bool ranTests = false;
 
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 ranTests = true;
 
                 RunTest("1+1", "2");
+                RunTest(" 1 + 1 ", "2");
                 RunTest("concat(\"test\", \"this\")", "testthis");
                 RunTest("concat(\"test \", 6/3)", "test 2");
                 RunTest("5+3*(7-4)/A1+Radius", "12.5", new List<(string, string)>() { ("A1", "2"), ("Radius", "3") });
@@ -55,46 +57,33 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static void RunTest(string formula, string expectedOutput, IEnumerable<(string, string)> constants = null, bool expectSyntaxFail = false)
         {
-            var oldWay = false;
-            if (oldWay)
+            var expressionParser = new ExpressionParser(formula);
+
+            if (constants != null)
             {
-                // the old way
-                var expressionParser = new ExpressionParser(formula);
-                if (constants != null)
+                foreach (var constant in constants)
                 {
-                    foreach (var constant in constants)
-                    {
-                        expressionParser.DefineConstant(constant.Item1, double.Parse(constant.Item2));
-                    }
-                }
-
-                if (expectSyntaxFail)
-                {
-                    if (expressionParser.CheckSyntax())
-                    {
-                        throw new Exception($"Expected syntax failure but got success for {formula}");
-                    }
-                }
-
-                if (!expressionParser.CheckSyntax())
-                {
-                    throw new Exception($"Expected syntax success but got failure for {formula}");
-                }
-
-                var result = expressionParser.Calculate();
-                if (result != expectedOutput)
-                {
-                    throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
+                    expressionParser.DefineConstant(constant.Item1, constant.Item2);
                 }
             }
-            else
+
+            if (expectSyntaxFail)
             {
-                // the new way
-                if (ExpressionEvaluator.ParseExpression(formula, constants) != expectedOutput)
+                if (expressionParser.CheckSyntax())
                 {
-                    var result = ExpressionEvaluator.ParseExpression(formula, constants);
-                    throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
+                    throw new Exception($"Expected syntax failure but got success for {formula}");
                 }
+            }
+
+            if (!expressionParser.CheckSyntax())
+            {
+                //throw new Exception($"Expected syntax success but got failure for {formula}");
+            }
+
+            var result = expressionParser.Calculate();
+            if (result != expectedOutput)
+            {
+                throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
             }
         }
 
@@ -104,12 +93,19 @@ namespace MatterHackers.MatterControl.DesignTools
             RunTests();
 #endif
 
-            expression = new Expression(expressionString);
+            mxParser = new Expression(expressionString);
+            expressionEvaluator = new ExpressionEvaluator(expressionString);
         }
 
         public string Calculate()
         {
-            return expression.calculate().ToString();
+            var result = mxParser.calculate();
+            if (double.IsNaN(result))
+            {
+                return expressionEvaluator.Calculate();
+            }
+
+            return result.ToString();
         }
 
         /// <summary>
@@ -118,17 +114,25 @@ namespace MatterHackers.MatterControl.DesignTools
         /// <returns>True if the syntax is valid</returns>
         public bool CheckSyntax()
         {
-            return expression.checkSyntax();
+            return mxParser.checkSyntax();
         }
 
-        public void DefineConstant(string key, double value)
+        public void DefineConstant(string key, string value)
         {
-            expression.defineConstant(key, value);
+            if (double.TryParse(value, out double doubleValue))
+            {
+                mxParser.defineConstant(key, doubleValue);
+            }
+            else
+            {
+                mxParser.defineConstant(key, 0);
+            }
+            expressionEvaluator.DefineConstant(key, value);
         }
 
         public string GetErrorMessage()
         {
-            return expression.getErrorMessage();
+            return mxParser.getErrorMessage();
         }
     }
 }

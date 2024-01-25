@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools._Object3D;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -39,14 +38,11 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TestInvoker;
 
 namespace MatterControl.Tests.MatterControl
 {
