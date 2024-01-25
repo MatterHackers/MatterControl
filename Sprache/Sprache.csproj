@@ -6,6 +6,7 @@
 	  <AssemblyName>Sprache</AssemblyName>
 	  <ReleaseVersion>2.20.12</ReleaseVersion>
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <ItemGroup>

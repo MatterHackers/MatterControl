@@ -24,6 +24,7 @@
 		<Compile Remove="Plugins\**" />
 		<Compile Remove="PrinterDriverInstaller\**" />
 		<Compile Remove="PrusaI3-MK3\**" />
+		<Compile Remove="Sprache\**" />
 		<Compile Remove="StaticData\**" />
 		<Compile Remove="Submodules\**" />
 		<Compile Remove="Tests\**" />
@@ -40,6 +41,7 @@
 		<EmbeddedResource Remove="Plugins\**" />
 		<EmbeddedResource Remove="PrinterDriverInstaller\**" />
 		<EmbeddedResource Remove="PrusaI3-MK3\**" />
+		<EmbeddedResource Remove="Sprache\**" />
 		<EmbeddedResource Remove="StaticData\**" />
 		<EmbeddedResource Remove="Submodules\**" />
 		<EmbeddedResource Remove="Tests\**" />
@@ -56,6 +58,7 @@
 		<None Remove="Plugins\**" />
 		<None Remove="PrinterDriverInstaller\**" />
 		<None Remove="PrusaI3-MK3\**" />
+		<None Remove="Sprache\**" />
 		<None Remove="StaticData\**" />
 		<None Remove="Submodules\**" />
 		<None Remove="Tests\**" />
