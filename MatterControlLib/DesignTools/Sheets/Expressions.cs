@@ -420,6 +420,20 @@ namespace MatterHackers.MatterControl.DesignTools
         //	}
         //}
 
+        public static bool ContainsExpression(IObject3D item)
+        {
+            // process depth first
+            foreach (var child in item.Children)
+            {
+                if (ContainsExpression(child))
+                {
+                    return true;
+                }
+            }
+
+            return HasExpressionWithString(item, "=", true);
+        }
+
         private static void AddItemsRequiringUpdateToDictionary(IObject3D inItem,
             Dictionary<IObject3D, UpdateItem> updatedItems,
             int inDepth,

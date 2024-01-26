@@ -62,8 +62,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			var rebuildLock = this.RebuildLock();
 			SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-			await ApplicationController.Instance.Tasks.Execute(
+            await ApplicationController.Instance.Tasks.Execute(
 				"Advanced Array".Localize(),
 				null,
 				(reporter, cancellationToken) =>
@@ -103,9 +104,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 					});
 
+                    SourceContainer.Visible = false; 
 					ProcessIndexExpressions();
 
-					SourceContainer.Visible = false;
 					UiThread.RunOnIdle(() =>
 					{
 						rebuildLock.Dispose();

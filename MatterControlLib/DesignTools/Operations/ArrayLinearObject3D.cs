@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.VectorMath;
+using static Matter_CAD_Lib.DesignTools._Object3D.Object3DExtensions;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -63,8 +64,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			var rebuildLock = this.RebuildLock();
 			SourceContainer.Visible = true;
+            RemoveAllButSource();
 
-			using (new CenterAndHeightMaintainer(this, MaintainFlags.Bottom))
+            using (new CenterAndHeightMaintainer(this, MaintainFlags.Bottom))
 			{
 				await ApplicationController.Instance.Tasks.Execute(
 					"Linear Array".Localize(),
@@ -79,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						var arrayItem = SourceContainer.Children.First();
 
-						var distance = Distance.Value(this);
+                        var distance = Distance.Value(this);
 						var count = Count.Value(this);
 
 						// add in all the array items
@@ -96,9 +98,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.AddRange(newChildren);
 						});
 
-						ProcessIndexExpressions();
+                        SourceContainer.Visible = false;
+                        ProcessIndexExpressions();
 
-						SourceContainer.Visible = false;
 						rebuildLock.Dispose();
 						this.DoRebuildComplete();
 						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));

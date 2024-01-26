@@ -609,13 +609,20 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
                     case ".STL":
                         if (saveMultipleStls)
                         {
-                            bool success = true;
-                            foreach (var child in item.VisibleMeshes())
+                            var itemsToSaveIterator = item.VisibleMeshes();
+                            if (item.Children.Count > 1)
                             {
-                                var firstValidName = child.Name;
+                                // change itemsToSaveIterator to children
+                                itemsToSaveIterator = item.Children;
+                            }
+
+                            bool success = true;
+                            foreach (var itemToSave in itemsToSaveIterator)
+                            {
+                                var firstValidName = itemToSave.Name;
                                 if (string.IsNullOrEmpty(firstValidName))
                                 {
-                                    firstValidName = child.Parents().Where(i => !string.IsNullOrEmpty(i.Name)).FirstOrDefault().Name;
+                                    firstValidName = itemToSave.Parents().Where(i => !string.IsNullOrEmpty(i.Name)).FirstOrDefault().Name;
                                     if (firstValidName == null)
                                     {
                                         Path.GetFileName(meshPathAndFileName);
@@ -631,28 +638,13 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
 
                                 childMeshPathAndFileName = Util.GetNonCollidingFileName(childMeshPathAndFileName);
 
-                                if (mergeMeshes)
-                                {
-                                    outputInfo.CsgOptionState = MeshOutputSettings.CsgOption.DoCsgMerge;
-                                }
-                                Mesh mesh = DoMergeAndTransform(child, outputInfo, cancellationToken, reportProgress);
-                                success &= mesh.Save(childMeshPathAndFileName, cancellationToken, outputInfo);
+                                success &= SaveSingleMesh(itemToSave, childMeshPathAndFileName, mergeMeshes, outputInfo, reportProgress, cancellationToken);
                             }
                             return success;
                         }
                         else
                         {
-                            if (mergeMeshes)
-                            {
-                                outputInfo.CsgOptionState = MeshOutputSettings.CsgOption.DoCsgMerge;
-                            }
-                            var mesh = DoMergeAndTransform(item, outputInfo, cancellationToken, reportProgress);
-                            if (mesh != null)
-                            {
-                                return mesh.Save(meshPathAndFileName, cancellationToken, outputInfo);
-                            }
-
-                            return false;
+                            return SaveSingleMesh(item, meshPathAndFileName, mergeMeshes, outputInfo, reportProgress, cancellationToken);
                         }
 
                     case ".AMF":
@@ -687,6 +679,21 @@ namespace Matter_CAD_Lib.DesignTools._Object3D
             {
                 return false;
             }
+        }
+
+        private static bool SaveSingleMesh(IObject3D item, string meshPathAndFileName, bool mergeMeshes, MeshOutputSettings outputInfo, Action<double, string> reportProgress, CancellationToken cancellationToken)
+        {
+            if (mergeMeshes)
+            {
+                outputInfo.CsgOptionState = MeshOutputSettings.CsgOption.DoCsgMerge;
+            }
+            var mesh = DoMergeAndTransform(item, outputInfo, cancellationToken, reportProgress);
+            if (mesh != null)
+            {
+                return mesh.Save(meshPathAndFileName, cancellationToken, outputInfo);
+            }
+
+            return false;
         }
 
         /// <summary>

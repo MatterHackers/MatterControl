@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Library.Export
 {
     public class StlExport : IExportPlugin, IExportWithOptions
 	{
-        private bool mergeMeshes = true;
+        private bool mergeMeshes = false;
 
         private bool saveMultipleStls = false;
 		
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Library.Export
             // add union checkbox
             var unionAllPartsCheckbox = new CheckBox("Performe Union".Localize(), theme.TextColor, 10)
             {
-				Checked = true,
+				Checked = mergeMeshes,
 				Cursor = Cursors.Hand,
                 ToolTipText = "Performe a union before exporting. Might be slower but can clean up some models.".Localize(),
                 Margin = new BorderDouble(0, 3)

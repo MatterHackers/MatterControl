@@ -820,6 +820,9 @@ Translated:Change
 English:Change Amount
 Translated:Change Amount
 
+English:Change Color
+Translated:Change Color
+
 English:Change Password
 Translated:Change Password
 
