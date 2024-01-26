@@ -4,15 +4,15 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TestInvoker;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    [TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+    //[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class CameraFittingUtilTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
@@ -32,13 +32,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				if (ortho)
 				{
 					testRunner.ClickByName("Projection mode button");
-					Assert.IsTrue(!view3D.TrackballTumbleWidget.PerspectiveMode);
+					Assert.True(!view3D.TrackballTumbleWidget.PerspectiveMode);
 					testRunner.Delay(1);
-					Assert.IsTrue(!view3D.TrackballTumbleWidget.PerspectiveMode);
+					Assert.True(!view3D.TrackballTumbleWidget.PerspectiveMode);
 				}
 				else
 				{
-					Assert.IsTrue(view3D.TrackballTumbleWidget.PerspectiveMode);
+					Assert.True(view3D.TrackballTumbleWidget.PerspectiveMode);
 				}
 
 				Vector3[] lookAtDirFwds = new Vector3[] {
@@ -81,10 +81,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					const double pixelTolerance = 1e-3;
 
 					// Check that the full object is visible.
-					Assert.IsTrue(rect.Left > -pixelTolerance);
-					Assert.IsTrue(rect.Bottom > -pixelTolerance);
-					Assert.IsTrue(rect.Right < viewportSize.X + pixelTolerance);
-					Assert.IsTrue(rect.Top < viewportSize.Y + pixelTolerance);
+					Assert.True(rect.Left > -pixelTolerance);
+					Assert.True(rect.Bottom > -pixelTolerance);
+					Assert.True(rect.Right < viewportSize.X + pixelTolerance);
+					Assert.True(rect.Top < viewportSize.Y + pixelTolerance);
 
 					// Check for centering.
 
@@ -127,24 +127,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					if (ortho)
 					{
 						// Ortho fitting will always center the screenspace AABB and the center of the object AABB.
-						Assert.IsTrue(isXWorldspaceCentered && isYWorldspaceCentered);
-						Assert.IsTrue(isXMarginBounded || isYMarginBounded);
-						Assert.IsTrue(isXWithinMargin && isYWithinMargin);
-						Assert.IsTrue(isXScreenspaceCentered && isYScreenspaceCentered);
+						Assert.True(isXWorldspaceCentered && isYWorldspaceCentered);
+						Assert.True(isXMarginBounded || isYMarginBounded);
+						Assert.True(isXWithinMargin && isYWithinMargin);
+						Assert.True(isXScreenspaceCentered && isYScreenspaceCentered);
 					}
 					else
 					{
 						if (isPerspectiveFittingWithinMargin)
-							Assert.IsTrue(isXWithinMargin && isYWithinMargin);
+							Assert.True(isXWithinMargin && isYWithinMargin);
 
 						if (isPerspectiveFittingBoundedByMargin)
-							Assert.IsTrue(isXMarginBounded || isYMarginBounded);
+							Assert.True(isXMarginBounded || isYMarginBounded);
 
 						if (perspectiveFittingWillCenterTheAABBCenter)
-							Assert.IsTrue(isXWorldspaceCentered && isYWorldspaceCentered);
+							Assert.True(isXWorldspaceCentered && isYWorldspaceCentered);
 
 						if (perspectiveFittingWillCenterTheScreenspaceAABB)
-							Assert.IsTrue(isXScreenspaceCentered && isYScreenspaceCentered);
+							Assert.True(isXScreenspaceCentered && isYScreenspaceCentered);
 					}
 
 					if (ortho || isPerspectiveFittingStable)
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						testRunner.Delay(1);
 
 						RectangleDouble rect2 = view3D.TrackballTumbleWidget.WorldspaceAabbToBottomScreenspaceRectangle(worldspaceAABB);
-						Assert.IsTrue(rect2.Equals(rect, pixelTolerance));
+						Assert.True(rect2.Equals(rect, pixelTolerance));
 					}
 				}
 
@@ -161,25 +161,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60 * 3, overrideWidth: 1300, overrideHeight: 800);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task OrthographicZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(true, true);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task OrthographicZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(true, false);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task PerspectiveZoomToSelectionWide()
 		{
 			return DoZoomToSelectionTest(false, true);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task PerspectiveZoomToSelectionTall()
 		{
 			return DoZoomToSelectionTest(false, false);
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.AddItemToBed(partName: "Row Item MatterControl - Coin.stl")
 				.Delay(.1)
 				.ClickByName(CoinName, offset: new Point2D(-4, 0));
-			Assert.IsNotNull(scene.SelectedItem);
+			Assert.NotNull(scene.SelectedItem);
 		}
 	}
 }

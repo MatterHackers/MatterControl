@@ -1,31 +1,31 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
+	//[TestFixture, Category("MatterControl.UI.Automation")]
 	public class ShowTerminalButtonClickedOpensTerminal
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ClickingShowTerminalButtonOpensTerminal()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				Assert.IsFalse(testRunner.WaitForName("TerminalWidget", 0.5), "Terminal Window should not exist");
+				Assert.False(testRunner.WaitForName("TerminalWidget", 0.5));//, "Terminal Window should not exist");
 
-				// when we start up a new session the Terminal Sidebar should not be present
-				Assert.IsFalse(testRunner.WaitForName("Terminal Sidebar", 0.5), "Terminal Sidebar should not exist");
+                // when we start up a new session the Terminal Sidebar should not be present
+                Assert.False(testRunner.WaitForName("Terminal Sidebar", 0.5));//, "Terminal Sidebar should not exist");
 
-				testRunner.SwitchToTerminalTab();
+                testRunner.SwitchToTerminalTab();
 
-				Assert.IsTrue(testRunner.WaitForName("TerminalWidget"), "Terminal Window should exists after Show Terminal button is clicked");
+				Assert.True(testRunner.WaitForName("TerminalWidget"));//, "Terminal Window should exists after Show Terminal button is clicked");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			});
 		}
 	}

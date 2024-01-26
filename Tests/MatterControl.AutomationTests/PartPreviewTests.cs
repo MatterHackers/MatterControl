@@ -46,15 +46,15 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    [TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+    //[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PartPreviewTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task CopyButtonMakesCopyOfPart()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -68,10 +68,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitForName("Calibration - Box.stl");
-				Assert.AreEqual(1, scene.Children.Count, "Should have 1 part before copy");
+				Assert.Equal(1, scene.Children.Count); //, "Should have 1 part before copy");
 
-				// Select scene object
-				testRunner.Select3DPart("Calibration - Box.stl")
+                // Select scene object
+                testRunner.Select3DPart("Calibration - Box.stl")
 					// Click Copy button and count Scene.Children
 					.ClickByName("Duplicate Button")
 					.Assert(() => scene.Children.Count == 2, "Should have 2 parts after copy");
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddMultiplePartsMultipleTimes()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -103,18 +103,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitForName("Selection");
-				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 scene item after first AddToBed");
+				Assert.Equal(1, scene.Children.Count); //, $"Should have 1 scene item after first AddToBed");
 
-				testRunner.ClickByName("Print Library Overflow Menu");
+                testRunner.ClickByName("Print Library Overflow Menu");
 				testRunner.ClickByName("Add to Bed Menu Item");
 				testRunner.WaitForName("Selection");
-				Assert.AreEqual(parts.Length + 1, scene.Children.Count, $"Should have {parts.Length + 1} scene items after second AddToBed");
+				Assert.Equal(parts.Length + 1, scene.Children.Count); //, $"Should have {parts.Length + 1} scene items after second AddToBed");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddingImageConverterWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
-		[Test, ChildProcessTest]
+		[Fact]
 		public static async Task ControlClickInDesignTreeView()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -153,10 +153,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
 				var scene = view3D.Object3DControlLayer.Scene;
 				var designTree = testRunner.GetWidgetByName("DesignTree", out _, 3) as TreeView;
-				Assert.AreEqual(scene.Children.Count, FetchTreeNodes().Count, "Scene part count should equal tree node count");
+				Assert.Equal(scene.Children.Count, FetchTreeNodes().Count); //, "Scene part count should equal tree node count");
 
-				// Open up some room in the design tree view panel for adding group and selection nodes.
-				var splitter = designTree.Parents<Splitter>().First();
+                // Open up some room in the design tree view panel for adding group and selection nodes.
+                var splitter = designTree.Parents<Splitter>().First();
 				var splitterBar = splitter.Children.Where(child => child.GetType().Name == "SplitterBar").First();
 				var treeNodes = FetchTreeNodes();
 				var cubeNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Cube").Single();
@@ -173,11 +173,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddPrimitivePartsToBed(moreParts, multiSelect: true);
 				var partCount = parts.Length + moreParts.Length;
 
-				Assert.IsTrue(scene.Children.Any(child => child is SelectionGroupObject3D), "Scene should have a selection child");
+				Assert.True(scene.Children.Any(child => child is SelectionGroupObject3D), "Scene should have a selection child");
 				treeNodes = FetchTreeNodes();
-				Assert.IsFalse(treeNodes.Where(node => node.Tag is SelectionGroupObject3D).Any());
-				Assert.AreEqual(treeNodes.Count, partCount, "Design tree should show all parts");
-				Assert.AreEqual(
+				Assert.False(treeNodes.Where(node => node.Tag is SelectionGroupObject3D).Any());
+				Assert.Equal(treeNodes.Count, partCount); //, "Design tree should show all parts");
+                Assert.Equal(
 					scene.Children.Sum(child =>
 					{
 						if (child is SelectionGroupObject3D selection)
@@ -186,8 +186,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 						return 1;
 					}),
-					treeNodes.Count,
-					"Number of parts in scene should equal number of nodes in design view");
+					treeNodes.Count); //
+            //"Number of parts in scene should equal number of nodes in design view");
 
 
 				//===========================================================================================//
@@ -203,15 +203,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.RectangleSelectParts(view3D.Object3DControlLayer, new[] { "Cube", "Pyramid" })
 					.Delay();
 
-				Assert.AreEqual(partCount - 3, scene.Children.Count, "Scene should have {0} children after drag rectangle select", partCount - 3);
-				Assert.IsTrue(scene.Children.Any(child => child is SelectionGroupObject3D), "Scene should have a selection child after drag rectangle select");
-				Assert.AreEqual(4, scene.SelectedItem.Children.Count, "4 parts should be selected");
-				Assert.IsTrue(
+				Assert.Equal(partCount - 3, scene.Children.Count); //, "Scene should have {0} children after drag rectangle select", partCount - 3);
+                Assert.True(scene.Children.Any(child => child is SelectionGroupObject3D), "Scene should have a selection child after drag rectangle select");
+				Assert.Equal(4, scene.SelectedItem.Children.Count); //, "4 parts should be selected");
+                Assert.True(
 					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] { "Cube", "Half Wedge", "Half Cylinder", "Pyramid" }),
 					"Cube, Half Cylinder, Half Wedge, Pyramid should be selected");
 				treeNodes = FetchTreeNodes();
-				Assert.IsFalse(treeNodes.Where(node => node.Tag is SelectionGroupObject3D).Any());
-				Assert.AreEqual(
+				Assert.False(treeNodes.Where(node => node.Tag is SelectionGroupObject3D).Any());
+				Assert.Equal(
 					scene.Children.Sum(child =>
 					{
 						if (child is SelectionGroupObject3D selection)
@@ -220,8 +220,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 						return 1;
 					}),
-					treeNodes.Count,
-					"Number of parts in scene should equal number of nodes in design view afte drag rectangle select");
+					treeNodes.Count); //
+            //"Number of parts in scene should equal number of nodes in design view afte drag rectangle select");
 
 				//===========================================================================================//
 				// Verify shift-clicking on parts on bed creates a selection group.
@@ -231,27 +231,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.PressModifierKeys(AutomationRunner.ModifierKeys.Shift)
 					.ClickByName("Pyramid")
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Shift);
-				Assert.AreEqual(partCount - 1, scene.Children.Count, "Should have {0} children after selection", partCount - 1);
-				Assert.IsTrue(scene.Children.Any(child => child is SelectionGroupObject3D), "Selection group should be child of scene");
-				Assert.IsFalse(scene.Children.Any(child => child.Name == "Half Cylinder" || child.Name == "Pyramid"), "Half Cylinder and Pyramid should be removed as direct children of scene");
-				Assert.IsNull(designTree.SelectedNode, "Design tree shouldn't have a selected node when multiple parts are selected");
+				Assert.Equal(partCount - 1, scene.Children.Count); //, "Should have {0} children after selection"); //, partCount - 1);
+                Assert.True(scene.Children.Any(child => child is SelectionGroupObject3D), "Selection group should be child of scene");
+				Assert.False(scene.Children.Any(child => child.Name == "Half Cylinder" || child.Name == "Pyramid"), "Half Cylinder and Pyramid should be removed as direct children of scene");
+				Assert.Null(designTree.SelectedNode); //, "Design tree shouldn't have a selected node when multiple parts are selected");
 
-				//===========================================================================================//
-				// Verify grouping parts creates a group.
-				testRunner.ClickByName("Group Button");
-				Assert.AreEqual(partCount - 1, scene.Children.Count, "Should have {0} parts after group", partCount - 1);
-				Assert.IsInstanceOf<GroupHolesAppliedObject3D>(scene.SelectedItem, "Scene selection should be group");
-				Assert.IsInstanceOf<GroupHolesAppliedObject3D>(designTree.SelectedNode.Tag, "Group should be selected in design tree");
-				Assert.AreSame(scene.SelectedItem, designTree.SelectedNode.Tag, "Same group object should be selected in scene and design tree");
+                //===========================================================================================//
+                // Verify grouping parts creates a group.
+                testRunner.ClickByName("Group Button");
+				Assert.Equal(partCount - 1, scene.Children.Count); //, "Should have {0} parts after group", partCount - 1);
+                Assert.IsType<GroupHolesAppliedObject3D>(scene.SelectedItem); //, "Scene selection should be group");
+                Assert.IsType<GroupHolesAppliedObject3D>(designTree.SelectedNode.Tag); //, "Group should be selected in design tree");
+                Assert.Equal(scene.SelectedItem, designTree.SelectedNode.Tag); //, "Same group object should be selected in scene and design tree");
 
-				treeNodes = FetchTreeNodes();
-				Assert.AreEqual(scene.Children.Count, treeNodes.Count, "Scene part count should equal tree node count after group");
-				Assert.IsTrue(treeNodes.Any(node => node.Tag is GroupHolesAppliedObject3D), "Design tree should have node for group");
-				Assert.AreSame(designTree.SelectedNode.Tag, treeNodes.Single(node => node.Tag is GroupHolesAppliedObject3D).Tag, "Selected node in design tree should be group node");
+                treeNodes = FetchTreeNodes();
+				Assert.Equal(scene.Children.Count, treeNodes.Count); //, "Scene part count should equal tree node count after group");
+                Assert.True(treeNodes.Any(node => node.Tag is GroupHolesAppliedObject3D), "Design tree should have node for group");
+				Assert.Equal(designTree.SelectedNode.Tag, treeNodes.Single(node => node.Tag is GroupHolesAppliedObject3D).Tag); //, "Selected node in design tree should be group node");
 
-				var groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
-				Assert.AreEqual(2, groupNode.Nodes.Count, "Group should have 2 parts");
-				Assert.IsTrue(
+                var groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
+				Assert.Equal(2, groupNode.Nodes.Count); //, "Group should have 2 parts");
+                Assert.True(
 					new HashSet<string>(groupNode.Nodes.Select(node => ((IObject3D)node.Tag).Name)).SetEquals(new[] {"Half Cylinder", "Pyramid"}),
 					"Half Cylinder and Pyramind should be grouped");
 
@@ -261,8 +261,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ToList();
 				var singleItemNames = new HashSet<string>(singleItemNodes.Select(item => ((IObject3D)item.Tag).Name));
 
-				Assert.AreEqual(partCount - 2, singleItemNodes.Count, "There should be {0} single item nodes in the design tree", partCount - 2);
-				Assert.IsTrue(singleItemNames.SetEquals(new[] {"Cube", "Half Wedge", "Sphere", "Wedge"}), "Cube, Half Wedge, Sphere, Wedge should be single items");
+				Assert.Equal(partCount - 2, singleItemNodes.Count); //, "There should be {0} single item nodes in the design tree", partCount - 2);
+                Assert.True(singleItemNames.SetEquals(new[] {"Cube", "Half Wedge", "Sphere", "Wedge"}), "Cube, Half Wedge, Sphere, Wedge should be single items");
 
 				//===========================================================================================//
 				// Verify using the design tree to create a selection group.
@@ -272,18 +272,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(sphereNode)
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
-				Assert.AreEqual(partCount - 2, scene.Children.Count, "Should have {0} parts after selection", partCount - 2);
-				Assert.IsNull(designTree.SelectedNode, "Design tree shouldn't have a selected node after creating selection in design tree");
+				Assert.Equal(partCount - 2, scene.Children.Count); //, "Should have {0} parts after selection", partCount - 2);
+                Assert.Null(designTree.SelectedNode); //, "Design tree shouldn't have a selected node after creating selection in design tree");
 
-				//===========================================================================================//
-				// Verify control-clicking a part in the group does not get added to the selection group. Only top-level nodes can be
-				// selected.
-				treeNodes = FetchTreeNodes();
+                //===========================================================================================//
+                // Verify control-clicking a part in the group does not get added to the selection group. Only top-level nodes can be
+                // selected.
+                treeNodes = FetchTreeNodes();
 				groupNode = treeNodes.Where(node => node.Tag is GroupHolesAppliedObject3D).Single();
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(groupNode.Nodes.Last())
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
-				Assert.AreEqual(
+				Assert.Equal(
 					scene.Children.Sum(child =>
 					{
 						if (child is SelectionGroupObject3D selection)
@@ -292,20 +292,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 						return 1;
 					}),
-					treeNodes.Count,
-					"Scene part count should equal design tree node count after control-click on group child");
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection shouldn't change after control-click on group child");
-				Assert.AreEqual(2, scene.SelectedItem.Children.Count, "Selection should have 2 parts after control-click on group child");
+					treeNodes.Count); //,
+            //"Scene part count should equal design tree node count after control-click on group child");
+				Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem); //, "Selection shouldn't change after control-click on group child");
+                Assert.Equal(2, scene.SelectedItem.Children.Count); //, "Selection should have 2 parts after control-click on group child");
 
-				//===========================================================================================//
-				// Verify adding group to selection.
-				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
+                //===========================================================================================//
+                // Verify adding group to selection.
+                testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(groupNode.TitleBar)
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
-				Assert.AreEqual(partCount - 3, scene.Children.Count, "Scene should have {0} children after control-clicking group", partCount - 3);
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selected item should be a selection group after control-clicking on group");
-				Assert.AreEqual(3, scene.SelectedItem.Children.Count, "Selection should have 3 items after control-clicking on group");
-				Assert.IsTrue(
+				Assert.Equal(partCount - 3, scene.Children.Count); //, "Scene should have {0} children after control-clicking group", partCount - 3);
+                Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem); //, "Selected item should be a selection group after control-clicking on group");
+                Assert.Equal(3, scene.SelectedItem.Children.Count); //, "Selection should have 3 items after control-clicking on group");
+                Assert.True(
 					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] {"Half Wedge", "Sphere", "Half Cylinder, Pyramid" }),
 					"Selection should have Group, Half Wedge, Sphere");
 
@@ -318,9 +318,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ClickWidget(halfWedgeNode)
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
 
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection group should exist after removing a child");
-				Assert.AreEqual(2, scene.SelectedItem.Children.Count, "Selection should have 2 parts after removing a child");
-				Assert.IsTrue(
+				Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem); //, "Selection group should exist after removing a child");
+                Assert.Equal(2, scene.SelectedItem.Children.Count); //, "Selection should have 2 parts after removing a child");
+                Assert.True(
 					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new[] { "Half Cylinder, Pyramid", "Sphere"}),
 					"Group and Sphere should be in selection after removing a child");
 
@@ -336,13 +336,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
 
 				treeNodes = FetchTreeNodes();
-				Assert.AreEqual(scene.Children.Count, treeNodes.Count, "Scene part count should equal design tree node count after removing penultimate child");
-				Assert.IsNotInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection group shouldn't exist after removing penultimate child");
-				Assert.AreSame(groupNode.Tag, scene.SelectedItem, "Selection should be group after removing penultimate child");
+				Assert.Equal(scene.Children.Count, treeNodes.Count); //, "Scene part count should equal design tree node count after removing penultimate child");
+                Assert.IsNotType<SelectionGroupObject3D>(scene.SelectedItem); //, "Selection group shouldn't exist after removing penultimate child");
+                Assert.Equal(groupNode.Tag, scene.SelectedItem);//, "Selection should be group after removing penultimate child");
 
-				//===========================================================================================//
-				// Verify control-clicking on a part in the group that's part of the selection doesn't change the selection.
-				halfWedgeNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Half Wedge").Single();
+                //===========================================================================================//
+                // Verify control-clicking on a part in the group that's part of the selection doesn't change the selection.
+                halfWedgeNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Half Wedge").Single();
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(halfWedgeNode)
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
@@ -359,24 +359,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ClickWidget(groupNode.Nodes.Last())
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
 
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection shouldn't change after control-click on selection group child");
-				Assert.AreEqual(3, scene.SelectedItem.Children.Count, "Selection should have 3 parts after control-click on selection group child");
+			Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem);//, "Selection shouldn't change after control-click on selection group child");
+				Assert.Equal(3, scene.SelectedItem.Children.Count);//, "Selection should have 3 parts after control-click on selection group child");
 
-				//===========================================================================================//
-				// Verify clicking on a top-level node that's not in the selection group unselects all the parts in the group
-				// and selects the part associated with the clicked node.
-				treeNodes = FetchTreeNodes();
+                //===========================================================================================//
+                // Verify clicking on a top-level node that's not in the selection group unselects all the parts in the group
+                // and selects the part associated with the clicked node.
+                treeNodes = FetchTreeNodes();
 				var wedgeNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Wedge").Single();
 				testRunner.ClickWidget(wedgeNode);
-				Assert.AreEqual(partCount - 1, scene.Children.Count, "Should be {0} parts in the scene after selecting wedge", partCount - 1);
-				Assert.AreSame(scene.SelectedItem, wedgeNode.Tag, "Wedge should be selected");
-				Assert.IsFalse(scene.Children.Any(child => child is SelectionGroupObject3D), "Selection group should go away when another part is selected");
-				Assert.AreSame(scene.SelectedItem, designTree.SelectedNode.Tag, "The same part should be selected in the scene and design tree");
+				Assert.Equal(partCount - 1, scene.Children.Count); //, "Should be {0} parts in the scene after selecting wedge", partCount - 1);
+                Assert.Equal(scene.SelectedItem, wedgeNode.Tag); //, "Wedge should be selected");
+                Assert.False(scene.Children.Any(child => child is SelectionGroupObject3D), "Selection group should go away when another part is selected");
+				Assert.Equal(scene.SelectedItem, designTree.SelectedNode.Tag); //, "The same part should be selected in the scene and design tree");
 
-				treeNodes = FetchTreeNodes();
+                treeNodes = FetchTreeNodes();
 				wedgeNode = treeNodes.Where(node => ((IObject3D)node.Tag).Name == "Wedge").Single();
-				Assert.AreSame(designTree.SelectedNode, wedgeNode, "Wedge node should be selected in design tree");
-				Assert.IsFalse(treeNodes.Any(node => node.Tag is SelectionGroupObject3D), "Selection group shouldn't exist in design tree after selecting wedge");
+				Assert.Equal(designTree.SelectedNode, wedgeNode); //, "Wedge node should be selected in design tree");
+				Assert.False(treeNodes.Any(node => node.Tag is SelectionGroupObject3D), "Selection group shouldn't exist in design tree after selecting wedge");
 
 				//===========================================================================================//
 				// Verify that shift-clicking a part on the bed makes a selection group with a part that's been selected through
@@ -384,10 +384,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Shift)
 					.ClickByName("Half Wedge")
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Shift);
-				Assert.AreEqual(partCount - 2, scene.Children.Count, "Scene should have {0} children after selecting half wedge", partCount - 2);
-				Assert.IsNull(designTree.SelectedNode, "Selected node in design tree should be null after selecting half wedge");
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Should have a selection group after selecting half wedge");
-				Assert.IsTrue(
+				Assert.Equal(partCount - 2, scene.Children.Count); //, "Scene should have {0} children after selecting half wedge", partCount - 2);
+                Assert.Null(designTree.SelectedNode); //, "Selected node in design tree should be null after selecting half wedge");
+                Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem); //, "Should have a selection group after selecting half wedge");
+                Assert.True(
 					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new [] {"Wedge", "Half Wedge"}),
 					"Half Wedge and Wedge should be in selection");
 
@@ -398,9 +398,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.PressModifierKeys(AutomationRunner.ModifierKeys.Control)
 					.ClickWidget(sphereNode)
 					.ReleaseModifierKeys(AutomationRunner.ModifierKeys.Control);
-				Assert.AreEqual(partCount - 3, scene.Children.Count, "Scene should have {0} children after selecting sphere", partCount - 3);
-				Assert.IsInstanceOf<SelectionGroupObject3D>(scene.SelectedItem, "Selection in scene should be selection group after adding sphere");
-				Assert.IsTrue(
+				Assert.Equal(partCount - 3, scene.Children.Count); //, "Scene should have {0} children after selecting sphere", partCount - 3);
+                Assert.IsType<SelectionGroupObject3D>(scene.SelectedItem); //, "Selection in scene should be selection group after adding sphere");
+                Assert.True(
 					new HashSet<string>(scene.SelectedItem.Children.Select(child => child.Name)).SetEquals(new [] {"Wedge", "Half Wedge", "Sphere"}),
 					"Half Wedge, Sphere, Wedge should be in selection");
 
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 110);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DesignTabFileOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task GroupAndUngroup()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -523,10 +523,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				// Assert expected start count
-				Assert.AreEqual(1, scene.Children.Count, "Should have one part before copy");
+				Assert.Equal(1, scene.Children.Count); //, "Should have one part before copy");
 
-				// Select scene object
-				testRunner.Select3DPart("Calibration - Box.stl");
+                // Select scene object
+                testRunner.Select3DPart("Calibration - Box.stl");
 
 				for (int i = 2; i <= 6; i++)
 				{
@@ -535,10 +535,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				// Get MeshGroupCount before Group is clicked
-				Assert.AreEqual(6, scene.Children.Count, "Scene should have 6 parts after copy loop");
+				Assert.Equal(6, scene.Children.Count); //, "Scene should have 6 parts after copy loop");
 
-				// Duplicate button moved to new container - move focus back to View3DWidget so CTRL-A below is seen by expected control
-				testRunner.Select3DPart("Calibration - Box.stl")
+                // Duplicate button moved to new container - move focus back to View3DWidget so CTRL-A below is seen by expected control
+                testRunner.Select3DPart("Calibration - Box.stl")
 					// select all
 					.Type("^a")
 					.ClickByName("Group Button")
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RemoveButtonRemovesParts()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -565,28 +565,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				Assert.AreEqual(1, scene.Children.Count, "There should be 1 part on the bed after AddDefaultFileToBedplate()");
+				Assert.Equal(1, scene.Children.Count); //, "There should be 1 part on the bed after AddDefaultFileToBedplate()");
 
-				// Add 5 items
-				for (int i = 0; i <= 4; i++)
+                // Add 5 items
+                for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("Duplicate Button")
 						.Delay(.5);
 				}
 
-				Assert.AreEqual(6, scene.Children.Count, "There should be 6 parts on the bed after the copy loop");
+				Assert.Equal(6, scene.Children.Count); //, "There should be 6 parts on the bed after the copy loop");
 
-				// Remove an item
-				testRunner.ClickByName("Remove Button");
+                // Remove an item
+                testRunner.ClickByName("Remove Button");
 
 				// Confirm
-				Assert.AreEqual(5, scene.Children.Count, "There should be 5 parts on the bed after remove");
+				Assert.Equal(5, scene.Children.Count); //, "There should be 5 parts on the bed after remove");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task SaveAsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -606,15 +606,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.NavigateToLibraryHome()
 					.NavigateToFolder("Queue Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA.mcx"), "The part we added should be in the library");
+				Assert.True(testRunner.WaitForName("Row Item Test PartA.mcx"), "The part we added should be in the library");
                 throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
                 return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task SaveAsToLocalLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -634,7 +634,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.NavigateToLibraryHome()
 					.NavigateToFolder("Local Library Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartB"), "The part we added should be in the library");
+				Assert.True(testRunner.WaitForName("Row Item Test PartB"), "The part we added should be in the library");
 
 				return Task.CompletedTask;
 			});

@@ -3,14 +3,14 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("ConfigIni")]
+	//[TestFixture, Category("ConfigIni")]
 	public class ImportSettingsTests
 	{
-		[Test]
+		[Fact]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -35,11 +35,11 @@ namespace MatterControl.Tests.MatterControl
 
 			printerSettings.Merge(printerSettings.UserLayer, toImport, sourceFilter, false);
 
-			Assert.AreEqual(printerSettings.GetValue(SettingsKey.cancel_gcode), newValue, "Imported setting applied");
-			Assert.IsEmpty(printerSettings.GetValue(notAnExistingKey), "Invalid settings keys should be skipped");
-		}
+			Assert.Equal(printerSettings.GetValue(SettingsKey.cancel_gcode), newValue);//, "Imported setting applied");
+            Assert.Empty(printerSettings.GetValue(notAnExistingKey));//, "Invalid settings keys should be skipped");
+        }
 
-		[Test]
+		[Fact]
 		public void MergeDropsFieldsIfValueAlreadySet()
 		{
 			// Validates that field are dropped during import if they are already set in a base layer
@@ -69,10 +69,10 @@ namespace MatterControl.Tests.MatterControl
 
 			printerSettings.Merge(printerSettings.UserLayer, toImport, sourceFilter, false);
 
-			Assert.AreEqual(printerSettings.GetValue(SettingsKey.cancel_gcode), newValue, "Imported setting applied");
-			Assert.IsEmpty(printerSettings.GetValue(notAnExistingKey), "Invalid settings keys should be skipped");
-			Assert.IsFalse(printerSettings.UserLayer.ContainsKey(SettingsKey.layer_height), "User layer should not contain layer_height after merge");
-			Assert.AreEqual(2, printerSettings.UserLayer.Count, "User layer should contain two items after import (start_gcode, cancel_gcode)");
-		}
+			Assert.Equal(printerSettings.GetValue(SettingsKey.cancel_gcode), newValue);//, "Imported setting applied");
+            Assert.Empty(printerSettings.GetValue(notAnExistingKey));//, "Invalid settings keys should be skipped");
+            Assert.False(printerSettings.UserLayer.ContainsKey(SettingsKey.layer_height), "User layer should not contain layer_height after merge");
+			Assert.Equal(2, printerSettings.UserLayer.Count);//, "User layer should contain two items after import (start_gcode, cancel_gcode)");
+        }
 	}
 }

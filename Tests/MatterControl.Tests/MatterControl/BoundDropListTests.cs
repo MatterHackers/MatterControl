@@ -6,13 +6,13 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterControl.Tests.MatterControl
 {
-	class BoundDropListTests
+	public class BoundDropListTests
 	{
-		[Test]
+		[Fact]
 		public void BoundDropListHonorsWhitelist()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -33,7 +33,7 @@ namespace MatterControl.Tests.MatterControl
 			// Whitelist on non-OEM builds should contain all printers
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = allManufacturers;
-			Assert.Greater(dropList.MenuItems.Count, 20);
+			Assert.True(dropList.MenuItems.Count > 20);
 
 			var whitelist = new List<string> { "3D Stuffmaker" };
 
@@ -41,14 +41,14 @@ namespace MatterControl.Tests.MatterControl
 
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = OemSettings.Instance.AllOems;
-			Assert.AreEqual(1, dropList.MenuItems.Count);
+			Assert.Single(dropList.MenuItems);
 
 			whitelist.Add("Airwolf 3D");
 			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
 
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = OemSettings.Instance.AllOems;
-			Assert.AreEqual(2, dropList.MenuItems.Count);
+			Assert.Equal(2, dropList.MenuItems.Count);
 		}
 	}
 }

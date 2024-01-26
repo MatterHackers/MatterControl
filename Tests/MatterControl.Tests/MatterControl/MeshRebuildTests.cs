@@ -38,11 +38,11 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-    [TestFixture, Category("Agg.PolygonMesh.Rebuild")]
+    //[TestFixture, Category("Agg.PolygonMesh.Rebuild")]
 	public class MeshRebuildTests
 	{
 		public void SetupEvnironment()
@@ -57,7 +57,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AppContext.Platform.ProcessCommandline();
 		}
 
-		[Test]
+		[Fact]
 		public async Task PinchChangesMesh()
 		{
 			SetupEvnironment();
@@ -69,14 +69,14 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			pinch1.Children.Add(new CubeObject3D());
 			await pinch1.Rebuild();
 			root.Children.Add(pinch1);
-			Assert.AreEqual(3, root.Descendants().Count());
+			Assert.Equal(3, root.Descendants().Count());
 		}
 	}
 
-	[TestFixture, Category("Agg.Scene.Rebuild")]
+	//[TestFixture, Category("Agg.Scene.Rebuild")]
 	public class SceenSheetTests
 	{
-		public void SetupEvnironment()
+		private void SetupEvnironment()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
@@ -88,7 +88,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AppContext.Platform.ProcessCommandline();
 		}
 
-		[Test]
+		[Fact]
 		public async Task TestSheetFunctions()
 		{
 			SetupEvnironment();
@@ -103,21 +103,21 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			sheet.SheetData[0, 0].Expression = "=33";
 			// rebuild cube without a reference to sheet
 			cube1.Invalidate(InvalidateType.Properties);
-			Assert.AreEqual(20, cube1.Width.Value(cube1), "cube1 should be the default 20mm");
+			Assert.Equal(20, cube1.Width.Value(cube1));//, "cube1 should be the default 20mm");
 			// set the cube width to the sheet value, but with a bad description (needs an equals to work)
-			cube1.Width = "A1";
+            cube1.Width = "A1";
 			cube1.Invalidate(InvalidateType.Properties);
-			Assert.AreEqual(CubeObject3D.MinEdgeSize, cube1.Width.Value(cube1), "Should be the minimum cube value as the reference is bad");
+			Assert.Equal(CubeObject3D.MinEdgeSize, cube1.Width.Value(cube1));//, "Should be the minimum cube value as the reference is bad");
 			// now fix the reference
 			cube1.Width = "=A1";
 			cube1.Invalidate(InvalidateType.Properties);
-			Assert.AreEqual(33, cube1.Width.Value(cube1), "Should now be the value ad A1");
+			Assert.Equal(33, cube1.Width.Value(cube1));//, "Should now be the value ad A1");
 			// Change the sheet value
-			sheet.SheetData[0, 0].Expression = "=43";
+            sheet.SheetData[0, 0].Expression = "=43";
 			sheet.SheetData.Recalculate();
 			// and rebuild the references
 			sheet.Invalidate(InvalidateType.SheetUpdated);
-			Assert.AreEqual(43, cube1.Width.Value(cube1));
+			Assert.Equal(43, cube1.Width.Value(cube1));
 		}
 	}
 }

@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
+	//[TestFixture, Category("MatterControl.UI.Automation")]
 	public class SqLiteLibraryProviderTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LibraryQueueViewRefreshesOnAddItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -21,9 +21,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitFor(() => scene.SelectedItem != null);
-				Assert.IsNotNull(scene.SelectedItem, "Expect part selection after Add to Bed action");
+				Assert.NotNull(scene.SelectedItem); //, "Expect part selection after Add to Bed action");
 
-				testRunner.ClickByName("Duplicate Button")
+                testRunner.ClickByName("Duplicate Button")
 					// wait for the copy to finish
 					.Delay(.1)
 					.ClickByName("Remove Button")
@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.NavigateToFolder("Local Library Row Item Collection");
 
 				// ensure that it is now in the library folder (that the folder updated)
-				Assert.IsTrue(testRunner.WaitForName("Row Item 0Test Part"), "The part we added should be in the library");
+				Assert.True(testRunner.WaitForName("Row Item 0Test Part"), "The part we added should be in the library");
 
 				testRunner.Delay(.5);
 

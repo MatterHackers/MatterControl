@@ -40,22 +40,21 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("LibraryContainerTests")]
+	//[TestFixture, Category("LibraryContainerTests")]
 	public class LibraryContainerTests
 	{
-		[SetUp]
-		public static void Setup()
+		public LibraryContainerTests()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test]
+		[Fact]
 		public Task TestExistsForEachContainerType()
 		{
 			// Find all test methods on this test class
@@ -65,16 +64,15 @@ namespace MatterControl.Tests.MatterControl
 			foreach (var containerType in PluginFinder.FindTypes<ILibraryContainer>().Where(fieldType => !fieldType.IsAbstract))
 			{
 				string expectedTestName = $"{containerType.Name}Test";
-				Assert.AreEqual(
-					1,
-					thisClassMethods.Where(m => m.Name == expectedTestName).Count(),
-					"Test for LibraryContainer missing, not yet created or typo'd - Expected: " + expectedTestName);
+				Assert.Single(
+					thisClassMethods.Where(m => m.Name == expectedTestName)); //,
+                //"Test for LibraryContainer missing, not yet created or typo'd - Expected: " + expectedTestName);
 			}
 
 			return Task.CompletedTask;
 		}
 
-		[Test]
+		[Fact]
 		public async Task NoContentChangedOnLoad()
 		{
 			bool onIdlePumpActive = true;
@@ -128,14 +126,14 @@ namespace MatterControl.Tests.MatterControl
 					await Task.Delay(300);
 
 					// Verify Reload is called;
-					Assert.AreEqual(0, changedCount, "Expected reload count not hit - container should fire reload event after acquiring content");
-				}
+					Assert.Equal(0, changedCount); //, "Expected reload count not hit - container should fire reload event after acquiring content");
+                }
 			}
 
 			onIdlePumpActive = false;
 		}
 
-		[Test]
+		[Fact]
 		public async Task AddFiresContentChangedEvent()
 		{
 			string filePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "Batman.stl");
@@ -216,8 +214,8 @@ namespace MatterControl.Tests.MatterControl
 					Console.WriteLine($"ContentChanged for {containerType.Name}");
 
 					// Verify Reload is called;
-					Assert.AreEqual(1, changedCount, $"Expected reload count for {containerType.Name} not hit - container should fire reload event after acquiring content");
-				}
+					Assert.Equal(1, changedCount); //, $"Expected reload count for {containerType.Name} not hit - container should fire reload event after acquiring content");
+                }
 			}
 
 			onIdlePumpActive = false;

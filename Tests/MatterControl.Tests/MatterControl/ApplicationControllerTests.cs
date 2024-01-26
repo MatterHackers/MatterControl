@@ -34,14 +34,14 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Tests.Automation;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture]
+	
 	public class ApplicationControllerTests
 	{
-		[Test]
+		[Fact]
 		public async Task LoadCachableShouldFallbackToStaticData()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -60,13 +60,13 @@ namespace MatterControl.Tests.MatterControl
 				},
 				staticDataFallbackPath: "BuildInfo.txt");
 
-			Assert.IsNotNull(versionInfo, "LoadCacheable should fall back to StaticData content if collection fails");
+			Assert.NotNull(versionInfo); //, "LoadCacheable should fall back to StaticData content if collection fails");
 
-			string cachePath = ApplicationController.CacheablePath(cacheScope, "HelloWorld-File1");
-			Assert.IsFalse(File.Exists(cachePath), "After fall back to StaticData content, cache should not contain fall back content");
+            string cachePath = ApplicationController.CacheablePath(cacheScope, "HelloWorld-File1");
+			Assert.False(File.Exists(cachePath), "After fall back to StaticData content, cache should not contain fall back content");
 		}
 
-		[Test]
+		[Fact]
 		public async Task LoadCachableShouldStoreCollectedResults()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -84,12 +84,12 @@ namespace MatterControl.Tests.MatterControl
 				},
 				staticDataFallbackPath: "BuildInfo.txt");
 
-			Assert.IsTrue(versionInfo.BuildVersion == "HelloFromCollector", "LoadCacheable should use content from collector");
+			Assert.True(versionInfo.BuildVersion == "HelloFromCollector", "LoadCacheable should use content from collector");
 
 			string cachePath = ApplicationController.CacheablePath(cacheScope, "HelloWorld-File1");
-			Assert.IsTrue(File.Exists(cachePath), "Collected results should be written to cache at expected path");
+			Assert.True(File.Exists(cachePath), "Collected results should be written to cache at expected path");
 
-			Assert.IsTrue(File.ReadAllText(cachePath).Contains("HelloFromCollector"), "Cached content should equal collected content");
+			Assert.True(File.ReadAllText(cachePath).Contains("HelloFromCollector"), "Cached content should equal collected content");
 		}
 	}
 }

@@ -34,12 +34,12 @@ using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Category("OemProfiles")]
+	//[TestFixture, Category("OemProfiles")]
 	public class OemProfileTests
 	{
 		private static List<PrinterTestDetails> allPrinters;
@@ -104,7 +104,7 @@ M300 S3000 P30   ; Resume Tone";
 						   }).ToList();
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public void ModifyPulsePrinterProfilesSettings()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
@@ -215,7 +215,7 @@ M300 S3000 P30   ; Resume Tone";
 			int a = 0;
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public void AllMaterialsLibraryHasGoodProfiles()
 		{
 			var materialSettingsDirectory = Path.Combine(MatterControlUtilities.StaticDataPath, "Materials");
@@ -266,33 +266,33 @@ M300 S3000 P30   ; Resume Tone";
 			for(var i = 0; i < profiles.Count; i++)
             {
 				var profile = profiles[i];
-				Assert.AreEqual(1, profile.MaterialLayers.Count, "Each material profile should have 1 material in it");
-				var material = profile.MaterialLayers[0];
+				Assert.Single(profile.MaterialLayers); //, "Each material profile should have 1 material in it");
+                var material = profile.MaterialLayers[0];
 				profile.ActiveMaterialKey = material.LayerID;
-				Assert.IsTrue(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)), $"All profiles should have a material_sku set {files[i].FullName}");
-				Assert.IsTrue(!allMaterialIds.Contains(material.LayerID), $"Every material needs a unique Id {files[i].FullName}");
+				Assert.True(!string.IsNullOrEmpty(profile.GetValue(SettingsKey.material_sku)), $"All profiles should have a material_sku set {files[i].FullName}");
+				Assert.True(!allMaterialIds.Contains(material.LayerID), $"Every material needs a unique Id {files[i].FullName}");
 				foreach(var key in isPresentKeys)
                 {
-					Assert.IsTrue(material.ContainsKey(key), $"Material {files[i].FullName} should include {key} setting");
+					Assert.True(material.ContainsKey(key), $"Material {files[i].FullName} should include {key} setting");
 				}
 
 				if (profile.GetValue(SettingsKey.layer_name).ToLower().Contains("nylon"))
                 {
 					// make sure the setting for garolite is greater than 0 and not NC
 					double.TryParse(profile.GetValue(SettingsKey.bed_temperature_garolite), out double temp);
-					Assert.Greater(temp, 0);
+					Assert.True(temp > 0);
 				}
 
 				foreach (var key in notPresentKeys)
                 {
-					Assert.IsTrue(!material.ContainsKey(key), $"Material {files[i].FullName} should not include {key} setting");
+					Assert.True(!material.ContainsKey(key), $"Material {files[i].FullName} should not include {key} setting");
 				}
 				allMaterialIds.Add(material.LayerID);
 			}
 		}
 
 
-		[Test]
+		[Fact]
 		public void LayerGCodeHasExpectedValue()
 		{
 			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"
@@ -336,7 +336,7 @@ M300 S3000 P30   ; Resume Tone";
 			settings.Save(printer.ConfigPath);
 		}
 
-		[Test]
+		[Fact]
 		public void StartGCodeWithExtrudesMustFollowM109Heatup()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -363,8 +363,8 @@ M300 S3000 P30   ; Resume Tone";
 					int m109Pos = lines.IndexOf(m109Line);
 					int extrudePos = lines.IndexOf(extrudeLine);
 
-					Assert.IsNotNull(m109Line);
-					// Assert.IsNotNull(emptyExtrudeLine);
+					Assert.NotNull(m109Line);
+					// Assert.NotNull(emptyExtrudeLine);
 					// Assert.Greater(emptyExtrudePos, m109Pos);
 
 					if (extrudePos < m109Pos)
@@ -375,7 +375,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void CsvBedSizeExistsAndHasTwoValues()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -389,16 +389,16 @@ M300 S3000 P30   ; Resume Tone";
 				string bedSize = settings.GetValue(SettingsKey.bed_size);
 
 				// Must exist in all configs
-				Assert.IsTrue(!string.IsNullOrEmpty(bedSize), "[bed_size] must exist: " + printer.RelativeFilePath);
+				Assert.True(!string.IsNullOrEmpty(bedSize), "[bed_size] must exist: " + printer.RelativeFilePath);
 
 				string[] segments = bedSize.Trim().Split(',');
 
 				// Must be a CSV and have two values
-				Assert.AreEqual(2, segments.Length, "[bed_size] should have two values separated by a comma: " + printer.RelativeFilePath);
-			});
+				Assert.Equal(2, segments.Length); //, "[bed_size] should have two values separated by a comma: " + printer.RelativeFilePath);
+            });
 		}
 
-		[Test]
+		[Fact]
 		public void CsvPrintCenterExistsAndHasTwoValues()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -412,12 +412,12 @@ M300 S3000 P30   ; Resume Tone";
 				string printCenter = settings.GetValue(SettingsKey.print_center);
 
 				// Must exist in all configs
-				Assert.IsTrue(!string.IsNullOrEmpty(printCenter), "[print_center] must exist: " + printer.RelativeFilePath);
+				Assert.True(!string.IsNullOrEmpty(printCenter), "[print_center] must exist: " + printer.RelativeFilePath);
 
 				string[] segments = printCenter.Trim().Split(',');
 
 				// Must be a CSV and have only two values
-				Assert.AreEqual(2, segments.Length, "[print_center] should have two values separated by a comma: " + printer.RelativeFilePath);
+				Assert.Equal(2, segments.Length); //, "[print_center] should have two values separated by a comma: " + printer.RelativeFilePath);
 
 #if false
 				// save out the material settings
@@ -436,10 +436,10 @@ M300 S3000 P30   ; Resume Tone";
 					}
 				}
 #endif
-			});
+            });
 		}
 
-		[Test]
+		[Fact]
 		public void RetractLengthIsLessThanTwenty()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -453,12 +453,12 @@ M300 S3000 P30   ; Resume Tone";
 						Assert.Fail("Invalid [retract_length] value (float parse failed): " + printer.RelativeFilePath);
 					}
 
-					Assert.Less(retractLength, 20, "[retract_length]: " + printer.RelativeFilePath);
-				}
+					Assert.True(retractLength < 20); //, "[retract_length]: " + printer.RelativeFilePath);
+                }
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void ExtruderCountIsGreaterThanZero()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -473,12 +473,12 @@ M300 S3000 P30   ; Resume Tone";
 					}
 
 					// Must be greater than zero
-					Assert.Greater(extruderCount, 0, "[extruder_count]: " + printer.RelativeFilePath);
-				}
+					Assert.True(extruderCount > 0); //, "[extruder_count]: " + printer.RelativeFilePath);
+                }
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void MinFanSpeedOneHundredOrLess()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -494,12 +494,12 @@ M300 S3000 P30   ; Resume Tone";
 					}
 
 					// Must be less than or equal to 100
-					Assert.LessOrEqual(minFanSpeed, 100, "[min_fan_speed]: " + printer.RelativeFilePath);
-				}
+					Assert.True(minFanSpeed <= 100); //, "[min_fan_speed]: " + printer.RelativeFilePath);
+                }
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void PlaAndAbsDensitySetCorrectly()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -526,7 +526,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void MaxFanSpeedOneHundredOrLess()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -542,12 +542,12 @@ M300 S3000 P30   ; Resume Tone";
 					}
 
 					// Must be less than or equal to 100
-					Assert.LessOrEqual(maxFanSpeed, 100, "[max_fan_speed]: " + printer.RelativeFilePath);
-				}
+					Assert.True(maxFanSpeed <= 100); //, "[max_fan_speed]: " + printer.RelativeFilePath);
+                }
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void NoCurlyBracketsInGcode()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -565,7 +565,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void BottomSolidLayersNotZero()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -579,12 +579,12 @@ M300 S3000 P30   ; Resume Tone";
 						return;
 					}
 
-					// Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
+					// Assert.Equal("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
 				}
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void NoFirstLayerBedTempInStartGcode()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -594,7 +594,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -633,7 +633,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -655,11 +655,11 @@ M300 S3000 P30   ; Resume Tone";
 					return;
 				}
 
-				Assert.Less(layerHeight, maximumLayerHeight, "[layer_height] must be less than [minimumLayerHeight]: " + printer.RelativeFilePath);
-			});
+				Assert.True(layerHeight < maximumLayerHeight); //, "[layer_height] must be less than [minimumLayerHeight]: " + printer.RelativeFilePath);
+            });
 		}
 
-		[Test]
+		[Fact]
 		public void FirstLayerExtrusionWidthGreaterThanNozzleDiameterIfSet()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -676,12 +676,12 @@ M300 S3000 P30   ; Resume Tone";
 						return;
 					}
 
-					Assert.GreaterOrEqual(firstLayerExtrusionWidth, nozzleDiameter, "[first_layer_extrusion_width] must be nozzle diameter or greater: " + printer.RelativeFilePath);
-				}
+					Assert.True(firstLayerExtrusionWidth >= nozzleDiameter); //, "[first_layer_extrusion_width] must be nozzle diameter or greater: " + printer.RelativeFilePath);
+                }
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void SupportMaterialAssignedToExtruderOne()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -703,7 +703,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -808,7 +808,7 @@ M300 S3000 P30   ; Resume Tone";
 				}
 			}
 
-			Assert.IsTrue(
+			Assert.True(
 				ruleViolations.Count == 0, /* Use == instead of Assert.AreEqual to better convey failure details */
 				string.Format("One or more printers violate this rule: \r\n\r\n{0}\r\n", string.Join("\r\n", ruleViolations.ToArray())));
 		}

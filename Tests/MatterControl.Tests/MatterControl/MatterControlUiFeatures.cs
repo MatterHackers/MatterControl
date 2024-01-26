@@ -32,13 +32,14 @@ using System.IO;
 using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Tests;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterHackers.MatterControl.UI
 {
-	[TestFixture, Category("MatterControl.UI")]
+	//[TestFixture, Category("MatterControl.UI")]
 	public class MatterControlUiFeatures
 	{
 		private static bool saveImagesForDebug = true;
@@ -46,10 +47,11 @@ namespace MatterHackers.MatterControl.UI
 		/// <summary>
 		/// Bug #94150618 - Left margin is not applied on GuiWidget
 		/// </summary>
-		[Test]
+		[Fact]
 		public void TopToBottomContainerAppliesExpectedMarginToToggleView()
 		{
-			TestContext.CurrentContext.SetCompatibleWorkingDirectory();
+			TestContext testContext = new TestContext();
+			testContext.CurrentContext.SetCompatibleWorkingDirectory();
 
 			int marginSize = 40;
 			int dimensions = 300;
@@ -82,10 +84,10 @@ namespace MatterHackers.MatterControl.UI
 			OutputImages(outerContainer, outerContainer);
 
 			var bounds = toggleBox.BoundsRelativeToParent;
-			Assert.IsTrue(bounds.Left == marginSize, "Left margin is incorrect");
-			Assert.IsTrue(bounds.Right == dimensions - marginSize, "Right margin is incorrect");
-			Assert.IsTrue(bounds.Top == dimensions - marginSize, "Top margin is incorrect");
-			Assert.IsTrue(bounds.Bottom == marginSize, "Bottom margin is incorrect");
+			Assert.True(bounds.Left == marginSize, "Left margin is incorrect");
+			Assert.True(bounds.Right == dimensions - marginSize, "Right margin is incorrect");
+			Assert.True(bounds.Top == dimensions - marginSize, "Top margin is incorrect");
+			Assert.True(bounds.Bottom == marginSize, "Bottom margin is incorrect");
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)

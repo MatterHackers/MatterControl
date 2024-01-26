@@ -3,16 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrintQueue;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	// Most of these tests are disabled. Local Library needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class LocalLibraryTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ParentFolderRefreshedOnPathPop()
 		{
 			// Expected: When descending into a child folder and moving items into the parent, popping the path to the parent should refresh and show the moved content
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -107,8 +107,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Make sure that Item does not exist before the test begins
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should not exist at test start");
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 1), "Mouthpiece part should not exist at test start");
+				Assert.False(testRunner.WaitForName("Row Item Batman", 1), "Batman part should not exist at test start");
+				Assert.False(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 1), "Mouthpiece part should not exist at test start");
 
 				// Add Library item
 				testRunner.InvokeLibraryAddDialog();
@@ -121,14 +121,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.DoubleClickByName("Batman.zip Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Batman part should exist after adding");
-				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl"), "Mouthpiece part should exist after adding");
+				Assert.True(testRunner.WaitForName("Row Item Batman.stl"), "Batman part should exist after adding");
+				Assert.True(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl"), "Mouthpiece part should exist after adding");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DoubleClickSwitchesToOpenTab()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var mainViewWidget = ApplicationController.Instance.MainView;
 				var tabControl = mainViewWidget.TabControl;
-				Assert.AreEqual(5, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.Equal(5, mainViewWidget.TabControl.AllTabs.Count());
 
 				// open the design for editing
 				testRunner.ClickByName("Library Tab")
@@ -157,19 +157,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 6);
 
 				// we have opened a new tab
-				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.Equal(6, mainViewWidget.TabControl.AllTabs.Count());
 				// we are on the design tab
-				Assert.AreEqual(5, tabControl.SelectedTabIndex);
-				Assert.AreEqual("New Design", tabControl.SelectedTabKey);
+				Assert.Equal(5, tabControl.SelectedTabIndex);
+				Assert.Equal("New Design", tabControl.SelectedTabKey);
 
 				// double click it again and prove that it goes to the currently open tab
 				testRunner.ClickByName("Library Tab")
 					.DoubleClickByName("Row Item Cube Design.mcx");
 
 				// we have not opened a new tab
-				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
+				Assert.Equal(6, mainViewWidget.TabControl.AllTabs.Count());
 				// we are on the design tab
-				Assert.AreEqual(5, tabControl.SelectedTabIndex);
+				Assert.Equal(5, tabControl.SelectedTabIndex);
 
 				// rename in the library tab
 				// assert tab name has change
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -207,13 +207,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.2);
 
 				// Make sure the renamed Library Folder exists
-				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection"), "Renamed folder should exist");
+				Assert.True(testRunner.WaitForName("Renamed Library Folder Row Item Collection"), "Renamed folder should exist");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -227,13 +227,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.LibraryRemoveSelectedItem();
 
 				// Make sure that the item has been removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", .5));
+				Assert.False(testRunner.WaitForName("Row Item Rook", .5));
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -250,8 +250,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1), "Rook part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part *not* exist after remove");
+				Assert.False(testRunner.WaitForName("Row Item Rook", 1), "Rook part should *not* exist after remove");
+				Assert.False(testRunner.WaitForName("Row Item Batman", 1), "Batman part *not* exist after remove");
 
 				return Task.CompletedTask;
 			});

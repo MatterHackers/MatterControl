@@ -11,23 +11,22 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterControl.Tests.MatterControl
 {
 	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
-	[TestFixture, Category("PopupAnchorTests"), Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Category("PopupAnchorTests"), Parallelizable(ParallelScope.Children)]
 	public class PopupAnchorTests
 	{
-		[SetUp]
-		public void TestSetup()
+		public PopupAnchorTests()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task WindowTest()
 		{
 			var systemWindow = new PopupsTestWindow(700, 300)
@@ -80,7 +79,7 @@ namespace MatterControl.Tests.MatterControl
 			}, 30);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task TopBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -112,11 +111,11 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Top;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Bottom;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task TopTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -148,11 +147,11 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Top;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Top;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task BottomTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -184,11 +183,11 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Bottom;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Top;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task BottomBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -220,12 +219,12 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Bottom;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Bottom;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				});
 		}
 
 		// Redirect down to up
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task BottomTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -259,7 +258,7 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Top;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Bottom;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{
@@ -267,7 +266,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task TopTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -301,7 +300,7 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Bottom;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Bottom;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{
@@ -311,7 +310,7 @@ namespace MatterControl.Tests.MatterControl
 
 
 		// Redirect up to down
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task BottomTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -345,7 +344,7 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Bottom;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Top;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{
@@ -353,7 +352,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task TopTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -387,7 +386,7 @@ namespace MatterControl.Tests.MatterControl
 					double buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Top;
 					double popupPosition = popupWidget.TransformToScreenSpace(popupWidget.LocalBounds).Top;
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{
@@ -396,7 +395,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect left to right
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task LeftRightRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -440,7 +439,7 @@ namespace MatterControl.Tests.MatterControl
 						buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Right;
 					}
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{
@@ -450,7 +449,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect right to left
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RightLeftRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -492,7 +491,7 @@ namespace MatterControl.Tests.MatterControl
 						buttonPosition = buttonWidget.TransformToScreenSpace(buttonWidget.LocalBounds).Right;
 					}
 
-					Assert.AreEqual(buttonPosition, popupPosition);
+					Assert.Equal(buttonPosition, popupPosition);
 				},
 				(row) =>
 				{

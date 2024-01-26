@@ -36,16 +36,16 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
+using Xunit;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TestInvoker;
+
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-    [TestFixture, Category("Agg.PolygonMesh"), Parallelizable(ParallelScope.Children)]
+    //[TestFixture, Category("Agg.PolygonMesh"), Parallelizable(ParallelScope.Children)]
     public class SceneTests
     {
         private readonly int BlueMaterialIndex = 6;
@@ -88,7 +88,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             return tempPath;
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void AmfFilesSaveObjectProperties()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -116,27 +116,27 @@ namespace MatterHackers.PolygonMesh.UnitTests
             scene.SetSelection(scene.Children.ToList());
             AmfDocument.Save(scene.SelectedItem, filePath);
 
-            Assert.IsTrue(File.Exists(filePath));
+            Assert.True(File.Exists(filePath));
 
             IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
-            Assert.IsTrue(loadedItem.Children.Count == 2);
+            Assert.True(loadedItem.Children.Count == 2);
 
             IObject3D item1 = loadedItem.Children.Last();
-            Assert.AreEqual("test1", item1.Name);
-            Assert.AreEqual(Color.Red, item1.Color);
-            Assert.AreEqual(12, item1.Mesh.Faces.Count);
+            Assert.Equal("test1", item1.Name);
+            Assert.Equal(Color.Red, item1.Color);
+            Assert.Equal(12, item1.Mesh.Faces.Count);
             var aabb1 = item1.GetAxisAlignedBoundingBox();
             Assert.True(new AxisAlignedBoundingBox(-10, -10, -10, 10, 10, 10).Equals(aabb1, .001));
 
             IObject3D item2 = loadedItem.Children.First();
-            Assert.AreEqual("test2", item2.Name);
-            Assert.AreEqual(Color.White, item2.Color);
-            Assert.AreEqual(12, item2.Mesh.Faces.Count);
+            Assert.Equal("test2", item2.Name);
+            Assert.Equal(Color.White, item2.Color);
+            Assert.Equal(12, item2.Mesh.Faces.Count);
             var aabb2 = item2.GetAxisAlignedBoundingBox();
             Assert.True(new AxisAlignedBoundingBox(20, -10, -10, 40, 10, 10).Equals(aabb2, .001));
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public async Task AutoArrangeChildrenTests()
         {
             // arrange a single item around the origin
@@ -149,11 +149,11 @@ namespace MatterHackers.PolygonMesh.UnitTests
                     Matrix = Matrix4X4.CreateTranslation(34, 22, 10)
                 });
 
-                Assert.IsTrue(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+                Assert.True(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
 
                 await scene.AutoArrangeChildren(Vector3.Zero);
 
-                Assert.IsTrue(new AxisAlignedBoundingBox(-10, -10, 0, 10, 10, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+                Assert.True(new AxisAlignedBoundingBox(-10, -10, 0, 10, 10, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
             }
 
             // arrange a single item around a typical bed center
@@ -166,11 +166,11 @@ namespace MatterHackers.PolygonMesh.UnitTests
                     Matrix = Matrix4X4.CreateTranslation(34, 22, 10)
                 });
 
-                Assert.IsTrue(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+                Assert.True(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
 
                 await scene.AutoArrangeChildren(new Vector3(100, 100, 0));
 
-                Assert.IsTrue(new AxisAlignedBoundingBox(90, 90, 0, 110, 110, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+                Assert.True(new AxisAlignedBoundingBox(90, 90, 0, 110, 110, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
             }
 
             // arrange 4 items
@@ -186,14 +186,14 @@ namespace MatterHackers.PolygonMesh.UnitTests
                 }
 
                 var sceneAabb = scene.GetAxisAlignedBoundingBox();
-                Assert.Greater(sceneAabb.XSize, 160);
-                Assert.Greater(sceneAabb.YSize, 160);
+                Assert.True(sceneAabb.XSize > 160);
+                Assert.True(sceneAabb.YSize > 160);
 
                 await scene.AutoArrangeChildren(Vector3.Zero);
 
                 sceneAabb = scene.GetAxisAlignedBoundingBox();
-                Assert.Less(sceneAabb.XSize, 60);
-                Assert.Less(sceneAabb.YSize, 75);
+                Assert.True(sceneAabb.XSize < 60);
+                Assert.True(sceneAabb.YSize < 75);
             }
 
             // arrange 4 items, starting with 1 selected
@@ -212,18 +212,18 @@ namespace MatterHackers.PolygonMesh.UnitTests
                 scene.SelectedItem = child;
 
                 var sceneAabb = scene.GetAxisAlignedBoundingBox();
-                Assert.Greater(sceneAabb.XSize, 160);
-                Assert.Greater(sceneAabb.YSize, 160);
+                Assert.True(sceneAabb.XSize > 160);
+                Assert.True(sceneAabb.YSize > 160);
 
                 await scene.AutoArrangeChildren(Vector3.Zero);
 
                 sceneAabb = scene.GetAxisAlignedBoundingBox();
-                Assert.Less(sceneAabb.XSize, 60);
-                Assert.Less(sceneAabb.YSize, 75);
+                Assert.True(sceneAabb.XSize < 60);
+                Assert.True(sceneAabb.YSize < 75);
             }
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void CreatesAndLinksAmfsForUnsavedMeshes()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -241,21 +241,21 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
             scene.Save(filePath);
 
-            Assert.IsTrue(File.Exists(filePath));
+            Assert.True(File.Exists(filePath));
 
             IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
-            Assert.IsTrue(loadedItem.Children.Count == 1);
+            Assert.True(loadedItem.Children.Count == 1);
 
             IObject3D meshItem = loadedItem.Children.First();
 
-            Assert.IsTrue(!string.IsNullOrEmpty(meshItem.MeshPath));
+            Assert.True(!string.IsNullOrEmpty(meshItem.MeshPath));
 
-            Assert.IsTrue(File.Exists(Path.Combine(tempPath, "Assets", meshItem.MeshPath)));
-            Assert.IsNotNull(meshItem.Mesh);
-            Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
+            Assert.True(File.Exists(Path.Combine(tempPath, "Assets", meshItem.MeshPath)));
+            Assert.NotNull(meshItem.Mesh);
+            Assert.True(meshItem.Mesh.Faces.Count > 0);
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public async Task ResavedSceneRemainsConsistent()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -280,14 +280,14 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Directory.CreateDirectory(Object3D.AssetsPath);
 
             scene.Save(filePath);
-            Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
-            Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
+            Assert.Equal(1, Directory.GetFiles(tempPath).Length);//, "Only .mcx file should exists");
+            Assert.Equal(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length);//, "Only 1 asset should exist");
 
             var originalFiles = Directory.GetFiles(tempPath).ToArray();
 
             // Load the file from disk
             IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
-            Assert.AreEqual(1, loadedItem.Children.Count);
+            Assert.Equal(1, loadedItem.Children.Count);
 
             // Ensure the UI scene is cleared
             scene.Children.Modify(list => list.Clear());
@@ -305,18 +305,18 @@ namespace MatterHackers.PolygonMesh.UnitTests
             //File.WriteAllText(@"c:\temp\file-a.txt", onDiskData);
             //File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
 
-            Assert.AreEqual(inMemoryData, onDiskData, "Serialized content should match");
+            Assert.Equal(inMemoryData, onDiskData);//, "Serialized content should match");
             Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
 
             // Save the scene a second time, validate that things remain the same
             scene.Save(filePath);
             onDiskData = loadedItem.ToJson().Result;
 
-            Assert.IsTrue(inMemoryData == onDiskData);
+            Assert.True(inMemoryData == onDiskData);
 
             // Verify that no additional files get created on second save
-            Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
-            Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
+            Assert.Equal(1, Directory.GetFiles(tempPath).Length);//, "Only .mcx file should exists");
+            Assert.Equal(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length);//, "Only 1 asset should exist");
         }
 
         public InteractiveScene SampleScene()
@@ -388,7 +388,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             return scene;
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void SaveSimpleScene()
         {
             var scene = new InteractiveScene();
@@ -402,14 +402,13 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
             scene.Save(filePath);
 
-            Assert.IsTrue(File.Exists(filePath));
+            Assert.True(File.Exists(filePath));
 
             IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
-            Assert.IsTrue(loadedItem.Children.Count == 1);
+            Assert.True(loadedItem.Children.Count == 1);
         }
 
-        [SetUp]
-        public void SetupUserSettings()
+        public SceneTests()
         {
             StaticData.RootPath = MatterControlUtilities.StaticDataPath;
             MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
@@ -417,7 +416,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             UserSettings.Instance.set(UserSettingsKey.PublicProfilesSha, "0"); //Clears DB so we will download the latest list
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void WorldColorBasicTest()
         {
             var scene = SampleScene();
@@ -428,29 +427,29 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
             // Validate root
-            Assert.AreEqual(Color.Black, scene.Color, "Color property on root should be Black");
-            Assert.AreEqual(Color.Black, scene.WorldColor(), "WorldColor on root should be Black");
+            Assert.Equal(Color.Black, scene.Color);//, "Color property on root should be Black");
+            Assert.Equal(Color.Black, scene.WorldColor());//, "WorldColor on root should be Black");
 
             // Validate red node
-            Assert.AreEqual(Color.Red, redItem.Color, "Color property on node should be Red");
-            Assert.AreEqual(Color.Pink, redItem.WorldColor(redItem.Parent), "WorldColor on Red up to parent node should be Pink");
-            Assert.AreEqual(Color.Violet, redItem.WorldColor(superGroup), "WorldColor on Red up to supergroup should be Violet");
+            Assert.Equal(Color.Red, redItem.Color);//, "Color property on node should be Red");
+            Assert.Equal(Color.Pink, redItem.WorldColor(redItem.Parent));//, "WorldColor on Red up to parent node should be Pink");
+            Assert.Equal(Color.Violet, redItem.WorldColor(superGroup));//, "WorldColor on Red up to supergroup should be Violet");
 
             // Validate green node
-            Assert.AreEqual(Color.Green, greenItem.Color, "Color property on node should be Green");
-            Assert.AreEqual(Color.Pink, greenItem.WorldColor(greenItem.Parent), "WorldColor on Green up to parent node should be Pink");
-            Assert.AreEqual(Color.Violet, greenItem.WorldColor(superGroup), "WorldColor on Green up to supergroup should be Violet");
+            Assert.Equal(Color.Green, greenItem.Color);//, "Color property on node should be Green");
+            Assert.Equal(Color.Pink, greenItem.WorldColor(greenItem.Parent));//, "WorldColor on Green up to parent node should be Pink");
+            Assert.Equal(Color.Violet, greenItem.WorldColor(superGroup));//, "WorldColor on Green up to supergroup should be Violet");
 
             // Validate green node
-            Assert.AreEqual(Color.Blue, blueItem.Color, "Color property on node should be Green");
-            Assert.AreEqual(Color.Pink, blueItem.WorldColor(blueItem.Parent), "WorldColor on Blue up to parent node should be Pink");
-            Assert.AreEqual(Color.Violet, blueItem.WorldColor(superGroup), "WorldColor on Blue up to supergroup should be Violet");
+            Assert.Equal(Color.Blue, blueItem.Color);//, "Color property on node should be Green");
+            Assert.Equal(Color.Pink, blueItem.WorldColor(blueItem.Parent));//, "WorldColor on Blue up to parent node should be Pink");
+            Assert.Equal(Color.Violet, blueItem.WorldColor(superGroup));//, "WorldColor on Blue up to supergroup should be Violet");
 
             // Validate WorldColor with null param
-            Assert.AreEqual(Color.Black, redItem.WorldColor(null), "WorldColor on Red with null param should be root color (Black)");
+            Assert.Equal(Color.Black, redItem.WorldColor(null));//, "WorldColor on Red with null param should be root color (Black)");
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void WorldFunctionNonExistingAncestorOverride()
         {
             var scene = SampleScene();
@@ -459,36 +458,36 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
             // ************************************* WorldColor *************************************
             // Validate root
-            Assert.AreEqual(Color.Black, scene.Color, "Color property on root should be Black");
-            Assert.AreEqual(Color.Black, scene.WorldColor(), "WorldColor on root should be Black");
+            Assert.Equal(Color.Black, scene.Color);//, "Color property on root should be Black");
+            Assert.Equal(Color.Black, scene.WorldColor());//, "WorldColor on root should be Black");
 
             // Validate red node
-            Assert.AreEqual(Color.Red, redItem.Color, "Color property on node should be Red");
+            Assert.Equal(Color.Red, redItem.Color);//, "Color property on node should be Red");
 
             // Validate WorldColor with non-ancestor param
-            Assert.AreEqual(Color.Black, redItem.WorldColor(nonAncestor), "WorldColor on Red with non-ancestor should be root color (Black)");
+            Assert.Equal(Color.Black, redItem.WorldColor(nonAncestor));//, "WorldColor on Red with non-ancestor should be root color (Black)");
 
             // ************************************* WorldMaxtrix *************************************
             // Validate root
-            Assert.AreEqual(this.RootMatrix, scene.Matrix, "Matrix property on root should be RootMatrix");
-            Assert.AreEqual(this.RootMatrix, scene.WorldMatrix(), "WorldMatrix on root should be RootMatrix");
+            Assert.Equal(this.RootMatrix, scene.Matrix);//, "Matrix property on root should be RootMatrix");
+            Assert.Equal(this.RootMatrix, scene.WorldMatrix());//, "WorldMatrix on root should be RootMatrix");
 
             // Validate red node
-            Assert.AreEqual(this.RedMatrix, redItem.Matrix, "Matrix property on node should be RedMatrix");
+            Assert.Equal(this.RedMatrix, redItem.Matrix);//, "Matrix property on node should be RedMatrix");
 
             // Validate WorldColor with non-ancestor param
-            Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(nonAncestor), "WorldMatrix on Red with non-ancestor should be RootMaterialIndex");
+            Assert.Equal(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(nonAncestor));//, "WorldMatrix on Red with non-ancestor should be RootMaterialIndex");
 
             // ************************************* WorldOutputType *************************************
             // Validate root
-            Assert.AreEqual(this.RootOutputType, scene.OutputType, "OutputType property on root should be RootOutputType");
-            Assert.AreEqual(this.RootOutputType, scene.WorldOutputType(), "WorldOutputType on root should be RootOutputType");
+            Assert.Equal(this.RootOutputType, scene.OutputType);//, "OutputType property on root should be RootOutputType");
+            Assert.Equal(this.RootOutputType, scene.WorldOutputType());//, "WorldOutputType on root should be RootOutputType");
 
             // Validate WorldColor with non-ancestor param
-            Assert.AreEqual(this.RootOutputType, redItem.WorldOutputType(nonAncestor), "WorldOutputType on Red with non-ancestor should be RootOutputType");
+            Assert.Equal(this.RootOutputType, redItem.WorldOutputType(nonAncestor));//, "WorldOutputType on Red with non-ancestor should be RootOutputType");
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void WorldMaterialIndexBasicTest()
         {
             var scene = SampleScene();
@@ -499,7 +498,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void WorldMatrixBasicTest()
         {
             var scene = SampleScene();
@@ -510,29 +509,29 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
             // Validate root
-            Assert.AreEqual(this.RootMatrix, scene.Matrix, "Matrix property on root should be RootMatrix");
-            Assert.AreEqual(this.RootMatrix, scene.WorldMatrix(), "WorldMatrix on root should be RootMatrix");
+            Assert.Equal(this.RootMatrix, scene.Matrix);//, "Matrix property on root should be RootMatrix");
+            Assert.Equal(this.RootMatrix, scene.WorldMatrix());//, "WorldMatrix on root should be RootMatrix");
 
             // Validate red node
-            Assert.AreEqual(this.RedMatrix, redItem.Matrix, "Matrix property on node should be RedMatrix");
-            Assert.AreEqual(redItem.Matrix * this.GroupMatrix, redItem.WorldMatrix(redItem.Parent), "WorldMatrix on Red up to parent node should be GroupMatrix");
-            Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(superGroup), "WorldMatrix on Red up to supergroup invalid");
+            Assert.Equal(this.RedMatrix, redItem.Matrix);//, "Matrix property on node should be RedMatrix");
+            Assert.Equal(redItem.Matrix * this.GroupMatrix, redItem.WorldMatrix(redItem.Parent));//, "WorldMatrix on Red up to parent node should be GroupMatrix");
+            Assert.Equal(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(superGroup));//, "WorldMatrix on Red up to supergroup invalid");
 
             // Validate green node
-            Assert.AreEqual(this.GreenMatrix, greenItem.Matrix, "Matrix property on node should be GreenMatrix");
-            Assert.AreEqual(this.GreenMatrix * this.GroupMatrix, greenItem.WorldMatrix(greenItem.Parent), "WorldMatrix on Green up to parent node should be GroupMatrix");
-            Assert.AreEqual(this.GreenMatrix * this.GroupMatrix * this.SuperGroupMatrix, greenItem.WorldMatrix(superGroup), "WorldMatrix on Green up to supergroup should be SuperGroupMatrix");
+            Assert.Equal(this.GreenMatrix, greenItem.Matrix);//, "Matrix property on node should be GreenMatrix");
+            Assert.Equal(this.GreenMatrix * this.GroupMatrix, greenItem.WorldMatrix(greenItem.Parent));//, "WorldMatrix on Green up to parent node should be GroupMatrix");
+            Assert.Equal(this.GreenMatrix * this.GroupMatrix * this.SuperGroupMatrix, greenItem.WorldMatrix(superGroup));//, "WorldMatrix on Green up to supergroup should be SuperGroupMatrix");
 
             // Validate green node
-            Assert.AreEqual(this.BlueMatrix, blueItem.Matrix, "Matrix property on node should be BlueMatrix");
-            Assert.AreEqual(this.BlueMatrix * this.GroupMatrix, blueItem.WorldMatrix(blueItem.Parent), "WorldMatrix on Blue up to parent node should be GroupMatrix");
-            Assert.AreEqual(this.BlueMatrix * this.GroupMatrix * this.SuperGroupMatrix, blueItem.WorldMatrix(superGroup), "WorldMatrix on Blue up to supergroup should be SuperGroupMatrix");
+            Assert.Equal(this.BlueMatrix, blueItem.Matrix);//, "Matrix property on node should be BlueMatrix");
+            Assert.Equal(this.BlueMatrix * this.GroupMatrix, blueItem.WorldMatrix(blueItem.Parent));//, "WorldMatrix on Blue up to parent node should be GroupMatrix");
+            Assert.Equal(this.BlueMatrix * this.GroupMatrix * this.SuperGroupMatrix, blueItem.WorldMatrix(superGroup));//, "WorldMatrix on Blue up to supergroup should be SuperGroupMatrix");
 
             // Validate Matrix with null param
-            Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(null), "WorldMatrix on Red with null param should be root color (RootMatrix)");
+            Assert.Equal(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(null));//, "WorldMatrix on Red with null param should be root color (RootMatrix)");
         }
 
-        [Test, ChildProcessTest]
+        [Fact]
         public void WorldOutputTypeBasicTest()
         {
             var scene = SampleScene();
@@ -543,24 +542,24 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
             // Validate root
-            Assert.AreEqual(this.RootOutputType, scene.OutputType, "OutputType property on root should be RootOutputType");
-            Assert.AreEqual(this.RootOutputType, scene.WorldOutputType(), "WorldOutputType on root should be RootOutputType");
+            Assert.Equal(this.RootOutputType, scene.OutputType);//, "OutputType property on root should be RootOutputType");
+            Assert.Equal(this.RootOutputType, scene.WorldOutputType());//, "WorldOutputType on root should be RootOutputType");
 
             // Validate red node
-            Assert.AreEqual(this.GroupOutputType, redItem.WorldOutputType(redItem.Parent), "WorldOutputType on Red up to parent node should be GroupOutputType");
-            Assert.AreEqual(this.SuperGroupOutputType, redItem.WorldOutputType(superGroup), "WorldOutputType on Red up to supergroup should be SuperGroupOutputType");
+            Assert.Equal(this.GroupOutputType, redItem.WorldOutputType(redItem.Parent));//, "WorldOutputType on Red up to parent node should be GroupOutputType");
+            Assert.Equal(this.SuperGroupOutputType, redItem.WorldOutputType(superGroup));//, "WorldOutputType on Red up to supergroup should be SuperGroupOutputType");
 
             // Validate green node
-            Assert.AreEqual(this.GroupOutputType, greenItem.WorldOutputType(greenItem.Parent), "WorldOutputType on Green up to parent node should be GroupOutputType");
-            Assert.AreEqual(this.SuperGroupOutputType, greenItem.WorldOutputType(superGroup), "WorldOutputType on Green up to supergroup should be SuperGroupOutputType");
+            Assert.Equal(this.GroupOutputType, greenItem.WorldOutputType(greenItem.Parent));//, "WorldOutputType on Green up to parent node should be GroupOutputType");
+            Assert.Equal(this.SuperGroupOutputType, greenItem.WorldOutputType(superGroup));//, "WorldOutputType on Green up to supergroup should be SuperGroupOutputType");
 
             // Validate green node
-            Assert.AreEqual(this.BlueOutputType, blueItem.OutputType, "OutputType property on node should be BlueOutputType");
-            Assert.AreEqual(this.GroupOutputType, blueItem.WorldOutputType(blueItem.Parent), "WorldOutputType on Blue up to parent node should be GroupOutputType");
-            Assert.AreEqual(this.SuperGroupOutputType, blueItem.WorldOutputType(superGroup), "WorldOutputType on Blue up to supergroup should be SuperGroupOutputType");
+            Assert.Equal(this.BlueOutputType, blueItem.OutputType);//, "OutputType property on node should be BlueOutputType");
+            Assert.Equal(this.GroupOutputType, blueItem.WorldOutputType(blueItem.Parent));//, "WorldOutputType on Blue up to parent node should be GroupOutputType");
+            Assert.Equal(this.SuperGroupOutputType, blueItem.WorldOutputType(superGroup));//, "WorldOutputType on Blue up to supergroup should be SuperGroupOutputType");
 
             // Validate OutputType with null param
-            Assert.AreEqual(this.RootOutputType, redItem.WorldOutputType(null), "WorldOutputType on Red with null param should be root color (RootOutputType)");
+            Assert.Equal(this.RootOutputType, redItem.WorldOutputType(null));//, "WorldOutputType on Red with null param should be root color (RootOutputType)");
         }
     }
 }

@@ -42,24 +42,23 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    [TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+    //[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
 
-		[SetUp]
-		public void TestSetup()
+		public SceneUndoRedoCopyTests()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task CopyRemoveUndoRedo()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -74,32 +73,32 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl")
 					.WaitForName("Duplicate Button");
-				Assert.AreEqual(1, scene.Children.Count, "Should have 1 part before copy");
+				Assert.Equal(1, scene.Children.Count); //, "Should have 1 part before copy");
 
-				for (int i = 0; i <= 4; i++)
+                for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("Duplicate Button");
 					testRunner.WaitFor(() => scene.Children.Count == i + 2);
-					Assert.AreEqual(i + 2, scene.Children.Count);
+					Assert.Equal(i + 2, scene.Children.Count);
 				}
 
 				testRunner.ClickByName("Remove Button");
 				testRunner.WaitFor(() => scene.Children.Count == 5);
-				Assert.AreEqual(5, scene.Children.Count, "Should have 5 parts after Remove");
+				Assert.Equal(5, scene.Children.Count); //, "Should have 5 parts after Remove");
 
-				testRunner.ClickByName("3D View Undo");
+                testRunner.ClickByName("3D View Undo");
 				testRunner.WaitFor(() => scene.Children.Count == 6);
-				Assert.AreEqual(6, scene.Children.Count, "Should have 6 parts after Undo");
+				Assert.Equal(6, scene.Children.Count); //, "Should have 6 parts after Undo");
 
-				testRunner.ClickByName("3D View Redo");
+                testRunner.ClickByName("3D View Redo");
 				testRunner.WaitFor(() => scene.Children.Count == 5);
-				Assert.AreEqual(5, scene.Children.Count, "Should have 5 parts after Redo");
+				Assert.Equal(5, scene.Children.Count); //, "Should have 5 parts after Redo");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task UndoRedoCopy()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -112,25 +111,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				Assert.AreEqual(1, scene.Children.Count, "There should be 1 part on the bed after AddDefaultFileToBedplate()");
+				Assert.Equal(1, scene.Children.Count); //, "There should be 1 part on the bed after AddDefaultFileToBedplate()");
 
-				// Add 5 items
-				for (int i = 0; i <= 4; i++)
+                // Add 5 items
+                for (int i = 0; i <= 4; i++)
 				{
 					testRunner.ClickByName("Duplicate Button");
 					testRunner.Delay(.5);
 				}
 
-				Assert.AreEqual(6, scene.Children.Count, "There should be 6 parts on the bed after the copy loop");
+				Assert.Equal(6, scene.Children.Count); //, "There should be 6 parts on the bed after the copy loop");
 
-				// Perform and validate 5 undos
-				for (int x = 0; x <= 4; x++)
+                // Perform and validate 5 undos
+                for (int x = 0; x <= 4; x++)
 				{
 					int meshCountBeforeUndo = scene.Children.Count;
 					testRunner.ClickByName("3D View Undo");
 
 					testRunner.WaitFor(() => scene.Children.Count == meshCountBeforeUndo - 1);
-					Assert.AreEqual(scene.Children.Count, meshCountBeforeUndo - 1);
+					Assert.Equal(scene.Children.Count, meshCountBeforeUndo - 1);
 				}
 
 				testRunner.Delay(.2);
@@ -142,14 +141,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("3D View Redo");
 
 					testRunner.WaitFor(() => meshCountBeforeRedo + 1 == scene.Children.Count);
-					Assert.AreEqual(meshCountBeforeRedo + 1, scene.Children.Count);
+					Assert.Equal(meshCountBeforeRedo + 1, scene.Children.Count);
 				}
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoOnUnGroupSingleMesh()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -163,9 +162,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBed(partName: "Row Item MH Logo.stl")
 					.Delay(.1)
 					.ClickByName("MH Logo.stl");
-				Assert.IsNotNull(scene.SelectedItem);
+				Assert.NotNull(scene.SelectedItem);
 				testRunner.WaitFor(() => scene.Children.Count() == 1);
-				Assert.AreEqual(1, scene.Children.Count());
+				Assert.Single(scene.Children);
 
 				// test un-group single mesh
 				testRunner.RunDoUndoTest(
@@ -181,14 +180,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 							.SelectNone()
 							// Assert
 							.WaitFor(() => scene.Children.Count() == 3);
-						Assert.AreEqual(3, scene.Children.Count());
+						Assert.Equal(3, scene.Children.Count());
 					});
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoOnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -200,7 +199,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Initialize
 				AddBoxABoxBToBed(testRunner, scene);
-				Assert.AreEqual(2, scene.Children.Count());
+				Assert.Equal(2, scene.Children.Count());
 
 				// test group 2 objects
 				testRunner.RunDoUndoTest(
@@ -217,14 +216,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 							// Assert
 							.WaitFor(() => scene.SelectedItem == null)
 							.WaitFor(() => scene.Children.Count() == 1);
-						Assert.AreEqual(1, scene.Children.Count());
+						Assert.Single(scene.Children);
 					});
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoUnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -236,23 +235,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Initialize
 				AddBoxABoxBToBed(testRunner, scene);
-				Assert.AreEqual(2, scene.Children.Count());
-				Assert.AreEqual(3, scene.DescendantsAndSelf().Count(), "The scene and the 2 objects");
+				Assert.Equal(2, scene.Children.Count());
+				Assert.Equal(3, scene.DescendantsAndSelf().Count()); //, "The scene and the 2 objects");
 
-				// Select all
-				testRunner.ClickByName("View3DWidget")
+                // Select all
+                testRunner.ClickByName("View3DWidget")
 					.SelectAll()
 					// Group
 					.ClickByName("Group Button")
 					// Blur
 					.SelectNone()
 					.WaitFor(() => scene.Children.Count() == 1);
-				Assert.AreEqual(1, scene.Children.Count());
+				Assert.Single(scene.Children);
 				// group object can now process holes so it is a source object and has an extra object in it.
-				Assert.AreEqual(5, scene.DescendantsAndSelf().Count(), "The scene, the group and the 2 objects");
+				Assert.Equal(5, scene.DescendantsAndSelf().Count()); //, "The scene, the group and the 2 objects");
 
-				// test un-group 2 grouped objects
-				testRunner.RunDoUndoTest(
+                // test un-group 2 grouped objects
+                testRunner.RunDoUndoTest(
 					scene,
 					() =>
 					{
@@ -265,15 +264,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						testRunner.WaitFor(() => scene.Children.Count() == 2);
 
 						// Assert
-						Assert.AreEqual(2, scene.Children.Count());
-						Assert.AreEqual(3, scene.DescendantsAndSelf().Count(), "The scene and the 2 objects");
-					});
+						Assert.Equal(2, scene.Children.Count());
+						Assert.Equal(3, scene.DescendantsAndSelf().Count()); //, "The scene and the 2 objects");
+                    });
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoMirror()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -304,7 +303,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: This test once failed on GLFW. Could be timing or accidental input.
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoTranslateXY()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -341,8 +340,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						//       ClickWidget now waits for 2 redraws in case there is more deferred processing.
 
 						// Assert
-						Assert.Greater(end.X, start.X);
-						Assert.Less(end.Y, start.Y);
+						Assert.True(end.X > start.X);
+						Assert.True(end.Y < start.Y);
 						Assert.True(Math.Abs(end.Z - start.Z) < .001);
 					});
 
@@ -350,20 +349,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 		// Parallel testing of this single test.
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
-		//[Test, ChildProcessTest] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
+		//[Fact] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
 
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ValidateDoUndoTranslateZ()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -389,7 +388,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						var endZ = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center.Z;
 
 						// Assert
-						Assert.Greater(endZ, startZ);
+						Assert.True(endZ > startZ);
 					});
 
 				return Task.CompletedTask;
@@ -420,7 +419,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.Delay(.1)
 				// TODO: assert the part is centered on the bed
 				.ClickByName(CoinName, offset: new Point2D(-4, 0));
-			Assert.IsNotNull(scene.SelectedItem);
+			Assert.NotNull(scene.SelectedItem);
 		}
 	}
 
@@ -450,7 +449,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string postOperationPath = Path.Combine(scenePath, scenePath, "postOperation.mcx");
 			scene.Save(postOperationPath);
 
-			Assert.AreEqual(postOperationDescendantCount, scene.DescendantsAndSelf().Count());
+			Assert.Equal(postOperationDescendantCount, scene.DescendantsAndSelf().Count());
 
 			// assert new save is different
 			SceneFilesAreSame(postOperationPath, preOperationPath, false);
@@ -458,7 +457,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// select the part
 			testRunner.Type("^a"); // clear the selection (type a space)
 			testRunner.WaitFor(() => scene.SelectedItem != null);
-			Assert.IsNotNull(scene.SelectedItem);
+			Assert.NotNull(scene.SelectedItem);
 
 			// with the part selected
 			AssertUndoRedo(
@@ -473,7 +472,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// unselect the part
 			testRunner.Type(" ") // clear the selection (type a space)
 				.WaitFor(() => scene.SelectedItem == null);
-			Assert.IsNull(scene.SelectedItem);
+			Assert.Null(scene.SelectedItem);
 
 			// with the part unselected
 			AssertUndoRedo(
@@ -497,17 +496,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				areSame &= ValidateSceneLine(fileContent1[i], fileContent2[i]);
 				if (expectedResult)
 				{
-					Assert.IsTrue(areSame, $"Should be same ({i}): '{fileContent1[i]}' '{fileContent2[i]}");
+					Assert.True(areSame, $"Should be same ({i}): '{fileContent1[i]}' '{fileContent2[i]}");
 				}
 			}
 
 			areSame &= fileContent1.Length == fileContent2.Length;
 			if (expectedResult)
 			{
-				Assert.IsTrue(areSame, $"Should be same length: '{fileName1}' '{fileName2}");
+				Assert.True(areSame, $"Should be same length: '{fileName1}' '{fileName2}");
 			}
 
-			Assert.IsTrue(expectedResult == areSame, $"Should be different: '{fileName1}' '{fileName2}");
+			Assert.True(expectedResult == areSame, $"Should be different: '{fileName1}' '{fileName2}");
 		}
 
 		private static bool ValidateSceneLine(string v1, string v2)
@@ -550,7 +549,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("3D View Undo");
 
 			testRunner.WaitFor(() => preOperationDescendantCount == scene.DescendantsAndSelf().Count());
-			Assert.AreEqual(preOperationDescendantCount, scene.DescendantsAndSelf().Count());
+			Assert.Equal(preOperationDescendantCount, scene.DescendantsAndSelf().Count());
 
 			// save the undo data
 			string undoScenePath = Path.Combine(scenePath, "undoScene.mcx");
@@ -560,8 +559,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Object3D.AssetsPath = Path.Combine(scenePath, "Assets");
 
 			scene.Save(undoScenePath);
-			Assert.AreEqual(totalSceneItems, scene.DescendantsAndSelf().Count());
-			Assert.AreEqual(selectedItem, scene.SelectedItem);
+			Assert.Equal(totalSceneItems, scene.DescendantsAndSelf().Count());
+			Assert.Equal(selectedItem, scene.SelectedItem);
 
 			// After undo action, validate the persisted undoScene with the original 'before do' scene
 			SceneFilesAreSame(preOperationPath, undoScenePath, true);
@@ -570,7 +569,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("3D View Redo");
 
 			testRunner.WaitFor(() => postOperationDescendantCount == scene.DescendantsAndSelf().Count());
-			Assert.AreEqual(postOperationDescendantCount, scene.DescendantsAndSelf().Count());
+			Assert.Equal(postOperationDescendantCount, scene.DescendantsAndSelf().Count());
 
 			// save the redo
 			string redoScenePath = Path.Combine(scenePath, "redoScene.mcx");

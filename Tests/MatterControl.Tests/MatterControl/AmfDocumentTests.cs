@@ -36,14 +36,14 @@ using Matter_CAD_Lib.DesignTools._Object3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh.Processors;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterHackers.Agg.Tests
 {
-    [TestFixture]
+    
 	public class AmfDocumentTests
 	{
-		[Test]
+		[Fact]
 		public void NoElementWhitespaceTest()
 		{
 			// Amf xml lacking whitespace between elements
@@ -54,30 +54,31 @@ namespace MatterHackers.Agg.Tests
 			{
 				var amfObject3D = AmfDocument.Load(memoryStream, CancellationToken.None);
 
-				Assert.AreEqual(amfObject3D.Children.Count, 1);
-				Assert.IsNotNull(amfObject3D.Children.First().Mesh);
+				Assert.Equal(1, amfObject3D.Children.Count);
+				Assert.NotNull(amfObject3D.Children.First().Mesh);
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void LoadAmfFullyIndented()
 		{
-			// Fully indented AMF file
-			string amfPath = TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", "TestData", "FullyIndented.amf" });
+			var testContext = new TestContext();
+            // Fully indented AMF file
+            string amfPath = testContext.CurrentContext.ResolveProjectPath(new string[] { "..", "TestData", "FullyIndented.amf" });
 
 			// Load AMF file and validate result
 			var amfObject = AmfDocument.Load(amfPath, CancellationToken.None);
 
-			Assert.AreEqual(amfObject.Children.Count, 1);
+			Assert.Equal(1, amfObject.Children.Count);
 
 			var child = amfObject.Children.First();
-			Assert.IsNotNull(child.Mesh);
-			Assert.AreEqual("Cube", child.Name);
-			Assert.AreEqual(new Color(0, 128, 255), child.Color);
-			Assert.AreEqual(PrintOutputTypes.Solid, child.OutputType);
+			Assert.NotNull(child.Mesh);
+			Assert.Equal("Cube", child.Name);
+			Assert.Equal(new Color(0, 128, 255), child.Color);
+			Assert.Equal(PrintOutputTypes.Solid, child.OutputType);
 		}
 
-		[Test]
+		[Fact]
 		public void SaveAmfContainingXmlSpecialCharacters()
 		{
 			const string XmlSpecialCharacters = "&<>'\"";
@@ -110,11 +111,11 @@ namespace MatterHackers.Agg.Tests
 			AmfDocument.Save(inputObject, memoryStream, outputSettings);
 			var outputObject = AmfDocument.Load(memoryStream, CancellationToken.None);
 
-			Assert.AreEqual(outputObject.Children.Count, 1);
-			Assert.AreEqual(XmlSpecialCharacters, outputObject.Children.First().Name);
+			Assert.Equal(outputObject.Children.Count, 1);
+			Assert.Equal(XmlSpecialCharacters, outputObject.Children.First().Name);
 		}
 
-		[Test]
+		[Fact]
 		public void SaveAmfWithSpecificCulture()
 		{
 			var originalCultureInfo = CultureInfo.CurrentCulture;
@@ -142,8 +143,8 @@ namespace MatterHackers.Agg.Tests
 				AmfDocument.Save(inputObject, memoryStream, new MeshOutputSettings());
 				var outputObject = AmfDocument.Load(memoryStream, CancellationToken.None);
 
-				Assert.AreEqual(outputObject.Children.Count, 1);
-				Assert.AreEqual("Cube", outputObject.Children.First().Name);
+				Assert.Equal(outputObject.Children.Count, 1);
+				Assert.Equal("Cube", outputObject.Children.First().Name);
 			}
 			finally
 			{

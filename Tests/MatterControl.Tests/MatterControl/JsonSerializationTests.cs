@@ -31,16 +31,16 @@ using Matter_CAD_Lib.DesignTools._Object3D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.Agg.Tests
 {
-    [TestFixture]
+    
     public class JsonSerializationTests
     {
-        [Test]
+        [Fact]
         public async Task CubeObject3D_SerializeDeserializeTest()
         {
             // Arrange: Create an instance of CubeObject3D and set properties
@@ -70,10 +70,10 @@ namespace MatterHackers.Agg.Tests
             var deserializedCubeObject = deserializedObject.Children.First() as CubeObject3D;
 
             // Assert: Check if the deserialized object's properties match the original object's properties
-            Assert.IsNotNull(deserializedCubeObject);
-            Assert.AreEqual(cubeObject.Width.Value(cubeObject), deserializedCubeObject.Width.Value(deserializedCubeObject), "Width should be equal.");
-            Assert.AreEqual(cubeObject.Depth.Value(cubeObject), deserializedCubeObject.Depth.Value(deserializedCubeObject), "Depth should be equal.");
-            Assert.AreEqual(cubeObject.Height.Value(cubeObject), deserializedCubeObject.Height.Value(deserializedCubeObject), "Height should be equal.");
+            Assert.NotNull(deserializedCubeObject);
+            Assert.Equal(cubeObject.Width.Value(cubeObject), deserializedCubeObject.Width.Value(deserializedCubeObject));//, "Width should be equal.");
+            Assert.Equal(cubeObject.Depth.Value(cubeObject), deserializedCubeObject.Depth.Value(deserializedCubeObject));//, "Depth should be equal.");
+            Assert.Equal(cubeObject.Height.Value(cubeObject), deserializedCubeObject.Height.Value(deserializedCubeObject));//, "Height should be equal.");
         }
    }
 }

@@ -28,16 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using NUnit.Framework;
+using Xunit;
 using System.Threading.Tasks;
-using TestInvoker;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    [TestFixture, Category("MatterControl.UI.Automation")]
+    //[TestFixture, Category("MatterControl.UI.Automation")]
     public class CreateLibraryFolder
     {
-        [Test, ChildProcessTest]
+        [Fact]
         public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
         {
             await MatterControlUtilities.RunTest((testRunner) =>
@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
                 var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as ThemedTextEditWidget;
 
-                Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
-                Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
+                Assert.True(textWidgetMH != null, "Found Text Widget");
+                Assert.True(textWidgetMH.Text == "Test Text", "Had the right text");
 
                 testRunner.ClickByName("Cancel Wizard Button");
                 testRunner.Delay(.5);

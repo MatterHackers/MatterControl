@@ -3,27 +3,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation")]
-	public class LibraryDownloadsTests
+	//[TestFixture, Category("MatterControl.UI.Automation")]
+	public class LibraryDownloadsTests : IDisposable
 	{
-		[SetUp]
-		public void Setup()
+		public LibraryDownloadsTests()
 		{
 			MatterControlUtilities.CreateDownloadsSubFolder();
 		}
 
-		[TearDown]
-		public void TearDown()
+		public void Dispose()
 		{
 			MatterControlUtilities.DeleteDownloadsSubFolder();
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -43,14 +41,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					5);
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Fennec Fox item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Batman item exists");
+				Assert.True(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Fennec Fox item exists");
+				Assert.True(testRunner.WaitForName("Row Item Batman.stl", 2), "Batman item exists");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -65,13 +63,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Rook.amf"), 4);
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Rook item exists");
+				Assert.True(testRunner.WaitForName("Row Item Rook.amf"), "Rook item exists");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DownloadsAddButtonAddsZipFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -89,15 +87,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.DoubleClickByName("TestCompress.zip Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon.stl", 2), "Chinese Dragon item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.stl", 2), "chichen-itza item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration.stl", 2), "Circle Calibration item exists");
+				Assert.True(testRunner.WaitForName("Row Item Chinese Dragon.stl", 2), "Chinese Dragon item exists");
+				Assert.True(testRunner.WaitForName("Row Item chichen-itza_pyramid.stl", 2), "chichen-itza item exists");
+				Assert.True(testRunner.WaitForName("Row Item Circle Calibration.stl", 2), "Circle Calibration item exists");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RenameDownloadsPrintItem()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -121,13 +119,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("InputBoxPage Action Button");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed.stl", 2));
+				Assert.True(testRunner.WaitForName("Row Item Batman Renamed.stl", 2));
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task CreateFolder()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

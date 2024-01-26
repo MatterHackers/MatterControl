@@ -1,7 +1,7 @@
 ﻿#if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
 #endif
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,25 +12,25 @@ using System.Xml.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using MatterHackers.MatterControl;
-using TestInvoker;
+
 
 namespace MatterControl.Tests
 {
-	[TestFixture, Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Parallelizable(ParallelScope.Children)]
 	public class ReleaseBuildTests
 	{
 		private static Type debuggableAttribute = typeof(DebuggableAttribute);
 
-		[Test, ChildProcessTest, Category("ReleaseQuality")]
-		public void MatterControlAssemblyIsOptimized()
+        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        public void MatterControlAssemblyIsOptimized()
 		{
 #if (!DEBUG)
             IsAssemblyOptimized(Assembly.Load("MatterControlLib, Culture=neutral, PublicKeyToken=null"));
 #endif
 		}
 
-		[Test, ChildProcessTest, Category("ReleaseQuality")]
-		public void MatterControlKnownAssembliesAreOptimized()
+        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        public void MatterControlKnownAssembliesAreOptimized()
 		{
 			//MatterHackers.RenderOpenGl.dll
 
@@ -56,7 +56,7 @@ namespace MatterControl.Tests
 
 
 				// Missing/renamed assemblies should fail the test and force a correction
-				Assert.IsTrue(File.Exists(assemblyPath), "Assembly missing: " + assemblyPath);
+				Assert.True(File.Exists(assemblyPath), "Assembly missing: " + assemblyPath);
 #if (!DEBUG)
 				var assembly = Assembly.LoadFrom(assemblyPath);
 				IsAssemblyOptimized(assembly);
@@ -87,22 +87,22 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task MatterControlRuns()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("PartPreviewContent");
 
-				Assert.IsTrue(testRunner.NameExists("PartPreviewContent"));
+				Assert.True(testRunner.NameExists("PartPreviewContent"));
 
 				return Task.CompletedTask;
 			});
 		}
 #endif
 
-		[Test, ChildProcessTest, Category("ReleaseQuality")]
-		public void MatterControlDependenciesAreOptimized()
+        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        public void MatterControlDependenciesAreOptimized()
 		{
 #if (!DEBUG)
 			var matterControl = Assembly.Load("MatterControlLib, Culture=neutral, PublicKeyToken=null");
@@ -122,8 +122,8 @@ namespace MatterControl.Tests
 #endif
 		}
 
-		[Test, ChildProcessTest, Category("ReleaseQuality")]
-		public void ClassicDebugComplicationFlagTests()
+        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        public void ClassicDebugComplicationFlagTests()
 		{
 #if (!DEBUG)
             BuildValidationTests.CheckKnownAssemblyConditionalCompSymbols();
@@ -137,12 +137,12 @@ namespace MatterControl.Tests
 
 			if (matchedAttributes.Count() == 0)
 			{
-				Assert.Inconclusive("Symbols likely missing from Release build: " + assemblyName.FullName + ". \r\n\r\nTo resolve the issue, switch Project Properties -> Build -> Advanced -> Debug Info property to 'pdb-only'");
+				throw new Exception("Symbols likely missing from Release build: " + assemblyName.FullName + ". \r\n\r\nTo resolve the issue, switch Project Properties -> Build -> Advanced -> Debug Info property to 'pdb-only'");
 			}
 
 			var debuggable = matchedAttributes.First() as DebuggableAttribute;
-			Assert.IsFalse(debuggable.IsJITOptimizerDisabled, "Referenced assembly is not optimized: " + assemblyName.Name);
-			Assert.IsFalse(debuggable.IsJITTrackingEnabled, "Referenced assembly has symbols: " + assemblyName.Name);
+			Assert.False(debuggable.IsJITOptimizerDisabled, "Referenced assembly is not optimized: " + assemblyName.Name);
+			Assert.False(debuggable.IsJITTrackingEnabled, "Referenced assembly has symbols: " + assemblyName.Name);
 			Console.WriteLine("Assembly is optimized: " + assemblyName.Name);
 		}
 	}

@@ -35,15 +35,15 @@ using System.Threading.Tasks;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class MatterControlTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ThumbnailGenerationMode()
 		{
 			await MatterControlUtilities.RunTest(async (testRunner) =>
@@ -56,11 +56,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var stopWatch = Stopwatch.StartNew();
 				await provider.GetThumbnail(item, 400, 400);
 
-				Assert.Less(stopWatch.ElapsedMilliseconds, 2000, "Elapsed thumbnail generation for Rook.amf should be less than 2 seconds for expected orthographic mode");
-			});
+				Assert.True(stopWatch.ElapsedMilliseconds< 2000); //, "Elapsed thumbnail generation for Rook.amf should be less than 2 seconds for expected orthographic mode");
+            });
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ViewGenerateSupportMenu()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

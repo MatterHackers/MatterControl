@@ -43,9 +43,9 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using NUnit.Framework;
+using Xunit;
 using static MatterControl.Tests.MatterControl.SliceSettingsFieldTests;
-using TestInvoker;
+
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -64,17 +64,16 @@ namespace MatterControl.Tests.MatterControl
 	}
 
 	// NOTE: These tests hang on GLFW currently as the window isn't closed properly.
-	[TestFixture, Category("SliceSettingsTests"), Parallelizable(ParallelScope.Children)]
-	public class SliceSettingsFieldTests
+	//[TestFixture, Category("SliceSettingsTests"), Parallelizable(ParallelScope.Children)]
+	public class SliceSettingsFieldTests : IDisposable
 	{
-		[SetUp]
-		public void TestSetup()
+		public SliceSettingsFieldTests()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task TestExistsForEachUIFieldType()
 		{
 			var testClass = this.GetType();
@@ -89,16 +88,14 @@ namespace MatterControl.Tests.MatterControl
 				}
 
 				string expectedTestName = $"{fieldType.Name}Test";
-				Assert.AreEqual(
-					1,
-					thisClassMethods.Where(m => m.Name == expectedTestName).Count(),
-					"Required test missing: " + expectedTestName);
+				Assert.Single(
+					thisClassMethods.Where(m => m.Name == expectedTestName)); //, "Required test missing: " + expectedTestName);
 			}
 
 			return Task.CompletedTask;
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -129,7 +126,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task PositiveDoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -160,7 +157,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task IntFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -191,7 +188,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DoubleOrPercentFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -237,7 +234,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task IntOrMmFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -283,7 +280,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public void CorrectStyleForSettingsRow()
 		{
 			var settings = new PrinterSettings();
@@ -292,7 +289,7 @@ namespace MatterControl.Tests.MatterControl
 			settings.OemLayer = new PrinterSettingsLayer();
 			settings.QualityLayer = new PrinterSettingsLayer();
 			settings.MaterialLayer = new PrinterSettingsLayer();
-			Assert.AreEqual(0, settings.UserLayer.Count);
+			Assert.Empty(settings.UserLayer);
 
 			var theme = new ThemeConfig();
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
@@ -302,16 +299,16 @@ namespace MatterControl.Tests.MatterControl
 			void TestStyle(Color color, bool restoreButton)
 			{
 				var data = SliceSettingsRow.GetStyleData(printer, theme, settingsContext, key, true);
-				Assert.AreEqual(color, data.highlightColor);
-				Assert.AreEqual(restoreButton, data.showRestoreButton);
+				Assert.Equal(color, data.highlightColor);
+				Assert.Equal(restoreButton, data.showRestoreButton);
 			}
 
 			// make sure all the colors are different
-			Assert.AreNotEqual(Color.Transparent, theme.PresetColors.MaterialPreset);
-			Assert.AreNotEqual(Color.Transparent, theme.PresetColors.QualityPreset);
-			Assert.AreNotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.QualityPreset);
-			Assert.AreNotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.UserOverride);
-			Assert.AreNotEqual(theme.PresetColors.QualityPreset, theme.PresetColors.UserOverride);
+			Assert.NotEqual(Color.Transparent, theme.PresetColors.MaterialPreset);
+			Assert.NotEqual(Color.Transparent, theme.PresetColors.QualityPreset);
+			Assert.NotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.QualityPreset);
+			Assert.NotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.UserOverride);
+			Assert.NotEqual(theme.PresetColors.QualityPreset, theme.PresetColors.UserOverride);
 
 			// nothing set no override
 			TestStyle(Color.Transparent, false);
@@ -347,43 +344,42 @@ namespace MatterControl.Tests.MatterControl
 			settings.MaterialLayer.Remove(key);
 		}		
 		
-		[TearDown]
-		public void TearDown()
+		public void Dispose()
 		{
 			FrostedSerialPort.MockPortsForTest = false;
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void CheckboxFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void CheckboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void MaterialIndexFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void MaterialIndexFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ColorFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void ColorFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ChildrenSelectorListFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void ChildrenSelectorListFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ToggleboxFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void ToggleboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task MultilineStringFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -415,7 +411,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task Vector2FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -439,7 +435,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task Vector3FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -463,7 +459,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task Vector4FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -489,7 +485,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task BoundsFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -513,13 +509,13 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ListFieldTest()
+        [Fact] // [Test, Ignore("Not Implemented")]
+        public void ListFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ExtruderOffsetFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;

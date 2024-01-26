@@ -39,14 +39,14 @@ using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
+using Xunit;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterControl.Tests.MatterControl
 {
-    [TestFixture]
+    
 	public class InteractiveSceneTests
 	{
 		public static void StartupMC()
@@ -61,8 +61,8 @@ namespace MatterControl.Tests.MatterControl
 			AppContext.Platform.ProcessCommandline();
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task CombineTests()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task CombineTests()
 		{
 			StartupMC();
 
@@ -72,7 +72,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeA = await CubeObject3D.Create(20, 20, 20);
 				var cubeB = await CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
-				Assert.IsTrue(offsetCubeB.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+				Assert.True(offsetCubeB.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					0, -10, -10,
 					20, 10, 10), .001));
 
@@ -81,24 +81,24 @@ namespace MatterControl.Tests.MatterControl
 				union.Children.Add(offsetCubeB);
 				root.Children.Add(union);
 
-				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+				Assert.True(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10), .001));
 
-				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+				Assert.True(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10), .001));
 
 				union.Combine();
-				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+				Assert.True(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10), .001));
 
 				union.Apply(null);
 
-				Assert.AreEqual(1, root.Children.Count());
+				Assert.Single(root.Children);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 			}
@@ -116,18 +116,18 @@ namespace MatterControl.Tests.MatterControl
 
 				union.Combine();
 
-				Assert.AreEqual(5, root.Descendants().Count());
+				Assert.Equal(5, root.Descendants().Count());
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					10, 10, 10).Equals(rootAabb, .001));
 
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				union.Combine();
-				Assert.AreEqual(7, root.Descendants().Count());
+				Assert.Equal(7, root.Descendants().Count());
 				rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 			}
@@ -143,28 +143,28 @@ namespace MatterControl.Tests.MatterControl
 				combine.Children.Add(cubeA);
 				combine.Children.Add(offsetCubeB);
 				root.Children.Add(combine);
-				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
+				Assert.Equal(5, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
 
-				combine.Combine();
-				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
-				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+                combine.Combine();
+				Assert.Equal(7, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+                var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
 				combine.Apply(undoBuffer);
 
-				Assert.AreEqual(1, root.Descendants().Count());
-				Assert.AreEqual(1, root.Children.Count());
+				Assert.Single(root.Descendants());
+				Assert.Single(root.Children);
 				rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 
 				undoBuffer.Undo();
-				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
-			}
+				Assert.Equal(7, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+            }
 
 			// now make sure undo has the right results for remove
 			{
@@ -178,27 +178,27 @@ namespace MatterControl.Tests.MatterControl
 				combine.Children.Add(cubeA);
 				combine.Children.Add(cubeB);
 				root.Children.Add(combine);
-				Assert.AreEqual(3, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB");
+				Assert.Equal(3, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 cubeB");
 
-				combine.Combine();
-				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
-				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+                combine.Combine();
+				Assert.Equal(5, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
+                var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					10, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
 				combine.Cancel(undoBuffer);
 
-				Assert.AreEqual(2, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB");
-				rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.Equal(2, root.Descendants().Count()); //, "Should have the 1 cubeA, 2 cubeB");
+                rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					10, 10, 10).Equals(rootAabb, .001));
 
 				undoBuffer.Undo();
-				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
-			}
+				Assert.Equal(5, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
+            }
 
 			// now make sure undo has the right results for remove
 			{
@@ -211,27 +211,27 @@ namespace MatterControl.Tests.MatterControl
 				combine.Children.Add(cubeA);
 				combine.Children.Add(offsetCubeB);
 				root.Children.Add(combine);
-				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
+				Assert.Equal(5, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
 
-				combine.Combine();
-				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
-				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+                combine.Combine();
+				Assert.Equal(7, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+                var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 
 				var undoBuffer = new UndoBuffer();
 				combine.Cancel(undoBuffer);
 
-				Assert.AreEqual(4, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB, 3 offset cubeB, 4 offset sourceItem");
-				rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.Equal(4, root.Descendants().Count()); //, "Should have the 1 cubeA, 2 cubeB, 3 offset cubeB, 4 offset sourceItem");
+                rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 
 				undoBuffer.Undo();
-				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
-			}
+				Assert.Equal(7, root.Descendants().Count()); //, "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+            }
 
 			// make sure the MatterControl add function is working
 			{
@@ -241,10 +241,10 @@ namespace MatterControl.Tests.MatterControl
 
 				var plus = cubeA.Plus(offsetCubeB, true);
 
-				Assert.AreEqual(0, plus.Children.Count());
-				Assert.IsTrue(plus.Mesh != null);
+				Assert.Empty(plus.Children);
+				Assert.True(plus.Mesh != null);
 				var aabb = plus.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(aabb, .001));
 			}
@@ -266,22 +266,22 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(union);
 
 				union.Combine();
-				Assert.AreEqual(8, root.Descendants().Count(), "group, union, wa, a, wtb, tb, b");
+				Assert.Equal(8, root.Descendants().Count()); //, "group, union, wa, a, wtb, tb, b");
 
-				union.Apply(null);
-				Assert.AreEqual(1, root.Descendants().Count(), "Should have the union result");
+                union.Apply(null);
+				Assert.Equal(1, root.Descendants().Count()); //, "Should have the union result");
 
-				Assert.AreEqual(1, root.Children.Count());
+                Assert.Single(root.Children);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 			}
 		}
 
 
-		[Test, Category("InteractiveScene")]
-		public async Task SubtractTests()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task SubtractTests()
 		{
 			StartupMC();
 
@@ -301,9 +301,9 @@ namespace MatterControl.Tests.MatterControl
 				subtract.Subtract();
 				subtract.Apply(null);
 
-				Assert.AreEqual(1, root.Children.Count());
+				Assert.Single(root.Children);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					0, 10, 10).Equals(rootAabb, .001));
 			}
@@ -316,17 +316,17 @@ namespace MatterControl.Tests.MatterControl
 
 				var subtract = cubeA.Minus(offsetCubeB);
 
-				Assert.AreEqual(0, subtract.Children.Count());
-				Assert.IsTrue(subtract.Mesh != null);
+				Assert.Empty(subtract.Children);
+				Assert.True(subtract.Mesh != null);
 				var aabb = subtract.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(new AxisAlignedBoundingBox(
+				Assert.True(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					0, 10, 10).Equals(aabb, .001));
 			}
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task HoleTests()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task HoleTests()
 		{
 			StartupMC();
 
@@ -350,9 +350,9 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(combine);
 				await combine.Rebuild();
 
-				Assert.AreEqual(1, root.Children.Count());
+				Assert.Single(root.Children);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(10, rootAabb.YSize, .001);
+				Assert.Equal(10, rootAabb.YSize, .001);
 			}
 
 			// Subtract has correct number of results with group
@@ -375,13 +375,13 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(combine);
 				await combine.Rebuild();
 
-				Assert.AreEqual(1, root.Children.Count());
+				Assert.Single(root.Children);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(10, rootAabb.YSize, .001);
+				Assert.Equal(10, rootAabb.YSize, .001);
 			}
 		}
 
-        [Test, Category("InteractiveScene")]
+        [Fact] // [Test, Category("InteractiveScene")]
         public async Task CopyObjectTests()
         {
             StartupMC();
@@ -392,13 +392,13 @@ namespace MatterControl.Tests.MatterControl
 
 				var copy = cubeA1.DeepCopy() as CubeObject3D;
 
-                Assert.AreEqual("10", copy.Width.Expression, "10");
-                Assert.AreEqual(10, copy.GetAxisAlignedBoundingBox().XSize, .001);
+                Assert.Equal("10", copy.Width.Expression); //, "10");
+                Assert.Equal(10, copy.GetAxisAlignedBoundingBox().XSize, .001);
             }
         }
-        
-		[Test, Category("InteractiveScene")]
-		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
+
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
 			StartupMC();
 
@@ -407,7 +407,7 @@ namespace MatterControl.Tests.MatterControl
 				var root = new Object3D();
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				root.Children.Add(cube);
-				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
+				Assert.True(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 				root.Children.Remove(cube);
 				var fit = await FitToBoundsObject3D_4.Create(cube);
 
@@ -417,7 +417,7 @@ namespace MatterControl.Tests.MatterControl
 				fit.Invalidate(InvalidateType.Properties);
 				root.Children.Add(fit);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), .001));
+				Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), .001));
 			}
 
 			// build with pinch
@@ -435,7 +435,7 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
+				Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 			}
 
 			// build with translate
@@ -447,7 +447,7 @@ namespace MatterControl.Tests.MatterControl
 
 				root.Children.Add(translate);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 
 			// build with pinch and translate
@@ -462,7 +462,7 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(pinch);
 				await pinch.Rebuild();
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 
 			// build with pinch and translate
@@ -482,12 +482,12 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task ScaleObjectMaintainsCorrectAabb()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task ScaleObjectMaintainsCorrectAabb()
 		{
 			// build cube with scale and undo
 			{
@@ -496,7 +496,7 @@ namespace MatterControl.Tests.MatterControl
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
-				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				Assert.Equal(2, root.DescendantsAndSelf().Count());
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				var undoBuffer = new UndoBuffer();
@@ -506,13 +506,13 @@ namespace MatterControl.Tests.MatterControl
 				scaleObject.WrapItems(new IObject3D[] { cube }, undoBuffer);
 
 				// ensure that the object did not move
-				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				Assert.Equal(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
-				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+				Assert.True(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreNotEqual(cube, scaleObject.UntransformedChildren.First(), "There is an undo buffer, there should have been a clone");
-			}
+				Assert.NotEqual(cube, scaleObject.UntransformedChildren.First()); //, "There is an undo buffer, there should have been a clone");
+            }
 			
 			// build cube with scale
 			{
@@ -521,24 +521,24 @@ namespace MatterControl.Tests.MatterControl
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
-				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				Assert.Equal(2, root.DescendantsAndSelf().Count());
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
 				var scaleObject = new ScaleObject3D_3(cube);
 
 				// ensure that the object did not move
-				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				Assert.Equal(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
-				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+				Assert.True(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreEqual(cube, scaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
-			}
+				Assert.Equal(cube, scaleObject.UntransformedChildren.First()); //, "There is no undo buffer, there should not have been a clone");
+            }
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task ScaleAndRotateMaintainsCorrectAabb()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task ScaleAndRotateMaintainsCorrectAabb()
 		{
 			{
 				// create a simple cube with translation
@@ -546,33 +546,33 @@ namespace MatterControl.Tests.MatterControl
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
-				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				Assert.Equal(2, root.DescendantsAndSelf().Count());
 				var preScaleAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a scale to it (that is not scaled)
 				var scaleObject = new ScaleObject3D_3(cube);
 
 				// ensure that the object did not move
-				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				Assert.Equal(4, root.DescendantsAndSelf().Count());
 				var postScaleAabb = root.GetAxisAlignedBoundingBox();
 
-				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+				Assert.True(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreEqual(cube, scaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
+				Assert.Equal(cube, scaleObject.UntransformedChildren.First()); //, "There is no undo buffer, there should not have been a clone");
 
-				var rotateScaleObject = new RotateObject3D_2(cube);
+                var rotateScaleObject = new RotateObject3D_2(cube);
 				// ensure that the object did not move
-				Assert.AreEqual(6, root.DescendantsAndSelf().Count());
+				Assert.Equal(6, root.DescendantsAndSelf().Count());
 				var postRotateScaleAabb = root.GetAxisAlignedBoundingBox();
 
-				Assert.IsTrue(preScaleAabb.Equals(postRotateScaleAabb, .001));
+				Assert.True(preScaleAabb.Equals(postRotateScaleAabb, .001));
 
-				Assert.AreEqual(cube, rotateScaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
-			}
+				Assert.Equal(cube, rotateScaleObject.UntransformedChildren.First()); //, "There is no undo buffer, there should not have been a clone");
+            }
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task RotateMaintainsCorrectAabb()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task RotateMaintainsCorrectAabb()
 		{
 			{
 				// create a simple cube with translation
@@ -580,25 +580,25 @@ namespace MatterControl.Tests.MatterControl
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
-				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				Assert.Equal(2, root.DescendantsAndSelf().Count());
 				var preRotateAabb = root.GetAxisAlignedBoundingBox();
 
 				// add a rotate to it (that is not rotated)
 				var rotateObject = new RotateObject3D_2(cube);
 
 				// ensure that the object did not move
-				Assert.IsTrue(rotateObject.RotateAbout.Origin.Equals(new Vector3(50, 60, 10)));
-				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				Assert.True(rotateObject.RotateAbout.Origin.Equals(new Vector3(50, 60, 10)));
+				Assert.Equal(4, root.DescendantsAndSelf().Count());
 				var postRotateAabb = root.GetAxisAlignedBoundingBox();
 
-				Assert.IsTrue(preRotateAabb.Equals(postRotateAabb, .001));
+				Assert.True(preRotateAabb.Equals(postRotateAabb, .001));
 
-				Assert.AreEqual(cube, rotateObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
-			}
+				Assert.Equal(cube, rotateObject.UntransformedChildren.First()); //, "There is no undo buffer, there should not have been a clone");
+            }
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task AabbCalculatedCorrectlyForAlignedFitObject()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task AabbCalculatedCorrectlyForAlignedFitObject()
 		{
 			StartupMC();
 
@@ -611,11 +611,11 @@ namespace MatterControl.Tests.MatterControl
 			fit.Height = 6;
 			fit.Invalidate(InvalidateType.Properties);
 
-			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
+			Assert.True(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
 
 			var bigCube = await CubeObject3D.Create(20, 20, 20);
 
-			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .01));
+			Assert.True(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .01));
 
 			var align = new AlignObject3D_2();
 			align.Children.Add(bigCube);
@@ -633,15 +633,15 @@ namespace MatterControl.Tests.MatterControl
 			await align.Rebuild();
 
 			var alignAabb = align.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(alignAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
+			Assert.True(alignAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 
 			alignAabb = align.GetAxisAlignedBoundingBox();
 			root.Children.Add(align);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
+			Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 		}
 
-		[Test]
+		[Fact]
 		public void CombineTests2()
         {
 			// overlaping results in simple new mesh
@@ -657,9 +657,9 @@ namespace MatterControl.Tests.MatterControl
 						new Object3D() { Mesh = meshB },
 					},
 					new CancellationToken());
-				Assert.AreEqual(12, mesh.Faces.Count());
+				Assert.Equal(12, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(15, aabb.YSize, .001);
+				Assert.Equal(15, aabb.YSize, .001);
 			}
 
 			// multiple overlaping faces all combine
@@ -678,9 +678,9 @@ namespace MatterControl.Tests.MatterControl
 						new Object3D() { Mesh = meshC },
 					},
 					new CancellationToken());
-				Assert.AreEqual(12, mesh.Faces.Count());
+				Assert.Equal(12, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(16, aabb.YSize, .001);
+				Assert.Equal(16, aabb.YSize, .001);
 			}
 
 			// a back face against a front face, both are removed
@@ -697,9 +697,9 @@ namespace MatterControl.Tests.MatterControl
 					},
 					new CancellationToken());
 				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
-				Assert.AreEqual(12, mesh.Faces.Count());
+				Assert.Equal(12, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(20, aabb.YSize, .001);
+				Assert.Equal(20, aabb.YSize, .001);
 			}
 
 			// multiple overlaping faces all combine
@@ -722,15 +722,15 @@ namespace MatterControl.Tests.MatterControl
 					},
 					new CancellationToken());
 				// StlProcessing.Save(mesh, @"C:\temp\temp.stl", new CancellationToken());
-				Assert.AreEqual(44, mesh.Faces.Count());
+				Assert.Equal(44, mesh.Faces.Count());
 				var aabb = mesh.GetAxisAlignedBoundingBox();
-				Assert.AreEqual(10, aabb.YSize, .001);
+				Assert.Equal(10, aabb.YSize, .001);
 			}
 
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task AlignObjectHasCorrectPositionsOnXAxis()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task AlignObjectHasCorrectPositionsOnXAxis()
 		{
 			StartupMC();
 
@@ -738,12 +738,12 @@ namespace MatterControl.Tests.MatterControl
 
 			var cube = await CubeObject3D.Create(20, 20, 20);
 			cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
-			Assert.IsTrue(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
+			Assert.True(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
 			scene.Children.Add(cube);
 
 			var bigCube = await CubeObject3D.Create(40, 40, 40);
 			bigCube.Matrix = Matrix4X4.CreateTranslation(20, 20, 20);
-			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
+			Assert.True(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
 			scene.Children.Add(bigCube);
 
 			// select them
@@ -757,37 +757,37 @@ namespace MatterControl.Tests.MatterControl
 			var unalignedBounds = align.GetAxisAlignedBoundingBox();
 
 			// assert the align in built correctly
-			Assert.AreEqual(1, scene.Children.Count);
-			Assert.AreEqual(2, align.Children.Count);
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
+			Assert.Equal(1, scene.Children.Count);
+			Assert.Equal(2, align.Children.Count);
+			Assert.True(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
 
 			align.SelectedChild = new SelectedChildren() { cube.ID.ToString() };
 
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
+			Assert.True(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
 
 			// turn align on
 			align.XAlign = Align.Min;
 			await align.Rebuild();
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
+			Assert.True(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
 
 			// turn it off
 			align.XAlign = Align.None;
 			await align.Rebuild();
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
+			Assert.True(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
 
 			// turn it back on
 			align.XAlign = Align.Min;
 			await align.Rebuild();
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
+			Assert.True(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
 
 			// remove the align and assert stuff moved back to where it started
 			align.Cancel(null);
-			Assert.IsTrue(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
-			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
+			Assert.True(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
+			Assert.True(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
 		}
 
-		[Test, Category("InteractiveScene")]
-		public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
+        [Fact] // [Test, Category("InteractiveScene")]
+        public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
 			StartupMC();
 
@@ -800,7 +800,7 @@ namespace MatterControl.Tests.MatterControl
 			fit.Height = 20;
 			fit.Invalidate(InvalidateType.Properties);
 
-			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), 1.0));
+			Assert.True(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), 1.0));
 
 			var curve = new CurveObject3D_3()
 			{
@@ -812,7 +812,7 @@ namespace MatterControl.Tests.MatterControl
 			var curveAabb = curve.GetAxisAlignedBoundingBox();
 			root.Children.Add(curve);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -9.9, -10), new Vector3(17.5, 11.97, 10)), 1.0));
+			Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -9.9, -10), new Vector3(17.5, 11.97, 10)), 1.0));
 		}
 	}
 }

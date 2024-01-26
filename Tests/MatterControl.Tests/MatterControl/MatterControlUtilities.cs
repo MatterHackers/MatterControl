@@ -52,12 +52,13 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using SQLiteWin32;
+using MatterHackers.Agg.Tests;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    [TestFixture, Category("MatterControl.UI.Automation")]
+    //[TestFixture, Category("MatterControl.UI.Automation")]
 	public static class MatterControlUtilities
 	{
 		private static bool saveImagesForDebug = true;
@@ -262,7 +263,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitFor(() => HeaderExists(headerText));
 
-			Assert.IsTrue(HeaderExists(headerText), "Expected page not found: " + headerText);
+			Assert.True(HeaderExists(headerText), "Expected page not found: " + headerText);
 
 			return testRunner;
 		}
@@ -337,7 +338,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(1);
 			// If testing is to be reliable, that dialog really shouldn't be showing now.
 			// NOTE: This may fail rarely still. Happened once with OrthographicZoomToSelectionWide.
-			Assert.IsFalse(testRunner.NamedWidgetExists("Cancel Wizard Button"));
+			Assert.False(testRunner.NamedWidgetExists("Cancel Wizard Button"));
 
 			if (removeDefaultPhil)
 			{
@@ -508,9 +509,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var scene = view3D.Object3DControlLayer.Scene;
 
 			testRunner.WaitFor(() => scene.Children.Count == 1);
-			Assert.AreEqual(1, scene.Children.Count, "Should have a Phil on the bed");
-			testRunner.WaitFor(() => scene.Children.First().Name == "Phil A Ment.stl");
-			Assert.AreEqual("Phil A Ment.stl", scene.Children.First().Name);
+			Assert.Equal(1, scene.Children.Count); //, "Should have a Phil on the bed");
+            testRunner.WaitFor(() => scene.Children.First().Name == "Phil A Ment.stl");
+			Assert.Equal("Phil A Ment.stl", scene.Children.First().Name);
 
 			testRunner.Type("^a"); // clear the selection (type a space)
 			testRunner.WaitFor(() => scene.SelectedItem != null);
@@ -653,7 +654,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			File.WriteAllText(mcpPath, JsonConvert.SerializeObject(queueItemData, Formatting.Indented));
 
             throw new NotImplementedException("fix this");
-            //Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
+            //Assert.True(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
         }
 
         public static AutomationRunner OpenUserPopupMenu(this AutomationRunner testRunner)
@@ -778,7 +779,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			string folderID = $"{folderName} Row Item Collection";
 
-			Assert.IsTrue(testRunner.WaitForName(folderID), $"{folderName} exists");
+			Assert.True(testRunner.WaitForName(folderID), $"{folderName} exists");
 
 			return folderID;
 		}
@@ -888,10 +889,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.OpenGLWinformsWindowProvider, agg_platform_win32";
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 
-#if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.RootPath = staticDataPathOverride;
-#endif
+		
 			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(RootPath);
 
@@ -1248,7 +1248,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsFalse(testRunner.WaitForName($"Row Item {friendlyName}", .1), $"{friendlyName} part should not exist at test start");
+				Assert.False(testRunner.WaitForName($"Row Item {friendlyName}", .1), $"{friendlyName} part should not exist at test start");
 			}
 
 			// Add Library item
@@ -1265,7 +1265,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string fileName = Path.GetFileName(assetName);
 
 				// Look for either expected format (print queue differs from libraries)
-				Assert.IsTrue(
+				Assert.True(
 					testRunner.WaitForName($"Row Item {friendlyName}", 2)
 					|| testRunner.WaitForName($"Row Item {fileName}", 2),
 					$"{friendlyName} part should exist after adding");

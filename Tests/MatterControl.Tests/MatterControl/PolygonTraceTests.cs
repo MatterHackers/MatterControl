@@ -33,21 +33,21 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using NUnit.Framework;
+using Xunit;
 using System.IO;
 using System.Threading;
 
 namespace MatterHackers.RayTracer
 {
-	[TestFixture, Category("Agg.RayTracer")]
+	//[TestFixture, Category("Agg.RayTracer")]
 	public class PolygonTraceTests
 	{
-		[Test, Ignore("WorkInProgress")]
-		public void RayBundleSameResultAsIndividualRays()
+        [Fact] // [Test, Ignore("WorkInProgress")]
+        public void RayBundleSameResultAsIndividualRays()
 		{
 		}
 
-		[Test]
+		[Fact]
 		public void TriangleMajorAxis()
 		{
 			var triangle0 = new TriangleShape(
@@ -56,7 +56,7 @@ namespace MatterHackers.RayTracer
 				new Vector3(-45.91038, 19.8672, 1.143422),
 				null);
 
-			Assert.AreEqual(2, triangle0.MajorAxis);
+			Assert.Equal(2, triangle0.MajorAxis);
 
 			var triangle1 = new TriangleShape(
 				new Vector3(0, 1, 0),
@@ -64,7 +64,7 @@ namespace MatterHackers.RayTracer
 				new Vector3(0, 0, 0),
 				null);
 
-			Assert.AreEqual(0, triangle1.MajorAxis);
+			Assert.Equal(0, triangle1.MajorAxis);
 
 			var triangle2 = new TriangleShape(
 				new Vector3(1, 0, 0),
@@ -72,13 +72,15 @@ namespace MatterHackers.RayTracer
 				new Vector3(0, 0, 0),
 				null);
 
-			Assert.AreEqual(1, triangle2.MajorAxis);
+			Assert.Equal(1, triangle2.MajorAxis);
 		}
 
-		[Test]
+		[Fact]
 		public void CorrectRayOnCircle()
 		{
-			var testPartPath = TestContext.CurrentContext.ResolveProjectPath(new string[] { "..", "..", "..", "examples", "RayTracerTest" });
+			var testContext = new TestContext();
+
+            var testPartPath = testContext.CurrentContext.ResolveProjectPath(new string[] { "..", "..", "..", "examples", "RayTracerTest" });
 
 			var testPart = Path.Combine(testPartPath, "circle_100x100_centered.stl");
 			Mesh simpleMesh = StlProcessing.Load(testPart, CancellationToken.None);
@@ -112,34 +114,34 @@ namespace MatterHackers.RayTracer
 
 			Ray ray = new Ray(rayOrigin, -Vector3.UnitZ);
 			IntersectInfo primaryInfo = raytracer.TracePrimaryRay(ray, scene);
-			Assert.IsTrue(primaryInfo.HitType == IntersectionType.FrontFace, "always have a hit");
+			Assert.True(primaryInfo.HitType == IntersectionType.FrontFace, "always have a hit");
 		}
 
-		[Test]
+		[Fact]
 		public void PolygonHitTests()
 		{
 			SolidMaterial redStuff = new SolidMaterial(new ColorF(1, 0, 0), 0, 0, 2);
 			{
 				TriangleShape facingPositiveX = new TriangleShape(new Vector3(0, 1, -1), new Vector3(0, 0, 1), new Vector3(0, -1, -1), redStuff);
 				IntersectInfo positiveXInfo = facingPositiveX.GetClosestIntersection(new Ray(new Vector3(1, 0, 0), new Vector3(-1, 0, 0)));
-				Assert.IsTrue(positiveXInfo.HitPosition == new Vector3(0, 0, 0));
-				Assert.IsTrue(positiveXInfo.HitType == IntersectionType.FrontFace);
-				Assert.IsTrue(positiveXInfo.ClosestHitObject == facingPositiveX);
-				Assert.IsTrue(positiveXInfo.DistanceToHit == 1);
+				Assert.True(positiveXInfo.HitPosition == new Vector3(0, 0, 0));
+				Assert.True(positiveXInfo.HitType == IntersectionType.FrontFace);
+				Assert.True(positiveXInfo.ClosestHitObject == facingPositiveX);
+				Assert.True(positiveXInfo.DistanceToHit == 1);
 
 				IntersectInfo negativeXInfo = facingPositiveX.GetClosestIntersection(new Ray(new Vector3(-1, 0, 0), new Vector3(1, 0, 0)));
-				Assert.IsTrue(negativeXInfo == null);
+				Assert.True(negativeXInfo == null);
 			}
 			{
 				TriangleShape facingNegativeX = new TriangleShape(new Vector3(0, -1, -1), new Vector3(0, 0, 1), new Vector3(0, 1, -1), redStuff);
 				IntersectInfo positiveXInfo = facingNegativeX.GetClosestIntersection(new Ray(new Vector3(1, 0, 0), new Vector3(-1, 0, 0)));
-				Assert.IsTrue(positiveXInfo == null);
+				Assert.True(positiveXInfo == null);
 
 				IntersectInfo negativeXInfo = facingNegativeX.GetClosestIntersection(new Ray(new Vector3(-1, 0, 0), new Vector3(1, 0, 0)));
-				Assert.IsTrue(negativeXInfo.HitPosition == new Vector3(0, 0, 0));
-				Assert.IsTrue(negativeXInfo.HitType == IntersectionType.FrontFace);
-				Assert.IsTrue(negativeXInfo.ClosestHitObject == facingNegativeX);
-				Assert.IsTrue(negativeXInfo.DistanceToHit == 1);
+				Assert.True(negativeXInfo.HitPosition == new Vector3(0, 0, 0));
+				Assert.True(negativeXInfo.HitType == IntersectionType.FrontFace);
+				Assert.True(negativeXInfo.ClosestHitObject == facingNegativeX);
+				Assert.True(negativeXInfo.DistanceToHit == 1);
 			}
 		}
 	}

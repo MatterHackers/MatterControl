@@ -32,15 +32,15 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation")]
+	//[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation")]
 	public class LibraryActionTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ClickOnExportButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -50,13 +50,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Make sure that the export window does not exist
 				bool exportWindowExists1 = testRunner.WaitForName("Export Item Window", 0);
-				Assert.IsTrue(exportWindowExists1 == false, "Export window does not exist");
+				Assert.True(exportWindowExists1 == false, "Export window does not exist");
 
 				testRunner.NavigateToFolder("Queue Row Item Collection");
 				testRunner.ClickByName("Queue Export Button");
 				SystemWindow containingWindow;
 				GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
-				Assert.IsTrue(exportWindow != null, "Export window does exist");
+				Assert.True(exportWindow != null, "Export window does exist");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Confirms the Export to Zip feature compresses and exports to a zip file and that file imports without issue
 		/// </summary>
 		/// <returns></returns>
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task ExportToZipImportFromZip()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter();
 
 				throw new NotImplementedException("fix this");
-				//Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
+				//Assert.Equal(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
 
 				// Invoke Queue -> Export to Zip dialog
 				testRunner.ClickByName("Queue... Menu");
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				testRunner.WaitFor(() => File.Exists(exportZipPath));
-				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
+				Assert.True(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
 				testRunner.InvokeLibraryAddDialog();
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
                 throw new NotImplementedException("fix this");
                 //testRunner.WaitFor(() => QueueData.Instance.ItemCount == 8);
-                //Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
+                //Assert.Equal(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
                 testRunner.Delay(.3);
 
@@ -121,8 +121,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, ChildProcessTest, Ignore("Test now works as expected but product does not implement expected functionality")]
-		public async Task QueueExportIsDisabledIfEmpty()
+        [Fact] // [Test, ChildProcessTest, Ignore("Test now works as expected but product does not implement expected functionality")]
+        public async Task QueueExportIsDisabledIfEmpty()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
@@ -131,8 +131,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Queue... Menu");
 
 				var exportButton = testRunner.GetWidgetByName(" Export to Zip Menu Item", out _, 5);
-				Assert.IsNotNull(exportButton, "Export button should exist");
-				Assert.IsTrue(exportButton.Enabled, "Export button should be enabled");
+				Assert.NotNull(exportButton); //, "Export button should exist");
+                Assert.True(exportButton.Enabled, "Export button should be enabled");
 
 				testRunner.ClickByName(" Remove All Menu Item");
 
@@ -140,14 +140,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Queue... Menu");
 				testRunner.WaitFor(() => !exportButton.Enabled, 4);
-				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
+				Assert.False(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest, Ignore("Not Finished")]
-		public async Task ClickCreatePartSheetButton()
+        [Fact] // [Test, ChildProcessTest, Ignore("Not Finished")]
+        public async Task ClickCreatePartSheetButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					queueEmpty = false;
 				}
 
-				Assert.IsTrue(queueEmpty == false);
+				Assert.True(queueEmpty == false);
 				testRunner.ClickByName("Queue... Menu");
 				testRunner.Delay(.2);
 				testRunner.ClickByName(" Create Part Sheet Menu Item");
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool partSheetCreated = File.Exists(validatePartSheetPath);
 
 				testRunner.Delay(2);
-				Assert.IsTrue(partSheetCreated == true);
+				Assert.True(partSheetCreated == true);
 
 				if (File.Exists(validatePartSheetPath))
 				{

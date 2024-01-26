@@ -32,7 +32,7 @@ using System.Reflection.Metadata.Ecma335;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -124,10 +124,10 @@ namespace MatterControl.Tests.MatterControl
 			field.SetValue(inputValue, false);
 
 			// Assert expected field value
-			Assert.AreEqual(expectedValue, field.Value);
+			Assert.Equal(expectedValue, field.Value);
 
 			// Assert expected widget value
-			Assert.AreEqual(expectedValue, collectValueFromWidget(field));
+			Assert.Equal(expectedValue, collectValueFromWidget(field));
 
 			// Sleep
 			System.Threading.Thread.Sleep(delay);

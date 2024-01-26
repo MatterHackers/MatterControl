@@ -9,15 +9,15 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh;
-using NUnit.Framework;
+using Xunit;
 
 namespace MatterControl.Tests.MatterControl
 {
-    [TestFixture]
+    
 	public class AssetManagerTests
 	{
 
-		[Test]
+		[Fact]
 		public async Task StoreAssetFile()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -36,7 +36,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				File.Delete(file);
 			}
-			Assert.AreEqual(0, Directory.GetFiles(Object3D.AssetsPath).Length);
+			Assert.Empty(Directory.GetFiles(Object3D.AssetsPath));
 
 			// Create AssetManager
 			var assetManager = new MockAssetManager();
@@ -46,17 +46,17 @@ namespace MatterControl.Tests.MatterControl
 			string result = await AssetObject3D.AssetManager.StoreFile(tempFile, false, CancellationToken.None, null);
 
 			// Validate
-			Assert.AreEqual(1, Directory.GetFiles(Object3D.AssetsPath).Length, "Unexpected asset file count");
-			Assert.AreEqual("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786.txt", result, "Unexpected asset name");
-			Assert.AreEqual(0, assetManager.PublishCount, "No files should have been published");
-		}
+			Assert.Equal(1, Directory.GetFiles(Object3D.AssetsPath).Length);//, "Unexpected asset file count");
+            Assert.Equal("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786.txt", result);//, "Unexpected asset name");
+            Assert.Equal(0, assetManager.PublishCount);//, "No files should have been published");
+        }
 
 		class AssetTestObject3D : AssetObject3D
 		{
 			public override string AssetPath { get; set ; }
 		}
 
-		[Test]
+		[Fact]
 		public async Task StoreAsset()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -80,7 +80,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				File.Delete(file);
 			}
-			Assert.AreEqual(0, Directory.GetFiles(Object3D.AssetsPath).Length);
+			Assert.Empty(Directory.GetFiles(Object3D.AssetsPath));
 
 			// Create AssetManager
 			var assetManager = new MockAssetManager();
@@ -90,13 +90,13 @@ namespace MatterControl.Tests.MatterControl
 			await AssetObject3D.AssetManager.StoreAsset(object3D, false, CancellationToken.None, null);
 
 			// Validate
-			Assert.AreEqual(1, Directory.GetFiles(Object3D.AssetsPath).Length, "Unexpected asset file count");
-			Assert.AreEqual("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786", object3D.AssetID, "Unexpected AssetID");
-			Assert.AreEqual("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786.txt", object3D.AssetPath, "Unexpected asset name");
-			Assert.AreEqual(0, assetManager.PublishCount, "No files should have been published");
-		}
+			Assert.Equal(1, Directory.GetFiles(Object3D.AssetsPath).Length);//, "Unexpected asset file count");
+            Assert.Equal("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786", object3D.AssetID);//, "Unexpected AssetID");
+            Assert.Equal("8FB7B108E5F0A7FAE84DF849DDE830FED5B5F786.txt", object3D.AssetPath);//, "Unexpected asset name");
+            Assert.Equal(0, assetManager.PublishCount);//, "No files should have been published");
+        }
 
-		[Test]
+		[Fact]
 		public async Task StoreMesh()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -120,7 +120,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				File.Delete(file);
 			}
-			Assert.AreEqual(0, Directory.GetFiles(Object3D.AssetsPath).Length);
+			Assert.Empty(Directory.GetFiles(Object3D.AssetsPath));
 
 			// Create AssetManager
 			var assetManager = new MockAssetManager();
@@ -130,10 +130,10 @@ namespace MatterControl.Tests.MatterControl
 			await AssetObject3D.AssetManager.StoreMesh(object3D, false, CancellationToken.None, null);
 
 			// Validate
-			Assert.AreEqual(1, Directory.GetFiles(Object3D.AssetsPath).Length, "Unexpected asset file count");
-			Assert.AreEqual("CF58E6637ED36311082F66EC5FA3A279E0513FE6.stl", object3D.MeshPath, "Unexpected MeshPath");
-			Assert.AreEqual(0, assetManager.PublishCount, "No files should have been published");
-		}
+			Assert.Equal(1, Directory.GetFiles(Object3D.AssetsPath).Length);//, "Unexpected asset file count");
+            Assert.Equal("CF58E6637ED36311082F66EC5FA3A279E0513FE6.stl", object3D.MeshPath);//, "Unexpected MeshPath");
+            Assert.Equal(0, assetManager.PublishCount);//, "No files should have been published");
+        }
 
 		// Create AssetManager
 		public class MockAssetManager : AssetManager

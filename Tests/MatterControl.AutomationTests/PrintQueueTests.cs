@@ -30,16 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
 	// Most of these tests are disabled. Local Library and Queue needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
-	[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
 	public class PrintQueueTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddOneItemToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -64,15 +64,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
+				Assert.True(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddTwoItemsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -102,15 +102,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
                 // Assert - two parts added and queue count increases by two
                 throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
-                Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
+                Assert.True(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
+				Assert.True(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -131,16 +131,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
                 //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
 
 				throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
 				// Make sure selected item was removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5), "Mouthpiece part should *not* exist after remove");
+				Assert.False(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -161,18 +161,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
                 //testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 500);
 
 				throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman.stl", .5), "Batman part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5), "Mouthpiece part should *not* exist after remove");
+				Assert.False(testRunner.WaitForName("Row Item Batman.stl", .5)); //, "Batman part should *not* exist after remove");
+                Assert.False(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl", .5)); //, "Mouthpiece part should *not* exist after remove");
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task DragTo3DViewAddsItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -184,21 +184,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.Object3DControlLayer.Scene;
 
-				Assert.AreEqual(0, scene.Children.Count, "The scene should have zero items before drag/drop");
+				Assert.Equal(0, scene.Children.Count); //, "The scene should have zero items before drag/drop");
+
+                testRunner.DragDropByName("Row Item Batman", "Object3DControlLayer");
+				Assert.Equal(1, scene.Children.Count); //, "The scene should have one item after drag/drop");
+
+                testRunner.Delay(.2);
 
 				testRunner.DragDropByName("Row Item Batman", "Object3DControlLayer");
-				Assert.AreEqual(1, scene.Children.Count, "The scene should have one item after drag/drop");
+				Assert.Equal(2, scene.Children.Count); //, "The scene should have two items after drag/drop");
 
-				testRunner.Delay(.2);
-
-				testRunner.DragDropByName("Row Item Batman", "Object3DControlLayer");
-				Assert.AreEqual(2, scene.Children.Count, "The scene should have two items after drag/drop");
-
-				return Task.CompletedTask;
+                return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddAmfFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -225,14 +225,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Named widget should exist after add(Rook)");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				Assert.True(testRunner.WaitForName("Row Item Rook.amf"), "Named widget should exist after add(Rook)");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddStlFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -259,14 +259,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
                 // Assert - one part  added and queue count increases by one
 				throw new NotImplementedException("fix this");
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+				Assert.True(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
 			});
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public async Task AddGCodeFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -294,8 +294,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
                 // Assert - one part  added and queue count increases by one
                 throw new NotImplementedException("fix this");
 
-                //Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-                Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode"), "Named widget should exist after add(chichen-itza)");
+                //Assert.Equal(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+                Assert.True(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode"), "Named widget should exist after add(chichen-itza)");
 
 				return Task.CompletedTask;
 			});

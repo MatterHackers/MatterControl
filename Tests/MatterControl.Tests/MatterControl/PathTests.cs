@@ -35,55 +35,55 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Tests.Automation;
-using NUnit.Framework;
-using TestInvoker;
+using Xunit;
+
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, Parallelizable(ParallelScope.Children)]
+	//[TestFixture, Parallelizable(ParallelScope.Children)]
 	public class PathTests
 	{
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task CacheablePathTest()
 		{
 			StaticData.RootPath = StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationController.CacheablePath("scope", "key.file");
 
-			Assert.AreEqual(
+			Assert.Equal(
 				path.Substring(path.IndexOf("MatterControl")),
-				Path.Combine("MatterControl", "data", "temp", "cache", "scope", "key.file"),
-				"Unexpected CacheablePath Value");
+				Path.Combine("MatterControl", "data", "temp", "cache", "scope", "key.file"));//,
+            //"Unexpected CacheablePath Value");
 
 			return Task.CompletedTask;
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task CacheDirectoryTest()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationDataStorage.Instance.CacheDirectory;
 
-			Assert.AreEqual(
+			Assert.Equal(
 				path.Substring(path.IndexOf("MatterControl")),
-				Path.Combine("MatterControl", "data", "temp", "cache"),
-				"Unexpected CacheDirectory Value");
+				Path.Combine("MatterControl", "data", "temp", "cache"));//,
+            //"Unexpected CacheDirectory Value");
 
 			return Task.CompletedTask;
 		}
 
-		[Test, ChildProcessTest]
+		[Fact]
 		public Task TempPathTest()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
 
 			string path = ApplicationDataStorage.Instance.ApplicationTempDataPath;
 
-			Assert.AreEqual(
+			Assert.Equal(
 				path.Substring(path.IndexOf("MatterControl")),
-				Path.Combine("MatterControl", "data", "temp"),
-				"Unexpected ApplicationTempDataPath Value");
+				Path.Combine("MatterControl", "data", "temp"));//,
+            //"Unexpected ApplicationTempDataPath Value");
 
 			return Task.CompletedTask;
 		}
