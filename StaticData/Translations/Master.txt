@@ -4408,6 +4408,9 @@ Translated:Repair
 English:Replace
 Translated:Replace
 
+English:Replace Image
+Translated:Replace Image
+
 English:Replacing
 Translated:Replacing
 

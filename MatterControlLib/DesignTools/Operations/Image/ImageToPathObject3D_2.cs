@@ -427,12 +427,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				});
 		}
 
-		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, UndoBuffer undoBuffer, Action requestWidgetUpdate)
 		{
 			var child = this.Children.First();
 			if (child is ImageObject3D imageObject)
 			{
-				ImageObject3D.ModifyImageObjectEditorWidget(imageObject, widget, theme, requestWidgetUpdate);
+				ImageObject3D.ModifyImageObjectEditorWidget(imageObject, widget, theme, undoBuffer, requestWidgetUpdate);
 			}
 		}
 

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
                 else if (propertyIObject3D is AssetObject3D assetObject
                     && property.PropertyInfo.Name == "AssetPath")
                 {
-                    rowContainer = InsertEditFieldWithFileButton(property, theme, assetObject);
+                    rowContainer = InsertEditFieldWithFileButton(property, theme, undoBuffer, assetObject);
                 }
                 else
                 {
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.DesignTools
             return rowContainer;
         }
 
-        private static GuiWidget InsertEditFieldWithFileButton(EditableProperty property, ThemeConfig theme, AssetObject3D assetObject)
+        private static GuiWidget InsertEditFieldWithFileButton(EditableProperty property, ThemeConfig theme, UndoBuffer undoBuffer, AssetObject3D assetObject)
         {
             GuiWidget rowContainer;
             // This is the AssetPath property of an asset object, add a button to set the AssetPath from a file
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.DesignTools
             {
                 UiThread.RunOnIdle(() =>
                 {
-                    ImageObject3D.ShowOpenDialog(assetObject);
+                    ImageObject3D.ShowOpenDialog(assetObject, undoBuffer);
                 });
             };
             return rowContainer;

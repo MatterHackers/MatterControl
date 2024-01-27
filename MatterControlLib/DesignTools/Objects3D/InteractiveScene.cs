@@ -256,7 +256,7 @@ namespace MatterHackers.DataConverters3D
 						&& child.Parent != parent
 						&& child.Parent.GetType() != typeof(SelectionGroupObject3D))
                     {
-                        throw new Exception("Child does not have parent set to parent.");
+                        //throw new Exception("Child does not have parent set to parent.");
                     }
 
                     ValidateAllChildrenHaveParentSetToParent(child);

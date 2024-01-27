@@ -34,6 +34,6 @@ namespace Matter_CAD_Lib.DesignTools.Interfaces
 {
     public interface IEditorWidgetModifier
     {
-        void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate);
+        void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, UndoBuffer undoBuffer, Action requestWidgetUpdate);
     }
 }

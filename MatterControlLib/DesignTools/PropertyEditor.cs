@@ -707,7 +707,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 if (propertyIObject3D is IEditorWidgetModifier editorWidgetModifier)
                 {
-                    editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, UpdateEditorImage);
+                    editorWidgetModifier.ModifyEditorWidget(imageWidget, theme, undoBuffer, UpdateEditorImage);
                 }
 
                 rowContainer.AddChild(imageWidget);

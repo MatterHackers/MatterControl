@@ -323,18 +323,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		public void ModifyEditorWidget(GuiWidget widget, ThemeConfig theme, UndoBuffer undoBuffer, Action requestWidgetUpdate)
 		{
-			ModifyImageObjectEditorWidget(this, widget, theme, requestWidgetUpdate);
+			ModifyImageObjectEditorWidget(this, widget, theme, undoBuffer, requestWidgetUpdate);
 		}
 
-		public static void ModifyImageObjectEditorWidget(ImageObject3D imageObject, GuiWidget widget, ThemeConfig theme, Action requestWidgetUpdate)
+		public static void ModifyImageObjectEditorWidget(ImageObject3D imageObject, GuiWidget widget, ThemeConfig theme, UndoBuffer undoBuffer, Action requestWidgetUpdate)
 		{
 			widget.Click += (s, e) =>
 			{
 				if (e.Button == MouseButtons.Left)
 				{
-					ShowOpenDialog(imageObject);
+					ShowOpenDialog(imageObject, undoBuffer);
 				}
 
 				if (e.Button == MouseButtons.Right)
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					openMenu.Click += (s2, e2) =>
 					{
 						popupMenu.Close();
-						ShowOpenDialog(imageObject);
+						ShowOpenDialog(imageObject, undoBuffer);
 					};
 
 					popupMenu.CreateSeparator();
@@ -367,12 +367,20 @@ namespace MatterHackers.MatterControl.DesignTools
 							filePath,
 							activeImage);
 
-						imageObject.AssetPath = filePath;
-						imageObject.Mesh = null;
-
-						requestWidgetUpdate();
-
-						imageObject.Invalidate(InvalidateType.Image);
+                        var oldFilePath = imageObject.AssetPath;
+                        undoBuffer.AddAndDo(new DoUndoActions("Replace Image".Localize(),
+                            () =>
+							{
+								imageObject.AssetPath = filePath;
+                                imageObject.Mesh = null;
+                                requestWidgetUpdate();
+                            },
+                            () =>
+							{
+								imageObject.AssetPath = oldFilePath;
+                                imageObject.Mesh = null;
+                                requestWidgetUpdate();
+                            }));
 					};
 
 					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
@@ -382,7 +390,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 		}
 
-		public static void ShowOpenDialog(IAssetObject assetObject)
+		public static void ShowOpenDialog(IAssetObject assetObject, UndoBuffer undoBuffer)
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -397,9 +405,26 @@ namespace MatterHackers.MatterControl.DesignTools
 							if (!File.Exists(openParams.FileName))
 							{
 								return;
-							}
+                            }
 
-							assetObject.AssetPath = openParams.FileName;
+							var oldFilePath = assetObject.AssetPath;
+							undoBuffer.AddAndDo(new DoUndoActions("Replace Image".Localize(),
+								() =>
+								{
+									assetObject.AssetPath = openParams.FileName;
+									if (assetObject is ImageObject3D imageObject)
+									{
+										imageObject.Mesh = null;
+									}
+                                },
+								() =>
+								{
+									assetObject.AssetPath = oldFilePath;
+                                    if (assetObject is ImageObject3D imageObject)
+                                    {
+                                        imageObject.Mesh = null;
+                                    }
+                                }));
 						});
 			});
 		}
