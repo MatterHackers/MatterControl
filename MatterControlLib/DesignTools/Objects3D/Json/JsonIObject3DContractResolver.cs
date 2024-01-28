@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using DataConverters3D.Object3D.Nodes;
 using System.IO;
 using System.Linq;
 using System.Reflection;

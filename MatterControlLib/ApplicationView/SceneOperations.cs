@@ -46,6 +46,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
+using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -870,7 +871,8 @@ namespace MatterHackers.MatterControl
 #endif
 						MakeComponentOperation(),
 						EditComponentOperation(),
-                    },
+                        AddGeometyNodesOperation(),
+					},
 				},
 			};
 
@@ -892,6 +894,23 @@ namespace MatterHackers.MatterControl
 
 			Icons.Add(typeof(ImageObject3D), (theme) => StaticData.Instance.LoadIcon("image_converter.png", 16, 16).GrayToColor(theme.TextColor).SetPreMultiply());
 		}
+
+        private static SceneOperation AddGeometyNodesOperation()
+        {
+            return new SceneOperation("Add Geometry Nodes")
+            {
+                ResultType = typeof(NodesObject3D),
+                TitleGetter = () => "Add Geometry Nodes".Localize(),
+                Action = async (sceneContext) =>
+                {
+                    var geometryNodes = new NodesObject3D();
+                    await geometryNodes.ConvertChildrenToNodes(sceneContext.Scene);
+                },
+                Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
+                HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
+                IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+            };
+        }
 
         private static SceneOperation CloneOperation()
         {
