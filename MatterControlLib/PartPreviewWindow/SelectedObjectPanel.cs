@@ -48,6 +48,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Threading.Tasks;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -260,52 +261,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             var undoBuffer = sceneContext.Scene.UndoBuffer;
 
-            void GetNextSelectionColor(Action<Color> setColor)
-            {
-                var scene = sceneContext.Scene;
-                var startingSelection = scene.SelectedItem;
-                CancellationTokenSource cancellationToken = null;
-
-                void SelectionChanged(object s, EventArgs e)
-                {
-                    var selection = scene.SelectedItem;
-                    if (selection != null)
-                    {
-                        setColor?.Invoke(selection.WorldColor());
-                        scene.SelectionChanged -= SelectionChanged;
-                        cancellationToken?.Cancel();
-                        scene.SelectedItem = startingSelection;
-                    }
-                }
-
-                var durationSeconds = 20;
-
-                ApplicationController.Instance.Tasks.Execute("Select an object to copy its color".Localize(),
-                    null,
-                    (progress, cancellationTokenIn) =>
-                    {
-                        cancellationToken = cancellationTokenIn;
-                        var time = UiThread.CurrentTimerMs;
-                        while (UiThread.CurrentTimerMs < time + durationSeconds * 1000
-                            && !cancellationToken.IsCancellationRequested)
-                        {
-                            Thread.Sleep(30);
-                            progress?.Invoke((UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds, null);
-                        }
-
-                        // If the reason we exited the loop was due to a cancellation request, return no color
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            setColor?.Invoke(Color.Transparent);
-                        }
-
-                        scene.SelectionChanged -= SelectionChanged;
-                        return Task.CompletedTask;
-                    });
-
-                scene.SelectionChanged += SelectionChanged;
-            }
-
             var firstItem = true;
             if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
             {
@@ -314,6 +269,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             AddCloneInfoAndSelector(sceneContext, selectedItem, undoBuffer, firstItem, ref tabIndex);
+
+            AddMatrixEditControl(sceneContext, selectedItem, undoBuffer, ref tabIndex);
 
             var rows = new SafeList<SettingsRow>();
 
@@ -331,270 +288,336 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     ShowObjectEditor((editorFactory.Invoke(theme, undoBuffer), item, item.Name), selectedItem);
                 }
             }
+        }
 
-            void AddCloneInfoAndSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, bool firstItem, ref int tabIndex)
+        private void AddMatrixEditControl(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
+        {
+            var setMatrixIdentity = theme.CreateDialogButton("Clear");
+            setMatrixIdentity.Height = 22 * DeviceScale;
+            setMatrixIdentity.Margin = new BorderDouble(5, 0);
+            setMatrixIdentity.Enabled = selectedItem.Matrix != Matrix4X4.Identity;
+            var toolTipText = "";
+            if (setMatrixIdentity.Enabled)
             {
-                if (!string.IsNullOrEmpty(selectedItem.CloneID))
+                toolTipText = $"{"Set Matrix to Identity".Localize()}\n\n{selectedItem.Matrix.ToString()}";//.000")}";
+            }
+            else
+            {
+                toolTipText = "Matrix is Identity".Localize();
+            }
+            setMatrixIdentity.ToolTipText = toolTipText;
+            setMatrixIdentity.Click += (s, e) =>
+            {
+                var oldMatrix = selectedItem.Matrix;
+                selectedItem.Matrix = Matrix4X4.Identity;
+                scene.AddTransformSnapshot(oldMatrix);
+            };
+
+            var matrixiRow = new SettingsRow("Matrix".Localize(), null, setMatrixIdentity, theme);
+            editorPanel.AddChild(matrixiRow);
+        }
+
+        private void AddCloneInfoAndSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, bool firstItem, ref int tabIndex)
+        {
+            if (!string.IsNullOrEmpty(selectedItem.CloneID))
+            {
+                // find all the items with the same clone id
+                var allClones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
+                if (allClones.Count == 1)
                 {
-                    // find all the items with the same clone id
-                    var allClones = scene.DescendantsAndSelf().Where(i => i.CloneID == selectedItem.CloneID).ToList();
-                    if (allClones.Count == 1)
+                    // there is only one clone of this object clear its clone id
+                    selectedItem.CloneID = null;
+                }
+
+                var clonesInSceneTreeView = allClones; // .Where(i => i.Parents().All(p => p.Visible && !(p is OperationSourceContainerObject3D))).ToList();
+                if (clonesInSceneTreeView.Count > 1)
+                {
+                    var leftToRightCloneControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+
+                    leftToRightCloneControls.AddChild(new TextWidget("Select".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
                     {
-                        // there is only one clone of this object clear its clone id
-                        selectedItem.CloneID = null;
-                    }
+                        VAnchor = VAnchor.Center,
+                    });
 
-                    var clonesInSceneTreeView = allClones; // .Where(i => i.Parents().All(p => p.Visible && !(p is OperationSourceContainerObject3D))).ToList();
-                    if (clonesInSceneTreeView.Count > 1)
+                    var dropDownList = new MHDropDownList("Select", theme)
                     {
-                        var leftToRightCloneControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                        Name = "Select Clone Drop Down",
+                        Margin = new BorderDouble(5, 0),
+                    };
 
-                        leftToRightCloneControls.AddChild(new TextWidget("Select".Localize(), textColor: theme.TextColor)
+                    for (var i = 0; i < clonesInSceneTreeView.Count; i++)
+                    {
+                        var clone = clonesInSceneTreeView[i];
+                        MenuItem newItem = dropDownList.AddItem($"Clone {i + 1}", clone.ID);
+                        newItem.Selected += (sender, e) =>
                         {
-                            VAnchor = VAnchor.Center,
-                        });
-
-                        var dropDownList = new MHDropDownList("Select", theme)
-                        {
-                            Name = "Select Clone Drop Down",
-                            Margin = new BorderDouble(5, 0),
-                            //VAnchor = VAnchor.Center,
-                            //HAnchor = HAnchor.Fit,
-                            //BackgroundColor = theme.MinimalShade,
-                            //BackgroundRadius = 3,
-                            //BackgroundOutlineWidth = 1,
-                            //BorderColor = theme.TextColor,
-                            //TextColor = theme.TextColor,
-                        };
-
-                        for (var i = 0; i < clonesInSceneTreeView.Count; i++)
-                        {
-                            var clone = clonesInSceneTreeView[i];
-                            MenuItem newItem = dropDownList.AddItem($"Clone {i + 1}", clone.ID);
-                            newItem.Selected += (sender, e) =>
+                            if (scene.SelectedItem != clone)
                             {
-                                if (scene.SelectedItem != clone)
-                                {
-                                    UiThread.RunOnIdle(() => scene.SelectedItem = clone);
-                                }
-                            };
-                        }
-                        leftToRightCloneControls.AddChild(dropDownList);
-                        dropDownList.SelectedLabel = $"Clone {clonesInSceneTreeView.IndexOf(selectedItem) + 1}";
-
-                        var uncloneButton = theme.CreateDialogButton("Unclone");
-                        uncloneButton.ToolTipText = "Cancel Clone, Make Individual".Localize();
-                        uncloneButton.Height = 22 * DeviceScale;
-                        uncloneButton.Margin = new BorderDouble(5, 0);
-                        uncloneButton.Click += (s, e) =>
-                        {
-                            var cloneId = selectedItem.CloneID;
-
-                            undoBuffer.AddAndDo(new DoUndoActions("Remove Clone".Localize(), () =>
-                            {
-                                selectedItem.CloneID = null;
-                                scene.SelectedItem = null;
-                                scene.SelectedItem = selectedItem;
-                            },
-                            () =>
-                            {
-                                selectedItem.CloneID = cloneId;
-                                scene.SelectedItem = null;
-                                scene.SelectedItem = selectedItem;
-                            }));
-
-                        };
-                        leftToRightCloneControls.AddChild(uncloneButton);
-
-                        var cloneDetails = $"Clone - {clonesInSceneTreeView.IndexOf(selectedItem) + 1} of {clonesInSceneTreeView.Count}";
-
-                        var cloneRow = new SettingsRow(cloneDetails, null, leftToRightCloneControls, theme);
-                        editorPanel.AddChild(cloneRow);
-
-                        if (firstItem)
-                        {
-                            // Special top border style for first item in editor
-                            cloneRow.Border = new BorderDouble(0, 1);
+                                UiThread.RunOnIdle(() => scene.SelectedItem = clone);
+                            }
                         };
                     }
+                    leftToRightCloneControls.AddChild(dropDownList);
+                    dropDownList.SelectedLabel = $"Clone {clonesInSceneTreeView.IndexOf(selectedItem) + 1}";
+
+                    var uncloneButton = theme.CreateDialogButton("Unclone");
+                    uncloneButton.ToolTipText = "Cancel Clone, Make Individual".Localize();
+                    uncloneButton.Height = 22 * DeviceScale;
+                    uncloneButton.Margin = new BorderDouble(5, 0);
+                    uncloneButton.Click += (s, e) =>
+                    {
+                        var cloneId = selectedItem.CloneID;
+
+                        undoBuffer.AddAndDo(new DoUndoActions("Remove Clone".Localize(), () =>
+                        {
+                            selectedItem.CloneID = null;
+                            scene.SelectedItem = null;
+                            scene.SelectedItem = selectedItem;
+                        },
+                        () =>
+                        {
+                            selectedItem.CloneID = cloneId;
+                            scene.SelectedItem = null;
+                            scene.SelectedItem = selectedItem;
+                        }));
+
+                    };
+                    leftToRightCloneControls.AddChild(uncloneButton);
+
+                    var cloneDetails = $"Clone - {clonesInSceneTreeView.IndexOf(selectedItem) + 1} of {clonesInSceneTreeView.Count}";
+
+                    var cloneRow = new SettingsRow(cloneDetails, null, leftToRightCloneControls, theme);
+                    editorPanel.AddChild(cloneRow);
+
+                    if (firstItem)
+                    {
+                        // Special top border style for first item in editor
+                        cloneRow.Border = new BorderDouble(0, 1);
+                    };
+                }
+            }
+        }
+
+        void GetNextSelectionColor(Action<Color> setColor)
+        {
+            var scene = sceneContext.Scene;
+            var startingSelection = scene.SelectedItem;
+            CancellationTokenSource cancellationToken = null;
+
+            void SelectionChanged(object s, EventArgs e)
+            {
+                var selection = scene.SelectedItem;
+                if (selection != null)
+                {
+                    setColor?.Invoke(selection.WorldColor());
+                    scene.SelectionChanged -= SelectionChanged;
+                    cancellationToken?.Cancel();
+                    scene.SelectedItem = startingSelection;
                 }
             }
 
-            void AddHoleAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
+            var durationSeconds = 20;
+
+            ApplicationController.Instance.Tasks.Execute("Select an object to copy its color".Localize(),
+                null,
+                (progress, cancellationTokenIn) =>
+                {
+                    cancellationToken = cancellationTokenIn;
+                    var time = UiThread.CurrentTimerMs;
+                    while (UiThread.CurrentTimerMs < time + durationSeconds * 1000
+                        && !cancellationToken.IsCancellationRequested)
+                    {
+                        Thread.Sleep(30);
+                        progress?.Invoke((UiThread.CurrentTimerMs - time) / 1000.0 / durationSeconds, null);
+                    }
+
+                    // If the reason we exited the loop was due to a cancellation request, return no color
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        setColor?.Invoke(Color.Transparent);
+                    }
+
+                    scene.SelectionChanged -= SelectionChanged;
+                    return Task.CompletedTask;
+                });
+
+            scene.SelectionChanged += SelectionChanged;
+        }
+
+        void AddHoleAndColorSelector(ISceneContext sceneContext, IObject3D selectedItem, UndoBuffer undoBuffer, ref int tabIndex)
+        {
+            var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
+            var worldColor = Color.White;
+            if (firstDetectedColor != null)
             {
-                var firstDetectedColor = selectedItem.VisibleMeshes()?.FirstOrDefault()?.WorldColor();
-                var worldColor = Color.White;
-                if (firstDetectedColor != null)
-                {
-                    worldColor = firstDetectedColor.Value;
-                }
+                worldColor = firstDetectedColor.Value;
+            }
 
-                // put in a color edit field
-                var colorField = new ColorField(theme, worldColor, GetNextSelectionColor, true);
-                colorField.Initialize(ref tabIndex);
-                colorField.ValueChanged += (s, e) =>
+            // put in a color edit field
+            var colorField = new ColorField(theme, worldColor, GetNextSelectionColor, true);
+            colorField.Initialize(ref tabIndex);
+            colorField.ValueChanged += (s, e) =>
+            {
+                if (selectedItem.Color != colorField.Color)
                 {
-                    if (selectedItem.Color != colorField.Color)
+                    if (colorField.Color == Color.Transparent)
                     {
-                        if (colorField.Color == Color.Transparent)
-                        {
-                            undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
-                        }
-                        else
-                        {
-                            undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
-                        }
+                        undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Default));
                     }
-                };
-
-                ColorButton holeButton = null;
-                var solidButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
-                GuiWidget otherContainer = null;
-                TextWidget otherText = null;
-                GuiWidget holeContainer = null;
-                GuiWidget solidContainer = null;
-
-                var scaledButtonSize = 24 * GuiWidget.DeviceScale;
-                void SetButtonStates()
-                {
-                    switch (selectedItem.OutputType)
-                    {
-                        case PrintOutputTypes.Hole:
-                            holeContainer.BackgroundOutlineWidth = 1;
-                            holeButton.BackgroundOutlineWidth = 2;
-                            holeButton.BackgroundRadius = scaledButtonSize / 2 - 1;
-
-                            solidContainer.BackgroundOutlineWidth = 0;
-                            solidButton.BackgroundOutlineWidth = 1;
-                            solidButton.BackgroundRadius = scaledButtonSize / 2;
-                            otherContainer.Visible = false;
-                            break;
-
-                        case PrintOutputTypes.Default:
-                        case PrintOutputTypes.Solid:
-                            holeContainer.BackgroundOutlineWidth = 0;
-                            holeButton.BackgroundOutlineWidth = 1;
-                            holeButton.BackgroundRadius = scaledButtonSize / 2;
-
-                            solidContainer.BackgroundOutlineWidth = 1;
-                            solidButton.BackgroundOutlineWidth = 2;
-                            solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
-                            otherContainer.Visible = false;
-                            break;
-                    }
-                }
-
-                void SetToSolid()
-                {
-                    // make sure the render mode is set to shaded or outline
-                    switch (sceneContext.ViewState.RenderType)
-                    {
-                        case RenderOpenGl.RenderTypes.Shaded:
-                        case RenderOpenGl.RenderTypes.Outlines:
-                        case RenderOpenGl.RenderTypes.Polygons:
-                            break;
-
-                        default:
-                            // make sure the render mode is set to outline
-                            sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
-                            break;
-                    }
-
-                    var currentOutputType = selectedItem.OutputType;
-                    if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
+                    else
                     {
                         undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
                     }
+                }
+            };
 
-                    SetButtonStates();
-                    Invalidate();
+            ColorButton holeButton = null;
+            var solidButton = colorField.Content.Descendants<ColorButton>().FirstOrDefault();
+            GuiWidget otherContainer = null;
+            TextWidget otherText = null;
+            GuiWidget holeContainer = null;
+            GuiWidget solidContainer = null;
+
+            var scaledButtonSize = 24 * GuiWidget.DeviceScale;
+            void SetButtonStates()
+            {
+                switch (selectedItem.OutputType)
+                {
+                    case PrintOutputTypes.Hole:
+                        holeContainer.BackgroundOutlineWidth = 1;
+                        holeButton.BackgroundOutlineWidth = 2;
+                        holeButton.BackgroundRadius = scaledButtonSize / 2 - 1;
+
+                        solidContainer.BackgroundOutlineWidth = 0;
+                        solidButton.BackgroundOutlineWidth = 1;
+                        solidButton.BackgroundRadius = scaledButtonSize / 2;
+                        otherContainer.Visible = false;
+                        break;
+
+                    case PrintOutputTypes.Default:
+                    case PrintOutputTypes.Solid:
+                        holeContainer.BackgroundOutlineWidth = 0;
+                        holeButton.BackgroundOutlineWidth = 1;
+                        holeButton.BackgroundRadius = scaledButtonSize / 2;
+
+                        solidContainer.BackgroundOutlineWidth = 1;
+                        solidButton.BackgroundOutlineWidth = 2;
+                        solidButton.BackgroundRadius = scaledButtonSize / 2 - 1;
+                        otherContainer.Visible = false;
+                        break;
+                }
+            }
+
+            void SetToSolid()
+            {
+                // make sure the render mode is set to shaded or outline
+                switch (sceneContext.ViewState.RenderType)
+                {
+                    case RenderOpenGl.RenderTypes.Shaded:
+                    case RenderOpenGl.RenderTypes.Outlines:
+                    case RenderOpenGl.RenderTypes.Polygons:
+                        break;
+
+                    default:
+                        // make sure the render mode is set to outline
+                        sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
+                        break;
                 }
 
-                solidButton.Parent.MouseDown += (s, e) => SetToSolid();
-
-                var outputTitle = "Output".Localize();
-
-                var colorRow = new SettingsRow(outputTitle, null, colorField.Content, theme)
+                var currentOutputType = selectedItem.OutputType;
+                if (currentOutputType != PrintOutputTypes.Solid && currentOutputType != PrintOutputTypes.Default)
                 {
-                    // Special top border style for first item in editor
-                    Border = new BorderDouble(0, 1)
-                };
-                editorPanel.AddChild(colorRow);
-
-                // put in a hole button
-                holeButton = new ColorButton(Color.DarkGray)
-                {
-                    Margin = new BorderDouble(5, 0, 11, 0),
-                    Width = scaledButtonSize,
-                    Height = scaledButtonSize,
-                    BackgroundRadius = scaledButtonSize / 2,
-                    BackgroundOutlineWidth = 1,
-                    VAnchor = VAnchor.Center,
-                    DisabledColor = theme.MinimalShade,
-                    BorderColor = theme.TextColor,
-                    ToolTipText = "Convert to Hole".Localize(),
-                };
-
-                GuiWidget NewTextContainer(string text)
-                {
-                    var textWidget = new TextWidget(text.Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
-                    {
-                        Margin = new BorderDouble(5, 4, 5, 5),
-                        AutoExpandBoundsToText = true,
-                    };
-
-                    var container = new GuiWidget()
-                    {
-                        Margin = new BorderDouble(5, 0),
-                        VAnchor = VAnchor.Fit | VAnchor.Center,
-                        HAnchor = HAnchor.Fit,
-                        BackgroundRadius = 3,
-                        BackgroundOutlineWidth = 1,
-                        BorderColor = theme.PrimaryAccentColor,
-                        Selectable = true,
-                    };
-
-                    container.AddChild(textWidget);
-
-                    return container;
+                    undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color, PrintOutputTypes.Solid));
                 }
-
-                var buttonRow = solidButton.Parents<FlowLayoutWidget>().FirstOrDefault();
-                solidContainer = NewTextContainer("Solid");
-                buttonRow.AddChild(solidContainer, 0);
-
-                buttonRow.AddChild(holeButton, 0);
-                holeContainer = NewTextContainer("Hole");
-                buttonRow.AddChild(holeContainer, 0);
-
-                otherContainer = NewTextContainer("");
-                buttonRow.AddChild(otherContainer, 0);
-
-                otherText = otherContainer.Children.First() as TextWidget;
-
-                void SetToHole()
-                {
-                    if (selectedItem.OutputType != PrintOutputTypes.Hole)
-                    {
-                        undoBuffer.AddAndDo(new MakeHole(selectedItem));
-                    }
-                    SetButtonStates();
-                    Invalidate();
-                }
-
-                holeButton.Click += (s, e) => SetToHole();
-                holeContainer.Click += (s, e) => SetToHole();
-                solidContainer.Click += (s, e) => SetToSolid();
 
                 SetButtonStates();
-                void SelectedItemOutputChanged(object sender, EventArgs e)
-                {
-                    SetButtonStates();
-                }
-
-                selectedItem.Invalidated += SelectedItemOutputChanged;
-                Closed += (s, e) => selectedItem.Invalidated -= SelectedItemOutputChanged;
+                Invalidate();
             }
+
+            solidButton.Parent.MouseDown += (s, e) => SetToSolid();
+
+            var outputTitle = "Output".Localize();
+
+            var colorRow = new SettingsRow(outputTitle, null, colorField.Content, theme)
+            {
+                // Special top border style for first item in editor
+                Border = new BorderDouble(0, 1)
+            };
+            editorPanel.AddChild(colorRow);
+
+            // put in a hole button
+            holeButton = new ColorButton(Color.DarkGray)
+            {
+                Margin = new BorderDouble(5, 0, 11, 0),
+                Width = scaledButtonSize,
+                Height = scaledButtonSize,
+                BackgroundRadius = scaledButtonSize / 2,
+                BackgroundOutlineWidth = 1,
+                VAnchor = VAnchor.Center,
+                DisabledColor = theme.MinimalShade,
+                BorderColor = theme.TextColor,
+                ToolTipText = "Convert to Hole".Localize(),
+            };
+
+            GuiWidget NewTextContainer(string text)
+            {
+                var textWidget = new TextWidget(text.Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
+                {
+                    Margin = new BorderDouble(5, 4, 5, 5),
+                    AutoExpandBoundsToText = true,
+                };
+
+                var container = new GuiWidget()
+                {
+                    Margin = new BorderDouble(5, 0),
+                    VAnchor = VAnchor.Fit | VAnchor.Center,
+                    HAnchor = HAnchor.Fit,
+                    BackgroundRadius = 3,
+                    BackgroundOutlineWidth = 1,
+                    BorderColor = theme.PrimaryAccentColor,
+                    Selectable = true,
+                };
+
+                container.AddChild(textWidget);
+
+                return container;
+            }
+
+            var buttonRow = solidButton.Parents<FlowLayoutWidget>().FirstOrDefault();
+            solidContainer = NewTextContainer("Solid");
+            buttonRow.AddChild(solidContainer, 0);
+
+            buttonRow.AddChild(holeButton, 0);
+            holeContainer = NewTextContainer("Hole");
+            buttonRow.AddChild(holeContainer, 0);
+
+            otherContainer = NewTextContainer("");
+            buttonRow.AddChild(otherContainer, 0);
+
+            otherText = otherContainer.Children.First() as TextWidget;
+
+            void SetToHole()
+            {
+                if (selectedItem.OutputType != PrintOutputTypes.Hole)
+                {
+                    undoBuffer.AddAndDo(new MakeHole(selectedItem));
+                }
+                SetButtonStates();
+                Invalidate();
+            }
+
+            holeButton.Click += (s, e) => SetToHole();
+            holeContainer.Click += (s, e) => SetToHole();
+            solidContainer.Click += (s, e) => SetToSolid();
+
+            SetButtonStates();
+            void SelectedItemOutputChanged(object sender, EventArgs e)
+            {
+                SetButtonStates();
+            }
+
+            selectedItem.Invalidated += SelectedItemOutputChanged;
+            Closed += (s, e) => selectedItem.Invalidated -= SelectedItemOutputChanged;
         }
 
         private void AddComponentEditor(IObject3D selectedItem, UndoBuffer undoBuffer, SafeList<SettingsRow> rows, IComponentObject3D componentObject, ref int tabIndex)

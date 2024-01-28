@@ -27,7 +27,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.Object3DControlLayer.Scene;
 
 				if (wideObject)
+				{
 					AddCoinToBed(testRunner, scene);
+				}
 
 				if (ortho)
 				{

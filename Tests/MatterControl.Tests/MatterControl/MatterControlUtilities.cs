@@ -327,13 +327,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static AutomationRunner OpenPartTab(this AutomationRunner testRunner, bool removeDefaultPhil = true)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
-            testRunner.WaitFor(() => testRunner.NameExists("Start New Design"), 5)
-				// close the welcome message
-				.ClickByName("Start New Design")
-				.Delay(1.5)
-				// and close the product tour offer
-				.ClickByName("Cancel Wizard Button");
+			testRunner.GetWidgetByName("Cancel Wizard Button", out systemWindow, 10);
+            testRunner.ClickByName("Cancel Wizard Button");
 
 			testRunner.Delay(1);
 			// If testing is to be reliable, that dialog really shouldn't be showing now.
@@ -699,7 +694,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					case "Scripting Row Item Collection":
 					case "Primitives Row Item Collection":
 						// If visible, navigate into Libraries container before opening target
-						testRunner.DoubleClickByName("Bundled Row Item Collection")
+						testRunner.DoubleClickByName("Included Row Item Collection")
 							.Delay();
 						break;
 
