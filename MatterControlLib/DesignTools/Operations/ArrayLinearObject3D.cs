@@ -33,13 +33,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.VectorMath;
-using static Matter_CAD_Lib.DesignTools._Object3D.Object3DExtensions;
+using static Matter_CAD_Lib.DesignTools.Objects3D.Object3DExtensions;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {

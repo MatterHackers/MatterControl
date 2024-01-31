@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using System;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public abstract class RebuildLock : IDisposable
     {

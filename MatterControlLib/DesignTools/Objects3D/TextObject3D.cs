@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;

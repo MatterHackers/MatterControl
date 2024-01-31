@@ -32,7 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh.Processors;

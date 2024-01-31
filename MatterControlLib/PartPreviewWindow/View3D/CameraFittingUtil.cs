@@ -7,7 +7,7 @@
 // If defined, use the same method as perspective near/far fitting. Represent the AABB as solid shapes instead of faces.
 //#define USE_TETRAHEDRON_CUTTING_FOR_ORTHOGRAPHIC_NEAR_FAR_FITTING
 
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;

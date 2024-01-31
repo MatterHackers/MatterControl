@@ -35,7 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Markdig.Agg;
 using Markdig.Renderers.Agg.Inlines;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;

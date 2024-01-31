@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using DataConverters3D.Object3D.Nodes;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -121,7 +121,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     UiThread.RunOnIdle(() =>
                     {
                         rebuildLocks.Dispose();
-                        this.CancelAllParentBuilding();
+                        this.DoRebuildComplete();
                         Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
                     });
 

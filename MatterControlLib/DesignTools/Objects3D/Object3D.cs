@@ -51,7 +51,7 @@ using MatterHackers.RayTracer.Traceable;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public class Object3D : IObject3D
     {

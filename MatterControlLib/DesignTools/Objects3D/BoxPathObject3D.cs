@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public class BoxPathObject3D : PathObject3DAbstract, IObject3DControlsProvider, IEditorDraw, IPropertyGridModifier, IStaticThumbnail
     {

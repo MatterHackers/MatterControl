@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using Markdig.Agg;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -39,7 +39,6 @@ using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using MatterHackers.MatterControl.Library.Widgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -227,10 +226,9 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             field.ValueChanged += (s, e) =>
             {
-                var contextItem = context.Item;
-                var contextObject3D = contextItem as IObject3D;
-                var propertyObject3D = property.Source as IObject3D;
-                var propertyGridModifier = property.Source as IPropertyGridModifier;
+                var source = property.Source;
+                var propertySourceObject3D = source as IObject3D;
+                var propertyGridModifier = source as IPropertyGridModifier;
 
                 var newValue = field.Value;
                 var oldValue = "";
@@ -258,20 +256,20 @@ namespace MatterHackers.MatterControl.DesignTools
                     undoBuffer.AddAndDo(new DoUndoActions("Value Change".Localize(), () =>
                     {
                         property.SetValue(valueFromString(newValue));
-                        propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                        propertySourceObject3D?.Invalidate(new InvalidateArgs(propertySourceObject3D, InvalidateType.Properties));
                         propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
                     },
                     () =>
                     {
                         property.SetValue(valueFromString(oldValue));
-                        propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                        propertySourceObject3D?.Invalidate(new InvalidateArgs(propertySourceObject3D, InvalidateType.Properties));
                         propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
                     }));
                 }
                 else
                 {
                     property.SetValue(valueFromString(newValue));
-                    propertyObject3D?.Invalidate(new InvalidateArgs(contextObject3D, InvalidateType.Properties));
+                    propertySourceObject3D?.Invalidate(new InvalidateArgs(propertySourceObject3D, InvalidateType.Properties));
                     propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
                 }
             };

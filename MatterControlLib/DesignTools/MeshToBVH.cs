@@ -35,7 +35,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 
 namespace MatterHackers.DataConverters3D
 {

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
     using System.IO.Compression;
     using System.Linq;
     using System.Threading;
-    using Matter_CAD_Lib.DesignTools._Object3D;
+    using Matter_CAD_Lib.DesignTools.Objects3D;
     using Matter_CAD_Lib.DesignTools.Interfaces;
     using MatterHackers.Agg.Image;
     using MatterHackers.Agg.Platform;

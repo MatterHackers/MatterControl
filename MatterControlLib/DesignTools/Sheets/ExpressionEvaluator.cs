@@ -71,9 +71,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 Parser<string> expr = null; // Declare expr as null initially
 
-                // Forward declaration of concatFunc
-                Parser<string> concatFunc = null;
-
                 var factor = Parse.Ref(() => expr)
                     .Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
                     .XOr(number.Select(n => n.ToString())) // Convert number to string
@@ -85,6 +82,8 @@ namespace MatterHackers.MatterControl.DesignTools
                 expr = Parse.ChainOperator(Parse.Char('+').Or(Parse.Char('-')).Token(), term, (op, a, b) =>
                     op == '+' ? (double.Parse(a) + double.Parse(b)).ToString() : (double.Parse(a) - double.Parse(b)).ToString());
 
+                // Forward declaration of concatFunc
+                Parser<string> concatFunc = null;
                 // Updated concatFunc definition to handle nested concatenations
                 concatFunc = from concat in identifier
                              from _ in Parse.Char('(').Token()

@@ -36,7 +36,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Solids;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {

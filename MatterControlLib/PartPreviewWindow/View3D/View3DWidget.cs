@@ -31,7 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -2033,7 +2033,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 var selectedItem = Scene.SelectedItem;
 
-                if (selectedItem is NodesObject3D nodesObject)
+                if (selectedItem is NodesObject3D)
                 {
                     nodeEditorHolder.Visible = true;
                 }

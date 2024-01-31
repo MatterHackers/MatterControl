@@ -35,7 +35,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -44,7 +44,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public static class Object3DExtensions
     {

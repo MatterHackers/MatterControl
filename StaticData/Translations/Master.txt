@@ -3001,6 +3001,12 @@ Translated:Material Setup
 English:Materials
 Translated:Materials
 
+English:Matrix
+Translated:Matrix
+
+English:Matrix is Identity
+Translated:Matrix is Identity
+
 English:MatterControl
 Translated:MatterControl
 
@@ -4887,6 +4893,9 @@ Translated:Session Expired
 
 English:Set how the printed output should be altered to compensate for the printers mirror.
 Translated:Set how the printed output should be altered to compensate for the printers mirror.
+
+English:Set Matrix to Identity
+Translated:Set Matrix to Identity
 
 English:Set Temperature
 Translated:Set Temperature

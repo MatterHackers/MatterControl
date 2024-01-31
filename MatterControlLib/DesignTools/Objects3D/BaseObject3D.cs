@@ -33,7 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg.Transform;
@@ -55,7 +55,7 @@ using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public enum BaseTypes
     {

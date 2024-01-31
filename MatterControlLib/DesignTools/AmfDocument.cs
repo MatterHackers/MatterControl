@@ -37,7 +37,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 using System.Xml;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using Matter_CAD_Lib.DesignTools._Object3D;
+using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;

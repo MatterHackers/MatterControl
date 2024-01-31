@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
                 RunTest("1+1", "2");
                 RunTest(" 1 + 1 ", "2");
+                RunTest("1.1 + 2.3", "3.4");
                 RunTest("concat(\"test\", \"this\")", "testthis");
                 RunTest("concat(\"test \", 6/3)", "test 2");
                 RunTest("concat(ipbase, concat(sku, concat(13, concat(\" of \", count))))",
@@ -90,7 +91,8 @@ namespace MatterHackers.MatterControl.DesignTools
                 //throw new Exception($"Expected syntax success but got failure for {formula}");
             }
 
-            var result = expressionParser.Calculate();
+            var newEvaluatorOnly = false;
+            var result = expressionParser.Calculate(newEvaluatorOnly);
             if (result != expectedOutput)
             {
                 throw new Exception($"Expected {expectedOutput} but got {result} for {formula}");
@@ -99,16 +101,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public ExpressionParser(string expressionString)
         {
-#if DEBUG
-            RunTests();
-#endif
-
             mxParser = new Expression(expressionString);
             expressionEvaluator = new ExpressionEvaluator(expressionString);
         }
 
-        public string Calculate()
+        public string Calculate(bool newEvaluatorOnly = false)
         {
+            if (newEvaluatorOnly)
+            {
+                return expressionEvaluator.Calculate();
+            }
+
             var result = mxParser.calculate();
             if (double.IsNaN(result))
             {

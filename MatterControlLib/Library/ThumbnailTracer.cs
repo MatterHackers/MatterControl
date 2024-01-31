@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.RayTracer
 {
     using Matter_CAD_Lib.DesignTools.Interfaces;
-    using Matter_CAD_Lib.DesignTools._Object3D;
+    using Matter_CAD_Lib.DesignTools.Objects3D;
     using MatterHackers.Agg.RasterizerScanline;
     using MatterHackers.Agg.VertexSource;
     using MatterHackers.RayTracer.Light;

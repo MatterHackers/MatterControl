@@ -32,7 +32,7 @@ using System.Linq;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.MatterControl.DesignTools.Operations;
 
-namespace Matter_CAD_Lib.DesignTools._Object3D
+namespace Matter_CAD_Lib.DesignTools.Objects3D
 {
     public class InvalidateArgs : EventArgs
     {
