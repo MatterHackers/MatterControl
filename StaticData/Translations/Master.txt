@@ -5128,6 +5128,9 @@ Translated:Slice Presets Editor
 English:Slice Settings
 Translated:Slice Settings
 
+English:Slice to Path
+Translated:Slice to Path
+
 English:Slicing
 Translated:Slicing
 

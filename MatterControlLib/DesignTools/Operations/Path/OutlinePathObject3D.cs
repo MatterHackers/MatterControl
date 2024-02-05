@@ -30,21 +30,18 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterControlLib.DesignTools.Operations.Path;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {

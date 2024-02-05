@@ -34,6 +34,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.VectorMath;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 public static class VertexSourceExtensions
 {
@@ -67,25 +68,33 @@ public static class VertexSourceExtensions
 		return a.Plus(b);
 	}
 
-	public static VertexStorage MergePaths(this IVertexSource a, IVertexSource b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd)
+	public static VertexStorage MergePaths(this IVertexSource a, IVertexSource b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd, bool cleanPaths = true)
 	{
-		List<List<IntPoint>> aPolys = a.CreatePolygons();
-		List<List<IntPoint>> bPolys = b.CreatePolygons();
+        var aPolys = a.CreatePolygons();
+        var bPolys = b.CreatePolygons();
 
-		var clipper = new Clipper();
-
-		clipper.AddPaths(aPolys, PolyType.ptSubject, true);
-		clipper.AddPaths(bPolys, PolyType.ptClip, true);
-
-		var outputPolys = new List<List<IntPoint>>();
-		clipper.Execute(clipType, outputPolys, polyFillType);
-
-		Clipper.CleanPolygons(outputPolys);
-
+		var outputPolys = CreateUnion(aPolys, bPolys, clipType, polyFillType);
 		VertexStorage output = outputPolys.CreateVertexStorage();
 
 		output.Add(0, 0, FlagsAndCommand.Stop);
 
 		return output;
 	}
+
+    public static Polygons CreateUnion(this Polygons a, Polygons b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd, bool cleanPaths = true)
+    {
+        var clipper = new Clipper();
+        clipper.AddPaths(a, PolyType.ptSubject, true);
+        clipper.AddPaths(b, PolyType.ptSubject, true);
+
+        var outputPolys = new Polygons();
+        clipper.Execute(clipType, outputPolys, polyFillType);
+
+		if (cleanPaths)
+		{
+            Clipper.CleanPolygons(outputPolys);
+        }
+
+        return outputPolys;
+    }
 }

@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace MatterHackers.DataConverters3D
 {
@@ -133,6 +134,30 @@ namespace MatterHackers.DataConverters3D
 
             if (!File.Exists(filePath))
             {
+                // if the path starts with http, we are going to try to download it
+                if (filePath.StartsWith("http"))
+                {
+                    var client = new HttpClient();
+                    var response = client.GetAsync(filePath).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // set the file path to a new guid in the assets folder
+                        filePath = Path.Combine(Object3D.AssetsPath, Guid.NewGuid() + Path.GetExtension(filePath));
+
+                        // save the file to the assets folder
+                        using (var fileStream = File.Create(filePath))
+                        {
+                            response.Content.ReadAsStreamAsync().Result.CopyTo(fileStream);
+                        }
+
+                        // modify the asset path to the local file
+                        assetObject.AssetPath = filePath;
+
+                        // return the stream
+                        return Task.FromResult<Stream>(File.OpenRead(filePath));
+                    }
+                }
+
                 // Not at natural path, not in local assets, not in remote assets
                 return Task.FromResult<Stream>(null);
             }

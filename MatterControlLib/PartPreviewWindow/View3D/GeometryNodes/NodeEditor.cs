@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using DataConverters3D.Object3D.Nodes;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -53,7 +52,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
         public Action UnscaledPositionChanged;
         private double _layerScale = 1;
         private Vector2 _unscaledRenderOffset = new Vector2(0, 0);
-        private NodesObject3D geometryNodes;
+        private GeometryNodesObject3D geometryNodes;
 
         private bool hasBeenStartupPositioned;
 
@@ -430,7 +429,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
             var newNodeToWindow = new Dictionary<int, GuiWidget>();
             // Change tree selection to current node
             if (selectedItem != null
-                && selectedItem is NodesObject3D nodeObject3D)
+                && selectedItem is GeometryNodesObject3D nodeObject3D)
             {
                 this.geometryNodes = nodeObject3D;
 
@@ -468,7 +467,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                     var windowTitle = node.TypeName.SplitCamelCase();
 
-                    if (node is InputMeshNode inputMeshNode)
+                    if (node is Object3DWrapperNode inputMeshNode)
                     {
                         windowTitle += " - " + inputMeshNode.Children.First().Name;
                     }
@@ -482,7 +481,7 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                     });
                     nodeEdit.TitleBar.Height = 20;
 
-                    if (node is InputMeshNode inputObject)
+                    if (node is Object3DWrapperNode inputObject)
                     {
                         var propertyEditor = new PropertyEditor(theme, UndoBuffer);
                         var propertyWidget = propertyEditor.Create(inputObject.Children.First(), UndoBuffer, theme);

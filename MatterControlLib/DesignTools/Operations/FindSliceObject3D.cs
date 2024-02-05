@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools.Objects3D;
@@ -39,50 +38,43 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.DesignTools.Primitives;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using ClipperLib;
+using System.Collections.Generic;
+using MatterHackers.DataConverters2D;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-    public class FindSliceObject3D : OperationSourceContainerObject3D, IEditorDraw, IPropertyGridModifier, IPathProvider
+    using Polygon = List<IntPoint>;
+    using Polygons = List<List<IntPoint>>;
+
+    public class FindSliceObject3D : OperationSourceContainerObject3D, IEditorDraw, IPropertyGridModifier, IPathProvider, IPrimaryOperationsSpecifier
 	{
 		public FindSliceObject3D()
 		{
 			Name = "Find Slice".Localize();
 		}
 
-		public double SliceHeight { get; set; } = 10;
+		public DoubleOrExpression SliceHeight { get; set; } = 10;
         public VertexStorage VertexStorage { get; set; }
 
         public bool MeshIsSolidObject => false;
 
         private double cutMargin = .01;
 
-		public (Mesh mesh, Polygons polygons) Cut(IObject3D item)
+		public Polygons FindSlice(IObject3D item)
 		{
 			var mesh = new Mesh(item.Mesh.Vertices, item.Mesh.Faces);
 
 			var itemMatrix = item.WorldMatrix(this);
 			mesh.Transform(itemMatrix);
 
-			// calculate and add the PWN face from the loops
-			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, SliceHeight));
+			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, SliceHeight.Value(this)));
 			var slice = SliceLayer.CreateSlice(mesh, cutPlane);
 
-			// copy every face that is on or below the cut plane
-			// cut the faces at the cut plane
-			mesh.Split(new Plane(Vector3.UnitZ, SliceHeight), cutMargin, cleanAndMerge: false);
-
-			// remove every face above the cut plane
-			RemoveFacesAboveCut(mesh);
-
-			slice.AsVertices().TriangulateFaces(null, mesh, SliceHeight);
-
-			mesh.Transform(itemMatrix.Inverted);
-
-			return (mesh, slice);
+			return slice;
 		}
 
         public virtual void DrawEditor(Object3DControlsLayer layer, DrawEventArgs e)
@@ -106,95 +98,33 @@ namespace MatterHackers.MatterControl.DesignTools
             base.Apply(undoBuffer, new IObject3D[] { newPathObject });
 		}
 
-		private void RemoveFacesAboveCut(Mesh mesh)
-		{
-			var newVertices = new List<Vector3Float>();
-			var newFaces = new List<Face>();
-			var facesToRemove = new HashSet<int>();
-
-			var cutRemove = SliceHeight - cutMargin;
-			for (int i = 0; i < mesh.Faces.Count; i++)
-			{
-				var face = mesh.Faces[i];
-
-				if (mesh.Vertices[face.v0].Z >= cutRemove
-					&& mesh.Vertices[face.v1].Z >= cutRemove
-					&& mesh.Vertices[face.v2].Z >= cutRemove)
-				{
-					// record the face for removal
-					facesToRemove.Add(i);
-				}
-			}
-
-			// make a new list of all the faces we are keeping
-			var keptFaces = new List<Face>();
-			for (int i = 0; i < mesh.Faces.Count; i++)
-			{
-				if (!facesToRemove.Contains(i))
-				{
-					keptFaces.Add(mesh.Faces[i]);
-				}
-			}
-
-			var vertexCount = mesh.Vertices.Count;
-
-			// add the new vertices
-			mesh.Vertices.AddRange(newVertices);
-
-			// add the new faces (have to make the vertex indices to the new vertices
-			foreach (var newFace in newFaces)
-			{
-				Face faceNewIndices = newFace;
-				faceNewIndices.v0 += vertexCount;
-				faceNewIndices.v1 += vertexCount;
-				faceNewIndices.v2 += vertexCount;
-				keptFaces.Add(faceNewIndices);
-			}
-
-			mesh.Faces = new FaceList(keptFaces);
-		}
-
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			var valuesChanged = false;
-
 			return TaskBuilder(
 				"Find Slice".Localize(),
 				(reporter, cancellationToken) =>
 				{
 					var polygons = new Polygons();
-					VertexStorage = polygons.PolygonToPathStorage();
 
-					var newChildren = new List<Object3D>();
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
-						var meshPolygons = Cut(sourceItem);
+						var slicePolygons = FindSlice(sourceItem);
 						
-						polygons = polygons.CreateUnion(meshPolygons.polygons);
-
-						var newMesh = new Object3D()
-						{
-							Mesh = meshPolygons.mesh,
-							OwnerID = sourceItem.ID
-						};
-						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
-						newChildren.Add(newMesh);
+						polygons = polygons.CreateUnion(slicePolygons, ClipType.ctUnion, PolyFillType.pftPositive);
 					}
 
-					VertexStorage = polygons.PolygonToPathStorage();
+					VertexStorage = polygons.CreateVertexStorage();
 
 					RemoveAllButSource();
 					SourceContainer.Visible = false;
-					foreach (var child in newChildren)
-					{
-						this.Children.Add(child);
-					}
 
-					UiThread.RunOnIdle(() =>
+                    this.Mesh = VertexSourceToMesh.Extrude(VertexStorage, Constants.PathPolygonsHeight);
+
+                    UiThread.RunOnIdle(() =>
 					{
 						rebuildLocks.Dispose();
 						Invalidate(InvalidateType.DisplayValues);
@@ -213,6 +143,11 @@ namespace MatterHackers.MatterControl.DesignTools
         public IVertexSource GetRawPath()
         {
             return VertexStorage;
+        }
+
+        public IEnumerable<SceneOperation> GetOperations()
+        {
+            return BoxPathObject3D.GetOperations(GetType());
         }
     }
 }

@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.VectorMath;
 
-namespace DataConverters3D.Object3D.Nodes
+namespace Matter_CAD_Lib.PartPreviewWindow.View3D.GeometryNodes
 
 {
     public class NodeObject : INodeObject

@@ -65,9 +65,9 @@ namespace MatterHackers.MatterControl.Library
 
             this.ChildContainers.Add(
                 new DynamicContainerLink(
-                    "Design Tools".Localize(),
+                    "Tools".Localize(),
                     StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
-                    StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
+                    StaticData.Instance.LoadIcon(Path.Combine("Library", "tools_library_icon.png")),
                     () => new DesignToolsContainer())
                 {
                     IsReadOnly = true

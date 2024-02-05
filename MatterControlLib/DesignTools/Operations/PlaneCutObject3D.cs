@@ -195,18 +195,4 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 	}
-
-	public static class CutExtensionMethods
-	{
-		public static Polygons CreateUnion(this Polygons polygons, Polygons other)
-		{
-			Clipper clipper = new Clipper();
-			clipper.AddPaths(polygons, PolyType.ptSubject, true);
-			clipper.AddPaths(other, PolyType.ptSubject, true);
-
-			Polygons ret = new Polygons();
-			clipper.Execute(ClipType.ctUnion, ret, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-			return ret;
-		}
-	}
 }

@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using DataConverters3D.Object3D.Nodes;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools.Objects3D;
+using Matter_CAD_Lib.PartPreviewWindow.View3D.GeometryNodes;
 using MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -50,10 +50,10 @@ using System.Threading.Tasks;
 namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 {
     [HideMeterialAndColor]
-    public class NodesObject3D : Object3D
+    public class GeometryNodesObject3D : Object3D
     {
         private CancellationTokenSource cancellationToken;
-        public NodesObject3D()
+        public GeometryNodesObject3D()
         {
             Name = "Geometry Nodes".Localize();
         }
@@ -83,12 +83,12 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
 
                     // start the rebuild process
                     // find all the OutputMeshNodes
-                    List<(OutputMeshNode node, int index)> nodesAndIndices = new List<(OutputMeshNode outputNodes, int index)>();
+                    List<(OutputObject3DNode node, int index)> nodesAndIndices = new List<(OutputObject3DNode outputNodes, int index)>();
                     for(int i=0; i<Nodes.Count; i++)
                     {
-                        if (Nodes[i] is OutputMeshNode)
+                        if (Nodes[i] is OutputObject3DNode)
                         {
-                            nodesAndIndices.Add(((OutputMeshNode)Nodes[i], i));
+                            nodesAndIndices.Add(((OutputObject3DNode)Nodes[i], i));
                         }
                     }
 
@@ -146,11 +146,11 @@ namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes
                         foreach (var child in selectedItems)
                         {
                             var clone = child.DeepCopy();
-                            Nodes.Add(new InputMeshNode(clone)
+                            Nodes.Add(new Object3DWrapperNode(clone)
                             {
                                 WindowPosition = new Vector2(-300, 0)
                             });
-                            Nodes.Add(new OutputMeshNode()
+                            Nodes.Add(new OutputObject3DNode()
                             {
                                 WindowPosition = new Vector2(200, 0)
                             });

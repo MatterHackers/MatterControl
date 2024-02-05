@@ -21,6 +21,7 @@
   
   <ItemGroup>
     <Compile Remove="Community.CsharpSqlite\**" />
+    <Compile Remove="DesignTools\Objects3D\Nodes\**" />
     <Compile Remove="Launcher\**" />
     <Compile Remove="MatterControl.OpenGL\**" />
     <Compile Remove="MatterControl.Printing\**" />
@@ -34,6 +35,7 @@
     <Compile Remove="Tests\**" />
     <Compile Remove="Tools\**" />
     <EmbeddedResource Remove="Community.CsharpSqlite\**" />
+    <EmbeddedResource Remove="DesignTools\Objects3D\Nodes\**" />
     <EmbeddedResource Remove="Launcher\**" />
     <EmbeddedResource Remove="MatterControl.OpenGL\**" />
     <EmbeddedResource Remove="MatterControl.Printing\**" />
@@ -47,6 +49,7 @@
     <EmbeddedResource Remove="Tests\**" />
     <EmbeddedResource Remove="Tools\**" />
     <None Remove="Community.CsharpSqlite\**" />
+    <None Remove="DesignTools\Objects3D\Nodes\**" />
     <None Remove="Launcher\**" />
     <None Remove="MatterControl.OpenGL\**" />
     <None Remove="MatterControl.Printing\**" />

@@ -27,34 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using DataConverters3D.Object3D.Nodes;
-using Matter_CAD_Lib.DesignTools.Interfaces;
-using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
-using System.Linq;
-using System.Text.Json.Serialization;
+using MatterHackers.VectorMath;
 
-namespace MatterControlLib.PartPreviewWindow.View3D.GeometryNodes.Nodes
+namespace Matter_CAD_Lib.PartPreviewWindow.View3D.GeometryNodes
 {
-    public class InputMeshNode : NodeObject
+    public interface INodeObject
     {
-        public InputMeshNode()
-        {
-        }
-        
-        public InputMeshNode(IObject3D object3D)
-        {
-            Children.Add(object3D);
-        }
-
-        [JsonConverter(typeof(JsonIObject3DConverter))]
-        public AscendableSafeList<IObject3D> Children { get; set; } = new AscendableSafeList<IObject3D>(null);
-    }
-
-    public class OutputMeshNode : NodeObject
-    {
-        public OutputMeshNode()
-        {
-        }
+        string TypeName { get; set; }
+        Vector2 WindowPosition { get; set; }
+        Vector2 WindowSize { get; set; }
     }
 }

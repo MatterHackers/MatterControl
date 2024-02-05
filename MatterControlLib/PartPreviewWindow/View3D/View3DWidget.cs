@@ -2033,7 +2033,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 var selectedItem = Scene.SelectedItem;
 
-                if (selectedItem is NodesObject3D)
+                if (selectedItem is GeometryNodesObject3D)
                 {
                     nodeEditorHolder.Visible = true;
                 }

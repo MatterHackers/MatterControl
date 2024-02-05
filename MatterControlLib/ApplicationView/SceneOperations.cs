@@ -796,7 +796,7 @@ namespace MatterHackers.MatterControl
                         TwistOperation(),
 						PlaneCutOperation(),
 #if DEBUG
-						FindSliceOperation(),
+						SliceToPathOperation(),
 #endif
 						HollowOutOperation(),
 					}
@@ -899,11 +899,11 @@ namespace MatterHackers.MatterControl
         {
             return new SceneOperation("Add Geometry Nodes")
             {
-                ResultType = typeof(NodesObject3D),
+                ResultType = typeof(GeometryNodesObject3D),
                 TitleGetter = () => "Add Geometry Nodes".Localize(),
                 Action = async (sceneContext) =>
                 {
-                    var geometryNodes = new NodesObject3D();
+                    var geometryNodes = new GeometryNodesObject3D();
                     await geometryNodes.ConvertChildrenToNodes(sceneContext.Scene);
                 },
                 Icon = (theme) => StaticData.Instance.LoadIcon("nodes.png", 16, 16).GrayToColor(theme.TextColor),
@@ -1262,18 +1262,18 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static SceneOperation FindSliceOperation()
+		private static SceneOperation SliceToPathOperation()
 		{
-			return new SceneOperation("Find Slice")
+			return new SceneOperation("Slice to Path")
 			{
-				ResultType = typeof(PlaneCutObject3D),
-				TitleGetter = () => "Find Slice".Localize(),
+				ResultType = typeof(FindSliceObject3D),
+				TitleGetter = () => "Slice to Path".Localize(),
 				Action = (sceneContext) =>
 				{
 					var cut = new FindSliceObject3D();
 					cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (theme) => StaticData.Instance.LoadIcon("plane_cut.png", 16, 16).GrayToColor(theme.TextColor),
+				Icon = (theme) => StaticData.Instance.LoadIcon("slice_to_path.png", 16, 16).GrayToColor(theme.TextColor),
 				HelpTextGetter = () => "At least 1 part must be selected".Localize().Stars(),
 				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};

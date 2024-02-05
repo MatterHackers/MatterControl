@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Library
     {
         public DesignToolsContainer()
         {
-            Name = "Design Tools".Localize();
+            Name = "Tools".Localize();
             DefaultSort = new LibrarySortBehavior()
             {
                 SortKey = SortKey.ModifiedDate,
