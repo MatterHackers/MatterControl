@@ -60,6 +60,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		public DoubleOrExpression SliceHeight { get; set; } = 10;
         public VertexStorage VertexStorage { get; set; }
 
+        public enum FillTypes
+		{
+			Even_Odd, 
+			Non_Zero, 
+			Positive, 
+			Negative
+		};
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+        public FillTypes FillType { get; set; } = FillTypes.Even_Odd;
+
         public bool MeshIsSolidObject => false;
 
         private double cutMargin = .01;
@@ -113,8 +124,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var slicePolygons = FindSlice(sourceItem);
-						
-						polygons = polygons.CreateUnion(slicePolygons, ClipType.ctUnion, PolyFillType.pftPositive);
+
+						// set the fill type from the FillType tranlated to the ClipperLib enum
+						polygons = polygons.CreateUnion(slicePolygons, ClipType.ctUnion, (PolyFillType)FillType);
 					}
 
 					VertexStorage = polygons.CreateVertexStorage();

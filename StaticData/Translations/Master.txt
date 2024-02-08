@@ -1969,6 +1969,9 @@ Translated:Fill Holes
 English:Fill Thin Gaps
 Translated:Fill Thin Gaps
 
+English:Fill Type
+Translated:Fill Type
+
 English:Filters
 Translated:Filters
 
@@ -2937,6 +2940,9 @@ Translated:Make
 
 English:Make Component
 Translated:Make Component
+
+English:Make Hole
+Translated:Make Hole
 
 English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
 Translated:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
@@ -4377,6 +4383,9 @@ Translated:Remove
 
 English:Remove all auto generated supports
 Translated:Remove all auto generated supports
+
+English:Remove Clone
+Translated:Remove Clone
 
 English:Remove Items?
 Translated:Remove Items?
