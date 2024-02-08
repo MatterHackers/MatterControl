@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return translate;
 		}
 
-		public Vector3 Translation { get; set; } = Vector3.Zero;
+		public Vector3OrExpression Translation { get; set; } = Vector3.Zero;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
