@@ -32,6 +32,7 @@ using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -125,6 +126,12 @@ namespace MatterHackers.MatterControl.DesignTools
             var inputExpression = inExpression;
 
             inputExpression = ReplaceConstantsWithValues(owner, inputExpression);
+
+            if (typeof(T) == typeof(Vector3))
+            {
+                throw new NotImplementedException();
+                return (T)(object)Vector3.Parse(inputExpression);
+            }
 
             // check if the expression is an equation (starts with "=")
             if (inputExpression.Length > 0 && inputExpression[0] == '=')

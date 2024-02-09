@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2024, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -108,12 +108,18 @@ namespace MatterHackers.MatterControl.DesignTools
             field.ClearUndoHistory();
             field.Content.HAnchor = HAnchor.Stretch;
             PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme);
 
             return rowContainer;
         }
 
-        private static GuiWidget InsertSingleLineEdit(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex, string stringValue, ThemeConfig theme, UndoBuffer undoBuffer)
+        private GuiWidget InsertSingleLineEdit(PropertyEditor propertyEditor,
+            EditableProperty property,
+            EditorContext context,
+            ref int tabIndex,
+            string stringValue,
+            ThemeConfig theme,
+            UndoBuffer undoBuffer)
         {
             GuiWidget rowContainer;
             // create a string editor
@@ -123,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
             field.ClearUndoHistory();
             field.Content.HAnchor = HAnchor.Stretch;
             PropertyEditor.RegisterValueChanged(property, undoBuffer, context, field, (valueString) => valueString);
-            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme, true);
+            rowContainer = propertyEditor.CreateSettingsRow(property, field.Content, theme);
 
             // check for DirectoryPathAttribute
             var directoryPathAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<DirectoryPathAttribute>().FirstOrDefault();

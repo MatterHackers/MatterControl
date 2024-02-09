@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				// set the matrix for the inner object
-				ItemWithTransform.Matrix = Matrix4X4.CreateTranslation(Translation);
+				ItemWithTransform.Matrix = Matrix4X4.CreateTranslation(Translation.Value(this));
 			}
 
 			this.DoRebuildComplete();

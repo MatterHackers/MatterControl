@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
     {
         public Vector3 Value(IObject3D owner)
         {
-            var value = Expressions.EvaluateExpression<double>(owner, Expression);
+            var value = Expressions.EvaluateExpression<Vector3>(owner, Expression);
             if (owner.RebuildLocked)
             {
                 ExpressionValueAtLastRebuild = value.ToString();
