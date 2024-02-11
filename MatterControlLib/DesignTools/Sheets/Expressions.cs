@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -129,10 +130,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
             if (typeof(T) == typeof(Vector3))
             {
-                throw new NotImplementedException();
-                return (T)(object)Vector3.Parse(inputExpression);
+                // This can parse a Vector3 from a string like "[1,2,3]" or a DoubleOrExpression that has formula in it.
+                return (T)(object)Vector3OrExpression.ParseVector(owner, inExpression);
             }
-
+            
             // check if the expression is an equation (starts with "=")
             if (inputExpression.Length > 0 && inputExpression[0] == '=')
             {

@@ -28,9 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.Agg;
+using MatterHackers.VectorMath;
+using Sprache;
 
 namespace MatterHackers.MatterControl.DesignTools
 {

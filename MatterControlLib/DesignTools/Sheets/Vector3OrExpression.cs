@@ -47,6 +47,28 @@ namespace MatterHackers.MatterControl.DesignTools
             return value;
         }
 
+        public static Vector3 ParseVector(IObject3D owner, string inputExpression)
+        {
+            var resultVector = Vector3.Zero;
+
+            if (inputExpression.Length > 6
+                && inputExpression.StartsWith("[")
+                && inputExpression.EndsWith("]"))
+            {
+                var withoutBrackets = inputExpression.Substring(1, inputExpression.Length - 2);
+
+                var result = withoutBrackets.Split(',');
+                if (result.Length == 3)
+                {
+                    resultVector.X = Expressions.EvaluateExpression<double>(owner, result[0]);
+                    resultVector.Y = Expressions.EvaluateExpression<double>(owner, result[1]);
+                    resultVector.Z = Expressions.EvaluateExpression<double>(owner, result[2]);
+                }
+            }
+
+            return resultVector;
+        }
+
         public Vector3OrExpression(Vector3 value)
         {
             Expression = value.ToString();

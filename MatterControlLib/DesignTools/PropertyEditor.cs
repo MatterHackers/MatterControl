@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.DesignTools
             { typeof(bool), null },
             { typeof(StringOrExpression), null },
             { typeof(IntOrExpression), null },
-            { typeof(Vector3OrExpression), null },
             { typeof(Color), null },
             { typeof(Vector2), null },
             { typeof(Vector3), null },
@@ -91,6 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools
             SelectedChildrenPropertyEditor.Register();
             StringPropertyEditor.Register();
             DoubleOrExpressionPropertyEditor.Register();
+            Vector3OrExpressionPropertyEditor.Register();
         }
 
         public PropertyEditor(ThemeConfig theme, UndoBuffer undoBuffer)
@@ -830,10 +830,6 @@ namespace MatterHackers.MatterControl.DesignTools
                     (valueString) => { return valueString == "1"; },
                     (value) => { return ((bool)value) ? "1" : "0"; });
                 rowContainer = CreateSettingsRow(property, field.Content, theme);
-            }
-            else if (propertyValue is Vector3OrExpression vector3OrExpression)
-            {
-                throw new NotImplementedException();
             }
             else if (propertyValue is IntOrExpression intExpresion)
             {
