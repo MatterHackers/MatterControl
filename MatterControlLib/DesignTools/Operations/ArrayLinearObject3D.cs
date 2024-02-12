@@ -66,49 +66,47 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			SourceContainer.Visible = true;
             RemoveAllButSource();
 
-            using (new CenterAndHeightMaintainer(this, MaintainFlags.Bottom))
-			{
-				await ApplicationController.Instance.Tasks.Execute(
-					"Linear Array".Localize(),
-					null,
-					(reporter, cancellationToken) =>
+			await ApplicationController.Instance.Tasks.Execute(
+				"Linear Array".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					this.DebugDepth("Rebuild");
+
+                    var newChildren = new List<IObject3D>
+                    {
+                        SourceContainer
+                    };
+
+                    var arrayItem = SourceContainer.Children.First();
+
+                    var distance = Distance.Value(this);
+					var count = Count.Value(this);
+
+					// add in all the array items
+					for (int i = 0; i < Math.Max(count, 1); i++)
 					{
-						this.DebugDepth("Rebuild");
+						var next = arrayItem.DeepCopy();
+						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * distance * i);
+						newChildren.Add(next);
+					}
 
-						var newChildren = new List<IObject3D>();
-
-						newChildren.Add(SourceContainer);
-
-						var arrayItem = SourceContainer.Children.First();
-
-                        var distance = Distance.Value(this);
-						var count = Count.Value(this);
-
-						// add in all the array items
-						for (int i = 0; i < Math.Max(count, 1); i++)
-						{
-							var next = arrayItem.DeepCopy();
-							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * distance * i);
-							newChildren.Add(next);
-						}
-
-						Children.Modify(list =>
-						{
-							list.Clear();
-							list.AddRange(newChildren);
-						});
-
-                        SourceContainer.Visible = false;
-
-                        ProcessIndexExpressions();
-
-						rebuildLock.Dispose();
-						this.DoRebuildComplete();
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-
-						return Task.CompletedTask;
+                    SourceContainer.Visible = false;
+                        
+					Children.Modify(list =>
+					{
+						list.Clear();
+						list.AddRange(newChildren);
 					});
-			}
+
+                    ProcessIndexExpressions();
+
+					rebuildLock.Dispose();
+					this.DoRebuildComplete();
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+
+					return Task.CompletedTask;
+				});
 		}
 	}
 }
