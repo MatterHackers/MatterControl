@@ -60,9 +60,9 @@ namespace MatterHackers.MatterControl.DesignTools
                 var result = withoutBrackets.Split(',');
                 if (result.Length == 3)
                 {
-                    resultVector.X = Expressions.EvaluateExpression<double>(owner, result[0]);
-                    resultVector.Y = Expressions.EvaluateExpression<double>(owner, result[1]);
-                    resultVector.Z = Expressions.EvaluateExpression<double>(owner, result[2]);
+                    resultVector.X = Expressions.EvaluateExpression<double>(owner, result[0].Trim());
+                    resultVector.Y = Expressions.EvaluateExpression<double>(owner, result[1].Trim());
+                    resultVector.Z = Expressions.EvaluateExpression<double>(owner, result[2].Trim());
                 }
             }
 

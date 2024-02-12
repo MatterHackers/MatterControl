@@ -317,7 +317,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static RunningInterval SendInvalidateInRebuildOrder(List<UpdateItem> updateItems,
             InvalidateType invalidateType,
-            IObject3D sender = null)
+            IObject3D sender = null,
+            bool skipArrayObjectProcessing = true)
         {
             // and send the invalidate
             RunningInterval runningInterval = null;
@@ -343,6 +344,11 @@ namespace MatterHackers.MatterControl.DesignTools
                                 updateItem.rebuildLock.Dispose();
                                 updateItem.rebuildLock = null;
                                 var updateSender = sender == null ? updateItem.item : sender;
+                                if (skipArrayObjectProcessing
+                                    && updateItem.item.Parents().Where(i => i is ArrayObject3D).Any())
+                                {
+                                    continue;
+                                }
                                 updateItem.item.Invalidate(new InvalidateArgs(updateSender, invalidateType));
                             }
                         }

@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						});
 
                         SourceContainer.Visible = false;
+
                         ProcessIndexExpressions();
 
 						rebuildLock.Dispose();

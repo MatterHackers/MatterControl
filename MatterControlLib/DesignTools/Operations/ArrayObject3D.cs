@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
             base.Apply(undoBuffer);
         }
 
-        internal void ProcessIndexExpressions()
+        public void ProcessIndexExpressions()
         {
             var updateItems = Expressions.SortAndLockUpdateItems(this, (item) =>
             {
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
                 return true;
             }, true);
 
-            var runningInterval = Expressions.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties);
+            var runningInterval = Expressions.SendInvalidateInRebuildOrder(updateItems, InvalidateType.Properties, skipArrayObjectProcessing: false);
 
             while (runningInterval.Active)
             {
