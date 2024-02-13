@@ -72,7 +72,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return translate;
 		}
 
-		public Vector3OrExpression Translation { get; set; } = Vector3.Zero;
+        [Slider(1, 400, Easing.EaseType.Quadratic, useSnappingGrid: true)]
+        public Vector3OrExpression Translation { get; set; } = Vector3.Zero;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{

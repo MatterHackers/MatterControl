@@ -35,7 +35,9 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
@@ -44,7 +46,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 {
     public class StringPropertyEditor : IPropertyEditorFactory
     {
@@ -308,7 +310,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
         public static void Register()
         {
-            PropertyEditor.RegisterEditor(typeof(String), new StringPropertyEditor());
+            PropertyEditor.RegisterEditor(typeof(string), new StringPropertyEditor());
         }
     }
 }

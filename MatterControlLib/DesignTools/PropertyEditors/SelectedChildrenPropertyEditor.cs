@@ -32,6 +32,7 @@ using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -42,7 +43,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using static MatterHackers.Agg.UI.OnScreenKeyboard;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 {
     public class SelectedChildrenPropertyEditor : IPropertyEditorFactory
     {

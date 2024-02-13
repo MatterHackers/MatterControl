@@ -30,63 +30,40 @@ either expressed or implied, of the FreeBSD Project.
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools.Objects3D;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Linq;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 {
-    public class Vector3OrExpressionPropertyEditor : IPropertyEditorFactory
+    public class DoubleOrExpressionPropertyEditor : IPropertyEditorFactory
     {
+        public static void Register()
+        {
+            PropertyEditor.RegisterEditor(typeof(DoubleOrExpression), new DoubleOrExpressionPropertyEditor());
+        }
+
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
-            if (property.Value is Vector3OrExpression vector3Expresion)
+            if (property.Value is DoubleOrExpression doubleExpresion)
             {
                 var theme = propertyEditor.Theme;
                 var undoBuffer = propertyEditor.UndoBuffer;
 
-                // create a string editor
-                var field2 = new TextField(theme);
-                field2.Initialize(ref tabIndex);
-                field2.SetValue(vector3Expresion.Expression, false);
-                field2.ClearUndoHistory();
-                field2.Content.HAnchor = HAnchor.Stretch;
-                PropertyEditor.RegisterValueChanged(property, undoBuffer, context,
-                    field2,
-                    (valueString) => new Vector3OrExpression(valueString),
-                    (value) =>
-                    {
-                        return ((Vector3OrExpression)value).Expression;
-                    });
-                return PropertyEditor.CreateSettingsColumn(property, field2, fullWidth: true);
-
-
-
-
                 var propertyIObject3D = property.Source as IObject3D;
 
-                var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+                GuiWidget rowContainer;
                 {
-                    HAnchor = HAnchor.Stretch,
-                    VAnchor = VAnchor.Fit,
-                    Margin = theme.DefaultContainerPadding
-                };
-
-                // add 
-
-                for (int i = 0; i < 3; i++)
-                {
-                    GuiWidget rowContainer;
-
                     // create a string editor
                     var field = new ExpressionField(theme)
                     {
                         Name = property.DisplayName + " Field"
                     };
                     field.Initialize(ref tabIndex);
-                    if (vector3Expresion.Expression.Contains("="))
+                    if (doubleExpresion.Expression.Contains("="))
                     {
-                        field.SetValue(vector3Expresion.Expression, false);
+                        field.SetValue(doubleExpresion.Expression, false);
                     }
                     else // make sure it is formatted
                     {
@@ -96,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
                             format = "0." + new string('#', Math.Min(10, decimalPlaces.Number));
                         }
 
-                        //field.SetValue(vector3Expresion.Value(propertyIObject3D).ToString(format), false);
+                        field.SetValue(doubleExpresion.Value(propertyIObject3D).ToString(format), false);
                     }
 
                     field.ClearUndoHistory();
@@ -104,19 +81,19 @@ namespace MatterHackers.MatterControl.DesignTools
                         field,
                         (valueString) =>
                         {
-                            vector3Expresion.Expression = valueString;
-                            return vector3Expresion;
+                            doubleExpresion.Expression = valueString;
+                            return doubleExpresion;
                         },
                         (value) =>
                         {
-                            return ((Vector3OrExpression)value).Expression;
+                            return ((DoubleOrExpression)value).Expression;
                         });
 
                     rowContainer = propertyEditor.CreateSettingsRow(property,
                         PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) =>
                         {
-                            vector3Expresion.Expression = valueString;
-                            return vector3Expresion;
+                            doubleExpresion.Expression = valueString;
+                            return doubleExpresion;
                         }, theme),
                         theme);
 
@@ -125,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
                         // This code only executes when the in scene controls are updating the objects data and the display needs to tack them.
                         if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
                         {
-                            var newValue = (Vector3OrExpression)property.Value;
+                            var newValue = (DoubleOrExpression)property.Value;
                             // if (newValue.Expression != field.Value)
                             {
                                 // we should never be in the situation where there is an '=' as the in scene controls should be disabled
@@ -142,7 +119,7 @@ namespace MatterHackers.MatterControl.DesignTools
                                     }
 
                                     var rawValue = newValue.Value(propertyIObject3D);
-                                    //field.TextValue = rawValue.ToString(format);
+                                    field.TextValue = rawValue.ToString(format);
                                 }
                             }
                         }
@@ -150,19 +127,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
                     propertyIObject3D.Invalidated += RefreshField;
                     field.Content.Closed += (s, e) => propertyIObject3D.Invalidated -= RefreshField;
-
-                    topToBottom.AddChild(rowContainer);
                 }
 
-                return topToBottom;
+                return rowContainer;
             }
 
             return null;
-        }
-
-        public static void Register()
-        {
-            PropertyEditor.RegisterEditor(typeof(Vector3OrExpression), new Vector3OrExpressionPropertyEditor());
         }
     }
 }

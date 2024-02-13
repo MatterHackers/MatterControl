@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.ComponentModel;
+using System.Linq;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using MatterHackers.VectorMath;
 
@@ -51,22 +52,31 @@ namespace MatterHackers.MatterControl.DesignTools
         {
             var resultVector = Vector3.Zero;
 
+            var components = ExtractComponents(inputExpression);
+
+            if (components.Length == 3)
+            {
+                resultVector.X = Expressions.EvaluateExpression<double>(owner, components[0]);
+                resultVector.Y = Expressions.EvaluateExpression<double>(owner, components[1]);
+                resultVector.Z = Expressions.EvaluateExpression<double>(owner, components[2]);
+            }
+
+            return resultVector;
+        }
+
+        public static string[] ExtractComponents(string inputExpression)
+        {
             if (inputExpression.Length > 6
                 && inputExpression.StartsWith("[")
                 && inputExpression.EndsWith("]"))
             {
                 var withoutBrackets = inputExpression.Substring(1, inputExpression.Length - 2);
 
-                var result = withoutBrackets.Split(',');
-                if (result.Length == 3)
-                {
-                    resultVector.X = Expressions.EvaluateExpression<double>(owner, result[0].Trim());
-                    resultVector.Y = Expressions.EvaluateExpression<double>(owner, result[1].Trim());
-                    resultVector.Z = Expressions.EvaluateExpression<double>(owner, result[2].Trim());
-                }
+                // trim each component and return
+                return withoutBrackets.Split(',').Select(s => s.Trim()).ToArray();
             }
 
-            return resultVector;
+            return new string[0];
         }
 
         public Vector3OrExpression(Vector3 value)
