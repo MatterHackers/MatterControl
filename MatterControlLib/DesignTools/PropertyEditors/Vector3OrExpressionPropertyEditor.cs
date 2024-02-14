@@ -48,25 +48,10 @@ namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 
         public GuiWidget CreateEditor(PropertyEditor propertyEditor, EditableProperty property, EditorContext context, ref int tabIndex)
         {
-            if (property.Value is Vector3OrExpression vector3Expresion2)
+            if (property.Value is Vector3OrExpression vector3Expresion)
             {
                 var theme = propertyEditor.Theme;
                 var undoBuffer = propertyEditor.UndoBuffer;
-
-                //// create a string editor
-                //var field2 = new TextField(theme);
-                //field2.Initialize(ref tabIndex);
-                //field2.SetValue(vector3Expresion.Expression, false);
-                //field2.ClearUndoHistory();
-                //field2.Content.HAnchor = HAnchor.Stretch;
-                //PropertyEditor.RegisterValueChanged(property, undoBuffer, context,
-                //    field2,
-                //    (valueString) => new Vector3OrExpression(valueString),
-                //    (value) =>
-                //    {
-                //        return ((Vector3OrExpression)value).Expression;
-                //    });
-                //return PropertyEditor.CreateSettingsColumn(property, field2, fullWidth: true);
 
                 var propertyIObject3D = property.Source as IObject3D;
 
@@ -79,7 +64,7 @@ namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 
                 var axisLabels = new string[] { "X", "Y", "Z" };
 
-                var components = Vector3OrExpression.ExtractComponents(vector3Expresion2.Expression);
+                var components = Vector3OrExpression.ExtractComponents(vector3Expresion.Expression);
 
                 for (int index = 0; index < 3; index++)
                 {
@@ -100,9 +85,15 @@ namespace Matter_CAD_Lib.DesignTools.PropertyEditors
 
                     var content = PublicPropertySliderFunctions.GetFieldContentWithSlider(property, context, field, undoBuffer, (valueString) =>
                     {
-                        var newComponents = Vector3OrExpression.ExtractComponents(vector3Expresion2.Expression);
-                        newComponents[i] = valueString;
-                        return new Vector3OrExpression($"[{string.Join(", ", newComponents)}]");
+                        if (property.Value is Vector3OrExpression vector3Expresion)
+                        {
+                            var newComponents = Vector3OrExpression.ExtractComponents(vector3Expresion.Expression);
+                            newComponents[i] = valueString;
+                            return new Vector3OrExpression($"[{string.Join(", ", newComponents)}]");
+                        }
+
+                        // This should never happen
+                        return new Vector3OrExpression("[0, 0, 0]");
                     }, theme);
                     var rowContainer = new SettingsRow(axisLabels[i], property.Description, content, theme);
 

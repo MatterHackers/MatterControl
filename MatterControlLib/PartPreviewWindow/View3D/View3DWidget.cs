@@ -1982,12 +1982,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void Scene_Invalidated(object sender, InvalidateArgs e)
         {
+            //var sceneLongHashCode = Scene.GetLongHashCode();
             if (sender == Scene
                 && e.InvalidateType == InvalidateType.DisplayValues
                 && !rebuildTreePending)
             {
-                rebuildTreePending = true;
-                UiThread.RunOnIdle(this.RebuildTree);
+                //rebuildTreePending = true;
+                //UiThread.RunOnIdle(this.RebuildTree);
             }
 
             if (Scene.Descendants().Count() != lastSceneDescendantsCount
