@@ -38,12 +38,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Matter_CAD_Lib.DesignTools.Interfaces;
 using Matter_CAD_Lib.DesignTools.Objects3D;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D

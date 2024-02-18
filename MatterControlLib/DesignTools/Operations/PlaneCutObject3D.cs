@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			return TaskBuilder(
+			return RunAysncRebuild(
 				"Plane Cut".Localize(),
 				(reporter, cancellationToken) =>
 				{

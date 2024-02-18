@@ -750,7 +750,7 @@ namespace MatterHackers.MatterControl
 
 			built = true;
 
-			OperationSourceContainerObject3D.TaskBuilder = (name, func) => ApplicationController.Instance.Tasks.Execute(name, null, func);
+			Object3D.RunAysncRebuild = (name, func) => ApplicationController.Instance.Tasks.Execute(name, null, func);
 
 			registeredOperations = new List<SceneOperation>()
 			{

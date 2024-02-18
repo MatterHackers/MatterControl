@@ -31,10 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Matter_CAD_Lib.DesignTools.Objects3D;
 using Matter_CAD_Lib.DesignTools.Interfaces;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -47,9 +45,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
     public class OperationSourceContainerObject3D : Object3D
 	{
-		public static Func<string, Func<Action<double, string>, CancellationTokenSource, Task>, Task> TaskBuilder { get; set; } =
-			(name, func) => Task.Run(() => func(null, null));
-
 		public override Mesh Mesh
 		{
 			get

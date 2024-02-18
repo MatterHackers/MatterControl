@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			return TaskBuilder(
+			return RunAysncRebuild(
 				"Find Slice".Localize(),
 				(reporter, cancellationToken) =>
 				{

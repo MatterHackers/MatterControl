@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var valuesChanged = false;
 
-			return TaskBuilder(
+			return RunAysncRebuild(
 				"Hollow".Localize(),
 				(reporter, cancellationToken) =>
 				{

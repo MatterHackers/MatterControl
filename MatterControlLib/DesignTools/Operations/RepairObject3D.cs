@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// check if we have be initialized
 
-			return TaskBuilder(
+			return RunAysncRebuild(
 				"Repair".Localize(),
 				(reporter, cancellationTokenSource) =>
 				{

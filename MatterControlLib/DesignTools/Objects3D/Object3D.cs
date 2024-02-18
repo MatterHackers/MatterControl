@@ -361,6 +361,12 @@ namespace Matter_CAD_Lib.DesignTools.Objects3D
             return new Object3DRebuildLock(this);
         }
 
+        /// <summary>
+        /// This allows for the rebuild function to override the async rebuild function to have feeback if desired.
+        /// </summary>
+        public static Func<string, Func<Action<double, string>, CancellationTokenSource, Task>, Task> RunAysncRebuild { get; set; } =
+            (name, func) => Task.Run(() => func(null, null));
+
         public static IObject3D Load(string filePath, CancellationToken cancellationToken, CacheContext cacheContext = null, Action<double, string> progress = null)
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))

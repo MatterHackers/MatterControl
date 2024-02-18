@@ -135,7 +135,7 @@ namespace MatterHackers.DataConverters3D
             if (!File.Exists(filePath))
             {
                 // if the path starts with http, we are going to try to download it
-                if (filePath.StartsWith("http"))
+                if (filePath != null && filePath.StartsWith("http"))
                 {
                     var client = new HttpClient();
                     var response = client.GetAsync(filePath).Result;

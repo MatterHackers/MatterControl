@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100);
 			}
 
-			return TaskBuilder(
+			return RunAysncRebuild(
 				"Reduce".Localize(),
 				(reporter, cancellationToken) =>
 				{
