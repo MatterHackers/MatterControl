@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 		// For 32 bit max size to ray trace is 8 MB mesh for 64 bit the max size is 40 MB.
 		private long MaxFileSizeForTracing => Is32Bit ? 8 * 1000 * 1000 : 16 * 1000 * 1000;
 
-		private long MaxFileSizeForThumbnail => Is32Bit ? 16 * 1000 * 1000 : 32 * 1000 * 1000;
+		private long MaxFileSizeForThumbnail => Is32Bit ? 16 * 1000 * 1000 : 64 * 1000 * 1000;
 
 		private ThemeConfig theme = null;
 

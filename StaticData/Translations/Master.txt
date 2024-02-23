@@ -1198,6 +1198,9 @@ Translated:Create
 English:Create a printer to export G-Code
 Translated:Create a printer to export G-Code
 
+English:Create a Sku plate for this sku.
+Translated:Create a Sku plate for this sku.
+
 English:Create Account
 Translated:Create Account
 
@@ -1233,6 +1236,9 @@ Translated:Create Raft
 
 English:Create Skirt
 Translated:Create Skirt
+
+English:Create Sku Plate
+Translated:Create Sku Plate
 
 English:Create Support
 Translated:Create Support
@@ -5118,6 +5124,9 @@ Translated:Skirt
 
 English:Skirt Height
 Translated:Skirt Height
+
+English:Sku Plate
+Translated:Sku Plate
 
 English:Slice
 Translated:Slice
