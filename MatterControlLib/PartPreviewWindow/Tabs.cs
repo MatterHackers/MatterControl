@@ -341,7 +341,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private int NumberOfFixedTabs => 2;
+		private int NumberOfFixedTabs
+		{
+			get
+			{
+				if (ApplicationController.Instance.IsMatterControlPro())
+				{
+                    return 2;
+                }
+                else
+				{
+                    return 3;
+                }
+			}
+		}
 
 		public void MoveTabRight(ITab tab)
 		{
