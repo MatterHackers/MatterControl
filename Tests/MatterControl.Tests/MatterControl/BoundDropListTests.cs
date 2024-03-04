@@ -12,7 +12,7 @@ namespace MatterControl.Tests.MatterControl
 {
 	public class BoundDropListTests
 	{
-		[Fact]
+		[StaFact]
 		public void BoundDropListHonorsWhitelist()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;

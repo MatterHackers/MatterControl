@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
     
 	public class SheetDataTests
     {
-        [Fact]
+        [StaFact]
 		public void Calculations()
         {
 			var sheetData = new SheetData(4, 4);
@@ -55,8 +55,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
         }
     }
 
-	// [TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class PrimitiveAndSheetsTests
+    [Collection("MatterControl.UI.Automation")]
+    public class PrimitiveAndSheetsTests
 	{
 		public PrimitiveAndSheetsTests()
 		{
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public void SheetEditorLayoutAndNavigation()
 		{
 			var systemWindow = new SystemWindow(800, 600)
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			2000);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DimensionsWorkWhenNoSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ScaleObjectWorksWithAndWithoutSheet()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Fact]
+		[StaFact]
 		public void SheetEditorNavigationTests()
 		{
 			var systemWindow = new SystemWindow(800, 600)

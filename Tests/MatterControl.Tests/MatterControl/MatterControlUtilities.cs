@@ -58,8 +58,8 @@ using MatterHackers.Agg.Tests;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    //[TestFixture, Category("MatterControl.UI.Automation")]
-	public static class MatterControlUtilities
+    [Collection("MatterControl.UI.Automation")]
+    public static class MatterControlUtilities
 	{
 		private static bool saveImagesForDebug = true;
 

@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public AxisAlignedBoundingBox GetEditorWorldspaceAABB(Object3DControlsLayer layer)
 		{
-			return new AxisAlignedBoundingBox(new Vector3[] { worldStartPosition, worldEndPosition });
+			return new AxisAlignedBoundingBox(worldStartPosition, worldEndPosition);
 		}
 
 		private void CreateWidgetIfRequired(Object3DControlsLayer controlLayer)

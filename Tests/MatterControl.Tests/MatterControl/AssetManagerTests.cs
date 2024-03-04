@@ -17,7 +17,7 @@ namespace MatterControl.Tests.MatterControl
 	public class AssetManagerTests
 	{
 
-		[Fact]
+		[StaFact]
 		public async Task StoreAssetFile()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -56,7 +56,7 @@ namespace MatterControl.Tests.MatterControl
 			public override string AssetPath { get; set ; }
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task StoreAsset()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -96,7 +96,7 @@ namespace MatterControl.Tests.MatterControl
             Assert.Equal(0, assetManager.PublishCount);//, "No files should have been published");
         }
 
-		[Fact]
+		[StaFact]
 		public async Task StoreMesh()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;

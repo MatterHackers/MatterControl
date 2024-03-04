@@ -8,11 +8,11 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	// Most of these tests are disabled. Local Library needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
-	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class LocalLibraryTests
+    // Most of these tests are disabled. Local Library needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
+    [Collection("MatterControl.UI.Automation")]
+    public class LocalLibraryTests
 	{
-		[Fact]
+		[StaFact]
 		public async Task LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ParentFolderRefreshedOnPathPop()
 		{
 			// Expected: When descending into a child folder and moving items into the parent, popping the path to the parent should refresh and show the moved content
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 
-		[Fact]
+		[StaFact]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DoubleClickSwitchesToOpenTab()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

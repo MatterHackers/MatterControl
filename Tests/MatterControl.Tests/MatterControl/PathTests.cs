@@ -43,7 +43,7 @@ namespace MatterControl.Tests.MatterControl
 	//[TestFixture, Parallelizable(ParallelScope.Children)]
 	public class PathTests
 	{
-		[Fact]
+		[StaFact]
 		public Task CacheablePathTest()
 		{
 			StaticData.RootPath = StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -58,7 +58,7 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Fact]
+		[StaFact]
 		public Task CacheDirectoryTest()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -73,7 +73,7 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Fact]
+		[StaFact]
 		public Task TempPathTest()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;

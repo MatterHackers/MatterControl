@@ -10,7 +10,7 @@ namespace MatterControl.Tests.MatterControl
 	//[TestFixture, Category("ConfigIni")]
 	public class ImportSettingsTests
 	{
-		[Fact]
+		[StaFact]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -39,7 +39,7 @@ namespace MatterControl.Tests.MatterControl
             Assert.Empty(printerSettings.GetValue(notAnExistingKey));//, "Invalid settings keys should be skipped");
         }
 
-		[Fact]
+		[StaFact]
 		public void MergeDropsFieldsIfValueAlreadySet()
 		{
 			// Validates that field are dropped during import if they are already set in a base layer

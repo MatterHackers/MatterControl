@@ -45,7 +45,7 @@ namespace MatterControl.Tests.MatterControl
 	public class TranslationsTests
 	{
         // Culture-sensitive DateTime strings here.
-        [Fact] // [Test, Category("Translations"), SetCulture("")]
+        [StaFact] // [Test, Category("Translations"), SetCulture("")]
         public void RelativeFriendlyDatesTest()
 		{
 			{
@@ -110,7 +110,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 
-        [Fact] // [Test, Category("Translations")]
+        [StaFact] // [Test, Category("Translations")]
         public void EnglishLinesOnlyContainEnglishCharachters()
         {
             string fullPath = Path.Combine(MatterControlUtilities.StaticDataPath, "Translations");

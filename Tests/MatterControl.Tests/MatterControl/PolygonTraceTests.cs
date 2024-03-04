@@ -42,12 +42,12 @@ namespace MatterHackers.RayTracer
 	//[TestFixture, Category("Agg.RayTracer")]
 	public class PolygonTraceTests
 	{
-        [Fact] // [Test, Ignore("WorkInProgress")]
+        [StaFact] // [Test, Ignore("WorkInProgress")]
         public void RayBundleSameResultAsIndividualRays()
 		{
 		}
 
-		[Fact]
+		[StaFact]
 		public void TriangleMajorAxis()
 		{
 			var triangle0 = new TriangleShape(
@@ -75,7 +75,7 @@ namespace MatterHackers.RayTracer
 			Assert.Equal(1, triangle2.MajorAxis);
 		}
 
-		[Fact]
+		[StaFact]
 		public void CorrectRayOnCircle()
 		{
 			var testContext = new TestContext();
@@ -117,7 +117,7 @@ namespace MatterHackers.RayTracer
 			Assert.True(primaryInfo.HitType == IntersectionType.FrontFace, "always have a hit");
 		}
 
-		[Fact]
+		[StaFact]
 		public void PolygonHitTests()
 		{
 			SolidMaterial redStuff = new SolidMaterial(new ColorF(1, 0, 0), 0, 0, 2);

@@ -655,7 +655,7 @@ namespace MatterHackers.DataConverters3D
 						&& vertices[indices[1]] != vertices[indices[2]]
 						&& vertices[indices[2]] != vertices[indices[0]])
 					{
-						mesh.CreateFace(new Vector3[] { vertices[indices[0]], vertices[indices[1]], vertices[indices[2]] });
+						mesh.CreateFace(vertices[indices[0]], vertices[indices[1]], vertices[indices[2]]);
 					}
 
 					progressData.ReportProgress0To50();

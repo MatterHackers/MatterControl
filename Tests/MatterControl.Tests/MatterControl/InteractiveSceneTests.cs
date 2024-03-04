@@ -61,7 +61,7 @@ namespace MatterControl.Tests.MatterControl
 			AppContext.Platform.ProcessCommandline();
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task CombineTests()
 		{
 			StartupMC();
@@ -280,7 +280,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task SubtractTests()
 		{
 			StartupMC();
@@ -325,7 +325,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task HoleTests()
 		{
 			StartupMC();
@@ -381,7 +381,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task CopyObjectTests()
         {
             StartupMC();
@@ -397,7 +397,7 @@ namespace MatterControl.Tests.MatterControl
             }
         }
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
 			StartupMC();
@@ -486,7 +486,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task ScaleObjectMaintainsCorrectAabb()
 		{
 			// build cube with scale and undo
@@ -537,7 +537,7 @@ namespace MatterControl.Tests.MatterControl
             }
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task ScaleAndRotateMaintainsCorrectAabb()
 		{
 			{
@@ -571,7 +571,7 @@ namespace MatterControl.Tests.MatterControl
             }
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task RotateMaintainsCorrectAabb()
 		{
 			{
@@ -597,7 +597,7 @@ namespace MatterControl.Tests.MatterControl
             }
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task AabbCalculatedCorrectlyForAlignedFitObject()
 		{
 			StartupMC();
@@ -641,7 +641,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.True(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 		}
 
-		[Fact]
+		[StaFact]
 		public void CombineTests2()
         {
 			// overlaping results in simple new mesh
@@ -729,7 +729,7 @@ namespace MatterControl.Tests.MatterControl
 
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task AlignObjectHasCorrectPositionsOnXAxis()
 		{
 			StartupMC();
@@ -786,7 +786,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.True(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
 		}
 
-        [Fact] // [Test, Category("InteractiveScene")]
+        [StaFact] // [Test, Category("InteractiveScene")]
         public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
 			StartupMC();

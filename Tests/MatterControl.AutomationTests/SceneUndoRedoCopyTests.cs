@@ -47,8 +47,8 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    //[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class SceneUndoRedoCopyTests
+    [Collection("MatterControl.UI.Automation")]
+    public class SceneUndoRedoCopyTests
 	{
 		private const string CoinName = "MatterControl - Coin.stl";
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task CopyRemoveUndoRedo()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task UndoRedoCopy()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoOnUnGroupSingleMesh()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoOnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoUnGroup2Items()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoMirror()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: This test once failed on GLFW. Could be timing or accidental input.
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoTranslateXY()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -349,20 +349,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 		// Parallel testing of this single test.
-		//[Fact] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
-		//[Fact] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY1() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY2() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY3() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY4() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY5() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY6() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY7() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY8() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXY9() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXYa() => await ValidateDoUndoTranslateXY();
+		//[StaFact] public async Task ValidateDoUndoTranslateXYb() => await ValidateDoUndoTranslateXY();
 
 
-		[Fact]
+		[StaFact]
 		public async Task ValidateDoUndoTranslateZ()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

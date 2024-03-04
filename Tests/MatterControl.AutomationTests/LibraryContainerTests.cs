@@ -54,7 +54,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public Task TestExistsForEachContainerType()
 		{
 			// Find all test methods on this test class
@@ -72,7 +72,7 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task NoContentChangedOnLoad()
 		{
 			bool onIdlePumpActive = true;
@@ -133,7 +133,7 @@ namespace MatterControl.Tests.MatterControl
 			onIdlePumpActive = false;
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddFiresContentChangedEvent()
 		{
 			string filePath = Path.Combine(MatterControlUtilities.RootPath, "Tests", "TestData", "TestParts", "Batman.stl");

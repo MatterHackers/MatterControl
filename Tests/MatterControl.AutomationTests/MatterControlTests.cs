@@ -40,10 +40,10 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class MatterControlTests
+    [Collection("MatterControl.UI.Automation")]
+    public class MatterControlTests
 	{
-		[Fact]
+		[StaFact]
 		public async Task ThumbnailGenerationMode()
 		{
 			await MatterControlUtilities.RunTest(async (testRunner) =>
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
             });
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ViewGenerateSupportMenu()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

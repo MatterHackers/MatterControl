@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl
 									var mesh = new Mesh();
 									foreach (var poly in levelingData.GetLevelingTriangles())
 									{
-										mesh.CreateFace(new Vector3[] { poly.v2, poly.v1, poly.v0 });
+										mesh.CreateFace(poly.v2, poly.v1, poly.v0);
 									}
 									mesh.Save(saveParams.FileName, CancellationToken.None);
 									break;

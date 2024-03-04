@@ -51,10 +51,10 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    //[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class PartPreviewTests
+    [Collection("MatterControl.UI.Automation")]
+    public class PartPreviewTests
 	{
-		[Fact]
+		[StaFact]
 		public async Task CopyButtonMakesCopyOfPart()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddMultiplePartsMultipleTimes()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddingImageConverterWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		// NOTE: On GLFW, this test appears to fail due to the (lack of) behavior in PressModifierKeys.
-		[Fact]
+		[StaFact]
 		public static async Task ControlClickInDesignTreeView()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 110);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DesignTabFileOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 60);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task GroupAndUngroup()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RemoveButtonRemovesParts()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -586,7 +586,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task SaveAsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task SaveAsToLocalLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

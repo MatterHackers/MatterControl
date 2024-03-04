@@ -41,7 +41,7 @@ namespace MatterControl.Tests.MatterControl
 	
 	public class ApplicationControllerTests
 	{
-		[Fact]
+		[StaFact]
 		public async Task LoadCachableShouldFallbackToStaticData()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;
@@ -66,7 +66,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.False(File.Exists(cachePath), "After fall back to StaticData content, cache should not contain fall back content");
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task LoadCachableShouldStoreCollectedResults()
 		{
 			StaticData.RootPath = MatterControlUtilities.StaticDataPath;

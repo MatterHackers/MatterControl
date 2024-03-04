@@ -104,7 +104,7 @@ M300 S3000 P30   ; Resume Tone";
 						   }).ToList();
 		}
 
-		[Fact]
+		[StaFact]
 		public void ModifyPulsePrinterProfilesSettings()
 		{
 			// This is not really a test. It updaets our profiles with new settings.
@@ -215,7 +215,7 @@ M300 S3000 P30   ; Resume Tone";
 			int a = 0;
 		}
 
-		[Fact]
+		[StaFact]
 		public void AllMaterialsLibraryHasGoodProfiles()
 		{
 			var materialSettingsDirectory = Path.Combine(MatterControlUtilities.StaticDataPath, "Materials");
@@ -292,7 +292,7 @@ M300 S3000 P30   ; Resume Tone";
 		}
 
 
-		[Fact]
+		[StaFact]
 		public void LayerGCodeHasExpectedValue()
 		{
 			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"
@@ -336,7 +336,7 @@ M300 S3000 P30   ; Resume Tone";
 			settings.Save(printer.ConfigPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public void StartGCodeWithExtrudesMustFollowM109Heatup()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -375,7 +375,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void CsvBedSizeExistsAndHasTwoValues()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -398,7 +398,7 @@ M300 S3000 P30   ; Resume Tone";
             });
 		}
 
-		[Fact]
+		[StaFact]
 		public void CsvPrintCenterExistsAndHasTwoValues()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -439,7 +439,7 @@ M300 S3000 P30   ; Resume Tone";
             });
 		}
 
-		[Fact]
+		[StaFact]
 		public void RetractLengthIsLessThanTwenty()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -458,7 +458,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void ExtruderCountIsGreaterThanZero()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -478,7 +478,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void MinFanSpeedOneHundredOrLess()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -499,7 +499,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void PlaAndAbsDensitySetCorrectly()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -526,7 +526,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void MaxFanSpeedOneHundredOrLess()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -547,7 +547,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void NoCurlyBracketsInGcode()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -565,7 +565,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void BottomSolidLayersNotZero()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -584,7 +584,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void NoFirstLayerBedTempInStartGcode()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -594,7 +594,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -633,7 +633,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -659,7 +659,7 @@ M300 S3000 P30   ; Resume Tone";
             });
 		}
 
-		[Fact]
+		[StaFact]
 		public void FirstLayerExtrusionWidthGreaterThanNozzleDiameterIfSet()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -681,7 +681,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void SupportMaterialAssignedToExtruderOne()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
@@ -703,7 +703,7 @@ M300 S3000 P30   ; Resume Tone";
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>

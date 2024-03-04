@@ -440,11 +440,9 @@ namespace Matter_CAD_Lib.DesignTools.Objects3D
 
                 foreach (var vertex in mesh3mf.Triangles)
                 {
-                    mesh.CreateFace(new Vector3[] {
-                                            new Vector3(vertex.V1.X,vertex.V1.Y,vertex.V1.Z),
-                                            new Vector3(vertex.V2.X,vertex.V2.Y,vertex.V2.Z),
-                                            new Vector3(vertex.V3.X,vertex.V3.Y,vertex.V3.Z),
-                                        });
+                    mesh.CreateFace(new Vector3(vertex.V1.X,vertex.V1.Y,vertex.V1.Z),
+                        new Vector3(vertex.V2.X,vertex.V2.Y,vertex.V2.Z),
+                        new Vector3(vertex.V3.X,vertex.V3.Y,vertex.V3.Z));
                 }
 
                 object3D.Children.Add(new Object3D()

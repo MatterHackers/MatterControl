@@ -43,7 +43,7 @@ namespace MatterHackers.Agg.Tests
     
 	public class AmfDocumentTests
 	{
-		[Fact]
+		[StaFact]
 		public void NoElementWhitespaceTest()
 		{
 			// Amf xml lacking whitespace between elements
@@ -59,7 +59,7 @@ namespace MatterHackers.Agg.Tests
 			}
 		}
 
-		[Fact]
+		[StaFact]
 		public void LoadAmfFullyIndented()
 		{
 			var testContext = new TestContext();
@@ -78,7 +78,7 @@ namespace MatterHackers.Agg.Tests
 			Assert.Equal(PrintOutputTypes.Solid, child.OutputType);
 		}
 
-		[Fact]
+		[StaFact]
 		public void SaveAmfContainingXmlSpecialCharacters()
 		{
 			const string XmlSpecialCharacters = "&<>'\"";
@@ -115,7 +115,7 @@ namespace MatterHackers.Agg.Tests
 			Assert.Equal(XmlSpecialCharacters, outputObject.Children.First().Name);
 		}
 
-		[Fact]
+		[StaFact]
 		public void SaveAmfWithSpecificCulture()
 		{
 			var originalCultureInfo = CultureInfo.CurrentCulture;

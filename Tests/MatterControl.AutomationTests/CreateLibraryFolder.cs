@@ -34,10 +34,10 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-    //[TestFixture, Category("MatterControl.UI.Automation")]
+    [Collection("MatterControl.UI.Automation")]
     public class CreateLibraryFolder
     {
-        [Fact]
+        [StaFact]
         public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
         {
             await MatterControlUtilities.RunTest((testRunner) =>

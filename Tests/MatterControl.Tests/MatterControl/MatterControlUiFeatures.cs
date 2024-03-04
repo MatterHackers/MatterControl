@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.UI
 		/// <summary>
 		/// Bug #94150618 - Left margin is not applied on GuiWidget
 		/// </summary>
-		[Fact]
+		[StaFact]
 		public void TopToBottomContainerAppliesExpectedMarginToToggleView()
 		{
 			TestContext testContext = new TestContext();

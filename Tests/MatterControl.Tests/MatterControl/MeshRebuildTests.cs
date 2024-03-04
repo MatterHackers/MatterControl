@@ -57,7 +57,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AppContext.Platform.ProcessCommandline();
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task PinchChangesMesh()
 		{
 			SetupEvnironment();
@@ -88,7 +88,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AppContext.Platform.ProcessCommandline();
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task TestSheetFunctions()
 		{
 			SetupEvnironment();

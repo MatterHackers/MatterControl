@@ -35,11 +35,11 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	// Most of these tests are disabled. Local Library and Queue needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
-	//[TestFixture, Category("MatterControl.UI.Automation"), Parallelizable(ParallelScope.Children)]
-	public class PrintQueueTests
+    // Most of these tests are disabled. Local Library and Queue needs to be added by InitializeLibrary() (MatterHackers.MatterControl.ApplicationController).
+    [Collection("MatterControl.UI.Automation")]
+    public class PrintQueueTests
 	{
-		[Fact]
+		[StaFact]
 		public async Task AddOneItemToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddTwoItemsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		
-		[Fact]
+		[StaFact]
 		public async Task DragTo3DViewAddsItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddAmfFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddStlFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task AddGCodeFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

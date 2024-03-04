@@ -40,7 +40,7 @@ namespace MatterHackers.Agg.Tests
     
     public class JsonSerializationTests
     {
-        [Fact]
+        [StaFact]
         public async Task CubeObject3D_SerializeDeserializeTest()
         {
             // Arrange: Create an instance of CubeObject3D and set properties

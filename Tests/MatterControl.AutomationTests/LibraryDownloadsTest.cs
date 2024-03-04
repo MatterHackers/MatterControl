@@ -8,8 +8,8 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	//[TestFixture, Category("MatterControl.UI.Automation")]
-	public class LibraryDownloadsTests : IDisposable
+    [Collection("MatterControl.UI.Automation")]
+    public class LibraryDownloadsTests : IDisposable
 	{
 		public LibraryDownloadsTests()
 		{
@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlUtilities.DeleteDownloadsSubFolder();
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DownloadsAddButtonAddsZipFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task RenameDownloadsPrintItem()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task CreateFolder()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

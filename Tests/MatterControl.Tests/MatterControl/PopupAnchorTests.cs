@@ -26,7 +26,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task WindowTest()
 		{
 			var systemWindow = new PopupsTestWindow(700, 300)
@@ -79,7 +79,7 @@ namespace MatterControl.Tests.MatterControl
 			}, 30);
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task TopBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -115,7 +115,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task TopTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -151,7 +151,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task BottomTopPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -187,7 +187,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task BottomBottomPopupTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -224,7 +224,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect down to up
-		[Fact]
+		[StaFact]
 		public async Task BottomTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -266,7 +266,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task TopTopUpRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -310,7 +310,7 @@ namespace MatterControl.Tests.MatterControl
 
 
 		// Redirect up to down
-		[Fact]
+		[StaFact]
 		public async Task BottomTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -352,7 +352,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task TopTopDownRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -395,7 +395,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect left to right
-		[Fact]
+		[StaFact]
 		public async Task LeftRightRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)
@@ -449,7 +449,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		// Redirect right to left
-		[Fact]
+		[StaFact]
 		public async Task RightLeftRedirectTest()
 		{
 			var systemWindow = new PopupsTestWindow(800, 600)

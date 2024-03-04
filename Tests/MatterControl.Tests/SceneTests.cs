@@ -88,7 +88,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             return tempPath;
         }
 
-        [Fact]
+        [StaFact]
         public void AmfFilesSaveObjectProperties()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -136,7 +136,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.True(new AxisAlignedBoundingBox(20, -10, -10, 40, 10, 10).Equals(aabb2, .001));
         }
 
-        [Fact]
+        [StaFact]
         public async Task AutoArrangeChildrenTests()
         {
             // arrange a single item around the origin
@@ -223,7 +223,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             }
         }
 
-        [Fact]
+        [StaFact]
         public void CreatesAndLinksAmfsForUnsavedMeshes()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -255,7 +255,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.True(meshItem.Mesh.Faces.Count > 0);
         }
 
-        [Fact]
+        [StaFact]
         public async Task ResavedSceneRemainsConsistent()
         {
             AssetObject3D.AssetManager = new AssetManager();
@@ -388,7 +388,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             return scene;
         }
 
-        [Fact]
+        [StaFact]
         public void SaveSimpleScene()
         {
             var scene = new InteractiveScene();
@@ -416,7 +416,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             UserSettings.Instance.set(UserSettingsKey.PublicProfilesSha, "0"); //Clears DB so we will download the latest list
         }
 
-        [Fact]
+        [StaFact]
         public void WorldColorBasicTest()
         {
             var scene = SampleScene();
@@ -449,7 +449,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.Equal(Color.Black, redItem.WorldColor(null));//, "WorldColor on Red with null param should be root color (Black)");
         }
 
-        [Fact]
+        [StaFact]
         public void WorldFunctionNonExistingAncestorOverride()
         {
             var scene = SampleScene();
@@ -487,7 +487,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.Equal(this.RootOutputType, redItem.WorldOutputType(nonAncestor));//, "WorldOutputType on Red with non-ancestor should be RootOutputType");
         }
 
-        [Fact]
+        [StaFact]
         public void WorldMaterialIndexBasicTest()
         {
             var scene = SampleScene();
@@ -498,7 +498,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
         }
 
-        [Fact]
+        [StaFact]
         public void WorldMatrixBasicTest()
         {
             var scene = SampleScene();
@@ -531,7 +531,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
             Assert.Equal(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(null));//, "WorldMatrix on Red with null param should be root color (RootMatrix)");
         }
 
-        [Fact]
+        [StaFact]
         public void WorldOutputTypeBasicTest()
         {
             var scene = SampleScene();

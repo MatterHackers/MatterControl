@@ -21,7 +21,7 @@ namespace MatterControl.Tests
 	{
 		private static Type debuggableAttribute = typeof(DebuggableAttribute);
 
-        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        [StaFact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
         public void MatterControlAssemblyIsOptimized()
 		{
 #if (!DEBUG)
@@ -29,7 +29,7 @@ namespace MatterControl.Tests
 #endif
 		}
 
-        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        [StaFact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
         public void MatterControlKnownAssembliesAreOptimized()
 		{
 			//MatterHackers.RenderOpenGl.dll
@@ -87,7 +87,7 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Fact]
+		[StaFact]
 		public async Task MatterControlRuns()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -101,7 +101,7 @@ namespace MatterControl.Tests
 		}
 #endif
 
-        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        [StaFact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
         public void MatterControlDependenciesAreOptimized()
 		{
 #if (!DEBUG)
@@ -122,7 +122,7 @@ namespace MatterControl.Tests
 #endif
 		}
 
-        [Fact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
+        [StaFact] // [Test, ChildProcessTest, Category("ReleaseQuality")]
         public void ClassicDebugComplicationFlagTests()
 		{
 #if (!DEBUG)

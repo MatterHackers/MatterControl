@@ -73,7 +73,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(MatterControlUtilities.RootPath);
 		}
 
-		[Fact]
+		[StaFact]
 		public Task TestExistsForEachUIFieldType()
 		{
 			var testClass = this.GetType();
@@ -95,7 +95,7 @@ namespace MatterControl.Tests.MatterControl
 			return Task.CompletedTask;
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -126,7 +126,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task PositiveDoubleFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -157,7 +157,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task IntFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -188,7 +188,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task DoubleOrPercentFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -234,7 +234,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task IntOrMmFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -280,7 +280,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public void CorrectStyleForSettingsRow()
 		{
 			var settings = new PrinterSettings();
@@ -349,37 +349,37 @@ namespace MatterControl.Tests.MatterControl
 			FrostedSerialPort.MockPortsForTest = false;
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void CheckboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void MaterialIndexFieldTest()
 		{
 			Assert.Fail();
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void ColorFieldTest()
 		{
 			Assert.Fail();
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void ChildrenSelectorListFieldTest()
 		{
 			Assert.Fail();
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void ToggleboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task MultilineStringFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -411,7 +411,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task Vector2FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -435,7 +435,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task Vector3FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -459,7 +459,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task Vector4FieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -485,7 +485,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task BoundsFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
@@ -509,13 +509,13 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-        [Fact] // [Test, Ignore("Not Implemented")]
+        [StaFact] // [Test, Ignore("Not Implemented")]
         public void ListFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Fact]
+		[StaFact]
 		public async Task ExtruderOffsetFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;

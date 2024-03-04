@@ -128,8 +128,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
                     nextK = nextJ + 1;
 
                     // Create north, then south face
-                    mesh.CreateFace(new[] { pixels[k].Top, pixels[j].Top, pixels[nextJ].Top, pixels[nextK].Top });
-                    mesh.CreateFace(new[] { pixels[j].Bottom, pixels[k].Bottom, pixels[nextK].Bottom, pixels[nextJ].Bottom });
+                    mesh.CreateFace(pixels[k].Top, pixels[j].Top, pixels[nextJ].Top, pixels[nextK].Top);
+                    mesh.CreateFace(pixels[j].Bottom, pixels[k].Bottom, pixels[nextK].Bottom, pixels[nextJ].Bottom);
                     workIndex++;
 
                     if (workIndex % notificationInterval == 0)
@@ -146,8 +146,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
                 k = j + 1;
 
                 // Create east, then west face
-                mesh.CreateFace(new[] { leftRow[k].Top, leftRow[j].Top, leftRow[j].Bottom, leftRow[k].Bottom });
-                mesh.CreateFace(new[] { rightRow[k].Top, rightRow[j].Top, rightRow[j].Bottom, rightRow[k].Bottom });
+                mesh.CreateFace(leftRow[k].Top, leftRow[j].Top, leftRow[j].Bottom, leftRow[k].Bottom);
+                mesh.CreateFace(rightRow[k].Top, rightRow[j].Top, rightRow[j].Bottom, rightRow[k].Bottom);
                 workIndex++;
 
                 if (workIndex % notificationInterval == 0)
@@ -163,8 +163,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
                 k = j + 1;
 
                 // Create north, then south face
-                mesh.CreateFace(new[] { frontRow[k].Top, frontRow[j].Top, frontRow[j].Bottom, frontRow[k].Bottom });
-                mesh.CreateFace(new[] { backRow[k].Top, backRow[j].Top, backRow[j].Bottom, backRow[k].Bottom });
+                mesh.CreateFace(frontRow[k].Top, frontRow[j].Top, frontRow[j].Bottom, frontRow[k].Bottom);
+                mesh.CreateFace(backRow[k].Top, backRow[j].Top, backRow[j].Bottom, backRow[k].Bottom);
                 workIndex++;
 
                 if (workIndex % notificationInterval == 0)

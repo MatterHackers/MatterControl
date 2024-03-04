@@ -6,10 +6,10 @@ using Xunit;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	//[TestFixture, Category("MatterControl.UI.Automation")]
-	public class ShowTerminalButtonClickedOpensTerminal
+    [Collection("MatterControl.UI.Automation")]
+    public class ShowTerminalButtonClickedOpensTerminal
 	{
-		[Fact]
+		[StaFact]
 		public async Task ClickingShowTerminalButtonOpensTerminal()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

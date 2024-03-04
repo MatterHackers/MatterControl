@@ -49,8 +49,9 @@ namespace IxMilia.ThreeMf
                 throw new ThreeMfParseException($"Invalid object id {objectId}.");
             }
 
-            var obj = resourceMap[objectId];
             var transform = ThreeMfMatrix.ParseMatrix(element.Attribute(ThreeMfMatrix.TransformAttributeName));
+
+            var obj = resourceMap[objectId];
             return new ThreeMfComponent(obj, transform);
         }
     }

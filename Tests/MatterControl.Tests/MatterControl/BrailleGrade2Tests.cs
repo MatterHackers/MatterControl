@@ -35,7 +35,7 @@ namespace MatterControl.Tests.MatterControl
 	//[TestFixture, Category("TextCreator")]
 	public class BrailleGrade2Tests
 	{
-		[Fact]
+		[StaFact]
 		public static void ConvertBrailleText()
 		{
 			Assert.True(BrailleGrade2.ConvertWord("taylor") == "taylor");

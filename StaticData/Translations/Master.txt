@@ -3595,6 +3595,12 @@ Translated:Open Recent
 English:Open Settings View Options
 Translated:Open Settings View Options
 
+English:Open Sku
+Translated:Open Sku
+
+English:Open the backend for this sku.
+Translated:Open the backend for this sku.
+
 English:Open the Output folder for this ID.
 Translated:Open the Output folder for this ID.
 
