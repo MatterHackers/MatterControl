@@ -1,6 +1,34 @@
-﻿using Superpower;
+﻿/*
+Copyright (c) 2024, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using Superpower;
 using Superpower.Parsers;
-using Superpower.Tokenizers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,94 +38,58 @@ namespace FormulaParser
 {
     public static class ExpressionParser
     {
-        public enum TokenType
-        {
-            Number,
-            Plus,
-            Minus,
-            Times,
-            Divide,
-            LessThan,
-            LessThanOrEqual,
-            GreaterThan,
-            GreaterThanOrEqual,
-            LParen,
-            RParen,
-            Comma,
-            Text,
-            Identifier, // For function names
-        }
+        private static readonly TokenListParser<ExpressionTokenType, string> Text =
+            Token.EqualTo(ExpressionTokenType.Text).Select(tok => tok.ToStringValue().Trim('"'));
 
-        private static Tokenizer<TokenType> tokenizer = new TokenizerBuilder<TokenType>()
-            .Match(Character.EqualTo('+'), TokenType.Plus)
-            .Match(Character.EqualTo('-'), TokenType.Minus)
-            .Match(Character.EqualTo('*'), TokenType.Times)
-            .Match(Character.EqualTo('/'), TokenType.Divide)
-            .Match(Numerics.Decimal, TokenType.Number)
-            .Match(Character.EqualTo('<').IgnoreThen(Character.EqualTo('=')), TokenType.LessThanOrEqual)
-            .Match(Character.EqualTo('<'), TokenType.LessThan)
-            .Match(Character.EqualTo('>').IgnoreThen(Character.EqualTo('=')), TokenType.GreaterThanOrEqual)
-            .Match(Character.EqualTo('>'), TokenType.GreaterThan)
-            .Match(Character.EqualTo('('), TokenType.LParen)
-            .Match(Character.EqualTo(')'), TokenType.RParen)
-            .Match(Character.EqualTo(','), TokenType.Comma)
-            .Match(QuotedString.CStyle, TokenType.Text)
-            .Match(Identifier.CStyle, TokenType.Identifier) // For function names
-            .Ignore(Span.WhiteSpace)
-            .Build();
+        private static readonly TokenListParser<ExpressionTokenType, string> Expression;
 
-        private static readonly TokenListParser<TokenType, string> Text =
-            Token.EqualTo(TokenType.Text).Select(tok => tok.ToStringValue().Trim('"'));
+        private static readonly TokenListParser<ExpressionTokenType, string> Comparison;
 
-        private static readonly TokenListParser<TokenType, string> Expression;
-
-        private static readonly TokenListParser<TokenType, string> Comparison;
-
-        private static readonly TokenListParser<TokenType, string> GeneralFunction =
-            from identifier in Token.EqualTo(TokenType.Identifier)
-            from _ in Token.EqualTo(TokenType.LParen)
-            from args in Parse.Ref(() => Expression).ManyDelimitedBy(Token.EqualTo(TokenType.Comma))
-            from __ in Token.EqualTo(TokenType.RParen)
+        private static readonly TokenListParser<ExpressionTokenType, string> GeneralFunction =
+            from identifier in Token.EqualTo(ExpressionTokenType.Identifier)
+            from _ in Token.EqualTo(ExpressionTokenType.LParen)
+            from args in Parse.Ref(() => Expression).ManyDelimitedBy(Token.EqualTo(ExpressionTokenType.Comma))
+            from __ in Token.EqualTo(ExpressionTokenType.RParen)
             select ApplyFunction(identifier.ToStringValue(), args.ToArray());
 
         static ExpressionParser()
         {
-            var Number = Token.EqualTo(TokenType.Number).Apply(Numerics.DecimalDecimal);
+            var Number = Token.EqualTo(ExpressionTokenType.Number).Apply(Numerics.DecimalDecimal);
             var Unary =
                 Parse.Chain(
-                    Token.EqualTo(TokenType.Minus),
+                    Token.EqualTo(ExpressionTokenType.Minus),
                     Number,
                     (op, left, right) => -right
                 );
 
             var Factor = Parse.Ref(() => Expression)
-                .Between(Token.EqualTo(TokenType.LParen), Token.EqualTo(TokenType.RParen))
+                .Between(Token.EqualTo(ExpressionTokenType.LParen), Token.EqualTo(ExpressionTokenType.RParen))
                 //.Or(Unary)
                 .Or(Number.Select(n => n.ToString(CultureInfo.InvariantCulture)))
                 .Or(Text);
 
-            var Term = Parse.Chain(Token.EqualTo(TokenType.Times).Or(Token.EqualTo(TokenType.Divide)), Factor, (op, left, right) =>
-                op.Kind == TokenType.Times ? (decimal.Parse(left) * decimal.Parse(right)).ToString() : (decimal.Parse(left) / decimal.Parse(right)).ToString());
+            var Term = Parse.Chain(Token.EqualTo(ExpressionTokenType.Times).Or(Token.EqualTo(ExpressionTokenType.Divide)), Factor, (op, left, right) =>
+                op.Kind == ExpressionTokenType.Times ? (decimal.Parse(left) * decimal.Parse(right)).ToString() : (decimal.Parse(left) / decimal.Parse(right)).ToString());
 
-            var AddAndSub = Parse.Chain(Token.EqualTo(TokenType.Plus).Or(Token.EqualTo(TokenType.Minus)), Term, (op, left, right) =>
-                op.Kind == TokenType.Plus ? (decimal.Parse(left) + decimal.Parse(right)).ToString() : (decimal.Parse(left) - decimal.Parse(right)).ToString());
+            var AddAndSub = Parse.Chain(Token.EqualTo(ExpressionTokenType.Plus).Or(Token.EqualTo(ExpressionTokenType.Minus)), Term, (op, left, right) =>
+                op.Kind == ExpressionTokenType.Plus ? (decimal.Parse(left) + decimal.Parse(right)).ToString() : (decimal.Parse(left) - decimal.Parse(right)).ToString());
 
             Comparison =
                 Parse.Chain(
-                    Token.EqualTo(TokenType.LessThan).Or(Token.EqualTo(TokenType.LessThanOrEqual))
-                    .Or(Token.EqualTo(TokenType.GreaterThan)).Or(Token.EqualTo(TokenType.GreaterThanOrEqual)),
+                    Token.EqualTo(ExpressionTokenType.LessThan).Or(Token.EqualTo(ExpressionTokenType.LessThanOrEqual))
+                    .Or(Token.EqualTo(ExpressionTokenType.GreaterThan)).Or(Token.EqualTo(ExpressionTokenType.GreaterThanOrEqual)),
                     AddAndSub, // Change this to use AddAndSub instead of Term
                     (op, left, right) =>
                     {
                         switch (op.Kind)
                         {
-                            case TokenType.LessThan:
+                            case ExpressionTokenType.LessThan:
                                 return Convert.ToDouble(left) < Convert.ToDouble(right) ? "true" : "false";
-                            case TokenType.LessThanOrEqual:
+                            case ExpressionTokenType.LessThanOrEqual:
                                 return Convert.ToDouble(left) <= Convert.ToDouble(right) ? "true" : "false";
-                            case TokenType.GreaterThan:
+                            case ExpressionTokenType.GreaterThan:
                                 return Convert.ToDouble(left) > Convert.ToDouble(right) ? "true" : "false";
-                            case TokenType.GreaterThanOrEqual:
+                            case ExpressionTokenType.GreaterThanOrEqual:
                                 return Convert.ToDouble(left) >= Convert.ToDouble(right) ? "true" : "false";
                             default:
                                 throw new InvalidOperationException("Unexpected comparison operator.");
@@ -115,7 +107,7 @@ namespace FormulaParser
 
         public static string ParseAndEvaluate(string input)
         {
-            var tokens = tokenizer.Tokenize(input);
+            var tokens = ExpressionTokenizer.Tokenize(input);
             return Expression.Parse(tokens);
         }
 
