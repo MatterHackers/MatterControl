@@ -49,6 +49,8 @@ namespace FormulaParser
             .Match(Character.EqualTo('('), ExpressionTokenType.LParen)
             .Match(Character.EqualTo(')'), ExpressionTokenType.RParen)
             .Match(Character.EqualTo(','), ExpressionTokenType.Comma)
+            .Match(Character.EqualTo('=').IgnoreThen(Character.EqualTo('=')), ExpressionTokenType.Equal)
+            .Match(Character.EqualTo('!').IgnoreThen(Character.EqualTo('=')), ExpressionTokenType.NotEqual)
             .Match(QuotedString.CStyle, ExpressionTokenType.Text)
             .Match(Identifier.CStyle, ExpressionTokenType.Identifier) // For function names
             .Ignore(Span.WhiteSpace)

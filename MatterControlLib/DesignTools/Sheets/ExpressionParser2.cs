@@ -38,77 +38,121 @@ namespace FormulaParser
 {
     public static class ExpressionParser
     {
-        private static readonly TokenListParser<ExpressionTokenType, string> Text =
+        private static readonly TokenListParser<ExpressionTokenType, string> TextTlp =
             Token.EqualTo(ExpressionTokenType.Text).Select(tok => tok.ToStringValue().Trim('"'));
 
-        private static readonly TokenListParser<ExpressionTokenType, string> Expression;
+        private static readonly TokenListParser<ExpressionTokenType, string> ExpressionTlp;
 
-        private static readonly TokenListParser<ExpressionTokenType, string> Comparison;
+        private static readonly TokenListParser<ExpressionTokenType, string> ComparisonTlp;
 
-        private static readonly TokenListParser<ExpressionTokenType, string> GeneralFunction =
+        private static readonly TokenListParser<ExpressionTokenType, string> GeneralFunctionTlp =
             from identifier in Token.EqualTo(ExpressionTokenType.Identifier)
             from _ in Token.EqualTo(ExpressionTokenType.LParen)
-            from args in Parse.Ref(() => Expression).ManyDelimitedBy(Token.EqualTo(ExpressionTokenType.Comma))
+            from args in Parse.Ref(() => ExpressionTlp).ManyDelimitedBy(Token.EqualTo(ExpressionTokenType.Comma))
             from __ in Token.EqualTo(ExpressionTokenType.RParen)
             select ApplyFunction(identifier.ToStringValue(), args.ToArray());
 
         static ExpressionParser()
         {
-            var Number = Token.EqualTo(ExpressionTokenType.Number).Apply(Numerics.DecimalDecimal);
-            var Unary =
-                Parse.Chain(
-                    Token.EqualTo(ExpressionTokenType.Minus),
-                    Number,
-                    (op, left, right) => -right
-                );
+            var NumberTlp = Token.EqualTo(ExpressionTokenType.Number).Apply(Numerics.DecimalDecimal);
 
-            var Factor = Parse.Ref(() => Expression)
-                .Between(Token.EqualTo(ExpressionTokenType.LParen), Token.EqualTo(ExpressionTokenType.RParen))
-                //.Or(Unary)
-                .Or(Number.Select(n => n.ToString(CultureInfo.InvariantCulture)))
-                .Or(Text);
+            TokenListParser<ExpressionTokenType, string> FactorTlp = null;
 
-            var Term = Parse.Chain(Token.EqualTo(ExpressionTokenType.Times).Or(Token.EqualTo(ExpressionTokenType.Divide)), Factor, (op, left, right) =>
+            var UnaryTlp =
+                from minus in Token.EqualTo(ExpressionTokenType.Minus)
+                from expr in Parse.Ref(() => FactorTlp)
+                select "-" + expr;
+
+            FactorTlp = UnaryTlp
+                .Or(Parse.Ref(() => ExpressionTlp).Between(Token.EqualTo(ExpressionTokenType.LParen), Token.EqualTo(ExpressionTokenType.RParen)))
+                .Or(NumberTlp.Select(n => n.ToString(CultureInfo.InvariantCulture)))
+                .Or(TextTlp);
+
+            var TermTlp = Parse.Chain(Token.EqualTo(ExpressionTokenType.Times).Or(Token.EqualTo(ExpressionTokenType.Divide)), FactorTlp, (op, left, right) =>
                 op.Kind == ExpressionTokenType.Times ? (decimal.Parse(left) * decimal.Parse(right)).ToString() : (decimal.Parse(left) / decimal.Parse(right)).ToString());
 
-            var AddAndSub = Parse.Chain(Token.EqualTo(ExpressionTokenType.Plus).Or(Token.EqualTo(ExpressionTokenType.Minus)), Term, (op, left, right) =>
-                op.Kind == ExpressionTokenType.Plus ? (decimal.Parse(left) + decimal.Parse(right)).ToString() : (decimal.Parse(left) - decimal.Parse(right)).ToString());
+            var AddAndSubTlp = Parse.Chain(
+                Token.EqualTo(ExpressionTokenType.Plus).Or(Token.EqualTo(ExpressionTokenType.Minus)),
+                TermTlp, // Make sure this is using terms which can include factors or unary operations
+                    (op, left, right) =>
+                    {
+                        if (op.Kind == ExpressionTokenType.Plus)
+                        {
+                            return (decimal.Parse(left, CultureInfo.InvariantCulture) + decimal.Parse(right, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                        }
+                        else
+                        { // This is a true subtraction operation
+                            return (decimal.Parse(left, CultureInfo.InvariantCulture) - decimal.Parse(right, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                        }
+                    });
 
-            Comparison =
+            ComparisonTlp =
                 Parse.Chain(
-                    Token.EqualTo(ExpressionTokenType.LessThan).Or(Token.EqualTo(ExpressionTokenType.LessThanOrEqual))
-                    .Or(Token.EqualTo(ExpressionTokenType.GreaterThan)).Or(Token.EqualTo(ExpressionTokenType.GreaterThanOrEqual)),
-                    AddAndSub, // Change this to use AddAndSub instead of Term
+                    Token.EqualTo(ExpressionTokenType.LessThan)
+                    .Or(Token.EqualTo(ExpressionTokenType.LessThanOrEqual))
+                    .Or(Token.EqualTo(ExpressionTokenType.GreaterThan))
+                    .Or(Token.EqualTo(ExpressionTokenType.GreaterThanOrEqual))
+                    .Or(Token.EqualTo(ExpressionTokenType.Equal))
+                    .Or(Token.EqualTo(ExpressionTokenType.NotEqual)),
+                    AddAndSubTlp, // Change this to use AddAndSub instead of Term
                     (op, left, right) =>
                     {
                         switch (op.Kind)
                         {
                             case ExpressionTokenType.LessThan:
-                                return Convert.ToDouble(left) < Convert.ToDouble(right) ? "true" : "false";
+                                return Convert.ToDouble(left) < Convert.ToDouble(right) ? "1" : "0";
                             case ExpressionTokenType.LessThanOrEqual:
-                                return Convert.ToDouble(left) <= Convert.ToDouble(right) ? "true" : "false";
+                                return Convert.ToDouble(left) <= Convert.ToDouble(right) ? "1" : "0";
                             case ExpressionTokenType.GreaterThan:
-                                return Convert.ToDouble(left) > Convert.ToDouble(right) ? "true" : "false";
+                                return Convert.ToDouble(left) > Convert.ToDouble(right) ? "1" : "0";
                             case ExpressionTokenType.GreaterThanOrEqual:
-                                return Convert.ToDouble(left) >= Convert.ToDouble(right) ? "true" : "false";
+                                return Convert.ToDouble(left) >= Convert.ToDouble(right) ? "1" : "0";
+                            case ExpressionTokenType.Equal:
+                                {
+                                    bool isNumericLeft = double.TryParse(left, out double leftNum);
+                                    bool isNumericRight = double.TryParse(right, out double rightNum);
+                                    if (isNumericLeft && isNumericRight)
+                                    {
+                                        return leftNum == rightNum ? "1" : "0";
+                                    }
+                                    else
+                                    {
+                                        // Assuming non-numeric values are strings; adjust as necessary for your context.
+                                        return left == right ? "1" : "0";
+                                    }
+                                }
+                            case ExpressionTokenType.NotEqual:
+                                {
+                                    bool isNumericLeft = double.TryParse(left, out double leftNum);
+                                    bool isNumericRight = double.TryParse(right, out double rightNum);
+                                    if (isNumericLeft && isNumericRight)
+                                    {
+                                        return leftNum != rightNum ? "1" : "0";
+                                    }
+                                    else
+                                    {
+                                        // Assuming non-numeric values are strings; adjust as necessary for your context.
+                                        return left != right ? "1" : "0";
+                                    }
+                                }
                             default:
                                 throw new InvalidOperationException("Unexpected comparison operator.");
                         }
                     }
                     );
 
-            Expression = Comparison
-                .Or(GeneralFunction)
-                .Or(Text)
-                .Or(AddAndSub) // Include AddAndSub in the Expression composition
-                .Or(Factor); // Ensure that standalone factors can be evaluated.
+            ExpressionTlp = ComparisonTlp
+                .Or(GeneralFunctionTlp)
+                .Or(TextTlp)
+                .Or(AddAndSubTlp) // Include AddAndSub in the Expression composition
+                .Or(FactorTlp); // Ensure that standalone factors can be evaluated.
         }
 
 
         public static string ParseAndEvaluate(string input)
         {
             var tokens = ExpressionTokenizer.Tokenize(input);
-            return Expression.Parse(tokens);
+            return ExpressionTlp.Parse(tokens);
         }
 
         private static string ApplyFunction(string name, IList<dynamic> args)

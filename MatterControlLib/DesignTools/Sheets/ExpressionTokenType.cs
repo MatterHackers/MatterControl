@@ -45,10 +45,18 @@ namespace FormulaParser
         [Token(Category = "operator", Example = "/")]
         Divide,
 
+        [Token(Category = "operator", Example = "<")]
         LessThan,
+        [Token(Category = "operator", Example = "<=")]
         LessThanOrEqual,
+        [Token(Category = "operator", Example = ">")]
         GreaterThan,
+        [Token(Category = "operator", Example = ">=")]
         GreaterThanOrEqual,
+        [Token(Category = "operator", Example = "==")]
+        Equal,
+        [Token(Category = "operator", Example = "!=")]
+        NotEqual,
 
         [Token(Example = "(")]
         LParen,
