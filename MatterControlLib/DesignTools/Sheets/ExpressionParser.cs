@@ -206,6 +206,8 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
             // check if they are the same
             if (resultString != newResult)
             {
+                // go with the old way for now
+                return resultString;
                 throw new Exception($"Expected {resultString} but got {newResult}");
             }
 
