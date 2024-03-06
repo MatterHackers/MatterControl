@@ -49,11 +49,19 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
 
         private readonly TokenListParser<ExpressionTokenType, string> GeneralFunctionTlp;
 
-        private readonly TokenListParser<ExpressionTokenType, string> VariableTlp;
-
         public void SetVariable(string name, string value)
         {
             variables[name] = value;
+        }
+
+        private string ReplaceVariables(string input)
+        {
+            var result = input;
+            foreach (var variable in variables)
+            {
+                result = result.Replace(variable.Key, variable.Value);
+            }
+            return result;
         }
 
         public ExpressionParserNew()
@@ -71,7 +79,8 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
             FactorTlp = UnaryTlp
                 .Or(Parse.Ref(() => ExpressionTlp).Between(Token.EqualTo(ExpressionTokenType.LParen), Token.EqualTo(ExpressionTokenType.RParen)))
                 .Or(NumberTlp.Select(n => n.ToString(CultureInfo.InvariantCulture)))
-                .Or(TextTlp);
+                .Or(TextTlp)
+                .Or(Token.EqualTo(ExpressionTokenType.Identifier).Select(tok => ReplaceVariables(tok.ToStringValue())));
 
             var TermTlp = Parse.Chain(Token.EqualTo(ExpressionTokenType.Times).Or(Token.EqualTo(ExpressionTokenType.Divide)), FactorTlp, (op, left, right) =>
                 op.Kind == ExpressionTokenType.Times ? (decimal.Parse(left) * decimal.Parse(right)).ToString() : (decimal.Parse(left) / decimal.Parse(right)).ToString());
@@ -90,21 +99,6 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                             return (decimal.Parse(left, CultureInfo.InvariantCulture) - decimal.Parse(right, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
                         }
                     });
-
-            VariableTlp =
-                Token.EqualTo(ExpressionTokenType.Identifier)
-                .Select(tok =>
-                {
-                    if (variables.Count > 0)
-                    {
-                        var varName = tok.ToStringValue();
-                        // Check if the variable exists in the dictionary and return its value if it does.
-                        // Otherwise, return the variable name itself (or throw an exception if needed).
-                        return variables.TryGetValue(varName, out var value) ? value : varName; // Or throw new KeyNotFoundException($"Variable '{varName}' is not defined.");
-                    }
-
-                    return tok.ToStringValue();
-                }).Try();
 
             GeneralFunctionTlp =
                 from identifier in Token.EqualTo(ExpressionTokenType.Identifier).Select(tok => tok.ToStringValue())
@@ -172,7 +166,6 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                     );
 
             ExpressionTlp = GeneralFunctionTlp
-                .Or(VariableTlp)
                 .Or(ComparisonTlp)
                 .Or(TextTlp)
                 .Or(AddAndSubTlp)

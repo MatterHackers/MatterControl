@@ -125,31 +125,31 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                 RunTest("\"test\" == \"test\"", "1");
                 RunTest("\"test\" == \"test2\"", "0");
                 // test with constants
-                //RunTest("A1+Radius",
-                //    "5",
-                //    new List<(string, string)>()
-                //    {
-                //        ("A1", "2"),
-                //        ("Radius", "3")
-                //    });
+                RunTest("A1+Radius",
+                    "5",
+                    new List<(string, string)>()
+                    {
+                        ("A1", "2"),
+                        ("Radius", "3")
+                    });
 
-                //RunTest("5+3*(7-4)/A1+Radius",
-                //    "12.5",
-                //    new List<(string, string)>()
-                //    {
-                //        ("A1", "2"),
-                //        ("Radius", "3")
-                //    });
+                RunTest("5+3*(7-4)/A1+Radius",
+                    "12.5",
+                    new List<(string, string)>()
+                    {
+                        ("A1", "2"),
+                        ("Radius", "3")
+                    });
 
-                //RunTest("concat(ipbase, concat(sku, concat(13, concat(of, count))))",
-                //    "basevalWG-XP-LM13 of 75",
-                //    new List<(string, string)>()
-                //    {
-                //        ("ipbase", "baseval"),
-                //        ("sku", "WG-XP-LM"),
-                //        ("index", "13"),
-                //        ("count", "75")
-                //    });
+                RunTest("concat(ipbase, concat(sku, concat(13, concat(\" of \", count))))",
+                    "basevalWG-XP-LM13 of 75",
+                    new List<(string, string)>()
+                    {
+                        ("ipbase", "baseval"),
+                        ("sku", "WG-XP-LM"),
+                        ("index", "13"),
+                        ("count", "75")
+                    });
             }
         }
 
