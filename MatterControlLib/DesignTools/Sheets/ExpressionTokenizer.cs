@@ -32,7 +32,7 @@ using Superpower.Model;
 using Superpower.Parsers;
 using Superpower.Tokenizers;
 
-namespace FormulaParser
+namespace Matter_CAD_Lib.DesignTools.Sheets
 {
     public static class ExpressionTokenizer
     {

@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using Superpower.Display;
 using Superpower.Parsers;
 
-namespace FormulaParser
+namespace Matter_CAD_Lib.DesignTools.Sheets
 {
     public enum ExpressionTokenType
     {

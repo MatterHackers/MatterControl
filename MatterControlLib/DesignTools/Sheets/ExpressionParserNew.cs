@@ -34,26 +34,31 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace FormulaParser
+namespace Matter_CAD_Lib.DesignTools.Sheets
 {
-    public static class ExpressionParser
+    public class ExpressionParserNew
     {
-        private static readonly TokenListParser<ExpressionTokenType, string> TextTlp =
+        private Dictionary<string, string> variables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        private readonly TokenListParser<ExpressionTokenType, string> TextTlp =
             Token.EqualTo(ExpressionTokenType.Text).Select(tok => tok.ToStringValue().Trim('"'));
 
-        private static readonly TokenListParser<ExpressionTokenType, string> ExpressionTlp;
+        private readonly TokenListParser<ExpressionTokenType, string> ExpressionTlp;
 
-        private static readonly TokenListParser<ExpressionTokenType, string> ComparisonTlp;
+        private readonly TokenListParser<ExpressionTokenType, string> ComparisonTlp;
 
-        private static readonly TokenListParser<ExpressionTokenType, string> GeneralFunctionTlp =
-            from identifier in Token.EqualTo(ExpressionTokenType.Identifier)
-            from _ in Token.EqualTo(ExpressionTokenType.LParen)
-            from args in Parse.Ref(() => ExpressionTlp).ManyDelimitedBy(Token.EqualTo(ExpressionTokenType.Comma))
-            from __ in Token.EqualTo(ExpressionTokenType.RParen)
-            select ApplyFunction(identifier.ToStringValue(), args.ToArray());
+        private readonly TokenListParser<ExpressionTokenType, string> GeneralFunctionTlp;
 
-        static ExpressionParser()
+        private readonly TokenListParser<ExpressionTokenType, string> VariableTlp;
+
+        public void SetVariable(string name, string value)
         {
+            variables[name] = value;
+        }
+
+        public ExpressionParserNew()
+        {
+
             var NumberTlp = Token.EqualTo(ExpressionTokenType.Number).Apply(Numerics.DecimalDecimal);
 
             TokenListParser<ExpressionTokenType, string> FactorTlp = null;
@@ -85,6 +90,31 @@ namespace FormulaParser
                             return (decimal.Parse(left, CultureInfo.InvariantCulture) - decimal.Parse(right, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
                         }
                     });
+
+            VariableTlp =
+                Token.EqualTo(ExpressionTokenType.Identifier)
+                .Select(tok =>
+                {
+                    if (variables.Count > 0)
+                    {
+                        var varName = tok.ToStringValue();
+                        // Check if the variable exists in the dictionary and return its value if it does.
+                        // Otherwise, return the variable name itself (or throw an exception if needed).
+                        return variables.TryGetValue(varName, out var value) ? value : varName; // Or throw new KeyNotFoundException($"Variable '{varName}' is not defined.");
+                    }
+
+                    return tok.ToStringValue();
+                }).Try();
+
+            GeneralFunctionTlp =
+                from identifier in Token.EqualTo(ExpressionTokenType.Identifier).Select(tok => tok.ToStringValue())
+                from _ in Token.EqualTo(ExpressionTokenType.LParen).Try()
+                from args in Parse.Ref(() => ExpressionTlp)
+                    .ManyDelimitedBy(Token.EqualTo(ExpressionTokenType.Comma))
+                    .Try() // This ensures that if the argument list is not correct, it will not throw an exception.
+                    .Select(args => args.Select(arg => arg ?? "defaultArgument").ToArray()) // Replace 'defaultArgument' with a sensible default or error handling.
+                from __ in Token.EqualTo(ExpressionTokenType.RParen).Try()
+                select ApplyFunction(identifier, args); // Ensure ApplyFunction handles null or unexpected values properly.
 
             ComparisonTlp =
                 Parse.Chain(
@@ -141,21 +171,22 @@ namespace FormulaParser
                     }
                     );
 
-            ExpressionTlp = ComparisonTlp
-                .Or(GeneralFunctionTlp)
+            ExpressionTlp = GeneralFunctionTlp
+                .Or(VariableTlp)
+                .Or(ComparisonTlp)
                 .Or(TextTlp)
-                .Or(AddAndSubTlp) // Include AddAndSub in the Expression composition
-                .Or(FactorTlp); // Ensure that standalone factors can be evaluated.
+                .Or(AddAndSubTlp)
+                .Or(FactorTlp);
         }
 
 
-        public static string ParseAndEvaluate(string input)
+        public string ParseAndEvaluate(string input)
         {
             var tokens = ExpressionTokenizer.Tokenize(input);
             return ExpressionTlp.Parse(tokens);
         }
 
-        private static string ApplyFunction(string name, IList<dynamic> args)
+        private string ApplyFunction(string name, IList<dynamic> args)
         {
             // Convert the first letter to uppercase to match the Math method naming convention
             var methodName = char.ToUpper(name[0]) + name.Substring(1).ToLower();
@@ -193,6 +224,5 @@ namespace FormulaParser
                     throw new ArgumentException($"Unknown function: {name}");
             }
         }
-
     }
 }

@@ -88,19 +88,19 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CsvHelper">
-			<Version>30.0.1</Version>
+			<Version>31.0.2</Version>
 		</PackageReference>
-		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="ServiceWire" Version="5.5.4" />
 		<PackageReference Include="SocketIoClientDotNet">
 			<Version>1.0.2-beta1</Version>
 		</PackageReference>
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.410601">
+		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="System.IO.Ports" Version="7.0.0" />
+		<PackageReference Include="System.IO.Ports" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="ConfigurationPage\ApplicationSettings\ThemeColorPanel.cs" />

@@ -33,10 +33,11 @@ using System.Linq;
 using System;
 using g3;
 using MatterHackers.Agg;
+using Matter_CAD_Lib.DesignTools.Sheets;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SheetData
+    public class SheetData
 	{
 		private object locker = new object();
 
