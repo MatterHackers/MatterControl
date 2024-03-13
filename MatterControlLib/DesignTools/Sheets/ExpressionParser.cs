@@ -124,6 +124,14 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                 // string comparison
                 RunTest("\"test\" == \"test\"", "1");
                 RunTest("\"test\" == \"test2\"", "0");
+                RunTest("radius+(wall+margin)*2",
+                    "11",
+                    new List<(string, string)>()
+                    {
+                        ("radius", "1"),
+                        ("wall", "3"),
+                        ("margin", "2")
+                    });
                 // test with constants
                 RunTest("A1+Radius",
                     "5",
@@ -194,11 +202,16 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
 
         public string Calculate()
         {
-            var newResult = expressionEvaluator.ParseAndEvaluate(expressionString);
-
             var result = mxParser.calculate();
-            if (double.IsNaN(result))
+            var newResult = expressionEvaluator.ParseAndEvaluate(expressionString);
+            var newResultIsQuoted = newResult.StartsWith("\"") && newResult.EndsWith("\"");
+            if (double.IsNaN(result) || newResultIsQuoted)
             {
+                if (newResultIsQuoted)
+                {
+                    newResult = newResult.Substring(1, newResult.Length - 2);
+                }
+
                 return newResult;
             }
 
@@ -228,12 +241,13 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
             if (double.TryParse(value, out double doubleValue))
             {
                 mxParser.defineConstant(key, doubleValue);
+                expressionEvaluator.SetVariable(key, value);
             }
             else
             {
                 mxParser.defineConstant(key, 0);
+                expressionEvaluator.SetVariable(key, $"\"{value}\"");
             }
-            expressionEvaluator.SetVariable(key, value);
         }
 
         public string GetErrorMessage()

@@ -80,7 +80,21 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                 .Or(Parse.Ref(() => ExpressionTlp).Between(Token.EqualTo(ExpressionTokenType.LParen), Token.EqualTo(ExpressionTokenType.RParen)))
                 .Or(NumberTlp.Select(n => n.ToString(CultureInfo.InvariantCulture)))
                 .Or(TextTlp)
-                .Or(Token.EqualTo(ExpressionTokenType.Identifier).Select(tok => ReplaceVariables(tok.ToStringValue())));
+                .Or(Token.EqualTo(ExpressionTokenType.Identifier)
+                    .Select(tok =>
+                    {
+                        var identifierValue = tok.ToStringValue();
+                        var result = ReplaceVariables(identifierValue);
+
+                        // If the identifier contains any operators, recursively parse the expression
+                        if (result.Any(c => "+-*/".Contains(c)))
+                        {
+                            var tokens = ExpressionTokenizer.Tokenize(result);
+                            result = ExpressionTlp.Parse(tokens);
+                        }
+
+                        return result;
+                    }));
 
             var TermTlp = Parse.Chain(Token.EqualTo(ExpressionTokenType.Times).Or(Token.EqualTo(ExpressionTokenType.Divide)), FactorTlp, (op, left, right) =>
                 op.Kind == ExpressionTokenType.Times ? (decimal.Parse(left) * decimal.Parse(right)).ToString() : (decimal.Parse(left) / decimal.Parse(right)).ToString());
@@ -175,8 +189,15 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
 
         public string ParseAndEvaluate(string input)
         {
-            var tokens = ExpressionTokenizer.Tokenize(input);
-            return ExpressionTlp.Parse(tokens);
+            try
+            {
+                var tokens = ExpressionTokenizer.Tokenize(input);
+                return ExpressionTlp.Parse(tokens);
+            }
+            catch (Exception ex)
+            {
+                return "NaN";
+            }
         }
 
         private string ApplyFunction(string name, IList<dynamic> args)
@@ -206,7 +227,16 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
             switch (name.ToLower())
             {
                 case "concat":
-                    return string.Concat(args.Select(arg => Convert.ToString(arg)));
+                    return string.Concat(args.Select(arg =>
+                    {
+                        var asString = Convert.ToString(arg);
+                        // remove quotes if present
+                        if (asString.StartsWith("\"") && asString.EndsWith("\""))
+                        {
+                            asString = asString.Substring(1, asString.Length - 2);
+                        }
+                        return asString;
+                    }));
                 case "sum":
                     return args.Sum(arg => Convert.ToDouble(arg)).ToString(CultureInfo.InvariantCulture);
                 case "strlen":
