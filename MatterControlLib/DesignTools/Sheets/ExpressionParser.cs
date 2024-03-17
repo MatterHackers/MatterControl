@@ -203,15 +203,23 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
         public string Calculate()
         {
             var result = mxParser.calculate();
-            var newResult = expressionEvaluator.ParseAndEvaluate(expressionString);
-            var newResultIsQuoted = newResult.StartsWith("\"") && newResult.EndsWith("\"");
-            if (double.IsNaN(result) || newResultIsQuoted)
+            var newResult = "";
+            try
             {
-                if (newResultIsQuoted)
-                {
-                    newResult = newResult.Substring(1, newResult.Length - 2);
-                }
+                expressionEvaluator.ParseAndEvaluate(expressionString);
+            }
+            catch (Exception)
+            {
+                return result.ToString();
+            }
 
+            if (newResult.StartsWith("\"") && newResult.EndsWith("\""))
+            {
+                newResult = newResult.Substring(1, newResult.Length - 2);
+            }
+
+            if (double.IsNaN(result))
+            {
                 return newResult;
             }
 
