@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						var slicePolygons = FindSlice(sourceItem);
 
 						// set the fill type from the FillType tranlated to the ClipperLib enum
-						polygons = polygons.CreateUnion(slicePolygons, ClipType.ctUnion, (PolyFillType)FillType);
+						polygons = polygons.ApplyClipping(slicePolygons, ClipType.ctUnion, (PolyFillType)FillType);
 					}
 
 					VertexStorage = polygons.CreateVertexStorage();

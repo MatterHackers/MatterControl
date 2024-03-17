@@ -73,7 +73,7 @@ public static class VertexSourceExtensions
         var aPolys = a.CreatePolygons();
         var bPolys = b.CreatePolygons();
 
-		var outputPolys = CreateUnion(aPolys, bPolys, clipType, polyFillType);
+		var outputPolys = ApplyClipping(aPolys, bPolys, clipType, polyFillType);
 		VertexStorage output = outputPolys.CreateVertexStorage();
 
 		output.Add(0, 0, FlagsAndCommand.Stop);
@@ -81,11 +81,11 @@ public static class VertexSourceExtensions
 		return output;
 	}
 
-    public static Polygons CreateUnion(this Polygons a, Polygons b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd, bool cleanPaths = true)
+    public static Polygons ApplyClipping(this Polygons a, Polygons b, ClipType clipType, PolyFillType polyFillType = PolyFillType.pftEvenOdd, bool cleanPaths = true)
     {
         var clipper = new Clipper();
         clipper.AddPaths(a, PolyType.ptSubject, true);
-        clipper.AddPaths(b, PolyType.ptSubject, true);
+        clipper.AddPaths(b, PolyType.ptClip, true);
 
         var outputPolys = new Polygons();
         clipper.Execute(clipType, outputPolys, polyFillType);

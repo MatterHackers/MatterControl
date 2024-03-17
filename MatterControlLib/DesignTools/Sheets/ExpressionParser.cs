@@ -206,7 +206,7 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
             var newResult = "";
             try
             {
-                expressionEvaluator.ParseAndEvaluate(expressionString);
+                newResult = expressionEvaluator.ParseAndEvaluate(expressionString);
             }
             catch (Exception)
             {
