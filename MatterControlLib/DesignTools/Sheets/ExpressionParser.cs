@@ -158,6 +158,12 @@ namespace Matter_CAD_Lib.DesignTools.Sheets
                         ("index", "13"),
                         ("count", "75")
                     });
+                RunTest("-radius",
+                    "-11",
+                    new List<(string, string)>()
+                    {
+                        ("radius", "11"),
+                    });
             }
         }
 

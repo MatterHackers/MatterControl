@@ -1645,6 +1645,9 @@ Translated:Enable this if your printer has hardware support for G30 (automatic b
 English:End
 Translated:End
 
+English:End Bend Percent
+Translated:End Bend Percent
+
 English:End G-Code
 Translated:End G-Code
 
@@ -5298,6 +5301,9 @@ Translated:Start At Concave Points
 
 English:Start At Non Overhang
 Translated:Start At Non Overhang
+
+English:Start Bend Percent
+Translated:Start Bend Percent
 
 English:Start End Overlap
 Translated:Start End Overlap

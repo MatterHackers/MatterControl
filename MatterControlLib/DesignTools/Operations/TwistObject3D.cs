@@ -347,23 +347,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				});
 		}
 
-		private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
-
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			changeSet.Clear();
-
-			changeSet.Add(nameof(RotationDistance), RotationType == RotationTypes.Distance);
-			changeSet.Add(nameof(Angle), RotationType == RotationTypes.Angle);
-			changeSet.Add(nameof(RotationOffset), Advanced);
-			changeSet.Add(nameof(StartHeightPercent), Advanced);
-			changeSet.Add(nameof(EasingOption), Advanced && EasingType != Easing.EaseType.Linear);
-			changeSet.Add(nameof(EasingType), Advanced);
-			changeSet.Add(nameof(EndHeightPercent), Advanced);
-			changeSet.Add(nameof(EasyModeMessage), !Advanced);
-			changeSet.Add(nameof(PreferedRadius), RadiusProvider != null && !this.EditRadius && RotationType == RotationTypes.Distance);
-			changeSet.Add(nameof(OverrideRadius), (RadiusProvider == null || this.EditRadius) && RotationType == RotationTypes.Distance);
-			changeSet.Add(nameof(EditRadius), RadiusProvider != null && RotationType == RotationTypes.Distance);
+			var changeSet = new Dictionary<string, bool>
+            {
+                { nameof(RotationDistance), RotationType == RotationTypes.Distance },
+                { nameof(Angle), RotationType == RotationTypes.Angle },
+                { nameof(RotationOffset), Advanced },
+                { nameof(StartHeightPercent), Advanced },
+                { nameof(EasingOption), Advanced && EasingType != Easing.EaseType.Linear },
+                { nameof(EasingType), Advanced },
+                { nameof(EndHeightPercent), Advanced },
+                { nameof(EasyModeMessage), !Advanced },
+                { nameof(PreferedRadius), RadiusProvider != null && !this.EditRadius && RotationType == RotationTypes.Distance },
+                { nameof(OverrideRadius), (RadiusProvider == null || this.EditRadius) && RotationType == RotationTypes.Distance },
+                { nameof(EditRadius), RadiusProvider != null && RotationType == RotationTypes.Distance }
+            };
 
 			// first turn on all the settings we want to see
 			foreach (var kvp in changeSet.Where(c => c.Value))

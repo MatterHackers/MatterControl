@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Matter_CAD_Lib.DesignTools.Interfaces;
@@ -105,6 +106,16 @@ namespace MatterHackers.MatterControl.DesignTools
         [Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
         [DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
         public DoubleOrExpression MinSidesPerRotation { get; set; } = 30;
+
+		public bool Advanced { get; set; } = false;
+
+        [Description("The percentage from the left to start the bend")]
+        [Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
+        public DoubleOrExpression StartBendPercent { get; set; } = 0;
+
+        [Description("The percentage from the left to end the bend")]
+        [Slider(0, 100, Easing.EaseType.Quadratic, snapDistance: 1)]
+        public DoubleOrExpression EndBendPercent { get; set; } = 100;
 
         struct DrawInfo
         {
@@ -222,7 +233,7 @@ namespace MatterHackers.MatterControl.DesignTools
             bool valuesChanged = false;
 
             // ensure we have good values
-            var startPercent = StartPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged);
+            var startRotationRatio = StartPercent.ClampIfNotCalculated(this, 0, 100, ref valuesChanged) / 100;
 
             var diameter = Diameter.Value(this);
             if (diameter == double.MaxValue
@@ -272,9 +283,20 @@ namespace MatterHackers.MatterControl.DesignTools
                         cutPosition += cutSize;
                     }
 
-                    var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (startPercent / 100),
+                    var startBendRatio = StartBendPercent.Value(this) / 100;
+                    var endBendRatio = EndBendPercent.Value(this) / 100;
+                    endBendRatio = Math.Max(startBendRatio, endBendRatio);
+
+                    var doAdvancedBend = Advanced && (startBendRatio != 0 || endBendRatio != 1);
+
+                    var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * startRotationRatio,
                         BendDirection == BendDirections.Bend_Up ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
                         sourceAabb.Center.Z);
+
+                    if (doAdvancedBend)
+                    {
+                        // make the rotation center be in the rang of the start and end bend
+                    }
 
                     var curvedChildren = new List<IObject3D>();
 
@@ -300,17 +322,24 @@ namespace MatterHackers.MatterControl.DesignTools
                         {
                             var position = transformedMesh.Vertices[i];
 
-                            var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-                            var distanceFromCenter = rotationCenter.Y - position.Y;
-                            if (BendDirection == BendDirections.Bend_Down)
+                            if (doAdvancedBend)
                             {
-                                angleToRotate = -angleToRotate;
-                                distanceFromCenter = -distanceFromCenter;
+                                // bend the part around the center but only in the range of the start and end bend
                             }
+                            else
+                            {
+                                var angleToRotate = (position.X - rotationCenter.X) / circumference * MathHelper.Tau - MathHelper.Tau / 4;
+                                var distanceFromCenter = rotationCenter.Y - position.Y;
+                                if (BendDirection == BendDirections.Bend_Down)
+                                {
+                                    angleToRotate = -angleToRotate;
+                                    distanceFromCenter = -distanceFromCenter;
+                                }
 
-                            var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-                            rotatePosition.Z = position.Z;
-                            transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + sourceAabb.MaxXYZ.Y, 0);
+                                var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+                                rotatePosition.Z = position.Z;
+                                transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + sourceAabb.MaxXYZ.Y, 0);
+                            }
                         }
 
                         // transform back into item local space
@@ -372,13 +401,28 @@ namespace MatterHackers.MatterControl.DesignTools
                 });
         }
 
-        private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
-
         public void UpdateControls(PublicPropertyChange change)
         {
-            change.SetRowVisible(nameof(Diameter), () => BendType == BendTypes.Diameter);
-            change.SetRowVisible(nameof(Angle), () => BendType == BendTypes.Angle);
-            change.SetRowVisible(nameof(MinSidesPerRotation), () => SplitMesh);
+            var changeSet = new Dictionary<string, bool>
+            {
+                { nameof(Diameter), BendType == BendTypes.Diameter },
+                { nameof(Angle), BendType == BendTypes.Angle },
+                { nameof(MinSidesPerRotation), SplitMesh },
+                { nameof(StartBendPercent), Advanced },
+                { nameof(EndBendPercent), Advanced },
+            };
+
+            // first turn on all the settings we want to see
+            foreach (var kvp in changeSet.Where(c => c.Value))
+            {
+                change.SetRowVisible(kvp.Key, () => kvp.Value);
+            }
+
+            // then turn off all the settings we want to hide
+            foreach (var kvp in changeSet.Where(c => !c.Value))
+            {
+                change.SetRowVisible(kvp.Key, () => kvp.Value);
+            }
         }
     }
 }
