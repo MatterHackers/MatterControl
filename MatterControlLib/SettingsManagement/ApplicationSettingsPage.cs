@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl
 			};
 			openCacheButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				Process.Start(ApplicationDataStorage.ApplicationUserDataPath);
+				ApplicationController.ProcessStart(ApplicationDataStorage.ApplicationUserDataPath);
 			});
 
 			this.AddSettingsRow(
