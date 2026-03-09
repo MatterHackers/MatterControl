@@ -224,7 +224,11 @@ namespace MatterHackers.MatterControl.Library
 					{
 						setItemThumbnail(image);
 					}));
-					thumbnailListener?.Invoke(icon);
+					// Invoke callback on UI thread to ensure Invalidate() works correctly
+					UiThread.RunOnIdle(() =>
+					{
+						thumbnailListener?.Invoke(icon);
+					});
 				}
 			}
 
