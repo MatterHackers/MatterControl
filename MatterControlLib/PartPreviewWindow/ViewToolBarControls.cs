@@ -643,7 +643,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							// Copy updated thumbnail into original image
 							imageBuffer.CopyFrom(thumbnail);
+							// Invalidate both the menu item and parent submenu to ensure proper refresh
 							bedHistory.Invalidate();
+							subMenu.Invalidate();
 						}
 
 						ApplicationController.Instance.Library.LoadItemThumbnail(
