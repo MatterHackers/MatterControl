@@ -45,7 +45,7 @@ MatterControl is written in C#. It uses the [agg-sharp](https://github.com/Matte
 
 3. Add Mono SSL Support - Copy in Mozilla Root certificates to enable NuGet and MatterControl SSL requests
 
-        mozroots --import --sync
+        cert-sync --import --sync
 
 4. Restore NuGet packages - On MonoDevelop 4.0 or older you can install [NuGet Addin](https://github.com/mrward/monodevelop-nuget-addin). If you are on Mint, also install libmono-cairo2.0-cil. Alternatively you can run the command line NuGet application to restore the project packages:
 
