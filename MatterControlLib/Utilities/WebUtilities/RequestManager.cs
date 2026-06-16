@@ -112,6 +112,11 @@ namespace MatterHackers.MatterControl
 			var request = (HttpWebRequest)HttpWebRequest.Create(uri);
 			request.Method = method;
 
+			// accounts.matterhackers.com (the migrated auth host) rejects requests with no
+			// User-Agent (HTTP 403), unlike the old bruha-auth App Engine host. Without this,
+			// sign-in fails with "Unable to connect to server". Mirrors MatterCAD's RequestManager.
+			request.UserAgent = "MatterControl/1.0";
+
 			request.Timeout = this.Timeout;
 
 			// Set cookie container to maintain cookies
