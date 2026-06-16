@@ -258,32 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ChromeTab tab = null;
 
-			// Upgrade tab
-			if (!ApplicationController.Instance.IsMatterControlPro())
-			{
-				tab = new ChromeTab("Upgrade", "Upgrade".Localize(), tabControl, new UpgradeToProTabPage(theme), theme, hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Upgrade",
-					Padding = new BorderDouble(15, 0),
-				};
-				tabControl.AddTab(tab);
-
-				ChromeTab upgradeTab = tab;
-
-				tab.AfterDraw += (s, e) =>
-				{
-					var textWidget = upgradeTab.Descendants<TextWidget>().FirstOrDefault();
-
-					var localLabelEndPosition = textWidget.TransformToScreenSpace(textWidget.Printer.GetSize()) - upgradeTab.TransformToScreenSpace(Vector2.Zero);
-
-					double radius = 5 * DeviceScale;
-					e.Graphics2D.Circle(localLabelEndPosition.X + radius + 3 * DeviceScale,
-						upgradeTab.LocalBounds.Bottom + upgradeTab.Height / 2 - 1 * DeviceScale,
-						radius,
-						theme.PrimaryAccentColor);
-				};
-			}
+			// Upgrade tab removed: all builds are now MatterControl Pro, so there is nothing to upgrade to.
 
 			// Store tab
 			tabControl.AddTab(

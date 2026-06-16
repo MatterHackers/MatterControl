@@ -134,13 +134,9 @@ namespace MatterHackers.MatterControl
 
 		public bool IsMatterControlPro()
 		{
-			var result = ApplicationController.Instance.UserHasPro?.Invoke();
-			if (result != null)
-			{
-				return result.Value;
-			}
-
-			return false;
+			// All builds are now MatterControl Pro. The paid Pro upgrade has been discontinued, so
+			// every build ships with full Pro functionality (and no "Upgrade to Pro" tab).
+			return true;
 		}
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
