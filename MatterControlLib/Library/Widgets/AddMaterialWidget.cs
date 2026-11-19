@@ -203,9 +203,7 @@ namespace MatterHackers.MatterControl.Library.Widgets
                                 }, theme,
                                 false)
                         {
-                            ShowProducts = false,
                             ShowHeadingRow = false,
-                            StoreID = SelectedMaterial.Sku,
                             HAnchor = HAnchor.Stretch,
                             VAnchor = VAnchor.Stretch
                         };

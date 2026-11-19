@@ -303,27 +303,6 @@ namespace MatterHackers.MatterControl.Library.Widgets
 
 						printerInfo.CloseChildren();
 
-						if (this.SelectedPrinter != null
-							&& OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))
-						{
-							printerInfo.AddChild(
-								new PrinterDetails(
-									new PrinterInfo()
-									{
-										Make = SelectedPrinter.Make,
-										Model = SelectedPrinter.Model,
-									},
-									theme,
-									false)
-								{
-									ShowProducts = false,
-									ShowHeadingRow = false,
-									StoreID = storePrinterID?.SID,
-									HAnchor = HAnchor.Stretch,
-									VAnchor = VAnchor.Stretch
-								});
-						}
-
 						nextButtonEnabled(TreeView.SelectedNode != null
 							&& !string.IsNullOrWhiteSpace(printerNameInput.Text));
 					}
